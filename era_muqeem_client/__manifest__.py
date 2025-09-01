@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'currency': 'USD',
-    'price': 799,
+    'price': 3490,
     'license': 'AGPL-3',
     'name': "Era Muqeem ",
 
@@ -17,7 +17,7 @@
     إصدار وتجديد ونقل إقامة - إصدار وإلغاء وتمديد تأشيرة الخروج والعودة والنهائي - تقرير مقيم - تقارير بالعمليات. وغيرها
         """,
 
-    'author': "Era group",
+    'author': "Era group | Developer: Nancy Elghoal",
     'email': "aqlan@era.net.sa ",
     'website': "https://era.net.sa",
     'category': 'Hr',
@@ -58,6 +58,7 @@
         'views/today_requests_report_template.xml',
         'views/client_requirement_views.xml',
         'views/res_company.xml',
+        'views/print_muqeem_confirm.xml',
         'wizard/res_config_view.xml'
 
 

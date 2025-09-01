@@ -1,0 +1,31 @@
+<odoo>
+<record id="view_print_muqeem_confirm" model="ir.ui.view">
+    <field name="name">print.muqeem.confirm.form</field>
+    <field name="model">print.muqeem.confirm</field>
+    <field name="arch" type="xml">
+        <form string="تأكيد الطباعة">
+            <footer>
+                <button name="action_open_muqeem_wizard"
+                        string="متابعة"
+                        type="object"
+                        class="btn-primary"/>
+                <button string="إلغاء" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="action_print_muqeem_confirm" model="ir.actions.act_window">
+    <field name="name">تأكيد الطباعة</field>
+    <field name="res_model">print.muqeem.confirm</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+    <record id="action_print_muqeem_confirm" model="ir.actions.act_window">
+        <field name="name">Confirm Muqeem Print</field>
+        <field name="res_model">print.muqeem.confirm</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

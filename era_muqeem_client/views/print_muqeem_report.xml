@@ -4,6 +4,7 @@
     <record id="print_muqeem_report_form_view" model="ir.ui.view">
         <field name="name">print.muqeem.form.view</field>
         <field name="model">print.muqeem.report</field>
+            <field name="context">{'active_model': 'hr.employee', 'active_id': active_id}</field>
         <field name="arch" type="xml">
             <form>
                 <group>

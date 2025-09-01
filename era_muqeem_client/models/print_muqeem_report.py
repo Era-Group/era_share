@@ -35,6 +35,15 @@ class PrintMuqeemReport(models.TransientModel):
         json_data = json.dumps(data)
         return json_data
 
+
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        if self.env.context.get('active_id') and self.env.context.get('active_model') == 'hr.employee':
+            res['employee_id'] = self.env.context['active_id']
+        return res
+
     @api.depends('iqamaNumber', 'language','print')
     def _compute_json_data(self):
         for record in self:

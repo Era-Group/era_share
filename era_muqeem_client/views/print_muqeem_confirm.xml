@@ -15,12 +15,6 @@
     </field>
 </record>
 
-<record id="action_print_muqeem_confirm" model="ir.actions.act_window">
-    <field name="name">تأكيد الطباعة</field>
-    <field name="res_model">print.muqeem.confirm</field>
-    <field name="view_mode">form</field>
-    <field name="target">new</field>
-</record>
 
     <record id="action_print_muqeem_confirm" model="ir.actions.act_window">
         <field name="name">Confirm Muqeem Print</field>

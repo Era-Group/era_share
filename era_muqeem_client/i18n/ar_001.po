@@ -2440,3 +2440,13 @@ msgstr "تاكيد طباعة مقيم"
 msgid ""
 "The cost of printing a Muqeem report is 125 points. Do you want to continue?"
 msgstr "تكلفة خدمة طباعة تقرير مقيم 125 نقطة هل تريد الاستمرار؟"
+
+#. module: era_muqeem_client
+#: model_terms:ir.ui.view,arch_db:era_muqeem_client.view_print_muqeem_confirm
+msgid "Continue"
+msgstr "استمرار"
+
+#. module: era_muqeem_client
+#: model_terms:ir.ui.view,arch_db:era_muqeem_client.view_print_muqeem_confirm
+msgid "Cancel"
+msgstr "الغاء"

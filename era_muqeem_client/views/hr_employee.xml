@@ -71,10 +71,10 @@ string="Issuing Exit Return visa" >
 <!--                                            class="btn text-nowrap me-1 my-2 btn-primary w-100" string="Print Muqeem Report">-->
 
 <!--                                    </button>-->
-                                    <button name="%(action_print_muqeem_confirm)d"
-        string="Print Muqeem Confirm"
-        type="action"
-        class="btn-primary"/>
+                                    <button type="action" name="%(action_print_muqeem_confirm)d"
+                                            class="btn text-nowrap me-1 my-2 btn-primary w-100" string="Print Muqeem Report">
+
+                                    </button>
 
                                     <button type="action" name="%(today_request_action)d"
                                             class="btn text-nowrap me-1 my-2 btn-primary w-100" string="Today Requests Report">

@@ -3,13 +3,16 @@
     <field name="name">print.muqeem.confirm.form</field>
     <field name="model">print.muqeem.confirm</field>
     <field name="arch" type="xml">
-        <form string="تأكيد الطباعة">
+        <form string="Confirm Printing">
+            <group>
+                <field name="message" nolabel="1" readonly="1"/>
+            </group>
             <footer>
                 <button name="action_open_muqeem_wizard"
-                        string="متابعة"
+                        string="Continue"
                         type="object"
                         class="btn-primary"/>
-                <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
             </footer>
         </form>
     </field>

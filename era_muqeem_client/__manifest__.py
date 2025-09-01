@@ -45,6 +45,7 @@
         'views/extend_passport_validaty.xml',
         'views/print_muqeem_report.xml',
         'views/today_requests_report.xml',
+        'views/print_muqeem_confirm.xml',
         'views/hr_employee.xml',
         'views/issue_exit_entry_template.xml',
         'views/extend_exit_entry_template.xml',
@@ -58,7 +59,6 @@
         'views/today_requests_report_template.xml',
         'views/client_requirement_views.xml',
         'views/res_company.xml',
-        'views/print_muqeem_confirm.xml',
         'wizard/res_config_view.xml'
 
 

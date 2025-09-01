@@ -21,7 +21,7 @@ class PrintMuqeemConfirm(models.TransientModel):
     #
     # def action_cancel(self):
     #     return {'type': 'ir.actions.act_window_close'}
-    @api.multi
+
     def action_open_muqeem_wizard(self):
         return {
             'type': 'ir.actions.act_window',

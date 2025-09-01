@@ -9,6 +9,7 @@ access_issue_iqama_wizard,access_issue_iqama_wizard,model_issue_iqama_wizard,,1,
 access_transfer_iqama_wizard,access_transfer_iqama_wizard,model_transfer_iqama_wizard,,1,1,1,1
 access_extend_passport_validaty,access_extend_passport_validaty,model_extend_passport_validaty,,1,1,1,1
 access_print_muqeem_report,access_print_muqeem_report,model_print_muqeem_report,,1,1,1,1
+access_print_muqeem_confirm,access_print_muqeem_confirm,model_print_muqeem_confirm,,1,1,1,1
 access_extend_exit_entry_wizard,access_extend_exit_entry_wizard,model_extend_exit_entry_wizard,,1,1,1,1
 access_today_request_report_wizard,access_today_request_report_wizard,model_today_request_report_wizard,,1,1,1,1
 access_client_requests_client_requests,client_requests.client_requests_,model_client_requests,,1,1,1,1

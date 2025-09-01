@@ -2428,3 +2428,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_muqeem_client.view_company_form_inherit
 msgid "للارشادات في طريقة الاشتراك:"
 msgstr ""
+
+#. module: era_muqeem_client
+#: model:ir.actions.act_window,name:era_muqeem_client.action_print_muqeem_confirm
+msgid "Confirm Muqeem Print"
+msgstr "تاكيد طباعة مقيم"
+
+#. module: era_muqeem_client
+#. odoo-python
+#: code:addons/era_muqeem_client/models/print_muqeem_confirm.py:0
+msgid ""
+"The cost of printing a Muqeem report is 125 points. Do you want to continue?"
+msgstr "تكلفة خدمة طباعة تقرير مقيم 125 نقطة هل تريد الاستمرار؟"

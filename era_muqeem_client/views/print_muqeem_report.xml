@@ -8,7 +8,7 @@
             <form>
                 <group>
                     <group>
-                        <field name="employee_id" />
+                        <field name="employee_id" invisible="1"/>
                                                 <field name="iqamaNumber"/>
 
                     </group>

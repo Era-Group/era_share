@@ -1,48 +1,80 @@
 # -*- coding: utf-8 -*-
-from odoo import api, models,fields
-from odoo.exceptions import UserError,ValidationError
+from odoo import api, models, fields, _
+from odoo.exceptions import UserError, ValidationError
+from dateutil.relativedelta import relativedelta
 import requests
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class CrmForsah(models.Model):
     _name = "crm.forsah.client"
-    _description = "crm_forsah_client"
-    name = fields.Char("Name", required=True,readonly=True)
-    category = fields.Char("Category",readonly=True)
-    link = fields.Char("Link",readonly=True)
-    size = fields.Char("Size",readonly=True)
-    days = fields.Char("Days",readonly=True)
-    city = fields.Char("City",readonly=True)
-    tag_ids = fields.Many2many('crm.forsah.tag.client', 'crm_forsah_client_id','Tags')
-    forsah_id = fields.Char("ٌRef ID",readonly=True)
-    active = fields.Boolean("Active",default=True)
+    _description = "CRM Forsah Client"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    name = fields.Char(string="Name", required=True, readonly=True, tracking=True)
+    category = fields.Char(string="Category", readonly=True, tracking=True)
+    link = fields.Char(string="Link", readonly=True)
+    size = fields.Char(string="Size", readonly=True, tracking=True)
+    days = fields.Char(string="Days", readonly=True, tracking=True)
+    city = fields.Char(string="City", readonly=True, tracking=True)
+    tag_ids = fields.Many2many(
+        'crm.forsah.tag.client',
+        'crm_forsah_tag_rel',
+        'forsah_id',
+        'tag_id',
+        string='Tags'
+    )
+    forsah_id = fields.Char(string="Ref ID", readonly=True, tracking=True)
+    active = fields.Boolean(string="Active", default=True, tracking=True)
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
 
     def get_forsah_data(self):
+        """Fetch and process Forsah data from the API."""
         url = 'https://service.era.net.sa/forsah/data'
         try:
-            response = requests.get(url)
-            response.raise_for_status()  
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
             data_list = response.json()
-            self._delete_all_records()  
-            if data_list['code'] == '200':
-                for data in data_list['data']:
-                    self.process_categories_to_tags()  
-                    vals = {
-                        'forsah_id': data["id"],
-                        'name': data["name"],
-                        'link': data["link"],
-                        'size': data["size"],
-                        'category': data["category"],
-                        'days': data["days"],
-                        'city': data["city"],
-                    }
-                    self.create(vals)
-            else:
-                raise UserError(f"Unexpected response code: {data_list['code']}")
+            
+            if data_list.get('code') != '200':
+                error_msg = _(f"Unexpected response code: {data_list.get('code')}")
+                _logger.error(error_msg)
+                raise UserError(error_msg)
+                
+            # Delete existing records in a transaction
+            with self.env.cr.savepoint():
+                self._delete_all_records()
+                
+                for data in data_list.get('data', []):
+                    try:
+                        vals = {
+                            'forsah_id': data.get('id'),
+                            'name': data.get('name'),
+                            'link': data.get('link'),
+                            'size': data.get('size'),
+                            'category': data.get('category'),
+                            'days': data.get('days'),
+                            'city': data.get('city'),
+                        }
+                        new_record = self.create(vals)
+                        self.process_categories_to_tags()
+                        _logger.info(f"Created Forsah record: {new_record.name}")
+                    except Exception as e:
+                        _logger.error(f"Error processing record: {e}")
+                        continue
 
         except requests.exceptions.RequestException as e:
-            print(f"An error occurred: {e}")
-        except ValueError:
-            print("An error occurred while decoding JSON response")
+            error_msg = _(f"API Request Error: {str(e)}")
+            _logger.error(error_msg)
+            raise UserError(error_msg)
+        except ValueError as e:
+            error_msg = _("Invalid JSON response from API")
+            _logger.error(f"{error_msg}: {str(e)}")
+            raise UserError(error_msg)
+        except Exception as e:
+            error_msg = _(f"Unexpected error: {str(e)}")
+            _logger.error(error_msg)
+            raise UserError(error_msg)
         
         
     @api.model
@@ -86,48 +118,59 @@ class CrmForsah(models.Model):
                 return source.id  
                              
     def action_create_lead(self):
-        crm_lead_model = self.env['crm.lead']
-        for record in self:
-            leads = crm_lead_model.search(['&',('name','=',record.name),('description','ilike',record.category)])
-            if leads:
-                 raise ValidationError("This Lead It Already Created.")  
-            else:
-                if self._get_source()==False:
-                    source_id = self.env['utm.source'].create({'name': "Forsah"})
-                    lead_data = {
-                        'name': record.name,
-                        'description': record.category + "  | Days "+str(record.days) + " |  Size " + record.size,
-                        'type': 'opportunity',
-                        'team_id': 1,
-                        'city': record.city,
-                        'website': record.link,
-                        'source_id': source_id.id,
-                    }
-                    lead = crm_lead_model.create(lead_data)
-                    activity_data =self.env['mail.activity'].create({
-                                            'display_name': lead.name,
-                                            'summary': '3 Days!',
-                                            'user_id': 2,
-                                            'res_id': lead.id,
-                                            'res_model_id': self.env['ir.model'].search([('model', '=', 'crm.lead')]).id,
-                                        'activity_type_id': 4})
-                else:  
-                    lead_data = {
-                        'name': record.name,
-                        'description': record.category + "  | Days "+str(record.days) + " |  Size " + record.size,
-                        'type': 'opportunity',
-                        'team_id': 1,
-                        'city': record.city,
-                        'website': record.link,
-                        'source_id': self._get_source(),
-                    }
-                    lead = crm_lead_model.create(lead_data)
-                    activity_data =self.env['mail.activity'].create({
-                                            'display_name': lead.name,
-                                            'summary': '3 Days!',
-                                            'user_id': 2,
-                                            'res_id': lead.id,
-                                            'res_model_id': self.env['ir.model'].search([('model', '=', 'crm.lead')]).id,
-                                        'activity_type_id': 4})
-        return activity_data
+        """Create a CRM lead from Forsah data."""
+        self.ensure_one()
+        Lead = self.env['crm.lead']
+        
+        # Check for existing lead
+        existing_lead = Lead.search([
+            ('name', '=', self.name),
+            ('description', 'ilike', self.category)
+        ], limit=1)
+        
+        if existing_lead:
+            raise ValidationError(_("A lead has already been created for this opportunity."))
+            
+        try:
+            # Get or create UTM source
+            source_id = self._get_source() or self.env['utm.source'].create({
+                'name': "Forsah"
+            }).id
+            
+            # Prepare lead data
+            description = f"{self.category} | Days {self.days} | Size {self.size}"
+            lead_data = {
+                'name': self.name,
+                'description': description,
+                'type': 'opportunity',
+                'team_id': self.env['crm.team'].search([], limit=1).id,
+                'city': self.city,
+                'website': self.link,
+                'source_id': source_id,
+                'company_id': self.company_id.id,
+            }
+            
+            # Create lead with activity in a transaction
+            with self.env.cr.savepoint():
+                lead = Lead.create(lead_data)
+                
+                # Create activity
+                activity = self.env['mail.activity'].create({
+                    'display_name': lead.name,
+                    'summary': _('Review Opportunity'),
+                    'note': _('New Forsah opportunity requires review within 3 days.'),
+                    'user_id': self.env.user.id,
+                    'res_id': lead.id,
+                    'res_model_id': self.env['ir.model']._get('crm.lead').id,
+                    'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id,
+                    'date_deadline': fields.Date.context_today(self) + relativedelta(days=3),
+                })
+                
+                _logger.info(f"Created lead and activity for Forsah: {self.name}")
+                return activity
+                
+        except Exception as e:
+            error_msg = _(f"Failed to create lead: {str(e)}")
+            _logger.error(error_msg)
+            raise UserError(error_msg)
 

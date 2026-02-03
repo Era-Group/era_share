@@ -1,0 +1,367 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * era_gosi_api
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-02 00:00+0000\n"
+"PO-Revision-Date: 2026-02-02 00:00+0000\n"
+"Last-Translator: Era IT <info@era.net.sa>\n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_gosi_api
+#: model:ir.actions.server,name:era_gosi_api.action_server_hr_employee_fetch_gosi
+msgid "Fetch GOSI Deductions"
+msgstr "جلب استقطاعات التأمينات الاجتماعية"
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_hr_employee_form_gosi
+msgid "GOSI"
+msgstr "التأمينات الاجتماعية"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_status
+msgid "GOSI Status"
+msgstr "حالة الخدمة"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_full_name_en
+msgid "GOSI Full Name (English)"
+msgstr "الاسم الكامل (إنجليزي)"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_full_name_ar
+msgid "GOSI Full Name (Arabic)"
+msgstr "الاسم الكامل (عربي)"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_identity_iqama
+msgid "IQAMA Number (GOSI)"
+msgstr "رقم الإقامة"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_identity_border_number
+msgid "Border Number (GOSI)"
+msgstr "رقم الحدود"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_registration_number
+msgid "GOSI Registration Number"
+msgstr "رقم التسجيل في التأمينات"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_start_date
+msgid "GOSI Engagement Start Date"
+msgstr "تاريخ بداية علاقة العمل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_status
+msgid "GOSI Engagement Status"
+msgstr "حالة علاقة العمل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_type
+msgid "GOSI Engagement Type"
+msgstr "نوع علاقة العمل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_coverage
+msgid "GOSI Coverage Summary"
+msgstr "ملخص الإستمارة"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_employer_deduction_rate
+msgid "GOSI Employer Deduction Rate"
+msgstr "نسبة استقطاع الشركة"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_employee_deduction_rate
+msgid "GOSI Employee Deduction Rate"
+msgstr "نسبة استقطاع الموظف"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_last_checked
+msgid "Last GOSI Check"
+msgstr "آخر فحص للتأمينات"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_last_response
+msgid "Last GOSI Response"
+msgstr "آخر استجابة"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_contributor_last_error
+msgid "Last GOSI Error"
+msgstr "آخر خطأ"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_response_status_code
+msgid "GOSI Status Code"
+msgstr "رمز حالة الخدمة"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/models/hr_employee.py:0
+msgid "Provide an Identification Number on the employee form."
+msgstr "قم بتوفير رقم تعريف على نموذج الموظف."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/models/hr_employee.py:0
+msgid "Unable to fetch contributor deductions: %s"
+msgstr "تعذر جلب الاستقطاعات: %s"
+
+#. module: era_gosi_api
+#: selection:hr.employee,gosi_contributor_status:0
+msgid "Not requested"
+msgstr "لم يُطلب"
+
+#. module: era_gosi_api
+#: selection:hr.employee,gosi_contributor_status:0
+msgid "Last fetch succeeded"
+msgstr "آخر جلب نجح"
+
+#. module: era_gosi_api
+#: selection:hr.employee,gosi_contributor_status:0
+msgid "Last fetch failed"
+msgstr "آخر جلب فشل"
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "API"
+msgstr "واجهة برمجة التطبيقات"
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "Runtime"
+msgstr "أوقات التشغيل"
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "KSA Proxy"
+msgstr "وكيل السعودية"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_registration_number
+msgid "Registration Number"
+msgstr "رقم التسجيل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_registration_number
+msgid "Establishment registration number used in API paths."
+msgstr "رقم تسجيل المنشأة المستخدم في مسارات API."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_client_id
+msgid "Client ID"
+msgstr "معرف العميل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_client_id
+msgid "Client ID issued by GOSI."
+msgstr "رقم العميل في التأمينات."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_client_secret
+msgid "Client Secret"
+msgstr "السرّ الخاص بالعميل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_client_secret
+msgid "Client secret issued by GOSI."
+msgstr "السرّ الخاص الصادر عن للتأمينات."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_private_key
+msgid "Private Key"
+msgstr "المفتاح الخاص"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_private_key
+msgid "PEM private key used to sign DPoP JWTs."
+msgstr "المفتاح الخاص بصيغة PEM المستخدم لتوقيع رموز JWT الخاصة بـ DPoP."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_private_key_password
+msgid "Private Key Password"
+msgstr "كلمة مرور المفتاح الخاص"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_private_key_password
+msgid "Password for the private key if it is encrypted."
+msgstr "كلمة مرور المفتاح الخاص إذا كان مشفرًا."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_timeout_seconds
+msgid "Timeout (Seconds)"
+msgstr "مهلة (بالثواني)"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_timeout_seconds
+msgid "Request timeout for GOSI API calls."
+msgstr "مهلة طلبات واجهة برمجة تطبيقات التأمينات."
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "Test Connection"
+msgstr "اختبار الاتصال"
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "Retrieves an access token using the configured credentials."
+msgstr "يسترجع رمز وصول باستخدام بيانات الاعتماد المُعدة."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_proxy_url
+msgid "Proxy URL"
+msgstr "رابط الوكيل"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_proxy_url
+msgid "Base URL of the KSA Odoo proxy server."
+msgstr "النقطة الأساسية لوكيل أودو مجموعة ارى."
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_res_config_settings__gosi_proxy_token
+msgid "Proxy Token"
+msgstr "رمز الوكيل من مجموعة ارى"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,help:era_gosi_api.field_res_config_settings__gosi_proxy_token
+msgid "Shared token expected by the KSA proxy."
+msgstr "الرمز المشترك الذي يتوقعه مجموعة ارى."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "registration number"
+msgstr "رقم التسجيل"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "client id"
+msgstr "معرف العميل"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "client secret"
+msgstr "سر العميل"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "private key"
+msgstr "المفتاح الخاص"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Configure GOSI %s in Settings > General Settings."
+msgstr "قم بتكوين %s في الإعدادات > الإعدادات العامة."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Missing python dependency: cryptography"
+msgstr "مكتبة بايثون مفقودة: cryptography"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI private key is encrypted; set the private key password in Settings."
+msgstr "المفتاح الخاص مشفر؛ قم بتعيين كلمة مرور المفتاح الخاص في الإعدادات."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Invalid GOSI private key: %s"
+msgstr "مفتاح GOSI الخاص غير صالح: %s"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Missing python dependency: PyJWT (import name: jwt)"
+msgstr "مكتبة بايثون مفقودة: PyJWT (اسم الاستيراد: jwt)"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "%s returned an empty response (status %s)."
+msgstr "%s أعاد استجابة فارغة (الحالة %s)."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "%s returned a non-JSON response (status %s, content-type %s)."
+msgstr "%s أعاد استجابة غير JSON (الحالة %s، نوع المحتوى %s)."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "%s error: %s"
+msgstr "خطأ %s: %s"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI proxy URL is not configured."
+msgstr "لم يتم تكوين رابط الوكيل السعودي."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI proxy request failed: %s"
+msgstr "فشل طلب الوكيل السعودي: %s"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI request failed: %s"
+msgstr "فشل طلب التأمينات: %s"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI authentication failed (401). Check credentials and DPoP configuration."
+msgstr "فشلت مصادقة GOSI (401). تحقق من بيانات الاعتماد وتكوين DPoP."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI request forbidden (403). Ensure access is enabled for this endpoint."
+msgstr "طلب GOSI مرفوض (403). تأكد من تفعيل الوصول لهذا الواجهة."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI service is temporarily unavailable (status %s)."
+msgstr "خدمة GOSI غير متوفرة مؤقتًا (الحالة %s)."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Configure GOSI registration number in Settings."
+msgstr "قم بتكوين رقم تسجيل GOSI في الإعدادات."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "GOSI did not return an access token."
+msgstr "لم تُرجع GOSI رمز وصول."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/services/gosi_client.py:0
+msgid "Provide a contributor identifier (NIN or Iqama)."
+msgstr "قم بتوفير معرف المساهم (NIN أو رقم الإقامة)."
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/models/hr_employee.py:0
+msgid "Coverage %s"
+msgstr "التغطية %s"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/models/hr_employee.py:0
+msgid "Employer %s%%"
+msgstr "صاحب العمل %s%%"
+
+#. module: era_gosi_api
+#: code:addons/era_gosi_api/models/hr_employee.py:0
+msgid "Employee %s%%"
+msgstr "الموظف %s%%"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_start_date
+msgid "Start Date"
+msgstr "تاريخ البدء"
+
+#. module: era_gosi_api
+#: model:ir.model.fields,field_description:era_gosi_api.field_hr_employee__gosi_engagement_end_date
+msgid "End Date"
+msgstr "تاريخ الانتهاء"

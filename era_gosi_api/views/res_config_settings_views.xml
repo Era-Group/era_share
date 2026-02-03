@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_gosi" model="ir.ui.view">
+        <field name="name">res.config.settings.gosi</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="GOSI" name="gosi" groups="base.group_system">
+                    <block title="API">
+                        <setting string="Registration Number" help="Establishment registration number used in API paths.">
+                            <field name="gosi_registration_number"/>
+                        </setting>
+                        <setting string="Client ID" help="Client ID issued by GOSI.">
+                            <field name="gosi_client_id"/>
+                        </setting>
+                        <setting string="Client Secret" help="Client secret issued by GOSI.">
+                            <field name="gosi_client_secret" password="True"/>
+                        </setting>
+                        <setting string="Private Key" help="PEM private key used to sign DPoP JWTs.">
+                            <field name="gosi_private_key" widget="text" placeholder="-----BEGIN PRIVATE KEY-----"/>
+                        </setting>
+                        <!--setting string="Private Key Password" help="Password for the private key if it is encrypted.">
+                            <field name="gosi_private_key_password" password="True" invisible="1"/>
+                        </setting-->
+                    </block>
+                    <block title="KSA Proxy">
+                        <setting string="Proxy URL" help="Base URL of the KSA Odoo proxy server.">
+                            <field name="gosi_proxy_url" placeholder="https://app.era.net.sa"/>
+                        </setting>
+                        <setting string="Proxy Token" help="Shared token expected by the KSA proxy.">
+                            <field name="gosi_proxy_token" password="True"/>
+                        </setting>
+                        <setting string="Test Connection" help="Retrieves an access token using the configured credentials.">
+                            <button name="action_gosi_test_connection" type="object" string="Test Connection" class="btn btn-secondary"/>
+                        </setting>
+
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

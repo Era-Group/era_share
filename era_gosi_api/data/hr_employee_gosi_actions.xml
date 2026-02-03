@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_server_hr_employee_fetch_gosi" model="ir.actions.server">
+        <field name="name">Fetch GOSI Deductions</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="binding_model_id" ref="hr.model_hr_employee"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+action = records.action_gosi_fetch_contributor_deductions()
+]]></field>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

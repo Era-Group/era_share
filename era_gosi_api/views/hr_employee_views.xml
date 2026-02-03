@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_form_gosi" model="ir.ui.view">
+        <field name="name">hr.employee.form.gosi</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="GOSI" groups="hr.group_hr_user">
+                    <group>
+                        <button
+                            name="action_gosi_fetch_contributor_deductions"
+                            type="object"
+                            string="Fetch GOSI Deductions"
+                            class="btn-secondary"
+                            groups="hr.group_hr_user"
+                        />
+                    </group>
+                    <group>
+                        
+                    </group>
+                    <group col="2">
+                        <group>
+                            <field name="identification_id" placeholder="National ID or Iqama"/>
+                            <field name="gosi_engagement_employer_deduction_rate" readonly="1"/>
+                            <field name="gosi_engagement_registration_number" readonly="1"/>
+                            <field name="gosi_engagement_type" readonly="1"/>
+                            <!--field name="gosi_contributor_identity_iqama" readonly="1"/-->
+                            <field name="gosi_contributor_identity_border_number" readonly="1"/>
+                            <!--field name="gosi_engagement_coverage" readonly="1"/-->
+                        </group>
+                        <group>
+                            <field name="gosi_engagement_status" readonly="1"/>
+                            <field name="gosi_engagement_employee_deduction_rate" readonly="1"/>
+                            <field name="gosi_engagement_start_date" readonly="1"/>
+                            <field name="gosi_engagement_end_date" readonly="1"/>
+                            <field name="gosi_contributor_full_name_en" readonly="1"/>
+                            <field name="gosi_contributor_full_name_ar" readonly="1"/>
+                            
+                        </group>
+                        
+                    </group>
+                    <group class="o_hr_gosi_status_row ">
+                        <small>
+                            <div class="o_row">
+                                <field name="gosi_contributor_status" readonly="1" class="o_col-3"/>
+                                <field name="gosi_contributor_last_checked" readonly="1" class="o_col-3"/>
+                                <field name="gosi_response_status_code" readonly="1" class="o_col-3"/>
+                                <field name="gosi_contributor_last_error" readonly="1" class="o_col-3"/>
+                            </div>
+                        </small>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

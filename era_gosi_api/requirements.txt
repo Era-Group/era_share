@@ -1,0 +1,4 @@
+jwt
+PyJWT
+cryptography
+requests

@@ -4,6 +4,8 @@ import logging
 import re
 from datetime import timedelta
 from email.utils import parseaddr
+from urllib.parse import urlsplit
+
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -46,7 +48,7 @@ class HrApplicant(models.Model):
     eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
     eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
-    eraspy_ai_match = fields.Text(string="AI Qualification Match", readonly=True)
+    eraspy_ai_match = fields.Html(string="AI Qualification Match", readonly=True, sanitize=True)
 
     def action_eraspy_enrich(self):
         applicant_ids = self.ids or self.env.context.get("active_ids") or []
@@ -292,11 +294,31 @@ class HrApplicant(models.Model):
         return deduped
 
     def _get_applicant_callback_url(self, cfg):
-        callback_url = cfg.get("callback_url")
-        system_base = self.env["ir.config_parameter"].sudo().get_param("web.base.url", default="").rstrip("/")
-        if system_base:
-            callback_url = f"{system_base}/eraspy/applicant/callback"
-        return callback_url
+        ICP = self.env["ir.config_parameter"].sudo()
+        explicit = ICP.get_param("era_spy.applicant_callback_url")
+        if explicit:
+            return explicit.strip()
+
+        base_url = ""
+        cfg_callback = (cfg or {}).get("callback_url")
+        if cfg_callback:
+            if "/eraspy/applicant/callback" in cfg_callback:
+                return cfg_callback
+            try:
+                parts = urlsplit(cfg_callback)
+                if parts.scheme and parts.netloc:
+                    base_url = f"{parts.scheme}://{parts.netloc}"
+                else:
+                    base_url = cfg_callback.split("/eraspy/")[0].rstrip("/")
+            except Exception:
+                base_url = ""
+
+        if not base_url:
+            base_url = ICP.get_param("web.base.url", default="").rstrip("/")
+
+        if base_url:
+            return f"{base_url}/eraspy/applicant/callback"
+        return cfg_callback
 
     def _apply_eraspy_profile(self, profile: dict, overwrite=False):
         self.ensure_one()
@@ -314,6 +336,11 @@ class HrApplicant(models.Model):
         self.ensure_one()
         if not profile:
             return {}
+        _logger.info(
+            "EraSpy prepare write vals: applicant=%s profile_keys=%s",
+            self.id,
+            list(profile.keys())[:20],
+        )
 
         def pick_first(values, keys):
             if isinstance(keys, str):
@@ -477,36 +504,15 @@ class HrApplicant(models.Model):
         return self._format_more_data_fallback(profile)
 
     def _format_more_data_with_ai(self, profile):
-        try:
-            from odoo.addons.ai.utils.llm_api_service import LLMApiService
-        except Exception:
-            return ""
-
         trimmed = self._trim_eraspy_profile(profile)
-        payload = json.dumps(trimmed, ensure_ascii=True)
-        system_prompts = [
-            "You format JSON into concise, readable HTML. Output only HTML.",
-            "Use <div>, <strong>, and bullet-like structure. Avoid tables. No scripts/styles.",
-        ]
-        user_prompts = [
-            "Format this JSON into a readable HTML summary with sections and bullets. "
-            "Keep it compact and easy to scan.",
-            payload,
-        ]
-        try:
-            llm_service = LLMApiService(self.env)
-            responses = llm_service.request_llm(
-                llm_model="gpt-5-mini",
-                system_prompts=system_prompts,
-                user_prompts=user_prompts,
-                temperature=0.2,
-            )
-        except Exception:
+        payload = json.dumps(trimmed, ensure_ascii=False)
+        prompt = (
+            "Format this candidate profile into a concise HTML summary with sections and bullets. "
+            "Output only HTML. Use <div>, <strong>, and bullet-like structure. Avoid tables, scripts, or styles."
+        )
+        html = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
+        if not html:
             return ""
-
-        if not responses:
-            return ""
-        html = (responses[-1] or "").strip()
         if html.startswith("```"):
             html = html.replace("```html", "").replace("```", "").strip()
         if "<" not in html:
@@ -514,11 +520,6 @@ class HrApplicant(models.Model):
         return html[:4000]
 
     def _build_eraspy_ai_match(self, profile):
-        try:
-            from odoo.addons.ai.utils.llm_api_service import LLMApiService
-        except Exception:
-            return ""
-
         job_description = self._get_job_description()
         job_title = self.job_id.name if getattr(self, "job_id", False) else ""
         if not job_description:
@@ -527,40 +528,35 @@ class HrApplicant(models.Model):
             job_description = f"Job title only (no detailed description): {job_title}"
 
         trimmed = self._trim_eraspy_profile(profile)
-        payload = json.dumps(
-            {
-                "job_title": job_title,
-                "job_description": job_description,
-                "candidate_profile": trimmed,
-            },
-            ensure_ascii=True,
+        _logger.info(
+            "EraSpy AI match start: applicant=%s job_title=%s profile_keys=%s",
+            self.id,
+            job_title,
+            list(trimmed.keys())[:20],
         )
-        system_prompts = [
-            "You are an HR assistant assessing candidate-job fit.",
-            "Return plain text only. Keep it concise and actionable.",
-        ]
-        user_prompts = [
+        payload = "\n".join(
+            [
+                f"Job Title: {job_title or 'N/A'}",
+                f"Job Description: {job_description}",
+                "Candidate Profile:",
+                json.dumps(trimmed, ensure_ascii=False),
+            ]
+        )
+        prompt = (
             "Compare the job description to the candidate profile and provide a short qualification match. "
-            "Include an overall fit rating from 1-5 and key strengths/gaps.",
-            payload,
-        ]
-        try:
-            llm_service = LLMApiService(self.env)
-            responses = llm_service.request_llm(
-                llm_model="gpt-5-mini",
-                system_prompts=system_prompts,
-                user_prompts=user_prompts,
-                temperature=0.3,
-            )
-        except Exception:
+            "Include an overall fit rating from 1-10 and key strengths/gaps. "
+            "Format into a concise HTML summary with sections and bullets. "
+            "Output only HTML. Use <div>, <strong>, and bullet-like structure. Avoid tables, scripts, or styles."
+            "Output in two languages: first Arabic and then English."
+        )
+        text = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
+        if not text:
+            _logger.warning("EraSpy AI match empty response: applicant=%s", self.id)
             return ""
-
-        if not responses:
-            return ""
-        text = (responses[-1] or "").strip()
+        _logger.info("EraSpy AI match result: applicant=%s len=%s", self.id, len(text))
         if text.startswith("```"):
             text = text.replace("```", "").strip()
-        return text[:2000]
+        return text
 
     def _get_job_description(self):
         job = getattr(self, "job_id", False)

@@ -47,7 +47,23 @@ class EraSpyClient(models.AbstractModel):
         base_url = ICP.get_param("era_spy.base_url", default="https://spy.era.net.sa/api")
         callback_url = ICP.get_param("era_spy.callback_url")
         if not callback_url:
-            system_base = ICP.get_param("web.base.url", default="").rstrip("/")
+            system_base = ""
+            try:
+                from odoo.http import request
+            except Exception:
+                request = None
+            if request and getattr(request, "httprequest", None):
+                try:
+                    system_base = (request.httprequest.url_root or "").rstrip("/")
+                except Exception:
+                    system_base = ""
+                if not system_base:
+                    host = request.httprequest.headers.get("X-Forwarded-Host") or request.httprequest.host
+                    proto = request.httprequest.headers.get("X-Forwarded-Proto") or request.httprequest.scheme
+                    if host:
+                        system_base = f"{proto}://{host}".rstrip("/")
+            if not system_base:
+                system_base = ICP.get_param("web.base.url", default="").rstrip("/")
             if not system_base:
                 raise UserError(
                     _("Set the system base URL in General Settings so EraSpy callbacks can reach Odoo.")
@@ -152,6 +168,56 @@ class EraSpyClient(models.AbstractModel):
         if data.get("requestId"):
             _logger.info("EraSpy request accepted: requestId=%s status=%s", data.get("requestId"), response.status_code)
         return data
+
+    def _call_ai_agent(self, prompt: str, body: str, timeout: int = 25) -> str:
+        ICP = self.env["ir.config_parameter"].sudo()
+        url = (ICP.get_param("era_spy.ai_agent_url") or "").strip()
+        if not url:
+            url = "https://ai1.era.net.sa"
+        if "://" not in url:
+            url = f"https://{url}"
+        if not url:
+            return ""
+        merged = ""
+        if prompt:
+            merged = prompt.strip()
+        if body:
+            merged = f"{merged}\n\n{body}".strip() if merged else str(body)
+        _logger.info("EraSpy AI agent request: url=%s timeout=%s body_len=%s", url, timeout, len(merged or ""))
+        headers = {
+            "Content-Type": "text/plain; charset=utf-8",
+        }
+        payload = (merged or "").encode("utf-8")
+        try:
+            response = requests.post(url, headers=headers, data=payload, timeout=timeout)
+        except Exception as exc:
+            _logger.warning("EraSpy AI agent request failed: %s", exc)
+            return ""
+        _logger.info(
+            "EraSpy AI agent response: status=%s content_type=%s body_len=%s",
+            response.status_code,
+            response.headers.get("Content-Type"),
+            len(response.text or ""),
+        )
+        if response.status_code >= 400:
+            _logger.warning(
+                "EraSpy AI agent response failed: status=%s body=%s",
+                response.status_code,
+                (response.text or "")[:1000],
+            )
+            return ""
+        content_type = (response.headers.get("Content-Type") or "").lower()
+        if "application/json" in content_type:
+            try:
+                data = response.json()
+            except Exception:
+                return (response.text or "").strip()
+            if isinstance(data, dict):
+                text = data.get("result") or data.get("text") or data.get("message") or data.get("output")
+                if text is None:
+                    text = json.dumps(data, ensure_ascii=False)
+                return str(text).strip()
+        return (response.text or "").strip()
 
     # Public API wrappers
     def search_person(self, identifiers: List[str], without_contacts: bool = False, callback_url: Optional[str] = None):

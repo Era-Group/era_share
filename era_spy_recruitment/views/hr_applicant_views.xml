@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_hr_applicant_eraspy_bulk" model="ir.actions.server">
+        <field name="name">EraSpy Enrich</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_eraspy_enrich()</field>
+    </record>
+
     <record id="view_hr_applicant_eraspy_form" model="ir.ui.view">
         <field name="name">hr.applicant.form.eraspy</field>
         <field name="model">hr.applicant</field>
@@ -14,17 +23,17 @@
             <xpath expr="//notebook" position="inside">
                 <page string="EraSpy" name="eraspy">
                     <group>
+                        <field name="eraspy_ai_match" readonly="1" widget="html"/>
+                        <field name="eraspy_more_data" readonly="1" widget="html"/>
+                    </group>
+                    <group style="font-size: small; display: inline-flex; flex-wrap: wrap; color: gray;"> 
                         <field name="eraspy_last_status" readonly="1"/>
                         <field name="eraspy_last_checked" readonly="1"/>
                         <field name="eraspy_last_request_id" readonly="1"/>
                         <field name="eraspy_last_identifier" readonly="1"/>
                         <field name="eraspy_profile_url" readonly="1"/>
                         <field name="eraspy_rating" readonly="1"/>
-                    </group>
-                    <group>
-                        <field name="eraspy_ai_match" readonly="1" widget="text"/>
-                        <field name="eraspy_more_data" readonly="1" widget="html"/>
-                        <field name="eraspy_debug_payload" readonly="1" widget="text" groups="base.group_system"/>
+                        <!--field name="eraspy_debug_payload" readonly="1" widget="text" groups="base.group_system"/-->
                     </group>
                 </page>
             </xpath>

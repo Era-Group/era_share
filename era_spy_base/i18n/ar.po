@@ -1,0 +1,136 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_spy_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-04 00:00+0000\n"
+"PO-Revision-Date: 2026-02-04 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_spy_base
+#: model:ir.ui.menu,name:era_spy_base.menu_eraspy_root
+#: model:ir.ui.menu,name:era_spy_base.menu_eraspy_technical_root
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+msgid "EraSpy"
+msgstr "EraSpy"
+
+#. module: era_spy_base
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+msgid "API"
+msgstr "واجهة برمجة التطبيقات"
+
+#. module: era_spy_base
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+msgid "Base URL"
+msgstr "الرابط الأساسي"
+
+#. module: era_spy_base
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+msgid "Use the EraSpy API or your proxy endpoint."
+msgstr "استخدم واجهة EraSpy أو نقطة الوكيل الخاصة بك."
+
+#. module: era_spy_base
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+#: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_auto_enrich_enabled
+msgid "Auto Enrich New Records"
+msgstr "الإثراء التلقائي للسجلات الجديدة"
+
+#. module: era_spy_base
+#: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
+msgid "Automatically enrich new CRM leads and applicants after one minute."
+msgstr "إثراء تلقائي للعملاء المحتملين والمتقدمين الجدد بعد دقيقة واحدة."
+
+#. module: era_spy_base
+#: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_base_url
+msgid "EraSpy Base URL"
+msgstr "رابط EraSpy الأساسي"
+
+#. module: era_spy_base
+#: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_base_url
+msgid "Root URL for the EraSpy API or your proxy endpoint."
+msgstr "الرابط الجذري لواجهة EraSpy أو لنقطة الوكيل الخاصة بك."
+
+#. module: era_spy_base
+#: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_rate_limit_per_minute
+msgid "EraSpy Max Calls / Minute"
+msgstr "أقصى عدد طلبات EraSpy في الدقيقة"
+
+#. module: era_spy_base
+#: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_rate_limit_per_minute
+msgid "Person API limit is 600 elements/min. Reduce if you see 429 responses."
+msgstr "حد واجهة الأشخاص هو 600 عنصر/دقيقة. قلل القيمة إذا ظهرت استجابات 429."
+
+#. module: era_spy_base
+#: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_without_contacts_default
+msgid "Default: Profile Preview Only"
+msgstr "الافتراضي: معاينة الملف فقط"
+
+#. module: era_spy_base
+#: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_without_contacts_default
+msgid "If enabled, wizards fetch profiles without revealing contact details to save credits."
+msgstr "عند التفعيل، تقوم المعالِجات بجلب الملفات دون إظهار بيانات الاتصال لتوفير الرصيد."
+
+#. module: era_spy_base
+#: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_auto_enrich_enabled
+msgid "If enabled, newly created CRM leads and applicants are auto-enriched after one minute."
+msgstr "عند التفعيل، يتم إثراء العملاء المحتملين والمتقدمين الجدد تلقائيًا بعد دقيقة واحدة."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy rate limit reached. Please wait %s seconds and try again."
+msgstr "تم الوصول إلى حد الطلبات في EraSpy. الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "Set the system base URL in General Settings so EraSpy callbacks can reach Odoo."
+msgstr "قم بتحديد رابط النظام الأساسي في الإعدادات العامة حتى تتمكن ردود EraSpy من الوصول إلى أودو."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy request failed: %s"
+msgstr "فشل طلب EraSpy: %s"
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy authentication failed (401)."
+msgstr "فشل التحقق من هوية EraSpy (401)."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy rate limit reached (429). Please wait %s seconds and try again."
+msgstr "تم الوصول إلى حد الطلبات في EraSpy (429). الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy service is temporarily unavailable (status %s)."
+msgstr "خدمة EraSpy غير متاحة مؤقتًا (الحالة %s)."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "Access to EraSpy is blocked. Contact info@era.net.sa to activate your account."
+msgstr "تم حظر الوصول إلى EraSpy. تواصل مع info@era.net.sa لتفعيل حسابك."
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy returned an unexpected response. Please try again later. Status: %s"
+msgstr "أعاد EraSpy استجابة غير متوقعة. الرجاء المحاولة لاحقًا. الحالة: %s"
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "EraSpy error: %s"
+msgstr "خطأ: %s"
+
+#. module: era_spy_base
+#: code:addons/era_spy_base/services/eraspy_client.py:0
+msgid "Provide at least one email, phone, or LinkedIn URL."
+msgstr "يرجى توفير بريد إلكتروني أو رقم هاتف أو رابط LinkedIn واحد على الأقل."
+

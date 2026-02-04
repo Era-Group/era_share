@@ -1,0 +1,163 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_spy_recruitment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-04 00:00+0000\n"
+"PO-Revision-Date: 2026-02-04 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_spy_recruitment
+#: model:ir.actions.server,name:era_spy_recruitment.action_hr_applicant_eraspy_bulk
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
+msgid "EraSpy Enrich"
+msgstr "إثراء EraSpy"
+
+#. module: era_spy_recruitment
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "EraSpy"
+msgstr "EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_ai_match
+msgid "AI Qualification Match"
+msgstr "مطابقة التأهيل بالذكاء الاصطناعي"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_more_data
+msgid "EraSpy More Data"
+msgstr "بيانات إضافية من EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_profile_url
+msgid "EraSpy Profile URL"
+msgstr "رابط ملف EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_request_id
+msgid "EraSpy Last Request ID"
+msgstr "معرّف آخر طلب EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_identifier
+msgid "EraSpy Last Identifier"
+msgstr "آخر مُعرِّف EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_status
+msgid "Eraspy Last Status"
+msgstr "آخر حالة لـ EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_checked
+msgid "Eraspy Last Checked"
+msgstr "آخر تحقق لـ EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_rating
+msgid "Eraspy Rating"
+msgstr "تقييم EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_debug_payload
+msgid "EraSpy Debug Payload"
+msgstr "حمولة تصحيح EraSpy"
+
+#. module: era_spy_recruitment
+#: model:ir.model,name:era_spy_recruitment.model_eraspy_applicant_callback_queue
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_list
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_form
+msgid "EraSpy Applicant Callback Queue"
+msgstr "قائمة ردود EraSpy للمتقدمين"
+
+#. module: era_spy_recruitment
+#: model:ir.actions.act_window,name:era_spy_recruitment.action_eraspy_applicant_callback_queue
+#: model:ir.ui.menu,name:era_spy_recruitment.menu_eraspy_applicant_callback_queue
+msgid "Applicant Callback Queue"
+msgstr "قائمة ردود المتقدمين"
+
+#. module: era_spy_recruitment
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_list
+#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_form
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: era_spy_recruitment
+#: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_applicant_process_queue
+msgid "EraSpy: Process Applicant Callback Queue"
+msgstr "EraSpy: معالجة قائمة ردود المتقدمين"
+
+#. module: era_spy_recruitment
+#: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_auto_enrich_applicants
+msgid "EraSpy: Auto Enrich New Applicants"
+msgstr "EraSpy: إثراء تلقائي للمتقدمين الجدد"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "Please select at least one applicant."
+msgstr "يرجى اختيار متقدم واحد على الأقل."
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "You can enrich at most 80 applicants at a time. Please split your selection."
+msgstr "يمكنك إثراء 80 متقدمًا كحد أقصى في كل مرة. يرجى تقسيم الاختيار."
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "Queued"
+msgstr "قيد الانتظار"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "Enriched"
+msgstr "تم الإثراء"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "EraSpy did not return any profile data."
+msgstr "لم تُرجع EraSpy أي بيانات للملف."
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "No contact data returned (check credits or preview mode)"
+msgstr "لم يتم إرجاع بيانات اتصال (تحقق من الرصيد أو وضع المعاينة)"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "No new data applied (already present)"
+msgstr "لم يتم تطبيق بيانات جديدة (موجودة مسبقًا)"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid "%s applicant(s) enriched via EraSpy."
+msgstr "تم إثراء %s متقدم/متقدمين عبر EraSpy."
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid " %s applicant(s) queued; results will be applied on callback."
+msgstr " تم وضع %s متقدم/متقدمين في قائمة الانتظار؛ سيتم تطبيق النتائج عند الاستدعاء."
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid " Request IDs: %s"
+msgstr " معرّفات الطلب: %s"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid " (Preview mode: contacts not requested)"
+msgstr " (وضع المعاينة: لم يتم طلب بيانات الاتصال)"
+
+#. module: era_spy_recruitment
+#: code:addons/era_spy_recruitment/models/hr_applicant.py:0
+msgid " Skipped: %s"
+msgstr " تم التخطي: %s"

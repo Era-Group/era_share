@@ -1,0 +1,248 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_spy_crm
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-04 00:00+0000\n"
+"PO-Revision-Date: 2026-02-04 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_spy_crm
+#: model:ir.actions.server,name:era_spy_crm.action_crm_lead_eraspy_bulk
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_crm_lead_eraspy_form
+msgid "EraSpy Enrich"
+msgstr "إثراء EraSpy"
+
+#. module: era_spy_crm
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_crm_lead_eraspy_form
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "EraSpy"
+msgstr "EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_profile_url
+msgid "EraSpy Profile URL"
+msgstr "رابط ملف EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_debug_payload
+msgid "EraSpy Debug Payload"
+msgstr "حمولة تصحيح EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_more_data
+msgid "EraSpy More Data"
+msgstr "بيانات إضافية من EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_request_id
+msgid "EraSpy Last Request ID"
+msgstr "معرّف آخر طلب EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_identifier
+msgid "EraSpy Last Identifier"
+msgstr "آخر مُعرِّف EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_status
+msgid "Eraspy Last Status"
+msgstr "آخر حالة لـ EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_checked
+msgid "Eraspy Last Checked"
+msgstr "آخر تحقق لـ EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_rating
+msgid "Eraspy Rating"
+msgstr "تقييم EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__linkedin_url
+msgid "LinkedIn"
+msgstr "لينكدإن"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_eraspy_enrich_wizard__lead_ids
+msgid "Leads"
+msgstr "العملاء المحتملون"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_eraspy_enrich_wizard__query
+msgid "Identifier or Query"
+msgstr "المعرّف أو الاستعلام"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_eraspy_enrich_wizard__without_contacts
+msgid "Profile preview only (no credits)"
+msgstr "معاينة الملف فقط (بدون خصم رصيد)"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,field_description:era_spy_crm.field_eraspy_enrich_wizard__overwrite_existing
+msgid "Overwrite existing lead fields"
+msgstr "استبدال الحقول الحالية للعميل المحتمل"
+
+#. module: era_spy_crm
+#: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__without_contacts
+msgid "When enabled, EraSpy returns public profile data without revealing contact details, saving credits."
+msgstr "عند التفعيل، تُرجع EraSpy بيانات عامة للملف دون إظهار بيانات الاتصال لتوفير الرصيد."
+
+#. module: era_spy_crm
+#: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__lookup_source
+msgid "Pick how EraSpy should locate the contact. Automatic uses lead email, phone, or LinkedIn URL if available."
+msgstr "اختر كيفية بحث EraSpy عن جهة الاتصال. التلقائي يستخدم بريد العميل المحتمل أو هاتفه أو رابط LinkedIn إن توفر."
+
+#. module: era_spy_crm
+#: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__overwrite_existing
+msgid "If disabled, only empty lead fields are filled."
+msgstr "عند التعطيل، يتم ملء الحقول الفارغة فقط."
+
+#. module: era_spy_crm
+#: model:ir.model.fields.selection,name:era_spy_crm.selection__eraspy_enrich_wizard__lookup_source__auto
+msgid "Automatic (email/phone/LinkedIn)"
+msgstr "تلقائي (البريد/الهاتف/LinkedIn)"
+
+#. module: era_spy_crm
+#: model:ir.model.fields.selection,name:era_spy_crm.selection__eraspy_enrich_wizard__lookup_source__email
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: era_spy_crm
+#: model:ir.model.fields.selection,name:era_spy_crm.selection__eraspy_enrich_wizard__lookup_source__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: era_spy_crm
+#: model:ir.model.fields.selection,name:era_spy_crm.selection__eraspy_enrich_wizard__lookup_source__linkedin
+msgid "LinkedIn URL"
+msgstr "رابط LinkedIn"
+
+#. module: era_spy_crm
+#: model:ir.model.fields.selection,name:era_spy_crm.selection__eraspy_enrich_wizard__lookup_source__query
+msgid "Free-form query"
+msgstr "استعلام حر"
+
+#. module: era_spy_crm
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
+msgid "EraSpy Enrichment"
+msgstr "إثراء EraSpy"
+
+#. module: era_spy_crm
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
+msgid "Enrich"
+msgstr "إثراء"
+
+#. module: era_spy_crm
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_spy_crm
+#: model:ir.model,name:era_spy_crm.model_eraspy_callback_queue
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_list
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_form
+#: model:ir.actions.act_window,name:era_spy_crm.action_eraspy_callback_queue
+msgid "EraSpy Callback Queue"
+msgstr "قائمة ردود EraSpy"
+
+#. module: era_spy_crm
+#: model:ir.ui.menu,name:era_spy_crm.menu_eraspy_callback_queue
+msgid "CRM Callback Queue"
+msgstr "قائمة ردود CRM"
+
+#. module: era_spy_crm
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_list
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_form
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: era_spy_crm
+#: model:ir.cron,name:era_spy_crm.ir_cron_eraspy_process_queue
+msgid "EraSpy: Process Callback Queue (CRM)"
+msgstr "EraSpy: معالجة قائمة الردود (CRM)"
+
+#. module: era_spy_crm
+#: model:ir.cron,name:era_spy_crm.ir_cron_eraspy_auto_enrich_leads
+msgid "EraSpy: Auto Enrich New Leads"
+msgstr "EraSpy: إثراء تلقائي للعملاء المحتملين الجدد"
+
+#. module: era_spy_crm
+#: model:ir.model,name:era_spy_crm.model_eraspy_enrich_wizard
+msgid "Enrich CRM leads via EraSpy"
+msgstr "إثراء العملاء المحتملين في CRM عبر EraSpy"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "Please select at least one lead."
+msgstr "يرجى اختيار عميل محتمل واحد على الأقل."
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "You can enrich at most 80 leads at a time. Please split your selection."
+msgstr "يمكنك إثراء 80 عميلًا محتملًا كحد أقصى في كل مرة. يرجى تقسيم الاختيار."
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "Queued"
+msgstr "قيد الانتظار"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "Enriched"
+msgstr "تم الإثراء"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "EraSpy did not return any profile data."
+msgstr "لم تُرجع EraSpy أي بيانات للملف."
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "No contact data returned (check credits or preview mode)"
+msgstr "لم يتم إرجاع بيانات اتصال (تحقق من الرصيد أو وضع المعاينة)"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/models/crm_lead.py:0
+msgid "No new data applied (already present)"
+msgstr "لم يتم تطبيق بيانات جديدة (موجودة مسبقًا)"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid "%s lead(s) enriched via EraSpy."
+msgstr "تم إثراء %s عميل/عملاء محتملين عبر EraSpy."
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid " %s lead(s) queued; results will be applied on callback."
+msgstr " تم وضع %s عميل/عملاء محتملين في قائمة الانتظار؛ سيتم تطبيق النتائج عند الاستدعاء."
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid " Request IDs: %s"
+msgstr " معرّفات الطلب: %s"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid " (Preview mode: contacts not requested)"
+msgstr " (وضع المعاينة: لم يتم طلب بيانات الاتصال)"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid " Skipped: %s"
+msgstr " تم التخطي: %s"
+
+#. module: era_spy_crm
+#: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
+msgid "No identifier found for lead %s. Please provide a query or ensure the lead has data."
+msgstr "لم يتم العثور على معرّف للعميل المحتمل %s. يرجى إدخال استعلام أو التأكد من وجود بيانات للعميل."

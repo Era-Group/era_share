@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_eraspy_root"
+              name="EraSpy"
+              sequence="90"/>
+    <menuitem id="menu_eraspy_technical_root"
+              name="EraSpy"
+              parent="base.menu_custom"
+              sequence="90"
+              groups="base.group_system"/>
+</odoo>

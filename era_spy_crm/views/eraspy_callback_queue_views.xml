@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_eraspy_callback_queue_list" model="ir.ui.view">
+        <field name="name">eraspy.callback.queue.list</field>
+        <field name="model">eraspy.callback.queue</field>
+        <field name="arch" type="xml">
+            <list string="EraSpy Callback Queue">
+                <button name="action_retry" type="object" string="Retry" class="btn-link"/>
+                <field name="create_date"/>
+                <field name="lead_id"/>
+                <field name="request_id"/>
+                <field name="identifier"/>
+                <field name="status"/>
+                <field name="state"/>
+                <field name="attempts"/>
+                <field name="last_error"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_eraspy_callback_queue_form" model="ir.ui.view">
+        <field name="name">eraspy.callback.queue.form</field>
+        <field name="model">eraspy.callback.queue</field>
+        <field name="arch" type="xml">
+            <form string="EraSpy Callback Queue">
+                <sheet>
+                    <header>
+                        <button name="action_retry" type="object" string="Retry" class="btn-primary"/>
+                    </header>
+                    <group>
+                        <field name="lead_id"/>
+                        <field name="request_id"/>
+                        <field name="identifier"/>
+                        <field name="status"/>
+                        <field name="error_message"/>
+                        <field name="state"/>
+                        <field name="attempts"/>
+                    </group>
+                    <group>
+                        <field name="payload_json" widget="text"/>
+                        <field name="candidate_json" widget="text"/>
+                        <field name="last_error" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_eraspy_callback_queue" model="ir.actions.act_window">
+        <field name="name">EraSpy Callback Queue</field>
+        <field name="res_model">eraspy.callback.queue</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_eraspy_callback_queue"
+              name="CRM Callback Queue"
+              parent="era_spy_base.menu_eraspy_technical_root"
+              action="action_eraspy_callback_queue"
+              sequence="20"/>
+</odoo>

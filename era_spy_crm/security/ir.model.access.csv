@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_eraspy_enrich_wizard_user,access_eraspy_enrich_wizard_user,model_eraspy_enrich_wizard,base.group_user,1,1,1,1
+access_eraspy_callback_queue_user,access_eraspy_callback_queue_user,model_eraspy_callback_queue,base.group_user,1,1,1,0

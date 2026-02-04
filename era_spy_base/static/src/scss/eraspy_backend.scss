@@ -1,0 +1,19 @@
+.o_eraspy_red {
+    color: #d0021b;
+}
+
+.o_eraspy_red .o_input,
+.o_eraspy_red input,
+.o_eraspy_red textarea {
+    color: #d0021b;
+    border-color: #d0021b;
+}
+
+.o_form_view label.o_form_label[for^="partner_name"],
+.o_form_view label.o_form_label[for^="email_from"],
+.o_form_view label.o_form_label[for^="phone_0"],
+.o_form_view label.o_form_label[data-name="partner_name"],
+.o_form_view label.o_form_label[data-name="email_from"],
+.o_form_view label.o_form_label[data-name="phone"] {
+    color: #d0021b !important;
+}

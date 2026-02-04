@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_crm_lead_eraspy_bulk" model="ir.actions.server">
+        <field name="name">EraSpy Enrich</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="binding_model_id" ref="crm.model_crm_lead"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_eraspy_enrich()</field>
+    </record>
+
+    <record id="view_crm_lead_eraspy_form" model="ir.ui.view">
+        <field name="name">crm.lead.form.eraspy</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_eraspy_enrich"
+                        type="object"
+                        string="EraSpy Enrich"
+                        class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//label[@for='phone']/following-sibling::div[1]" position="after">
+                <label for="linkedin_url" class="oe_inline"/>
+                <div class="o_row o_row_readonly">
+                    <field name="linkedin_url" placeholder="LinkedIn URL"/>
+                </div>
+            </xpath>
+            <xpath expr="//label[@for='phone_group_lead_info']/following-sibling::div[1]" position="after">
+                <label for="linkedin_url" class="oe_inline"/>
+                <div class="o_row o_row_readonly">
+                    <field name="linkedin_url" placeholder="LinkedIn URL"/>
+                </div>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="EraSpy" name="eraspy">
+                    <group>
+                        <field name="eraspy_last_status" readonly="1"/>
+                        <field name="eraspy_last_checked" readonly="1"/>
+                        <field name="eraspy_more_data" readonly="1" widget="html"/>
+                        <!--field name="eraspy_debug_payload" readonly="1" widget="text" groups="base.group_system"/-->
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

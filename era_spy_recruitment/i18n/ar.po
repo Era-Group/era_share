@@ -26,7 +26,7 @@ msgstr "إثراء ارى"
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
 msgid "EraSpy"
-msgstr "ارى"
+msgstr "إثراء إرى"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_ai_match

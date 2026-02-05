@@ -23,8 +23,8 @@
             <xpath expr="//notebook" position="inside">
                 <page string="EraSpy" name="eraspy">
                     <group>
-                        <field name="eraspy_ai_match" readonly="1" widget="html"/>
-                        <field name="eraspy_more_data" readonly="1" widget="html"/>
+                        <field name="eraspy_ai_match" readonly="1" widget="html" />
+                        <field name="eraspy_more_data" readonly="1" widget="html" style="direction: ltr; text-align: left;"/>
                     </group>
                     <group style="font-size: small; display: inline-flex; flex-wrap: wrap; color: gray;"> 
                         <field name="eraspy_last_status" readonly="1"/>

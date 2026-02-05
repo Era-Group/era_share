@@ -542,13 +542,46 @@ class HrApplicant(models.Model):
                 json.dumps(trimmed, ensure_ascii=False),
             ]
         )
-        prompt = (
-            "Compare the job description to the candidate profile and provide a short qualification match. "
-            "Include an overall fit rating from 1-10 and key strengths/gaps. "
-            "Format into a concise HTML summary with sections and bullets. "
-            "Output only HTML. Use <div>, <strong>, and bullet-like structure. Avoid tables, scripts, or styles."
-            "Output in two languages: first Arabic and then English."
-        )
+        prompt = """Compare the job description to the candidate profile and provide a short qualification match.
+Requirements:
+- Include an overall fit rating from 1–10.
+- Identify key strengths and key gaps.
+- Use an evidence-based, objective approach only (do not assume missing information).
+
+Scoring Logic (Internal – do not explain):
+- Evaluate the match using weighted criteria:
+  • Skills Match (40%)
+  • Relevant Experience (30%)
+  • Education/Certifications (15%)
+  • Responsibilities / Domain Fit (15%)
+- If a criterion is not mentioned in the job description, exclude it and re-normalize weights.
+- If employee data is missing for a required criterion, score it low (0–20) depending on criticality.
+- Ensure calculated percentages are consistent with the applied weights.
+
+Output Format (Strict):
+- Output ONLY valid HTML.
+- Use ONLY <div> and <strong>.
+- Use bullet-like lines using symbols (e.g. • or -), NOT lists or tables.
+- Do NOT use tables, scripts, styles, JSON, or code blocks.
+
+HTML Content Structure:
+1. Arabic section FIRST, then English section.
+2. Each language section must include:
+   - Overall Fit Rating (1–10)
+   - Job Match Percentage (0–100%)
+   - Key Strengths
+   - Key Gaps
+   - Short Hiring Guidance (Strong Fit / Potential Fit / Not Recommended)
+3. Keep the summary concise and readable.
+
+Language Rules:
+- Output in TWO languages:
+  • Arabic (Modern Standard Arabic). add dir="rtl" to Arabic section.
+  • English (add dir="ltr" to English section)
+- Arabic content must appear before English.
+
+Output ONLY the HTML. Do not include explanations, comments, or metadata.
+"""
         text = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
         if not text:
             _logger.warning("EraSpy AI match empty response: applicant=%s", self.id)

@@ -131,7 +131,7 @@ class EraSpyApplicantCallbackQueue(models.Model):
         return self.create(vals)
 
     @api.model
-    def cron_process_queue(self, limit=50):
+    def cron_process_queue(self, limit=10):
         records = self.search([("state", "=", "pending")], limit=limit)
         for record in records:
             record._process_one()
@@ -141,13 +141,9 @@ class EraSpyApplicantCallbackQueue(models.Model):
         self.attempts += 1
         try:
             if not self.applicant_id:
-                applicant = self._match_applicant()
-                if applicant:
-                    self.applicant_id = applicant.id
-                else:
-                    self.state = "error"
-                    self.last_error = "No applicant matched"
-                    return
+                self.state = "error"
+                self.last_error = "Missing applicant_id"
+                return
 
             try:
                 item = json.loads(self.payload_json or "{}")

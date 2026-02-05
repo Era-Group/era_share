@@ -20,13 +20,13 @@ msgstr ""
 #: model:ir.actions.server,name:era_spy_recruitment.action_hr_applicant_eraspy_bulk
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
 msgid "EraSpy Enrich"
-msgstr "إثراء EraSpy"
+msgstr "إثراء ارى"
 
 #. module: era_spy_recruitment
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
 msgid "EraSpy"
-msgstr "EraSpy"
+msgstr "ارى"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_ai_match
@@ -36,42 +36,37 @@ msgstr "مطابقة التأهيل بالذكاء الاصطناعي"
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_more_data
 msgid "EraSpy More Data"
-msgstr "بيانات إضافية من EraSpy"
+msgstr "بيانات إضافية من ارى"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_profile_url
 msgid "EraSpy Profile URL"
-msgstr "رابط ملف EraSpy"
+msgstr "رابط الملف"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_request_id
 msgid "EraSpy Last Request ID"
-msgstr "معرّف آخر طلب EraSpy"
+msgstr "معرّف آخر"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_identifier
 msgid "EraSpy Last Identifier"
-msgstr "آخر مُعرِّف EraSpy"
+msgstr "آخر مُعرِّف"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_status
 msgid "Eraspy Last Status"
-msgstr "آخر حالة لـ EraSpy"
+msgstr "آخر حالة"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_checked
 msgid "Eraspy Last Checked"
-msgstr "آخر تحقق لـ EraSpy"
+msgstr "آخر تحقق"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_rating
 msgid "Eraspy Rating"
-msgstr "تقييم EraSpy"
-
-#. module: era_spy_recruitment
-#: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_debug_payload
-msgid "EraSpy Debug Payload"
-msgstr "حمولة تصحيح EraSpy"
+msgstr "تقييم ارى"
 
 #. module: era_spy_recruitment
 #: model:ir.model,name:era_spy_recruitment.model_eraspy_applicant_callback_queue
@@ -84,7 +79,7 @@ msgstr "قائمة ردود EraSpy للمتقدمين"
 #: model:ir.actions.act_window,name:era_spy_recruitment.action_eraspy_applicant_callback_queue
 #: model:ir.ui.menu,name:era_spy_recruitment.menu_eraspy_applicant_callback_queue
 msgid "Applicant Callback Queue"
-msgstr "قائمة ردود المتقدمين"
+msgstr "قائمة تحديثات المتقدمين"
 
 #. module: era_spy_recruitment
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_list
@@ -95,7 +90,7 @@ msgstr "إعادة المحاولة"
 #. module: era_spy_recruitment
 #: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_applicant_process_queue
 msgid "EraSpy: Process Applicant Callback Queue"
-msgstr "EraSpy: معالجة قائمة ردود المتقدمين"
+msgstr "EraSpy: معالجة قائمة تحديثات المتقدمين"
 
 #. module: era_spy_recruitment
 #: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_auto_enrich_applicants

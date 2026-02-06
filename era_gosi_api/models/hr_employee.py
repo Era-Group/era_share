@@ -12,9 +12,9 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
     _GOSI_STATUS_SELECTION = [
-        ('not_requested', _('Not requested')),
-        ('success', _('Last fetch succeeded')),
-        ('error', _('Last fetch failed')),
+        ('not_requested', 'Not requested'),
+        ('success', 'Last fetch succeeded'),
+        ('error', 'Last fetch failed'),
     ]
     _GOSI_SUMMARY_FIELDS = [
         'gosi_response_status_code',

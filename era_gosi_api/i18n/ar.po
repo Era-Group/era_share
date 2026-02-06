@@ -213,6 +213,11 @@ msgstr "اختبار الاتصال"
 
 #. module: era_gosi_api
 #: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
+msgid "Access token retrieved successfully."
+msgstr "تم استرجاع رمز الوصول بنجاح."
+
+#. module: era_gosi_api
+#: model:ir.ui.view,arch_db:era_gosi_api.view_res_config_settings_gosi
 msgid "Retrieves an access token using the configured credentials."
 msgstr "يسترجع رمز وصول باستخدام بيانات الاعتماد المُعدة."
 

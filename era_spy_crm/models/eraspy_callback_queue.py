@@ -11,9 +11,10 @@ class EraSpyCallbackQueue(models.Model):
     _name = "eraspy.callback.queue"
     _description = "EraSpy Callback Queue"
     _order = "create_date desc"
-    _sql_constraints = [
-        ("eraspy_callback_queue_request_id_uniq", "unique(request_id)", "Request ID must be unique."),
-    ]
+    _request_id_unique = models.Constraint(
+        "unique(request_id)",
+        "Request ID must be unique.",
+    )
 
     lead_id = fields.Many2one("crm.lead", required=False, ondelete="set null")
     request_id = fields.Char()
@@ -34,7 +35,7 @@ class EraSpyCallbackQueue(models.Model):
         super().init()
         # Keep the newest record per request_id before applying the unique constraint.
         try:
-            self._cr.execute(
+            self.env.cr.execute(
                 """
                 WITH ranked AS (
                     SELECT id,

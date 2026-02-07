@@ -52,6 +52,8 @@ class EraSpyCallbackQueue(models.Model):
 
     @api.model
     def enqueue(self, lead, item, candidate):
+        import hashlib
+        
         request_id = item.get("requestId") or item.get("request_id")
         identifier = item.get("item")
         status = item.get("status")
@@ -71,6 +73,11 @@ class EraSpyCallbackQueue(models.Model):
             return bool(error_value)
 
         incoming_success = bool(candidate_dict) and not is_failure(status, error_message)
+
+        # If no request_id, generate one from item identifier to prevent duplicates
+        if not request_id and identifier:
+            # Create a hash-based pseudo-request_id from identifier
+            request_id = "auto_" + hashlib.md5(str(identifier).encode()).hexdigest()[:16]
 
         if request_id:
             domain = [("request_id", "=", str(request_id))]
@@ -132,7 +139,7 @@ class EraSpyCallbackQueue(models.Model):
         return self.create(vals)
 
     @api.model
-    def cron_process_queue(self, limit=50):
+    def cron_process_queue(self, limit=120):
         records = self.search([("state", "=", "pending")], limit=limit)
         for record in records:
             record._process_one()

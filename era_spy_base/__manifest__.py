@@ -13,6 +13,7 @@
         "then add CRM or Recruitment extensions as needed."
     ),
     "author": "Era Group",
+    "post_load": "post_load",
     "depends": ["base", "base_setup", "web"],
     "data": [
         "views/menus.xml",

@@ -1,0 +1,21 @@
+SAR Symbol Font Module Documentation
+
+English:
+This module adds the new Saudi Riyal (SAR) symbol () to your Odoo system interfaces. It ensures the SAR symbol appears in various parts of the Odoo system including PDF reports, Point of Sale interface, invoices, and all system views.
+
+Key Features:
+- Adds the new Saudi Riyal () symbol to Odoo system interfaces
+- Works in PDF reports
+- Compatible with Point of Sale interface
+- Shows in invoices and all system views
+- Integrates with web assets for backend and frontend
+
+Arabic:
+هذا الوحدة تضيف رمز الريال السعودي (SAR) الجديد () إلى واجهات نظام Odoo. تضمن ظهور رمز SAR في أجزاء مختلفة من نظام Odoo بما في ذلك التقارير PDF، وواجهة نقطة البيع، والفواتير، وجميع عروض النظام.
+
+الميزات الرئيسية:
+- تضيف رمز الريال السعودي () الجديد إلى واجهات نظام Odoo
+- يعمل في التقارير PDF
+- متوافق مع واجهة نقطة البيع
+- يظهر في الفواتير وجميع عروض النظام
+- التكامل مع أصول الويب للخلفية والواجهة الأمامية

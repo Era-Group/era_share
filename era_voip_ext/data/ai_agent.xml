@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="voip_call_formatting_source" model="utm.source">
+            <field name="name">VoIP Call Formatter</field>
+        </record>
+        <record id="voip_call_formatting_agent" model="ai.agent">
+            <field name="name">VoIP Call Formatter</field>
+            <field name="subtitle">Formats VoIP call transcripts for CRM.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="partner_id" ref="base.partner_root"/>
+            <field name="source_id" ref="era_voip_ext.voip_call_formatting_source"/>
+            <field name="system_prompt">
+Format transcript to a call conversation.
+Example: [employee name] : [the script].
+Then new line on each turn.
+Return only the formatted transcript. In Arabic or English according to the original transcript language.
+            </field>
+        </record>
+    </data>
+</odoo>

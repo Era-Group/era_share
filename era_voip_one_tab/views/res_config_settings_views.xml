@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="res_config_settings_view_form_voip_one_tab" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.voip.one.tab</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='integration']" position="inside">
+                <setting string="VoIP single-tab guard" help="SIP connects only on call and forces other tabs to logout first.">
+                    <field name="voip_one_tab_enabled"/>
+                </setting>
+                <setting string="VoIP one-tab lock timeout" help="Controls how long a tab lock remains valid without heartbeats.">
+                    <field name="voip_one_tab_lock_timeout"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

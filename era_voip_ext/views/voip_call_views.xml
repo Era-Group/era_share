@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_voip_call_form_recording_link" model="ir.ui.view">
+        <field name="name">voip.call.form.recording.link</field>
+        <field name="model">voip.call</field>
+        <field name="inherit_id" ref="voip.voip_call_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='transcript']" position="attributes">
+                <attribute name="widget">text</attribute>
+                <attribute name="style">white-space: pre-wrap;</attribute>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group name="transcription_actions">
+                    <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
+                </group>
+                <group name="recording_link_group">
+                    <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_voip_call_list_recording_link" model="ir.ui.view">
+        <field name="name">voip.call.list.recording.link</field>
+        <field name="model">voip.call</field>
+        <field name="inherit_id" ref="voip.voip_call_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree|//list" position="inside">
+                <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

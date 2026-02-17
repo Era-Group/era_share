@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+import time
 
 from odoo import api, fields, models
 
@@ -30,6 +31,10 @@ class EraSpyApplicantCallbackQueue(models.Model):
     )
     attempts = fields.Integer(default=0)
     last_error = fields.Text()
+    processing_started_at = fields.Datetime(readonly=True)
+    processing_finished_at = fields.Datetime(readonly=True)
+    processing_seconds = fields.Float(readonly=True, digits=(16, 3))
+    processing_total_seconds = fields.Float(readonly=True, digits=(16, 3))
 
     def init(self):
         super().init()
@@ -139,6 +144,9 @@ class EraSpyApplicantCallbackQueue(models.Model):
 
     def _process_one(self):
         self.ensure_one()
+        started_at = fields.Datetime.now()
+        started_ts = time.monotonic()
+        self.processing_started_at = started_at
         self.attempts += 1
         try:
             if not self.applicant_id:
@@ -198,6 +206,11 @@ class EraSpyApplicantCallbackQueue(models.Model):
                 self.state = "pending"
             else:
                 self.state = "error"
+        finally:
+            elapsed = round(max(0.0, time.monotonic() - started_ts), 3)
+            self.processing_finished_at = fields.Datetime.now()
+            self.processing_seconds = elapsed
+            self.processing_total_seconds = round((self.processing_total_seconds or 0.0) + elapsed, 3)
 
     def action_retry(self):
         for record in self:
@@ -206,6 +219,10 @@ class EraSpyApplicantCallbackQueue(models.Model):
                     "state": "pending",
                     "last_error": False,
                     "attempts": 0,
+                    "processing_started_at": False,
+                    "processing_finished_at": False,
+                    "processing_seconds": 0.0,
+                    "processing_total_seconds": 0.0,
                 }
             )
 

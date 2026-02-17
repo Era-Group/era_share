@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_custom_llm" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.custom.llm.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="ai_app.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='ai_app']/block[@name='ai_providers']/setting[@id='google_provider']" position="after">
+                <setting
+                    id="custom_llm_provider"
+                    string="Use your own custom LLM provider"
+                    help="Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local gateways, etc.)."
+                    groups="base.group_system"
+                >
+                    <field name="custom_llm_key_enabled"/>
+                    <group invisible="not custom_llm_key_enabled">
+                        <div class="flex-grow-1 d-flex flex-column gap-2">
+                            <label for="custom_llm_provider_name"/>
+                            <field name="custom_llm_provider_name" placeholder="OpenRouter" class="w-100"/>
+                            <div class="text-muted">
+                                Provider label shown for admins (example: OpenRouter, Groq, Together).
+                            </div>
+                            <label for="custom_llm_key"/>
+                            <field name="custom_llm_key" placeholder="API key" password="True" class="w-100"/>
+                            <div class="text-muted">
+                                Secret API key used to authenticate all LLM and embedding requests.
+                            </div>
+                            <label for="custom_llm_base_url"/>
+                            <field name="custom_llm_base_url" placeholder="https://openrouter.ai/api/v1" class="w-100"/>
+                            <div class="text-muted">
+                                Base URL for an OpenAI-compatible API endpoint.
+                            </div>
+                            <label for="custom_llm_auth_header"/>
+                            <field name="custom_llm_auth_header" placeholder="Authorization" class="w-100"/>
+                            <div class="text-muted">
+                                Header name used for auth token (usually <code>Authorization</code>).
+                            </div>
+                            <label for="custom_llm_auth_prefix"/>
+                            <field name="custom_llm_auth_prefix" placeholder="Bearer" class="w-100"/>
+                            <div class="text-muted">
+                                Prefix before token (usually <code>Bearer</code>).
+                            </div>
+                            <label for="custom_llm_model"/>
+                            <field name="custom_llm_model" placeholder="openrouter/free" class="w-100"/>
+                            <div class="text-muted">
+                                Primary chat model for attempt #1.
+                            </div>
+                            <label for="custom_llm_model_2"/>
+                            <field name="custom_llm_model_2" placeholder="openai/gpt-4o-mini" class="w-100"/>
+                            <div class="text-muted">
+                                Fallback chat model for attempt #2 (optional).
+                            </div>
+                            <label for="custom_llm_model_3"/>
+                            <field name="custom_llm_model_3" placeholder="google/gemini-2.0-flash-exp:free" class="w-100"/>
+                            <div class="text-muted">
+                                Fallback chat model for attempt #3 (optional).
+                            </div>
+                            <label for="custom_llm_model_4"/>
+                            <field name="custom_llm_model_4" placeholder="meta-llama/llama-3.3-70b-instruct:free" class="w-100"/>
+                            <div class="text-muted">
+                                Final fallback chat model for attempt #4 (optional).
+                            </div>
+                            <label for="custom_llm_embedding_model"/>
+                            <field name="custom_llm_embedding_model" placeholder="openai/text-embedding-3-small" class="w-100"/>
+                            <div class="text-muted">
+                                Embedding model used for RAG indexing and semantic search.
+                            </div>
+                            <label for="custom_llm_referer"/>
+                            <field name="custom_llm_referer" placeholder="https://your-domain.example" class="w-100"/>
+                            <div class="text-muted">
+                                Optional <code>HTTP-Referer</code> header. Defaults to your system URL.
+                            </div>
+                            <label for="custom_llm_title"/>
+                            <field name="custom_llm_title" placeholder="Your App Name" class="w-100"/>
+                            <div class="text-muted">
+                                Optional <code>X-Title</code> header for provider-side app identification.
+                            </div>
+                        </div>
+                    </group>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

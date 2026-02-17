@@ -13,6 +13,8 @@
                 <field name="status"/>
                 <field name="state"/>
                 <field name="attempts"/>
+                <field name="processing_seconds" string="Last Proc (s)"/>
+                <field name="processing_total_seconds" string="Total Proc (s)"/>
                 <field name="last_error"/>
             </list>
         </field>
@@ -35,6 +37,10 @@
                         <field name="error_message"/>
                         <field name="state"/>
                         <field name="attempts"/>
+                        <field name="processing_started_at"/>
+                        <field name="processing_finished_at"/>
+                        <field name="processing_seconds"/>
+                        <field name="processing_total_seconds"/>
                     </group>
                     <group>
                         <field name="payload_json" widget="text"/>

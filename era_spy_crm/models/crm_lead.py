@@ -15,8 +15,39 @@ class CrmLead(models.Model):
     eraspy_auto_enrich_pending = fields.Boolean(readonly=True, default=False)
     eraspy_auto_enrich_at = fields.Datetime(readonly=True)
 
+    def _auto_init(self):
+        """Backfill empty lead titles before schema enforces NOT NULL."""
+        result = super()._auto_init()
+        self.env.cr.execute(
+            """
+            UPDATE crm_lead
+               SET name = COALESCE(
+                   NULLIF(BTRIM(email_from), ''),
+                   NULLIF(BTRIM(partner_name), ''),
+                   'Lead #' || id::text
+               )
+             WHERE name IS NULL
+                OR BTRIM(name) = ''
+            """
+        )
+        if self.env.cr.rowcount:
+            _logger.warning(
+                "Backfilled %s crm.lead records with empty names to avoid NOT NULL failures.",
+                self.env.cr.rowcount,
+            )
+        return result
+
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("name"):
+                continue
+            vals["name"] = (
+                vals.get("contact_name")
+                or vals.get("partner_name")
+                or vals.get("email_from")
+                or _("New Lead")
+            )
         records = super().create(vals_list)
         if self.env.context.get("eraspy_disable_auto_enrich"):
             return records

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+import threading
 import time
 from typing import Dict, List, Optional
 
@@ -10,6 +11,9 @@ from odoo import _, api, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
+_PARAM_WARN_WINDOW_SECONDS = 300
+_PARAM_WARN_LOCK = threading.Lock()
+_PARAM_WARN_LAST_TS = {}
 
 
 class EraSpyClient(models.AbstractModel):
@@ -17,6 +21,15 @@ class EraSpyClient(models.AbstractModel):
     _description = "EraSpy API Client"
 
     _last_call_ts = 0.0
+
+    def _warn_param_once(self, key: str, message: str, *args):
+        now = time.monotonic()
+        with _PARAM_WARN_LOCK:
+            last_ts = _PARAM_WARN_LAST_TS.get(key, 0.0)
+            if last_ts and now - last_ts < _PARAM_WARN_WINDOW_SECONDS:
+                return
+            _PARAM_WARN_LAST_TS[key] = now
+        _logger.warning(message, *args)
 
     def _get_rate_limit_block_until(self):
         ICP = self.env["ir.config_parameter"].sudo()
@@ -169,7 +182,18 @@ class EraSpyClient(models.AbstractModel):
             _logger.info("EraSpy request accepted: requestId=%s status=%s", data.get("requestId"), response.status_code)
         return data
 
-    def _call_ai_agent(self, prompt: str, body: str, timeout: int = 25) -> str:
+    def _get_int_param(self, key: str, default: int, min_value: int = 0) -> int:
+        ICP = self.env["ir.config_parameter"].sudo()
+        raw = ICP.get_param(key)
+        try:
+            value = int(raw) if raw not in (None, "") else int(default)
+        except (TypeError, ValueError):
+            value = int(default)
+        if value < min_value:
+            return min_value
+        return value
+
+    def _call_ai_agent(self, prompt: str, body: str, timeout: int = 120) -> str:
         ICP = self.env["ir.config_parameter"].sudo()
         url = (ICP.get_param("era_spy.ai_agent_url") or "").strip()
         if not url:
@@ -183,14 +207,39 @@ class EraSpyClient(models.AbstractModel):
             merged = prompt.strip()
         if body:
             merged = f"{merged}\n\n{body}".strip() if merged else str(body)
-        _logger.info("EraSpy AI agent request: url=%s timeout=%s body_len=%s", url, timeout, len(merged or ""))
+        connect_timeout = self._get_int_param("era_spy.ai_agent_connect_timeout", default=10, min_value=1)
+        try:
+            timeout_value = int(timeout)
+        except (TypeError, ValueError):
+            timeout_value = 25
+        read_timeout_default = timeout_value if timeout_value > 0 else 25
+        read_timeout = self._get_int_param("era_spy.ai_agent_read_timeout", default=read_timeout_default, min_value=1)
+        if read_timeout < 120:
+            self._warn_param_once(
+                "era_spy.ai_agent_read_timeout",
+                "EraSpy AI agent read timeout config is too low (%s). Using safe minimum of 120 seconds.",
+                read_timeout,
+            )
+            read_timeout = 120
+        max_attempts = 1
+        timeout_tuple = (connect_timeout, read_timeout)
+        _logger.info(
+            "EraSpy AI agent request: url=%s timeout=%s attempts=%s body_len=%s",
+            url,
+            timeout_tuple,
+            max_attempts,
+            len(merged or ""),
+        )
         headers = {
             "Content-Type": "text/plain; charset=utf-8",
         }
         payload = (merged or "").encode("utf-8")
         try:
-            response = requests.post(url, headers=headers, data=payload, timeout=timeout)
-        except Exception as exc:
+            response = requests.post(url, headers=headers, data=payload, timeout=timeout_tuple)
+        except requests.exceptions.Timeout as exc:
+            _logger.warning("EraSpy AI agent request timed out: %s", exc)
+            return ""
+        except requests.exceptions.RequestException as exc:
             _logger.warning("EraSpy AI agent request failed: %s", exc)
             return ""
         _logger.info(

@@ -10,7 +10,7 @@
         <field name="call_source"/>
         <field name="duration_seconds"/>
         <field name="summary"/>
-        <field name="recording_link_html" widget="html" string="Recording"/>
+        <!--field name="recording_link_html" widget="html" string="Recording"/-->
         <button name="action_open_recording_player"
                 type="object"
                 string="Play"

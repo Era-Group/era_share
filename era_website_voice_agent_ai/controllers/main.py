@@ -329,8 +329,7 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_recording(self, summary_id):
         record = request.env["crm.realtime_call_summary"].browse(summary_id)
         try:
-            record.check_access_rights("read")
-            record.check_access_rule("read")
+            record.check_access("read")
         except AccessError:
             return request.not_found()
         if not record or not record.attachment_id:
@@ -353,8 +352,7 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_recording_player(self, summary_id):
         record = request.env["crm.realtime_call_summary"].browse(summary_id)
         try:
-            record.check_access_rights("read")
-            record.check_access_rule("read")
+            record.check_access("read")
         except AccessError:
             return request.not_found()
         if not record or not record.attachment_id:

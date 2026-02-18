@@ -27,6 +27,8 @@ let state = {
   recorderFlushTimer: null,
   summaryId: null,
   sessionKey: "",
+  chunkSeq: 0,
+  chunkUploadChain: Promise.resolve(),
 };
 
 function qs(id) {
@@ -104,6 +106,45 @@ function clearRecorderFlushTimer() {
   }
 }
 
+function blobToBase64(blob) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result || "";
+      const parts = String(dataUrl).split(",");
+      resolve(parts.length > 1 ? parts[1] : "");
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+function enqueueAudioChunkUpload(blob) {
+  if (!blob || blob.size === 0) return;
+  if (!state.summaryId || !state.sessionKey) return;
+  const mimetype = state.recorder?.mimeType || blob.type || "audio/webm";
+  const summaryId = state.summaryId;
+  const sessionKey = state.sessionKey;
+  const seq = state.chunkSeq++;
+  state.chunkUploadChain = state.chunkUploadChain
+    .then(async () => {
+      const base64 = await blobToBase64(blob);
+      if (!base64) return;
+      const res = await rpcJson("/realtime_agent/chunk", {
+        summary_id: summaryId,
+        session_key: sessionKey,
+        audio_chunk_base64: base64,
+        audio_mimetype: mimetype,
+        chunk_seq: seq,
+      });
+      if (res?.error) {
+        console.warn("Audio chunk upload error:", res.error, res.details || "");
+      }
+    })
+    .catch((err) => {
+      console.warn("Audio chunk upload failed:", err);
+    });
+}
+
 function initRecorder(micStream) {
   if (!micStream) return;
   try {
@@ -121,13 +162,16 @@ function initRecorder(micStream) {
     const mimeType = MediaRecorder.isTypeSupported(preferredMime) ? preferredMime : "audio/webm";
     const recorder = new MediaRecorder(dest.stream, { mimeType: mimeType });
     recorder.ondataavailable = (e) => {
-      if (e.data && e.data.size > 0) state.recordedChunks.push(e.data);
+      if (e.data && e.data.size > 0) {
+        state.recordedChunks.push(e.data);
+        enqueueAudioChunkUpload(e.data);
+      }
     };
     recorder.onstop = () => {
       finalizeRecording();
     };
     state.recorder = recorder;
-    recorder.start(1000);
+    recorder.start(5000);
     clearRecorderFlushTimer();
     // Force periodic chunk flushes; some browsers delay chunks until stop.
     state.recorderFlushTimer = setInterval(() => {
@@ -138,7 +182,7 @@ function initRecorder(micStream) {
           // no-op: requestData can fail during teardown
         }
       }
-    }, 1000);
+    }, 5000);
   } catch (err) {
     console.warn("Recorder init failed:", err);
   }
@@ -205,6 +249,8 @@ async function startAgent() {
   state.finalizeContext = null;
   state.summaryId = null;
   state.sessionKey = "";
+  state.chunkSeq = 0;
+  state.chunkUploadChain = Promise.resolve();
   state.transcript = [];
   state.assistantBuffer = "";
   if (!DISABLE_TRANSCRIPT) {
@@ -498,15 +544,7 @@ async function finalizeRecording() {
   state.recordingFinalized = true;
   try {
     const blob = new Blob(state.recordedChunks, { type: state.recorder.mimeType || "audio/webm" });
-    const base64 = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result || "";
-        const parts = String(dataUrl).split(",");
-        resolve(parts.length > 1 ? parts[1] : "");
-      };
-      reader.readAsDataURL(blob);
-    });
+    const base64 = await blobToBase64(blob);
     if (!base64) return;
     const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : null;
     const fallbackTranscript = summaryPayload?.transcript || "";

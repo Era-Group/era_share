@@ -3,6 +3,9 @@ import base64
 import io
 import json
 from html import escape
+import os
+import re
+import tempfile
 import uuid
 import requests
 
@@ -12,6 +15,9 @@ from odoo.http import request
 
 
 class RealtimeAgentController(http.Controller):
+    MAX_AUDIO_BYTES = 40 * 1024 * 1024
+    MAX_TRANSCRIBE_AUDIO_BYTES = 24 * 1024 * 1024
+
     def _get_realtime_model(self, ICP):
         """Return the configured model or the default gpt-realtime."""
         configured_model = ICP.get_param("openai.realtime_model")
@@ -103,6 +109,46 @@ class RealtimeAgentController(http.Controller):
         except Exception:
             return None
 
+    def _normalize_session_key(self, value):
+        key = (value or "").strip().lower()
+        if re.fullmatch(r"[0-9a-f]{32}", key):
+            return key
+        return ""
+
+    def _chunk_dir(self):
+        path = os.path.join(tempfile.gettempdir(), "era_website_voice_agent_ai_chunks")
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def _chunk_file_path(self, session_key):
+        key = self._normalize_session_key(session_key)
+        if not key:
+            return ""
+        return os.path.join(self._chunk_dir(), f"{key}.webm")
+
+    def _append_chunk_file(self, session_key, chunk_bytes):
+        path = self._chunk_file_path(session_key)
+        if not path:
+            return False
+        with open(path, "ab") as f:
+            f.write(chunk_bytes)
+        return True
+
+    def _read_chunk_file(self, session_key):
+        path = self._chunk_file_path(session_key)
+        if not path or not os.path.exists(path):
+            return b""
+        with open(path, "rb") as f:
+            return f.read()
+
+    def _delete_chunk_file(self, session_key):
+        path = self._chunk_file_path(session_key)
+        if path and os.path.exists(path):
+            try:
+                os.remove(path)
+            except Exception:
+                pass
+
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
 
@@ -136,35 +182,38 @@ class RealtimeAgentController(http.Controller):
         return Summary.create(values)
 
     def _save_summary_audio(self, kwargs, audio_bytes, filename, mimetype):
-        if len(audio_bytes) > 12 * 1024 * 1024:
+        if len(audio_bytes) > self.MAX_AUDIO_BYTES:
             return {"error": "Audio too large"}
 
         ICP = request.env["ir.config_parameter"].sudo()
-        api_key = ICP.get_param("openai.api_key")
-        if not api_key:
-            return {"error": "Missing system parameter: openai.api_key"}
+        api_key = ICP.get_param("openai.api_key") or ""
         summary_prompt = ICP.get_param("openai.realtime_summary_prompt") or None
 
         fallback_transcript = (kwargs.get("transcript") or "").strip()
-        transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
+        transcript = ""
+        error = None
         warnings = []
-        transcription_error = None
+        if not api_key:
+            warnings.append("Missing openai.api_key; skipping transcription and summary.")
+        elif len(audio_bytes) > self.MAX_TRANSCRIBE_AUDIO_BYTES:
+            warnings.append("Audio too large for transcription; recording saved without auto-transcript.")
+        else:
+            transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
         if error:
-            transcription_error = error
             transcript = ""
-            warnings.append(f"Transcription failed: {transcription_error}")
+            warnings.append(f"Transcription failed: {error}")
         if not transcript and fallback_transcript:
             transcript = fallback_transcript
             warnings.append("Using client transcript fallback.")
 
         summary, error = (None, None)
-        if transcript:
+        if transcript and api_key:
             summary, error = self._summarize_transcript(api_key, transcript, summary_prompt)
         if error:
             summary = "تعذر تلخيص المكالمة تلقائيا."
             warnings.append(f"Summary failed: {error}")
         if not summary:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
+            summary = "تم حفظ تسجيل المكالمة."
 
         values = {
             "summary": summary,
@@ -194,6 +243,7 @@ class RealtimeAgentController(http.Controller):
             }
         )
         record.sudo().write({"attachment_id": attachment.id})
+        self._delete_chunk_file(kwargs.get("session_key"))
         response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
         if warnings:
             response["warning"] = " | ".join(warnings)
@@ -204,6 +254,14 @@ class RealtimeAgentController(http.Controller):
         existing = self._get_session_record(kwargs)
         if existing and existing.attachment_id:
             return {"id": existing.id, "summary": existing.summary}
+        chunk_audio = self._read_chunk_file(kwargs.get("session_key"))
+        if chunk_audio:
+            return self._save_summary_audio(
+                kwargs,
+                chunk_audio,
+                kwargs.get("audio_filename") or "realtime-call.webm",
+                kwargs.get("audio_mimetype") or "audio/webm",
+            )
         values = {
             "summary": "انتهت المكالمة بمغادرة الصفحة قبل اكتمال حفظ التسجيل.",
             "transcription": (kwargs.get("transcript") or "").strip(),
@@ -337,6 +395,26 @@ class RealtimeAgentController(http.Controller):
         values = {k: v for k, v in values.items() if k in Summary._fields}
         record = Summary.create(values)
         return {"summary_id": record.id, "session_key": session_key}
+
+    @http.route("/realtime_agent/chunk", type="jsonrpc", auth="public", website=True, csrf=False)
+    def realtime_agent_chunk(self, **kwargs):
+        record = self._get_session_record(kwargs)
+        if not record:
+            return {"error": "Invalid session"}
+        audio_chunk_base64 = (kwargs.get("audio_chunk_base64") or "").strip()
+        if not audio_chunk_base64:
+            return {"error": "Missing audio chunk"}
+        try:
+            chunk_bytes = base64.b64decode(audio_chunk_base64)
+        except Exception as e:
+            return {"error": "Invalid audio chunk", "details": str(e)}
+        if not chunk_bytes:
+            return {"error": "Empty audio chunk"}
+        if len(chunk_bytes) > 2 * 1024 * 1024:
+            return {"error": "Audio chunk too large"}
+        if not self._append_chunk_file(kwargs.get("session_key"), chunk_bytes):
+            return {"error": "Invalid session key"}
+        return {"ok": True, "summary_id": record.id}
 
     @http.route("/realtime_agent/summary", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary(self, **kwargs):

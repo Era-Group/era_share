@@ -6,7 +6,7 @@
     <field name="inherit_id" ref="base.res_config_settings_view_form"/>
     <field name="arch" type="xml">
       <xpath expr="//form" position="inside">
-        <app string="Website AI Widget" name="openai_realtime" logo="/era_voip_ai/static/src/img/website_widget_icon.svg" groups="base.group_system">
+        <app string="Website AI Widget" name="openai_realtime" logo="/era_website_voice_agent_ai/static/src/img/website_widget_icon.svg" groups="base.group_system">
           <block title="Realtime Voice Agent">
             <setting string="OpenAI API Key" help="Stored in system parameters as openai.api_key (server-side only).">
               <field name="openai_api_key" password="True" placeholder="sk-..."/>

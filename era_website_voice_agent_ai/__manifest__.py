@@ -19,8 +19,8 @@
     ],
     "assets": {
         "web.assets_frontend": [
-            "era_voip_ai/static/src/js/realtime_agent_widget.js",
-            "era_voip_ai/static/src/scss/realtime_agent_widget.scss",
+            "era_website_voice_agent_ai/static/src/js/realtime_agent_widget.js",
+            "era_website_voice_agent_ai/static/src/scss/realtime_agent_widget.scss",
         ],
     },
     "installable": True,

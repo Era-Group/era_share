@@ -4,7 +4,7 @@ Adds a floating widget to talk with an OpenAI Realtime agent, records calls, and
 summaries/transcripts/recordings in CRM.
 
 ## Install
-1. Copy this module folder `era_voip_ai` into your Odoo addons path.
+1. Copy this module folder `era_website_voice_agent_ai` into your Odoo addons path.
 2. Restart Odoo.
 3. Apps → Update Apps List.
 4. Install **Website Realtime Agent Floating Widget**.

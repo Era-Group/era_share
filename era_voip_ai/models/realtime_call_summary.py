@@ -125,11 +125,19 @@ class CrmRealtimeCallSummary(models.Model):
 
     def action_open_recording_player(self):
         self.ensure_one()
-        record = self.sudo()
-        if not record.attachment_id:
+        if not self.attachment_id:
             return False
+        wizard = self.env["crm.realtime_call_summary_play_wizard"].create(
+            {"attachment_id": self.attachment_id.id}
+        )
         return {
-            "type": "ir.actions.act_url",
-            "url": f"/realtime_agent/recording_player/{record.id}",
+            "type": "ir.actions.act_window",
+            "name": "Call Recording",
+            "res_model": "crm.realtime_call_summary_play_wizard",
+            "view_mode": "form",
+            "view_id": self.env.ref(
+                "era_voip_ai.view_crm_realtime_call_summary_play_wizard_form"
+            ).id,
+            "res_id": wizard.id,
             "target": "new",
         }

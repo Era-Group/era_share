@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "ERA Website Realtime Agent Widget & VoIP Call Recording with AI Summaries",
+    "name": "ERA Website Realtime Agent Widget with AI Summaries",
     "version": "19.0.1.0.0",
     "category": "Website",
-    "summary": "Realtime voice assistant widget + VoIP call recording, transcription, and CRM summaries",
+    "summary": "Realtime voice assistant widget with recording, transcription, and CRM summaries",
     "description": (
         "Adds a floating website widget to talk with an OpenAI Realtime agent, "
         "records calls, generates Arabic summaries, and stores transcripts/recordings "
-        "in CRM. Integrates with Odoo VoIP to capture inbound/outbound calls in "
-        "the browser, and can ingest SIP recordings via webhook."
+        "in CRM. Recording and summarization are scoped to the Realtime Agent Widget only."
     ),
-    "depends": ["website", "web", "crm", "voip"],
+    "depends": ["website", "web", "crm"],
     "data": [
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
@@ -21,9 +20,6 @@
         "web.assets_frontend": [
             "era_voip_ai/static/src/js/realtime_agent_widget.js",
             "era_voip_ai/static/src/scss/realtime_agent_widget.scss",
-        ],
-        "web.assets_backend": [
-            "era_voip_ai/static/src/js/voip_call_recording.js",
         ],
     },
     "installable": True,

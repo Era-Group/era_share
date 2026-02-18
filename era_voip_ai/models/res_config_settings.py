@@ -37,12 +37,6 @@ class ResConfigSettings(models.TransientModel):
         help="Voice name for audio output (default: alloy).",
     )
 
-    openai_ai_voip_user_id = fields.Many2one(
-        "res.users",
-        string="AI VoIP User",
-        help="User account that represents the AI agent in Odoo VoIP.",
-    )
-
     openai_realtime_widget_enabled = fields.Boolean(
         string="Show Website Widget",
         default=True,
@@ -63,8 +57,6 @@ class ResConfigSettings(models.TransientModel):
         ICP = self.env["ir.config_parameter"].sudo()
         raw = ICP.get_param("openai.realtime_widget_enabled", default="1")
         res["openai_realtime_widget_enabled"] = str(raw).lower() in ("1", "true", "yes", "y", "t")
-        ai_user_id = ICP.get_param("openai.ai_voip_user_id")
-        res["openai_ai_voip_user_id"] = int(ai_user_id) if ai_user_id and ai_user_id.isdigit() else False
         return res
 
     def set_values(self):
@@ -73,9 +65,5 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param(
             "openai.realtime_widget_enabled",
             "1" if self.openai_realtime_widget_enabled else "0",
-        )
-        ICP.set_param(
-            "openai.ai_voip_user_id",
-            str(self.openai_ai_voip_user_id.id) if self.openai_ai_voip_user_id else "",
         )
         return res

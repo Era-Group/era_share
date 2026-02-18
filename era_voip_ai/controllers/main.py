@@ -15,19 +15,6 @@ class RealtimeAgentController(http.Controller):
         configured_model = ICP.get_param("openai.realtime_model")
         return configured_model or "gpt-realtime"
 
-    def _get_ai_voip_user_id(self, ICP):
-        raw = ICP.get_param("openai.ai_voip_user_id") or ""
-        return int(raw) if raw.isdigit() else None
-
-    def _normalize_call_source(self, value):
-        if value in ("incoming", "incomming", "inbound", "in"):
-            return "incoming"
-        if value in ("outgoing", "outbound", "out"):
-            return "outgoing"
-        if value == "agent":
-            return "agent"
-        return "incoming"
-
     def _summarize_transcript(self, api_key, transcript, system_prompt=None):
         url = "https://api.openai.com/v1/responses"
         prompt_text = system_prompt or "لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد."
@@ -323,175 +310,19 @@ class RealtimeAgentController(http.Controller):
 
     @http.route("/realtime_agent/sip/recording", type="json", auth="public", website=True, csrf=False)
     def realtime_agent_sip_recording(self, **kwargs):
-        """Ingest a SIP recording + metadata from the PBX."""
-        ICP = request.env["ir.config_parameter"].sudo()
-        secret = ICP.get_param("openai.sip_webhook_secret") or ""
-        provided = request.httprequest.headers.get("X-Webhook-Secret") or kwargs.get("secret") or ""
-        if secret and provided != secret:
-            return {"error": "Unauthorized"}
-
-        audio_base64 = (kwargs.get("audio_base64") or "").strip()
-        if not audio_base64:
-            return {"error": "Missing audio"}
-
-        try:
-            audio_bytes = base64.b64decode(audio_base64)
-        except Exception as e:
-            return {"error": "Invalid audio data", "details": str(e)}
-
-        if len(audio_bytes) > 12 * 1024 * 1024:
-            return {"error": "Audio too large"}
-
-        filename = kwargs.get("audio_filename") or "sip-call.webm"
-        mimetype = kwargs.get("audio_mimetype") or "audio/webm"
-
-        api_key = ICP.get_param("openai.api_key")
-        if not api_key:
-            return {"error": "Missing system parameter: openai.api_key"}
-        summary_prompt = ICP.get_param("openai.realtime_summary_prompt") or None
-
-        fallback_transcript = (kwargs.get("transcript") or "").strip()
-        transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
-        warnings = []
-        transcription_error = None
-        if error:
-            transcription_error = error
-            transcript = ""
-            warnings.append(f"Transcription failed: {transcription_error}")
-        if not transcript and fallback_transcript:
-            transcript = fallback_transcript
-            warnings.append("Using client transcript fallback.")
-
-        summary, error = (None, None)
-        if transcript:
-            summary, error = self._summarize_transcript(api_key, transcript, summary_prompt)
-        if error:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-            warnings.append(f"Summary failed: {error}")
-        if not summary:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-
-        values = {
-            "summary": summary,
-            "transcription": transcript,
-            "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
-            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
-            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
-            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
-            "duration_seconds": kwargs.get("duration_seconds"),
-            "call_source": self._normalize_call_source(kwargs.get("call_source") or kwargs.get("direction")),
-            "sip_call_id": kwargs.get("call_id") or kwargs.get("sip_call_id"),
-            "sip_operator": kwargs.get("operator_extension") or kwargs.get("sip_operator"),
-            "sip_direction": kwargs.get("direction") or kwargs.get("sip_direction"),
-            "sip_trunk": kwargs.get("sip_trunk") or ICP.get_param("openai.sip_trunk_host"),
+        """SIP recording ingestion is disabled; widget-only mode."""
+        return {
+            "error": "Disabled route",
+            "details": "SIP/VoIP recording ingestion is disabled. Use the Realtime Agent Widget.",
         }
-        phone = kwargs.get("caller_phone") or ""
-        company = kwargs.get("caller_company") or ""
-        values["caller_phone"] = phone
-        values["caller_company"] = company
-        lead = self._find_lead(phone=phone, company=company)
-        if lead:
-            values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
-        attachment = request.env["ir.attachment"].sudo().create(
-            {
-                "name": filename,
-                "datas": base64.b64encode(audio_bytes),
-                "mimetype": mimetype,
-                "res_model": "crm.realtime_call_summary",
-                "res_id": record.id,
-            }
-        )
-        record.sudo().write({"attachment_id": attachment.id})
-        response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
-        if warnings:
-            response["warning"] = " | ".join(warnings)
-        return response
 
     @http.route("/realtime_agent/voip/recording", type="json", auth="user", website=False, csrf=False)
     def realtime_agent_voip_recording(self, **kwargs):
-        """Ingest a browser VoIP recording for inbound/outbound calls."""
-        audio_base64 = (kwargs.get("audio_base64") or "").strip()
-        if not audio_base64:
-            return {"error": "Missing audio"}
-
-        try:
-            audio_bytes = base64.b64decode(audio_base64)
-        except Exception as e:
-            return {"error": "Invalid audio data", "details": str(e)}
-
-        if len(audio_bytes) > 12 * 1024 * 1024:
-            return {"error": "Audio too large"}
-
-        filename = kwargs.get("audio_filename") or "voip-call.webm"
-        mimetype = kwargs.get("audio_mimetype") or "audio/webm"
-
-        ICP = request.env["ir.config_parameter"].sudo()
-        api_key = ICP.get_param("openai.api_key")
-        if not api_key:
-            return {"error": "Missing system parameter: openai.api_key"}
-        summary_prompt = ICP.get_param("openai.realtime_summary_prompt") or None
-        fallback_transcript = (kwargs.get("transcript") or "").strip()
-        transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
-        warnings = []
-        transcription_error = None
-        if error:
-            transcription_error = error
-            transcript = ""
-            warnings.append(f"Transcription failed: {transcription_error}")
-        if not transcript and fallback_transcript:
-            transcript = fallback_transcript
-            warnings.append("Using client transcript fallback.")
-
-        summary, error = (None, None)
-        if transcript:
-            summary, error = self._summarize_transcript(api_key, transcript, summary_prompt)
-        if error:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-            warnings.append(f"Summary failed: {error}")
-        if not summary:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-
-        values = {
-            "summary": summary,
-            "transcription": transcript,
-            "prompt_id": ICP.get_param("openai.realtime_prompt_id"),
-            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
-            "model": ICP.get_param("openai.realtime_model"),
-            "voice": ICP.get_param("openai.realtime_voice"),
-            "duration_seconds": kwargs.get("duration_seconds"),
-            "call_source": self._normalize_call_source(kwargs.get("call_source") or kwargs.get("direction")),
-            "sip_call_id": kwargs.get("call_id") or kwargs.get("sip_call_id"),
-            "sip_operator": kwargs.get("operator_extension") or request.env.user.login,
-            "sip_direction": kwargs.get("direction") or kwargs.get("sip_direction"),
-            "sip_trunk": kwargs.get("sip_trunk") or ICP.get_param("openai.sip_trunk_host"),
+        """Standard Odoo VoIP recording ingestion is disabled; widget-only mode."""
+        return {
+            "error": "Disabled route",
+            "details": "Standard Odoo VoIP call recording is disabled. Use the Realtime Agent Widget.",
         }
-        phone = kwargs.get("caller_phone") or ""
-        company = kwargs.get("caller_company") or ""
-        values["caller_phone"] = phone
-        values["caller_company"] = company
-        lead = self._find_lead(phone=phone, company=company)
-        if lead:
-            values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
-        attachment = request.env["ir.attachment"].sudo().create(
-            {
-                "name": filename,
-                "datas": base64.b64encode(audio_bytes),
-                "mimetype": mimetype,
-                "res_model": "crm.realtime_call_summary",
-                "res_id": record.id,
-            }
-        )
-        record.sudo().write({"attachment_id": attachment.id})
-        response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
-        if warnings:
-            response["warning"] = " | ".join(warnings)
-        return response
 
     @http.route("/realtime_agent/recording/<int:summary_id>", type="http", auth="user", website=False)
     def realtime_agent_recording(self, summary_id):

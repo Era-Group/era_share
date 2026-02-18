@@ -28,10 +28,6 @@
               <field name="openai_realtime_voice" placeholder="alloy"/>
             </setting>
 
-            <setting string="AI VoIP User" help="User account that represents the AI agent in Odoo VoIP.">
-              <field name="openai_ai_voip_user_id" options="{'no_create': True}" domain="[('share', '=', False)]"/>
-            </setting>
-
             <setting string="Show Website Widget" help="Show or hide the floating widget on the website.">
               <field name="openai_realtime_widget_enabled"/>
             </setting>

@@ -24,6 +24,7 @@ let state = {
   finalizeContext: null,
   unloadHandled: false,
   lifecycleWired: false,
+  recorderFlushTimer: null,
 };
 
 function qs(id) {
@@ -94,6 +95,13 @@ function safeSend(obj) {
   return true;
 }
 
+function clearRecorderFlushTimer() {
+  if (state.recorderFlushTimer) {
+    clearInterval(state.recorderFlushTimer);
+    state.recorderFlushTimer = null;
+  }
+}
+
 function initRecorder(micStream) {
   if (!micStream) return;
   try {
@@ -118,6 +126,17 @@ function initRecorder(micStream) {
     };
     state.recorder = recorder;
     recorder.start(1000);
+    clearRecorderFlushTimer();
+    // Force periodic chunk flushes; some browsers delay chunks until stop.
+    state.recorderFlushTimer = setInterval(() => {
+      if (state.recorder && state.recorder.state === "recording") {
+        try {
+          state.recorder.requestData();
+        } catch (err) {
+          // no-op: requestData can fail during teardown
+        }
+      }
+    }, 1000);
   } catch (err) {
     console.warn("Recorder init failed:", err);
   }
@@ -479,6 +498,7 @@ async function finalizeRecording() {
   } catch (err) {
     console.warn("Recording finalize failed:", err);
   } finally {
+    clearRecorderFlushTimer();
     state.recorder = null;
     state.recordedChunks = [];
     state.summaryPayload = null;
@@ -560,8 +580,8 @@ function handlePageUnload() {
   }
 
   if (summaryPayload?.transcript) {
-    sendJsonRpcBeacon("/realtime_agent/summary", {
-      transcript: summaryPayload.transcript,
+    sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
+      transcript: summaryPayload.transcript || "",
       prompt_id: snapshot.sessionMeta?.promptId || "",
       model: snapshot.sessionMeta?.model || "",
       voice: snapshot.sessionMeta?.voice || "",
@@ -569,7 +589,17 @@ function handlePageUnload() {
       caller_company: snapshot.sessionMeta?.callerCompany || "",
       duration_seconds: summaryPayload.duration_seconds || "",
     });
+    return;
   }
+
+  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
+    prompt_id: snapshot.sessionMeta?.promptId || "",
+    model: snapshot.sessionMeta?.model || "",
+    voice: snapshot.sessionMeta?.voice || "",
+    caller_phone: snapshot.sessionMeta?.callerPhone || "",
+    caller_company: snapshot.sessionMeta?.callerCompany || "",
+    duration_seconds: snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : "",
+  });
 }
 
 function stopAgent() {
@@ -594,6 +624,7 @@ function stopAgent() {
     }
   }
   try {
+    clearRecorderFlushTimer();
     if (state.dc) state.dc.close();
     if (state.pc) state.pc.close();
     if (state.micStream) state.micStream.getTracks().forEach((t) => t.stop());

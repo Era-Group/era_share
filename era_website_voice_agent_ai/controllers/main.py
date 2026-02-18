@@ -168,6 +168,30 @@ class RealtimeAgentController(http.Controller):
             response["warning"] = " | ".join(warnings)
         return response
 
+    def _save_abandoned_summary(self, kwargs):
+        ICP = request.env["ir.config_parameter"].sudo()
+        values = {
+            "summary": "انتهت المكالمة بمغادرة الصفحة قبل اكتمال حفظ التسجيل.",
+            "transcription": (kwargs.get("transcript") or "").strip(),
+            "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
+            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
+            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
+            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
+            "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
+            "call_source": "agent",
+        }
+        phone = kwargs.get("caller_phone") or ""
+        company = kwargs.get("caller_company") or ""
+        values["caller_phone"] = phone
+        values["caller_company"] = company
+        lead = self._find_lead(phone=phone, company=company)
+        if lead:
+            values["lead_id"] = lead.id
+        Summary = request.env["crm.realtime_call_summary"].sudo()
+        values = {k: v for k, v in values.items() if k in Summary._fields}
+        record = Summary.create(values)
+        return {"id": record.id, "summary": values.get("summary")}
+
     def _prompt_has_mcp_tools(self, api_key, prompt_id):
         """Check if a prompt declares MCP tools to provide a clear error before session start."""
         if not prompt_id:
@@ -355,6 +379,17 @@ class RealtimeAgentController(http.Controller):
             headers=[("Content-Type", "application/json")],
             status=status,
         )
+
+    @http.route(
+        "/realtime_agent/session_abandoned",
+        type="jsonrpc",
+        auth="public",
+        website=True,
+        csrf=False,
+    )
+    def realtime_agent_session_abandoned(self, **kwargs):
+        """Persist a fallback summary when the visitor leaves before audio upload completes."""
+        return self._save_abandoned_summary(kwargs)
 
     @http.route("/realtime_agent/sip/recording", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_sip_recording(self, **kwargs):

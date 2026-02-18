@@ -125,7 +125,7 @@ class RealtimeAgentController(http.Controller):
                 return True, None
         return False, None
 
-    @http.route("/realtime_agent/token", type="json", auth="public", website=True, csrf=False)
+    @http.route("/realtime_agent/token", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_token(self):
         """Return a short-lived token for browser clients to connect to the Realtime API."""
         ICP = request.env["ir.config_parameter"].sudo()
@@ -183,7 +183,7 @@ class RealtimeAgentController(http.Controller):
 
         return {"value": client_secret}
 
-    @http.route("/realtime_agent/summary", type="json", auth="public", website=True, csrf=False)
+    @http.route("/realtime_agent/summary", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary(self, **kwargs):
         """Summarize the transcript and store it in CRM."""
         transcript = (kwargs.get("transcript") or "").strip()
@@ -229,7 +229,7 @@ class RealtimeAgentController(http.Controller):
             response["warning"] = warning
         return response
 
-    @http.route("/realtime_agent/summary_audio", type="json", auth="public", website=True, csrf=False)
+    @http.route("/realtime_agent/summary_audio", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary_audio(self, **kwargs):
         """Store recording, transcribe it, and save summary in CRM."""
         audio_base64 = (kwargs.get("audio_base64") or "").strip()
@@ -309,7 +309,7 @@ class RealtimeAgentController(http.Controller):
             response["warning"] = " | ".join(warnings)
         return response
 
-    @http.route("/realtime_agent/sip/recording", type="json", auth="public", website=True, csrf=False)
+    @http.route("/realtime_agent/sip/recording", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_sip_recording(self, **kwargs):
         """SIP recording ingestion is disabled; widget-only mode."""
         return {
@@ -317,7 +317,7 @@ class RealtimeAgentController(http.Controller):
             "details": "SIP/VoIP recording ingestion is disabled. Use the Realtime Agent Widget.",
         }
 
-    @http.route("/realtime_agent/voip/recording", type="json", auth="user", website=False, csrf=False)
+    @http.route("/realtime_agent/voip/recording", type="jsonrpc", auth="user", website=False, csrf=False)
     def realtime_agent_voip_recording(self, **kwargs):
         """Standard Odoo VoIP recording ingestion is disabled; widget-only mode."""
         return {

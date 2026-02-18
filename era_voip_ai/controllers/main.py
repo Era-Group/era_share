@@ -2,6 +2,7 @@
 import base64
 import io
 import json
+from html import escape
 import requests
 
 from odoo import http
@@ -347,3 +348,47 @@ class RealtimeAgentController(http.Controller):
             ("Content-Security-Policy", "default-src 'self'; media-src 'self'"),
         ]
         return request.make_response(content, headers=headers)
+
+    @http.route("/realtime_agent/recording_player/<int:summary_id>", type="http", auth="user", website=False)
+    def realtime_agent_recording_player(self, summary_id):
+        record = request.env["crm.realtime_call_summary"].browse(summary_id)
+        try:
+            record.check_access_rights("read")
+            record.check_access_rule("read")
+        except AccessError:
+            return request.not_found()
+        if not record or not record.attachment_id:
+            return request.not_found()
+
+        filename = escape(record.attachment_id.name or "realtime-call.webm")
+        media_url = f"/realtime_agent/recording/{record.id}"
+        html = f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{filename}</title>
+  <style>
+    body {{ font-family: Arial, sans-serif; margin: 24px; background: #f7f8fa; color: #1f2937; }}
+    .card {{ max-width: 680px; margin: 0 auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }}
+    h1 {{ margin: 0 0 12px; font-size: 18px; }}
+    p {{ margin: 0 0 14px; color: #4b5563; font-size: 14px; }}
+    audio {{ width: 100%; }}
+    a {{ color: #0b6bcb; text-decoration: none; }}
+    a:hover {{ text-decoration: underline; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>{filename}</h1>
+    <p>Click play to listen to the recording.</p>
+    <audio controls preload="metadata" src="{media_url}"></audio>
+    <p><a href="{media_url}" target="_blank">Open raw media</a></p>
+  </div>
+</body>
+</html>"""
+        headers = [
+            ("Content-Type", "text/html; charset=utf-8"),
+            ("Content-Security-Policy", "default-src 'self'; media-src 'self'; style-src 'unsafe-inline'"),
+        ]
+        return request.make_response(html, headers=headers)

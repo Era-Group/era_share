@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
+from odoo.tools import html_escape
 
 
 class CrmRealtimeCallSummary(models.Model):
@@ -29,9 +30,24 @@ class CrmRealtimeCallSummary(models.Model):
     attachment_datas = fields.Binary(related="attachment_id.datas", readonly=True)
     attachment_mimetype = fields.Char(related="attachment_id.mimetype", readonly=True)
     attachment_name = fields.Char(related="attachment_id.name", readonly=True)
+    recording_link_html = fields.Html(
+        string="Recording Link",
+        compute="_compute_recording_link_html",
+    )
     lead_id = fields.Many2one("crm.lead", string="Lead/Opportunity")
     caller_phone = fields.Char()
     caller_company = fields.Char()
+
+    @api.depends("attachment_id", "attachment_name")
+    def _compute_recording_link_html(self):
+        for record in self:
+            if record.attachment_id:
+                filename = html_escape(record.attachment_name or "realtime-call.webm")
+                record.recording_link_html = (
+                    f'<a href="/realtime_agent/recording_player/{record.id}" target="_blank">{filename}</a>'
+                )
+            else:
+                record.recording_link_html = ""
 
     def _create_done_call_activity(self, lead, summary, attachment=None):
         if not lead:
@@ -53,12 +69,12 @@ class CrmRealtimeCallSummary(models.Model):
         link_html = ""
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url", "") or ""
         if attachment:
-            path = f"/realtime_agent/recording/{self.id}"
+            path = f"/realtime_agent/recording_player/{self.id}"
             url = f"{base_url}{path}" if base_url else path
-            link_html = f'<p><a href="{url}" target="_blank">Open call recording</a></p>'
+            filename = html_escape(attachment.name or "realtime-call.webm")
+            link_html = f'<p><a href="{url}" target="_blank">{filename}</a></p>'
 
         summary_html = f"{summary}" if summary else ""
-        note_html = f"{summary_html}{link_html}"
 
         activity = self.env["mail.activity"].sudo().create(
             {
@@ -114,6 +130,6 @@ class CrmRealtimeCallSummary(models.Model):
             return False
         return {
             "type": "ir.actions.act_url",
-            "url": f"/realtime_agent/recording/{record.id}",
+            "url": f"/realtime_agent/recording_player/{record.id}",
             "target": "new",
         }

@@ -49,6 +49,11 @@
             <field name="transcript" nolabel="1"/>
           </group>
           <group>
+            <button name="action_open_recording_player"
+                    type="object"
+                    string="Play"
+                    class="btn btn-primary"
+                    invisible="not attachment_id"/>
           </group>
         </sheet>
       </form>

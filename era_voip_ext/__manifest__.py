@@ -4,6 +4,7 @@
     "description": "Adds VoIP call counts to CRM leads and enhances call transcripts with AI formatting.",
     "version": "19.0.1.0.0",
     "author": "Era Group",
+    "license": "LGPL-3",
     "depends": ["crm", "voip", "voip_ai"],
     "data": [
         "data/ai_agent.xml",

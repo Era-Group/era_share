@@ -2,6 +2,7 @@
 {
     "name": "ERA Website Realtime Agent Widget with AI Summaries",
     "version": "19.0.1.0.0",
+    "author": "Era Group",
     "category": "Website",
     "summary": "Realtime voice assistant widget with recording, transcription, and CRM summaries",
     "description": (

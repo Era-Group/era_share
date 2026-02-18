@@ -21,7 +21,7 @@
     'email': "aqlan@era.net.sa ",
     'website': "https://era.net.sa",
     'category': 'Hr',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'images': ['static/description/muqeem_services.png'],
 
     # any module necessary for this one to work correctly

@@ -1,0 +1,125 @@
+# era_muqeem_client Module Documentation
+
+## English Description
+
+The ERA Muqeem Client module provides integration with the Muqeem platform for managing residence and visa operations in Saudi Arabia. This module enables organizations to automate various immigration processes including issuing exit/re-entry visas, extending passports, renewing Iqama (residence permit) documents, and transferring residence permits.
+
+Key features include:
+
+1. **Residence and Visa Management**:
+   - Integration with Muqeem API for automated residence document processing
+   - Support for issuing and managing exit/re-entry visas
+   - Iqama renewal, transfer, and cancellation operations
+   - Passport validity extension functionality
+
+2. **Employee Data Integration**:
+   - Enhanced employee records with Muqeem-specific fields (Iqama number, passport details)
+   - Automatic synchronization of residence document information
+   - Admin-only visibility for sensitive data fields
+
+3. **Process Automation**:
+   - Automated API calls to Muqeem platform for document processing
+   - Real-time status updates and error handling
+   - PDF attachment generation for issued visas
+
+4. **User Interface**:
+   - Dedicated wizard interfaces for various Muqeem operations
+   - Multi-language support (Arabic and English)
+   - Validation rules to ensure proper data entry
+
+## العربية Description
+
+يوفر موديول ERA Muqeem Client التكامل مع منصة Muqeem لإدارة عمليات الإقامة والتأشيرات في المملكة العربية السعودية. يمكّن هذا الموديول المؤسسات من أتمتة عمليات الهجرة المختلفة بما في ذلك إصدار تأشيرات الخروج/العودة، وتمديد التأشيرات، وإعادة إصدار تراخيص الإقامة (Iqama)، ونقل تراخيص الإقامة.
+
+الميزات الرئيسية تشمل:
+
+1. **إدارة الإقامة والتأشيرات**:
+   - التكامل مع API Muqeem لمعالجة وثائق الإقامة تلقائياً
+   - دعم لإصدار وإدارة تأشيرات الخروج/العودة
+   - عمليات تجديد ونقل وإلغاء تراخيص الإقامة (Iqama)
+   - وظيفة تمديد صلاحية التأشيرات
+
+2. **دمج بيانات الموظف**:
+   - سجلات موظفين محسّنة بحقول مخصصة ل Muqeem (رقم الإقامة، تفاصيل التأشيرة)
+   - مزامنة تلقائية لمعلومات الوثائق الإقامة
+   - رؤية فقط للمشرفين للحقول الحساسة
+
+3. **أتمتة العمليات**:
+   - مكالمات API تلقائية إلى منصة Muqeem لمعالجة الوثائق
+   - تحديثات للحالة في الوقت الحقيقي ومعالجة الأخطاء
+   - إنشاء مرفقات PDF للتأشيرات الصادرة
+
+4. **واجهة المستخدم**:
+   - واجهات مخصصة لعمليات Muqeem المختلفة
+   - دعم للغات متعددة (العربية والإنجليزية)
+   - قواعد التحقق لضمان إدخال البيانات الصحيح
+
+## Key Features and Capabilities
+
+1. **Muqeem API Integration**
+   - Secure connection to Muqeem platform for document processing
+   - Automated data transmission with proper authentication
+   - Error handling and status reporting for all operations
+
+2. **Iqama Management System**
+   - Iqama number tracking and validation
+   - Iqama expiry date monitoring
+   - Support for various Iqama operations (renewal, transfer, cancellation)
+
+3. **Visa Operations**
+   - Exit/re-entry visa issuance with configurable validity periods
+   - Visa type selection (single/multiple entry)
+   - Return date validation in Hijri calendar format
+
+4. **Employee Information Management**
+   - Enhanced employee forms with Muqeem-specific fields
+   - Passport number and expiry date tracking
+   - Border number and visa information storage
+
+5. **Administrative Controls**
+   - Admin-only visibility for sensitive data fields
+   - User role-based access control
+   - Audit trail for all Muqeem operations
+
+## Technical Details
+
+- **Dependencies**: base, hr, hijri_converter
+- **Models**:
+  - hr.employee (extended) - adds Muqeem-specific fields and admin checks
+  - api.access.iqama.wizard - handles exit/re-entry visa operations
+  - Various wizard models for different Muqeem operations (renewal, transfer, etc.)
+
+- **Views**:
+  - Dedicated wizard interfaces for each Muqeem operation
+  - Employee form view extensions to display Muqeem fields
+  - Menu items for accessing various Muqeem services
+
+- **API Integration**:
+  - Calls to Muqeem API endpoints for document processing
+  - Authentication using company credentials (app_id, app_key)
+  - PDF attachment handling for issued visas
+
+- **Fields Added**:
+  - iqamaNumber: Iqama number field for residence permit tracking
+  - last_visa_number: Last visa number field
+  - borderNumber: Border number field
+  - passportNumber: Passport number field
+  - expriry_pass_date: Passport expiry date field
+  - expriry_date_iqama: Iqama expiry date field
+  - is_admin: Boolean field to identify admin users
+
+## Integration Points
+
+This module integrates with:
+- Muqeem platform API for residence document processing
+- Odoo's core HR module for employee data management
+- Hijri calendar converter for date handling in Islamic calendar format
+- Odoo's notification system for operation status updates
+
+## Configuration Requirements
+
+1. Company must have valid Muqeem API credentials (app_id, app_key)
+2. Proper configuration of API endpoints in company settings
+3. Employee records must include Iqama and passport information
+4. System should be configured to handle PDF attachment processing
+5. User roles must be properly set up for admin access control

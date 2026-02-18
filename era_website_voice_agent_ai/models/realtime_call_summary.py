@@ -29,7 +29,7 @@ class CrmRealtimeCallSummary(models.Model):
     attachment_id = fields.Many2one("ir.attachment", string="Recording")
     attachment_datas = fields.Binary(related="attachment_id.datas", readonly=True)
     attachment_mimetype = fields.Char(related="attachment_id.mimetype", readonly=True)
-    attachment_name = fields.Char(related="attachment_id.name", readonly=True)
+    attachment_name = fields.Char(string="Recording Filename", related="attachment_id.name", readonly=True)
     recording_link_html = fields.Html(
         string="Recording Link",
         compute="_compute_recording_link_html",

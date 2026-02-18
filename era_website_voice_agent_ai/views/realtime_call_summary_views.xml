@@ -97,7 +97,7 @@
     <field name="model">crm.lead</field>
     <field name="inherit_id" ref="crm.crm_lead_view_form"/>
     <field name="arch" type="xml">
-      <xpath expr="//div[@class='oe_button_box']" position="inside">
+      <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
         <button type="action"
                 name="%(action_crm_realtime_call_summary_from_lead)d"
                 class="oe_stat_button"

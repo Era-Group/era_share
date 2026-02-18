@@ -13,7 +13,7 @@
 
         <button id="oai-agent-fab" class="oai-agent-fab btn btn-primary rounded-pill shadow" type="button" aria-label="Talk to agent">
           <span class="oai-agent-fab__dot" aria-hidden="true"></span>
-          <span class="oai-agent-fab__text">تكلّم</span>
+          <span class="oai-agent-fab__text">مكالمة</span>
         </button>
 
         <div id="oai-agent-panel" class="oai-agent-panel d-none shadow-lg" role="dialog" aria-label="Realtime assistant" dir="rtl">

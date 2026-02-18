@@ -49,8 +49,13 @@
             <field name="transcript" nolabel="1"/>
           </group>
           <group>
-            <field name="recording_link_html" widget="html" readonly="1"/>
+            <field name="recording_link_html" widget="html" readonly="1" invisible="1"/>
             <field name="attachment_id" invisible="1"/>
+            <button name="action_open_recording_player"
+                    type="object"
+                    string="Play"
+                    class="btn btn-primary"
+                    invisible="not attachment_id"/>
             <field name="attachment_datas" widget="audio" filename="attachment_name" mimetype="attachment_mimetype"/>
           </group>
         </sheet>

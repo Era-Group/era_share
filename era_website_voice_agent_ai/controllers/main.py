@@ -3,6 +3,7 @@ import base64
 import io
 import json
 from html import escape
+import uuid
 import requests
 
 from odoo import http
@@ -102,6 +103,38 @@ class RealtimeAgentController(http.Controller):
         except Exception:
             return None
 
+    def _summary_model(self):
+        return request.env["crm.realtime_call_summary"].sudo()
+
+    def _get_session_record(self, kwargs):
+        Summary = self._summary_model()
+        summary_id = kwargs.get("summary_id")
+        session_key = (kwargs.get("session_key") or "").strip()
+        if not summary_id or not session_key:
+            return Summary.browse()
+        try:
+            summary_id = int(summary_id)
+        except Exception:
+            return Summary.browse()
+        record = Summary.browse(summary_id).exists()
+        if not record:
+            return Summary.browse()
+        if "session_key" in Summary._fields and record.session_key == session_key:
+            return record
+        return Summary.browse()
+
+    def _upsert_summary_record(self, kwargs, values):
+        Summary = self._summary_model()
+        values = {k: v for k, v in values.items() if k in Summary._fields}
+        record = self._get_session_record(kwargs)
+        if record:
+            record.write(values)
+            return record
+        session_key = (kwargs.get("session_key") or "").strip()
+        if session_key and "session_key" in Summary._fields:
+            values["session_key"] = session_key
+        return Summary.create(values)
+
     def _save_summary_audio(self, kwargs, audio_bytes, filename, mimetype):
         if len(audio_bytes) > 12 * 1024 * 1024:
             return {"error": "Audio too large"}
@@ -150,9 +183,7 @@ class RealtimeAgentController(http.Controller):
         lead = self._find_lead(phone=phone, company=company)
         if lead:
             values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
+        record = self._upsert_summary_record(kwargs, values)
         attachment = request.env["ir.attachment"].sudo().create(
             {
                 "name": filename,
@@ -170,6 +201,9 @@ class RealtimeAgentController(http.Controller):
 
     def _save_abandoned_summary(self, kwargs):
         ICP = request.env["ir.config_parameter"].sudo()
+        existing = self._get_session_record(kwargs)
+        if existing and existing.attachment_id:
+            return {"id": existing.id, "summary": existing.summary}
         values = {
             "summary": "انتهت المكالمة بمغادرة الصفحة قبل اكتمال حفظ التسجيل.",
             "transcription": (kwargs.get("transcript") or "").strip(),
@@ -187,9 +221,7 @@ class RealtimeAgentController(http.Controller):
         lead = self._find_lead(phone=phone, company=company)
         if lead:
             values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
+        record = self._upsert_summary_record(kwargs, values)
         return {"id": record.id, "summary": values.get("summary")}
 
     def _prompt_has_mcp_tools(self, api_key, prompt_id):
@@ -281,6 +313,31 @@ class RealtimeAgentController(http.Controller):
 
         return {"value": client_secret}
 
+    @http.route("/realtime_agent/session_start", type="jsonrpc", auth="public", website=True, csrf=False)
+    def realtime_agent_session_start(self, **kwargs):
+        ICP = request.env["ir.config_parameter"].sudo()
+        Summary = self._summary_model()
+        session_key = uuid.uuid4().hex
+        values = {
+            "summary": "بدأت مكالمة من الموقع.",
+            "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
+            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
+            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
+            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
+            "duration_seconds": 0,
+            "call_source": "agent",
+            "caller_phone": kwargs.get("caller_phone") or "",
+            "caller_company": kwargs.get("caller_company") or "",
+        }
+        lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
+        if lead:
+            values["lead_id"] = lead.id
+        if "session_key" in Summary._fields:
+            values["session_key"] = session_key
+        values = {k: v for k, v in values.items() if k in Summary._fields}
+        record = Summary.create(values)
+        return {"summary_id": record.id, "session_key": session_key}
+
     @http.route("/realtime_agent/summary", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary(self, **kwargs):
         """Summarize the transcript and store it in CRM."""
@@ -309,7 +366,7 @@ class RealtimeAgentController(http.Controller):
             "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
             "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
             "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
-            "duration_seconds": kwargs.get("duration_seconds"),
+            "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
         }
         phone = kwargs.get("caller_phone") or ""
@@ -319,9 +376,7 @@ class RealtimeAgentController(http.Controller):
         lead = self._find_lead(phone=phone, company=company)
         if lead:
             values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
+        record = self._upsert_summary_record(kwargs, values)
         response = {"id": record.id, "summary": summary}
         if warning:
             response["warning"] = warning

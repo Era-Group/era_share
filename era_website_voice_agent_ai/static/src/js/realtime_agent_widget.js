@@ -25,6 +25,8 @@ let state = {
   unloadHandled: false,
   lifecycleWired: false,
   recorderFlushTimer: null,
+  summaryId: null,
+  sessionKey: "",
 };
 
 function qs(id) {
@@ -201,6 +203,8 @@ async function startAgent() {
   state.startedAt = Date.now();
   state.unloadHandled = false;
   state.finalizeContext = null;
+  state.summaryId = null;
+  state.sessionKey = "";
   state.transcript = [];
   state.assistantBuffer = "";
   if (!DISABLE_TRANSCRIPT) {
@@ -225,6 +229,24 @@ async function startAgent() {
   if (!EPHEMERAL_KEY) {
     console.error("Token response is missing value:", tok);
     throw new Error("Invalid token response from server.");
+  }
+
+  try {
+    const session = await rpcJson("/realtime_agent/session_start", {
+      prompt_id: cfg.promptId,
+      model: cfg.model,
+      voice: cfg.voice,
+      caller_phone: cfg.callerPhone,
+      caller_company: cfg.callerCompany,
+    });
+    if (session && !session.error) {
+      state.summaryId = session.summary_id || null;
+      state.sessionKey = session.session_key || "";
+    } else {
+      console.warn("Session start failed:", session?.error || "unknown");
+    }
+  } catch (err) {
+    console.warn("Session start request failed:", err);
   }
 
   // 2) WebRTC PeerConnection
@@ -397,6 +419,7 @@ async function submitSummary(payload) {
     if (res?.warning) {
       console.warn("Summary warning:", res.warning);
     }
+    if (res?.id && !state.summaryId) state.summaryId = res.id;
     console.log("Summary saved:", res);
   } catch (err) {
     console.error("Summary request failed:", err);
@@ -414,6 +437,7 @@ async function submitSummaryAudio(payload) {
     if (res?.warning) {
       console.warn("Summary audio warning:", res.warning);
     }
+    if (res?.id && !state.summaryId) state.summaryId = res.id;
     console.log("Summary audio saved:", res);
   } catch (err) {
     console.error("Summary audio request failed:", err);
@@ -449,6 +473,8 @@ function buildSummaryPayload() {
     model: state.sessionMeta?.model || "",
     voice: state.sessionMeta?.voice || "",
     duration_seconds: durationSeconds,
+    summary_id: state.summaryId || "",
+    session_key: state.sessionKey || "",
   };
 }
 
@@ -459,6 +485,8 @@ async function finalizeRecording() {
   const sessionMeta = ctx.sessionMeta || state.sessionMeta || {};
   const summaryPayload = ctx.summaryPayload || state.summaryPayload || null;
   const startedAt = ctx.startedAt || state.startedAt;
+  const summaryId = ctx.summaryId || state.summaryId || "";
+  const sessionKey = ctx.sessionKey || state.sessionKey || "";
   if (state.recordedChunks.length === 0) {
     state.recorder = null;
     if (summaryPayload) {
@@ -493,6 +521,8 @@ async function finalizeRecording() {
       caller_phone: sessionMeta?.callerPhone || "",
       caller_company: sessionMeta?.callerCompany || "",
       duration_seconds: durationSeconds,
+      summary_id: summaryId,
+      session_key: sessionKey,
     };
     await submitSummaryAudio(payload);
   } catch (err) {
@@ -517,6 +547,8 @@ function submitSummaryAudioBeacon(blob, ctx = null) {
   const sessionMeta = context.sessionMeta || state.sessionMeta || {};
   const summaryPayload = context.summaryPayload || state.summaryPayload || {};
   const startedAt = context.startedAt || state.startedAt;
+  const summaryId = context.summaryId || state.summaryId || "";
+  const sessionKey = context.sessionKey || state.sessionKey || "";
   const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
   const fallbackTranscript = summaryPayload?.transcript || "";
 
@@ -531,6 +563,8 @@ function submitSummaryAudioBeacon(blob, ctx = null) {
   formData.append("caller_phone", sessionMeta?.callerPhone || "");
   formData.append("caller_company", sessionMeta?.callerCompany || "");
   formData.append("duration_seconds", durationSeconds ? String(durationSeconds) : "");
+  formData.append("summary_id", String(summaryId || ""));
+  formData.append("session_key", sessionKey || "");
 
   let sent = false;
   if (navigator.sendBeacon) {
@@ -561,7 +595,21 @@ function handlePageUnload() {
     summaryPayload: summaryPayload || null,
     sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
     startedAt: state.startedAt,
+    summaryId: state.summaryId,
+    sessionKey: state.sessionKey,
   };
+
+  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
+    transcript: summaryPayload?.transcript || "",
+    prompt_id: snapshot.sessionMeta?.promptId || "",
+    model: snapshot.sessionMeta?.model || "",
+    voice: snapshot.sessionMeta?.voice || "",
+    caller_phone: snapshot.sessionMeta?.callerPhone || "",
+    caller_company: snapshot.sessionMeta?.callerCompany || "",
+    duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),
+    summary_id: snapshot.summaryId || "",
+    session_key: snapshot.sessionKey || "",
+  });
 
   if (state.recorder && state.recorder.state !== "inactive") {
     try {
@@ -579,27 +627,6 @@ function handlePageUnload() {
     return;
   }
 
-  if (summaryPayload?.transcript) {
-    sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
-      transcript: summaryPayload.transcript || "",
-      prompt_id: snapshot.sessionMeta?.promptId || "",
-      model: snapshot.sessionMeta?.model || "",
-      voice: snapshot.sessionMeta?.voice || "",
-      caller_phone: snapshot.sessionMeta?.callerPhone || "",
-      caller_company: snapshot.sessionMeta?.callerCompany || "",
-      duration_seconds: summaryPayload.duration_seconds || "",
-    });
-    return;
-  }
-
-  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
-    prompt_id: snapshot.sessionMeta?.promptId || "",
-    model: snapshot.sessionMeta?.model || "",
-    voice: snapshot.sessionMeta?.voice || "",
-    caller_phone: snapshot.sessionMeta?.callerPhone || "",
-    caller_company: snapshot.sessionMeta?.callerCompany || "",
-    duration_seconds: snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : "",
-  });
 }
 
 function stopAgent() {
@@ -615,6 +642,8 @@ function stopAgent() {
     summaryPayload: summaryPayload,
     sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
     startedAt: state.startedAt,
+    summaryId: state.summaryId,
+    sessionKey: state.sessionKey,
   };
   if (state.recorder && state.recorder.state !== "inactive") {
     try {
@@ -643,6 +672,8 @@ function stopAgent() {
   state.sessionMeta = null;
   state.remoteStream = null;
   state.unloadHandled = false;
+  state.summaryId = null;
+  state.sessionKey = "";
 
   // We don't togglePanel(false) immediately if we want to show the "تم الإنهاء" status
   setTimeout(() => {

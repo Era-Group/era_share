@@ -37,6 +37,7 @@ class CrmRealtimeCallSummary(models.Model):
     lead_id = fields.Many2one("crm.lead", string="Lead/Opportunity")
     caller_phone = fields.Char()
     caller_company = fields.Char()
+    session_key = fields.Char(copy=False, index=True)
 
     @api.depends("attachment_id", "attachment_name")
     def _compute_recording_link_html(self):

@@ -94,6 +94,80 @@ class RealtimeAgentController(http.Controller):
             return None, f"OpenAI transcription missing text: {payload}"
         return text, None
 
+    def _coerce_duration_seconds(self, value):
+        try:
+            if value in (None, "", False):
+                return None
+            return int(float(value))
+        except Exception:
+            return None
+
+    def _save_summary_audio(self, kwargs, audio_bytes, filename, mimetype):
+        if len(audio_bytes) > 12 * 1024 * 1024:
+            return {"error": "Audio too large"}
+
+        ICP = request.env["ir.config_parameter"].sudo()
+        api_key = ICP.get_param("openai.api_key")
+        if not api_key:
+            return {"error": "Missing system parameter: openai.api_key"}
+        summary_prompt = ICP.get_param("openai.realtime_summary_prompt") or None
+
+        fallback_transcript = (kwargs.get("transcript") or "").strip()
+        transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
+        warnings = []
+        transcription_error = None
+        if error:
+            transcription_error = error
+            transcript = ""
+            warnings.append(f"Transcription failed: {transcription_error}")
+        if not transcript and fallback_transcript:
+            transcript = fallback_transcript
+            warnings.append("Using client transcript fallback.")
+
+        summary, error = (None, None)
+        if transcript:
+            summary, error = self._summarize_transcript(api_key, transcript, summary_prompt)
+        if error:
+            summary = "تعذر تلخيص المكالمة تلقائيا."
+            warnings.append(f"Summary failed: {error}")
+        if not summary:
+            summary = "تعذر تلخيص المكالمة تلقائيا."
+
+        values = {
+            "summary": summary,
+            "transcription": transcript,
+            "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
+            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
+            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
+            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
+            "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
+            "call_source": "agent",
+        }
+        phone = kwargs.get("caller_phone") or ""
+        company = kwargs.get("caller_company") or ""
+        values["caller_phone"] = phone
+        values["caller_company"] = company
+        lead = self._find_lead(phone=phone, company=company)
+        if lead:
+            values["lead_id"] = lead.id
+        Summary = request.env["crm.realtime_call_summary"].sudo()
+        values = {k: v for k, v in values.items() if k in Summary._fields}
+        record = Summary.create(values)
+        attachment = request.env["ir.attachment"].sudo().create(
+            {
+                "name": filename,
+                "datas": base64.b64encode(audio_bytes),
+                "mimetype": mimetype,
+                "res_model": "crm.realtime_call_summary",
+                "res_id": record.id,
+            }
+        )
+        record.sudo().write({"attachment_id": attachment.id})
+        response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
+        if warnings:
+            response["warning"] = " | ".join(warnings)
+        return response
+
     def _prompt_has_mcp_tools(self, api_key, prompt_id):
         """Check if a prompt declares MCP tools to provide a clear error before session start."""
         if not prompt_id:
@@ -241,73 +315,46 @@ class RealtimeAgentController(http.Controller):
         except Exception as e:
             return {"error": "Invalid audio data", "details": str(e)}
 
-        if len(audio_bytes) > 12 * 1024 * 1024:
-            return {"error": "Audio too large"}
-
         filename = kwargs.get("audio_filename") or "realtime-call.webm"
         mimetype = kwargs.get("audio_mimetype") or "audio/webm"
+        return self._save_summary_audio(kwargs, audio_bytes, filename, mimetype)
 
-        ICP = request.env["ir.config_parameter"].sudo()
-        api_key = ICP.get_param("openai.api_key")
-        if not api_key:
-            return {"error": "Missing system parameter: openai.api_key"}
-        summary_prompt = ICP.get_param("openai.realtime_summary_prompt") or None
+    @http.route(
+        "/realtime_agent/summary_audio_beacon",
+        type="http",
+        auth="public",
+        methods=["POST"],
+        website=True,
+        csrf=False,
+    )
+    def realtime_agent_summary_audio_beacon(self, **post):
+        """Receive unload-safe multipart uploads from navigator.sendBeacon."""
+        audio_file = request.httprequest.files.get("audio_file")
+        if not audio_file:
+            return request.make_response(
+                json.dumps({"error": "Missing audio"}),
+                headers=[("Content-Type", "application/json")],
+                status=400,
+            )
+        try:
+            audio_bytes = audio_file.read() or b""
+        except Exception as e:
+            return request.make_response(
+                json.dumps({"error": "Invalid audio data", "details": str(e)}),
+                headers=[("Content-Type", "application/json")],
+                status=400,
+            )
 
-        fallback_transcript = (kwargs.get("transcript") or "").strip()
-        transcript, error = self._transcribe_audio(api_key, filename, mimetype, audio_bytes)
-        warnings = []
-        transcription_error = None
-        if error:
-            transcription_error = error
-            transcript = ""
-            warnings.append(f"Transcription failed: {transcription_error}")
-        if not transcript and fallback_transcript:
-            transcript = fallback_transcript
-            warnings.append("Using client transcript fallback.")
-
-        summary, error = (None, None)
-        if transcript:
-            summary, error = self._summarize_transcript(api_key, transcript, summary_prompt)
-        if error:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-            warnings.append(f"Summary failed: {error}")
-        if not summary:
-            summary = "تعذر تلخيص المكالمة تلقائيا."
-
-        values = {
-            "summary": summary,
-            "transcription": transcript,
-            "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
-            "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
-            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
-            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
-            "duration_seconds": kwargs.get("duration_seconds"),
-            "call_source": "agent",
-        }
-        phone = kwargs.get("caller_phone") or ""
-        company = kwargs.get("caller_company") or ""
-        values["caller_phone"] = phone
-        values["caller_company"] = company
-        lead = self._find_lead(phone=phone, company=company)
-        if lead:
-            values["lead_id"] = lead.id
-        Summary = request.env["crm.realtime_call_summary"].sudo()
-        values = {k: v for k, v in values.items() if k in Summary._fields}
-        record = Summary.create(values)
-        attachment = request.env["ir.attachment"].sudo().create(
-            {
-                "name": filename,
-                "datas": base64.b64encode(audio_bytes),
-                "mimetype": mimetype,
-                "res_model": "crm.realtime_call_summary",
-                "res_id": record.id,
-            }
+        filename = post.get("audio_filename") or audio_file.filename or "realtime-call.webm"
+        mimetype = post.get("audio_mimetype") or getattr(audio_file, "mimetype", None) or "audio/webm"
+        payload = dict(post)
+        response = self._save_summary_audio(payload, audio_bytes, filename, mimetype)
+        status = 400 if response.get("error") else 200
+        return request.make_response(
+            json.dumps(response),
+            headers=[("Content-Type", "application/json")],
+            status=status,
         )
-        record.sudo().write({"attachment_id": attachment.id})
-        response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
-        if warnings:
-            response["warning"] = " | ".join(warnings)
-        return response
 
     @http.route("/realtime_agent/sip/recording", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_sip_recording(self, **kwargs):

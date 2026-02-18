@@ -21,6 +21,9 @@ let state = {
   recordedChunks: [],
   recordingFinalized: false,
   summaryPayload: null,
+  finalizeContext: null,
+  unloadHandled: false,
+  lifecycleWired: false,
 };
 
 function qs(id) {
@@ -177,6 +180,8 @@ async function startAgent() {
     callerCompany: cfg.callerCompany,
   };
   state.startedAt = Date.now();
+  state.unloadHandled = false;
+  state.finalizeContext = null;
   state.transcript = [];
   state.assistantBuffer = "";
   if (!DISABLE_TRANSCRIPT) {
@@ -396,6 +401,23 @@ async function submitSummaryAudio(payload) {
   }
 }
 
+function sendJsonRpcBeacon(url, params = {}) {
+  if (!navigator.sendBeacon) return false;
+  const payload = JSON.stringify({
+    jsonrpc: "2.0",
+    method: "call",
+    params: params,
+    id: Math.floor(Math.random() * 1000000),
+  });
+  try {
+    const blob = new Blob([payload], { type: "application/json" });
+    return navigator.sendBeacon(url, blob);
+  } catch (err) {
+    console.warn("Beacon JSON-RPC send failed:", err);
+    return false;
+  }
+}
+
 function buildSummaryPayload() {
   const transcriptText = state.transcript
     .map((item) => `${item.role === "user" ? "User" : "Assistant"}: ${item.text}`)
@@ -414,10 +436,14 @@ function buildSummaryPayload() {
 async function finalizeRecording() {
   if (state.recordingFinalized) return;
   if (!state.recorder) return;
+  const ctx = state.finalizeContext || {};
+  const sessionMeta = ctx.sessionMeta || state.sessionMeta || {};
+  const summaryPayload = ctx.summaryPayload || state.summaryPayload || null;
+  const startedAt = ctx.startedAt || state.startedAt;
   if (state.recordedChunks.length === 0) {
     state.recorder = null;
-    if (state.summaryPayload) {
-      submitSummary(state.summaryPayload);
+    if (summaryPayload) {
+      submitSummary(summaryPayload);
       state.summaryPayload = null;
     }
     return;
@@ -435,18 +461,18 @@ async function finalizeRecording() {
       reader.readAsDataURL(blob);
     });
     if (!base64) return;
-    const durationSeconds = state.startedAt ? Math.round((Date.now() - state.startedAt) / 1000) : null;
-    const fallbackTranscript = state.summaryPayload?.transcript || "";
+    const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : null;
+    const fallbackTranscript = summaryPayload?.transcript || "";
     const payload = {
       audio_base64: base64,
       audio_mimetype: blob.type || "audio/webm",
       audio_filename: "realtime-call.webm",
       transcript: fallbackTranscript,
-      prompt_id: state.sessionMeta?.promptId || "",
-      model: state.sessionMeta?.model || "",
-      voice: state.sessionMeta?.voice || "",
-      caller_phone: state.sessionMeta?.callerPhone || "",
-      caller_company: state.sessionMeta?.callerCompany || "",
+      prompt_id: sessionMeta?.promptId || "",
+      model: sessionMeta?.model || "",
+      voice: sessionMeta?.voice || "",
+      caller_phone: sessionMeta?.callerPhone || "",
+      caller_company: sessionMeta?.callerCompany || "",
       duration_seconds: durationSeconds,
     };
     await submitSummaryAudio(payload);
@@ -456,11 +482,93 @@ async function finalizeRecording() {
     state.recorder = null;
     state.recordedChunks = [];
     state.summaryPayload = null;
+    state.finalizeContext = null;
     if (state.audioContext) {
       state.audioContext.close().catch(() => {});
       state.audioContext = null;
       state.mixerDest = null;
     }
+  }
+}
+
+function submitSummaryAudioBeacon(blob, ctx = null) {
+  if (!blob || blob.size === 0) return false;
+  const context = ctx || {};
+  const sessionMeta = context.sessionMeta || state.sessionMeta || {};
+  const summaryPayload = context.summaryPayload || state.summaryPayload || {};
+  const startedAt = context.startedAt || state.startedAt;
+  const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
+  const fallbackTranscript = summaryPayload?.transcript || "";
+
+  const formData = new FormData();
+  formData.append("audio_file", blob, "realtime-call.webm");
+  formData.append("audio_filename", "realtime-call.webm");
+  formData.append("audio_mimetype", blob.type || "audio/webm");
+  formData.append("transcript", fallbackTranscript);
+  formData.append("prompt_id", sessionMeta?.promptId || "");
+  formData.append("model", sessionMeta?.model || "");
+  formData.append("voice", sessionMeta?.voice || "");
+  formData.append("caller_phone", sessionMeta?.callerPhone || "");
+  formData.append("caller_company", sessionMeta?.callerCompany || "");
+  formData.append("duration_seconds", durationSeconds ? String(durationSeconds) : "");
+
+  let sent = false;
+  if (navigator.sendBeacon) {
+    try {
+      sent = navigator.sendBeacon("/realtime_agent/summary_audio_beacon", formData);
+    } catch (err) {
+      console.warn("Summary audio beacon failed:", err);
+    }
+  }
+  if (!sent) {
+    fetch("/realtime_agent/summary_audio_beacon", {
+      method: "POST",
+      body: formData,
+      keepalive: true,
+      credentials: "same-origin",
+    }).catch((err) => console.warn("Summary audio keepalive fallback failed:", err));
+  }
+  return sent;
+}
+
+function handlePageUnload() {
+  if (state.unloadHandled || state.recordingFinalized) return;
+  if (!state.running && (!state.recorder || state.recordedChunks.length === 0)) return;
+  state.unloadHandled = true;
+
+  const summaryPayload = state.summaryPayload || buildSummaryPayload();
+  const snapshot = {
+    summaryPayload: summaryPayload || null,
+    sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
+    startedAt: state.startedAt,
+  };
+
+  if (state.recorder && state.recorder.state !== "inactive") {
+    try {
+      state.recorder.requestData();
+    } catch (err) {
+      console.warn("Recorder requestData failed during unload:", err);
+    }
+  }
+
+  if (state.recordedChunks.length > 0) {
+    state.recordingFinalized = true;
+    const mimeType = state.recorder?.mimeType || "audio/webm";
+    const blob = new Blob(state.recordedChunks, { type: mimeType });
+    submitSummaryAudioBeacon(blob, snapshot);
+    return;
+  }
+
+  if (summaryPayload?.transcript) {
+    sendJsonRpcBeacon("/realtime_agent/summary", {
+      transcript: summaryPayload.transcript,
+      prompt_id: snapshot.sessionMeta?.promptId || "",
+      model: snapshot.sessionMeta?.model || "",
+      voice: snapshot.sessionMeta?.voice || "",
+      caller_phone: snapshot.sessionMeta?.callerPhone || "",
+      caller_company: snapshot.sessionMeta?.callerCompany || "",
+      duration_seconds: summaryPayload.duration_seconds || "",
+    });
   }
 }
 
@@ -473,6 +581,11 @@ function stopAgent() {
   }
   const summaryPayload = buildSummaryPayload();
   state.summaryPayload = summaryPayload;
+  state.finalizeContext = {
+    summaryPayload: summaryPayload,
+    sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
+    startedAt: state.startedAt,
+  };
   if (state.recorder && state.recorder.state !== "inactive") {
     try {
       state.recorder.stop();
@@ -498,7 +611,7 @@ function stopAgent() {
   state.startedAt = null;
   state.sessionMeta = null;
   state.remoteStream = null;
-  state.recordingFinalized = false;
+  state.unloadHandled = false;
 
   // We don't togglePanel(false) immediately if we want to show the "تم الإنهاء" status
   setTimeout(() => {
@@ -511,7 +624,15 @@ function stopAgent() {
   }
 }
 
+function wireLifecycleGuards() {
+  if (state.lifecycleWired) return;
+  state.lifecycleWired = true;
+  window.addEventListener("pagehide", handlePageUnload);
+  window.addEventListener("beforeunload", handlePageUnload);
+}
+
 function wireUI() {
+  wireLifecycleGuards();
   const fab = qs("oai-agent-fab");
   const stopBtn = qs("oai-agent-stop");
 

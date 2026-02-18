@@ -54,7 +54,6 @@
                     string="Play"
                     class="btn btn-primary"
                     invisible="not attachment_id"/>
-            <field name="attachment_datas" widget="audio" filename="attachment_name" mimetype="attachment_mimetype"/>
           </group>
         </sheet>
       </form>

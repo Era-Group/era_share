@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <template id="realtime_agent_fab" inherit_id="website.layout" name="Realtime Agent Floating Button">
+    <xpath expr="//body" position="inside">
+      <div id="oai-agent-widget"
+           class="oai-agent-widget"
+           t-if="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_enabled', 'True') in ('1', 'true', 'True')"
+           t-att-data-prompt-id="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_prompt_id') or ''"
+           t-att-data-model="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_model') or 'gpt-realtime'"
+           t-att-data-voice="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_voice') or 'alloy'"
+           t-att-data-caller-phone="(request.env.user.partner_id.phone or request.env.user.partner_id.mobile) if not request.env.user._is_public() else ''"
+           t-att-data-caller-company="request.env.user.partner_id.company_name if not request.env.user._is_public() else ''">
+
+        <button id="oai-agent-fab" class="oai-agent-fab btn btn-primary rounded-pill shadow" type="button" aria-label="Talk to agent">
+          <span class="oai-agent-fab__dot" aria-hidden="true"></span>
+          <span class="oai-agent-fab__text">تكلّم</span>
+        </button>
+
+        <div id="oai-agent-panel" class="oai-agent-panel d-none shadow-lg" role="dialog" aria-label="Realtime assistant" dir="rtl">
+          <div class="oai-agent-panel__title">المساعد الصوتي</div>
+          <div id="oai-agent-status" class="oai-agent-panel__status">جاري الاتصال...</div>
+
+          <div class="oai-agent-panel__actions">
+            <button id="oai-agent-stop" class="btn btn-lg btn-danger w-100 py-3" type="button">إنهاء المكالمة</button>
+          </div>
+        </div>
+      </div>
+    </xpath>
+  </template>
+</odoo>

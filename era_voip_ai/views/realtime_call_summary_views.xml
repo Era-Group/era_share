@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_crm_realtime_call_summary_list" model="ir.ui.view">
+    <field name="name">crm.realtime.call.summary.tree</field>
+    <field name="model">crm.realtime_call_summary</field>
+    <field name="arch" type="xml">
+      <list string="Realtime Call Summaries">
+        <field name="create_date"/>
+        <field name="name"/>
+        <field name="call_source"/>
+        <field name="duration_seconds"/>
+        <field name="summary"/>
+        <field name="attachment_id"/>
+        <button name="action_open_recording_player"
+                type="object"
+                string="Play"
+                class="btn btn-link"
+                invisible="not attachment_id"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_crm_realtime_call_summary_form" model="ir.ui.view">
+    <field name="name">crm.realtime.call.summary.form</field>
+    <field name="model">crm.realtime_call_summary</field>
+    <field name="arch" type="xml">
+      <form string="Realtime Call Summary">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="create_date" readonly="1"/>
+            <field name="duration_seconds"/>
+          </group>
+          <group>
+            <field name="lead_id"/>
+            <field name="caller_phone"/>
+            <field name="caller_company"/>
+          </group>
+          <group>
+            <field name="call_source"/>
+          </group>
+          <group>
+            <field name="summary" nolabel="1"/>
+          </group>
+          <group>
+            <field name="transcription" nolabel="1"/>
+          </group>
+          <group>
+            <field name="transcript" nolabel="1"/>
+          </group>
+          <group>
+            <field name="attachment_id"/>
+            <field name="attachment_datas" widget="audio" filename="attachment_name" mimetype="attachment_mimetype"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_crm_realtime_call_summary" model="ir.actions.act_window">
+    <field name="name">Calls</field>
+    <field name="res_model">crm.realtime_call_summary</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <record id="view_crm_realtime_call_summary_play_wizard_form" model="ir.ui.view">
+    <field name="name">crm.realtime.call.summary.play.wizard.form</field>
+    <field name="model">crm.realtime_call_summary_play_wizard</field>
+    <field name="arch" type="xml">
+      <form string="Call Recording" create="0" edit="0">
+        <sheet>
+          <group>
+            <field name="attachment_id" invisible="1"/>
+            <field name="audio" widget="audio" filename="filename"/>
+          </group>
+        </sheet>
+        <footer>
+          <button string="Close" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_crm_realtime_call_summary_from_lead" model="ir.actions.act_window">
+    <field name="name">Realtime Call Summaries</field>
+    <field name="res_model">crm.realtime_call_summary</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[("lead_id", "=", active_id)]</field>
+    <field name="context">{}</field>
+  </record>
+
+  <record id="view_crm_lead_form_inherit_realtime_call_summary" model="ir.ui.view">
+    <field name="name">crm.lead.form.realtime.call.summary</field>
+    <field name="model">crm.lead</field>
+    <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@class='oe_button_box']" position="inside">
+        <button type="action"
+                name="%(action_crm_realtime_call_summary_from_lead)d"
+                class="oe_stat_button"
+                icon="fa-phone">
+          <field name="realtime_call_summary_count" widget="statinfo" string="Calls"/>
+        </button>
+      </xpath>
+    </field>
+  </record>
+
+  <menuitem id="menu_crm_realtime_call_summary"
+            name="Calls"
+            parent="crm.crm_menu_root"
+            action="action_crm_realtime_call_summary"
+            sequence="120"/>
+</odoo>

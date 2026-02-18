@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="res_config_settings_view_form_inherit_openai_realtime" model="ir.ui.view">
+    <field name="name">res.config.settings.openai.realtime</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="inside">
+        <app string="OpenAI" name="openai_realtime" groups="base.group_system">
+          <block title="Realtime Voice Agent">
+            <setting string="OpenAI API Key" help="Stored in system parameters as openai.api_key (server-side only).">
+              <field name="openai_api_key" password="True" placeholder="sk-..."/>
+            </setting>
+
+            <setting string="Realtime Prompt ID" help="Published prompt id for your agent, e.g. pmpt_...">
+              <field name="openai_realtime_prompt_id" placeholder="pmpt_..."/>
+            </setting>
+
+            <setting string="Realtime Prompt Version" help="Optional prompt version to use for Realtime sessions (e.g. 2).">
+              <field name="openai_realtime_prompt_version" placeholder="2"/>
+            </setting>
+
+            <setting string="Realtime Model" help="Model for realtime sessions (default: gpt-realtime).">
+              <field name="openai_realtime_model" placeholder="gpt-realtime"/>
+            </setting>
+
+            <setting string="Voice" help="Voice name for audio output (default: alloy).">
+              <field name="openai_realtime_voice" placeholder="alloy"/>
+            </setting>
+
+            <setting string="AI VoIP User" help="User account that represents the AI agent in Odoo VoIP.">
+              <field name="openai_ai_voip_user_id" options="{'no_create': True}" domain="[('share', '=', False)]"/>
+            </setting>
+
+            <setting string="Show Website Widget" help="Show or hide the floating widget on the website.">
+              <field name="openai_realtime_widget_enabled"/>
+            </setting>
+
+            <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">
+              <field name="openai_realtime_summary_prompt" widget="text" placeholder="لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد"/>
+            </setting>
+          </block>
+        </app>
+      </xpath>
+    </field>
+  </record>
+</odoo>

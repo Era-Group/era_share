@@ -32,9 +32,7 @@ let state = {
 };
 
 function qs(id) {
-  const el = document.getElementById(id);
-  if (!el) console.warn(`Element #${id} not found`);
-  return el;
+  return document.getElementById(id);
 }
 
 function widgetEl() {
@@ -76,7 +74,6 @@ function togglePanel(show) {
 }
 
 async function rpcJson(url, params = {}) {
-  // Odoo JSON-RPC expects a specific wrapper
   const payload = {
     jsonrpc: "2.0",
     method: "call",
@@ -216,7 +213,6 @@ function sendUserText(text) {
 
   pushTranscript("user", trimmed);
 
-  // 1) create a user message item
   safeSend({
     type: "conversation.item.create",
     item: {
@@ -226,7 +222,6 @@ function sendUserText(text) {
     },
   });
 
-  // 2) ask model to respond (audio)
   safeSend({
     type: "response.create",
     response: {
@@ -261,7 +256,6 @@ async function startAgent() {
     throw new Error("Missing prompt id (openai.realtime_prompt_id). Configure it in Settings → OpenAI.");
   }
 
-  // 1) get ephemeral token from Odoo
   setStatus("جاري التجهيز...");
   const tok = await rpcJson("/realtime_agent/token", {});
   
@@ -295,37 +289,28 @@ async function startAgent() {
     console.warn("Session start request failed:", err);
   }
 
-  // 2) WebRTC PeerConnection
   const pc = new RTCPeerConnection();
 
-  // audio output element (model voice)
   const audioEl = document.createElement("audio");
   audioEl.autoplay = true;
   audioEl.className = "oai-agent-audio";
   document.body.appendChild(audioEl);
 
   pc.ontrack = (e) => {
-    console.log("Received remote track", e.streams[0]);
     audioEl.srcObject = e.streams[0];
     state.remoteStream = e.streams[0];
     attachRemoteToMixer(state.remoteStream);
-    // Ensure audio plays
     audioEl.play().catch(err => console.error("Audio play failed:", err));
   };
 
-  // microphone
-  console.log("Requesting microphone...");
   const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  console.log("Microphone acquired");
   micStream.getTracks().forEach((t) => pc.addTrack(t, micStream));
   initRecorder(micStream);
 
-  // data channel for events
   const dc = pc.createDataChannel("oai-events");
   dc.addEventListener("message", (e) => {
     try {
       const evt = JSON.parse(e.data);
-      console.log("DC Event:", evt.type, evt);
       if (!DISABLE_TRANSCRIPT && evt.type && evt.type.includes("input_audio_transcription")) {
         const userText =
           evt.transcript ||
@@ -362,24 +347,9 @@ async function startAgent() {
     }
   });
 
-  // 3) Offer/Answer via OpenAI Realtime calls endpoint
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-
-  console.log(`Sending SDP offer to OpenAI (Model: ${cfg.model})...`);
-  // Ensure the model is correct in the URL; OpenAI is sensitive to this.
-  // Force a known valid model for the SDP URL if it's the generic placeholder
   const modelUrl = cfg.model || "gpt-realtime";
-  
-  // LOG THE SDP TO SEE IF IT IS VALID
-  console.log("Offer SDP:", offer.sdp);
-  
-  console.log(`Debug - EPHEMERAL_KEY exists: ${!!EPHEMERAL_KEY}`);
-  console.log(`Debug - modelUrl used: ${modelUrl}`);
-
-  // THE FIX: OpenAI requires the Authorization header to be exactly 'Bearer ' + token.
-  console.log("Using Token:", EPHEMERAL_KEY.substring(0, 10) + "...");
-  // OpenAI Realtime Beta endpoint: https://api.openai.com/v1/realtime/calls
   const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls?model=" + modelUrl, {
     method: "POST",
     body: offer.sdp,
@@ -389,33 +359,16 @@ async function startAgent() {
       "OpenAI-Beta": "realtime=v1",
     },
   });
-  
-  // LOG RESPONSE FOR DEBUG
-  if (sdpResp.status === 400) {
-    const raw = await sdpResp.clone().text();
-    console.warn("400 Error Raw Content:", raw);
-  }
-  
-  // LOG FULL RESPONSE OBJECT
-  console.log("SDP Response status:", sdpResp.status);
-  console.log("SDP Response headers:", [...sdpResp.headers.entries()]);
-
   if (!sdpResp.ok) {
     const errorText = await sdpResp.text();
-    console.error("OpenAI SDP Error Raw:", errorText);
-    try {
-      const errorJson = JSON.parse(errorText);
-      console.error("OpenAI SDP Error JSON:", errorJson);
-    } catch (e) {}
+    console.error("OpenAI SDP error:", errorText);
     throw new Error(`Failed to create Realtime call: ${sdpResp.status} ${sdpResp.statusText}`);
   }
 
   const answerSdp = await sdpResp.text();
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
-  // 4) Once data channel is open, bind your published prompt (agent)
   dc.addEventListener("open", async () => {
-    console.log("Data channel opened");
     setStatus("متصل ✅");
 
     safeSend({
@@ -430,16 +383,13 @@ async function startAgent() {
       },
     });
 
-    // If user typed before connect, send it now
     if (state.pendingText) {
       sendUserText(state.pendingText);
       state.pendingText = null;
     }
   });
 
-  // Handle connection closure
   pc.addEventListener("connectionstatechange", () => {
-    console.log("Connection state:", pc.connectionState);
     if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
       setStatus("انقطع الاتصال");
       stopAgent();
@@ -447,7 +397,6 @@ async function startAgent() {
   });
 
   state.running = true;
-  console.log("Agent started successfully");
   state.pc = pc;
   state.dc = dc;
   state.micStream = micStream;
@@ -466,7 +415,6 @@ async function submitSummary(payload) {
       console.warn("Summary warning:", res.warning);
     }
     if (res?.id && !state.summaryId) state.summaryId = res.id;
-    console.log("Summary saved:", res);
   } catch (err) {
     console.error("Summary request failed:", err);
   }
@@ -484,7 +432,6 @@ async function submitSummaryAudio(payload) {
       console.warn("Summary audio warning:", res.warning);
     }
     if (res?.id && !state.summaryId) state.summaryId = res.id;
-    console.log("Summary audio saved:", res);
   } catch (err) {
     console.error("Summary audio request failed:", err);
   }
@@ -668,7 +615,6 @@ function handlePageUnload() {
 }
 
 function stopAgent() {
-  console.log("Stopping agent...");
   setStatus("تم الإنهاء");
   if (!DISABLE_TRANSCRIPT && state.assistantBuffer) {
     pushTranscript("assistant", state.assistantBuffer);
@@ -713,7 +659,6 @@ function stopAgent() {
   state.summaryId = null;
   state.sessionKey = "";
 
-  // We don't togglePanel(false) immediately if we want to show the "تم الإنهاء" status
   setTimeout(() => {
     if (!state.running) togglePanel(false);
   }, 2000);
@@ -750,9 +695,7 @@ function wireUI() {
       } catch (e) {
         console.error("Agent error:", e);
         setStatus("تعذر الاتصال: " + e.message);
-        // Don't stopAgent immediately if it failed to even start
         state.running = false;
-        // togglePanel(false); // Maybe keep panel open to show error?
       }
     });
   }
@@ -766,11 +709,6 @@ function wireUI() {
 
 }
 
-/**
- * Odoo 19 uses a modern JS framework.
- * While we could use PublicWidget, for a simple global floating button
- * we can just ensure wireUI runs even if the script loads after DOMContentLoaded.
- */
 if (document.readyState === "complete" || document.readyState === "interactive") {
   wireUI();
 } else {

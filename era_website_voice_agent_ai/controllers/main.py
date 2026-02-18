@@ -134,6 +134,15 @@ class RealtimeAgentController(http.Controller):
             f.write(chunk_bytes)
         return True
 
+    def _chunk_file_size(self, session_key):
+        path = self._chunk_file_path(session_key)
+        if not path or not os.path.exists(path):
+            return 0
+        try:
+            return os.path.getsize(path)
+        except Exception:
+            return 0
+
     def _read_chunk_file(self, session_key):
         path = self._chunk_file_path(session_key)
         if not path or not os.path.exists(path):
@@ -233,16 +242,19 @@ class RealtimeAgentController(http.Controller):
         if lead:
             values["lead_id"] = lead.id
         record = self._upsert_summary_record(kwargs, values)
-        attachment = request.env["ir.attachment"].sudo().create(
-            {
-                "name": filename,
-                "datas": base64.b64encode(audio_bytes),
-                "mimetype": mimetype,
-                "res_model": "crm.realtime_call_summary",
-                "res_id": record.id,
-            }
-        )
-        record.sudo().write({"attachment_id": attachment.id})
+        attachment_values = {
+            "name": filename,
+            "datas": base64.b64encode(audio_bytes),
+            "mimetype": mimetype,
+            "res_model": "crm.realtime_call_summary",
+            "res_id": record.id,
+        }
+        if record.attachment_id:
+            record.attachment_id.sudo().write(attachment_values)
+            attachment = record.attachment_id
+        else:
+            attachment = request.env["ir.attachment"].sudo().create(attachment_values)
+            record.sudo().write({"attachment_id": attachment.id})
         self._delete_chunk_file(kwargs.get("session_key"))
         response = {"id": record.id, "summary": summary, "attachment_id": attachment.id}
         if warnings:
@@ -412,6 +424,9 @@ class RealtimeAgentController(http.Controller):
             return {"error": "Empty audio chunk"}
         if len(chunk_bytes) > 2 * 1024 * 1024:
             return {"error": "Audio chunk too large"}
+        current_size = self._chunk_file_size(kwargs.get("session_key"))
+        if current_size + len(chunk_bytes) > self.MAX_AUDIO_BYTES:
+            return {"error": "Audio too large"}
         if not self._append_chunk_file(kwargs.get("session_key"), chunk_bytes):
             return {"error": "Invalid session key"}
         return {"ok": True, "summary_id": record.id}

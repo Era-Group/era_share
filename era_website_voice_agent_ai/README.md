@@ -16,7 +16,7 @@ Fill:
 - OpenAI API Key
 - Realtime Prompt ID (pmpt_...)
 - Realtime Prompt Version (optional)
-- Model (default: gpt-realtime; must match your Prompt's model)
+- Model (default: gpt-realtime-mini; must match your Prompt's model)
 - Voice (default: alloy)
 - Show Website Widget (toggle)
 - Summary Prompt (used for call analysis in Arabic)

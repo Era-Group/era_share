@@ -45,7 +45,7 @@ function getConfig() {
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
   return {
     promptId: w?.dataset?.promptId || "",
-    model: w?.dataset?.model || "gpt-realtime",
+    model: w?.dataset?.model || "gpt-realtime-mini",
     voice: voice,
     callerPhone: w?.dataset?.callerPhone || "",
     callerCompany: w?.dataset?.callerCompany || "",
@@ -349,7 +349,7 @@ async function startAgent() {
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-  const modelUrl = cfg.model || "gpt-realtime";
+  const modelUrl = cfg.model || "gpt-realtime-mini";
   const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls?model=" + modelUrl, {
     method: "POST",
     body: offer.sdp,

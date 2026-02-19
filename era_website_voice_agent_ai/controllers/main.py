@@ -19,9 +19,9 @@ class RealtimeAgentController(http.Controller):
     MAX_TRANSCRIBE_AUDIO_BYTES = 24 * 1024 * 1024
 
     def _get_realtime_model(self, ICP):
-        """Return the configured model or the default gpt-realtime."""
+        """Return the configured model or the default gpt-realtime-mini."""
         configured_model = ICP.get_param("openai.realtime_model")
-        return configured_model or "gpt-realtime"
+        return configured_model or "gpt-realtime-mini"
 
     def _summarize_transcript(self, api_key, transcript, system_prompt=None):
         url = "https://api.openai.com/v1/responses"

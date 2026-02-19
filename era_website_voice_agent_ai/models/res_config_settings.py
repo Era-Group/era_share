@@ -25,9 +25,9 @@ class ResConfigSettings(models.TransientModel):
 
     openai_realtime_model = fields.Char(
         string="Realtime Model",
-        default="gpt-realtime",
+        default="gpt-realtime-mini",
         config_parameter="openai.realtime_model",
-        help="Model used for Realtime sessions (default: gpt-realtime).",
+        help="Model used for Realtime sessions (default: gpt-realtime-mini).",
     )
 
     openai_realtime_voice = fields.Char(

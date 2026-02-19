@@ -20,8 +20,8 @@
               <field name="openai_realtime_prompt_version" placeholder="2"/>
             </setting>
 
-            <setting string="Realtime Model" help="Model for realtime sessions (default: gpt-realtime).">
-              <field name="openai_realtime_model" placeholder="gpt-realtime"/>
+            <setting string="Realtime Model" help="Model for realtime sessions (default: gpt-realtime-mini).">
+              <field name="openai_realtime_model" placeholder="gpt-realtime-mini"/>
             </setting>
 
             <setting string="Voice" help="Voice name for audio output (default: alloy).">

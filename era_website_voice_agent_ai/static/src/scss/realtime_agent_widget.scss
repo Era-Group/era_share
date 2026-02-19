@@ -12,20 +12,36 @@
 .oai-agent-fab {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 0;
   border: 0;
-  border-radius: 999px;
-  padding: 12px 20px;
+  border-radius: 50%;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.5);
+  color: #fff;
   box-shadow: 0 10px 25px rgba(0,0,0,.18);
   cursor: pointer;
   order: 2; // Keep button below panel
 }
 
+.oai-agent-fab.btn.btn-primary,
+.oai-agent-fab.btn.btn-primary:hover,
+.oai-agent-fab.btn.btn-primary:focus,
+.oai-agent-fab.btn.btn-primary:active {
+  background: rgba(212, 175, 55, 0.5);
+  border-color: transparent;
+  color: #fff;
+}
+
 .oai-agent-fab__dot {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
-  background: #00c853;
+  background: #fff;
+}
+
+.oai-agent-fab__text {
+  display: none;
 }
 
 .oai-agent-panel {

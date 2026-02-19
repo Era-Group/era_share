@@ -27,7 +27,7 @@
     # any module necessary for this one to work correctly
     'depends': ['base', 'hr'],
     'external_dependencies': {
-        'python': ['requests', 'hijri_converter'],
+        'python': ['requests', 'hijridate'],
     },
 
     # always loaded

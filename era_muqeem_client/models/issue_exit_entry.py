@@ -3,7 +3,7 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
+from hijridate import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 from markupsafe import Markup
 import logging
@@ -12,6 +12,11 @@ from datetime import datetime
 
 
 _logger = logging.getLogger(__name__)
+
+
+def _to_hijri_string(date_value):
+    hijri_date = Gregorian(date_value.year, date_value.month, date_value.day).to_hijri()
+    return f"{hijri_date.year:04d}-{hijri_date.month:02d}-{hijri_date.day:02d}"
 
 
 
@@ -64,9 +69,7 @@ class AccessIqama(models.TransientModel):
     def _compute_hijri_date(self):
         for record in self:
             if record.date_field:
-                gregorian_date = Gregorian.fromisoformat(str(record.date_field))
-                hijri_date = gregorian_date.to_hijri()
-                record.hijri_date_field = f"{hijri_date.year:04d}-{hijri_date.month:02d}-{hijri_date.day:02d}"
+                record.hijri_date_field = _to_hijri_string(record.date_field)
             else:
                 record.hijri_date_field = ''
 
@@ -158,7 +161,6 @@ class AccessIqama(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

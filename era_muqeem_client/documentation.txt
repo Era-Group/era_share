@@ -83,7 +83,7 @@ Key features include:
 
 ## Technical Details
 
-- **Dependencies**: base, hr, hijri_converter
+- **Dependencies**: base, hr, hijridate
 - **Models**:
   - hr.employee (extended) - adds Muqeem-specific fields and admin checks
   - api.access.iqama.wizard - handles exit/re-entry visa operations

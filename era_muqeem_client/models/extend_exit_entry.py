@@ -2,13 +2,18 @@ import json
 import requests
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
-from hijri_converter import Gregorian
+from hijridate import Gregorian
 from markupsafe import Markup, escape
 import logging
 from datetime import datetime
 
 
 _logger = logging.getLogger(__name__)
+
+
+def _to_hijri_string(date_value):
+    hijri_date = Gregorian(date_value.year, date_value.month, date_value.day).to_hijri()
+    return f"{hijri_date.year:04d}-{hijri_date.month:02d}-{hijri_date.day:02d}"
 
 
 
@@ -62,9 +67,7 @@ class ExtendExitEntry(models.TransientModel):
     def _compute_hijri_date(self):
         for record in self:
             if record.returnBefore:
-                gregorian_date = Gregorian.fromisoformat(str(record.returnBefore))
-                hijri_date = gregorian_date.to_hijri()
-                record.hijri_date_field = f"{hijri_date.year:04d}-{hijri_date.month:02d}-{hijri_date.day:02d}"
+                record.hijri_date_field = _to_hijri_string(record.returnBefore)
             else:
                 record.hijri_date_field = ''
 
@@ -230,4 +233,3 @@ class ExtendExitEntry(models.TransientModel):
                         record.update({'des': 'Fail'})
 
                         return company.show_popup(_('Error'), message_ar)
-

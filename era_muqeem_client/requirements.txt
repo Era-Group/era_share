@@ -1,2 +1,2 @@
-hijri_converter
+hijridate
 requests

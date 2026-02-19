@@ -1,7 +1,7 @@
 import json
 
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
+from hijridate import Gregorian
 import pytz
 from odoo.tools.misc import format_date
 from datetime import datetime
@@ -11,6 +11,7 @@ from datetime import datetime
 
 class TodayrequestReport(models.TransientModel):
     _name = "today.request.report.wizard"
+    _description = "Today Requests Report Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
     date_from= fields.Date(string='Date From')
@@ -62,10 +63,10 @@ class TodayrequestReport(models.TransientModel):
     def _compute_str_date(self):
         for record in self:
             if record.date_from and record.date_to:
-                gregorian_date_from = Gregorian.fromisoformat(str(record.date_from))
-                record.fromDate = f"{gregorian_date_from.year:04d}-{gregorian_date_from.month:02d}-{gregorian_date_from.day:02d}"
-                gregorian_date_to = Gregorian.fromisoformat(str(record.date_to))
-                record.toDate = f"{gregorian_date_to.year:04d}-{gregorian_date_to.month:02d}-{gregorian_date_to.day:02d}"
+                from_hijri = Gregorian(record.date_from.year, record.date_from.month, record.date_from.day).to_hijri()
+                record.fromDate = f"{from_hijri.year:04d}-{from_hijri.month:02d}-{from_hijri.day:02d}"
+                to_hijri = Gregorian(record.date_to.year, record.date_to.month, record.date_to.day).to_hijri()
+                record.toDate = f"{to_hijri.year:04d}-{to_hijri.month:02d}-{to_hijri.day:02d}"
             else:
                 record.fromDate = ''
                 record.toDate = ''

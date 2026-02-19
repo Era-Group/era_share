@@ -1,10 +1,7 @@
 import json
+from datetime import datetime
 
-import requests
-from odoo import _, fields, models
-from odoo.exceptions import ValidationError, UserError
-
-REQUEST_TIMEOUT = 60
+from odoo import _, api, fields, models
 
 
 class IssueIqama(models.TransientModel):
@@ -17,107 +14,80 @@ class IssueIqama(models.TransientModel):
         string='IqamaDuration',
         required=True,
     )
+    json_data = fields.Char(string='JSON Data', compute='_compute_json_data')
 
-    def _get_api_config(self):
-        params = self.env['ir.config_parameter'].sudo()
-        config = {
-            'base_url': params.get_param('era_muqeem_client.url'),
-            'username': params.get_param('era_muqeem_client.user_name'),
-            'password': params.get_param('era_muqeem_client.user_pass'),
-            'app_id': params.get_param('era_muqeem_client.user_app_id'),
-            'app_key': params.get_param('era_muqeem_client.user_app_key'),
-            # Backward compatibility with previous key naming.
-            'x_integrator_id': params.get_param('era_muqeem_client.user_x_integrator_id')
-            or params.get_param('era_muqeem_client.user_X_INTEGRATOR_ID'),
-        }
-        missing = [label for label, value in {
-            'Base URL': config['base_url'],
-            'User Name': config['username'],
-            'User Password': config['password'],
-            'App ID': config['app_id'],
-            'App Key': config['app_key'],
-            'X Integrator ID': config['x_integrator_id'],
-        }.items() if not value]
-        if missing:
-            raise ValidationError(_('Configuration missing: %s') % ', '.join(missing))
-        config['base_url'] = config['base_url'].rstrip('/')
-        return config
+    def convert_to_json(self):
+        for record in self:
+            data = {
+                'iqamaNumber': record.iqamaNumber,
+                'iqamaDuration': record.iqamaDuration,
+            }
+            return json.dumps(data)
+        return json.dumps({})
 
-    def get_token(self):
-        config = self._get_api_config()
-        url = "%s/api/authenticate" % config['base_url']
-
-        payload = json.dumps({
-            "username": config['username'],
-            "password": config['password'],
-        })
-        headers = {
-            'app-id': config['app_id'],
-            'app-key': config['app_key'],
-            'X-INTEGRATOR-ID': config['x_integrator_id'],
-            'Content-Type': 'application/json',
-        }
-
-        try:
-            response = requests.post(url, headers=headers, data=payload, timeout=REQUEST_TIMEOUT)
-            response.raise_for_status()
-            token = response.json().get('id_token')
-            if not token:
-                raise ValidationError(_("Failed to retrieve token"))
-            return token
-        except requests.exceptions.Timeout:
-            raise UserError(_("The request timed out. Please try again later."))
-        except requests.exceptions.RequestException as e:
-            raise UserError(_("An error occurred while connecting to the API: %s") % str(e))
+    @api.depends('iqamaNumber', 'iqamaDuration')
+    def _compute_json_data(self):
+        for record in self:
+            record.json_data = record.convert_to_json()
 
     def renew_iqama(self):
-        config = self._get_api_config()
-        url = "%s/api/v1/iqama/issue" % config['base_url']
+        json_data = self.json_data
+        url_muqeem = '11'
+        company = self.env.company
+        user_name, user_password = company._get_api_credentials_client()
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
 
-        headers = {
-            'app-id': config['app_id'],
-            'app-key': config['app_key'],
-            'Authorization': f'Bearer {self.get_token()}',
-            'X-INTEGRATOR-ID': config['x_integrator_id'],
-            'Content-Type': 'application/json',
+        vals = {
+            'name': _('Issue Iqama'),
+            'user': self.env.user.name,
+            'employee': self.employee_id.name,
+            'date': datetime.now(),
         }
+        record = self.env['client.requests'].create(vals)
 
-        payload = {
-            "iqamaNumber": self.iqamaNumber,
-            "iqamaDuration": self.iqamaDuration,
-        }
-        try:
-            response = requests.post(url, headers=headers, json=payload, timeout=REQUEST_TIMEOUT)
-            try:
-                response_data = response.json()
-            except ValueError:
-                raise UserError(_("Invalid response payload returned by Muqeem API."))
+        if isinstance(response_data, dict):
+            status_code = response_data.get('statusCode')
 
-            user_lang = self.env.user.lang
-            if response_data.get("message", {}).get("en") == "Error in input data ":
+            if status_code == 200:
+                datas_main = response_data.get('response_data') or {}
+                if isinstance(datas_main, list):
+                    datas_main = datas_main[0] if datas_main else {}
+
                 report_data = {
-                    "ar": "خطأ في البيانات المدخلة",
-                    "en": "Error in input data ",
-                    'user_lang': user_lang,
+                    'residentName': datas_main.get('residentName'),
+                    'translatedResidentName': datas_main.get('translatedResidentName') or False,
+                    'iqamaNumber': datas_main.get('iqamaNumber'),
+                    'versionNumber': datas_main.get('versionNumber'),
+                    'newIqamaExpiryDateHij': datas_main.get('newIqamaExpiryDateHij'),
+                    'newIqamaExpiryDateGre': datas_main.get('newIqamaExpiryDateGre'),
                 }
-            else:
+
+                if report_data['newIqamaExpiryDateGre']:
+                    self.employee_id.expriry_date_iqama = report_data['newIqamaExpiryDateGre']
+
                 self.employee_id.message_post(body=_('Issue Iqama'))
-                report_data = {
-                    'residentName': response_data.get('residentName'),
-                    'translatedResidentName': response_data.get('translatedResidentName') or False,
-                    'iqamaNumber': response_data.get('iqamaNumber'),
-                    'versionNumber': response_data.get('versionNumber'),
-                    'newIqamaExpiryDateHij': response_data.get('newIqamaExpiryDateHij'),
-                    'newIqamaExpiryDateGre': response_data.get('newIqamaExpiryDateGre'),
+                record.update({'des': _('Success')})
+
+                data_return = {
+                    'form': self.read()[0],
+                    'data': [report_data],
                 }
+                return self.env.ref("era_muqeem_client.renew_iqama_report_id").report_action(self, data=data_return)
 
-            data_return = {
-                'form': self.read()[0],
-                'data': [report_data],
-            }
+            if status_code in (500, 429, 401):
+                record.update({'des': _('Fail')})
+                return company.show_popup(_('Error'), response_data.get('message'))
 
-            return self.env.ref("era_muqeem_client.renew_iqama_report_id").report_action(self, data=data_return)
-        except requests.exceptions.Timeout:
-            raise UserError(_("The request timed out. Please try again later."))
-        except requests.exceptions.RequestException as e:
-            raise UserError(_("An error occurred while connecting to the API: %s") % str(e))
+            if status_code == 400:
+                record.update({'des': _('Fail')})
+                if response_data.get('fieldErrors'):
+                    error_messages = []
+                    for error in response_data.get('fieldErrors'):
+                        field = error.get('field')
+                        message = error.get('message')
+                        error_messages.append(f"{field}: {message}")
+                    return company.show_popup(_('Error'), '\n'.join(error_messages))
+                return company.show_popup(_('Error'), response_data.get('message'))
+
+        record.update({'des': _('Fail')})
+        return company.show_popup(_('Error'), _('Unexpected response from Muqeem service'))

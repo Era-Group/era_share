@@ -1,67 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Keep this XMLID to disable any previously installed settings extension. -->
     <record id="res_config_settings_api_view_form2" model="ir.ui.view">
-        <field name="name">res.config.settings.inherit</field>
+        <field name="name">res.config.settings.inherit.muqeem.disabled</field>
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="hr.res_config_settings_view_form"/>
+        <field name="active" eval="False"/>
         <field name="arch" type="xml">
-            <xpath expr="//block[@name='employees_setting_container']" position="after">
-                    <block title="Muqeem API" name="users_name_setting">
-                        <setting id="url_setting">
-                            <span class="o_form_label">
-                                Base URL
-                            </span>
-                            <field name="url" class="w-auto ps-3 fw-bold"/>
-                        </setting>
-                        <setting id="users_name_setting">
-                            <span class="o_form_label">
-                                User Name
-                            </span>
-                            <field name="user_name" class="w-auto ps-3 fw-bold"/>
-                        </setting>
-                        <setting id="users_pass_setting">
-                            <span class="o_form_label">
-                                User Password
-                            </span>
-                            <field name="user_pass" class="w-auto ps-3 fw-bold" password="1"/>
-                        </setting>
-                        <setting id="user_app_id_setting">
-                            <span class="o_form_label">
-                                App ID
-                            </span>
-                            <field name="user_app_id" class="w-auto ps-3 fw-bold"/>
-                        </setting>
-                        <setting id="user_app_key_setting">
-                            <span class="o_form_label">
-                                App Key
-                            </span>
-                            <field name="user_app_key" class="w-auto ps-3 fw-bold" password="1"/>
-                        </setting>
-                        <setting id="user_x_integrator_id_setting">
-                            <span class="o_form_label">
-                                X Integrator ID
-                            </span>
-                            <field name="user_x_integrator_id" class="w-auto ps-3 fw-bold"/>
-                        </setting>
-                        <setting id="env_setting">
-                            <span class="o_form_label">
-                                Environment
-                            </span>
-                            <field name="user_environment" class="w-auto ps-3 fw-bold" />
-                        </setting>
-                        <div class="o_form_label">
-    <span class="text-info">
-        للارشادات في طريقة الاشتراك: <a href="https://era.net.sa/hr-muqeem" target="_blank">https://era.net.sa/hr-muqeem</a>
-    </span>
-</div>
-
-                    </block>
-
-            </xpath>
+            <xpath expr="//block[@name='employees_setting_container']" position="inside"/>
         </field>
     </record>
-
-
-
-
 </odoo>

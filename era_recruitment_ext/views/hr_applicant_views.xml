@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_applicant_view_form_inherit_era_ai_match" model="ir.ui.view">
+        <field name="name">hr.applicant.view.form.inherit.era.ai.match</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="AI Match" name="ai_match" groups="hr_recruitment.group_hr_recruitment_user">
+                    <group>
+                        <button name="action_ai_analyze_cv" string="Analyze CV" type="object" class="btn-primary" invisible="not id"/>
+                        <field name="ai_match_last_run" readonly="1"/>
+                        <field name="ai_match_score_display" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="ai_match_summary" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="ai_match_strengths" readonly="1"/>
+                        <field name="ai_match_gaps" readonly="1"/>
+                    </group>
+                    <group groups="base.group_system">
+                        <field name="ai_match_raw_response" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

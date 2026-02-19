@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="era_recruitment_ext_ai_prompt_template" model="ir.config_parameter">
+            <field name="key">era_recruitment_ext.ai_prompt_template</field>
+            <field name="value"><![CDATA[You are an HR assistant. Evaluate how well the applicant matches the job.
+
+Return ONLY valid JSON with keys:
+- match_score: number from 0 to 100
+- summary: short paragraph
+- strengths: list of 3 to 6 bullet strings
+- gaps: list of 3 to 6 bullet strings
+The summary/strengths/gaps must be written in the user's language: $user_language.
+
+Job Title: $job_name
+Job Description:
+$job_description
+
+Job Requirements:
+$job_requirements
+
+Applicant Name: $applicant_name
+
+CV Text:
+$cv_text]]></field>
+        </record>
+    </data>
+</odoo>

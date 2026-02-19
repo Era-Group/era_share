@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_era_recruitment_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.era.recruitment.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="hr_recruitment.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='hr_recruitment']" position="inside">
+                <block title="AI Matching" name="recruitment_ai_matching">
+                    <setting id="era_recruitment_ext_ai_agent_setting" string="AI Agent" help="Select the AI agent used for CV match analysis.">
+                        <field name="era_recruitment_ext_ai_agent_id"/>
+                    </setting>
+                    <setting id="era_recruitment_ext_ai_prompt_setting" string="AI Prompt Template" help="Customize the prompt used for CV match analysis.">
+                        <field name="era_recruitment_ext_ai_prompt_template" placeholder="Use $applicant_name, $job_name, $job_description, $job_requirements, $cv_text, $user_language."/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

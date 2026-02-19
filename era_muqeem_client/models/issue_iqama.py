@@ -6,6 +6,7 @@ from odoo import _, api, fields, models
 
 class IssueIqama(models.TransientModel):
     _name = "issue.iqama.wizard"
+    _description = "Issue Iqama Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)

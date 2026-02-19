@@ -13,6 +13,7 @@ from datetime import datetime
 
 class RenewIqama(models.TransientModel):
     _name = "renew.iqama.wizard"
+    _description = "Renew Iqama Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)

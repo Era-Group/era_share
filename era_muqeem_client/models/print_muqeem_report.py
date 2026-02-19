@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 
 class PrintMuqeemReport(models.TransientModel):
     _name = "print.muqeem.report"
+    _description = "Print Muqeem Report Wizard"
 
 
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
@@ -152,7 +153,6 @@ class PrintMuqeemReport(models.TransientModel):
                         record.update({'des': _('Fail')})
 
                         return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

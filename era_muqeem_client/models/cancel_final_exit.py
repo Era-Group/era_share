@@ -12,6 +12,7 @@ from base64 import b64decode
 
 class CancelFinalExit(models.TransientModel):
     _name = "cancel.final.exit.wizard"
+    _description = "Cancel Final Exit Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
@@ -209,7 +210,6 @@ class CancelFinalExit(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

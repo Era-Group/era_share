@@ -11,6 +11,7 @@ from datetime import datetime
 
 class ReprintVisa(models.TransientModel):
     _name = "reprint.visa.wizard"
+    _description = "Reprint Exit Reentry Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
@@ -116,4 +117,3 @@ class ReprintVisa(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-

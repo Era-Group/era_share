@@ -12,6 +12,7 @@ from datetime import datetime
 
 class TransferIqama(models.TransientModel):
     _name = "transfer.iqama.wizard"
+    _description = "Transfer Iqama Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
@@ -185,5 +186,4 @@ class TransferIqama(models.TransientModel):
 
                         message_ar = "رقم صاحب العمل الذي تم إدخاله ليس ضمن المؤسسة"
                         return company.show_popup(_('Error'), message_ar)
-
 

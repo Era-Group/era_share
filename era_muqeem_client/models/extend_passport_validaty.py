@@ -7,6 +7,7 @@ from odoo.exceptions import ValidationError
 
 class ExtendPassValid(models.TransientModel):
     _name = "extend.passport.validaty"
+    _description = "Extend Passport Validity Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)

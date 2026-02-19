@@ -11,6 +11,7 @@ from base64 import b64decode
 
 class FinalExit(models.TransientModel):
     _name = "final.exit.wizard"
+    _description = "Final Exit Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)

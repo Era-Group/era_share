@@ -10,6 +10,7 @@ from datetime import datetime
 
 class CancellVisa(models.TransientModel):
     _name = "cancell.visa.wizard"
+    _description = "Cancel Exit Reentry Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident" ,readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
@@ -158,7 +159,6 @@ class CancellVisa(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

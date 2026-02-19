@@ -24,6 +24,7 @@ def _to_hijri_string(date_value):
 
 class AccessIqama(models.TransientModel):
     _name = "api.access.iqama.wizard"
+    _description = "Issue Exit Reentry Wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
     iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
@@ -161,6 +162,5 @@ class AccessIqama(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 

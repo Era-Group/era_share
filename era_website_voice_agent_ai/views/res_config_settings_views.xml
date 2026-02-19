@@ -32,6 +32,10 @@
               <field name="openai_realtime_widget_enabled"/>
             </setting>
 
+            <setting string="Widget Button Label" help="Text shown on the floating website widget button.">
+              <field name="openai_realtime_widget_label" placeholder="مكالمة"/>
+            </setting>
+
             <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">
               <field name="openai_realtime_summary_prompt" widget="text" placeholder="لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد"/>
             </setting>

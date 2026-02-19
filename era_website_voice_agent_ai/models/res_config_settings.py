@@ -44,6 +44,13 @@ class ResConfigSettings(models.TransientModel):
         help="Show or hide the website floating widget.",
     )
 
+    openai_realtime_widget_label = fields.Char(
+        string="Widget Button Label",
+        default="مكالمة",
+        config_parameter="openai.realtime_widget_label",
+        help="Text shown on the floating website widget button.",
+    )
+
     openai_realtime_summary_prompt = fields.Char(
         string="Summary Prompt",
         default="لخص المكالمة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد. (المتصل هو العميل)",

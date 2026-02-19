@@ -11,9 +11,14 @@
            t-att-data-caller-phone="(request.env.user.partner_id.phone or (request.env.user.partner_id.mobile if 'mobile' in request.env.user.partner_id._fields else '')) if not request.env.user._is_public() else ''"
            t-att-data-caller-company="request.env.user.partner_id.company_name if not request.env.user._is_public() else ''">
 
-        <button id="oai-agent-fab" class="oai-agent-fab btn btn-primary rounded-pill shadow" type="button" aria-label="Talk to agent">
+        <button id="oai-agent-fab"
+                class="oai-agent-fab btn btn-primary rounded-pill shadow"
+                type="button"
+                t-att-aria-label="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_label') or 'مكالمة'">
           <span class="oai-agent-fab__dot" aria-hidden="true"></span>
-          <span class="oai-agent-fab__text">مكالمة</span>
+          <span class="oai-agent-fab__text">
+            <t t-esc="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_label') or 'مكالمة'"/>
+          </span>
         </button>
 
         <div id="oai-agent-panel" class="oai-agent-panel d-none shadow-lg" role="dialog" aria-label="Realtime assistant" dir="rtl">

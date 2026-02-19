@@ -17,7 +17,7 @@
   border: 0;
   border-radius: 50%;
   padding: 16px;
-  background: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.8);
   color: #fff;
   box-shadow: 0 10px 25px rgba(0,0,0,.18);
   cursor: pointer;
@@ -41,7 +41,7 @@
 }
 
 .oai-agent-fab__text {
-  display: none;
+  display:block;
 }
 
 .oai-agent-panel {

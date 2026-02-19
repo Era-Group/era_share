@@ -12,7 +12,7 @@ class CancellVisa(models.TransientModel):
     _name = "cancell.visa.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident" ,readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
     feVisaNumber = fields.Char( string="Visa Number", required=True)
     confirm = fields.Boolean(string="Confirm", default=False,required=True)
 

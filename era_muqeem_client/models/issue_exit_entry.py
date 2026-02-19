@@ -21,7 +21,7 @@ class AccessIqama(models.TransientModel):
     _name = "api.access.iqama.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
     visa_duration = fields.Char(string="Number of days")
     visa_type = fields.Selection([('1', 'single'), ('2', 'multiple')], string='Visa Type', required=True)
     validity_visa = fields.Selection([('1', 'Number of days'), ('2', 'Return before date')], string='Validity Visa', required=True)

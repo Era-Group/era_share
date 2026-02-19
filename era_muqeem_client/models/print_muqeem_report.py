@@ -16,7 +16,7 @@ class PrintMuqeemReport(models.TransientModel):
     _name = "print.muqeem.report"
 
 
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
     language = fields.Selection([('ar','Arabic'),('en','English')],default="ar",string="Language",required=True)

@@ -11,11 +11,11 @@
                 <xpath expr="//field[@name='mobile_phone']" position="before">
                     <field name="is_admin" invisible="1"/>
 
-                    <field name="iqamaNumber" placeholder="'2123123123' for success and '2138453036' for fail"
+                    <field name="identification_id" placeholder="'2123123123' for success and '2138453036' for fail"
                            invisible="is_admin == False"/>
-                    <field name="iqamaNumber" placeholder="" invisible="is_admin == True"/>
-                    <field name="passportNumber" placeholder="'F45646567' for success " invisible="is_admin == False"/>
-                    <field name="passportNumber" placeholder="" invisible="is_admin == True"/>
+                    <field name="identification_id" placeholder="" invisible="is_admin == True"/>
+                    <field name="passport_id" placeholder="'F45646567' for success " invisible="is_admin == False"/>
+                    <field name="passport_id" placeholder="" invisible="is_admin == True"/>
 <!--                    <field name="last_visa_number"/>-->
                     <field name="borderNumber"/>
                     <field name="expriry_pass_date"/>

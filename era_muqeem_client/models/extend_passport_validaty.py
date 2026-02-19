@@ -11,12 +11,12 @@ class ExtendPassValid(models.TransientModel):
     _name = "extend.passport.validaty"
 
     employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
     type_update = fields.Selection([('extend', 'Extend'), ('renew', 'Renew')], string="TypeUpdate", required=True)
     newPassportExpiryDate = fields.Date(string="NewPassportExpiry")
     newPassportIssueDate = fields.Date(string="NewPassportIssueDate")
     newPassportExpiryDate2 = fields.Date(string="newPassportExpiryDate")
-    passportNumber = fields.Char(related="employee_id.passportNumber", string='CurrentPassportNumber')
+    passportNumber = fields.Char(related="employee_id.passport_id", string='CurrentPassportNumber')
     newPassportNumber = fields.Char(string='NewPassportNumber')
 
     def _get_api_config(self):

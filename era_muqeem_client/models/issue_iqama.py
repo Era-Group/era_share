@@ -11,7 +11,7 @@ class IssueIqama(models.TransientModel):
     _name = "issue.iqama.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
     iqamaDuration = fields.Selection(
         [('3', '3'), ('6', '6'), ('9', '9'), ('12', '12'), ('15', '15'), ('18', '18'), ('21', '21'), ('24', '24')],
         string='IqamaDuration',

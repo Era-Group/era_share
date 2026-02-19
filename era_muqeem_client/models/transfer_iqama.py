@@ -15,7 +15,7 @@ class TransferIqama(models.TransientModel):
     _name = "transfer.iqama.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
     newSponsorId = fields.Char( string='NewSponsor',required=True)
 
     json_data = fields.Char(string='JSON Data', compute='_compute_json_data')

@@ -13,7 +13,7 @@ class ReprintVisa(models.TransientModel):
     _name = "reprint.visa.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
     visa_number = fields.Char( string="Visa Number", readonly=False,required=True)
 
     json_data = fields.Char(string='JSON Data', compute='_compute_json_data')

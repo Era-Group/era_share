@@ -13,7 +13,7 @@ class FinalExit(models.TransientModel):
     _name = "final.exit.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident")
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
 
     json_data = fields.Char(string='JSON Data', compute='_compute_json_data')
 

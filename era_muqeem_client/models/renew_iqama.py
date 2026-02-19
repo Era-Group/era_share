@@ -16,7 +16,7 @@ class RenewIqama(models.TransientModel):
     _name = "renew.iqama.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
     iqamaDuration = fields.Selection([('3', '3'), ('6', '6'), ('9', '9'), ('12', '12'), ('15', '15'), ('18', '18'), ('21', '21'), ('24', '24')], string='IqamaDuration',required=True)
     json_data = fields.Char(string='JSON Data', compute='_compute_json_data')
 

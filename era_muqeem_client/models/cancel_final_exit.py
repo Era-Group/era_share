@@ -14,7 +14,7 @@ class CancelFinalExit(models.TransientModel):
     _name = "cancel.final.exit.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True,required=True)
     feVisaNumber = fields.Char( string="Visa Number", required=True)
     # num_visa=fields.Char(string='Number Visa')
     confirm = fields.Boolean(string="Confirm", default=False,required=True)

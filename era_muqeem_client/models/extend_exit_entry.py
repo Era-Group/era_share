@@ -18,7 +18,7 @@ class ExtendExitEntry(models.TransientModel):
     _name = "extend.exit.entry.wizard"
 
     employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    iqamaNumber = fields.Char(related="employee_id.identification_id", string="Iqama Number", readonly=True, required=True)
     visaNumber = fields.Char( string="Visa Number",  required=True)
     visa_duration = fields.Char(string="Number of days")
     validity_visa = fields.Selection([('1', 'Number of days'), ('2', 'Return before date')], string='Validity Visa', required=True)

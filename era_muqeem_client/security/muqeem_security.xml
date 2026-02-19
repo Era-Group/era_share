@@ -9,7 +9,6 @@
 
     <record id="group_muqeem_user" model="res.groups">
         <field name="name">Muqeem Responsible</field>
-        <field name="category_id" ref="era_muqeem_client.module_category_human_resources_Muqeem"/>
     </record>
 
 </odoo>

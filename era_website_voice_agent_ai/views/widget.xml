@@ -12,7 +12,7 @@
            t-att-data-caller-company="request.env.user.partner_id.company_name if not request.env.user._is_public() else ''">
 
         <button id="oai-agent-fab"
-                class="btn o-livechat-LivechatButton p-3 d-flex justify-content-center align-items-center shadow rounded-circle btn-secondary"
+                class="oai-agent-fab btn btn-primary rounded-pill shadow"
                 type="button"
                 t-att-aria-label="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_label') or 'مكالمة'">
           <span class="oai-agent-fab__dot" aria-hidden="true"></span>

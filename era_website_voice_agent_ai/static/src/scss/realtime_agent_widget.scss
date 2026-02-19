@@ -21,6 +21,20 @@
   order: 2; // Keep button below panel
 }
 
+.oai-agent-fab.btn.btn-primary {
+  background-color: #fff;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.oai-agent-fab.btn.btn-primary:hover,
+.oai-agent-fab.btn.btn-primary:focus,
+.oai-agent-fab.btn.btn-primary:active {
+  background-color: #fff;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
 .oai-agent-fab__dot {
   width: 10px;
   height: 10px;

@@ -15,7 +15,6 @@
                 class="oai-agent-fab btn btn-primary rounded-pill shadow"
                 type="button"
                 t-att-aria-label="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_label') or 'مكالمة'">
-          <span class="oai-agent-fab__dot" aria-hidden="true"></span>
           <span class="oai-agent-fab__text">
             <t t-esc="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_widget_label') or 'مكالمة'"/>
           </span>

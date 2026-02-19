@@ -3,63 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERA Muqeem Integration</title>
     <style>
-        .content-wrapper {
+        :root {
+            --primary: #0f4c5c;
+            --primary-soft: #e6f4f7;
+            --accent: #ffb703;
+            --text-main: #172026;
+            --text-muted: #4b5f6b;
+            --surface: #ffffff;
+            --border: #d8e4e8;
+            --bg: linear-gradient(160deg, #f6fbfd 0%, #eef6f9 40%, #ffffff 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Tajawal", "Cairo", "Segoe UI", sans-serif;
+            color: var(--text-main);
+            background: var(--bg);
+        }
+
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 16px 36px;
+        }
+
+        .hero {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--surface);
+            overflow: hidden;
+            box-shadow: 0 16px 42px rgba(15, 76, 92, 0.08);
+            animation: lift-in 0.8s ease;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 0;
+            align-items: stretch;
+        }
+
+        .hero-copy {
+            padding: 34px 30px;
+            background: radial-gradient(circle at top right, #f6fcff 0%, #ffffff 70%);
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            border: 1px solid #c7e4eb;
+            color: var(--primary);
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            color: var(--primary);
+            font-size: 30px;
+            line-height: 1.25;
+        }
+
+        .hero p {
+            margin: 0 0 10px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .hero-image {
+            min-height: 290px;
+            background: linear-gradient(180deg, #f0f9fb 0%, #fff 100%);
+            border-left: 1px solid var(--border);
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 20px; /* Adjust the gap as needed */
-            padding: 20px; /* Optional padding around the content */
+            padding: 20px;
         }
 
-        .oe_container {
-            width: 100%; /* Ensure full width of each section */
+        .hero-image img {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            border-radius: 12px;
         }
 
-        .oe_row {
-            margin-bottom: 20px; /* Space between rows within each section */
+        .cards {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+            padding: 18px 16px;
+            animation: lift-in 0.8s ease;
+        }
+
+        .card h3 {
+            margin: 0 0 6px;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .impact {
+            margin-top: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 20px 18px;
+            background: linear-gradient(140deg, #f8fcfd 0%, #ffffff 100%);
+            animation: lift-in 0.8s ease;
+        }
+
+        .impact h2 {
+            margin: 0 0 12px;
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .metric {
+            border: 1px solid #d7e7ec;
+            border-radius: 12px;
+            padding: 14px 12px;
+            background: #ffffff;
+        }
+
+        .metric strong {
+            display: block;
+            color: #113643;
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .metric span {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .cta {
+            margin-top: 20px;
+            border: 1px solid #efd28f;
+            border-radius: 16px;
+            background: linear-gradient(130deg, #fff9e8 0%, #fff4d0 100%);
+            padding: 20px 18px;
+            text-align: center;
+            animation: lift-in 0.8s ease;
+        }
+
+        .cta h2 {
+            margin: 0 0 8px;
+            color: #7d5a02;
+            font-size: 24px;
+        }
+
+        .cta p {
+            margin: 0 0 12px;
+            color: #6f5d2b;
+            line-height: 1.7;
+        }
+
+        .cta a {
+            display: inline-block;
+            text-decoration: none;
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .small-note {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #6a6f73;
+        }
+
+        @keyframes lift-in {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid,
+            .cards,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-image {
+                border-left: 0;
+                border-top: 1px solid var(--border);
+            }
+
+            .hero h1 {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 <body>
-
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced" style="display: flex; align-items: center;">
-        <div>
-            <img src="jawazat.png" style="width: 100%; height: auto; object-fit: cover;">
+<div class="wrapper">
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-copy" dir="rtl">
+                <span class="badge">Best-Selling Opportunity for Odoo HR & PRO Teams</span>
+                <h1>تكامل مقيم داخل Odoo بشكل احترافي وسريع</h1>
+                <p>Module جاهز لإدارة الإقامات والتأشيرات وتقارير مقيم من شاشة Odoo نفسها، مع تتبع كامل للعمليات حسب الوقت والمستخدم.</p>
+                <p><strong>Muqeem Integration API (Annual Subscription)</strong><br>Automate residency and exit/re-entry workflows without leaving Odoo.</p>
+            </div>
+            <div class="hero-image">
+                <img src="jawazat.png" alt="Muqeem integration workflow">
+            </div>
         </div>
+    </section>
 
-        <div dir="rtl">
-            <h2 class="oe_slogan" style="color:#875A7B;">التكامل مع منصة مُقيم - Muqeem integration API</h2>
-            <p>(Annual subscription)</p>
-            <p>تكامل API منصة "مقيم" مع نظام Odoo لإدارة التأشيرات والإقامة والتقارير. الخطوات: الاشتراك في API عبر منصة
-                "مقيم"، اختيار حزمة الاشتراك (API غير مباشر)، واختيار (مجموعة ارى) كشريك للتكامل. بعد تأكيد الاشتراك
-                والتحقق من الدفع، ستكون خدمات "مقيم" متاحة على منصة Odoo مع أذونات وصول محددة. (التواصل معنا
-                للاشتراك)</p>
+    <section class="cards" dir="rtl">
+        <article class="card">
+            <h3>الإقامات</h3>
+            <p>إصدار وتجديد الإقامة، نقل الخدمات، تحديث بيانات الجواز، وتقليل الإدخال اليدوي والأخطاء.</p>
+        </article>
+        <article class="card">
+            <h3>التأشيرات</h3>
+            <p>إصدار، تمديد، إلغاء، وإعادة طباعة تأشيرات الخروج والعودة والخروج النهائي من داخل Odoo.</p>
+        </article>
+        <article class="card">
+            <h3>التقارير والمتابعة</h3>
+            <p>تقرير مقيم وتقارير يومية للعمليات المنجزة حسب المستخدم والتاريخ لتسريع المراجعة.</p>
+        </article>
+        <article class="card">
+            <h3>جاهز للتشغيل التجاري</h3>
+            <p>واجهة واضحة، صلاحيات وصول، وسيناريو عملي يخدم شركات الموارد البشرية والخدمات الإدارية.</p>
+        </article>
+    </section>
+
+    <section class="impact">
+        <h2>Why This App Sells Well</h2>
+        <div class="impact-grid">
+            <div class="metric">
+                <strong>1 Platform</strong>
+                <span>Muqeem operations managed directly from Odoo.</span>
+            </div>
+            <div class="metric">
+                <strong>Less Manual Work</strong>
+                <span>Fewer repeated entries and less dependency on external portals.</span>
+            </div>
+            <div class="metric">
+                <strong>Audit Ready</strong>
+                <span>Operation tracking by user and timestamp for better governance.</span>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<div style="min-height: 500px; text-align: center;">
-    <h2>الإقامات</h2>
-    <p>اصدار وتجديد الاقامات. وتجديد الجواز والتعديل المعلومات ونقل الخدمات</p>
-    <h2>تقارير</h2>
-    <p>تقرير مقيم + تقارير بالعمليات المنجزة بالوقت والمستخدم</p>
-    <h2>إدارة مقيم</h2>
-    <p>إدارة مقيم من داخل اودو لضمان الدقة والسرعة والأمان</p>
-    <h2>التأشيرات</h2>
-    <p>اصدار وتعديل وإلغاء كافة انواع تأشيرات الخروج</p>
-</div>
-<div >
-<section class="oe_container">
-    <div class="oe_mt32" style="text-align: center;">
-        <h5 style="color: #007BFF; display: inline-block;">
-            <a href="https://era.net.sa/hr-muqeem" style="color: #875A7B; text-decoration: none; margin-right: 10px;">https://era.net.sa/hr-muqeem</a>
-            <span style="color: #875A7B;">لتشغيل هذا الموديول تحتاج عمل اشتراك مع مقيم وكذلك اشتراك مع مجموعة ارى</span>
-        </h5>
-    </div>
-</section>
+    <section class="cta" dir="rtl">
+        <h2>ابدأ تشغيل التكامل الآن</h2>
+        <p>لتشغيل هذا الموديول يلزم اشتراك في منصة مقيم + اشتراك التكامل مع مجموعة ارى.</p>
+        <a href="https://era.net.sa/hr-muqeem">https://era.net.sa/hr-muqeem</a>
+        <p class="small-note">For pricing and onboarding, contact ERA Group and enable your API package.</p>
+    </section>
+
+    <section class="hero" style="margin-top: 20px;">
+        <div class="hero-grid">
+            <div class="hero-image" style="border-left: 0; border-right: 1px solid var(--border);">
+                <img src="muqeem_services.png" alt="Muqeem services">
+            </div>
+            <div class="hero-copy" dir="rtl">
+                <span class="badge">Production-Ready Integration</span>
+                <h1 style="font-size: 28px;">حل موثوق للشركات التي تتعامل مع حجم عمليات كبير</h1>
+                <p>هذا التطبيق مناسب للشركات التي تحتاج تنفيذ سريع، متابعة دقيقة، وتحكم كامل في دورة الإقامة والتأشيرات.</p>
+                <p>يمكنك تقديمه كخدمة ذات قيمة عالية لعملائك داخل بيئة Odoo.</p>
+            </div>
+        </div>
+    </section>
 </div>
 </body>
 </html>
-

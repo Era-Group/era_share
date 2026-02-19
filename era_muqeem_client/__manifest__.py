@@ -17,8 +17,8 @@
     إصدار وتجديد ونقل إقامة - إصدار وإلغاء وتمديد تأشيرة الخروج والعودة والنهائي - تقرير مقيم - تقارير بالعمليات. وغيرها
         """,
 
-    'author': "Era group | Developer: Nancy Elghoal",
-    'email': "aqlan@era.net.sa ",
+    'author': "Era group",
+    'email': "info@era.net.sa ",
     'website': "https://era.net.sa",
     'category': 'Hr',
     'version': '19.0.1.0.0',

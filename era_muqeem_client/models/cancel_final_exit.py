@@ -48,7 +48,6 @@ class CancelFinalExit(models.TransientModel):
             'default_feVisaNumber': self.feVisaNumber,
             'default_confirm': self.confirm,
         })
-        print('context',context)
         return {
             'name': 'سوف يتم ارسال البيانات الى وزارة الداخلية بناءا على مسؤليتكم المباشرة',
             'type': 'ir.actions.act_window',
@@ -73,7 +72,6 @@ class CancelFinalExit(models.TransientModel):
 
         if self.confirm == False:
             raise ValidationError(_("You cant proceed in process until you check"))
-        company = self.env['res.company'].search([], limit=1)
         json_data = self.json_data
         url_muqeem = '2'
         company = self.env.company
@@ -199,7 +197,6 @@ class CancelFinalExit(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors', errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -212,8 +209,6 @@ class CancelFinalExit(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
-
 
 
 

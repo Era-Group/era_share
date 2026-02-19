@@ -94,7 +94,6 @@ class ExtendExitEntry(models.TransientModel):
         }
         record = self.env['client.requests'].create(vals)
 
-        print('&&&&response_data',response_data)
         statusCode=response_data.get('statusCode')
         lang=self.env.user.lang
 
@@ -204,7 +203,6 @@ class ExtendExitEntry(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors', errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -232,5 +230,4 @@ class ExtendExitEntry(models.TransientModel):
                         record.update({'des': 'Fail'})
 
                         return company.show_popup(_('Error'), message_ar)
-
 

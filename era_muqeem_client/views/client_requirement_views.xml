@@ -61,5 +61,6 @@
         name="Muqeem Log"
         parent="base.menu_users"
         action="action_view_client_requirements"
+        groups="era_muqeem_client.group_muqeem_user"
         sequence="5"/>
 </odoo>

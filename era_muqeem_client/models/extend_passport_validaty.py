@@ -1,63 +1,66 @@
 import json
-import base64
-from base64 import b64decode
+
 import requests
-from odoo import models, fields, api, _
-from hijri_converter import Gregorian
-from odoo.exceptions import AccessError, ValidationError, UserError
+from odoo import _, fields, models
+from odoo.exceptions import ValidationError, UserError
 
-
+REQUEST_TIMEOUT = 60
 
 
 class ExtendPassValid(models.TransientModel):
     _name = "extend.passport.validaty"
 
-    employee_id = fields.Many2one('hr.employee', string="Resident",readonly=True)
-    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True,required=True)
-    type_update=fields.Selection([('extend','Extend'),('renew','Renew')] ,string="TypeUpdate",required=True)
-    newPassportExpiryDate = fields.Date( string="NewPassportExpiry")
-    newPassportIssueDate = fields.Date( string="NewPassportIssueDate")
-    newPassportExpiryDate2 = fields.Date( string="newPassportExpiryDate")
-    passportNumber = fields.Char( related="employee_id.passportNumber",string='CurrentPassportNumber')
-    newPassportNumber = fields.Char( string='NewPassportNumber')
-    # location_city_code = fields.Selection(
-    #     string='Location City',
-    #     selection='_get_location_city_codes'
-    # )
+    employee_id = fields.Many2one('hr.employee', string="Resident", readonly=True)
+    iqamaNumber = fields.Char(related="employee_id.iqamaNumber", string="Iqama Number", readonly=True, required=True)
+    type_update = fields.Selection([('extend', 'Extend'), ('renew', 'Renew')], string="TypeUpdate", required=True)
+    newPassportExpiryDate = fields.Date(string="NewPassportExpiry")
+    newPassportIssueDate = fields.Date(string="NewPassportIssueDate")
+    newPassportExpiryDate2 = fields.Date(string="newPassportExpiryDate")
+    passportNumber = fields.Char(related="employee_id.passportNumber", string='CurrentPassportNumber')
+    newPassportNumber = fields.Char(string='NewPassportNumber')
 
+    def _get_api_config(self):
+        params = self.env['ir.config_parameter'].sudo()
+        config = {
+            'base_url': params.get_param('era_muqeem_client.url'),
+            'username': params.get_param('era_muqeem_client.user_name'),
+            'password': params.get_param('era_muqeem_client.user_pass'),
+            'app_id': params.get_param('era_muqeem_client.user_app_id'),
+            'app_key': params.get_param('era_muqeem_client.user_app_key'),
+            # Backward compatibility with previous key naming.
+            'x_integrator_id': params.get_param('era_muqeem_client.user_x_integrator_id')
+            or params.get_param('era_muqeem_client.user_X_INTEGRATOR_ID'),
+        }
+        missing = [label for label, value in {
+            'Base URL': config['base_url'],
+            'User Name': config['username'],
+            'User Password': config['password'],
+            'App ID': config['app_id'],
+            'App Key': config['app_key'],
+            'X Integrator ID': config['x_integrator_id'],
+        }.items() if not value]
+        if missing:
+            raise ValidationError(_('Configuration missing: %s') % ', '.join(missing))
+        config['base_url'] = config['base_url'].rstrip('/')
+        return config
 
     def get_token(self):
-        settings = self.env['ir.config_parameter']
-        mg_hostname = settings.sudo().get_param('era_muqeem_client.url')
-        print("mg_hostname",mg_hostname)
-
-        mg_user_name = settings.sudo().get_param('era_muqeem_client.user_name')
-
-        mg_user_password = settings.sudo().get_param('era_muqeem_client.user_pass')
-
-
-
-        mg_user_app_id = '13e43c0d'
-        mg_user_app_key = '1ed8919dc9370c11b942f19083dab09c'
-        mg_user_X_INTEGRATOR_ID = '80c1c102-b9f5-4273-aee3-9e4ca55333a2'
-
-        url = mg_hostname+"/api/authenticate"
+        config = self._get_api_config()
+        url = "%s/api/authenticate" % config['base_url']
 
         payload = json.dumps({
-            "username": mg_user_name,
-            "password": mg_user_password
+            "username": config['username'],
+            "password": config['password'],
         })
-        print('payload',payload)
         headers = {
-            'app-id': mg_user_app_id,
-            'app-key': mg_user_app_key,
-            'X-INTEGRATOR-ID': mg_user_X_INTEGRATOR_ID,
-            'Content-Type': 'application/json'
+            'app-id': config['app_id'],
+            'app-key': config['app_key'],
+            'X-INTEGRATOR-ID': config['x_integrator_id'],
+            'Content-Type': 'application/json',
         }
-        print('headers',headers)
 
         try:
-            response = requests.post(url, headers=headers, data=payload, timeout=60)  # Set timeout to 20 seconds
+            response = requests.post(url, headers=headers, data=payload, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             token = response.json().get('id_token')
             if not token:
@@ -69,127 +72,59 @@ class ExtendPassValid(models.TransientModel):
             raise UserError(_("An error occurred while connecting to the API: %s") % str(e))
 
     def extend_passport(self):
-        if self. type_update ==  'extend' :
-            settings = self.env['ir.config_parameter']
-            # mg_user_app_id = settings.sudo().get_param('era_muqeem_client.user_app_id')
-            # print("mg_user_app_id",mg_user_app_id)
-            #
-            # mg_user_app_key = settings.sudo().get_param('era_muqeem_client.user_app_key')
-            # print("mg_user_app_key",mg_user_app_key)
-            #
-            # mg_user_X_INTEGRATOR_ID = settings.sudo().get_param('era_muqeem_client.user_X_INTEGRATOR_ID')
+        if self.type_update != 'extend':
+            raise UserError(_("Renew passport flow is not supported in this version yet."))
 
-            mg_user_app_id = '13e43c0d'
-            mg_user_app_key = '1ed8919dc9370c11b942f19083dab09c'
-            mg_user_X_INTEGRATOR_ID = '80c1c102-b9f5-4273-aee3-9e4ca55333a2'
+        if not self.newPassportExpiryDate:
+            raise ValidationError(_('New passport expiry date is required.'))
+        if not self.passportNumber:
+            raise ValidationError(_('Current passport number is required.'))
 
-            mg_hostname = settings.sudo().get_param('era_muqeem_client.url')
-            print("mg_hostname",mg_hostname)
+        config = self._get_api_config()
+        url = "%s/api/v1/update-information/extend" % config['base_url']
+        headers = {
+            'app-id': config['app_id'],
+            'app-key': config['app_key'],
+            'Authorization': f'Bearer {self.get_token()}',
+            'X-INTEGRATOR-ID': config['x_integrator_id'],
+            'Content-Type': 'application/json',
+        }
+        payload = {
+            "iqamaNumber": self.iqamaNumber,
+            "newPassportExpiryDate": self.newPassportExpiryDate.strftime('%Y-%m-%d'),
+            "passportNumber": self.passportNumber,
+        }
 
-            url = mg_hostname+"/api/v1/update-information/extend"
+        try:
+            response = requests.post(url, headers=headers, json=payload, timeout=REQUEST_TIMEOUT)
+            try:
+                response_data = response.json()
+            except ValueError:
+                raise UserError(_("Invalid response payload returned by Muqeem API."))
+        except requests.exceptions.Timeout:
+            raise UserError(_("The request timed out. Please try again later."))
+        except requests.exceptions.RequestException as e:
+            raise UserError(_("An error occurred while connecting to the API: %s") % str(e))
 
-            headers = {
-                'app-id': mg_user_app_id,
-                'app-key':mg_user_app_key,
-                'Authorization': f'Bearer {self.get_token()}',
-                'Authorization': f'Bearer {self.get_token()}',
-                'X-INTEGRATOR-ID': mg_user_X_INTEGRATOR_ID,
-                'Content-Type': 'application/json'
+        user_lang = self.env.user.lang
+        if response.status_code == 200:
+            self.employee_id.expriry_pass_date = self.newPassportExpiryDate
+            self.employee_id.message_post(body=_('Extend Passport'))
+            report_data = {'message': 'The passport validity has been successfully extended'}
+        elif response_data.get("message", {}).get("en") == "Error in input data ":
+            report_data = {
+                "ar": "خطأ في البيانات المدخلة",
+                "en": "Error in input data ",
+                'user_lang': user_lang,
             }
-            print('headersextend',headers)
-            print('newPassportExpiryDate',self.newPassportExpiryDate)
-            format_date= self.newPassportExpiryDate.strftime('%Y-%m-%d')
-            payload = {
-                    "iqamaNumber": self.iqamaNumber,
-                    "newPassportExpiryDate": format_date,
-                    "passportNumber": self.passportNumber,
-                }
-
-            response = requests.post(url, headers=headers, json=payload)
-
-            response_data = response.json()
-            user_lang = self.env.user.lang
-
-            if response.status_code == 200:
-                self. employee_id.expriry_pass_date=self.newPassportExpiryDate
-                name = "Attachment Muqeem"
-                message = (_('Extend Passport '))
-                employee = self.employee_id
-                employee.message_post(
-                    body=message,
-                )
-
-                report_data = {
-                    'message':'The passport validity has been successfully extended',
-
-
-                }
-            elif response_data.get("message", {}).get("en") == "Error in input data ":
-                report_data={
-                    "ar": "خطأ في البيانات المدخلة",
-                    "en": "Error in input data ",
-                    'user_lang':user_lang
-                }
-
-
-
-            data_return = {
-                'form': self.read()[0],
-                'data': [report_data],
-            }
-
-            return self.env.ref("era_muqeem_client.extend_passport_report_id").report_action(self, data=data_return)
         else:
-            settings = self.env['ir.config_parameter']
-            mg_user_app_id = settings.sudo().get_param('era_muqeem_client.user_app_id')
-            mg_user_app_key = settings.sudo().get_param('era_muqeem_client.user_app_key')
-            mg_user_X_INTEGRATOR_ID = settings.sudo().get_param('era_muqeem_client.user_X_INTEGRATOR_ID')
+            message = response_data.get('message')
+            if isinstance(message, dict):
+                message = message.get('en') or message.get('ar')
+            return self.env.company.show_popup(_('Error'), message or _('Failed to extend passport data.'))
 
-            mg_hostname = settings.sudo().get_param('era_muqeem_client.url')
-            if mg_hostname == False:
-                raise ValidationError(_('You should enter Url'))
-            if mg_user_app_id == False:
-                raise ValidationError(_('You should enter User App id'))
-            if mg_user_app_key == False:
-                raise ValidationError(_('You should enter User App key'))
-            if mg_user_X_INTEGRATOR_ID == False:
-                raise ValidationError(_('You should enter X_INTEGRATOR_ID'))
-
-            url = mg_hostname + "/api/lookups/cities"
-
-            headers = {
-                'app-id': mg_user_app_id,
-                'app-key': mg_user_app_key,
-                'Authorization': f'Bearer {self.get_token()}',
-                'X-INTEGRATOR-ID': mg_user_X_INTEGRATOR_ID,
-                'Content-Type': 'application/json'
-            }
-            print('headers',headers)
-
-            response = requests.post(url, headers=headers, )
-
-            print(response.status_code)
-            print(response.text)
-            user_lang = self.env.user.lang
-
-            # if response.status_code == 200:
-            #     print("okkkkkkkk")
-            #     print('response.json()',response.json())
-            #     report_data = {
-            #         'message': 'The passport validity has been successfully extended',
-            #
-            #     }
-            #
-            # data_return = {
-            #     'form': self.read()[0],
-            #     'data': [report_data],
-            # }
-            #
-            # return self.env.ref("era_muqeem_client.extend_passport_report_id").report_action(self,
-            #                                                                                        data=data_return)
-
-            # def _get_location_city_codes(self):
-            #     # This is where you would normally fetch your list of codes
-            #     list_code = ['1', '2', '3']
-            #     # Convert the list of codes to the format required for the selection field
-            #     return [(code, code) for code in list_code]
+        data_return = {
+            'form': self.read()[0],
+            'data': [report_data],
+        }
+        return self.env.ref("era_muqeem_client.extend_passport_report_id").report_action(self, data=data_return)

@@ -14,8 +14,6 @@ class RequestTodayCardXlsx(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, residents, ):
-        print("MMMMMMMMMMMMMMMMMMMMMMM",data['form'])
-
         bold = workbook.add_format({'bold': True})
         bold = workbook.add_format({'bold': True})
         sheet = workbook.add_worksheet("Residents")
@@ -51,7 +49,6 @@ class RequestTodayCardXlsx(models.AbstractModel):
         row_body=8
         col_body=0
         for obj in data['data']:
-            print('obj',obj)
             for key,value in obj.items():
                 # sheet.write(row_body + 1, col, value, full_border)
                 sheet.write(row_body + 1, col, obj.get('requestNumber', ''), full_border)
@@ -63,7 +60,6 @@ class RequestTodayCardXlsx(models.AbstractModel):
                 sheet.write(row_body + 1, col+6, obj.get('errorMessage', ''), full_border)
                 sheet.write(row_body + 1, col+7, obj.get('date', ''), full_border)
             row_body+=1
-
 
 
 

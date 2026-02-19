@@ -37,9 +37,6 @@ class TransferIqama(models.TransientModel):
 
 
     def transfer_iqama(self):
-
-        company = self.env['res.company'].search([], limit=1)
-
         json_data = self.json_data
         url_muqeem = '10'
         company = self.env.company
@@ -59,8 +56,6 @@ class TransferIqama(models.TransientModel):
         }
         record = self.env['client.requests'].create(vals)
 
-
-        print('&&&&response_data',response_data)
         statusCode=response_data.get('statusCode')
         lang=self.env.user.lang
 
@@ -171,7 +166,6 @@ class TransferIqama(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors',errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -192,8 +186,6 @@ class TransferIqama(models.TransientModel):
 
                         message_ar = "رقم صاحب العمل الذي تم إدخاله ليس ضمن المؤسسة"
                         return company.show_popup(_('Error'), message_ar)
-
-
 
 
 

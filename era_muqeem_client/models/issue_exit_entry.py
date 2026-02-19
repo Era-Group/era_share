@@ -92,9 +92,7 @@ class AccessIqama(models.TransientModel):
         }
         record = self.env['client.requests'].create(vals)
 
-        print('&&&&response_data',response_data)
         statusCode=response_data.get('statusCode')
-        print('statusCode',statusCode)
         lang=self.env.user.lang
         if isinstance(response_data, dict):
             if statusCode == 200:
@@ -150,8 +148,6 @@ class AccessIqama(models.TransientModel):
                         if field == 'returnBefore' and lang =='ar_001':
                             field_ar ="حقل العودة قبل تاريخ"
                             message_ar ="العودة قبل تاريخ يجب ان يكون فى المستقبل "
-                            print('field', field)
-                            print('message', message)
                             error_messages.append(_('%s: %s') % (field_ar, message_ar))
                         else:
                             error_messages.append(_('%s: %s') % (field, message))
@@ -162,7 +158,6 @@ class AccessIqama(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

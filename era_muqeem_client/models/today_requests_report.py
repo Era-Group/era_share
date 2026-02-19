@@ -1,13 +1,10 @@
 import json
-import base64
-from base64 import b64decode
-import requests
+
 from odoo import models, fields, api, _
 from hijri_converter import Gregorian
-from odoo.exceptions import AccessError, ValidationError, UserError
 import pytz
 from odoo.tools.misc import format_date
-from datetime import datetime, date
+from datetime import datetime
 
 
 
@@ -21,6 +18,7 @@ class TodayrequestReport(models.TransientModel):
     fromDate = fields.Char(string='Datestr From',compute="_compute_str_date")
     toDate = fields.Char(string='Datestr To',compute="_compute_str_date")
     user_id= fields.Many2one('hr.employee', string="User")
+    user_name = fields.Char(string="User Name", compute="_compute_user_name")
     name = fields.Char(string="Name", compute='_compute_report_name', store=True)
 
     json_data = fields.Char(string='JSON Data', compute='_compute_json_data')
@@ -48,7 +46,6 @@ class TodayrequestReport(models.TransientModel):
         for rec in self:
             if rec.date_from and  rec.date_to:
                 DateTime_from = datetime(rec.date_from.year, rec.date_from.month, rec.date_from.day)
-                DateTime_to = datetime(rec.date_to.year, rec.date_to.month, rec.date_to.day)
                 lang =  self.env.user.lang
                 tz = self.env.user.tz or 'UTC'
                 local_tz = pytz.timezone(tz)
@@ -75,11 +72,8 @@ class TodayrequestReport(models.TransientModel):
     @api.depends('user_id')
     def _compute_user_name(self):
         for record in self:
-            if record.user_id :
-                recset=self.env['hr.employee'].search(['id','=',self.user_id.id])
-                print('recset',recset)
-                record.user_name=recset.name
-                print('name',record.user_name)
+            if record.user_id:
+                record.user_name = record.user_id.name
             else:
                 record.user_name = ''
 
@@ -127,7 +121,6 @@ class TodayrequestReport(models.TransientModel):
                     }
 
                     list_dict.append(report_data)
-                print('list_dict')
                 data_return = {
                         'form': self.read()[0],
                         'data': list_dict,
@@ -157,24 +150,19 @@ class TodayrequestReport(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors', errors)
                     error_messages = []
                     for error in errors:
 
                         field = error.get('field')
-                        print('field',field)
                         message = error.get('message')
-                        print('message',message)
                         if field == 'toDate' and lang == 'ar_001':
                             fieldar=' حقل الى تاريخ'
                             messagear='الى تاريخ يجب ان لايكون فى المستقبل'
                             error_messages.append(f"{fieldar}: {messagear}")
                             record.update({'des': ('الى تاريخ يجب ان لايكون فى المستقبل')})
-                            print('rec',record)
                         else:
                           error_messages.append(f"{field}: {message}")
                           record.update({'des': _('toDate must not be a future date')})
-                          print('record',record['des'])
 
 
                     return company.show_popup(_('Error'), '\n'.join(error_messages))
@@ -265,4 +253,3 @@ class TodayrequestReport(models.TransientModel):
     #                 record.update({'des': 'Fail'})
     #
     #                 return company.show_popup(_('Error'), response_data.get('message'))
-

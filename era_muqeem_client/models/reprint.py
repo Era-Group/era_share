@@ -34,9 +34,6 @@ class ReprintVisa(models.TransientModel):
             record.json_data = record.convert_to_json()
 
     def reprint_reentry_exit(self):
-
-        company = self.env['res.company'].search([], limit=1)
-
         json_data = self.json_data
         url_muqeem = '8'
         company = self.env.company
@@ -64,7 +61,6 @@ class ReprintVisa(models.TransientModel):
 
                 name = _("Attachment Muqeem")
                 era_visa = response_data.get('response_data').get('ervisaPDF')
-                print("$$$$",era_visa)
                 ervisaPDF = b64decode(era_visa, validate=True)
                 if ervisaPDF[:4] != b'%PDF':
                     raise ValidationError(_('Missing the PDF file signature'))
@@ -108,7 +104,6 @@ class ReprintVisa(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors', errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -121,6 +116,4 @@ class ReprintVisa(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
-
 

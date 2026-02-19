@@ -91,9 +91,6 @@ class PrintMuqeemReport(models.TransientModel):
                         raise ValidationError(_('Missing the PDF file signature'))
 
                     if content:
-                        if content[:4] == b'%PDF':
-                            print('PDF signature is valid')
-
                         attachment_name = _("Attachment Print Muqeem.pdf")
                         employee = self.employee_id
 
@@ -128,7 +125,7 @@ class PrintMuqeemReport(models.TransientModel):
 
                     return company.show_popup(_('Error'), response_data.get('message'))
                 elif statusCode == 429:
-                    record.updaterecord.update({'des': _('Fail')})
+                    record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
                 elif statusCode == 401:
@@ -156,7 +153,6 @@ class PrintMuqeemReport(models.TransientModel):
                         record.update({'des': _('Fail')})
 
                         return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

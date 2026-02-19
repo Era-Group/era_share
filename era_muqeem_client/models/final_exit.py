@@ -34,9 +34,6 @@ class FinalExit(models.TransientModel):
 
 
     def final_exit(self):
-
-        company = self.env['res.company'].search([], limit=1)
-
         json_data = self.json_data
         url_muqeem = '5'
         company = self.env.company
@@ -70,7 +67,6 @@ class FinalExit(models.TransientModel):
                             'occupation': datas_main.get('occupation'),
                             'visaNumber': datas_main.get('visaNumber'),
                         }
-                        print('report_data',report_data)
                         mess1 = _('Resident Name: {}').format(report_data['residentName'])
                         mess2 = _('Iqama Number: {}').format(report_data['iqamaNumber'])
                         mess3 = _('Passport Number: {}').format(report_data['passportNumber'])
@@ -139,4 +135,3 @@ class FinalExit(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-

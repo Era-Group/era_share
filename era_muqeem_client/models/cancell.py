@@ -143,12 +143,9 @@ class CancellVisa(models.TransientModel):
             elif statusCode == 400:
                 record.update({'des': _('Fail')})
 
-                print('400')
-
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors', errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -161,7 +158,6 @@ class CancellVisa(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

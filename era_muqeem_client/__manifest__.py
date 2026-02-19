@@ -26,11 +26,14 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'hr'],
+    'external_dependencies': {
+        'python': ['requests', 'hijri_converter'],
+    },
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
         'security/muqeem_security.xml',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
         'views/menus2.xml',
@@ -68,4 +71,3 @@
     ],
     "application": True,
 }
-

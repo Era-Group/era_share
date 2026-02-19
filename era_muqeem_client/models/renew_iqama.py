@@ -37,8 +37,7 @@ class RenewIqama(models.TransientModel):
 
 
     def renew_iqama(self):
-
-        company = self.env['res.company'].search([], limit=1)
+        company = self.env.company
 
         json_data = self.json_data
         url_muqeem = '7'
@@ -58,7 +57,6 @@ class RenewIqama(models.TransientModel):
         }
         record = self.env['client.requests'].create(vals)
 
-        print('response_code',response_data.get('statusCode'))
         lang=self.env.user.lang
 
         if isinstance(response_data, dict):
@@ -77,7 +75,6 @@ class RenewIqama(models.TransientModel):
 
                 new_iqama_date=report_data['newIqamaExpiryDateGre']
 
-                print('report_data', report_data)
                 mess1 = _('Resident Name: {}').format(report_data['residentName'])
                 mess2 = _('TranslatedResidentName: {}').format(report_data['translatedResidentName'])
                 mess3 = _('Iqama Number: {}').format(report_data['iqamaNumber'])
@@ -137,7 +134,6 @@ class RenewIqama(models.TransientModel):
                 if response_data.get('fieldErrors'):
 
                     errors = response_data.get('fieldErrors')
-                    print('errors',errors)
                     error_messages = []
                     for error in errors:
                         field = error.get('field')
@@ -145,8 +141,6 @@ class RenewIqama(models.TransientModel):
                         if field == 'iqamaDuration' and lang == 'ar_001':
                             field_ar = "حقل مدة التجديد"
                             message_ar = "مدة التجديد يجب ان يكون مساوى (3,6,9,12) شهور "
-                            print('field', field)
-                            print('message', message)
                             error_messages.append(_('%s: %s') % (field_ar, message_ar))
                         else:
                                 error_messages.append(f"{field}: {message}")
@@ -157,4 +151,3 @@ class RenewIqama(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-

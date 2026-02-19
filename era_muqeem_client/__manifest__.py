@@ -3,7 +3,7 @@
     'currency': 'USD',
     'price': 3490,
     'license': 'AGPL-3',
-    'name': "Era Muqeem ",
+    'name': "Era Muqeem Integration API",
 
     'summary': """
             تكامل مع منصة مُقيم - Muqeem integration API (Annual subscription) 
@@ -19,7 +19,7 @@
 
     'author': "Era group",
     'email': "info@era.net.sa ",
-    'website': "https://era.net.sa",
+    'website': "https://era.net.sa/hr-muqeem",
     'category': 'Hr',
     'version': '19.0.1.0.0',
     'images': ['static/description/muqeem_services.png'],

@@ -154,6 +154,12 @@ class RealtimeAgentController(http.Controller):
             return key
         return ""
 
+    def _normalize_client_call_id(self, value):
+        client_call_id = (value or "").strip().lower()
+        if re.fullmatch(r"[a-z0-9_-]{8,128}", client_call_id):
+            return client_call_id
+        return ""
+
     def _chunk_dir(self):
         path = os.path.join(tempfile.gettempdir(), "era_website_voice_agent_ai_chunks")
         os.makedirs(path, exist_ok=True)
@@ -234,6 +240,7 @@ class RealtimeAgentController(http.Controller):
         Summary = self._summary_model()
         summary_id = kwargs.get("summary_id")
         session_key = self._normalize_session_key(kwargs.get("session_key"))
+        client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
 
         if summary_id:
             try:
@@ -254,6 +261,8 @@ class RealtimeAgentController(http.Controller):
         # Fallback: locate by session_key to avoid duplicate records if summary_id is missing/mismatched.
         if session_key and "session_key" in Summary._fields:
             return Summary.search([("session_key", "=", session_key)], order="id desc", limit=1)
+        if client_call_id and "client_call_id" in Summary._fields:
+            return Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
         return Summary.browse()
 
     def _upsert_summary_record(self, kwargs, values):
@@ -264,10 +273,14 @@ class RealtimeAgentController(http.Controller):
             record.write(values)
             return record
         session_key = self._normalize_session_key(kwargs.get("session_key"))
+        client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
         if "session_key" in Summary._fields:
-            if not session_key:
+            if not session_key and not client_call_id:
                 return Summary.browse()
-            values["session_key"] = session_key
+            if session_key:
+                values["session_key"] = session_key
+        if "client_call_id" in Summary._fields and client_call_id:
+            values["client_call_id"] = client_call_id
         return Summary.create(values)
 
     def _save_summary_audio(self, kwargs, audio_bytes, filename, mimetype):
@@ -530,6 +543,17 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_session_start(self, **kwargs):
         ICP = request.env["ir.config_parameter"].sudo()
         Summary = self._summary_model()
+        client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
+
+        if client_call_id and "client_call_id" in Summary._fields:
+            existing = Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
+            if existing:
+                existing_key = existing.session_key or ""
+                if not existing_key and "session_key" in Summary._fields:
+                    existing_key = uuid.uuid4().hex
+                    existing.sudo().write({"session_key": existing_key})
+                return {"summary_id": existing.id, "session_key": existing_key}
+
         session_key = uuid.uuid4().hex
         values = {
             "summary": "بدأت مكالمة من الموقع.",
@@ -547,6 +571,8 @@ class RealtimeAgentController(http.Controller):
             values["lead_id"] = lead.id
         if "session_key" in Summary._fields:
             values["session_key"] = session_key
+        if "client_call_id" in Summary._fields and client_call_id:
+            values["client_call_id"] = client_call_id
         values = {k: v for k, v in values.items() if k in Summary._fields}
         record = Summary.create(values)
         return {"summary_id": record.id, "session_key": session_key}

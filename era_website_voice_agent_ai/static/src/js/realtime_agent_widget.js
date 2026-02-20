@@ -27,6 +27,7 @@ let state = {
   recorderFlushTimer: null,
   summaryId: null,
   sessionKey: "",
+  clientCallId: "",
   chunkSeq: 0,
   chunkUploadChain: Promise.resolve(),
   starting: false,
@@ -57,6 +58,11 @@ function notifyEmbedHost() {
 
 function widgetEl() {
   return document.getElementById("oai-agent-widget");
+}
+
+function createClientCallId() {
+  const rand = Math.random().toString(36).slice(2, 12);
+  return `call_${Date.now().toString(36)}_${rand}`;
 }
 
 function getConfig() {
@@ -366,6 +372,7 @@ async function startAgent() {
   state.finalizeContext = null;
   state.summaryId = null;
   state.sessionKey = "";
+  state.clientCallId = createClientCallId();
   state.chunkSeq = 0;
   state.chunkUploadChain = Promise.resolve();
   state.transcript = [];
@@ -398,6 +405,7 @@ async function startAgent() {
       voice: cfg.voice,
       caller_phone: cfg.callerPhone,
       caller_company: cfg.callerCompany,
+      client_call_id: state.clientCallId,
     });
     if (session && !session.error) {
       state.summaryId = session.summary_id || null;
@@ -592,6 +600,7 @@ function buildSummaryPayload() {
     duration_seconds: durationSeconds,
     summary_id: state.summaryId || "",
     session_key: state.sessionKey || "",
+    client_call_id: state.clientCallId || "",
   };
 }
 
@@ -604,6 +613,7 @@ async function finalizeRecording() {
   const startedAt = ctx.startedAt || state.startedAt;
   const summaryId = ctx.summaryId || state.summaryId || "";
   const sessionKey = ctx.sessionKey || state.sessionKey || "";
+  const clientCallId = ctx.clientCallId || state.clientCallId || "";
   if (state.recordedChunks.length === 0) {
     state.recorder = null;
     if (summaryPayload) {
@@ -632,6 +642,7 @@ async function finalizeRecording() {
       duration_seconds: durationSeconds,
       summary_id: summaryId,
       session_key: sessionKey,
+      client_call_id: clientCallId,
     };
     await submitSummaryAudio(payload);
   } catch (err) {
@@ -644,6 +655,7 @@ async function finalizeRecording() {
     state.finalizeContext = null;
     state.summaryId = null;
     state.sessionKey = "";
+    state.clientCallId = "";
     state.stopping = false;
     if (state.audioContext) {
       state.audioContext.close().catch(() => {});
@@ -661,6 +673,7 @@ function submitSummaryAudioBeacon(blob, ctx = null) {
   const startedAt = context.startedAt || state.startedAt;
   const summaryId = context.summaryId || state.summaryId || "";
   const sessionKey = context.sessionKey || state.sessionKey || "";
+  const clientCallId = context.clientCallId || state.clientCallId || "";
   const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
   const fallbackTranscript = summaryPayload?.transcript || "";
 
@@ -677,6 +690,7 @@ function submitSummaryAudioBeacon(blob, ctx = null) {
   formData.append("duration_seconds", durationSeconds ? String(durationSeconds) : "");
   formData.append("summary_id", String(summaryId || ""));
   formData.append("session_key", sessionKey || "");
+  formData.append("client_call_id", clientCallId || "");
 
   let sent = false;
   if (navigator.sendBeacon) {
@@ -709,6 +723,7 @@ function handlePageUnload() {
     startedAt: state.startedAt,
     summaryId: state.finalizeContext?.summaryId || state.summaryId,
     sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
+    clientCallId: state.finalizeContext?.clientCallId || state.clientCallId,
   };
 
   sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
@@ -721,6 +736,7 @@ function handlePageUnload() {
     duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),
     summary_id: snapshot.summaryId || "",
     session_key: snapshot.sessionKey || "",
+    client_call_id: snapshot.clientCallId || "",
   });
 
   if (state.recorder && state.recorder.state !== "inactive") {
@@ -757,6 +773,7 @@ function stopAgent() {
     startedAt: state.startedAt,
     summaryId: state.summaryId,
     sessionKey: state.sessionKey,
+    clientCallId: state.clientCallId,
   };
   if (state.recorder && state.recorder.state !== "inactive") {
     try {

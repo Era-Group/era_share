@@ -389,10 +389,28 @@ class RealtimeAgentController(http.Controller):
             if prompt_version:
                 payload["prompt"]["version"] = prompt_version
 
-        try:
-            r = requests.post(url, headers=headers, data=json.dumps(payload), timeout=20)
-        except Exception as e:
-            return {"error": f"OpenAI request failed: {e}"}
+        def _is_prompt_not_found_error(response_text):
+            text = (response_text or "").lower()
+            return "prompt with id" in text and "not found" in text
+
+        def _mint_session(session_payload):
+            try:
+                return requests.post(url, headers=headers, data=json.dumps(session_payload), timeout=20), None
+            except Exception as e:
+                return None, str(e)
+
+        r, request_error = _mint_session(payload)
+        if request_error:
+            return {"error": f"OpenAI request failed: {request_error}"}
+
+        # If configured prompt is missing/deleted, retry without prompt so widget can still work.
+        if r.status_code >= 400 and payload.get("prompt") and _is_prompt_not_found_error(r.text):
+            fallback_payload = dict(payload)
+            fallback_payload.pop("prompt", None)
+            fallback_resp, fallback_error = _mint_session(fallback_payload)
+            if fallback_error:
+                return {"error": f"OpenAI request failed: {fallback_error}"}
+            r = fallback_resp
 
         if r.status_code >= 400:
             return {"error": "OpenAI token mint failed", "status": r.status_code, "details": r.text}

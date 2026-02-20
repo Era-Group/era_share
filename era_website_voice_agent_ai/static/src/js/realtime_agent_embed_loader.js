@@ -1,4 +1,6 @@
 (function () {
+  const LOADER_STATE_KEY = "__eraRealtimeEmbedLoaderState";
+
   function currentScript() {
     if (document.currentScript) return document.currentScript;
     const scripts = document.getElementsByTagName("script");
@@ -26,6 +28,11 @@
 
   const baseUrl = normalizeBaseUrl(scriptEl);
   if (!baseUrl) return;
+
+  const loaderState = window[LOADER_STATE_KEY] || { initialized: false };
+  if (loaderState.initialized) return;
+  loaderState.initialized = true;
+  window[LOADER_STATE_KEY] = loaderState;
 
   const params = new URLSearchParams();
   const promptId = (scriptEl.dataset.promptId || "").trim();
@@ -77,10 +84,18 @@
   });
 
   if (document.body) {
-    document.body.appendChild(frame);
-  } else {
-    window.addEventListener("DOMContentLoaded", function () {
+    if (!document.getElementById(frame.id)) {
       document.body.appendChild(frame);
-    });
+    }
+  } else {
+    window.addEventListener(
+      "DOMContentLoaded",
+      function () {
+        if (!document.getElementById(frame.id)) {
+          document.body.appendChild(frame);
+        }
+      },
+      { once: true }
+    );
   }
 })();

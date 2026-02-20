@@ -2,6 +2,7 @@
 
 // Disable transcript processing to speed up voice conversations
 const DISABLE_TRANSCRIPT = true;
+const UI_WIRED_KEY = "__eraRealtimeWidgetUiWired";
 
 let state = {
   running: false,
@@ -831,6 +832,8 @@ function wireLifecycleGuards() {
 }
 
 function wireUI() {
+  if (window[UI_WIRED_KEY]) return;
+  window[UI_WIRED_KEY] = true;
   wireLifecycleGuards();
   const fab = qs("oai-agent-fab");
   const startBtn = qs("oai-agent-start");

@@ -342,10 +342,6 @@ async function startAgent() {
     const transcriptEl = qs("oai-agent-transcript");
     if (transcriptEl) transcriptEl.innerHTML = "";
   }
-  if (!cfg.promptId) {
-    throw new Error("Missing prompt id (openai.realtime_prompt_id). Configure it in Settings → OpenAI.");
-  }
-
   setStatus("جاري التجهيز...");
   const tok = await rpcJson("/realtime_agent/token", {});
   

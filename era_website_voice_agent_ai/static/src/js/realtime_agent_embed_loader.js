@@ -49,7 +49,7 @@
   const frame = document.createElement("iframe");
   frame.src = frameSrc;
   frame.title = "ERA Realtime Voice Agent";
-  frame.allow = "microphone; autoplay";
+  frame.allow = "microphone; autoplay; clipboard-read; clipboard-write";
   frame.setAttribute("aria-hidden", "false");
   frame.style.position = "fixed";
   frame.style.right = `${right}px`;

@@ -424,6 +424,39 @@ class RealtimeAgentController(http.Controller):
 
         return {"value": client_secret, "prompt_fallback": used_prompt_fallback}
 
+    @http.route("/realtime_agent/embed/frame", type="http", auth="public", website=True, csrf=False)
+    def realtime_agent_embed_frame(self, **kwargs):
+        """Render a standalone widget frame for third-party website embedding."""
+        ICP = request.env["ir.config_parameter"].sudo()
+        widget_enabled = (ICP.get_param("openai.realtime_widget_enabled", "1") or "1").lower() in (
+            "1",
+            "true",
+            "yes",
+            "y",
+            "t",
+        )
+        if not widget_enabled:
+            return request.make_response("")
+
+        def _pick(query_key, param_key, fallback=""):
+            value = (kwargs.get(query_key) or "").strip()
+            if value:
+                return value
+            return (ICP.get_param(param_key) or fallback).strip()
+
+        values = {
+            "prompt_id": _pick("prompt_id", "openai.realtime_prompt_id"),
+            "model": _pick("model", "openai.realtime_model", "gpt-realtime-mini"),
+            "voice": _pick("voice", "openai.realtime_voice", "alloy"),
+            "widget_label": _pick("widget_label", "openai.realtime_widget_label"),
+            "caller_phone": (kwargs.get("caller_phone") or "").strip(),
+            "caller_company": (kwargs.get("caller_company") or "").strip(),
+        }
+        response = request.render("era_website_voice_agent_ai.realtime_agent_embed_frame_page", values)
+        response.headers["X-Frame-Options"] = "ALLOWALL"
+        response.headers["Content-Security-Policy"] = "frame-ancestors *"
+        return response
+
     @http.route("/realtime_agent/session_start", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_session_start(self, **kwargs):
         ICP = request.env["ir.config_parameter"].sudo()

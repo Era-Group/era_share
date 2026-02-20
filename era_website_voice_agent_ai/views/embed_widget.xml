@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <template id="realtime_agent_embed_frame_page" name="Realtime Agent Embed Frame">
+    <html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <t t-call-assets="web.assets_frontend" t-css="true"/>
+        <t t-call-assets="web.assets_frontend" t-js="true"/>
+        <style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+          }
+          .oai-agent-widget {
+            right: 0 !important;
+            bottom: 0 !important;
+          }
+          .oai-agent-panel {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="oai-agent-widget"
+             class="oai-agent-widget"
+             t-att-data-prompt-id="prompt_id or ''"
+             t-att-data-model="model or 'gpt-realtime-mini'"
+             t-att-data-voice="voice or 'alloy'"
+             t-att-data-caller-phone="caller_phone or ''"
+             t-att-data-caller-company="caller_company or ''">
+
+          <button id="oai-agent-fab"
+                  class="oai-agent-fab btn btn-primary rounded-pill shadow"
+                  type="button"
+                  t-att-aria-label="widget_label or ''">
+            <span class="fa fa-align-center" style="transform: rotate(90deg);" aria-hidden="true"></span>
+            <span class="oai-agent-fab__text">
+              <t t-esc="widget_label or ''"/>
+            </span>
+          </button>
+
+          <div id="oai-agent-panel" class="oai-agent-panel d-none shadow-lg" role="dialog" aria-label="Realtime assistant" dir="rtl">
+            <div class="oai-agent-panel__title">المساعد الصوتي</div>
+            <div id="oai-agent-status" class="oai-agent-panel__status">أدخل رقم الجوال للمتابعة</div>
+
+            <div id="oai-agent-mobile-step" class="oai-agent-mobile-step">
+              <input id="oai-agent-mobile-input"
+                     class="oai-agent-mobile-input"
+                     type="tel"
+                     inputmode="tel"
+                     autocomplete="tel"
+                     placeholder="05xxxxxxxx"/>
+              <div id="oai-agent-mobile-error" class="oai-agent-mobile-error d-none"></div>
+              <button id="oai-agent-start" class="btn btn-primary w-100 py-2" type="button">متابعة</button>
+            </div>
+
+            <div id="oai-agent-call-actions" class="oai-agent-panel__actions d-none">
+              <button id="oai-agent-stop" class="btn btn-lg btn-danger w-100 py-3" type="button">إنهاء المكالمة</button>
+            </div>
+          </div>
+        </div>
+      </body>
+    </html>
+  </template>
+</odoo>

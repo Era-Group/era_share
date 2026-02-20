@@ -15,6 +15,7 @@
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
         "views/widget.xml",
+        "views/embed_widget.xml",
         "views/realtime_call_summary_views.xml",
     ],
     "assets": {

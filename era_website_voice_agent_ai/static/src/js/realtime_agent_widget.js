@@ -35,6 +35,24 @@ function qs(id) {
   return document.getElementById(id);
 }
 
+function notifyEmbedHost() {
+  if (!window.parent || window.parent === window) return;
+  const panel = qs("oai-agent-panel");
+  const isOpen = !!(panel && !panel.classList.contains("d-none"));
+  const payload = {
+    source: "era-realtime-widget",
+    type: "resize",
+    width: isOpen ? 360 : 92,
+    height: isOpen ? 560 : 92,
+    open: isOpen,
+  };
+  try {
+    window.parent.postMessage(payload, "*");
+  } catch (_err) {
+    // no-op
+  }
+}
+
 function widgetEl() {
   return document.getElementById("oai-agent-widget");
 }
@@ -161,6 +179,7 @@ function togglePanel(show) {
   const panel = qs("oai-agent-panel");
   if (!panel) return;
   panel.classList.toggle("d-none", !show);
+  notifyEmbedHost();
 }
 
 async function rpcJson(url, params = {}) {
@@ -834,8 +853,10 @@ function wireUI() {
 
 if (document.readyState === "complete" || document.readyState === "interactive") {
   wireUI();
+  notifyEmbedHost();
 } else {
   document.addEventListener("DOMContentLoaded", () => {
     wireUI();
+    notifyEmbedHost();
   });
 }

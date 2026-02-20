@@ -33,3 +33,24 @@ Standard Odoo VoIP calls and SIP webhook ingestion are intentionally disabled in
 
 ## Security Note
 The OpenAI API key is stored server-side. The browser only receives a short-lived token via `/realtime_agent/token`.
+
+## External Website Embed
+Use this script on any external website:
+
+```html
+<script
+  src="https://crm.era.net.sa/era_website_voice_agent_ai/static/src/js/realtime_agent_embed_loader.js"
+  data-base-url="https://crm.era.net.sa"
+  data-model="gpt-realtime-mini"
+  data-voice="alloy"
+  data-label="تحدث معنا"
+  data-right="14"
+  data-bottom="14"
+  data-z-index="2147483000">
+</script>
+```
+
+Optional attributes:
+- `data-prompt-id`: Override the prompt for this embed only.
+- `data-caller-company`: Pre-fill company name in saved summaries.
+- `data-closed-width` / `data-closed-height`: Control button-only frame size.

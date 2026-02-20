@@ -412,7 +412,9 @@ async function startAgent() {
     session_key: state.sessionKey || "",
   });
   const promptFallback = !!tok?.prompt_fallback;
+  const interruptResponseEnabled = !!tok?.interrupt_response_enabled;
   state.sessionMeta.promptFallback = promptFallback;
+  state.sessionMeta.interruptResponseEnabled = interruptResponseEnabled;
 
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
@@ -511,6 +513,10 @@ async function startAgent() {
     const sessionUpdate = {
       model: cfg.model,
       voice: cfg.voice,
+      turn_detection: {
+        type: "server_vad",
+        interrupt_response: !!state.sessionMeta?.interruptResponseEnabled,
+      },
       input_audio_transcription: {
         model: "gpt-4o-mini-transcribe",
       },

@@ -616,6 +616,9 @@ class RealtimeAgentController(http.Controller):
         voice = raw_voice or "alloy"
         if voice == "marin":
             voice = "alloy"
+        interrupt_response_enabled = self._is_truthy(
+            ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
+        )
         prompt_id = ICP.get_param("openai.realtime_prompt_id")
         prompt_version = ICP.get_param("openai.realtime_prompt_version")
 
@@ -641,6 +644,10 @@ class RealtimeAgentController(http.Controller):
             "model": model,
             "voice": voice,
             "modalities": ["audio", "text"],
+            "turn_detection": {
+                "type": "server_vad",
+                "interrupt_response": interrupt_response_enabled,
+            },
             "instructions": "You are a helpful assistant.",
         }
         used_prompt_fallback = False
@@ -681,7 +688,11 @@ class RealtimeAgentController(http.Controller):
         if not client_secret:
             return {"error": "No client_secret returned by OpenAI", "details": data}
 
-        return {"value": client_secret, "prompt_fallback": used_prompt_fallback}
+        return {
+            "value": client_secret,
+            "prompt_fallback": used_prompt_fallback,
+            "interrupt_response_enabled": interrupt_response_enabled,
+        }
 
     @http.route("/realtime_agent/embed/frame", type="http", auth="public", website=True, csrf=False)
     def realtime_agent_embed_frame(self, **kwargs):

@@ -37,6 +37,13 @@ class ResConfigSettings(models.TransientModel):
         help="Voice name for audio output (default: alloy).",
     )
 
+    openai_realtime_interrupt_response_enabled = fields.Boolean(
+        string="Allow Agent Interruption",
+        default=False,
+        config_parameter="openai.realtime_interrupt_response_enabled",
+        help="If enabled, server VAD can interrupt the current assistant response when the user starts speaking.",
+    )
+
     openai_realtime_widget_enabled = fields.Boolean(
         string="Show Widget Inside Website",
         default=True,

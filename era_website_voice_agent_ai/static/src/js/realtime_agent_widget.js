@@ -29,6 +29,8 @@ let state = {
   sessionKey: "",
   chunkSeq: 0,
   chunkUploadChain: Promise.resolve(),
+  starting: false,
+  stopping: false,
 };
 
 function qs(id) {
@@ -144,18 +146,21 @@ function collectVisitorMobileNumber() {
 }
 
 async function startAgentFromPanel() {
+  if (state.starting || state.running) return;
   const mobileNumber = collectVisitorMobileNumber();
   if (!mobileNumber) return;
   const w = widgetEl();
   if (w) w.dataset.callerPhone = mobileNumber;
 
   setStartButtonLoading(true);
+  state.starting = true;
   setStatus("جاري الاتصال...");
   try {
     await startAgent();
     showMobileStep(false);
     showCallActions(true);
   } finally {
+    state.starting = false;
     setStartButtonLoading(false);
   }
 }
@@ -346,6 +351,7 @@ function sendUserText(text) {
 }
 
 async function startAgent() {
+  if (state.running || state.starting && state.pc) return;
   const cfg = getConfig();
   state.sessionMeta = {
     promptId: cfg.promptId,
@@ -356,6 +362,7 @@ async function startAgent() {
   };
   state.startedAt = Date.now();
   state.unloadHandled = false;
+  state.stopping = false;
   state.finalizeContext = null;
   state.summaryId = null;
   state.sessionKey = "";
@@ -635,6 +642,9 @@ async function finalizeRecording() {
     state.recordedChunks = [];
     state.summaryPayload = null;
     state.finalizeContext = null;
+    state.summaryId = null;
+    state.sessionKey = "";
+    state.stopping = false;
     if (state.audioContext) {
       state.audioContext.close().catch(() => {});
       state.audioContext = null;
@@ -697,8 +707,8 @@ function handlePageUnload() {
     summaryPayload: summaryPayload || null,
     sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
     startedAt: state.startedAt,
-    summaryId: state.summaryId,
-    sessionKey: state.sessionKey,
+    summaryId: state.finalizeContext?.summaryId || state.summaryId,
+    sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
   };
 
   sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
@@ -732,6 +742,8 @@ function handlePageUnload() {
 }
 
 function stopAgent() {
+  if (state.stopping) return;
+  state.stopping = true;
   setStatus("تم الإنهاء");
   if (!DISABLE_TRANSCRIPT && state.assistantBuffer) {
     pushTranscript("assistant", state.assistantBuffer);
@@ -773,8 +785,6 @@ function stopAgent() {
   state.sessionMeta = null;
   state.remoteStream = null;
   state.unloadHandled = false;
-  state.summaryId = null;
-  state.sessionKey = "";
   showCallActions(false);
   togglePanel(false);
 

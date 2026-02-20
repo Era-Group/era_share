@@ -264,7 +264,9 @@ class RealtimeAgentController(http.Controller):
             record.write(values)
             return record
         session_key = self._normalize_session_key(kwargs.get("session_key"))
-        if session_key and "session_key" in Summary._fields:
+        if "session_key" in Summary._fields:
+            if not session_key:
+                return Summary.browse()
             values["session_key"] = session_key
         return Summary.create(values)
 
@@ -319,6 +321,8 @@ class RealtimeAgentController(http.Controller):
         if lead:
             values["lead_id"] = lead.id
         record = self._upsert_summary_record(kwargs, values)
+        if not record:
+            return {"error": "Invalid session"}
         attachment_values = {
             "name": filename,
             "datas": base64.b64encode(audio_bytes),
@@ -369,6 +373,8 @@ class RealtimeAgentController(http.Controller):
         if lead:
             values["lead_id"] = lead.id
         record = self._upsert_summary_record(kwargs, values)
+        if not record:
+            return {"error": "Invalid session"}
         return {"id": record.id, "summary": values.get("summary")}
 
     def _prompt_has_mcp_tools(self, api_key, prompt_id):
@@ -607,6 +613,8 @@ class RealtimeAgentController(http.Controller):
         if lead:
             values["lead_id"] = lead.id
         record = self._upsert_summary_record(kwargs, values)
+        if not record:
+            return {"error": "Invalid session"}
         response = {"id": record.id, "summary": summary}
         if warning:
             response["warning"] = warning

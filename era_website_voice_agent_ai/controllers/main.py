@@ -541,6 +541,32 @@ class RealtimeAgentController(http.Controller):
             return {"error": "Invalid session"}
         return {"id": record.id, "summary": values.get("summary")}
 
+    def _end_active_session(self, kwargs):
+        Summary = self._summary_model()
+        record = self._get_session_record(kwargs)
+        if not record:
+            client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
+            if client_call_id and "client_call_id" in Summary._fields:
+                record = Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
+        if not record:
+            caller_ip = self._caller_ip_for_payload(kwargs)
+            if caller_ip and "caller_ip" in Summary._fields:
+                record = self._find_recent_open_summary(caller_ip=caller_ip, max_age_minutes=20)
+        if not record:
+            return {"ok": False}
+
+        vals = {}
+        if "is_active" in record._fields and record.is_active:
+            vals["is_active"] = False
+        duration = self._coerce_duration_seconds(kwargs.get("duration_seconds"))
+        if duration is not None and "duration_seconds" in record._fields:
+            current = record.duration_seconds or 0
+            if duration > current:
+                vals["duration_seconds"] = duration
+        if vals:
+            record.sudo().write(vals)
+        return {"ok": True, "id": record.id}
+
     def _prompt_has_mcp_tools(self, api_key, prompt_id):
         """Check if a prompt declares MCP tools to provide a clear error before session start."""
         if not prompt_id:
@@ -933,6 +959,10 @@ class RealtimeAgentController(http.Controller):
         if blocked:
             return blocked
         return self._save_abandoned_summary(kwargs)
+
+    @http.route("/realtime_agent/session_end", type="jsonrpc", auth="public", website=True, csrf=False)
+    def realtime_agent_session_end(self, **kwargs):
+        return self._end_active_session(kwargs)
 
     @http.route("/realtime_agent/sip/recording", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_sip_recording(self, **kwargs):

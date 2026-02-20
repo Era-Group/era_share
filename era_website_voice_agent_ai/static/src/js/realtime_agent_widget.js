@@ -578,6 +578,45 @@ async function submitSummaryAudio(payload) {
   }
 }
 
+async function endSession(ctx = null) {
+  const context = ctx || {};
+  const sessionMeta = context.sessionMeta || state.sessionMeta || {};
+  const summaryId = context.summaryId || state.summaryId || "";
+  const sessionKey = context.sessionKey || state.sessionKey || "";
+  const clientCallId = context.clientCallId || state.clientCallId || "";
+  const startedAt = context.startedAt || state.startedAt;
+  const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
+  if (!summaryId && !sessionKey && !clientCallId) return;
+  try {
+    await rpcJson("/realtime_agent/session_end", {
+      summary_id: summaryId,
+      session_key: sessionKey,
+      client_call_id: clientCallId,
+      embed_mode: sessionMeta?.embedMode ? "1" : "",
+      duration_seconds: durationSeconds ? String(durationSeconds) : "",
+    });
+  } catch (err) {
+    console.warn("Session end request failed:", err);
+  }
+}
+
+function clearFinalizeState() {
+  clearRecorderFlushTimer();
+  state.recorder = null;
+  state.recordedChunks = [];
+  state.summaryPayload = null;
+  state.finalizeContext = null;
+  state.summaryId = null;
+  state.sessionKey = "";
+  state.clientCallId = "";
+  state.stopping = false;
+  if (state.audioContext) {
+    state.audioContext.close().catch(() => {});
+    state.audioContext = null;
+    state.mixerDest = null;
+  }
+}
+
 function sendJsonRpcBeacon(url, params = {}) {
   if (!navigator.sendBeacon) return false;
   const payload = JSON.stringify({
@@ -624,12 +663,19 @@ async function finalizeRecording() {
   const summaryId = ctx.summaryId || state.summaryId || "";
   const sessionKey = ctx.sessionKey || state.sessionKey || "";
   const clientCallId = ctx.clientCallId || state.clientCallId || "";
+  const endCtx = {
+    sessionMeta: sessionMeta,
+    startedAt: startedAt,
+    summaryId: summaryId,
+    sessionKey: sessionKey,
+    clientCallId: clientCallId,
+  };
   if (state.recordedChunks.length === 0) {
-    state.recorder = null;
+    await endSession(endCtx);
     if (summaryPayload) {
       submitSummary(summaryPayload);
-      state.summaryPayload = null;
     }
+    clearFinalizeState();
     return;
   }
   state.recordingFinalized = true;
@@ -659,20 +705,8 @@ async function finalizeRecording() {
   } catch (err) {
     console.warn("Recording finalize failed:", err);
   } finally {
-    clearRecorderFlushTimer();
-    state.recorder = null;
-    state.recordedChunks = [];
-    state.summaryPayload = null;
-    state.finalizeContext = null;
-    state.summaryId = null;
-    state.sessionKey = "";
-    state.clientCallId = "";
-    state.stopping = false;
-    if (state.audioContext) {
-      state.audioContext.close().catch(() => {});
-      state.audioContext = null;
-      state.mixerDest = null;
-    }
+    await endSession(endCtx);
+    clearFinalizeState();
   }
 }
 
@@ -819,8 +853,18 @@ function stopAgent() {
   togglePanel(false);
 
   if (!state.recorder && summaryPayload) {
+    const endCtx = { ...(state.finalizeContext || {}) };
     submitSummary(summaryPayload);
-    state.summaryPayload = null;
+    endSession(endCtx).finally(() => {
+      clearFinalizeState();
+    });
+    return;
+  }
+  if (!state.recorder) {
+    const endCtx = { ...(state.finalizeContext || {}) };
+    endSession(endCtx).finally(() => {
+      clearFinalizeState();
+    });
   }
 }
 

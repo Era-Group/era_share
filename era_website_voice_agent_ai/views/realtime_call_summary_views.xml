@@ -6,7 +6,6 @@
     <field name="arch" type="xml">
       <list string="Realtime Call Summaries">
         <field name="create_date"/>
-        <field name="name"/>
         <field name="caller_phone"/>
         <field name="call_source"/>
         <field name="duration_seconds"/>

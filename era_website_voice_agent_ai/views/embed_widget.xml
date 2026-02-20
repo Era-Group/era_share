@@ -29,6 +29,7 @@
       <body>
         <div id="oai-agent-widget"
              class="oai-agent-widget"
+             data-embed-mode="1"
              t-att-data-prompt-id="prompt_id or ''"
              t-att-data-model="model or 'gpt-realtime-mini'"
              t-att-data-voice="voice or 'alloy'"

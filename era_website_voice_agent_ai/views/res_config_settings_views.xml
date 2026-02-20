@@ -32,9 +32,6 @@
               <field name="openai_realtime_widget_enabled"/>
             </setting>
 
-            <setting string="Enable External Embed Widget" help="Allow or block loading the widget from external websites via embed script.">
-              <field name="openai_realtime_embed_enabled"/>
-            </setting>
 
             <setting string="Widget Button Label" help="Text shown on the floating website widget button.">
               <field name="openai_realtime_widget_label"/>
@@ -44,6 +41,9 @@
               <field name="openai_realtime_summary_prompt" widget="text" placeholder="لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد"/>
             </setting>
 
+            <setting string="Enable External Embed Widget" help="Allow or block loading the widget from external websites via embed script.">
+              <field name="openai_realtime_embed_enabled"/>
+            </setting>
             <setting string="Allowed Embed Origins" help="Optional allowlist of parent website origins that can embed the external widget frame. One origin per line, e.g. https://example.com">
               <field name="openai_realtime_embed_allowed_origins" widget="text" placeholder="https://example.com&#10;https://www.example.com"/>
             </setting>

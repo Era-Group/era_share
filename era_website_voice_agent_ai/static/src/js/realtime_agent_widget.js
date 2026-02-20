@@ -69,12 +69,15 @@ function getConfig() {
   const w = widgetEl();
   const rawVoice = w?.dataset?.voice || "";
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
+  const embedModeRaw = w?.dataset?.embedMode || "";
+  const embedMode = String(embedModeRaw).toLowerCase() === "1" || String(embedModeRaw).toLowerCase() === "true";
   return {
     promptId: w?.dataset?.promptId || "",
     model: w?.dataset?.model || "gpt-realtime-mini",
     voice: voice,
     callerPhone: w?.dataset?.callerPhone || "",
     callerCompany: w?.dataset?.callerCompany || "",
+    embedMode: embedMode,
   };
 }
 
@@ -255,6 +258,7 @@ function enqueueAudioChunkUpload(blob) {
       const res = await rpcJson("/realtime_agent/chunk", {
         summary_id: summaryId,
         session_key: sessionKey,
+        embed_mode: state.sessionMeta?.embedMode ? "1" : "",
         audio_chunk_base64: base64,
         audio_mimetype: mimetype,
         chunk_seq: seq,
@@ -365,6 +369,7 @@ async function startAgent() {
     voice: cfg.voice,
     callerPhone: cfg.callerPhone,
     callerCompany: cfg.callerCompany,
+    embedMode: cfg.embedMode,
   };
   state.startedAt = Date.now();
   state.unloadHandled = false;
@@ -382,7 +387,9 @@ async function startAgent() {
     if (transcriptEl) transcriptEl.innerHTML = "";
   }
   setStatus("جاري التجهيز...");
-  const tok = await rpcJson("/realtime_agent/token", {});
+  const tok = await rpcJson("/realtime_agent/token", {
+    embed_mode: cfg.embedMode ? "1" : "",
+  });
   const promptFallback = !!tok?.prompt_fallback;
   state.sessionMeta.promptFallback = promptFallback;
   
@@ -406,6 +413,7 @@ async function startAgent() {
       caller_phone: cfg.callerPhone,
       caller_company: cfg.callerCompany,
       client_call_id: state.clientCallId,
+      embed_mode: cfg.embedMode ? "1" : "",
     });
     if (session && !session.error) {
       state.summaryId = session.summary_id || null;
@@ -597,6 +605,7 @@ function buildSummaryPayload() {
     prompt_id: state.sessionMeta?.promptId || "",
     model: state.sessionMeta?.model || "",
     voice: state.sessionMeta?.voice || "",
+    embed_mode: state.sessionMeta?.embedMode ? "1" : "",
     duration_seconds: durationSeconds,
     summary_id: state.summaryId || "",
     session_key: state.sessionKey || "",
@@ -637,6 +646,7 @@ async function finalizeRecording() {
       prompt_id: sessionMeta?.promptId || "",
       model: sessionMeta?.model || "",
       voice: sessionMeta?.voice || "",
+      embed_mode: sessionMeta?.embedMode ? "1" : "",
       caller_phone: sessionMeta?.callerPhone || "",
       caller_company: sessionMeta?.callerCompany || "",
       duration_seconds: durationSeconds,
@@ -685,6 +695,7 @@ function submitSummaryAudioBeacon(blob, ctx = null) {
   formData.append("prompt_id", sessionMeta?.promptId || "");
   formData.append("model", sessionMeta?.model || "");
   formData.append("voice", sessionMeta?.voice || "");
+  formData.append("embed_mode", sessionMeta?.embedMode ? "1" : "");
   formData.append("caller_phone", sessionMeta?.callerPhone || "");
   formData.append("caller_company", sessionMeta?.callerCompany || "");
   formData.append("duration_seconds", durationSeconds ? String(durationSeconds) : "");
@@ -731,6 +742,7 @@ function handlePageUnload() {
     prompt_id: snapshot.sessionMeta?.promptId || "",
     model: snapshot.sessionMeta?.model || "",
     voice: snapshot.sessionMeta?.voice || "",
+    embed_mode: snapshot.sessionMeta?.embedMode ? "1" : "",
     caller_phone: snapshot.sessionMeta?.callerPhone || "",
     caller_company: snapshot.sessionMeta?.callerCompany || "",
     duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),

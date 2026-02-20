@@ -207,6 +207,49 @@ class RealtimeAgentController(http.Controller):
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
 
+    def _is_truthy(self, value):
+        return str(value or "").lower() in ("1", "true", "yes", "y", "t")
+
+    def _is_external_embed_enabled(self, ICP):
+        raw_embed_enabled = ICP.get_param("openai.realtime_embed_enabled")
+        if raw_embed_enabled in (None, ""):
+            # Backward compatibility: before split settings, external embed followed the legacy widget flag.
+            raw_embed_enabled = ICP.get_param("openai.realtime_widget_enabled", "1")
+        return self._is_truthy(raw_embed_enabled or "1")
+
+    def _is_embed_request(self, payload=None):
+        payload = payload or {}
+        if self._is_truthy(payload.get("embed_mode")):
+            return True
+        referer = (request.httprequest.headers.get("Referer") or "").strip()
+        if not referer:
+            return False
+        try:
+            path = urlparse(referer).path or ""
+        except Exception:
+            return False
+        return path.startswith("/realtime_agent/embed/frame")
+
+    def _guard_external_embed_enabled_json(self, payload=None):
+        if not self._is_embed_request(payload):
+            return None
+        ICP = request.env["ir.config_parameter"].sudo()
+        if self._is_external_embed_enabled(ICP):
+            return None
+        return {"error": "External embed widget is disabled."}
+
+    def _guard_external_embed_enabled_http(self, payload=None):
+        if not self._is_embed_request(payload):
+            return None
+        ICP = request.env["ir.config_parameter"].sudo()
+        if self._is_external_embed_enabled(ICP):
+            return None
+        return request.make_response(
+            json.dumps({"error": "External embed widget is disabled."}),
+            headers=[("Content-Type", "application/json")],
+            status=403,
+        )
+
     def _find_recent_open_summary(self, caller_phone="", caller_company="", model="", voice="", max_age_minutes=120):
         Summary = self._summary_model()
         phone = (caller_phone or "").strip()
@@ -458,8 +501,12 @@ class RealtimeAgentController(http.Controller):
         return False, None
 
     @http.route("/realtime_agent/token", type="jsonrpc", auth="public", website=True, csrf=False)
-    def realtime_agent_token(self):
+    def realtime_agent_token(self, **kwargs):
         """Return a short-lived token for browser clients to connect to the Realtime API."""
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+
         ICP = request.env["ir.config_parameter"].sudo()
         api_key = ICP.get_param("openai.api_key")
         
@@ -539,18 +586,7 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_embed_frame(self, **kwargs):
         """Render a standalone widget frame for third-party website embedding."""
         ICP = request.env["ir.config_parameter"].sudo()
-        raw_embed_enabled = ICP.get_param("openai.realtime_embed_enabled")
-        if raw_embed_enabled in (None, ""):
-            # Backward compatibility: before split settings, external embed followed the legacy widget flag.
-            raw_embed_enabled = ICP.get_param("openai.realtime_widget_enabled", "1")
-        embed_enabled = (raw_embed_enabled or "1").lower() in (
-            "1",
-            "true",
-            "yes",
-            "y",
-            "t",
-        )
-        if not embed_enabled:
+        if not self._is_external_embed_enabled(ICP):
             return request.make_response("")
 
         allowed_origins = self._parse_allowed_embed_origins(ICP)
@@ -581,6 +617,10 @@ class RealtimeAgentController(http.Controller):
 
     @http.route("/realtime_agent/session_start", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_session_start(self, **kwargs):
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+
         ICP = request.env["ir.config_parameter"].sudo()
         Summary = self._summary_model()
         client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
@@ -641,6 +681,10 @@ class RealtimeAgentController(http.Controller):
 
     @http.route("/realtime_agent/chunk", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_chunk(self, **kwargs):
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+
         record = self._get_session_record(kwargs)
         if not record:
             return {"error": "Invalid session"}
@@ -665,6 +709,10 @@ class RealtimeAgentController(http.Controller):
     @http.route("/realtime_agent/summary", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary(self, **kwargs):
         """Summarize the transcript and store it in CRM."""
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+
         transcript = (kwargs.get("transcript") or "").strip()
         if not transcript:
             return {"error": "Missing transcript"}
@@ -711,6 +759,10 @@ class RealtimeAgentController(http.Controller):
     @http.route("/realtime_agent/summary_audio", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_summary_audio(self, **kwargs):
         """Store recording, transcribe it, and save summary in CRM."""
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+
         audio_base64 = (kwargs.get("audio_base64") or "").strip()
         if not audio_base64:
             return {"error": "Missing audio"}
@@ -734,6 +786,10 @@ class RealtimeAgentController(http.Controller):
     )
     def realtime_agent_summary_audio_beacon(self, **post):
         """Receive unload-safe multipart uploads from navigator.sendBeacon."""
+        blocked = self._guard_external_embed_enabled_http(post)
+        if blocked:
+            return blocked
+
         audio_file = request.httprequest.files.get("audio_file")
         if not audio_file:
             return request.make_response(
@@ -770,6 +826,9 @@ class RealtimeAgentController(http.Controller):
     )
     def realtime_agent_session_abandoned(self, **kwargs):
         """Persist a fallback summary when the visitor leaves before audio upload completes."""
+        blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
         return self._save_abandoned_summary(kwargs)
 
     @http.route("/realtime_agent/sip/recording", type="jsonrpc", auth="public", website=True, csrf=False)

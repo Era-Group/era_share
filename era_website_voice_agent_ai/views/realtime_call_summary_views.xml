@@ -5,9 +5,9 @@
     <field name="model">crm.realtime_call_summary</field>
     <field name="arch" type="xml">
       <list string="Realtime Call Summaries">
-        <field name="create_date"/>
-        <field name="caller_phone"/>
-        <field name="call_source"/>
+        <field name="create_date" string="Created on"/>
+        <field name="caller_phone" string="Caller Phone"/>
+        <field name="call_source" string="Call Source"/>
         <field name="duration_seconds"/>
         <field name="summary"/>
         <!--field name="recording_link_html" widget="html" string="Recording"/-->
@@ -27,17 +27,17 @@
       <form string="Realtime Call Summary">
         <sheet>
           <group>
-            <field name="name"/>
-            <field name="create_date" readonly="1"/>
+            <field name="name" string="Name"/>
+            <field name="create_date" string="Created on" readonly="1"/>
             <field name="duration_seconds"/>
           </group>
           <group>
             <field name="lead_id"/>
-            <field name="caller_phone"/>
-            <field name="caller_company"/>
+            <field name="caller_phone" string="Caller Phone"/>
+            <field name="caller_company" string="Caller Company"/>
           </group>
           <group>
-            <field name="call_source"/>
+            <field name="call_source" string="Call Source"/>
           </group>
           <group>
             <field name="summary" nolabel="1"/>

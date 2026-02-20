@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.tools import html_escape
 
 
@@ -8,7 +8,7 @@ class CrmRealtimeCallSummary(models.Model):
     _description = "Realtime Call Summary"
     _order = "create_date desc"
 
-    name = fields.Char(required=True, default=lambda self: "Realtime Call Summary")
+    name = fields.Char(required=True, default=lambda self: _("Realtime Call Summary"))
     call_source = fields.Selection(
         [
             ("incoming", "Incoming"),
@@ -106,9 +106,10 @@ class CrmRealtimeCallSummary(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        name_prefix = _("Realtime Call Summary")
         for vals in vals_list:
             if not vals.get("name"):
-                vals["name"] = fields.Datetime.now().strftime("Realtime Call Summary %Y-%m-%d %H:%M:%S")
+                vals["name"] = fields.Datetime.now().strftime(f"{name_prefix} %Y-%m-%d %H:%M:%S")
         return super().create(vals_list)
 
     def write(self, vals):

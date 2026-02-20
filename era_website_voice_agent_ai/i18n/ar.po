@@ -165,8 +165,40 @@ msgstr "ملخصات المكالمات الفورية"
 #. module: era_website_voice_agent_ai
 #: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
 #: model:ir.model,name:era_website_voice_agent_ai.model_crm_realtime_call_summary
+#: code:addons/era_website_voice_agent_ai/models/realtime_call_summary.py:0
 msgid "Realtime Call Summary"
 msgstr "ملخص مكالمة فورية"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_list
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_list
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__caller_phone
+msgid "Caller Phone"
+msgstr "هاتف المتصل"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__caller_company
+msgid "Caller Company"
+msgstr "شركة المتصل"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_list
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__call_source
+msgid "Call Source"
+msgstr "مصدر المكالمة"
 
 #. module: era_website_voice_agent_ai
 #: model:ir.model,name:era_website_voice_agent_ai.model_crm_realtime_call_summary_play_wizard

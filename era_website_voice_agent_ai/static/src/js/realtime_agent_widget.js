@@ -749,13 +749,7 @@ function stopAgent() {
   state.summaryId = null;
   state.sessionKey = "";
   showCallActions(false);
-  showMobileStep(true);
-  setMobileError("");
-  setStartButtonLoading(false);
-
-  setTimeout(() => {
-    if (!state.running) togglePanel(false);
-  }, 2000);
+  togglePanel(false);
 
   if (!state.recorder && summaryPayload) {
     submitSummary(summaryPayload);

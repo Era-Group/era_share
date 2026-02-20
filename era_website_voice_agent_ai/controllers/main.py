@@ -64,18 +64,39 @@ class RealtimeAgentController(http.Controller):
     def _find_lead(self, phone=None, company=None):
         Lead = request.env["crm.lead"].sudo()
         lead = None
+        def _or_domain(conditions):
+            if not conditions:
+                return []
+            if len(conditions) == 1:
+                return list(conditions)
+            return (["|"] * (len(conditions) - 1)) + list(conditions)
+
         if phone:
-            lead = Lead.search(
-                ["|", ("phone", "ilike", phone), ("mobile", "ilike", phone)],
-                order="write_date desc, create_date desc",
-                limit=1,
-            )
+            phone_conditions = []
+            if "phone" in Lead._fields:
+                phone_conditions.append(("phone", "ilike", phone))
+            if "mobile" in Lead._fields:
+                phone_conditions.append(("mobile", "ilike", phone))
+            phone_domain = _or_domain(phone_conditions)
+            if phone_domain:
+                lead = Lead.search(
+                    phone_domain,
+                    order="write_date desc, create_date desc",
+                    limit=1,
+                )
         if not lead and company:
-            lead = Lead.search(
-                ["|", ("partner_name", "ilike", company), ("name", "ilike", company)],
-                order="write_date desc, create_date desc",
-                limit=1,
-            )
+            company_conditions = []
+            if "partner_name" in Lead._fields:
+                company_conditions.append(("partner_name", "ilike", company))
+            if "name" in Lead._fields:
+                company_conditions.append(("name", "ilike", company))
+            company_domain = _or_domain(company_conditions)
+            if company_domain:
+                lead = Lead.search(
+                    company_domain,
+                    order="write_date desc, create_date desc",
+                    limit=1,
+                )
         return lead
 
     def _transcribe_audio(self, api_key, filename, mimetype, audio_bytes):

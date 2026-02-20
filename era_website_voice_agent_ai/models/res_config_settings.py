@@ -46,7 +46,6 @@ class ResConfigSettings(models.TransientModel):
 
     openai_realtime_widget_label = fields.Char(
         string="Widget Button Label",
-        default="مكالمة",
         config_parameter="openai.realtime_widget_label",
         help="Text shown on the floating website widget button.",
     )

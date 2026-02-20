@@ -33,7 +33,7 @@
             </setting>
 
             <setting string="Widget Button Label" help="Text shown on the floating website widget button.">
-              <field name="openai_realtime_widget_label" placeholder="مكالمة"/>
+              <field name="openai_realtime_widget_label"/>
             </setting>
 
             <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">

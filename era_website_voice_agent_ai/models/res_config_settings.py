@@ -56,7 +56,7 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_summary_prompt",
         help="System prompt used when summarizing and analyzing recorded calls.",
     )
-    openai_realtime_embed_allowed_origins = fields.Text(
+    openai_realtime_embed_allowed_origins = fields.Char(
         string="Allowed Embed Origins",
         config_parameter="openai.realtime_embed_allowed_origins",
         help=(

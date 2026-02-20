@@ -28,8 +28,12 @@
               <field name="openai_realtime_voice" placeholder="alloy"/>
             </setting>
 
-            <setting string="Show Website Widget" help="Show or hide the floating widget on the website.">
+            <setting string="Show Widget Inside Website" help="Show or hide the floating widget on this Odoo website.">
               <field name="openai_realtime_widget_enabled"/>
+            </setting>
+
+            <setting string="Enable External Embed Widget" help="Allow or block loading the widget from external websites via embed script.">
+              <field name="openai_realtime_embed_enabled"/>
             </setting>
 
             <setting string="Widget Button Label" help="Text shown on the floating website widget button.">

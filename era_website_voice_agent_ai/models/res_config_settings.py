@@ -38,10 +38,17 @@ class ResConfigSettings(models.TransientModel):
     )
 
     openai_realtime_widget_enabled = fields.Boolean(
-        string="Show Website Widget",
+        string="Show Widget Inside Website",
         default=True,
         config_parameter="openai.realtime_widget_enabled",
-        help="Show or hide the website floating widget.",
+        help="Show or hide the floating widget on this Odoo website.",
+    )
+
+    openai_realtime_embed_enabled = fields.Boolean(
+        string="Enable External Embed Widget",
+        default=True,
+        config_parameter="openai.realtime_embed_enabled",
+        help="Allow or block the widget iframe for external websites using the embed script.",
     )
 
     openai_realtime_widget_label = fields.Char(
@@ -100,8 +107,20 @@ class ResConfigSettings(models.TransientModel):
     def get_values(self):
         res = super().get_values()
         ICP = self.env["ir.config_parameter"].sudo()
-        raw = ICP.get_param("openai.realtime_widget_enabled", default="1")
-        res["openai_realtime_widget_enabled"] = str(raw).lower() in ("1", "true", "yes", "y", "t")
+
+        def _as_bool(raw_value, default=False):
+            if raw_value in (None, ""):
+                return default
+            return str(raw_value).lower() in ("1", "true", "yes", "y", "t")
+
+        raw_inside = ICP.get_param("openai.realtime_widget_enabled", default="1")
+        raw_embed = ICP.get_param("openai.realtime_embed_enabled")
+        if raw_embed in (None, ""):
+            # Backward compatibility: until explicitly set, external embed follows the legacy single switch.
+            raw_embed = raw_inside
+
+        res["openai_realtime_widget_enabled"] = _as_bool(raw_inside, default=True)
+        res["openai_realtime_embed_enabled"] = _as_bool(raw_embed, default=True)
         return res
 
     def set_values(self):
@@ -110,5 +129,9 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param(
             "openai.realtime_widget_enabled",
             "1" if self.openai_realtime_widget_enabled else "0",
+        )
+        ICP.set_param(
+            "openai.realtime_embed_enabled",
+            "1" if self.openai_realtime_embed_enabled else "0",
         )
         return res

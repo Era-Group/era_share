@@ -539,14 +539,18 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_embed_frame(self, **kwargs):
         """Render a standalone widget frame for third-party website embedding."""
         ICP = request.env["ir.config_parameter"].sudo()
-        widget_enabled = (ICP.get_param("openai.realtime_widget_enabled", "1") or "1").lower() in (
+        raw_embed_enabled = ICP.get_param("openai.realtime_embed_enabled")
+        if raw_embed_enabled in (None, ""):
+            # Backward compatibility: before split settings, external embed followed the legacy widget flag.
+            raw_embed_enabled = ICP.get_param("openai.realtime_widget_enabled", "1")
+        embed_enabled = (raw_embed_enabled or "1").lower() in (
             "1",
             "true",
             "yes",
             "y",
             "t",
         )
-        if not widget_enabled:
+        if not embed_enabled:
             return request.make_response("")
 
         allowed_origins = self._parse_allowed_embed_origins(ICP)

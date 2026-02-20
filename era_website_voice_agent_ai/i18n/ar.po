@@ -183,6 +183,13 @@ msgstr "أُنشئ في"
 #. module: era_website_voice_agent_ai
 #: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
 #: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_list
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__summary
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_form
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.view_crm_realtime_call_summary_list
 #: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__caller_phone
 msgid "Caller Phone"
 msgstr "هاتف المتصل"

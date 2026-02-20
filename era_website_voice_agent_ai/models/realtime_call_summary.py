@@ -38,6 +38,7 @@ class CrmRealtimeCallSummary(models.Model):
     caller_phone = fields.Char()
     caller_company = fields.Char()
     caller_ip = fields.Char(index=True)
+    is_active = fields.Boolean(default=False, copy=False, index=True)
     session_key = fields.Char(copy=False, index=True)
     client_call_id = fields.Char(copy=False, index=True)
 

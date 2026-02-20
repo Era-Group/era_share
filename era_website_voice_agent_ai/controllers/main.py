@@ -279,18 +279,19 @@ class RealtimeAgentController(http.Controller):
 
         incoming_client_call_id = self._normalize_client_call_id(payload.get("client_call_id"))
         active_client_call_id = self._normalize_client_call_id(active.client_call_id)
-        if incoming_client_call_id and active_client_call_id and incoming_client_call_id == active_client_call_id:
+        if active_client_call_id and incoming_client_call_id and incoming_client_call_id == active_client_call_id:
             return None
-
-        incoming_summary_id = payload.get("summary_id")
-        try:
-            incoming_summary_id = int(incoming_summary_id or 0)
-        except Exception:
-            incoming_summary_id = 0
-        incoming_session_key = self._normalize_session_key(payload.get("session_key"))
-        if incoming_summary_id and incoming_summary_id == active.id:
-            if not incoming_session_key or not active.session_key or active.session_key == incoming_session_key:
-                return None
+        # If active call id is not yet set (older records), allow only exact same summary+session.
+        if not active_client_call_id:
+            incoming_summary_id = payload.get("summary_id")
+            try:
+                incoming_summary_id = int(incoming_summary_id or 0)
+            except Exception:
+                incoming_summary_id = 0
+            incoming_session_key = self._normalize_session_key(payload.get("session_key"))
+            if incoming_summary_id and incoming_summary_id == active.id:
+                if incoming_session_key and active.session_key and active.session_key == incoming_session_key:
+                    return None
 
         return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
 
@@ -321,7 +322,9 @@ class RealtimeAgentController(http.Controller):
             domain.append(("model", "=", model))
         if voice and "voice" in Summary._fields:
             domain.append(("voice", "=", voice))
-        if "attachment_id" in Summary._fields:
+        if "is_active" in Summary._fields:
+            domain.append(("is_active", "=", True))
+        elif "attachment_id" in Summary._fields:
             domain.append(("attachment_id", "=", False))
         cutoff = fields.Datetime.now() - timedelta(minutes=max_age_minutes)
         domain.append(("create_date", ">=", cutoff))
@@ -468,6 +471,7 @@ class RealtimeAgentController(http.Controller):
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
             "caller_ip": self._caller_ip_for_payload(kwargs),
+            "is_active": False,
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""
@@ -502,6 +506,8 @@ class RealtimeAgentController(http.Controller):
         ICP = request.env["ir.config_parameter"].sudo()
         existing = self._get_session_record(kwargs)
         if existing and existing.attachment_id:
+            if "is_active" in existing._fields and existing.is_active:
+                existing.sudo().write({"is_active": False})
             return {"id": existing.id, "summary": existing.summary}
         chunk_audio = self._read_chunk_file(kwargs.get("session_key"))
         if chunk_audio:
@@ -521,6 +527,7 @@ class RealtimeAgentController(http.Controller):
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
             "caller_ip": self._caller_ip_for_payload(kwargs),
+            "is_active": False,
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""
@@ -708,6 +715,8 @@ class RealtimeAgentController(http.Controller):
                     write_vals["session_key"] = existing_key
                 if caller_ip and "caller_ip" in Summary._fields and not existing.caller_ip:
                     write_vals["caller_ip"] = caller_ip
+                if "is_active" in Summary._fields and not existing.is_active:
+                    write_vals["is_active"] = True
                 if write_vals:
                     existing.sudo().write(write_vals)
                 return {"summary_id": existing.id, "session_key": existing_key}
@@ -726,6 +735,11 @@ class RealtimeAgentController(http.Controller):
                 max_age_minutes=20,
             )
         if existing:
+            active_client_call_id = self._normalize_client_call_id(existing.client_call_id)
+            if active_client_call_id and client_call_id and active_client_call_id != client_call_id:
+                return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
+            if active_client_call_id and not client_call_id:
+                return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
             existing_key = existing.session_key or ""
             write_vals = {}
             if "session_key" in Summary._fields and not existing_key:
@@ -735,6 +749,8 @@ class RealtimeAgentController(http.Controller):
                 write_vals["client_call_id"] = client_call_id
             if "caller_ip" in Summary._fields and caller_ip and not existing.caller_ip:
                 write_vals["caller_ip"] = caller_ip
+            if "is_active" in Summary._fields and not existing.is_active:
+                write_vals["is_active"] = True
             if write_vals:
                 existing.sudo().write(write_vals)
             return {"summary_id": existing.id, "session_key": existing_key}
@@ -751,6 +767,7 @@ class RealtimeAgentController(http.Controller):
             "caller_phone": caller_phone,
             "caller_company": caller_company,
             "caller_ip": caller_ip,
+            "is_active": True,
         }
         lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
         if lead:
@@ -825,6 +842,7 @@ class RealtimeAgentController(http.Controller):
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
             "caller_ip": self._caller_ip_for_payload(kwargs),
+            "is_active": False,
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""

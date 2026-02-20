@@ -1,0 +1,193 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_website_voice_agent_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-20 00:00+0000\n"
+"PO-Revision-Date: 2026-02-20 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_website_voice_agent_ai
+msgid "ERA Website Realtime Agent Widget with AI Summaries"
+msgstr "أداة وكيل الموقع الصوتي الفوري مع ملخصات الذكاء الاصطناعي"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime voice assistant widget with recording, transcription, and CRM summaries"
+msgstr "أداة مساعد صوتي فوري مع التسجيل والتفريغ النصي وملخصات CRM"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Agent Floating Button"
+msgstr "زر الوكيل الفوري العائم"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime assistant"
+msgstr "المساعد الفوري"
+
+#. module: era_website_voice_agent_ai
+msgid "Website AI Widget"
+msgstr "أداة الذكاء الاصطناعي للموقع"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Voice Agent"
+msgstr "وكيل الصوت الفوري"
+
+#. module: era_website_voice_agent_ai
+msgid "OpenAI API Key"
+msgstr "مفتاح OpenAI API"
+
+#. module: era_website_voice_agent_ai
+msgid "Stored in system parameters as openai.api_key (server-side only)."
+msgstr "يُحفظ في معاملات النظام باسم openai.api_key (على الخادم فقط)."
+
+#. module: era_website_voice_agent_ai
+msgid "Stored as system parameter: openai.api_key. Never expose this key to the browser."
+msgstr "يُحفظ كمعامل نظام: openai.api_key. لا تعرض هذا المفتاح للمتصفح أبدًا."
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Prompt ID"
+msgstr "معرّف الموجّه الفوري"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Prompt ID (pmpt_...)"
+msgstr "معرّف الموجّه الفوري (pmpt_...)"
+
+#. module: era_website_voice_agent_ai
+msgid "Published prompt id for your agent, e.g. pmpt_..."
+msgstr "معرّف موجّه منشور لوكيلك، مثل pmpt_..."
+
+#. module: era_website_voice_agent_ai
+msgid "The published Prompt ID for your Realtime agent, e.g. pmpt_... (Dashboard → Prompts)."
+msgstr "معرّف الموجّه المنشور لوكيل Realtime، مثل pmpt_... (لوحة التحكم ← الموجّهات)."
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Prompt Version"
+msgstr "إصدار الموجّه الفوري"
+
+#. module: era_website_voice_agent_ai
+msgid "Optional prompt version to use for Realtime sessions (e.g. 2)."
+msgstr "إصدار موجّه اختياري لاستخدامه في جلسات Realtime (مثل 2)."
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Model"
+msgstr "نموذج Realtime"
+
+#. module: era_website_voice_agent_ai
+msgid "Model for realtime sessions (default: gpt-realtime-mini)."
+msgstr "النموذج المستخدم لجلسات Realtime (الافتراضي: gpt-realtime-mini)."
+
+#. module: era_website_voice_agent_ai
+msgid "Model used for Realtime sessions (default: gpt-realtime-mini)."
+msgstr "النموذج المستخدم لجلسات Realtime (الافتراضي: gpt-realtime-mini)."
+
+#. module: era_website_voice_agent_ai
+msgid "Voice"
+msgstr "الصوت"
+
+#. module: era_website_voice_agent_ai
+msgid "Voice name for audio output (default: alloy)."
+msgstr "اسم الصوت للإخراج الصوتي (الافتراضي: alloy)."
+
+#. module: era_website_voice_agent_ai
+msgid "Show Website Widget"
+msgstr "إظهار أداة الموقع"
+
+#. module: era_website_voice_agent_ai
+msgid "Show or hide the floating widget on the website."
+msgstr "إظهار أو إخفاء الأداة العائمة على الموقع."
+
+#. module: era_website_voice_agent_ai
+msgid "Show or hide the website floating widget."
+msgstr "إظهار أو إخفاء أداة الموقع العائمة."
+
+#. module: era_website_voice_agent_ai
+msgid "Widget Button Label"
+msgstr "نص زر الأداة"
+
+#. module: era_website_voice_agent_ai
+msgid "Text shown on the floating website widget button."
+msgstr "النص الظاهر على زر أداة الموقع العائمة."
+
+#. module: era_website_voice_agent_ai
+msgid "Summary Prompt"
+msgstr "موجّه الملخص"
+
+#. module: era_website_voice_agent_ai
+msgid "System prompt used to analyze and summarize call recordings."
+msgstr "موجّه النظام المستخدم لتحليل وتلخيص تسجيلات المكالمات."
+
+#. module: era_website_voice_agent_ai
+msgid "System prompt used when summarizing and analyzing recorded calls."
+msgstr "موجّه النظام المستخدم عند تلخيص وتحليل المكالمات المسجلة."
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Call Summaries"
+msgstr "ملخصات المكالمات الفورية"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Call Summary"
+msgstr "ملخص مكالمة فورية"
+
+#. module: era_website_voice_agent_ai
+msgid "Realtime Call Recording Player"
+msgstr "مشغّل تسجيل المكالمة الفورية"
+
+#. module: era_website_voice_agent_ai
+msgid "Call Recording"
+msgstr "تسجيل المكالمة"
+
+#. module: era_website_voice_agent_ai
+msgid "Calls"
+msgstr "المكالمات"
+
+#. module: era_website_voice_agent_ai
+msgid "Website Calls"
+msgstr "مكالمات الموقع"
+
+#. module: era_website_voice_agent_ai
+msgid "Play"
+msgstr "تشغيل"
+
+#. module: era_website_voice_agent_ai
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_website_voice_agent_ai
+msgid "Incoming"
+msgstr "واردة"
+
+#. module: era_website_voice_agent_ai
+msgid "Outgoing"
+msgstr "صادرة"
+
+#. module: era_website_voice_agent_ai
+msgid "Agent"
+msgstr "وكيل"
+
+#. module: era_website_voice_agent_ai
+msgid "Seconds"
+msgstr "ثوانٍ"
+
+#. module: era_website_voice_agent_ai
+msgid "Recording"
+msgstr "التسجيل"
+
+#. module: era_website_voice_agent_ai
+msgid "Recording Filename"
+msgstr "اسم ملف التسجيل"
+
+#. module: era_website_voice_agent_ai
+msgid "Recording Link"
+msgstr "رابط التسجيل"
+
+#. module: era_website_voice_agent_ai
+msgid "Lead/Opportunity"
+msgstr "عميل محتمل/فرصة"

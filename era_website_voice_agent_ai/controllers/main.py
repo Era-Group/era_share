@@ -384,6 +384,7 @@ class RealtimeAgentController(http.Controller):
             "modalities": ["audio", "text"],
             "instructions": "You are a helpful assistant.",
         }
+        used_prompt_fallback = False
         if prompt_id:
             payload["prompt"] = {"id": prompt_id}
             if prompt_version:
@@ -411,6 +412,7 @@ class RealtimeAgentController(http.Controller):
             if fallback_error:
                 return {"error": f"OpenAI request failed: {fallback_error}"}
             r = fallback_resp
+            used_prompt_fallback = True
 
         if r.status_code >= 400:
             return {"error": "OpenAI token mint failed", "status": r.status_code, "details": r.text}
@@ -420,7 +422,7 @@ class RealtimeAgentController(http.Controller):
         if not client_secret:
             return {"error": "No client_secret returned by OpenAI", "details": data}
 
-        return {"value": client_secret}
+        return {"value": client_secret, "prompt_fallback": used_prompt_fallback}
 
     @http.route("/realtime_agent/session_start", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_session_start(self, **kwargs):

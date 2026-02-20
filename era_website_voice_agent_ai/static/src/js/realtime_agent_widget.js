@@ -176,7 +176,13 @@ async function rpcJson(url, params = {}) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  const json = await res.json();
+  const raw = await res.text();
+  let json = null;
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch (_err) {
+    throw new Error(`Non-JSON response from ${url} (status ${res.status}): ${raw.slice(0, 200)}`);
+  }
   return json.result || json;
 }
 
@@ -344,6 +350,8 @@ async function startAgent() {
   }
   setStatus("جاري التجهيز...");
   const tok = await rpcJson("/realtime_agent/token", {});
+  const promptFallback = !!tok?.prompt_fallback;
+  state.sessionMeta.promptFallback = promptFallback;
   
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
@@ -457,16 +465,20 @@ async function startAgent() {
   dc.addEventListener("open", async () => {
     setStatus("متصل ✅");
 
+    const sessionUpdate = {
+      model: cfg.model,
+      voice: cfg.voice,
+      input_audio_transcription: {
+        model: "gpt-4o-mini-transcribe",
+      },
+    };
+    if (cfg.promptId && !state.sessionMeta?.promptFallback) {
+      sessionUpdate.prompt = { id: cfg.promptId };
+    }
+
     safeSend({
       type: "session.update",
-      session: {
-        model: cfg.model,
-        prompt: { id: cfg.promptId },
-        voice: cfg.voice,
-        input_audio_transcription: {
-          model: "gpt-4o-mini-transcribe",
-        },
-      },
+      session: sessionUpdate,
     });
 
     if (state.pendingText) {

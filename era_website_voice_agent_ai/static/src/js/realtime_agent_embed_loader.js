@@ -46,7 +46,12 @@
   const closedWidth = toInt(scriptEl.dataset.closedWidth, 92);
   const closedHeight = toInt(scriptEl.dataset.closedHeight, 92);
 
+  // Avoid duplicate widget if embed script is injected more than once.
+  const existing = document.getElementById("era-realtime-agent-embed-frame");
+  if (existing) return;
+
   const frame = document.createElement("iframe");
+  frame.id = "era-realtime-agent-embed-frame";
   frame.src = frameSrc;
   frame.title = "ERA Realtime Voice Agent";
   frame.allow = "microphone; autoplay; clipboard-read; clipboard-write";

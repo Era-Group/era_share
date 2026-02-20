@@ -233,18 +233,27 @@ class RealtimeAgentController(http.Controller):
     def _get_session_record(self, kwargs):
         Summary = self._summary_model()
         summary_id = kwargs.get("summary_id")
-        session_key = (kwargs.get("session_key") or "").strip()
-        if not summary_id or not session_key:
-            return Summary.browse()
-        try:
-            summary_id = int(summary_id)
-        except Exception:
-            return Summary.browse()
-        record = Summary.browse(summary_id).exists()
-        if not record:
-            return Summary.browse()
-        if "session_key" in Summary._fields and record.session_key == session_key:
-            return record
+        session_key = self._normalize_session_key(kwargs.get("session_key"))
+
+        if summary_id:
+            try:
+                summary_id = int(summary_id)
+            except Exception:
+                summary_id = 0
+            if summary_id:
+                record = Summary.browse(summary_id).exists()
+                if record:
+                    if "session_key" not in Summary._fields:
+                        return record
+                    # Accept direct id match when no session key was provided.
+                    if not session_key:
+                        return record
+                    if record.session_key == session_key:
+                        return record
+
+        # Fallback: locate by session_key to avoid duplicate records if summary_id is missing/mismatched.
+        if session_key and "session_key" in Summary._fields:
+            return Summary.search([("session_key", "=", session_key)], order="id desc", limit=1)
         return Summary.browse()
 
     def _upsert_summary_record(self, kwargs, values):
@@ -254,7 +263,7 @@ class RealtimeAgentController(http.Controller):
         if record:
             record.write(values)
             return record
-        session_key = (kwargs.get("session_key") or "").strip()
+        session_key = self._normalize_session_key(kwargs.get("session_key"))
         if session_key and "session_key" in Summary._fields:
             values["session_key"] = session_key
         return Summary.create(values)

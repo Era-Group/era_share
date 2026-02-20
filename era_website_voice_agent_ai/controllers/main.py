@@ -486,10 +486,11 @@ class RealtimeAgentController(http.Controller):
             return request.make_response("")
 
         allowed_origins = self._parse_allowed_embed_origins(ICP)
-        if allowed_origins:
-            req_origin = self._request_origin()
-            if not req_origin or req_origin not in allowed_origins:
-                return request.make_response("Embed origin is not allowed.", status=403)
+        if not allowed_origins:
+            return request.make_response("Embed is disabled until allowed origins are configured.", status=403)
+        req_origin = self._request_origin()
+        if not req_origin or req_origin not in allowed_origins:
+            return request.make_response("Embed origin is not allowed.", status=403)
 
         def _pick(query_key, param_key, fallback=""):
             value = (kwargs.get(query_key) or "").strip()

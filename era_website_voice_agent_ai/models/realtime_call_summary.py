@@ -5,15 +5,15 @@ from odoo.tools import html_escape
 
 class CrmRealtimeCallSummary(models.Model):
     _name = "crm.realtime_call_summary"
-    _description = "Realtime Call Summary"
+    _description = "ملخص مكالمة فورية"
     _order = "create_date desc"
 
-    name = fields.Char(required=True, default=lambda self: _("Realtime Call Summary"))
+    name = fields.Char(required=True, default=lambda self: _("ملخص مكالمة فورية"))
     call_source = fields.Selection(
         [
-            ("incoming", "Incoming"),
-            ("outgoing", "Outgoing"),
-            ("agent", "Agent"),
+            ("incoming", "واردة"),
+            ("outgoing", "صادرة"),
+            ("agent", "وكيل"),
         ],
         default="agent",
         required=True,
@@ -25,16 +25,16 @@ class CrmRealtimeCallSummary(models.Model):
     prompt_version = fields.Char()
     model = fields.Char()
     voice = fields.Char()
-    duration_seconds = fields.Integer(string="Seconds")
-    attachment_id = fields.Many2one("ir.attachment", string="Recording")
+    duration_seconds = fields.Integer(string="ثوانٍ")
+    attachment_id = fields.Many2one("ir.attachment", string="التسجيل")
     attachment_datas = fields.Binary(related="attachment_id.datas", readonly=True)
     attachment_mimetype = fields.Char(related="attachment_id.mimetype", readonly=True)
-    attachment_name = fields.Char(string="Recording Filename", related="attachment_id.name", readonly=True)
+    attachment_name = fields.Char(string="اسم ملف التسجيل", related="attachment_id.name", readonly=True)
     recording_link_html = fields.Html(
-        string="Recording Link",
+        string="رابط التسجيل",
         compute="_compute_recording_link_html",
     )
-    lead_id = fields.Many2one("crm.lead", string="Lead/Opportunity")
+    lead_id = fields.Many2one("crm.lead", string="عميل محتمل/فرصة")
     caller_phone = fields.Char()
     caller_company = fields.Char()
     session_key = fields.Char(copy=False, index=True)
@@ -106,7 +106,7 @@ class CrmRealtimeCallSummary(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        name_prefix = _("Realtime Call Summary")
+        name_prefix = _("ملخص مكالمة فورية")
         for vals in vals_list:
             if not vals.get("name"):
                 vals["name"] = fields.Datetime.now().strftime(f"{name_prefix} %Y-%m-%d %H:%M:%S")

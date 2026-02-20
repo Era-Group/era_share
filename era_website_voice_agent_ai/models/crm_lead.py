@@ -6,7 +6,7 @@ class CrmLead(models.Model):
     _inherit = "crm.lead"
 
     realtime_call_summary_count = fields.Integer(
-        string="Calls",
+        string="المكالمات",
         compute="_compute_realtime_call_summary_count",
     )
 

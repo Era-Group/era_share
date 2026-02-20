@@ -4,16 +4,16 @@
     <field name="name">crm.realtime.call.summary.tree</field>
     <field name="model">crm.realtime_call_summary</field>
     <field name="arch" type="xml">
-      <list string="Realtime Call Summaries">
-        <field name="create_date" string="Created on"/>
-        <field name="caller_phone" string="Caller Phone"/>
-        <field name="call_source" string="Call Source"/>
+      <list string="ملخصات المكالمات الفورية">
+        <field name="create_date" string="أُنشئ في"/>
+        <field name="caller_phone" string="هاتف المتصل"/>
+        <field name="call_source" string="مصدر المكالمة"/>
         <field name="duration_seconds"/>
         <field name="summary"/>
         <!--field name="recording_link_html" widget="html" string="Recording"/-->
         <button name="action_open_recording_player"
                 type="object"
-                string="Play"
+                string="تشغيل"
                 class="btn btn-link"
                 invisible="not attachment_id"/>
       </list>
@@ -24,20 +24,20 @@
     <field name="name">crm.realtime.call.summary.form</field>
     <field name="model">crm.realtime_call_summary</field>
     <field name="arch" type="xml">
-      <form string="Realtime Call Summary">
+      <form string="ملخص مكالمة فورية">
         <sheet>
           <group>
-            <field name="name" string="Name"/>
-            <field name="create_date" string="Created on" readonly="1"/>
+            <field name="name" string="الاسم"/>
+            <field name="create_date" string="أُنشئ في" readonly="1"/>
             <field name="duration_seconds"/>
           </group>
           <group>
             <field name="lead_id"/>
-            <field name="caller_phone" string="Caller Phone"/>
-            <field name="caller_company" string="Caller Company"/>
+            <field name="caller_phone" string="هاتف المتصل"/>
+            <field name="caller_company" string="شركة المتصل"/>
           </group>
           <group>
-            <field name="call_source" string="Call Source"/>
+            <field name="call_source" string="مصدر المكالمة"/>
           </group>
           <group>
             <field name="summary" nolabel="1"/>
@@ -51,7 +51,7 @@
           <group>
             <button name="action_open_recording_player"
                     type="object"
-                    string="Play"
+                    string="تشغيل"
                     class="btn btn-primary"
                     invisible="not attachment_id"/>
           </group>
@@ -61,7 +61,7 @@
   </record>
 
   <record id="action_crm_realtime_call_summary" model="ir.actions.act_window">
-    <field name="name">Calls</field>
+    <field name="name">المكالمات</field>
     <field name="res_model">crm.realtime_call_summary</field>
     <field name="view_mode">list,form</field>
   </record>
@@ -70,7 +70,7 @@
     <field name="name">crm.realtime.call.summary.play.wizard.form</field>
     <field name="model">crm.realtime_call_summary_play_wizard</field>
     <field name="arch" type="xml">
-      <form string="Call Recording" create="0" edit="0">
+      <form string="تسجيل المكالمة" create="0" edit="0">
         <sheet>
           <group>
             <field name="attachment_id" invisible="1"/>
@@ -78,14 +78,14 @@
           </group>
         </sheet>
         <footer>
-          <button string="Close" class="btn-secondary" special="cancel"/>
+          <button string="إغلاق" class="btn-secondary" special="cancel"/>
         </footer>
       </form>
     </field>
   </record>
 
   <record id="action_crm_realtime_call_summary_from_lead" model="ir.actions.act_window">
-    <field name="name">Realtime Call Summaries</field>
+    <field name="name">ملخصات المكالمات الفورية</field>
     <field name="res_model">crm.realtime_call_summary</field>
     <field name="view_mode">list,form</field>
     <field name="domain">[("lead_id", "=", active_id)]</field>
@@ -102,14 +102,14 @@
                 name="%(action_crm_realtime_call_summary_from_lead)d"
                 class="oe_stat_button"
                 icon="fa-phone">
-          <field name="realtime_call_summary_count" widget="statinfo" string="Calls"/>
+          <field name="realtime_call_summary_count" widget="statinfo" string="المكالمات"/>
         </button>
       </xpath>
     </field>
   </record>
 
   <menuitem id="menu_crm_realtime_call_summary"
-            name="Website Calls"
+            name="مكالمات الموقع"
             parent="crm.crm_menu_root"
             action="action_crm_realtime_call_summary"
             sequence="120"/>

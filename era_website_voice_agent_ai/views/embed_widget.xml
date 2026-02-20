@@ -6,7 +6,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <t t-call-assets="web.assets_frontend" t-css="true"/>
-        <t t-call-assets="web.assets_frontend" t-js="true"/>
+        <script type="text/javascript" src="/era_website_voice_agent_ai/static/src/js/realtime_agent_widget.js"></script>
         <style>
           html, body {
             margin: 0;

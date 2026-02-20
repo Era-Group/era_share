@@ -7,10 +7,11 @@ import os
 import re
 import tempfile
 import uuid
+from datetime import timedelta
 from urllib.parse import urlparse
 import requests
 
-from odoo import http
+from odoo import fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -206,6 +207,27 @@ class RealtimeAgentController(http.Controller):
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
 
+    def _find_recent_open_summary(self, caller_phone="", caller_company="", model="", voice="", max_age_minutes=120):
+        Summary = self._summary_model()
+        phone = (caller_phone or "").strip()
+        if not phone:
+            return Summary.browse()
+        domain = [
+            ("call_source", "=", "agent"),
+            ("caller_phone", "=", phone),
+        ]
+        if caller_company and "caller_company" in Summary._fields:
+            domain.append(("caller_company", "=", caller_company))
+        if model and "model" in Summary._fields:
+            domain.append(("model", "=", model))
+        if voice and "voice" in Summary._fields:
+            domain.append(("voice", "=", voice))
+        if "attachment_id" in Summary._fields:
+            domain.append(("attachment_id", "=", False))
+        cutoff = fields.Datetime.now() - timedelta(minutes=max_age_minutes)
+        domain.append(("create_date", ">=", cutoff))
+        return Summary.search(domain, order="id desc", limit=1)
+
     def _parse_allowed_embed_origins(self, ICP):
         raw = (ICP.get_param("openai.realtime_embed_allowed_origins") or "").strip()
         if not raw:
@@ -274,6 +296,20 @@ class RealtimeAgentController(http.Controller):
             return record
         session_key = self._normalize_session_key(kwargs.get("session_key"))
         client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
+        recent = self._find_recent_open_summary(
+            caller_phone=values.get("caller_phone") or "",
+            caller_company=values.get("caller_company") or "",
+            model=values.get("model") or "",
+            voice=values.get("voice") or "",
+        )
+        if recent:
+            patch_vals = dict(values)
+            if "session_key" in Summary._fields and session_key and not recent.session_key:
+                patch_vals["session_key"] = session_key
+            if "client_call_id" in Summary._fields and client_call_id and not recent.client_call_id:
+                patch_vals["client_call_id"] = client_call_id
+            recent.write(patch_vals)
+            return recent
         if "session_key" in Summary._fields:
             if not session_key and not client_call_id:
                 return Summary.browse()
@@ -544,6 +580,10 @@ class RealtimeAgentController(http.Controller):
         ICP = request.env["ir.config_parameter"].sudo()
         Summary = self._summary_model()
         client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
+        caller_phone = (kwargs.get("caller_phone") or "").strip()
+        caller_company = (kwargs.get("caller_company") or "").strip()
+        model = kwargs.get("model") or ICP.get_param("openai.realtime_model")
+        voice = kwargs.get("voice") or ICP.get_param("openai.realtime_voice")
 
         if client_call_id and "client_call_id" in Summary._fields:
             existing = Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
@@ -554,17 +594,35 @@ class RealtimeAgentController(http.Controller):
                     existing.sudo().write({"session_key": existing_key})
                 return {"summary_id": existing.id, "session_key": existing_key}
 
+        existing = self._find_recent_open_summary(
+            caller_phone=caller_phone,
+            caller_company=caller_company,
+            model=model or "",
+            voice=voice or "",
+        )
+        if existing:
+            existing_key = existing.session_key or ""
+            write_vals = {}
+            if "session_key" in Summary._fields and not existing_key:
+                existing_key = uuid.uuid4().hex
+                write_vals["session_key"] = existing_key
+            if "client_call_id" in Summary._fields and client_call_id and not existing.client_call_id:
+                write_vals["client_call_id"] = client_call_id
+            if write_vals:
+                existing.sudo().write(write_vals)
+            return {"summary_id": existing.id, "session_key": existing_key}
+
         session_key = uuid.uuid4().hex
         values = {
             "summary": "بدأت مكالمة من الموقع.",
             "prompt_id": kwargs.get("prompt_id") or ICP.get_param("openai.realtime_prompt_id"),
             "prompt_version": ICP.get_param("openai.realtime_prompt_version"),
-            "model": kwargs.get("model") or ICP.get_param("openai.realtime_model"),
-            "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
+            "model": model,
+            "voice": voice,
             "duration_seconds": 0,
             "call_source": "agent",
-            "caller_phone": kwargs.get("caller_phone") or "",
-            "caller_company": kwargs.get("caller_company") or "",
+            "caller_phone": caller_phone,
+            "caller_company": caller_company,
         }
         lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
         if lead:

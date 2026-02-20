@@ -52,6 +52,26 @@ function getConfig() {
   };
 }
 
+function normalizeMobileNumber(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  let normalized = raw.replace(/[\s\-().]/g, "");
+  normalized = normalized.replace(/(?!^)\+/g, "");
+  if (!/^\+?\d{7,20}$/.test(normalized)) return "";
+  return normalized;
+}
+
+function requestVisitorMobileNumber(initialValue = "") {
+  const promptText = "يرجى إدخال رقم الجوال للمتابعة";
+  while (true) {
+    const entered = window.prompt(promptText, initialValue || "");
+    if (entered === null) return null;
+    const normalized = normalizeMobileNumber(entered);
+    if (normalized) return normalized;
+    window.alert("رقم الجوال غير صالح. أدخل رقمًا صحيحًا للمتابعة.");
+  }
+}
+
 function setStatus(text) {
   const el = qs("oai-agent-status");
   if (el) el.textContent = text;
@@ -686,6 +706,11 @@ function wireUI() {
       ev.preventDefault();
       try {
         if (!state.running) {
+          const cfg = getConfig();
+          const mobileNumber = requestVisitorMobileNumber(cfg.callerPhone || "");
+          if (!mobileNumber) return;
+          const w = widgetEl();
+          if (w) w.dataset.callerPhone = mobileNumber;
           togglePanel(true);
           setStatus("جاري الاتصال...");
           await startAgent();

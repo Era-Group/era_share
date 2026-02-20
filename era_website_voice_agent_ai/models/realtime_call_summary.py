@@ -37,6 +37,7 @@ class CrmRealtimeCallSummary(models.Model):
     lead_id = fields.Many2one("crm.lead", string="عميل محتمل/فرصة")
     caller_phone = fields.Char()
     caller_company = fields.Char()
+    caller_ip = fields.Char(index=True)
     session_key = fields.Char(copy=False, index=True)
     client_call_id = fields.Char(copy=False, index=True)
 

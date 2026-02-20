@@ -388,12 +388,32 @@ async function startAgent() {
     if (transcriptEl) transcriptEl.innerHTML = "";
   }
   setStatus("جاري التجهيز...");
+  const session = await rpcJson("/realtime_agent/session_start", {
+    prompt_id: cfg.promptId,
+    model: cfg.model,
+    voice: cfg.voice,
+    caller_phone: cfg.callerPhone,
+    caller_company: cfg.callerCompany,
+    client_call_id: state.clientCallId,
+    embed_mode: cfg.embedMode ? "1" : "",
+  });
+  if (!session || session.error) {
+    console.error("Session start failed:", session?.error || "unknown", session?.details || "");
+    const details = session?.details ? ` (${session.details})` : "";
+    throw new Error((session?.error || "Could not start call session.") + details);
+  }
+  state.summaryId = session.summary_id || null;
+  state.sessionKey = session.session_key || "";
+
   const tok = await rpcJson("/realtime_agent/token", {
     embed_mode: cfg.embedMode ? "1" : "",
+    client_call_id: state.clientCallId,
+    summary_id: state.summaryId || "",
+    session_key: state.sessionKey || "",
   });
   const promptFallback = !!tok?.prompt_fallback;
   state.sessionMeta.promptFallback = promptFallback;
-  
+
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
     const details = tok?.details ? ` (${tok.details})` : "";
@@ -404,26 +424,6 @@ async function startAgent() {
   if (!EPHEMERAL_KEY) {
     console.error("Token response is missing value:", tok);
     throw new Error("Invalid token response from server.");
-  }
-
-  try {
-    const session = await rpcJson("/realtime_agent/session_start", {
-      prompt_id: cfg.promptId,
-      model: cfg.model,
-      voice: cfg.voice,
-      caller_phone: cfg.callerPhone,
-      caller_company: cfg.callerCompany,
-      client_call_id: state.clientCallId,
-      embed_mode: cfg.embedMode ? "1" : "",
-    });
-    if (session && !session.error) {
-      state.summaryId = session.summary_id || null;
-      state.sessionKey = session.session_key || "";
-    } else {
-      console.warn("Session start failed:", session?.error || "unknown");
-    }
-  } catch (err) {
-    console.warn("Session start request failed:", err);
   }
 
   const pc = new RTCPeerConnection();

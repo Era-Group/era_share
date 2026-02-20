@@ -207,6 +207,22 @@ class RealtimeAgentController(http.Controller):
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
 
+    def _request_ip(self):
+        headers = request.httprequest.headers
+        forwarded_for = (headers.get("X-Forwarded-For") or "").strip()
+        if forwarded_for:
+            # Use the left-most value as original client IP.
+            return forwarded_for.split(",")[0].strip()
+        real_ip = (headers.get("X-Real-IP") or "").strip()
+        if real_ip:
+            return real_ip
+        return (request.httprequest.remote_addr or "").strip()
+
+    def _caller_ip_for_payload(self, payload=None):
+        if self._is_embed_request(payload):
+            return self._request_ip()
+        return ""
+
     def _is_truthy(self, value):
         return str(value or "").lower() in ("1", "true", "yes", "y", "t")
 
@@ -250,15 +266,55 @@ class RealtimeAgentController(http.Controller):
             status=403,
         )
 
-    def _find_recent_open_summary(self, caller_phone="", caller_company="", model="", voice="", max_age_minutes=120):
+    def _guard_single_active_ip_session_json(self, payload=None):
+        payload = payload or {}
+        if not self._is_embed_request(payload):
+            return None
+        caller_ip = self._request_ip()
+        if not caller_ip:
+            return None
+        active = self._find_recent_open_summary(caller_ip=caller_ip, max_age_minutes=20)
+        if not active:
+            return None
+
+        incoming_client_call_id = self._normalize_client_call_id(payload.get("client_call_id"))
+        active_client_call_id = self._normalize_client_call_id(active.client_call_id)
+        if incoming_client_call_id and active_client_call_id and incoming_client_call_id == active_client_call_id:
+            return None
+
+        incoming_summary_id = payload.get("summary_id")
+        try:
+            incoming_summary_id = int(incoming_summary_id or 0)
+        except Exception:
+            incoming_summary_id = 0
+        incoming_session_key = self._normalize_session_key(payload.get("session_key"))
+        if incoming_summary_id and incoming_summary_id == active.id:
+            if not incoming_session_key or not active.session_key or active.session_key == incoming_session_key:
+                return None
+
+        return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
+
+    def _find_recent_open_summary(
+        self,
+        caller_phone="",
+        caller_company="",
+        model="",
+        voice="",
+        caller_ip="",
+        max_age_minutes=120,
+    ):
         Summary = self._summary_model()
         phone = (caller_phone or "").strip()
-        if not phone:
+        ip = (caller_ip or "").strip()
+        if not phone and not ip:
             return Summary.browse()
         domain = [
             ("call_source", "=", "agent"),
-            ("caller_phone", "=", phone),
         ]
+        if phone:
+            domain.append(("caller_phone", "=", phone))
+        if ip and "caller_ip" in Summary._fields:
+            domain.append(("caller_ip", "=", ip))
         if caller_company and "caller_company" in Summary._fields:
             domain.append(("caller_company", "=", caller_company))
         if model and "model" in Summary._fields:
@@ -339,12 +395,19 @@ class RealtimeAgentController(http.Controller):
             return record
         session_key = self._normalize_session_key(kwargs.get("session_key"))
         client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
-        recent = self._find_recent_open_summary(
-            caller_phone=values.get("caller_phone") or "",
-            caller_company=values.get("caller_company") or "",
-            model=values.get("model") or "",
-            voice=values.get("voice") or "",
-        )
+        caller_ip = (values.get("caller_ip") or "").strip()
+        if caller_ip:
+            recent = self._find_recent_open_summary(
+                caller_ip=caller_ip,
+                max_age_minutes=20,
+            )
+        else:
+            recent = self._find_recent_open_summary(
+                caller_phone=values.get("caller_phone") or "",
+                caller_company=values.get("caller_company") or "",
+                model=values.get("model") or "",
+                voice=values.get("voice") or "",
+            )
         if recent:
             patch_vals = dict(values)
             if "session_key" in Summary._fields and session_key and not recent.session_key:
@@ -404,6 +467,7 @@ class RealtimeAgentController(http.Controller):
             "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
+            "caller_ip": self._caller_ip_for_payload(kwargs),
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""
@@ -456,6 +520,7 @@ class RealtimeAgentController(http.Controller):
             "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
+            "caller_ip": self._caller_ip_for_payload(kwargs),
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""
@@ -504,6 +569,9 @@ class RealtimeAgentController(http.Controller):
     def realtime_agent_token(self, **kwargs):
         """Return a short-lived token for browser clients to connect to the Realtime API."""
         blocked = self._guard_external_embed_enabled_json(kwargs)
+        if blocked:
+            return blocked
+        blocked = self._guard_single_active_ip_session_json(kwargs)
         if blocked:
             return blocked
 
@@ -626,6 +694,7 @@ class RealtimeAgentController(http.Controller):
         client_call_id = self._normalize_client_call_id(kwargs.get("client_call_id"))
         caller_phone = (kwargs.get("caller_phone") or "").strip()
         caller_company = (kwargs.get("caller_company") or "").strip()
+        caller_ip = self._caller_ip_for_payload(kwargs)
         model = kwargs.get("model") or ICP.get_param("openai.realtime_model")
         voice = kwargs.get("voice") or ICP.get_param("openai.realtime_voice")
 
@@ -633,17 +702,29 @@ class RealtimeAgentController(http.Controller):
             existing = Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
             if existing:
                 existing_key = existing.session_key or ""
+                write_vals = {}
                 if not existing_key and "session_key" in Summary._fields:
                     existing_key = uuid.uuid4().hex
-                    existing.sudo().write({"session_key": existing_key})
+                    write_vals["session_key"] = existing_key
+                if caller_ip and "caller_ip" in Summary._fields and not existing.caller_ip:
+                    write_vals["caller_ip"] = caller_ip
+                if write_vals:
+                    existing.sudo().write(write_vals)
                 return {"summary_id": existing.id, "session_key": existing_key}
 
-        existing = self._find_recent_open_summary(
-            caller_phone=caller_phone,
-            caller_company=caller_company,
-            model=model or "",
-            voice=voice or "",
-        )
+        if caller_ip:
+            existing = self._find_recent_open_summary(
+                caller_ip=caller_ip,
+                max_age_minutes=20,
+            )
+        else:
+            existing = self._find_recent_open_summary(
+                caller_phone=caller_phone,
+                caller_company=caller_company,
+                model=model or "",
+                voice=voice or "",
+                max_age_minutes=20,
+            )
         if existing:
             existing_key = existing.session_key or ""
             write_vals = {}
@@ -652,6 +733,8 @@ class RealtimeAgentController(http.Controller):
                 write_vals["session_key"] = existing_key
             if "client_call_id" in Summary._fields and client_call_id and not existing.client_call_id:
                 write_vals["client_call_id"] = client_call_id
+            if "caller_ip" in Summary._fields and caller_ip and not existing.caller_ip:
+                write_vals["caller_ip"] = caller_ip
             if write_vals:
                 existing.sudo().write(write_vals)
             return {"summary_id": existing.id, "session_key": existing_key}
@@ -667,6 +750,7 @@ class RealtimeAgentController(http.Controller):
             "call_source": "agent",
             "caller_phone": caller_phone,
             "caller_company": caller_company,
+            "caller_ip": caller_ip,
         }
         lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
         if lead:
@@ -740,6 +824,7 @@ class RealtimeAgentController(http.Controller):
             "voice": kwargs.get("voice") or ICP.get_param("openai.realtime_voice"),
             "duration_seconds": self._coerce_duration_seconds(kwargs.get("duration_seconds")),
             "call_source": "agent",
+            "caller_ip": self._caller_ip_for_payload(kwargs),
         }
         phone = kwargs.get("caller_phone") or ""
         company = kwargs.get("caller_company") or ""

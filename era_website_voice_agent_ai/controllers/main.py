@@ -7,6 +7,7 @@ import os
 import re
 import tempfile
 import uuid
+from urllib.parse import urlparse
 import requests
 
 from odoo import http
@@ -181,6 +182,36 @@ class RealtimeAgentController(http.Controller):
 
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
+
+    def _parse_allowed_embed_origins(self, ICP):
+        raw = (ICP.get_param("openai.realtime_embed_allowed_origins") or "").strip()
+        if not raw:
+            return set()
+        items = []
+        for part in raw.replace(",", "\n").splitlines():
+            value = part.strip()
+            if value:
+                items.append(value)
+        origins = set()
+        for item in items:
+            parsed = urlparse(item)
+            if parsed.scheme and parsed.netloc:
+                origins.add(f"{parsed.scheme}://{parsed.netloc}".lower())
+        return origins
+
+    def _request_origin(self):
+        headers = request.httprequest.headers
+        origin = (headers.get("Origin") or "").strip()
+        if origin:
+            parsed = urlparse(origin)
+            if parsed.scheme and parsed.netloc:
+                return f"{parsed.scheme}://{parsed.netloc}".lower()
+        referer = (headers.get("Referer") or "").strip()
+        if referer:
+            parsed = urlparse(referer)
+            if parsed.scheme and parsed.netloc:
+                return f"{parsed.scheme}://{parsed.netloc}".lower()
+        return ""
 
     def _get_session_record(self, kwargs):
         Summary = self._summary_model()
@@ -437,6 +468,12 @@ class RealtimeAgentController(http.Controller):
         )
         if not widget_enabled:
             return request.make_response("")
+
+        allowed_origins = self._parse_allowed_embed_origins(ICP)
+        if allowed_origins:
+            req_origin = self._request_origin()
+            if not req_origin or req_origin not in allowed_origins:
+                return request.make_response("Embed origin is not allowed.", status=403)
 
         def _pick(query_key, param_key, fallback=""):
             value = (kwargs.get(query_key) or "").strip()

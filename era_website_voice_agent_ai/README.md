@@ -54,3 +54,6 @@ Optional attributes:
 - `data-prompt-id`: Override the prompt for this embed only.
 - `data-caller-company`: Pre-fill company name in saved summaries.
 - `data-closed-width` / `data-closed-height`: Control button-only frame size.
+
+Security:
+- In Odoo Settings you can set `Allowed Embed Origins` (one origin per line) to restrict which external websites can load the embed frame.

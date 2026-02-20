@@ -56,6 +56,56 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_summary_prompt",
         help="System prompt used when summarizing and analyzing recorded calls.",
     )
+    openai_realtime_embed_allowed_origins = fields.Text(
+        string="Allowed Embed Origins",
+        config_parameter="openai.realtime_embed_allowed_origins",
+        help=(
+            "Optional allowlist of parent website origins allowed to embed the external widget iframe. "
+            "Use one origin per line, e.g. https://example.com"
+        ),
+    )
+    openai_realtime_embed_script = fields.Text(
+        string="External Embed Script",
+        compute="_compute_openai_realtime_embed_script",
+        readonly=True,
+        help="Copy/paste this script into any external website to show the floating voice widget.",
+    )
+
+    @api.depends(
+        "openai_realtime_model",
+        "openai_realtime_voice",
+        "openai_realtime_widget_label",
+        "openai_realtime_prompt_id",
+    )
+    def _compute_openai_realtime_embed_script(self):
+        ICP = self.env["ir.config_parameter"].sudo()
+        base_url = (ICP.get_param("web.base.url") or "").strip().rstrip("/")
+        for rec in self:
+            model = (rec.openai_realtime_model or "gpt-realtime-mini").strip()
+            voice = (rec.openai_realtime_voice or "alloy").strip()
+            label = (rec.openai_realtime_widget_label or "").strip()
+            prompt_id = (rec.openai_realtime_prompt_id or "").strip()
+
+            lines = [
+                '<script',
+                f'  src="{base_url}/era_website_voice_agent_ai/static/src/js/realtime_agent_embed_loader.js"',
+                f'  data-base-url="{base_url}"',
+                f'  data-model="{model}"',
+                f'  data-voice="{voice}"',
+            ]
+            if label:
+                lines.append(f'  data-label="{label}"')
+            if prompt_id:
+                lines.append(f'  data-prompt-id="{prompt_id}"')
+            lines.extend(
+                [
+                    '  data-right="14"',
+                    '  data-bottom="14"',
+                    '  data-z-index="2147483000">',
+                    "</script>",
+                ]
+            )
+            rec.openai_realtime_embed_script = "\n".join(lines)
 
     @api.model
     def get_values(self):

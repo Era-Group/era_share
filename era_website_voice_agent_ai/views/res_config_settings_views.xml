@@ -39,6 +39,14 @@
             <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">
               <field name="openai_realtime_summary_prompt" widget="text" placeholder="لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد"/>
             </setting>
+
+            <setting string="Allowed Embed Origins" help="Optional allowlist of parent website origins that can embed the external widget frame. One origin per line, e.g. https://example.com">
+              <field name="openai_realtime_embed_allowed_origins" widget="text" placeholder="https://example.com&#10;https://www.example.com"/>
+            </setting>
+
+            <setting string="External Embed Script" help="Copy/paste this script into any external website.">
+              <field name="openai_realtime_embed_script" widget="text" readonly="1"/>
+            </setting>
           </block>
         </app>
       </xpath>

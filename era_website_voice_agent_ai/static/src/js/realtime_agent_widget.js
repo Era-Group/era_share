@@ -52,23 +52,93 @@ function getConfig() {
   };
 }
 
+function toWesternDigits(value) {
+  return String(value || "")
+    .replace(/[٠-٩]/g, (ch) => String(ch.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, (ch) => String(ch.charCodeAt(0) - 0x6f0));
+}
+
 function normalizeMobileNumber(value) {
-  const raw = String(value || "").trim();
+  const raw = toWesternDigits(value).trim();
   if (!raw) return "";
   let normalized = raw.replace(/[\s\-().]/g, "");
   normalized = normalized.replace(/(?!^)\+/g, "");
-  if (!/^\+?\d{7,20}$/.test(normalized)) return "";
+  if (!/^\+?\d+$/.test(normalized)) return "";
+  const digitCount = normalized.replace(/\D/g, "").length;
+  if (digitCount < 7 || digitCount > 20) return "";
   return normalized;
 }
 
-function requestVisitorMobileNumber(initialValue = "") {
-  const promptText = "يرجى إدخال رقم الجوال للمتابعة";
-  while (true) {
-    const entered = window.prompt(promptText, initialValue || "");
-    if (entered === null) return null;
-    const normalized = normalizeMobileNumber(entered);
-    if (normalized) return normalized;
-    window.alert("رقم الجوال غير صالح. أدخل رقمًا صحيحًا للمتابعة.");
+function showMobileStep(show) {
+  const el = qs("oai-agent-mobile-step");
+  if (el) el.classList.toggle("d-none", !show);
+}
+
+function showCallActions(show) {
+  const el = qs("oai-agent-call-actions");
+  if (el) el.classList.toggle("d-none", !show);
+}
+
+function setMobileError(text = "") {
+  const el = qs("oai-agent-mobile-error");
+  if (!el) return;
+  if (text) {
+    el.textContent = text;
+    el.classList.remove("d-none");
+    return;
+  }
+  el.textContent = "";
+  el.classList.add("d-none");
+}
+
+function setStartButtonLoading(loading) {
+  const btn = qs("oai-agent-start");
+  if (!btn) return;
+  btn.disabled = !!loading;
+  btn.textContent = loading ? "جاري الاتصال..." : "متابعة";
+}
+
+function prepareMobileStep() {
+  const input = qs("oai-agent-mobile-input");
+  const cfg = getConfig();
+  if (input) {
+    input.value = cfg.callerPhone || "";
+    setTimeout(() => input.focus(), 0);
+  }
+  setMobileError("");
+  setStartButtonLoading(false);
+  showMobileStep(true);
+  showCallActions(false);
+  setStatus("أدخل رقم الجوال للمتابعة");
+}
+
+function collectVisitorMobileNumber() {
+  const input = qs("oai-agent-mobile-input");
+  const normalized = normalizeMobileNumber(input?.value || "");
+  if (!normalized) {
+    setMobileError("يرجى إدخال رقم جوال صحيح للمتابعة.");
+    if (input) input.focus();
+    return "";
+  }
+  if (input) input.value = normalized;
+  setMobileError("");
+  return normalized;
+}
+
+async function startAgentFromPanel() {
+  const mobileNumber = collectVisitorMobileNumber();
+  if (!mobileNumber) return;
+  const w = widgetEl();
+  if (w) w.dataset.callerPhone = mobileNumber;
+
+  setStartButtonLoading(true);
+  setStatus("جاري الاتصال...");
+  try {
+    await startAgent();
+    showMobileStep(false);
+    showCallActions(true);
+  } finally {
+    setStartButtonLoading(false);
   }
 }
 
@@ -678,6 +748,10 @@ function stopAgent() {
   state.unloadHandled = false;
   state.summaryId = null;
   state.sessionKey = "";
+  showCallActions(false);
+  showMobileStep(true);
+  setMobileError("");
+  setStartButtonLoading(false);
 
   setTimeout(() => {
     if (!state.running) togglePanel(false);
@@ -699,21 +773,17 @@ function wireLifecycleGuards() {
 function wireUI() {
   wireLifecycleGuards();
   const fab = qs("oai-agent-fab");
+  const startBtn = qs("oai-agent-start");
   const stopBtn = qs("oai-agent-stop");
+  const mobileInput = qs("oai-agent-mobile-input");
 
   if (fab) {
     fab.addEventListener("click", async (ev) => {
       ev.preventDefault();
       try {
         if (!state.running) {
-          const cfg = getConfig();
-          const mobileNumber = requestVisitorMobileNumber(cfg.callerPhone || "");
-          if (!mobileNumber) return;
-          const w = widgetEl();
-          if (w) w.dataset.callerPhone = mobileNumber;
           togglePanel(true);
-          setStatus("جاري الاتصال...");
-          await startAgent();
+          prepareMobileStep();
         } else {
           stopAgent();
         }
@@ -721,6 +791,32 @@ function wireUI() {
         console.error("Agent error:", e);
         setStatus("تعذر الاتصال: " + e.message);
         state.running = false;
+      }
+    });
+  }
+
+  if (startBtn) {
+    startBtn.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      if (state.running) return;
+      try {
+        await startAgentFromPanel();
+      } catch (e) {
+        console.error("Agent error:", e);
+        setStatus("تعذر الاتصال: " + e.message);
+        state.running = false;
+        showMobileStep(true);
+        showCallActions(false);
+      }
+    });
+  }
+
+  if (mobileInput) {
+    mobileInput.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        const btn = qs("oai-agent-start");
+        if (btn) btn.click();
       }
     });
   }

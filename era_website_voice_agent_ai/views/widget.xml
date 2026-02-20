@@ -24,9 +24,21 @@
 
         <div id="oai-agent-panel" class="oai-agent-panel d-none shadow-lg" role="dialog" aria-label="Realtime assistant" dir="rtl">
           <div class="oai-agent-panel__title">المساعد الصوتي</div>
-          <div id="oai-agent-status" class="oai-agent-panel__status">جاري الاتصال...</div>
+          <div id="oai-agent-status" class="oai-agent-panel__status">أدخل رقم الجوال للمتابعة</div>
 
-          <div class="oai-agent-panel__actions">
+          <div id="oai-agent-mobile-step" class="oai-agent-mobile-step">
+            <label for="oai-agent-mobile-input" class="oai-agent-mobile-label">رقم الجوال</label>
+            <input id="oai-agent-mobile-input"
+                   class="oai-agent-mobile-input"
+                   type="tel"
+                   inputmode="tel"
+                   autocomplete="tel"
+                   placeholder="+9665xxxxxxxx"/>
+            <div id="oai-agent-mobile-error" class="oai-agent-mobile-error d-none"></div>
+            <button id="oai-agent-start" class="btn btn-primary w-100 py-2" type="button">متابعة</button>
+          </div>
+
+          <div id="oai-agent-call-actions" class="oai-agent-panel__actions d-none">
             <button id="oai-agent-stop" class="btn btn-lg btn-danger w-100 py-3" type="button">إنهاء المكالمة</button>
           </div>
         </div>

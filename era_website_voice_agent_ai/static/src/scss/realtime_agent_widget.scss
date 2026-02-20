@@ -71,6 +71,37 @@
   gap: 8px;
 }
 
+.oai-agent-mobile-step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.oai-agent-mobile-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.oai-agent-mobile-input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  direction: ltr;
+}
+
+.oai-agent-mobile-input:focus {
+  outline: 0;
+  border-color: #ffb320;
+  box-shadow: 0 0 0 2px rgba(255, 179, 32, 0.25);
+}
+
+.oai-agent-mobile-error {
+  font-size: 12px;
+  color: #b42318;
+}
+
 .oai-agent-transcript {
   max-height: 360px;
   min-height: 260px;

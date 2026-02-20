@@ -1,6 +1,3 @@
-PyJWT>=2.8.0,<3.0.0
-hijridate
+phonenumbers
 markdown2==2.5.4
 pdfminer.six==20211012
-phonenumbers
-requests

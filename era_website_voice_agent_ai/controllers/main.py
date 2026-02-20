@@ -118,10 +118,27 @@ class RealtimeAgentController(http.Controller):
             payload = r.json()
         except Exception as e:
             return None, f"OpenAI transcription invalid JSON: {e}"
-        text = payload.get("text")
+        text = self._extract_transcription_text(payload)
         if not text:
-            return None, f"OpenAI transcription missing text: {payload}"
+            # Empty transcript is possible for silence/non-speech audio; treat as non-fatal.
+            return "", None
         return text, None
+
+    def _extract_transcription_text(self, payload):
+        text = (payload.get("text") or "").strip()
+        if text:
+            return text
+        transcript = (payload.get("transcript") or "").strip()
+        if transcript:
+            return transcript
+        output_text = (payload.get("output_text") or "").strip()
+        if output_text:
+            return output_text
+        for segment in payload.get("segments", []) or []:
+            seg_text = (segment.get("text") or "").strip()
+            if seg_text:
+                return seg_text
+        return ""
 
     def _coerce_duration_seconds(self, value):
         try:
@@ -265,7 +282,6 @@ class RealtimeAgentController(http.Controller):
             warnings.append(f"Transcription failed: {error}")
         if not transcript and fallback_transcript:
             transcript = fallback_transcript
-            warnings.append("Using client transcript fallback.")
 
         summary, error = (None, None)
         if transcript and api_key:

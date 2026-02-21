@@ -58,7 +58,9 @@
               <field name="openai_realtime_embed_script" widget="text" readonly="1"/>
             </setting>
 
-            <setting string="Realtime System Instructions" help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions.">
+            <setting string="Realtime System Instructions"
+                     help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions."
+                     class="o_realtime_system_instructions_setting">
               <field name="openai_realtime_system_instructions_cfg"
                      widget="text"
                      class="o_realtime_system_instructions_cfg"

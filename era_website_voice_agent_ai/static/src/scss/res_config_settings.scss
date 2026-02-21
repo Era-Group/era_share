@@ -1,3 +1,22 @@
+.o_settings_container .o_setting_box.o_realtime_system_instructions_setting,
+.o_settings_container .o_setting_box:has(textarea[name="openai_realtime_system_instructions_cfg"]) {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.o_settings_container .o_setting_box.o_realtime_system_instructions_setting .o_setting_left_pane,
+.o_settings_container .o_setting_box:has(textarea[name="openai_realtime_system_instructions_cfg"]) .o_setting_left_pane {
+  display: none;
+}
+
+.o_settings_container .o_setting_box.o_realtime_system_instructions_setting .o_setting_right_pane,
+.o_settings_container .o_setting_box:has(textarea[name="openai_realtime_system_instructions_cfg"]) .o_setting_right_pane {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
 .o_setting_box .o_realtime_system_instructions_cfg,
 .o_setting_box .o_realtime_system_instructions_cfg .o_input,
 .o_setting_box .o_realtime_system_instructions_cfg textarea,

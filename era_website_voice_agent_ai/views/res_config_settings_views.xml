@@ -58,20 +58,14 @@
               <field name="openai_realtime_embed_script" widget="text" readonly="1"/>
             </setting>
 
-            <div class="row mt16 o_settings_container o_realtime_system_instructions_row">
-              <div class="col-12 col-lg-12 o_setting_box">
-                <div class="o_setting_right_pane w-100">
-                  <label class="o_form_label">Realtime System Instructions</label>
-                  <div class="text-muted mb-2">
-                    System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions.
-                  </div>
-                  <field name="openai_realtime_system_instructions_cfg"
-                         widget="text"
-                         class="w-100 o_realtime_system_instructions_cfg"
-                         placeholder="You are an Arabic sales assistant for ERA..."/>
-                </div>
-              </div>
-            </div>
+            <setting string="Realtime System Instructions"
+                     help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions."
+                     class="o_realtime_system_instructions_setting">
+              <field name="openai_realtime_system_instructions_cfg"
+                     widget="text"
+                     class="o_realtime_system_instructions_cfg"
+                     placeholder="You are an Arabic sales assistant for ERA..."/>
+            </setting>
 
           </block>
         </app>

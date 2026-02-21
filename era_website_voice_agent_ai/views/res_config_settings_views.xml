@@ -29,7 +29,11 @@
             </setting>
 
             <setting string="Realtime System Instructions" help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions.">
-              <field name="openai_realtime_system_instructions_cfg" widget="text" placeholder="You are an Arabic sales assistant for ERA..."/>
+              <field name="openai_realtime_system_instructions_cfg"
+                     widget="text"
+                     options="{'rows': 8}"
+                     class="o_realtime_system_instructions_cfg"
+                     placeholder="You are an Arabic sales assistant for ERA..."/>
             </setting>
 
             <setting string="Allow Agent Interruption" help="If enabled, the assistant response can be interrupted when the user speaks (server VAD).">

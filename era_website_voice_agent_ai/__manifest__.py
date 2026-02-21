@@ -19,6 +19,9 @@
         "views/realtime_call_summary_views.xml",
     ],
     "assets": {
+        "web.assets_backend": [
+            "era_website_voice_agent_ai/static/src/scss/res_config_settings.scss",
+        ],
         "web.assets_frontend": [
             "era_website_voice_agent_ai/static/src/js/realtime_agent_widget.js",
             "era_website_voice_agent_ai/static/src/scss/realtime_agent_widget.scss",

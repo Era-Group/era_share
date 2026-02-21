@@ -28,13 +28,7 @@
               <field name="openai_realtime_voice" placeholder="alloy"/>
             </setting>
 
-            <setting string="Realtime System Instructions" help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions.">
-              <field name="openai_realtime_system_instructions_cfg"
-                     widget="text"
-                     options="{'rows': 8}"
-                     class="o_realtime_system_instructions_cfg"
-                     placeholder="You are an Arabic sales assistant for ERA..."/>
-            </setting>
+            
 
             <setting string="Allow Agent Interruption" help="If enabled, the assistant response can be interrupted when the user speaks (server VAD).">
               <field name="openai_realtime_interrupt_response_enabled"/>
@@ -63,6 +57,14 @@
             <setting string="External Embed Script" help="Copy/paste this script into any external website.">
               <field name="openai_realtime_embed_script" widget="text" readonly="1"/>
             </setting>
+
+            <setting string="Realtime System Instructions" help="System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions.">
+              <field name="openai_realtime_system_instructions_cfg"
+                     widget="text"
+                     class="o_realtime_system_instructions_cfg"
+                     placeholder="You are an Arabic sales assistant for ERA..."/>
+            </setting>
+
           </block>
         </app>
       </xpath>

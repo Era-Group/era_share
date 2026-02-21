@@ -271,6 +271,32 @@ function togglePanel(show) {
   notifyEmbedHost();
 }
 
+function errorToText(err) {
+  if (!err) return "Unknown error";
+  if (typeof err === "string") return err;
+  if (err instanceof Error && err.message) return err.message;
+  const rpcError = err.error || err.data || err.cause || null;
+  if (rpcError) {
+    if (typeof rpcError === "string") return rpcError;
+    if (rpcError.message) return String(rpcError.message);
+    if (rpcError.error?.message) return String(rpcError.error.message);
+  }
+  if (err.message) {
+    if (typeof err.message === "string") return err.message;
+    if (err.message?.message) return String(err.message.message);
+    try {
+      return JSON.stringify(err.message);
+    } catch (_jsonErr) {
+      // no-op
+    }
+  }
+  try {
+    return JSON.stringify(err);
+  } catch (_jsonErr) {
+    return String(err);
+  }
+}
+
 async function rpcJson(url, params = {}) {
   const payload = {
     jsonrpc: "2.0",
@@ -291,7 +317,20 @@ async function rpcJson(url, params = {}) {
   } catch (_err) {
     throw new Error(`Non-JSON response from ${url} (status ${res.status}): ${raw.slice(0, 200)}`);
   }
-  return json.result || json;
+  if (json && json.error) {
+    const rpcErr = json.error || {};
+    const data = rpcErr.data || {};
+    const msg =
+      data.message ||
+      data.arguments?.[0] ||
+      rpcErr.message ||
+      `RPC error from ${url}`;
+    throw new Error(String(msg));
+  }
+  if (json && Object.prototype.hasOwnProperty.call(json, "result")) {
+    return json.result;
+  }
+  return json;
 }
 
 function safeSend(obj) {
@@ -997,7 +1036,7 @@ function wireUI() {
         }
       } catch (e) {
         console.error("Agent error:", e);
-        setStatus("تعذر الاتصال: " + e.message);
+        setStatus("تعذر الاتصال: " + errorToText(e));
         state.running = false;
       }
     });
@@ -1011,7 +1050,7 @@ function wireUI() {
         await startAgentFromPanel();
       } catch (e) {
         console.error("Agent error:", e);
-        setStatus("تعذر الاتصال: " + e.message);
+        setStatus("تعذر الاتصال: " + errorToText(e));
         state.running = false;
         showMobileStep(true);
         showCallActions(false);

@@ -51,6 +51,15 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_interrupt_response_enabled",
         help="If enabled, server VAD can interrupt the current assistant response when the user starts speaking.",
     )
+    openai_realtime_idle_timeout_seconds = fields.Integer(
+        string="Realtime Idle Timeout (Seconds)",
+        default=0,
+        config_parameter="openai.realtime_idle_timeout_seconds",
+        help=(
+            "Silence timeout for Realtime sessions, in seconds. "
+            "Set 0 to disable idle timeout."
+        ),
+    )
 
     openai_realtime_widget_enabled = fields.Boolean(
         string="Show Widget Inside Website",

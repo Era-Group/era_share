@@ -715,6 +715,15 @@ class RealtimeAgentController(http.Controller):
         interrupt_response_enabled = self._is_truthy(
             ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
         )
+        idle_timeout_seconds = 0
+        try:
+            idle_timeout_seconds = int(
+                float(ICP.get_param("openai.realtime_idle_timeout_seconds", "0") or 0)
+            )
+        except Exception:
+            idle_timeout_seconds = 0
+        if idle_timeout_seconds < 0:
+            idle_timeout_seconds = 0
         system_instructions = (ICP.get_param("openai.realtime_system_instructions") or "").strip()
         prompt_id = (ICP.get_param("openai.realtime_prompt_id") or "").strip()
         if not api_key:
@@ -747,6 +756,8 @@ class RealtimeAgentController(http.Controller):
                 "interrupt_response": interrupt_response_enabled,
             },
         }
+        if idle_timeout_seconds > 0:
+            payload["turn_detection"]["idle_timeout_ms"] = idle_timeout_seconds * 1000
         if system_instructions:
             payload["instructions"] = system_instructions
         else:
@@ -755,6 +766,10 @@ class RealtimeAgentController(http.Controller):
                 prompt_instructions = (prompt_profile.get("instructions") or "").strip()
             if prompt_instructions:
                 payload["instructions"] = prompt_instructions
+
+        def _is_idle_timeout_not_supported(response_text):
+            text = (response_text or "").lower()
+            return "idle_timeout_ms" in text or "idle timeout" in text
 
         def _mint_session(session_payload):
             try:
@@ -765,6 +780,20 @@ class RealtimeAgentController(http.Controller):
         r, request_error = _mint_session(payload)
         if request_error:
             return {"error": f"OpenAI request failed: {request_error}"}
+
+        if (
+            r.status_code >= 400
+            and idle_timeout_seconds > 0
+            and _is_idle_timeout_not_supported(r.text)
+        ):
+            fallback_payload = dict(payload)
+            turn_detection = dict(fallback_payload.get("turn_detection") or {})
+            turn_detection.pop("idle_timeout_ms", None)
+            fallback_payload["turn_detection"] = turn_detection
+            fallback_resp, fallback_error = _mint_session(fallback_payload)
+            if fallback_error:
+                return {"error": f"OpenAI request failed: {fallback_error}"}
+            r = fallback_resp
 
         if r.status_code >= 400:
             return {"error": "OpenAI token mint failed", "status": r.status_code, "details": r.text}
@@ -778,6 +807,7 @@ class RealtimeAgentController(http.Controller):
             "value": client_secret,
             "prompt_fallback": False,
             "interrupt_response_enabled": interrupt_response_enabled,
+            "idle_timeout_seconds": idle_timeout_seconds,
         }
         if prompt_warning:
             response["prompt_lookup_warning"] = prompt_warning

@@ -21,6 +21,7 @@
     "assets": {
         "web.assets_backend": [
             "era_website_voice_agent_ai/static/src/scss/res_config_settings.scss",
+            "era_website_voice_agent_ai/static/src/js/res_config_settings_autoresize.js",
         ],
         "web.assets_frontend": [
             "era_website_voice_agent_ai/static/src/js/realtime_agent_widget.js",

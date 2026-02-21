@@ -3,6 +3,7 @@
 // Disable transcript processing to speed up voice conversations
 const DISABLE_TRANSCRIPT = true;
 const UI_WIRED_KEY = "__eraRealtimeWidgetUiWired";
+const DEFAULT_PTT_IDLE_TIMEOUT_SECONDS = 30;
 
 let state = {
   running: false,
@@ -35,6 +36,8 @@ let state = {
   stopping: false,
   responseInFlight: false,
   micEnabled: false,
+  pttIdleTimer: null,
+  pttLastActivityAt: 0,
 };
 
 function qs(id) {
@@ -183,6 +186,35 @@ function setStatus(text) {
   if (el) el.textContent = text;
 }
 
+function clearPttIdleTimer() {
+  if (state.pttIdleTimer) {
+    clearTimeout(state.pttIdleTimer);
+    state.pttIdleTimer = null;
+  }
+}
+
+function resolvePttIdleTimeoutSeconds() {
+  const configured = Number(state.sessionMeta?.idleTimeoutSeconds || 0);
+  if (Number.isFinite(configured) && configured > 0) return configured;
+  return DEFAULT_PTT_IDLE_TIMEOUT_SECONDS;
+}
+
+function armPttIdleTimer() {
+  clearPttIdleTimer();
+  if (!state.running || state.stopping || state.micEnabled) return;
+  const timeoutSeconds = resolvePttIdleTimeoutSeconds();
+  const timeoutMs = Math.max(1, Math.round(timeoutSeconds * 1000));
+  state.pttIdleTimer = setTimeout(() => {
+    if (!state.running || state.stopping || state.micEnabled) return;
+    stopAgent(`تم إنهاء المكالمة بسبب عدم الضغط على زر التحدث لمدة ${timeoutSeconds} ثانية.`);
+  }, timeoutMs);
+}
+
+function touchPttActivity() {
+  state.pttLastActivityAt = Date.now();
+  clearPttIdleTimer();
+}
+
 function updatePushToTalkButton() {
   const btn = qs("oai-agent-ptt");
   if (!btn) return;
@@ -210,12 +242,14 @@ function setMicEnabled(enabled) {
 function startPushToTalk(ev) {
   if (ev) ev.preventDefault();
   if (!state.running) return;
+  touchPttActivity();
   setMicEnabled(true);
 }
 
 function stopPushToTalk(ev) {
   if (ev && (ev.type === "keydown" || ev.type === "keyup")) ev.preventDefault();
   setMicEnabled(false);
+  armPttIdleTimer();
 }
 
 function appendTranscript(role, text) {
@@ -507,8 +541,10 @@ async function startAgent() {
   });
   const promptFallback = !!tok?.prompt_fallback;
   const interruptResponseEnabled = !!tok?.interrupt_response_enabled;
+  const idleTimeoutSeconds = Number(tok?.idle_timeout_seconds || 0);
   state.sessionMeta.promptFallback = promptFallback;
   state.sessionMeta.interruptResponseEnabled = interruptResponseEnabled;
+  state.sessionMeta.idleTimeoutSeconds = Number.isFinite(idleTimeoutSeconds) ? idleTimeoutSeconds : 0;
 
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
@@ -675,6 +711,7 @@ async function startAgent() {
   state.dc = dc;
   state.audioEl = audioEl;
   updatePushToTalkButton();
+  armPttIdleTimer();
 }
 
 async function submitSummary(payload) {
@@ -726,6 +763,7 @@ async function endSession(ctx = null) {
 
 function clearFinalizeState() {
   clearRecorderFlushTimer();
+  clearPttIdleTimer();
   state.recorder = null;
   state.recordedChunks = [];
   state.summaryPayload = null;
@@ -735,6 +773,7 @@ function clearFinalizeState() {
   state.clientCallId = "";
   state.responseInFlight = false;
   state.micEnabled = false;
+  state.pttLastActivityAt = 0;
   state.stopping = false;
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});
@@ -857,10 +896,11 @@ function handlePageUnload() {
   }
 }
 
-function stopAgent() {
+function stopAgent(reasonText = "") {
   if (state.stopping) return;
   state.stopping = true;
-  setStatus("تم الإنهاء");
+  clearPttIdleTimer();
+  setStatus(reasonText || "تم الإنهاء");
   setMicEnabled(false);
   if (!DISABLE_TRANSCRIPT && state.assistantBuffer) {
     pushTranscript("assistant", state.assistantBuffer);
@@ -901,6 +941,7 @@ function stopAgent() {
   state.pendingText = null;
   state.responseInFlight = false;
   state.micEnabled = false;
+  state.pttLastActivityAt = 0;
   state.startedAt = null;
   state.sessionMeta = null;
   state.remoteStream = null;

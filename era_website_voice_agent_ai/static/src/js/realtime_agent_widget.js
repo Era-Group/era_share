@@ -33,6 +33,7 @@ let state = {
   chunkUploadChain: Promise.resolve(),
   starting: false,
   stopping: false,
+  responseInFlight: false,
 };
 
 function qs(id) {
@@ -226,6 +227,50 @@ function safeSend(obj) {
   return true;
 }
 
+function trackRealtimeResponseState(evtType) {
+  const type = String(evtType || "");
+  if (!type) return;
+  if (
+    type === "response.created" ||
+    type === "response.text.delta" ||
+    type === "response.output_text.delta" ||
+    type === "response.audio.delta"
+  ) {
+    state.responseInFlight = true;
+    return;
+  }
+  if (
+    type === "response.done" ||
+    type === "response.completed" ||
+    type === "response.failed" ||
+    type === "response.cancelled" ||
+    type === "response.canceled"
+  ) {
+    state.responseInFlight = false;
+  }
+}
+
+function classifyNonFatalRealtimeError(errCode, message) {
+  const code = String(errCode || "").toLowerCase();
+  const msg = String(message || "").toLowerCase();
+  if (
+    code === "conversation_already_has_active_response" ||
+    msg.includes("already has an active response in progress")
+  ) {
+    state.responseInFlight = true;
+    return true;
+  }
+  if (
+    code === "invalid_value" ||
+    msg.includes("audio content of")
+  ) {
+    if (/audio content of .* shorter than/i.test(msg)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function clearRecorderFlushTimer() {
   if (state.recorderFlushTimer) {
     clearInterval(state.recorderFlushTimer);
@@ -341,24 +386,36 @@ function pushTranscript(role, text) {
 function sendUserText(text) {
   const trimmed = (text || "").trim();
   if (!trimmed) return;
+  if (state.responseInFlight) {
+    // Keep only the latest queued utterance while a response is active.
+    state.pendingText = trimmed;
+    return;
+  }
 
   pushTranscript("user", trimmed);
 
-  safeSend({
+  if (!safeSend({
     type: "conversation.item.create",
     item: {
       type: "message",
       role: "user",
       content: [{ type: "input_text", text: trimmed }],
     },
-  });
+  })) {
+    state.pendingText = trimmed;
+    return;
+  }
 
-  safeSend({
+  if (!safeSend({
     type: "response.create",
     response: {
       modalities: ["audio", "text"],
     },
-  });
+  })) {
+    state.pendingText = trimmed;
+    return;
+  }
+  state.responseInFlight = true;
 }
 
 async function startAgent() {
@@ -450,6 +507,7 @@ async function startAgent() {
   dc.addEventListener("message", (e) => {
     try {
       const evt = JSON.parse(e.data);
+      trackRealtimeResponseState(evt.type);
       if (!DISABLE_TRANSCRIPT && evt.type && evt.type.includes("input_audio_transcription")) {
         const userText =
           evt.transcript ||
@@ -488,24 +546,34 @@ async function startAgent() {
 
         const errCode = String(err.code || err.error?.code || "").toLowerCase();
         const msg = String(errMsg || "");
-        const isActiveResponseRace = errCode === "conversation_already_has_active_response";
-        const isShortAudioEdgeCase =
-          errCode === "invalid_value" && /audio content of .* shorter than/i.test(msg.toLowerCase());
-        if (isActiveResponseRace || isShortAudioEdgeCase) {
-          // Non-fatal realtime edge cases; keep the session running.
-          console.debug("OpenAI Realtime non-fatal:", errCode || msg, err);
+        if (state.stopping || !state.running) {
+          return;
+        }
+        if (classifyNonFatalRealtimeError(errCode, msg)) {
+          // Non-fatal realtime edge cases; keep the session running silently.
           return;
         }
 
         console.error("OpenAI Error:", errMsg, err);
-        setStatus(`صار خطأ في الاتصال: ${msg.slice(0, 120)}`);
 
         const isFatal =
           /unauthorized|forbidden|api key|token.*expired|session.*expired|session.*not found/i.test(msg) ||
           /(turn_detection|interrupt_response)/i.test(msg);
         if (isFatal) {
+          setStatus(`صار خطأ في الاتصال: ${msg.slice(0, 120)}`);
           stopAgent();
+          return;
         }
+        if (state.pendingText && !state.responseInFlight) {
+          const queued = state.pendingText;
+          state.pendingText = null;
+          sendUserText(queued);
+        }
+      }
+      if (state.pendingText && !state.responseInFlight && state.dc && state.dc.readyState === "open") {
+        const queued = state.pendingText;
+        state.pendingText = null;
+        sendUserText(queued);
       }
     } catch (err) {
       console.error("Error parsing message:", err);
@@ -589,42 +657,33 @@ async function submitSummary(payload) {
   }
 }
 
-async function submitSummaryAudio(payload) {
-  if (!payload || !payload.audio_base64) return;
-  try {
-    const res = await rpcJson("/realtime_agent/summary_audio", payload);
-    if (res?.error) {
-      console.error("Summary audio error:", res.error, res.details || "");
-      return;
-    }
-    if (res?.warning) {
-      console.warn("Summary audio warning:", res.warning);
-    }
-    if (res?.id && !state.summaryId) state.summaryId = res.id;
-  } catch (err) {
-    console.error("Summary audio request failed:", err);
-  }
-}
-
 async function endSession(ctx = null) {
   const context = ctx || {};
   const sessionMeta = context.sessionMeta || state.sessionMeta || {};
+  const summaryPayload = context.summaryPayload || state.summaryPayload || null;
   const summaryId = context.summaryId || state.summaryId || "";
   const sessionKey = context.sessionKey || state.sessionKey || "";
   const clientCallId = context.clientCallId || state.clientCallId || "";
   const startedAt = context.startedAt || state.startedAt;
   const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
-  if (!summaryId && !sessionKey && !clientCallId) return;
+  if (!summaryId && !sessionKey && !clientCallId) return { ok: false };
   try {
-    await rpcJson("/realtime_agent/session_end", {
+    return await rpcJson("/realtime_agent/session_end", {
       summary_id: summaryId,
       session_key: sessionKey,
       client_call_id: clientCallId,
+      transcript: summaryPayload?.transcript || "",
+      prompt_id: sessionMeta?.promptId || "",
+      model: sessionMeta?.model || "",
+      voice: sessionMeta?.voice || "",
       embed_mode: sessionMeta?.embedMode ? "1" : "",
+      caller_phone: sessionMeta?.callerPhone || "",
+      caller_company: sessionMeta?.callerCompany || "",
       duration_seconds: durationSeconds ? String(durationSeconds) : "",
     });
   } catch (err) {
     console.warn("Session end request failed:", err);
+    return { ok: false };
   }
 }
 
@@ -637,6 +696,7 @@ function clearFinalizeState() {
   state.summaryId = null;
   state.sessionKey = "";
   state.clientCallId = "";
+  state.responseInFlight = false;
   state.stopping = false;
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});
@@ -693,14 +753,15 @@ async function finalizeRecording() {
   const clientCallId = ctx.clientCallId || state.clientCallId || "";
   const endCtx = {
     sessionMeta: sessionMeta,
+    summaryPayload: summaryPayload,
     startedAt: startedAt,
     summaryId: summaryId,
     sessionKey: sessionKey,
     clientCallId: clientCallId,
   };
   if (state.recordedChunks.length === 0) {
-    await endSession(endCtx);
-    if (summaryPayload) {
+    const endRes = await endSession(endCtx);
+    if (summaryPayload && !endRes?.attachment_id) {
       submitSummary(summaryPayload);
     }
     clearFinalizeState();
@@ -708,81 +769,16 @@ async function finalizeRecording() {
   }
   state.recordingFinalized = true;
   try {
-    const blob = new Blob(state.recordedChunks, { type: state.recorder.mimeType || "audio/webm" });
-    const base64 = await blobToBase64(blob);
-    if (!base64) return;
-    const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : null;
-    const fallbackTranscript = summaryPayload?.transcript || "";
-    const payload = {
-      audio_base64: base64,
-      audio_mimetype: blob.type || "audio/webm",
-      audio_filename: "realtime-call.webm",
-      transcript: fallbackTranscript,
-      prompt_id: sessionMeta?.promptId || "",
-      model: sessionMeta?.model || "",
-      voice: sessionMeta?.voice || "",
-      embed_mode: sessionMeta?.embedMode ? "1" : "",
-      caller_phone: sessionMeta?.callerPhone || "",
-      caller_company: sessionMeta?.callerCompany || "",
-      duration_seconds: durationSeconds,
-      summary_id: summaryId,
-      session_key: sessionKey,
-      client_call_id: clientCallId,
-    };
-    await submitSummaryAudio(payload);
+    await state.chunkUploadChain;
+    const endRes = await endSession(endCtx);
+    if (summaryPayload && !endRes?.attachment_id) {
+      submitSummary(summaryPayload);
+    }
   } catch (err) {
     console.warn("Recording finalize failed:", err);
   } finally {
-    await endSession(endCtx);
     clearFinalizeState();
   }
-}
-
-function submitSummaryAudioBeacon(blob, ctx = null) {
-  if (!blob || blob.size === 0) return false;
-  const context = ctx || {};
-  const sessionMeta = context.sessionMeta || state.sessionMeta || {};
-  const summaryPayload = context.summaryPayload || state.summaryPayload || {};
-  const startedAt = context.startedAt || state.startedAt;
-  const summaryId = context.summaryId || state.summaryId || "";
-  const sessionKey = context.sessionKey || state.sessionKey || "";
-  const clientCallId = context.clientCallId || state.clientCallId || "";
-  const durationSeconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : "";
-  const fallbackTranscript = summaryPayload?.transcript || "";
-
-  const formData = new FormData();
-  formData.append("audio_file", blob, "realtime-call.webm");
-  formData.append("audio_filename", "realtime-call.webm");
-  formData.append("audio_mimetype", blob.type || "audio/webm");
-  formData.append("transcript", fallbackTranscript);
-  formData.append("prompt_id", sessionMeta?.promptId || "");
-  formData.append("model", sessionMeta?.model || "");
-  formData.append("voice", sessionMeta?.voice || "");
-  formData.append("embed_mode", sessionMeta?.embedMode ? "1" : "");
-  formData.append("caller_phone", sessionMeta?.callerPhone || "");
-  formData.append("caller_company", sessionMeta?.callerCompany || "");
-  formData.append("duration_seconds", durationSeconds ? String(durationSeconds) : "");
-  formData.append("summary_id", String(summaryId || ""));
-  formData.append("session_key", sessionKey || "");
-  formData.append("client_call_id", clientCallId || "");
-
-  let sent = false;
-  if (navigator.sendBeacon) {
-    try {
-      sent = navigator.sendBeacon("/realtime_agent/summary_audio_beacon", formData);
-    } catch (err) {
-      console.warn("Summary audio beacon failed:", err);
-    }
-  }
-  if (!sent) {
-    fetch("/realtime_agent/summary_audio_beacon", {
-      method: "POST",
-      body: formData,
-      keepalive: true,
-      credentials: "same-origin",
-    }).catch((err) => console.warn("Summary audio keepalive fallback failed:", err));
-  }
-  return sent;
 }
 
 function handlePageUnload() {
@@ -821,15 +817,6 @@ function handlePageUnload() {
       console.warn("Recorder requestData failed during unload:", err);
     }
   }
-
-  if (state.recordedChunks.length > 0) {
-    state.recordingFinalized = true;
-    const mimeType = state.recorder?.mimeType || "audio/webm";
-    const blob = new Blob(state.recordedChunks, { type: mimeType });
-    submitSummaryAudioBeacon(blob, snapshot);
-    return;
-  }
-
 }
 
 function stopAgent() {
@@ -873,6 +860,7 @@ function stopAgent() {
   state.micStream = null;
   state.audioEl = null;
   state.pendingText = null;
+  state.responseInFlight = false;
   state.startedAt = null;
   state.sessionMeta = null;
   state.remoteStream = null;

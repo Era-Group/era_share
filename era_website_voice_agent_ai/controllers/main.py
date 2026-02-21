@@ -555,6 +555,46 @@ class RealtimeAgentController(http.Controller):
         if not record:
             return {"ok": False}
 
+        has_attachment = bool(
+            "attachment_id" in record._fields and getattr(record, "attachment_id", False)
+        )
+        chunk_audio = b""
+        if not has_attachment:
+            chunk_audio = self._read_chunk_file(kwargs.get("session_key"))
+        if chunk_audio:
+            payload = dict(kwargs or {})
+            payload.setdefault("summary_id", record.id)
+            if "session_key" in record._fields:
+                payload.setdefault("session_key", record.session_key or "")
+            if "client_call_id" in record._fields:
+                payload.setdefault("client_call_id", record.client_call_id or "")
+            if "prompt_id" in record._fields:
+                payload.setdefault("prompt_id", record.prompt_id or "")
+            if "model" in record._fields:
+                payload.setdefault("model", record.model or "")
+            if "voice" in record._fields:
+                payload.setdefault("voice", record.voice or "")
+            if "caller_phone" in record._fields:
+                payload.setdefault("caller_phone", record.caller_phone or "")
+            if "caller_company" in record._fields:
+                payload.setdefault("caller_company", record.caller_company or "")
+            audio_result = self._save_summary_audio(
+                payload,
+                chunk_audio,
+                kwargs.get("audio_filename") or "realtime-call.webm",
+                kwargs.get("audio_mimetype") or "audio/webm",
+            )
+            if audio_result.get("error"):
+                # Fall back to closing the active session even if audio finalize fails.
+                pass
+            else:
+                response = {"ok": True, "id": audio_result.get("id") or record.id}
+                if audio_result.get("attachment_id"):
+                    response["attachment_id"] = audio_result.get("attachment_id")
+                if audio_result.get("warning"):
+                    response["warning"] = audio_result.get("warning")
+                return response
+
         vals = {}
         if "is_active" in record._fields and record.is_active:
             vals["is_active"] = False

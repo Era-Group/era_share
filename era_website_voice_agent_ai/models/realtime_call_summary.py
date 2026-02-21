@@ -5,6 +5,7 @@ from odoo.tools import html_escape
 
 class CrmRealtimeCallSummary(models.Model):
     _name = "crm.realtime_call_summary"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "ملخص مكالمة فورية"
     _order = "create_date desc"
 

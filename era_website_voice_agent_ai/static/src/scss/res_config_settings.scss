@@ -1,3 +1,11 @@
+.o_setting_box .o_realtime_system_instructions_cfg,
+.o_setting_box .o_realtime_system_instructions_cfg .o_input,
+.o_setting_box .o_realtime_system_instructions_cfg textarea,
+textarea[name="openai_realtime_system_instructions_cfg"] {
+  width: 100%;
+  max-width: 100%;
+}
+
 .o_setting_box .o_realtime_system_instructions_cfg textarea,
 textarea[name="openai_realtime_system_instructions_cfg"] {
   min-height: 160px;

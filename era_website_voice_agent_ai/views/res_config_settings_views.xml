@@ -38,6 +38,10 @@
               <field name="openai_realtime_idle_timeout_seconds" placeholder="0"/>
             </setting>
 
+            <setting string="Assigned Salesperson" help="Default salesperson assigned to each website call summary and notified on assignment.">
+              <field name="openai_realtime_salesperson_user_id" options="{'no_create': True, 'no_open': True}"/>
+            </setting>
+
             <setting string="Show Widget Inside Website" help="Show or hide the floating widget on this Odoo website.">
               <field name="openai_realtime_widget_enabled"/>
             </setting>

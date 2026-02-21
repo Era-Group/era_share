@@ -34,6 +34,7 @@ class CrmRealtimeCallSummary(models.Model):
         string="رابط التسجيل",
         compute="_compute_recording_link_html",
     )
+    salesperson_user_id = fields.Many2one("res.users", string="مندوب المبيعات", index=True)
     lead_id = fields.Many2one("crm.lead", string="عميل محتمل/فرصة")
     caller_phone = fields.Char()
     caller_company = fields.Char()
@@ -111,25 +112,80 @@ class CrmRealtimeCallSummary(models.Model):
             lead.message_post(body=feedback, subtype_xmlid="mail.mt_note")
         return activity
 
+    def _create_salesperson_assignment_activity(self):
+        ActivityType = self.env["mail.activity.type"].sudo()
+        activity_type = ActivityType.search([("category", "=", "default")], limit=1)
+        if not activity_type:
+            activity_type = ActivityType.search([("name", "ilike", "to-do")], limit=1)
+        if not activity_type:
+            activity_type = ActivityType.search([], limit=1)
+        if not activity_type:
+            return
+
+        Model = self.env["ir.model"].sudo()
+        model_record = (
+            Model._get(self._name)
+            if hasattr(Model, "_get")
+            else Model.search([("model", "=", self._name)], limit=1)
+        )
+        if not model_record:
+            return
+
+        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url", "") or ""
+        for record in self:
+            if not record.salesperson_user_id:
+                continue
+            call_link = ""
+            if base_url and record.id:
+                call_link = (
+                    f"{base_url}/web#id={record.id}"
+                    f"&model=crm.realtime_call_summary&view_type=form"
+                )
+            summary_line = (record.summary or "").strip().splitlines()
+            summary_preview = summary_line[0] if summary_line else ""
+            caller = record.caller_phone or record.caller_company or "-"
+            note = (
+                f"<p>New website call assigned to you.</p>"
+                f"<p><b>Caller:</b> {html_escape(caller)}</p>"
+                f"<p><b>Summary:</b> {html_escape(summary_preview)}</p>"
+            )
+            if call_link:
+                note += f'<p><a href="{call_link}" target="_blank">Open call summary</a></p>'
+
+            self.env["mail.activity"].sudo().create(
+                {
+                    "activity_type_id": activity_type.id,
+                    "res_model_id": model_record.id,
+                    "res_id": record.id,
+                    "user_id": record.salesperson_user_id.id,
+                    "summary": _("Website call assigned"),
+                    "note": note,
+                }
+            )
+
+    def _notify_salesperson_assignment_change(self, previous_salespersons):
+        for record in self:
+            old_user_id = previous_salespersons.get(record.id)
+            new_user_id = record.salesperson_user_id.id if record.salesperson_user_id else False
+            if new_user_id and new_user_id != old_user_id:
+                record._create_salesperson_assignment_activity()
+
     @api.model_create_multi
     def create(self, vals_list):
         name_prefix = _("ملخص مكالمة فورية")
         for vals in vals_list:
             if not vals.get("name"):
                 vals["name"] = fields.Datetime.now().strftime(f"{name_prefix} %Y-%m-%d %H:%M:%S")
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        previous_salespersons = {record.id: False for record in records}
+        records._notify_salesperson_assignment_change(previous_salespersons)
+        return records
 
     def write(self, vals):
-        previous_leads = {record.id: record.lead_id.id for record in self}
+        previous_salespersons = {record.id: record.salesperson_user_id.id for record in self}
         result = super().write(vals)
-        if vals.get("lead_id"):
-            for record in self:
-                if not previous_leads.get(record.id) and record.lead_id:
-                    record._create_done_call_activity(
-                        record.lead_id,
-                        record.summary or "",
-                        record.attachment_id,
-                    )
+        if "salesperson_user_id" in vals:
+            self._notify_salesperson_assignment_change(previous_salespersons)
         return result
 
     def action_open_recording_player(self):

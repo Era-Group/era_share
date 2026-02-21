@@ -7,6 +7,7 @@
       <list string="ملخصات المكالمات الفورية">
         <field name="create_date" string="أُنشئ في"/>
         <field name="caller_phone" string="هاتف المتصل"/>
+        <field name="salesperson_user_id" string="مندوب المبيعات"/>
         <field name="call_source" string="مصدر المكالمة"/>
         <field name="duration_seconds"/>
         <field name="summary"/>
@@ -33,6 +34,7 @@
           </group>
           <group>
             <field name="lead_id"/>
+            <field name="salesperson_user_id"/>
             <field name="caller_phone" string="هاتف المتصل"/>
             <field name="caller_company" string="شركة المتصل"/>
           </group>

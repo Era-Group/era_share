@@ -207,6 +207,20 @@ class RealtimeAgentController(http.Controller):
     def _summary_model(self):
         return request.env["crm.realtime_call_summary"].sudo()
 
+    def _configured_salesperson_user_id(self, ICP=None):
+        ICP = ICP or request.env["ir.config_parameter"].sudo()
+        raw_user_id = (ICP.get_param("openai.realtime_salesperson_user_id") or "").strip()
+        try:
+            user_id = int(raw_user_id or 0)
+        except Exception:
+            user_id = 0
+        if not user_id:
+            return 0
+        user = request.env["res.users"].sudo().browse(user_id).exists()
+        if not user or user.share:
+            return 0
+        return user.id
+
     def _request_ip(self):
         headers = request.httprequest.headers
         forwarded_for = (headers.get("X-Forwarded-For") or "").strip()
@@ -391,6 +405,13 @@ class RealtimeAgentController(http.Controller):
 
     def _upsert_summary_record(self, kwargs, values):
         Summary = self._summary_model()
+        configured_salesperson_id = self._configured_salesperson_user_id()
+        if (
+            "salesperson_user_id" in Summary._fields
+            and configured_salesperson_id
+            and not values.get("salesperson_user_id")
+        ):
+            values["salesperson_user_id"] = configured_salesperson_id
         values = {k: v for k, v in values.items() if k in Summary._fields}
         record = self._get_session_record(kwargs)
         if record:
@@ -860,6 +881,7 @@ class RealtimeAgentController(http.Controller):
         caller_ip = self._caller_ip_for_payload(kwargs)
         model = kwargs.get("model") or ICP.get_param("openai.realtime_model")
         voice = kwargs.get("voice") or ICP.get_param("openai.realtime_voice")
+        configured_salesperson_id = self._configured_salesperson_user_id(ICP)
 
         if client_call_id and "client_call_id" in Summary._fields:
             existing = Summary.search([("client_call_id", "=", client_call_id)], order="id desc", limit=1)
@@ -873,6 +895,12 @@ class RealtimeAgentController(http.Controller):
                     write_vals["caller_ip"] = caller_ip
                 if "is_active" in Summary._fields and not existing.is_active:
                     write_vals["is_active"] = True
+                if (
+                    "salesperson_user_id" in Summary._fields
+                    and configured_salesperson_id
+                    and not existing.salesperson_user_id
+                ):
+                    write_vals["salesperson_user_id"] = configured_salesperson_id
                 if write_vals:
                     existing.sudo().write(write_vals)
                 return {"summary_id": existing.id, "session_key": existing_key}
@@ -907,6 +935,12 @@ class RealtimeAgentController(http.Controller):
                 write_vals["caller_ip"] = caller_ip
             if "is_active" in Summary._fields and not existing.is_active:
                 write_vals["is_active"] = True
+            if (
+                "salesperson_user_id" in Summary._fields
+                and configured_salesperson_id
+                and not existing.salesperson_user_id
+            ):
+                write_vals["salesperson_user_id"] = configured_salesperson_id
             if write_vals:
                 existing.sudo().write(write_vals)
             return {"summary_id": existing.id, "session_key": existing_key}
@@ -924,6 +958,7 @@ class RealtimeAgentController(http.Controller):
             "caller_company": caller_company,
             "caller_ip": caller_ip,
             "is_active": True,
+            "salesperson_user_id": configured_salesperson_id,
         }
         lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
         if lead:

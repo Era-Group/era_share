@@ -60,6 +60,13 @@ class ResConfigSettings(models.TransientModel):
             "Set 0 to disable idle timeout."
         ),
     )
+    openai_realtime_salesperson_user_id = fields.Many2one(
+        "res.users",
+        string="Assigned Salesperson",
+        config_parameter="openai.realtime_salesperson_user_id",
+        domain=[("share", "=", False)],
+        help="Default salesperson assigned to new website call summaries.",
+    )
 
     openai_realtime_widget_enabled = fields.Boolean(
         string="Show Widget Inside Website",

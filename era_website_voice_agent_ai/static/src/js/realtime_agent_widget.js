@@ -478,8 +478,18 @@ async function startAgent() {
         state.assistantBuffer = "";
       }
       if (evt.type === "error") {
-        console.error("OpenAI Error:", evt.error);
-        setStatus("صار خطأ في الاتصال");
+        const err = evt.error || {};
+        const errMsg =
+          err.message ||
+          err.error?.message ||
+          err.code ||
+          err.type ||
+          JSON.stringify(err);
+        console.error("OpenAI Error:", errMsg, err);
+        setStatus(`صار خطأ في الاتصال: ${String(errMsg).slice(0, 120)}`);
+        if (/(invalid|unauthorized|forbidden|expired|session|token|turn_detection|interrupt_response)/i.test(String(errMsg))) {
+          stopAgent();
+        }
       }
     } catch (err) {
       console.error("Error parsing message:", err);
@@ -513,10 +523,6 @@ async function startAgent() {
     const sessionUpdate = {
       model: cfg.model,
       voice: cfg.voice,
-      turn_detection: {
-        type: "server_vad",
-        interrupt_response: !!state.sessionMeta?.interruptResponseEnabled,
-      },
       input_audio_transcription: {
         model: "gpt-4o-mini-transcribe",
       },

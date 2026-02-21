@@ -195,7 +195,9 @@ function clearPttIdleTimer() {
 
 function resolvePttIdleTimeoutSeconds() {
   const configured = Number(state.sessionMeta?.idleTimeoutSeconds || 0);
-  if (Number.isFinite(configured) && configured > 0) return configured;
+  if (Number.isFinite(configured) && configured > 0) {
+    return Math.max(DEFAULT_PTT_IDLE_TIMEOUT_SECONDS, configured);
+  }
   return DEFAULT_PTT_IDLE_TIMEOUT_SECONDS;
 }
 

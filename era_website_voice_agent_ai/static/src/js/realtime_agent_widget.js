@@ -485,9 +485,25 @@ async function startAgent() {
           err.code ||
           err.type ||
           JSON.stringify(err);
+
+        const errCode = String(err.code || err.error?.code || "").toLowerCase();
+        const msg = String(errMsg || "");
+        const isActiveResponseRace = errCode === "conversation_already_has_active_response";
+        const isShortAudioEdgeCase =
+          errCode === "invalid_value" && /audio content of .* shorter than/i.test(msg.toLowerCase());
+        if (isActiveResponseRace || isShortAudioEdgeCase) {
+          // Non-fatal realtime edge cases; keep the session running.
+          console.debug("OpenAI Realtime non-fatal:", errCode || msg, err);
+          return;
+        }
+
         console.error("OpenAI Error:", errMsg, err);
-        setStatus(`صار خطأ في الاتصال: ${String(errMsg).slice(0, 120)}`);
-        if (/(invalid|unauthorized|forbidden|expired|session|token|turn_detection|interrupt_response)/i.test(String(errMsg))) {
+        setStatus(`صار خطأ في الاتصال: ${msg.slice(0, 120)}`);
+
+        const isFatal =
+          /unauthorized|forbidden|api key|token.*expired|session.*expired|session.*not found/i.test(msg) ||
+          /(turn_detection|interrupt_response)/i.test(msg);
+        if (isFatal) {
           stopAgent();
         }
       }

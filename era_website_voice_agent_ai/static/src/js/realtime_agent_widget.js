@@ -651,9 +651,6 @@ async function startAgent() {
         model: "gpt-4o-mini-transcribe",
       },
     };
-    if (cfg.promptId && !state.sessionMeta?.promptFallback) {
-      sessionUpdate.prompt = { id: cfg.promptId };
-    }
 
     safeSend({
       type: "session.update",

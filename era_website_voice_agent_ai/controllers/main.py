@@ -659,20 +659,8 @@ class RealtimeAgentController(http.Controller):
         interrupt_response_enabled = self._is_truthy(
             ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
         )
-        prompt_id = ICP.get_param("openai.realtime_prompt_id")
-        prompt_version = ICP.get_param("openai.realtime_prompt_version")
-
         if not api_key:
             return {"error": "Missing system parameter: openai.api_key"}
-
-        has_mcp_tools, prompt_check_error = self._prompt_has_mcp_tools(api_key, prompt_id)
-        if has_mcp_tools:
-            return {
-                "error": "Prompt uses MCP tools",
-                "details": "MCP tools must be fetched from the MCP server before use. Remove MCP tools from the prompt or ensure the MCP server is available and warmed.",
-            }
-        if prompt_check_error:
-            return {"error": "Prompt lookup failed", "details": prompt_check_error}
 
         url = "https://api.openai.com/v1/realtime/sessions"
         headers = {
@@ -688,17 +676,7 @@ class RealtimeAgentController(http.Controller):
                 "type": "server_vad",
                 "interrupt_response": interrupt_response_enabled,
             },
-            "instructions": "You are a helpful assistant.",
         }
-        used_prompt_fallback = False
-        if prompt_id:
-            payload["prompt"] = {"id": prompt_id}
-            if prompt_version:
-                payload["prompt"]["version"] = prompt_version
-
-        def _is_prompt_not_found_error(response_text):
-            text = (response_text or "").lower()
-            return "prompt with id" in text and "not found" in text
 
         def _mint_session(session_payload):
             try:
@@ -710,16 +688,6 @@ class RealtimeAgentController(http.Controller):
         if request_error:
             return {"error": f"OpenAI request failed: {request_error}"}
 
-        # If configured prompt is missing/deleted, retry without prompt so widget can still work.
-        if r.status_code >= 400 and payload.get("prompt") and _is_prompt_not_found_error(r.text):
-            fallback_payload = dict(payload)
-            fallback_payload.pop("prompt", None)
-            fallback_resp, fallback_error = _mint_session(fallback_payload)
-            if fallback_error:
-                return {"error": f"OpenAI request failed: {fallback_error}"}
-            r = fallback_resp
-            used_prompt_fallback = True
-
         if r.status_code >= 400:
             return {"error": "OpenAI token mint failed", "status": r.status_code, "details": r.text}
 
@@ -730,7 +698,7 @@ class RealtimeAgentController(http.Controller):
 
         return {
             "value": client_secret,
-            "prompt_fallback": used_prompt_fallback,
+            "prompt_fallback": False,
             "interrupt_response_enabled": interrupt_response_enabled,
         }
 

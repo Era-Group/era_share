@@ -62,7 +62,15 @@
             </div>
 
             <div id="oai-agent-call-actions" class="oai-agent-panel__actions d-none">
-              <button id="oai-agent-stop" class="btn btn-lg btn-danger w-100 py-3" type="button">إنهاء المكالمة</button>
+              <button id="oai-agent-stop" class="btn btn-danger oai-agent-stop-btn" type="button">End call</button>
+              <button id="oai-agent-ptt"
+                      class="btn oai-agent-ptt-btn"
+                      type="button"
+                      aria-pressed="false"
+                      title="Push to talk">
+                <span class="fa fa-microphone" aria-hidden="true"></span>
+                <span id="oai-agent-ptt-label" class="visually-hidden">Push to talk</span>
+              </button>
             </div>
           </div>
         </div>

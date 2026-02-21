@@ -67,8 +67,62 @@
 
 .oai-agent-panel__actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  direction: ltr;
+  gap: 12px;
+}
+
+.oai-agent-stop-btn {
+  min-width: 122px;
+  min-height: 52px;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-weight: 600;
+}
+
+.oai-agent-ptt-btn {
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  min-height: 58px;
+  border-radius: 50%;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #ffffff;
+  background: #1d4ed8;
+  box-shadow: 0 8px 18px rgba(29, 78, 216, 0.28);
+}
+
+.oai-agent-ptt-btn:hover,
+.oai-agent-ptt-btn:focus,
+.oai-agent-ptt-btn:active {
+  color: #ffffff;
+  background: #1e40af;
+  border-color: transparent;
+}
+
+.oai-agent-ptt-btn.is-live {
+  background: #15803d;
+  box-shadow: 0 8px 18px rgba(21, 128, 61, 0.28);
+}
+
+@media (max-width: 420px) {
+  .oai-agent-stop-btn {
+    min-width: 108px;
+    min-height: 48px;
+    padding: 0 14px;
+  }
+
+  .oai-agent-ptt-btn {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    min-height: 54px;
+  }
 }
 
 .oai-agent-mobile-step {

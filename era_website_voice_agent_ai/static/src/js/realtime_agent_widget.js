@@ -34,6 +34,7 @@ let state = {
   starting: false,
   stopping: false,
   responseInFlight: false,
+  micEnabled: false,
 };
 
 function qs(id) {
@@ -170,6 +171,7 @@ async function startAgentFromPanel() {
     await startAgent();
     showMobileStep(false);
     showCallActions(true);
+    updatePushToTalkButton();
   } finally {
     state.starting = false;
     setStartButtonLoading(false);
@@ -179,6 +181,41 @@ async function startAgentFromPanel() {
 function setStatus(text) {
   const el = qs("oai-agent-status");
   if (el) el.textContent = text;
+}
+
+function updatePushToTalkButton() {
+  const btn = qs("oai-agent-ptt");
+  if (!btn) return;
+  const active = !!(state.running && state.micEnabled);
+  btn.disabled = !state.running;
+  btn.setAttribute("aria-pressed", active ? "true" : "false");
+  btn.classList.toggle("is-live", active);
+  btn.title = active ? "Talking..." : "Push to talk";
+  const label = qs("oai-agent-ptt-label");
+  if (label) label.textContent = active ? "Talking" : "Push to talk";
+}
+
+function setMicEnabled(enabled) {
+  const tracks = state.micStream?.getAudioTracks?.() || [];
+  const target = !!enabled;
+  if (tracks.length) {
+    tracks.forEach((track) => {
+      track.enabled = target;
+    });
+  }
+  state.micEnabled = !!(target && tracks.length);
+  updatePushToTalkButton();
+}
+
+function startPushToTalk(ev) {
+  if (ev) ev.preventDefault();
+  if (!state.running) return;
+  setMicEnabled(true);
+}
+
+function stopPushToTalk(ev) {
+  if (ev && (ev.type === "keydown" || ev.type === "keyup")) ev.preventDefault();
+  setMicEnabled(false);
 }
 
 function appendTranscript(role, text) {
@@ -500,7 +537,10 @@ async function startAgent() {
   };
 
   const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  state.micStream = micStream;
   micStream.getTracks().forEach((t) => pc.addTrack(t, micStream));
+  // Push-to-talk: keep microphone muted until the user presses the PTT button.
+  setMicEnabled(false);
   initRecorder(micStream);
 
   const dc = pc.createDataChannel("oai-events");
@@ -602,7 +642,7 @@ async function startAgent() {
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
   dc.addEventListener("open", async () => {
-    setStatus("متصل ✅");
+    setStatus("متصل ✅ اضغط مطولًا على زر التحدث");
 
     const sessionUpdate = {
       model: cfg.model,
@@ -636,8 +676,8 @@ async function startAgent() {
   state.running = true;
   state.pc = pc;
   state.dc = dc;
-  state.micStream = micStream;
   state.audioEl = audioEl;
+  updatePushToTalkButton();
 }
 
 async function submitSummary(payload) {
@@ -697,6 +737,7 @@ function clearFinalizeState() {
   state.sessionKey = "";
   state.clientCallId = "";
   state.responseInFlight = false;
+  state.micEnabled = false;
   state.stopping = false;
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});
@@ -823,6 +864,7 @@ function stopAgent() {
   if (state.stopping) return;
   state.stopping = true;
   setStatus("تم الإنهاء");
+  setMicEnabled(false);
   if (!DISABLE_TRANSCRIPT && state.assistantBuffer) {
     pushTranscript("assistant", state.assistantBuffer);
     state.assistantBuffer = "";
@@ -861,12 +903,14 @@ function stopAgent() {
   state.audioEl = null;
   state.pendingText = null;
   state.responseInFlight = false;
+  state.micEnabled = false;
   state.startedAt = null;
   state.sessionMeta = null;
   state.remoteStream = null;
   state.unloadHandled = false;
   showCallActions(false);
   togglePanel(false);
+  updatePushToTalkButton();
 
   if (!state.recorder && summaryPayload) {
     const endCtx = { ...(state.finalizeContext || {}) };
@@ -898,6 +942,7 @@ function wireUI() {
   const fab = qs("oai-agent-fab");
   const startBtn = qs("oai-agent-start");
   const stopBtn = qs("oai-agent-stop");
+  const pttBtn = qs("oai-agent-ptt");
   const mobileInput = qs("oai-agent-mobile-input");
 
   if (fab) {
@@ -949,6 +994,23 @@ function wireUI() {
       ev.preventDefault();
       stopAgent();
     });
+  }
+
+  if (pttBtn) {
+    pttBtn.addEventListener("pointerdown", startPushToTalk);
+    pttBtn.addEventListener("pointerup", stopPushToTalk);
+    pttBtn.addEventListener("pointerleave", stopPushToTalk);
+    pttBtn.addEventListener("pointercancel", stopPushToTalk);
+    pttBtn.addEventListener("blur", stopPushToTalk);
+    pttBtn.addEventListener("keydown", (ev) => {
+      if (ev.key === " " || ev.key === "Enter") startPushToTalk(ev);
+    });
+    pttBtn.addEventListener("keyup", (ev) => {
+      if (ev.key === " " || ev.key === "Enter") stopPushToTalk(ev);
+    });
+    window.addEventListener("pointerup", stopPushToTalk);
+    window.addEventListener("pointercancel", stopPushToTalk);
+    updatePushToTalkButton();
   }
 
 }

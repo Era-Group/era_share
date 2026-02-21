@@ -620,19 +620,28 @@ class RealtimeAgentController(http.Controller):
                     continue
                 if not isinstance(part, dict):
                     continue
-                text = (part.get("text") or part.get("value") or "").strip()
+                raw_text = part.get("text")
+                if isinstance(raw_text, dict):
+                    raw_text = raw_text.get("value") or raw_text.get("text") or ""
+                text = str(raw_text or part.get("value") or "").strip()
                 if text:
                     chunks.append(text)
             return "\n".join(chunks).strip()
         if isinstance(content, dict):
-            text = (content.get("text") or content.get("value") or "").strip()
+            raw_text = content.get("text")
+            if isinstance(raw_text, dict):
+                raw_text = raw_text.get("value") or raw_text.get("text") or ""
+            text = str(raw_text or content.get("value") or "").strip()
             if text:
                 return text
         return ""
 
     def _extract_prompt_instructions(self, payload):
+        if not isinstance(payload, dict):
+            return ""
         prompt_data = payload.get("prompt") if isinstance(payload.get("prompt"), dict) else payload
-        instructions = (prompt_data.get("instructions") or payload.get("instructions") or "").strip()
+        raw_instructions = prompt_data.get("instructions") or payload.get("instructions") or ""
+        instructions = self._prompt_content_to_text(raw_instructions)
         if instructions:
             return instructions
 
@@ -663,7 +672,7 @@ class RealtimeAgentController(http.Controller):
             "OpenAI-Beta": "prompts=v1",
         }
         try:
-            r = requests.get(url, headers=headers, timeout=10)
+            r = requests.get(url, headers=headers, timeout=(3.05, 8))
         except Exception as e:
             return None, f"OpenAI prompt lookup failed: {e}"
         if r.status_code in (401, 403):
@@ -710,14 +719,16 @@ class RealtimeAgentController(http.Controller):
         if not api_key:
             return {"error": "Missing system parameter: openai.api_key"}
 
-        prompt_profile, prompt_error = self._fetch_prompt_profile(api_key, prompt_id)
-        if prompt_error:
-            return {"error": "Prompt lookup failed", "details": prompt_error}
-        if prompt_profile and prompt_profile.get("has_mcp_tools"):
-            return {
-                "error": "Prompt uses MCP tools",
-                "details": "MCP tools must be fetched from the MCP server before use. Remove MCP tools from the prompt or ensure the MCP server is available and warmed.",
-            }
+        prompt_profile = {"has_mcp_tools": False, "instructions": ""}
+        prompt_warning = ""
+        try:
+            fetched_profile, prompt_error = self._fetch_prompt_profile(api_key, prompt_id)
+            if prompt_error:
+                prompt_warning = prompt_error
+            elif fetched_profile:
+                prompt_profile = fetched_profile
+        except Exception as e:
+            prompt_warning = f"Prompt lookup failed: {e}"
 
         url = "https://api.openai.com/v1/realtime/sessions"
         headers = {
@@ -758,11 +769,14 @@ class RealtimeAgentController(http.Controller):
         if not client_secret:
             return {"error": "No client_secret returned by OpenAI", "details": data}
 
-        return {
+        response = {
             "value": client_secret,
             "prompt_fallback": False,
             "interrupt_response_enabled": interrupt_response_enabled,
         }
+        if prompt_warning:
+            response["prompt_lookup_warning"] = prompt_warning
+        return response
 
     @http.route("/realtime_agent/embed/frame", type="http", auth="public", website=True, csrf=False)
     def realtime_agent_embed_frame(self, **kwargs):

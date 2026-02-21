@@ -715,20 +715,22 @@ class RealtimeAgentController(http.Controller):
         interrupt_response_enabled = self._is_truthy(
             ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
         )
+        system_instructions = (ICP.get_param("openai.realtime_system_instructions") or "").strip()
         prompt_id = (ICP.get_param("openai.realtime_prompt_id") or "").strip()
         if not api_key:
             return {"error": "Missing system parameter: openai.api_key"}
 
         prompt_profile = {"has_mcp_tools": False, "instructions": ""}
         prompt_warning = ""
-        try:
-            fetched_profile, prompt_error = self._fetch_prompt_profile(api_key, prompt_id)
-            if prompt_error:
-                prompt_warning = prompt_error
-            elif fetched_profile:
-                prompt_profile = fetched_profile
-        except Exception as e:
-            prompt_warning = f"Prompt lookup failed: {e}"
+        if not system_instructions:
+            try:
+                fetched_profile, prompt_error = self._fetch_prompt_profile(api_key, prompt_id)
+                if prompt_error:
+                    prompt_warning = prompt_error
+                elif fetched_profile:
+                    prompt_profile = fetched_profile
+            except Exception as e:
+                prompt_warning = f"Prompt lookup failed: {e}"
 
         url = "https://api.openai.com/v1/realtime/sessions"
         headers = {
@@ -745,11 +747,14 @@ class RealtimeAgentController(http.Controller):
                 "interrupt_response": interrupt_response_enabled,
             },
         }
-        prompt_instructions = ""
-        if prompt_profile:
-            prompt_instructions = (prompt_profile.get("instructions") or "").strip()
-        if prompt_instructions:
-            payload["instructions"] = prompt_instructions
+        if system_instructions:
+            payload["instructions"] = system_instructions
+        else:
+            prompt_instructions = ""
+            if prompt_profile:
+                prompt_instructions = (prompt_profile.get("instructions") or "").strip()
+            if prompt_instructions:
+                payload["instructions"] = prompt_instructions
 
         def _mint_session(session_payload):
             try:

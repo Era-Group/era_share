@@ -36,6 +36,14 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_voice",
         help="Voice name for audio output (default: alloy).",
     )
+    openai_realtime_system_instructions = fields.Text(
+        string="Realtime System Instructions",
+        config_parameter="openai.realtime_system_instructions",
+        help=(
+            "System instructions sent directly to OpenAI Realtime sessions. "
+            "If set, these instructions take precedence over Prompt ID instructions."
+        ),
+    )
 
     openai_realtime_interrupt_response_enabled = fields.Boolean(
         string="Allow Agent Interruption",

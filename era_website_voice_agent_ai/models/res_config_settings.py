@@ -36,7 +36,7 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_voice",
         help="Voice name for audio output (default: alloy).",
     )
-    openai_realtime_system_instructions = fields.Text(
+    openai_realtime_system_instructions_cfg = fields.Char(
         string="Realtime System Instructions",
         config_parameter="openai.realtime_system_instructions",
         help=(

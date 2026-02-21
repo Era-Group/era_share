@@ -50,11 +50,15 @@
             <setting string="Enable External Embed Widget" help="Allow or block loading the widget from external websites via embed script.">
               <field name="openai_realtime_embed_enabled"/>
             </setting>
-            <setting string="Allowed Embed Origins" help="Optional allowlist of parent website origins that can embed the external widget frame. One origin per line, e.g. https://example.com">
+            <setting string="Allowed Embed Origins"
+                     help="Optional allowlist of parent website origins that can embed the external widget frame. One origin per line, e.g. https://example.com"
+                     invisible="not openai_realtime_embed_enabled">
               <field name="openai_realtime_embed_allowed_origins" widget="text" placeholder="https://example.com&#10;https://www.example.com"/>
             </setting>
 
-            <setting string="External Embed Script" help="Copy/paste this script into any external website.">
+            <setting string="External Embed Script"
+                     help="Copy/paste this script into any external website."
+                     invisible="not openai_realtime_embed_enabled">
               <field name="openai_realtime_embed_script" widget="text" readonly="1"/>
             </setting>
 

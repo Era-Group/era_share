@@ -607,10 +607,55 @@ class RealtimeAgentController(http.Controller):
             record.sudo().write(vals)
         return {"ok": True, "id": record.id}
 
-    def _prompt_has_mcp_tools(self, api_key, prompt_id):
-        """Check if a prompt declares MCP tools to provide a clear error before session start."""
+    def _prompt_content_to_text(self, content):
+        if isinstance(content, str):
+            return content.strip()
+        if isinstance(content, list):
+            chunks = []
+            for part in content:
+                if isinstance(part, str):
+                    text = part.strip()
+                    if text:
+                        chunks.append(text)
+                    continue
+                if not isinstance(part, dict):
+                    continue
+                text = (part.get("text") or part.get("value") or "").strip()
+                if text:
+                    chunks.append(text)
+            return "\n".join(chunks).strip()
+        if isinstance(content, dict):
+            text = (content.get("text") or content.get("value") or "").strip()
+            if text:
+                return text
+        return ""
+
+    def _extract_prompt_instructions(self, payload):
+        prompt_data = payload.get("prompt") if isinstance(payload.get("prompt"), dict) else payload
+        instructions = (prompt_data.get("instructions") or payload.get("instructions") or "").strip()
+        if instructions:
+            return instructions
+
+        messages = prompt_data.get("messages") or payload.get("messages") or []
+        if not isinstance(messages, list):
+            return ""
+
+        collected = []
+        for msg in messages:
+            if not isinstance(msg, dict):
+                continue
+            role = (msg.get("role") or "").strip().lower()
+            if role not in ("system", "developer"):
+                continue
+            text = self._prompt_content_to_text(msg.get("content"))
+            if text:
+                collected.append(text)
+        return "\n\n".join(collected).strip()
+
+    def _fetch_prompt_profile(self, api_key, prompt_id):
+        """Read prompt metadata from OpenAI without sending prompt reference to Realtime sessions."""
         if not prompt_id:
-            return False, None
+            return {"has_mcp_tools": False, "instructions": ""}, None
         url = f"https://api.openai.com/v1/prompts/{prompt_id}"
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -620,23 +665,25 @@ class RealtimeAgentController(http.Controller):
         try:
             r = requests.get(url, headers=headers, timeout=10)
         except Exception as e:
-            return False, f"OpenAI prompt lookup failed: {e}"
+            return None, f"OpenAI prompt lookup failed: {e}"
         if r.status_code in (401, 403):
-            return False, f"OpenAI prompt lookup unauthorized: {r.status_code} {r.text}"
+            return None, f"OpenAI prompt lookup unauthorized: {r.status_code} {r.text}"
         if r.status_code >= 400:
-            # Treat other failures as non-blocking to avoid breaking valid sessions.
-            return False, None
+            return None, f"OpenAI prompt lookup failed: {r.status_code} {r.text}"
         try:
             data = r.json()
         except Exception as e:
-            return False, f"OpenAI prompt lookup invalid JSON: {e}"
+            return None, f"OpenAI prompt lookup invalid JSON: {e}"
         tools = data.get("tools") or (data.get("prompt") or {}).get("tools") or []
+        has_mcp_tools = False
         for tool in tools:
             tool_type = (tool.get("type") or tool.get("tool_type") or "").lower()
             provider = (tool.get("provider") or "").lower()
             if tool_type == "mcp" or provider == "mcp":
-                return True, None
-        return False, None
+                has_mcp_tools = True
+                break
+        instructions = self._extract_prompt_instructions(data)
+        return {"has_mcp_tools": has_mcp_tools, "instructions": instructions}, None
 
     @http.route("/realtime_agent/token", type="jsonrpc", auth="public", website=True, csrf=False)
     def realtime_agent_token(self, **kwargs):
@@ -659,8 +706,18 @@ class RealtimeAgentController(http.Controller):
         interrupt_response_enabled = self._is_truthy(
             ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
         )
+        prompt_id = (ICP.get_param("openai.realtime_prompt_id") or "").strip()
         if not api_key:
             return {"error": "Missing system parameter: openai.api_key"}
+
+        prompt_profile, prompt_error = self._fetch_prompt_profile(api_key, prompt_id)
+        if prompt_error:
+            return {"error": "Prompt lookup failed", "details": prompt_error}
+        if prompt_profile and prompt_profile.get("has_mcp_tools"):
+            return {
+                "error": "Prompt uses MCP tools",
+                "details": "MCP tools must be fetched from the MCP server before use. Remove MCP tools from the prompt or ensure the MCP server is available and warmed.",
+            }
 
         url = "https://api.openai.com/v1/realtime/sessions"
         headers = {
@@ -677,6 +734,11 @@ class RealtimeAgentController(http.Controller):
                 "interrupt_response": interrupt_response_enabled,
             },
         }
+        prompt_instructions = ""
+        if prompt_profile:
+            prompt_instructions = (prompt_profile.get("instructions") or "").strip()
+        if prompt_instructions:
+            payload["instructions"] = prompt_instructions
 
         def _mint_session(session_payload):
             try:

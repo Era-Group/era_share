@@ -129,6 +129,20 @@ class EraSpyApplicantController(http.Controller):
             queued += 1
 
         _logger.info("EraSpy applicant callback queued: %s items", queued)
+        if queued:
+            try:
+                cron = request.env.ref(
+                    "era_spy_recruitment.ir_cron_eraspy_applicant_process_queue",
+                    raise_if_not_found=False,
+                )
+                if cron and hasattr(cron, "method_direct_trigger"):
+                    cron.sudo().method_direct_trigger()
+                elif cron and hasattr(cron, "_trigger"):
+                    cron.sudo()._trigger()
+                else:
+                    queue.cron_process_queue()
+            except Exception:
+                _logger.exception("EraSpy applicant callback trigger failed")
         return request.make_response(
             json.dumps({"ok": True, "queued": queued}),
             headers=[("Content-Type", "application/json")],

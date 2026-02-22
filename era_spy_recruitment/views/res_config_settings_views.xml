@@ -5,17 +5,6 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="era_spy_base.view_res_config_settings_eraspy"/>
         <field name="arch" type="xml">
-            <xpath expr="//app[@name='eraspy']" position="inside">
-                <block title="Recruitment">
-                    <setting string="Fix Stuck Queued Applicants"
-                             help="Find applicants with EraSpy Last Status = Queued and no pending callback records, then mark them as failed.">
-                        <button name="action_eraspy_fix_stuck_queued_applicants"
-                                type="object"
-                                string="Run Fix"
-                                class="btn btn-secondary"/>
-                    </setting>
-                </block>
-            </xpath>
         </field>
     </record>
 </odoo>

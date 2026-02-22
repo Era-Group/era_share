@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_eraspy_recruitment" model="ir.ui.view">
+        <field name="name">res.config.settings.eraspy.recruitment</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="era_spy_base.view_res_config_settings_eraspy"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@title='API']/setting[@string='Base URL']" position="replace">
+            </xpath>
+        </field>
+    </record>
+</odoo>

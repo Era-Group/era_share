@@ -9,6 +9,14 @@ _logger = logging.getLogger(__name__)
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
+    def _set_default_eraspy_base_url(self):
+        """Set the default EraSpy Base URL on module installation/upgrade."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        current_url = ICP.get_param('era_spy.base_url')
+        if not current_url:
+            ICP.set_param('era_spy.base_url', 'https://spy.era.net.sa/api')
+            _logger.info('Set default EraSpy Base URL to https://spy.era.net.sa/api')
+
     def action_eraspy_fix_stuck_queued_applicants(self):
         self.ensure_one()
         applicant_model = self.env["hr.applicant"].sudo()

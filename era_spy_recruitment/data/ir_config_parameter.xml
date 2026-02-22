@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_config_param_eraspy_base_url" model="ir.config_parameter">
+            <field name="key">era_spy.base_url</field>
+            <field name="value">https://spy.era.net.sa/api</field>
+        </record>
+    </data>
+</odoo>

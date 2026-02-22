@@ -60,17 +60,10 @@ class HrApplicant(models.Model):
     def _get_eraspy_pending_applicant_ids(self):
         if not self.ids:
             return set()
-        groups = self.env["eraspy.applicant.callback.queue"].sudo().read_group(
+        pending_queue = self.env["eraspy.applicant.callback.queue"].sudo().search(
             [("applicant_id", "in", self.ids), ("state", "=", "pending")],
-            ["applicant_id"],
-            ["applicant_id"],
         )
-        pending_ids = set()
-        for group in groups:
-            applicant_data = group.get("applicant_id")
-            if applicant_data:
-                pending_ids.add(applicant_data[0])
-        return pending_ids
+        return set(pending_queue.mapped("applicant_id").ids)
 
     def action_eraspy_enrich(self):
         applicant_ids = self.ids or self.env.context.get("active_ids") or []

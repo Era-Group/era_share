@@ -87,17 +87,10 @@ class CrmLead(models.Model):
     def _get_eraspy_pending_lead_ids(self):
         if not self.ids:
             return set()
-        groups = self.env["eraspy.callback.queue"].sudo().read_group(
+        pending_queue = self.env["eraspy.callback.queue"].sudo().search(
             [("lead_id", "in", self.ids), ("state", "=", "pending")],
-            ["lead_id"],
-            ["lead_id"],
         )
-        pending_ids = set()
-        for group in groups:
-            lead_data = group.get("lead_id")
-            if lead_data:
-                pending_ids.add(lead_data[0])
-        return pending_ids
+        return set(pending_queue.mapped("lead_id").ids)
 
     def action_eraspy_enrich(self):
         lead_ids = self.ids or self.env.context.get("active_ids") or []

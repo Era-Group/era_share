@@ -6,7 +6,12 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app string="GOSI" name="gosi" groups="base.group_system">
+                <app data-string="GOSI"
+                     string="GOSI"
+                     name="gosi"
+                     data-key="era_gosi_api"
+                     logo="/era_gosi_api/static/description/settings_icon.svg"
+                     groups="base.group_system">
                     <block title="API">
                         <setting string="Registration Number" help="Establishment registration number used in API paths.">
                             <field name="gosi_registration_number"/>

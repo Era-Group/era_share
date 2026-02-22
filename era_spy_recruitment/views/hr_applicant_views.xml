@@ -20,7 +20,7 @@
                         <button name="action_eraspy_enrich"
                                 type="object"
                                 string="EraSpy Enrich"
-                                readonly="eraspy_last_status == 'Queued'"
+                                readonly="eraspy_last_status in ['Queued', 'queued', 'queue']"
                                 class="oe_highlight"/>
                     </group>
                     <group>

@@ -14,12 +14,6 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
-                <button name="action_eraspy_enrich"
-                        type="object"
-                        string="EraSpy Enrich"
-                        class="oe_highlight"/>
-            </xpath>
             <xpath expr="//label[@for='phone']/following-sibling::div[1]" position="after">
                 <label for="linkedin_url" class="oe_inline"/>
                 <div class="o_row o_row_readonly">
@@ -34,6 +28,12 @@
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="EraSpy" name="eraspy">
+                    <group>
+                        <button name="action_eraspy_enrich"
+                                type="object"
+                                string="EraSpy Enrich"
+                                class="oe_highlight"/>
+                    </group>
                     <group>
                         <field name="eraspy_last_status" readonly="1"/>
                         <field name="eraspy_last_checked" readonly="1"/>

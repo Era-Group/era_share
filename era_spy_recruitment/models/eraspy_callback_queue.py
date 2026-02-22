@@ -35,6 +35,8 @@ class EraSpyApplicantCallbackQueue(models.Model):
     processing_finished_at = fields.Datetime(readonly=True)
     processing_seconds = fields.Float(readonly=True, digits=(16, 3))
     processing_total_seconds = fields.Float(readonly=True, digits=(16, 3))
+    _PROCESSING_LOCK_KEY_1 = 19623
+    _PROCESSING_LOCK_KEY_2 = 1
 
     def init(self):
         super().init()
@@ -138,9 +140,29 @@ class EraSpyApplicantCallbackQueue(models.Model):
 
     @api.model
     def cron_process_queue(self, limit=10):
-        records = self.search([("state", "=", "pending")], limit=limit)
-        for record in records:
-            record._process_one()
+        if not self._acquire_processing_lock():
+            _logger.info("EraSpy applicant queue cron already running; skipping this trigger.")
+            return
+        try:
+            records = self.search([("state", "=", "pending")], limit=limit)
+            for record in records:
+                record._process_one()
+        finally:
+            self._release_processing_lock()
+
+    def _acquire_processing_lock(self):
+        self.env.cr.execute(
+            "SELECT pg_try_advisory_lock(%s, %s)",
+            (self._PROCESSING_LOCK_KEY_1, self._PROCESSING_LOCK_KEY_2),
+        )
+        row = self.env.cr.fetchone()
+        return bool(row and row[0])
+
+    def _release_processing_lock(self):
+        self.env.cr.execute(
+            "SELECT pg_advisory_unlock(%s, %s)",
+            (self._PROCESSING_LOCK_KEY_1, self._PROCESSING_LOCK_KEY_2),
+        )
 
     def _process_one(self):
         self.ensure_one()

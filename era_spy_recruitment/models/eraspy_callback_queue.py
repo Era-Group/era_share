@@ -95,6 +95,15 @@ class EraSpyApplicantCallbackQueue(models.Model):
         existing = self.search(domain, limit=1)
 
         if existing:
+            if not existing.applicant_id and not applicant:
+                _logger.warning(
+                    "EraSpy applicant queue dropping orphan existing row id=%s request_id=%s identifier=%s",
+                    existing.id,
+                    request_id,
+                    identifier,
+                )
+                existing.unlink()
+                return False
             existing_has_candidate = bool(existing.candidate_json)
             existing_status = str(existing.status or "").strip().lower()
             existing_queue_like = existing_status in QUEUE_LIKE_STATUSES or existing_status.startswith("queued")
@@ -136,6 +145,15 @@ class EraSpyApplicantCallbackQueue(models.Model):
             existing.write(vals)
             return existing
 
+        if not applicant:
+            _logger.warning(
+                "EraSpy applicant queue skip create (no applicant): request_id=%s status=%s identifier=%s",
+                request_id,
+                status,
+                identifier,
+            )
+            return False
+
         vals = {
             "applicant_id": applicant.id if applicant else False,
             "request_id": str(request_id) if request_id else False,
@@ -149,6 +167,11 @@ class EraSpyApplicantCallbackQueue(models.Model):
 
     @api.model
     def cron_process_queue(self, limit=10):
+        # Keep callback queue clean from legacy orphan rows.
+        orphan_records = self.search([("applicant_id", "=", False)])
+        if orphan_records:
+            _logger.warning("EraSpy applicant queue cleanup removed orphan rows: %s", len(orphan_records))
+            orphan_records.unlink()
         records = self.search([("state", "=", "pending")], limit=limit)
         for record in records:
             record._process_one()

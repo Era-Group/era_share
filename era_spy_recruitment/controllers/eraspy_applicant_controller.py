@@ -46,6 +46,7 @@ class EraSpyApplicantController(http.Controller):
         queue = request.env["eraspy.applicant.callback.queue"].sudo()
         applicant_model = request.env["hr.applicant"].sudo()
         queued = 0
+        unmatched = 0
 
         for item in payload or []:
             if not isinstance(item, dict):
@@ -128,10 +129,21 @@ class EraSpyApplicantController(http.Controller):
                 error_message,
             )
 
-            queue.enqueue(applicant if applicant else None, item, candidate if isinstance(candidate, dict) else {})
-            queued += 1
+            if not applicant:
+                unmatched += 1
+                _logger.warning(
+                    "EraSpy applicant callback skipped (no applicant match): request_id=%s status=%s identifier=%s",
+                    request_id,
+                    status,
+                    identifier,
+                )
+                continue
 
-        _logger.info("EraSpy applicant callback queued: %s items", queued)
+            queue_record = queue.enqueue(applicant, item, candidate if isinstance(candidate, dict) else {})
+            if queue_record:
+                queued += 1
+
+        _logger.info("EraSpy applicant callback queued: %s items, skipped unmatched: %s", queued, unmatched)
         if queued:
             try:
                 # Ensure callback queue rows are persisted as pending before triggering processing.
@@ -149,6 +161,6 @@ class EraSpyApplicantController(http.Controller):
             except Exception:
                 _logger.exception("EraSpy applicant callback trigger failed")
         return request.make_response(
-            json.dumps({"ok": True, "queued": queued}),
+            json.dumps({"ok": True, "queued": queued, "unmatched": unmatched}),
             headers=[("Content-Type", "application/json")],
         )

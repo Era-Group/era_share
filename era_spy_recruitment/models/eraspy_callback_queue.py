@@ -176,6 +176,10 @@ class EraSpyApplicantCallbackQueue(models.Model):
         for record in records:
             record._process_one()
 
+        # Fix stuck queued applicants at the end of the scheduled action
+        config = self.env['res.config.settings'].create({})
+        config.action_eraspy_fix_stuck_queued_applicants()
+
     def _process_one(self):
         self.ensure_one()
         started_at = fields.Datetime.now()

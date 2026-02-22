@@ -43,7 +43,6 @@ class HrApplicant(models.Model):
     eraspy_debug_payload = fields.Text(
         string="EraSpy Debug Payload",
         readonly=True,
-        groups="base.group_system",
     )
     eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)

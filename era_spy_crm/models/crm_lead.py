@@ -70,8 +70,7 @@ class CrmLead(models.Model):
     eraspy_rating = fields.Char(readonly=True)
     eraspy_debug_payload = fields.Text(
         string="EraSpy Debug Payload",
-        readonly=True,
-        groups="base.group_system",
+        readonly=True
     )
     eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)

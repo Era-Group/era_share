@@ -50,12 +50,22 @@ class HrApplicant(models.Model):
     eraspy_ai_match = fields.Html(string="AI Qualification Match", readonly=True, sanitize=True)
     eraspy_in_queue = fields.Boolean(compute="_compute_eraspy_in_queue")
 
+    @staticmethod
+    def _is_eraspy_queue_status(status_value):
+        status_lower = str(status_value or "").strip().lower()
+        if not status_lower:
+            return False
+        if status_lower in ("queued", "queue", "pending", "in_queue", "in queue", "processing", "in_progress", "in progress"):
+            return True
+        return status_lower.startswith("queued:") or status_lower.startswith("queue:")
+
     @api.depends("eraspy_last_status")
     def _compute_eraspy_in_queue(self):
         pending_ids = self._get_eraspy_pending_applicant_ids()
         for applicant in self:
-            status_lower = str(applicant.eraspy_last_status or "").lower()
-            applicant.eraspy_in_queue = bool(applicant.id in pending_ids or "queue" in status_lower)
+            applicant.eraspy_in_queue = bool(
+                applicant.id in pending_ids or applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
+            )
 
     def _get_eraspy_pending_applicant_ids(self):
         if not self.ids:
@@ -72,7 +82,7 @@ class HrApplicant(models.Model):
         applicants = self.browse(applicant_ids)
         pending_ids = applicants._get_eraspy_pending_applicant_ids()
         blocked = applicants.filtered(
-            lambda applicant: applicant.id in pending_ids or "queue" in str(applicant.eraspy_last_status or "").lower()
+            lambda applicant: applicant.id in pending_ids or applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
         )
         if blocked:
             names = ", ".join(blocked.mapped("display_name")[:5])

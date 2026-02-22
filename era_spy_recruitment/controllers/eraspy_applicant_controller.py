@@ -65,7 +65,10 @@ class EraSpyApplicantController(http.Controller):
             candidate = item.get("candidate") or item.get("profile")
             if not candidate:
                 candidate = None
-            if status and status.lower() in ("failed", "not_found", "not found") and not error_message and not candidate:
+            status_lower = str(status or "").strip().lower()
+            if status_lower == "duplicate_query" and not error_message:
+                error_message = "Duplicate query"
+            if status_lower in ("failed", "error", "not_found", "not found") and not error_message and not candidate:
                 error_message = "No profile found"
 
             applicant = None

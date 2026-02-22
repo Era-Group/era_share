@@ -7,6 +7,9 @@ from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
+FAILURE_STATUSES = {"failed", "error", "not_found", "not found", "duplicate_query"}
+QUEUE_LIKE_STATUSES = {"queued", "queue", "pending", "in_queue", "in queue", "processing", "in_progress", "in progress"}
+
 
 class EraSpyApplicantCallbackQueue(models.Model):
     _name = "eraspy.applicant.callback.queue"
@@ -67,15 +70,19 @@ class EraSpyApplicantCallbackQueue(models.Model):
             or item.get("error_message")
             or item.get("reason")
         )
+        status_lower = str(status or "").strip().lower()
+        if status_lower == "duplicate_query" and not error_message:
+            error_message = "Duplicate query"
         candidate_dict = candidate if isinstance(candidate, dict) else None
 
         def is_failure(status_value, error_value):
-            status_lower = str(status_value or "").lower()
-            if status_lower in ("failed", "error", "not_found", "not found"):
+            status_norm = str(status_value or "").strip().lower()
+            if status_norm in FAILURE_STATUSES:
                 return True
             return bool(error_value)
 
         incoming_success = bool(candidate_dict) and not is_failure(status, error_message)
+        incoming_failure = is_failure(status, error_message)
 
         if request_id:
             domain = [("request_id", "=", str(request_id))]
@@ -88,16 +95,20 @@ class EraSpyApplicantCallbackQueue(models.Model):
         existing = self.search(domain, limit=1)
 
         if existing:
-            existing_success = False
-            if existing.candidate_json:
-                existing_success = True
-            else:
-                existing_status = str(existing.status or "").lower()
-                if existing_status and existing_status not in ("failed", "error", "not_found", "not found"):
-                    existing_success = True
+            existing_has_candidate = bool(existing.candidate_json)
+            existing_status = str(existing.status or "").strip().lower()
+            existing_queue_like = existing_status in QUEUE_LIKE_STATUSES or existing_status.startswith("queued")
+            existing_failure = is_failure(existing.status, existing.error_message)
+            should_overwrite = False
 
-            # Only overwrite failed/empty records when a success arrives.
-            if not incoming_success or existing_success:
+            # A success callback should replace stale queue/failure/empty rows.
+            if incoming_success and not existing_has_candidate:
+                should_overwrite = True
+            # A terminal failure callback (like duplicate_query) should replace queue-like rows.
+            elif incoming_failure and (existing_queue_like or (not existing_has_candidate and not existing_status)):
+                should_overwrite = True
+
+            if not should_overwrite or (existing_has_candidate and not existing_failure):
                 return existing
 
             vals = {
@@ -179,13 +190,20 @@ class EraSpyApplicantCallbackQueue(models.Model):
                 or item.get("details")
             )
             status_lower = str(status or "").lower()
-            is_failure = status_lower in ("failed", "error", "not_found", "not found") or bool(error_message)
+            if status_lower == "duplicate_query":
+                status = "failed"
+                status_lower = "failed"
+                if not error_message:
+                    error_message = "Duplicate query"
+            is_failure = status_lower in FAILURE_STATUSES or bool(error_message)
             write_vals = {}
             if isinstance(candidate, dict) and candidate and not is_failure:
                 write_vals = self.applicant_id._prepare_eraspy_write_vals(candidate, overwrite=False)
-            if status and status.lower() in ("failed", "error", "not_found", "not found") and not error_message:
+            if status and status.lower() in FAILURE_STATUSES and not error_message:
                 error_message = "No profile found"
-            if status and status.lower() in ("failed", "error", "not_found", "not found"):
+            if is_failure and not status:
+                status = "failed"
+            if status and is_failure:
                 write_vals.update(
                     {
                         "eraspy_last_status": f"{status}: {error_message}"[:255] if error_message else status[:255],

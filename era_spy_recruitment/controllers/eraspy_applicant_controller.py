@@ -3,6 +3,7 @@ import json
 import logging
 
 from odoo import http
+from odoo.exceptions import UserError
 from odoo.http import request
 
 _logger = logging.getLogger(__name__)
@@ -152,10 +153,16 @@ class EraSpyApplicantController(http.Controller):
                     "era_spy_recruitment.ir_cron_eraspy_applicant_process_queue",
                     raise_if_not_found=False,
                 )
-                if cron and hasattr(cron, "method_direct_trigger"):
-                    cron.sudo().method_direct_trigger()
-                elif cron and hasattr(cron, "_trigger"):
+                if cron and hasattr(cron, "_trigger"):
                     cron.sudo()._trigger()
+                elif cron and hasattr(cron, "method_direct_trigger"):
+                    try:
+                        cron.sudo().method_direct_trigger()
+                    except UserError as exc:
+                        if "already executing" in str(exc).lower():
+                            _logger.info("EraSpy callback queue cron already executing; skipping direct trigger")
+                        else:
+                            raise
                 else:
                     queue.cron_process_queue()
             except Exception:

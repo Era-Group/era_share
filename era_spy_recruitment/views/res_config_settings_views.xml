@@ -5,7 +5,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="era_spy_base.view_res_config_settings_eraspy"/>
         <field name="arch" type="xml">
-            <xpath expr="//setting[@string='Base URL']" position="replace">
+            <xpath expr="//field[@name='eraspy_base_url']/parent::*" position="replace">
             </xpath>
         </field>
     </record>

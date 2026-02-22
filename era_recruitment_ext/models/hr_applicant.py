@@ -21,7 +21,7 @@ class HrApplicant(models.Model):
 
     ai_match_score = fields.Float(string="AI Match Score", digits=(5, 2), tracking=True)
     ai_match_score_display = fields.Char(
-        string="AI Match Score",
+        string="AI Match Score (%)",
         compute="_compute_ai_match_score_display",
     )
     ai_match_summary = fields.Text(string="AI Summary", tracking=True)

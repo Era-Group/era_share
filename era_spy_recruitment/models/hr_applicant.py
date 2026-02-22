@@ -164,11 +164,6 @@ class HrApplicant(models.Model):
             message += _(" %s applicant(s) queued; results will be applied on callback.") % pending
             if pending_requests:
                 message += _(" Request IDs: %s") % ", ".join(pending_requests[:10])
-            try:
-                # Trigger one immediate pass of the queue processor after enrich.
-                self.env["eraspy.applicant.callback.queue"].sudo().cron_process_queue()
-            except Exception:
-                _logger.exception("EraSpy applicant queue manual trigger failed after enrich")
         if without_contacts:
             message += _(" (Preview mode: contacts not requested)")
         if skipped:

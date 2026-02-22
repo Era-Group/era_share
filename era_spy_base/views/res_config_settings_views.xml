@@ -6,7 +6,12 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app string="EraSpy" name="eraspy" groups="base.group_system">
+                <app data-string="EraSpy"
+                     string="EraSpy"
+                     name="eraspy"
+                     data-key="era_spy_base"
+                     logo="/era_spy_base/static/description/settings_icon.svg"
+                     groups="base.group_system">
                     <block title="API">
                         <setting string="Base URL" help="Use the EraSpy API or your proxy endpoint.">
                             <field name="eraspy_base_url"/>

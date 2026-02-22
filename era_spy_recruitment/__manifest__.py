@@ -17,7 +17,6 @@
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron.xml",
-        "data/ir_config_parameter.xml",
         "views/res_config_settings_views.xml",
         "views/hr_applicant_views.xml",
         "views/eraspy_applicant_callback_queue_views.xml",

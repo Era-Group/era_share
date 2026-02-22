@@ -131,6 +131,8 @@ class EraSpyApplicantController(http.Controller):
         _logger.info("EraSpy applicant callback queued: %s items", queued)
         if queued:
             try:
+                # Ensure callback queue rows are persisted as pending before triggering processing.
+                request.env.cr.commit()
                 cron = request.env.ref(
                     "era_spy_recruitment.ir_cron_eraspy_applicant_process_queue",
                     raise_if_not_found=False,

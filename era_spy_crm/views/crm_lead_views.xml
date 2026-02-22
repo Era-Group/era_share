@@ -32,10 +32,11 @@
                         <button name="action_eraspy_enrich"
                                 type="object"
                                 string="EraSpy Enrich"
-                                readonly="eraspy_last_status in ['Queued', 'queued', 'queue']"
+                                invisible="eraspy_in_queue"
                                 class="oe_highlight"/>
                     </group>
                     <group>
+                        <field name="eraspy_in_queue" invisible="1"/>
                         <field name="eraspy_last_status" readonly="1"/>
                         <field name="eraspy_last_checked" readonly="1"/>
                         <field name="eraspy_more_data" readonly="1" widget="html"/>

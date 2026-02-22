@@ -48,14 +48,46 @@ class HrApplicant(models.Model):
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
     eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
     eraspy_ai_match = fields.Html(string="AI Qualification Match", readonly=True, sanitize=True)
+    eraspy_in_queue = fields.Boolean(compute="_compute_eraspy_in_queue")
+
+    @api.depends("eraspy_last_status")
+    def _compute_eraspy_in_queue(self):
+        pending_ids = self._get_eraspy_pending_applicant_ids()
+        for applicant in self:
+            status_lower = str(applicant.eraspy_last_status or "").lower()
+            applicant.eraspy_in_queue = bool(applicant.id in pending_ids or "queue" in status_lower)
+
+    def _get_eraspy_pending_applicant_ids(self):
+        if not self.ids:
+            return set()
+        groups = self.env["eraspy.applicant.callback.queue"].sudo().read_group(
+            [("applicant_id", "in", self.ids), ("state", "=", "pending")],
+            ["applicant_id"],
+            ["applicant_id"],
+        )
+        pending_ids = set()
+        for group in groups:
+            applicant_data = group.get("applicant_id")
+            if applicant_data:
+                pending_ids.add(applicant_data[0])
+        return pending_ids
 
     def action_eraspy_enrich(self):
         applicant_ids = self.ids or self.env.context.get("active_ids") or []
         if not applicant_ids:
             raise UserError(_("Please select at least one applicant."))
+        applicants = self.browse(applicant_ids)
+        pending_ids = applicants._get_eraspy_pending_applicant_ids()
+        blocked = applicants.filtered(
+            lambda applicant: applicant.id in pending_ids or "queue" in str(applicant.eraspy_last_status or "").lower()
+        )
+        if blocked:
+            names = ", ".join(blocked.mapped("display_name")[:5])
+            more = len(blocked) - 5
+            suffix = _(" and %s more") % more if more > 0 else ""
+            raise UserError(_("EraSpy enrichment is already queued for: %s%s") % (names, suffix))
         if len(applicant_ids) > 80:
             raise UserError(_("You can enrich at most 80 applicants at a time. Please split your selection."))
-        applicants = self.browse(applicant_ids)
         client = self.env["eraspy.client"]
         client._raise_if_rate_limited()
         cfg = client._get_config()

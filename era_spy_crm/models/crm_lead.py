@@ -75,11 +75,44 @@ class CrmLead(models.Model):
     eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
     eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
+    eraspy_in_queue = fields.Boolean(compute="_compute_eraspy_in_queue")
+
+    @api.depends("eraspy_last_status")
+    def _compute_eraspy_in_queue(self):
+        pending_ids = self._get_eraspy_pending_lead_ids()
+        for lead in self:
+            status_lower = str(lead.eraspy_last_status or "").lower()
+            lead.eraspy_in_queue = bool(lead.id in pending_ids or "queue" in status_lower)
+
+    def _get_eraspy_pending_lead_ids(self):
+        if not self.ids:
+            return set()
+        groups = self.env["eraspy.callback.queue"].sudo().read_group(
+            [("lead_id", "in", self.ids), ("state", "=", "pending")],
+            ["lead_id"],
+            ["lead_id"],
+        )
+        pending_ids = set()
+        for group in groups:
+            lead_data = group.get("lead_id")
+            if lead_data:
+                pending_ids.add(lead_data[0])
+        return pending_ids
 
     def action_eraspy_enrich(self):
         lead_ids = self.ids or self.env.context.get("active_ids") or []
         if not lead_ids:
             raise UserError(_("Please select at least one lead."))
+        leads = self.browse(lead_ids)
+        pending_ids = leads._get_eraspy_pending_lead_ids()
+        blocked = leads.filtered(
+            lambda lead: lead.id in pending_ids or "queue" in str(lead.eraspy_last_status or "").lower()
+        )
+        if blocked:
+            names = ", ".join(blocked.mapped("display_name")[:5])
+            more = len(blocked) - 5
+            suffix = _(" and %s more") % more if more > 0 else ""
+            raise UserError(_("EraSpy enrichment is already queued for: %s%s") % (names, suffix))
         if len(lead_ids) > 80:
             raise UserError(_("You can enrich at most 80 leads at a time. Please split your selection."))
         ctx = dict(self.env.context or {})

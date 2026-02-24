@@ -673,6 +673,7 @@ async function startAgent(options = {}) {
     client_call_id: state.clientCallId,
     summary_id: state.summaryId || "",
     session_key: state.sessionKey || "",
+    current_page_url: window.location.href || "",
   });
   const promptFallback = !!tok?.prompt_fallback;
   const interruptResponseEnabled = !!tok?.interrupt_response_enabled;
@@ -812,7 +813,7 @@ async function startAgent(options = {}) {
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
   dc.addEventListener("open", async () => {
-    setStatus("متصل ✅ اضغط مطولًا على زر التحدث");
+    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
 
     const sessionUpdate = {
       model: cfg.model,
@@ -1126,7 +1127,7 @@ async function tryResumeSession() {
   setStatus("جاري إعادة الاتصال...");
   try {
     await startAgent({ resume: continuity });
-    setStatus("متصل ✅ اضغط مطولًا على زر التحدث");
+    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
     showMobileStep(false);
     showCallActions(true);
     updatePushToTalkButton();

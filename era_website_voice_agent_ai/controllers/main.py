@@ -789,6 +789,21 @@ class RealtimeAgentController(http.Controller):
             if prompt_instructions:
                 payload["instructions"] = prompt_instructions
 
+        current_page_url = (kwargs.get("current_page_url") or "").strip()
+        if current_page_url:
+            try:
+                parsed = urlparse(current_page_url)
+                if parsed.scheme in ("http", "https") and parsed.netloc:
+                    # Keep full link (path + query), drop fragment.
+                    safe_url = parsed._replace(fragment="").geturl()
+                    page_line = f"You are in this page now: {safe_url}"
+                    if payload.get("instructions"):
+                        payload["instructions"] = f'{payload["instructions"]}\n\n{page_line}'
+                    else:
+                        payload["instructions"] = page_line
+            except Exception:
+                pass
+
         def _is_idle_timeout_not_supported(response_text):
             text = (response_text or "").lower()
             return "idle_timeout_ms" in text or "idle timeout" in text

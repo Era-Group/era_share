@@ -998,8 +998,44 @@ function handlePageUnload() {
   if (state.unloadHandled || state.recordingFinalized) return;
   if (!state.running && !state.starting && !state.stopping && (!state.recorder || state.recordedChunks.length === 0)) return;
   state.unloadHandled = true;
-  // Keep the same logical call session across page unloads/navigation.
-  // Session cleanup/finalization is handled by explicit stop and stale-session recovery.
+  if (state.navigationIntent) {
+    // In-site navigation: keep one logical session and resume on next page.
+    persistContinuityState(true);
+    return;
+  }
+
+  // Tab close/reload: notify backend to close active session and avoid stale open calls.
+  const summaryPayload = state.summaryPayload || buildSummaryPayload();
+  const snapshot = {
+    summaryPayload: summaryPayload || null,
+    sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
+    startedAt: state.startedAt,
+    summaryId: state.finalizeContext?.summaryId || state.summaryId,
+    sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
+    clientCallId: state.finalizeContext?.clientCallId || state.clientCallId,
+  };
+  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
+    transcript: summaryPayload?.transcript || "",
+    prompt_id: snapshot.sessionMeta?.promptId || "",
+    model: snapshot.sessionMeta?.model || "",
+    voice: snapshot.sessionMeta?.voice || "",
+    embed_mode: snapshot.sessionMeta?.embedMode ? "1" : "",
+    caller_phone: snapshot.sessionMeta?.callerPhone || "",
+    caller_company: snapshot.sessionMeta?.callerCompany || "",
+    duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),
+    summary_id: snapshot.summaryId || "",
+    session_key: snapshot.sessionKey || "",
+    client_call_id: snapshot.clientCallId || "",
+  });
+  if (state.recorder && state.recorder.state !== "inactive") {
+    try {
+      state.recorder.requestData();
+    } catch (err) {
+      console.warn("Recorder requestData failed during unload:", err);
+    }
+  }
+  // Keep continuity payload until browser fully disposes the tab; this avoids
+  // accidental multi-summary splits if a navigation was misdetected as unload.
   persistContinuityState(true);
 }
 

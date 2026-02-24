@@ -4,6 +4,8 @@
 const DISABLE_TRANSCRIPT = true;
 const UI_WIRED_KEY = "__eraRealtimeWidgetUiWired";
 const DEFAULT_PTT_IDLE_TIMEOUT_SECONDS = 30;
+const SESSION_CONTINUITY_KEY = "eraRealtimeSessionContinuityV1";
+const SESSION_CONTINUITY_MAX_AGE_MS = 30 * 60 * 1000;
 
 let state = {
   running: false,
@@ -42,6 +44,64 @@ let state = {
 
 function qs(id) {
   return document.getElementById(id);
+}
+
+function readContinuityState() {
+  try {
+    const raw = window.sessionStorage?.getItem(SESSION_CONTINUITY_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    return parsed;
+  } catch (_err) {
+    return null;
+  }
+}
+
+function clearContinuityState() {
+  try {
+    window.sessionStorage?.removeItem(SESSION_CONTINUITY_KEY);
+  } catch (_err) {
+    // no-op
+  }
+}
+
+function persistContinuityState(forceActive = true) {
+  const active = !!(forceActive && (state.running || state.starting || state.stopping));
+  if (!active) {
+    clearContinuityState();
+    return;
+  }
+  const payload = {
+    active: true,
+    ts: Date.now(),
+    startedAt: state.startedAt || Date.now(),
+    summaryId: state.summaryId || "",
+    sessionKey: state.sessionKey || "",
+    clientCallId: state.clientCallId || "",
+    sessionMeta: state.sessionMeta || null,
+  };
+  try {
+    window.sessionStorage?.setItem(SESSION_CONTINUITY_KEY, JSON.stringify(payload));
+  } catch (_err) {
+    // no-op
+  }
+}
+
+function getResumableSession() {
+  const continuity = readContinuityState();
+  if (!continuity || !continuity.active) return null;
+  const ts = Number(continuity.ts || 0);
+  if (!ts || (Date.now() - ts) > SESSION_CONTINUITY_MAX_AGE_MS) {
+    clearContinuityState();
+    return null;
+  }
+  const clientCallId = String(continuity.clientCallId || "").trim();
+  if (!clientCallId) {
+    clearContinuityState();
+    return null;
+  }
+  return continuity;
 }
 
 function notifyEmbedHost() {
@@ -268,6 +328,9 @@ function togglePanel(show) {
   const panel = qs("oai-agent-panel");
   if (!panel) return;
   panel.classList.toggle("d-none", !show);
+  if (state.running || state.starting || state.stopping) {
+    persistContinuityState(true);
+  }
   notifyEmbedHost();
 }
 
@@ -530,8 +593,9 @@ function sendUserText(text) {
   state.responseInFlight = true;
 }
 
-async function startAgent() {
+async function startAgent(options = {}) {
   if (state.running || state.starting && state.pc) return;
+  const resume = options.resume || null;
   const cfg = getConfig();
   state.sessionMeta = {
     promptId: cfg.promptId,
@@ -541,17 +605,18 @@ async function startAgent() {
     callerCompany: cfg.callerCompany,
     embedMode: cfg.embedMode,
   };
-  state.startedAt = Date.now();
+  state.startedAt = Number(resume?.startedAt || 0) || Date.now();
   state.unloadHandled = false;
   state.stopping = false;
   state.finalizeContext = null;
-  state.summaryId = null;
-  state.sessionKey = "";
-  state.clientCallId = createClientCallId();
+  state.summaryId = String(resume?.summaryId || "").trim() || null;
+  state.sessionKey = String(resume?.sessionKey || "").trim();
+  state.clientCallId = String(resume?.clientCallId || "").trim() || createClientCallId();
   state.chunkSeq = 0;
   state.chunkUploadChain = Promise.resolve();
   state.transcript = [];
   state.assistantBuffer = "";
+  persistContinuityState(true);
   if (!DISABLE_TRANSCRIPT) {
     const transcriptEl = qs("oai-agent-transcript");
     if (transcriptEl) transcriptEl.innerHTML = "";
@@ -573,6 +638,7 @@ async function startAgent() {
   }
   state.summaryId = session.summary_id || null;
   state.sessionKey = session.session_key || "";
+  persistContinuityState(true);
 
   const tok = await rpcJson("/realtime_agent/token", {
     embed_mode: cfg.embedMode ? "1" : "",
@@ -753,6 +819,7 @@ async function startAgent() {
   state.audioEl = audioEl;
   updatePushToTalkButton();
   armPttIdleTimer();
+  persistContinuityState(true);
 }
 
 async function submitSummary(payload) {
@@ -816,6 +883,7 @@ function clearFinalizeState() {
   state.micEnabled = false;
   state.pttLastActivityAt = 0;
   state.stopping = false;
+  clearContinuityState();
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});
     state.audioContext = null;
@@ -901,40 +969,9 @@ async function finalizeRecording() {
 
 function handlePageUnload() {
   if (state.unloadHandled || state.recordingFinalized) return;
-  if (!state.running && (!state.recorder || state.recordedChunks.length === 0)) return;
+  if (!state.running && !state.starting && !state.stopping && (!state.recorder || state.recordedChunks.length === 0)) return;
   state.unloadHandled = true;
-
-  const summaryPayload = state.summaryPayload || buildSummaryPayload();
-  const snapshot = {
-    summaryPayload: summaryPayload || null,
-    sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
-    startedAt: state.startedAt,
-    summaryId: state.finalizeContext?.summaryId || state.summaryId,
-    sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
-    clientCallId: state.finalizeContext?.clientCallId || state.clientCallId,
-  };
-
-  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
-    transcript: summaryPayload?.transcript || "",
-    prompt_id: snapshot.sessionMeta?.promptId || "",
-    model: snapshot.sessionMeta?.model || "",
-    voice: snapshot.sessionMeta?.voice || "",
-    embed_mode: snapshot.sessionMeta?.embedMode ? "1" : "",
-    caller_phone: snapshot.sessionMeta?.callerPhone || "",
-    caller_company: snapshot.sessionMeta?.callerCompany || "",
-    duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),
-    summary_id: snapshot.summaryId || "",
-    session_key: snapshot.sessionKey || "",
-    client_call_id: snapshot.clientCallId || "",
-  });
-
-  if (state.recorder && state.recorder.state !== "inactive") {
-    try {
-      state.recorder.requestData();
-    } catch (err) {
-      console.warn("Recorder requestData failed during unload:", err);
-    }
-  }
+  persistContinuityState(true);
 }
 
 function stopAgent(reasonText = "") {
@@ -1004,6 +1041,35 @@ function stopAgent(reasonText = "") {
     endSession(endCtx).finally(() => {
       clearFinalizeState();
     });
+  }
+}
+
+async function tryResumeSession() {
+  const continuity = getResumableSession();
+  if (!continuity) return;
+  if (state.running || state.starting) return;
+
+  const w = widgetEl();
+  if (w && continuity.sessionMeta) {
+    if (continuity.sessionMeta.callerPhone) w.dataset.callerPhone = continuity.sessionMeta.callerPhone;
+    if (continuity.sessionMeta.callerCompany) w.dataset.callerCompany = continuity.sessionMeta.callerCompany;
+  }
+
+  togglePanel(true);
+  showMobileStep(false);
+  showCallActions(true);
+  setStatus("جاري إعادة الاتصال...");
+  try {
+    await startAgent({ resume: continuity });
+    setStatus("متصل ✅ اضغط مطولًا على زر التحدث");
+    showMobileStep(false);
+    showCallActions(true);
+    updatePushToTalkButton();
+  } catch (err) {
+    console.warn("Session resume failed:", err);
+    clearContinuityState();
+    setStatus("تعذر إعادة الاتصال: " + errorToText(err));
+    prepareMobileStep();
   }
 }
 
@@ -1092,6 +1158,7 @@ function wireUI() {
     updatePushToTalkButton();
   }
 
+  tryResumeSession();
 }
 
 if (document.readyState === "complete" || document.readyState === "interactive") {

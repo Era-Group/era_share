@@ -4,6 +4,8 @@
 const DISABLE_TRANSCRIPT = true;
 const UI_WIRED_KEY = "__eraRealtimeWidgetUiWired";
 const DEFAULT_PTT_IDLE_TIMEOUT_SECONDS = 30;
+const SESSION_CONTINUITY_KEY = "eraRealtimeSessionContinuityV1";
+const SESSION_CONTINUITY_MAX_AGE_MS = 30 * 60 * 1000;
 
 let state = {
   running: false,
@@ -38,10 +40,69 @@ let state = {
   micEnabled: false,
   pttIdleTimer: null,
   pttLastActivityAt: 0,
+  navigationIntent: false,
 };
 
 function qs(id) {
   return document.getElementById(id);
+}
+
+function readContinuityState() {
+  try {
+    const raw = window.sessionStorage?.getItem(SESSION_CONTINUITY_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    return parsed;
+  } catch (_err) {
+    return null;
+  }
+}
+
+function clearContinuityState() {
+  try {
+    window.sessionStorage?.removeItem(SESSION_CONTINUITY_KEY);
+  } catch (_err) {
+    // no-op
+  }
+}
+
+function persistContinuityState(forceActive = true) {
+  const active = !!(forceActive && (state.running || state.starting || state.stopping));
+  if (!active) {
+    clearContinuityState();
+    return;
+  }
+  const payload = {
+    active: true,
+    ts: Date.now(),
+    startedAt: state.startedAt || Date.now(),
+    summaryId: state.summaryId || "",
+    sessionKey: state.sessionKey || "",
+    clientCallId: state.clientCallId || "",
+    sessionMeta: state.sessionMeta || null,
+  };
+  try {
+    window.sessionStorage?.setItem(SESSION_CONTINUITY_KEY, JSON.stringify(payload));
+  } catch (_err) {
+    // no-op
+  }
+}
+
+function getResumableSession() {
+  const continuity = readContinuityState();
+  if (!continuity || !continuity.active) return null;
+  const ts = Number(continuity.ts || 0);
+  if (!ts || (Date.now() - ts) > SESSION_CONTINUITY_MAX_AGE_MS) {
+    clearContinuityState();
+    return null;
+  }
+  const clientCallId = String(continuity.clientCallId || "").trim();
+  if (!clientCallId) {
+    clearContinuityState();
+    return null;
+  }
+  return continuity;
 }
 
 function notifyEmbedHost() {
@@ -186,6 +247,14 @@ function setStatus(text) {
   if (el) el.textContent = text;
 }
 
+function markNavigationIntent() {
+  state.navigationIntent = true;
+}
+
+function resetNavigationIntent() {
+  state.navigationIntent = false;
+}
+
 function clearPttIdleTimer() {
   if (state.pttIdleTimer) {
     clearTimeout(state.pttIdleTimer);
@@ -268,6 +337,9 @@ function togglePanel(show) {
   const panel = qs("oai-agent-panel");
   if (!panel) return;
   panel.classList.toggle("d-none", !show);
+  if (state.running || state.starting || state.stopping) {
+    persistContinuityState(true);
+  }
   notifyEmbedHost();
 }
 
@@ -295,6 +367,13 @@ function errorToText(err) {
   } catch (_jsonErr) {
     return String(err);
   }
+}
+
+function userFacingError(errorObj, fallback = "تعذر الاتصال. حاول مرة أخرى.") {
+  if (!errorObj) return fallback;
+  const msg = String(errorObj.user_message || errorObj.error || "").trim();
+  if (!msg) return fallback;
+  return msg;
 }
 
 async function rpcJson(url, params = {}) {
@@ -530,8 +609,9 @@ function sendUserText(text) {
   state.responseInFlight = true;
 }
 
-async function startAgent() {
+async function startAgent(options = {}) {
   if (state.running || state.starting && state.pc) return;
+  const resume = options.resume || null;
   const cfg = getConfig();
   state.sessionMeta = {
     promptId: cfg.promptId,
@@ -541,23 +621,24 @@ async function startAgent() {
     callerCompany: cfg.callerCompany,
     embedMode: cfg.embedMode,
   };
-  state.startedAt = Date.now();
+  state.startedAt = Number(resume?.startedAt || 0) || Date.now();
   state.unloadHandled = false;
   state.stopping = false;
   state.finalizeContext = null;
-  state.summaryId = null;
-  state.sessionKey = "";
-  state.clientCallId = createClientCallId();
+  state.summaryId = String(resume?.summaryId || "").trim() || null;
+  state.sessionKey = String(resume?.sessionKey || "").trim();
+  state.clientCallId = String(resume?.clientCallId || "").trim() || createClientCallId();
   state.chunkSeq = 0;
   state.chunkUploadChain = Promise.resolve();
   state.transcript = [];
   state.assistantBuffer = "";
+  persistContinuityState(true);
   if (!DISABLE_TRANSCRIPT) {
     const transcriptEl = qs("oai-agent-transcript");
     if (transcriptEl) transcriptEl.innerHTML = "";
   }
   setStatus("جاري التجهيز...");
-  const session = await rpcJson("/realtime_agent/session_start", {
+  const startPayload = {
     prompt_id: cfg.promptId,
     model: cfg.model,
     voice: cfg.voice,
@@ -565,20 +646,34 @@ async function startAgent() {
     caller_company: cfg.callerCompany,
     client_call_id: state.clientCallId,
     embed_mode: cfg.embedMode ? "1" : "",
-  });
+  };
+  let session = await rpcJson("/realtime_agent/session_start", startPayload);
+  if (session?.error && /another session|already active|active session/i.test(String(session.error || ""))) {
+    // Recover from stale sessions (e.g. tab was closed before cleanup).
+    await endSession({
+      sessionMeta: state.sessionMeta,
+      summaryPayload: null,
+      startedAt: state.startedAt,
+      summaryId: "",
+      sessionKey: "",
+      clientCallId: "",
+    });
+    session = await rpcJson("/realtime_agent/session_start", startPayload);
+  }
   if (!session || session.error) {
     console.error("Session start failed:", session?.error || "unknown", session?.details || "");
-    const details = session?.details ? ` (${session.details})` : "";
-    throw new Error((session?.error || "Could not start call session.") + details);
+    throw new Error(userFacingError(session, "تعذر بدء جلسة الاتصال."));
   }
   state.summaryId = session.summary_id || null;
   state.sessionKey = session.session_key || "";
+  persistContinuityState(true);
 
   const tok = await rpcJson("/realtime_agent/token", {
     embed_mode: cfg.embedMode ? "1" : "",
     client_call_id: state.clientCallId,
     summary_id: state.summaryId || "",
     session_key: state.sessionKey || "",
+    current_page_url: window.location.href || "",
   });
   const promptFallback = !!tok?.prompt_fallback;
   const interruptResponseEnabled = !!tok?.interrupt_response_enabled;
@@ -589,8 +684,7 @@ async function startAgent() {
 
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
-    const details = tok?.details ? ` (${tok.details})` : "";
-    throw new Error((tok?.error || "Could not retrieve ephemeral token from server.") + details);
+    throw new Error(userFacingError(tok, "تعذر الحصول على رمز الاتصال."));
   }
 
   const EPHEMERAL_KEY = tok.value;
@@ -719,7 +813,7 @@ async function startAgent() {
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
   dc.addEventListener("open", async () => {
-    setStatus("متصل ✅ اضغط مطولًا على زر التحدث");
+    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
 
     const sessionUpdate = {
       model: cfg.model,
@@ -753,6 +847,7 @@ async function startAgent() {
   state.audioEl = audioEl;
   updatePushToTalkButton();
   armPttIdleTimer();
+  persistContinuityState(true);
 }
 
 async function submitSummary(payload) {
@@ -816,6 +911,7 @@ function clearFinalizeState() {
   state.micEnabled = false;
   state.pttLastActivityAt = 0;
   state.stopping = false;
+  clearContinuityState();
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});
     state.audioContext = null;
@@ -901,9 +997,15 @@ async function finalizeRecording() {
 
 function handlePageUnload() {
   if (state.unloadHandled || state.recordingFinalized) return;
-  if (!state.running && (!state.recorder || state.recordedChunks.length === 0)) return;
+  if (!state.running && !state.starting && !state.stopping && (!state.recorder || state.recordedChunks.length === 0)) return;
   state.unloadHandled = true;
+  if (state.navigationIntent) {
+    // In-site navigation: keep one logical session and resume on next page.
+    persistContinuityState(true);
+    return;
+  }
 
+  // Tab close/reload: notify backend to close active session and avoid stale open calls.
   const summaryPayload = state.summaryPayload || buildSummaryPayload();
   const snapshot = {
     summaryPayload: summaryPayload || null,
@@ -913,7 +1015,6 @@ function handlePageUnload() {
     sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
     clientCallId: state.finalizeContext?.clientCallId || state.clientCallId,
   };
-
   sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
     transcript: summaryPayload?.transcript || "",
     prompt_id: snapshot.sessionMeta?.promptId || "",
@@ -927,7 +1028,6 @@ function handlePageUnload() {
     session_key: snapshot.sessionKey || "",
     client_call_id: snapshot.clientCallId || "",
   });
-
   if (state.recorder && state.recorder.state !== "inactive") {
     try {
       state.recorder.requestData();
@@ -935,6 +1035,9 @@ function handlePageUnload() {
       console.warn("Recorder requestData failed during unload:", err);
     }
   }
+  // Keep continuity payload until browser fully disposes the tab; this avoids
+  // accidental multi-summary splits if a navigation was misdetected as unload.
+  persistContinuityState(true);
 }
 
 function stopAgent(reasonText = "") {
@@ -1007,9 +1110,58 @@ function stopAgent(reasonText = "") {
   }
 }
 
+async function tryResumeSession() {
+  const continuity = getResumableSession();
+  if (!continuity) return;
+  if (state.running || state.starting) return;
+
+  const w = widgetEl();
+  if (w && continuity.sessionMeta) {
+    if (continuity.sessionMeta.callerPhone) w.dataset.callerPhone = continuity.sessionMeta.callerPhone;
+    if (continuity.sessionMeta.callerCompany) w.dataset.callerCompany = continuity.sessionMeta.callerCompany;
+  }
+
+  togglePanel(true);
+  showMobileStep(false);
+  showCallActions(true);
+  setStatus("جاري إعادة الاتصال...");
+  try {
+    await startAgent({ resume: continuity });
+    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
+    showMobileStep(false);
+    showCallActions(true);
+    updatePushToTalkButton();
+  } catch (err) {
+    console.warn("Session resume failed:", err);
+    clearContinuityState();
+    setStatus("تعذر إعادة الاتصال: " + errorToText(err));
+    prepareMobileStep();
+  }
+}
+
 function wireLifecycleGuards() {
   if (state.lifecycleWired) return;
   state.lifecycleWired = true;
+  window.addEventListener("pageshow", resetNavigationIntent);
+  document.addEventListener("click", (ev) => {
+    const anchor = ev.target?.closest?.("a[href]");
+    if (!anchor) return;
+    if (anchor.target && anchor.target.toLowerCase() === "_blank") return;
+    if (anchor.hasAttribute("download")) return;
+    const href = anchor.getAttribute("href") || "";
+    if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      markNavigationIntent();
+    } catch (_err) {
+      // no-op
+    }
+  }, true);
+  document.addEventListener("submit", () => {
+    markNavigationIntent();
+  }, true);
   window.addEventListener("pagehide", handlePageUnload);
   window.addEventListener("beforeunload", handlePageUnload);
 }
@@ -1092,6 +1244,7 @@ function wireUI() {
     updatePushToTalkButton();
   }
 
+  tryResumeSession();
 }
 
 if (document.readyState === "complete" || document.readyState === "interactive") {

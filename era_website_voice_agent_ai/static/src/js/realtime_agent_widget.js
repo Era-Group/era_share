@@ -40,6 +40,7 @@ let state = {
   micEnabled: false,
   pttIdleTimer: null,
   pttLastActivityAt: 0,
+  navigationIntent: false,
 };
 
 function qs(id) {
@@ -244,6 +245,14 @@ async function startAgentFromPanel() {
 function setStatus(text) {
   const el = qs("oai-agent-status");
   if (el) el.textContent = text;
+}
+
+function markNavigationIntent() {
+  state.navigationIntent = true;
+}
+
+function resetNavigationIntent() {
+  state.navigationIntent = false;
 }
 
 function clearPttIdleTimer() {
@@ -622,7 +631,7 @@ async function startAgent(options = {}) {
     if (transcriptEl) transcriptEl.innerHTML = "";
   }
   setStatus("جاري التجهيز...");
-  const session = await rpcJson("/realtime_agent/session_start", {
+  const startPayload = {
     prompt_id: cfg.promptId,
     model: cfg.model,
     voice: cfg.voice,
@@ -630,7 +639,20 @@ async function startAgent(options = {}) {
     caller_company: cfg.callerCompany,
     client_call_id: state.clientCallId,
     embed_mode: cfg.embedMode ? "1" : "",
-  });
+  };
+  let session = await rpcJson("/realtime_agent/session_start", startPayload);
+  if (session?.error && /another session|already active|active session/i.test(String(session.error || ""))) {
+    // Recover from stale sessions (e.g. tab was closed before cleanup).
+    await endSession({
+      sessionMeta: state.sessionMeta,
+      summaryPayload: null,
+      startedAt: state.startedAt,
+      summaryId: "",
+      sessionKey: "",
+      clientCallId: "",
+    });
+    session = await rpcJson("/realtime_agent/session_start", startPayload);
+  }
   if (!session || session.error) {
     console.error("Session start failed:", session?.error || "unknown", session?.details || "");
     const details = session?.details ? ` (${session.details})` : "";
@@ -971,7 +993,45 @@ function handlePageUnload() {
   if (state.unloadHandled || state.recordingFinalized) return;
   if (!state.running && !state.starting && !state.stopping && (!state.recorder || state.recordedChunks.length === 0)) return;
   state.unloadHandled = true;
-  persistContinuityState(true);
+
+  if (state.navigationIntent) {
+    persistContinuityState(true);
+    return;
+  }
+
+  // Treat close/reload as abandonment so backend closes open call locks.
+  const summaryPayload = state.summaryPayload || buildSummaryPayload();
+  const snapshot = {
+    summaryPayload: summaryPayload || null,
+    sessionMeta: state.sessionMeta ? { ...state.sessionMeta } : null,
+    startedAt: state.startedAt,
+    summaryId: state.finalizeContext?.summaryId || state.summaryId,
+    sessionKey: state.finalizeContext?.sessionKey || state.sessionKey,
+    clientCallId: state.finalizeContext?.clientCallId || state.clientCallId,
+  };
+
+  sendJsonRpcBeacon("/realtime_agent/session_abandoned", {
+    transcript: summaryPayload?.transcript || "",
+    prompt_id: snapshot.sessionMeta?.promptId || "",
+    model: snapshot.sessionMeta?.model || "",
+    voice: snapshot.sessionMeta?.voice || "",
+    embed_mode: snapshot.sessionMeta?.embedMode ? "1" : "",
+    caller_phone: snapshot.sessionMeta?.callerPhone || "",
+    caller_company: snapshot.sessionMeta?.callerCompany || "",
+    duration_seconds: summaryPayload?.duration_seconds || (snapshot.startedAt ? Math.round((Date.now() - snapshot.startedAt) / 1000) : ""),
+    summary_id: snapshot.summaryId || "",
+    session_key: snapshot.sessionKey || "",
+    client_call_id: snapshot.clientCallId || "",
+  });
+
+  if (state.recorder && state.recorder.state !== "inactive") {
+    try {
+      state.recorder.requestData();
+    } catch (err) {
+      console.warn("Recorder requestData failed during unload:", err);
+    }
+  }
+  clearContinuityState();
 }
 
 function stopAgent(reasonText = "") {
@@ -1076,6 +1136,26 @@ async function tryResumeSession() {
 function wireLifecycleGuards() {
   if (state.lifecycleWired) return;
   state.lifecycleWired = true;
+  window.addEventListener("pageshow", resetNavigationIntent);
+  document.addEventListener("click", (ev) => {
+    const anchor = ev.target?.closest?.("a[href]");
+    if (!anchor) return;
+    if (anchor.target && anchor.target.toLowerCase() === "_blank") return;
+    if (anchor.hasAttribute("download")) return;
+    const href = anchor.getAttribute("href") || "";
+    if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      markNavigationIntent();
+    } catch (_err) {
+      // no-op
+    }
+  }, true);
+  document.addEventListener("submit", () => {
+    markNavigationIntent();
+  }, true);
   window.addEventListener("pagehide", handlePageUnload);
   window.addEventListener("beforeunload", handlePageUnload);
 }

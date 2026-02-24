@@ -6,6 +6,7 @@ from html import escape
 import os
 import re
 import tempfile
+import time
 import uuid
 from datetime import timedelta
 from urllib.parse import urlparse
@@ -792,15 +793,57 @@ class RealtimeAgentController(http.Controller):
             text = (response_text or "").lower()
             return "idle_timeout_ms" in text or "idle timeout" in text
 
+        def _short_error_text(raw_text):
+            text = (raw_text or "").strip()
+            if not text:
+                return ""
+            text = re.sub(r"<[^>]+>", " ", text)
+            text = re.sub(r"\s+", " ", text).strip()
+            if len(text) > 300:
+                text = text[:300] + "..."
+            return text
+
+        def _build_user_message(status_code=None, details_text=""):
+            if status_code in (502, 503, 504):
+                return "تعذر الاتصال بخدمة OpenAI مؤقتًا. حاول مرة أخرى بعد قليل."
+            if status_code == 429:
+                return "خدمة OpenAI مشغولة حاليًا (429). حاول بعد دقيقة."
+            if status_code == 401:
+                return "مفتاح OpenAI غير صالح أو منتهي الصلاحية."
+            if status_code == 403:
+                return "تم رفض الطلب من OpenAI (403)."
+            if status_code and status_code >= 500:
+                return "حدث خطأ مؤقت من OpenAI. حاول مرة أخرى."
+            if details_text:
+                return details_text
+            return "تعذر إنشاء جلسة OpenAI حاليًا."
+
         def _mint_session(session_payload):
-            try:
-                return requests.post(url, headers=headers, data=json.dumps(session_payload), timeout=20), None
-            except Exception as e:
-                return None, str(e)
+            max_attempts = 3
+            last_error = ""
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    resp = requests.post(url, headers=headers, data=json.dumps(session_payload), timeout=20)
+                    if resp.status_code in (502, 503, 504) and attempt < max_attempts:
+                        time.sleep(0.6 * attempt)
+                        continue
+                    return resp, None
+                except Exception as e:
+                    last_error = str(e)
+                    if attempt < max_attempts:
+                        time.sleep(0.6 * attempt)
+                        continue
+                    return None, last_error
+            return None, last_error
 
         r, request_error = _mint_session(payload)
         if request_error:
-            return {"error": f"OpenAI request failed: {request_error}"}
+            short_err = _short_error_text(request_error)
+            return {
+                "error": "OpenAI request failed",
+                "details": short_err,
+                "user_message": _build_user_message(details_text=short_err),
+            }
 
         if (
             r.status_code >= 400
@@ -813,11 +856,22 @@ class RealtimeAgentController(http.Controller):
             fallback_payload["turn_detection"] = turn_detection
             fallback_resp, fallback_error = _mint_session(fallback_payload)
             if fallback_error:
-                return {"error": f"OpenAI request failed: {fallback_error}"}
+                short_err = _short_error_text(fallback_error)
+                return {
+                    "error": "OpenAI request failed",
+                    "details": short_err,
+                    "user_message": _build_user_message(details_text=short_err),
+                }
             r = fallback_resp
 
         if r.status_code >= 400:
-            return {"error": "OpenAI token mint failed", "status": r.status_code, "details": r.text}
+            short_details = _short_error_text(r.text)
+            return {
+                "error": "OpenAI token mint failed",
+                "status": r.status_code,
+                "details": short_details,
+                "user_message": _build_user_message(status_code=r.status_code, details_text=short_details),
+            }
 
         data = r.json()
         client_secret = (data.get("client_secret") or {}).get("value")

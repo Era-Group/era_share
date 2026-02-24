@@ -369,6 +369,13 @@ function errorToText(err) {
   }
 }
 
+function userFacingError(errorObj, fallback = "تعذر الاتصال. حاول مرة أخرى.") {
+  if (!errorObj) return fallback;
+  const msg = String(errorObj.user_message || errorObj.error || "").trim();
+  if (!msg) return fallback;
+  return msg;
+}
+
 async function rpcJson(url, params = {}) {
   const payload = {
     jsonrpc: "2.0",
@@ -655,8 +662,7 @@ async function startAgent(options = {}) {
   }
   if (!session || session.error) {
     console.error("Session start failed:", session?.error || "unknown", session?.details || "");
-    const details = session?.details ? ` (${session.details})` : "";
-    throw new Error((session?.error || "Could not start call session.") + details);
+    throw new Error(userFacingError(session, "تعذر بدء جلسة الاتصال."));
   }
   state.summaryId = session.summary_id || null;
   state.sessionKey = session.session_key || "";
@@ -677,8 +683,7 @@ async function startAgent(options = {}) {
 
   if (!tok || tok.error) {
     console.error("Token error:", tok?.error || "Unknown error", tok?.details || "");
-    const details = tok?.details ? ` (${tok.details})` : "";
-    throw new Error((tok?.error || "Could not retrieve ephemeral token from server.") + details);
+    throw new Error(userFacingError(tok, "تعذر الحصول على رمز الاتصال."));
   }
 
   const EPHEMERAL_KEY = tok.value;

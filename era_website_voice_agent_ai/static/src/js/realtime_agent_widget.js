@@ -6,6 +6,8 @@ const UI_WIRED_KEY = "__eraRealtimeWidgetUiWired";
 const DEFAULT_PTT_IDLE_TIMEOUT_SECONDS = 30;
 const SESSION_CONTINUITY_KEY = "eraRealtimeSessionContinuityV1";
 const SESSION_CONTINUITY_MAX_AGE_MS = 30 * 60 * 1000;
+const MAX_CONVERSATION_MEMORY_ITEMS = 24;
+const MAX_CONVERSATION_MEMORY_CHARS = 4000;
 
 let state = {
   running: false,
@@ -41,6 +43,7 @@ let state = {
   pttIdleTimer: null,
   pttLastActivityAt: 0,
   navigationIntent: false,
+  conversationHistory: [],
 };
 
 function qs(id) {
@@ -67,6 +70,53 @@ function clearContinuityState() {
   }
 }
 
+function sanitizeHistoryItems(items) {
+  if (!Array.isArray(items)) return [];
+  const normalized = [];
+  for (const item of items) {
+    if (!item || typeof item !== "object") continue;
+    const role = String(item.role || "").trim().toLowerCase();
+    const text = String(item.text || "").replace(/\s+/g, " ").trim();
+    if (!text) continue;
+    if (role !== "user" && role !== "assistant") continue;
+    normalized.push({ role, text });
+  }
+  return normalized.slice(-MAX_CONVERSATION_MEMORY_ITEMS);
+}
+
+function compactConversationHistory() {
+  if (!Array.isArray(state.conversationHistory)) {
+    state.conversationHistory = [];
+    return;
+  }
+  state.conversationHistory = state.conversationHistory.slice(-MAX_CONVERSATION_MEMORY_ITEMS);
+  let totalChars = state.conversationHistory.reduce((acc, item) => acc + String(item.text || "").length, 0);
+  while (state.conversationHistory.length > 0 && totalChars > MAX_CONVERSATION_MEMORY_CHARS) {
+    const removed = state.conversationHistory.shift();
+    totalChars -= String(removed?.text || "").length;
+  }
+}
+
+function rememberConversation(role, text) {
+  const cleanRole = String(role || "").trim().toLowerCase();
+  if (cleanRole !== "user" && cleanRole !== "assistant") return;
+  const cleanText = String(text || "").replace(/\s+/g, " ").trim();
+  if (!cleanText) return;
+  state.conversationHistory.push({ role: cleanRole, text: cleanText });
+  compactConversationHistory();
+  if (state.running || state.starting || state.stopping) {
+    persistContinuityState(true);
+  }
+}
+
+function buildConversationMemoryText() {
+  compactConversationHistory();
+  if (!state.conversationHistory.length) return "";
+  return state.conversationHistory
+    .map((item) => `${item.role === "user" ? "User" : "Assistant"}: ${item.text}`)
+    .join("\n");
+}
+
 function persistContinuityState(forceActive = true) {
   const active = !!(forceActive && (state.running || state.starting || state.stopping));
   if (!active) {
@@ -81,6 +131,7 @@ function persistContinuityState(forceActive = true) {
     sessionKey: state.sessionKey || "",
     clientCallId: state.clientCallId || "",
     sessionMeta: state.sessionMeta || null,
+    conversationHistory: sanitizeHistoryItems(state.conversationHistory),
   };
   try {
     window.sessionStorage?.setItem(SESSION_CONTINUITY_KEY, JSON.stringify(payload));
@@ -563,9 +614,9 @@ function attachRemoteToMixer(stream) {
 }
 
 function pushTranscript(role, text) {
-  if (DISABLE_TRANSCRIPT) return;
   const cleaned = (text || "").trim();
   if (!cleaned) return;
+  if (DISABLE_TRANSCRIPT) return;
   state.transcript.push({
     role: role,
     text: cleaned,
@@ -583,6 +634,7 @@ function sendUserText(text) {
     return;
   }
 
+  rememberConversation("user", trimmed);
   pushTranscript("user", trimmed);
 
   if (!safeSend({
@@ -630,6 +682,7 @@ async function startAgent(options = {}) {
   state.clientCallId = String(resume?.clientCallId || "").trim() || createClientCallId();
   state.chunkSeq = 0;
   state.chunkUploadChain = Promise.resolve();
+  state.conversationHistory = sanitizeHistoryItems(resume?.conversationHistory || []);
   state.transcript = [];
   state.assistantBuffer = "";
   persistContinuityState(true);
@@ -674,6 +727,7 @@ async function startAgent(options = {}) {
     summary_id: state.summaryId || "",
     session_key: state.sessionKey || "",
     current_page_url: window.location.href || "",
+    conversation_memory: buildConversationMemoryText(),
   });
   const promptFallback = !!tok?.prompt_fallback;
   const interruptResponseEnabled = !!tok?.interrupt_response_enabled;
@@ -719,21 +773,22 @@ async function startAgent(options = {}) {
     try {
       const evt = JSON.parse(e.data);
       trackRealtimeResponseState(evt.type);
-      if (!DISABLE_TRANSCRIPT && evt.type && evt.type.includes("input_audio_transcription")) {
-        const userText =
-          evt.transcript ||
-          evt.text ||
-          evt.content?.text ||
-          evt.item?.content?.[0]?.transcript ||
-          evt.item?.content?.[0]?.text ||
-          "";
-        if (userText) pushTranscript("user", userText);
+      const userText =
+        evt.transcript ||
+        evt.text ||
+        evt.content?.text ||
+        evt.item?.content?.[0]?.transcript ||
+        evt.item?.content?.[0]?.text ||
+        "";
+      if (evt.type && evt.type.includes("input_audio_transcription") && userText) {
+        rememberConversation("user", userText);
+        pushTranscript("user", userText);
       }
       const isTextDelta =
         evt.type === "response.output_text.delta" ||
         evt.type === "response.text.delta" ||
         (evt.type && evt.type.includes("transcript") && evt.type.endsWith(".delta"));
-      if (!DISABLE_TRANSCRIPT && isTextDelta) {
+      if (isTextDelta) {
         const delta = evt.delta || evt.text || evt.content?.text || "";
         if (delta) state.assistantBuffer += delta;
       }
@@ -741,9 +796,12 @@ async function startAgent(options = {}) {
         evt.type === "response.output_text.done" ||
         evt.type === "response.text.done" ||
         (evt.type && evt.type.includes("transcript") && evt.type.endsWith(".done"));
-      if (!DISABLE_TRANSCRIPT && isTextDone) {
+      if (isTextDone) {
         const finalText = (evt.text || evt.content?.text || state.assistantBuffer || "").trim();
-        if (finalText) pushTranscript("assistant", finalText);
+        if (finalText) {
+          rememberConversation("assistant", finalText);
+          pushTranscript("assistant", finalText);
+        }
         state.assistantBuffer = "";
       }
       if (evt.type === "error") {
@@ -911,6 +969,7 @@ function clearFinalizeState() {
   state.micEnabled = false;
   state.pttLastActivityAt = 0;
   state.stopping = false;
+  state.conversationHistory = [];
   clearContinuityState();
   if (state.audioContext) {
     state.audioContext.close().catch(() => {});

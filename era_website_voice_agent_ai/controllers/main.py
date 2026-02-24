@@ -804,6 +804,20 @@ class RealtimeAgentController(http.Controller):
             except Exception:
                 pass
 
+        conversation_memory = (kwargs.get("conversation_memory") or "").strip()
+        if conversation_memory:
+            cleaned_memory = re.sub(r"\s+", " ", conversation_memory).strip()
+            if len(cleaned_memory) > 4000:
+                cleaned_memory = cleaned_memory[-4000:]
+            memory_block = (
+                "Continue the same conversation using this previous context:\n"
+                f"{cleaned_memory}"
+            )
+            if payload.get("instructions"):
+                payload["instructions"] = f'{payload["instructions"]}\n\n{memory_block}'
+            else:
+                payload["instructions"] = memory_block
+
         def _is_idle_timeout_not_supported(response_text):
             text = (response_text or "").lower()
             return "idle_timeout_ms" in text or "idle timeout" in text

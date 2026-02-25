@@ -17,7 +17,7 @@ class VoipCall(models.Model):
     _inherit = "voip.call"
 
     recording_url = fields.Char(
-        string="Recording",
+        string="Recording URL",
         compute="_compute_recording_url",
     )
     recording_link_html = fields.Html(

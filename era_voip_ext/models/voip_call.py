@@ -189,11 +189,6 @@ class VoipCall(models.Model):
         self.ensure_one()
         if self.transcription_status == "queued":
             raise UserError(_("This call is already being processed."))
-        if not self._safe_write(self, {"transcription_status": "pending"}):
-            raise UserError(
-                _("Could not mark this call as pending due to a concurrent update. Please retry.")
-            )
-        self.env.cr.commit()
         self._transcribe_call(self)
         return True
 
@@ -204,10 +199,6 @@ class VoipCall(models.Model):
             if call.transcription_status == "queued":
                 skipped += 1
                 continue
-            if not self._safe_write(call, {"transcription_status": "pending"}):
-                skipped += 1
-                continue
-            self.env.cr.commit()
             self._transcribe_call(call)
             processed += 1
 

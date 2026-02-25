@@ -33,12 +33,36 @@ class VoipCall(models.Model):
     def _safe_write(self, call, vals):
         if not call:
             return False
-        try:
-            call.write(vals)
-            return True
-        except Exception as exc:
-            _logger.warning("Call %s: write failed: %s", call.id, exc)
-            return False
+        call_id = call.id
+        retries = 3
+        for attempt in range(1, retries + 1):
+            try:
+                with self.env.cr.savepoint():
+                    target = self.browse(call_id).exists()
+                    if not target:
+                        return False
+                    target.write(vals)
+                return True
+            except errors.SerializationFailure as exc:
+                self.env.invalidate_all()
+                if attempt < retries:
+                    _logger.info(
+                        "Call %s: concurrent update while writing %s, retrying (%s/%s)",
+                        call_id,
+                        ",".join(vals.keys()),
+                        attempt,
+                        retries,
+                    )
+                    continue
+                _logger.warning(
+                    "Call %s: write failed after retries due to concurrent update: %s",
+                    call_id,
+                    exc,
+                )
+                return False
+            except Exception as exc:
+                _logger.warning("Call %s: write failed: %s", call_id, exc)
+                return False
 
 
     @api.model
@@ -165,7 +189,10 @@ class VoipCall(models.Model):
         self.ensure_one()
         if self.transcription_status == "queued":
             raise UserError(_("This call is already being processed."))
-        self.transcription_status = "pending"
+        if not self._safe_write(self, {"transcription_status": "pending"}):
+            raise UserError(
+                _("Could not mark this call as pending due to a concurrent update. Please retry.")
+            )
         self.env.cr.commit()
         self._transcribe_call(self)
         return True
@@ -177,7 +204,9 @@ class VoipCall(models.Model):
             if call.transcription_status == "queued":
                 skipped += 1
                 continue
-            call.transcription_status = "pending"
+            if not self._safe_write(call, {"transcription_status": "pending"}):
+                skipped += 1
+                continue
             self.env.cr.commit()
             self._transcribe_call(call)
             processed += 1

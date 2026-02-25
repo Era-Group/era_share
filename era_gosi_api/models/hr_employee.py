@@ -35,87 +35,104 @@ class HrEmployee(models.Model):
     gosi_contributor_status = fields.Selection(
         selection=_GOSI_STATUS_SELECTION,
         string='Status',
+        groups='hr.group_hr_user',
         readonly=True,
         default='not_requested',
         copy=False,
     )
     gosi_contributor_last_checked = fields.Datetime(
         string='Last Check',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_last_response = fields.Text(
         string='Last Response',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_last_error = fields.Text(
         string='Last Error',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_response_status_code = fields.Integer(
         string='Status Code',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_full_name_en = fields.Char(
         string='Full Name (English)',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_full_name_ar = fields.Char(
         string='Full Name (Arabic)',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_identity_iqama = fields.Char(
         string='IQAMA Number',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_contributor_identity_border_number = fields.Char(
         string='Border Number',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_registration_number = fields.Char(
         string='GOSI Number',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_start_date = fields.Char(
         string='Start Date',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_end_date = fields.Char(
         string='End Date',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_status = fields.Char(
         string='Engagement Status',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_type = fields.Char(
         string='Engagement Type',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_coverage = fields.Text(
         string='Coverage Summary',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_employer_deduction_rate = fields.Float(
         string='GOSI Employer Deduction Rate',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )
     gosi_engagement_employee_deduction_rate = fields.Float(
         string='GOSI Employee Deduction Rate',
+        groups='hr.group_hr_user',
         readonly=True,
         copy=False,
     )

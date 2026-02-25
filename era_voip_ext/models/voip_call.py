@@ -70,12 +70,25 @@ class VoipCall(models.Model):
             f"""
                 SELECT id
                   FROM {self._table}
-                 WHERE transcription_status = %s
+                 WHERE (
+                        transcription_status = %s
+                        OR (
+                            transcription_status = %s
+                            AND state = %s
+                            AND EXISTS (
+                                SELECT 1
+                                  FROM ir_attachment
+                                 WHERE res_model = %s
+                                   AND res_id = {self._table}.id
+                                   AND mimetype = %s
+                            )
+                        )
+                    )
               ORDER BY create_date DESC
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,
-            ("pending",),
+            ("pending", "no_audio", "terminated", "voip.call", "audio/ogg"),
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.browse()

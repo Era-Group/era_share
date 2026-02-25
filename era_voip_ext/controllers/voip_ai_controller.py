@@ -47,19 +47,6 @@ class VoipAiControllerExt(VoipAiController):
                 headers=[("Content-Type", "text/plain")],
             )
 
-        # Set pending before creating attachment to avoid status-write collisions
-        # with mail-thread side effects triggered by attachment creation.
-        if not call_sudo._safe_write(
-            call_sudo,
-            {"transcription_status": "pending"},
-            retries=1,
-        ):
-            return request.make_response(
-                "Concurrent update, please retry",
-                status=409,
-                headers=[("Content-Type", "text/plain")],
-            )
-
         request.env["ir.attachment"].sudo().create(
             {
                 "name": "call_recording.ogg",

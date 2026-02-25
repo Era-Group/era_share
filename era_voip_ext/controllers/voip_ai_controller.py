@@ -26,6 +26,18 @@ class VoipAiControllerExt(VoipAiController):
         call.with_user(request.session.uid).check_access("read")
 
         call_sudo = call.sudo()
+        request.env.cr.execute(
+            "SELECT pg_try_advisory_xact_lock(%s, %s)",
+            (97123, int(call_sudo.id)),
+        )
+        lock_row = request.env.cr.fetchone()
+        if not (lock_row and lock_row[0]):
+            return request.make_response(
+                "Call is already being processed",
+                status=409,
+                headers=[("Content-Type", "text/plain")],
+            )
+
         recording_raw = ufile.read()
         if len(recording_raw) > TRANSCRIPTION_MAX_FILE_SIZE:
             call_sudo._safe_write(call_sudo, {"transcription_status": "too_big_to_process"})
@@ -37,7 +49,11 @@ class VoipAiControllerExt(VoipAiController):
 
         # Set pending before creating attachment to avoid status-write collisions
         # with mail-thread side effects triggered by attachment creation.
-        if not call_sudo._safe_write(call_sudo, {"transcription_status": "pending"}):
+        if not call_sudo._safe_write(
+            call_sudo,
+            {"transcription_status": "pending"},
+            retries=1,
+        ):
             return request.make_response(
                 "Concurrent update, please retry",
                 status=409,

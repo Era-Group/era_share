@@ -30,11 +30,10 @@ class VoipCall(models.Model):
         if not modules.module.current_test:
             self.env.cr.commit()
 
-    def _safe_write(self, call, vals):
+    def _safe_write(self, call, vals, retries=3):
         if not call:
             return False
         call_id = call.id
-        retries = 3
         for attempt in range(1, retries + 1):
             try:
                 with self.env.cr.savepoint():

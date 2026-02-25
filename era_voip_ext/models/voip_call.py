@@ -43,6 +43,11 @@ class VoipCall(models.Model):
                     records = self.browse(self.ids).exists()
                     if not records:
                         return True
+                    # Lock target rows first so concurrent writers wait instead of colliding.
+                    self.env.cr.execute(
+                        f"SELECT id FROM {self._table} WHERE id = ANY(%s) FOR UPDATE",
+                        (records.ids,),
+                    )
                     return super(VoipCall, records).write(vals)
             except errors.SerializationFailure:
                 self.env.invalidate_all()

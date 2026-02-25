@@ -9,7 +9,6 @@
             <field name="subtitle">Formats VoIP call transcripts for CRM.</field>
             <field name="is_system_agent" eval="True"/>
             <field name="active" eval="True"/>
-            <field name="partner_id" ref="base.partner_root"/>
             <field name="source_id" ref="era_voip_ext.voip_call_formatting_source"/>
             <field name="system_prompt">
 Format transcript to a call conversation.

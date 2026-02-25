@@ -16,5 +16,6 @@
             "era_voip_ext/static/src/scss/voip_call.scss",
         ],
     },
+    "post_init_hook": "post_init_hook",
     "installable": True,
 }

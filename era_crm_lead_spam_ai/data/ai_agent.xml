@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="lead_spam_detection_source" model="utm.source">
+            <field name="name">CRM Lead Spam Guard</field>
+        </record>
+
+        <record id="lead_spam_detection_agent" model="ai.agent">
+            <field name="name">CRM Lead Spam Guard</field>
+            <field name="subtitle">Classifies CRM leads as SPAM or VALID_LEAD</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="source_id" ref="era_crm_lead_spam_ai.lead_spam_detection_source"/>
+            <field name="system_prompt">
+You are a CRM lead email qualification classifier.
+Follow the user prompt exactly.
+Return only one token: SPAM or VALID_LEAD.
+            </field>
+        </record>
+    </data>
+</odoo>

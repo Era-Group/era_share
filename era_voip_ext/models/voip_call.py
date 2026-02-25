@@ -170,6 +170,33 @@ class VoipCall(models.Model):
         self._transcribe_call(self)
         return True
 
+    def action_retranscript_bulk(self):
+        processed = 0
+        skipped = 0
+        for call in self:
+            if call.transcription_status == "queued":
+                skipped += 1
+                continue
+            call.transcription_status = "pending"
+            self.env.cr.commit()
+            self._transcribe_call(call)
+            processed += 1
+
+        message = _("Processed %(processed)s call(s).", processed=processed)
+        if skipped:
+            message += _(" Skipped %(skipped)s queued call(s).", skipped=skipped)
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Transcript Bulk Action"),
+                "message": message,
+                "type": "success",
+                "sticky": False,
+            },
+        }
+
     
 
     def _find_recording_attachment(self):

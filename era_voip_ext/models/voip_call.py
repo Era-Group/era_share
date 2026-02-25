@@ -1,4 +1,5 @@
 import re
+import time
 from json.decoder import JSONDecodeError
 from logging import getLogger
 
@@ -29,6 +30,26 @@ class VoipCall(models.Model):
     def _commit_if_needed(self):
         if not modules.module.current_test:
             self.env.cr.commit()
+
+    def write(self, vals):
+        retry_keys = {"transcription_status", "message_main_attachment_id"}
+        if not (retry_keys & set(vals.keys())):
+            return super().write(vals)
+
+        retries = 3
+        for attempt in range(1, retries + 1):
+            try:
+                with self.env.cr.savepoint():
+                    records = self.browse(self.ids).exists()
+                    if not records:
+                        return True
+                    return super(VoipCall, records).write(vals)
+            except errors.SerializationFailure:
+                self.env.invalidate_all()
+                if attempt < retries:
+                    time.sleep(0.05 * attempt)
+                    continue
+                raise
 
     def _safe_write(self, call, vals):
         if not call:

@@ -44,9 +44,10 @@ class CrmRealtimeCallSummary(models.Model):
     session_key = fields.Char(copy=False, index=True)
     client_call_id = fields.Char(copy=False, index=True)
 
-    _sql_constraints = [
-        ("crm_realtime_call_summary_client_call_id_uniq", "unique(client_call_id)", "Client call id must be unique."),
-    ]
+    _client_call_id_uniq = models.Constraint(
+        "unique(client_call_id)",
+        "Client call id must be unique.",
+    )
 
     @api.depends("attachment_id", "attachment_name")
     def _compute_recording_link_html(self):

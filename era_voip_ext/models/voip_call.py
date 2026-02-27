@@ -16,6 +16,8 @@ _logger = getLogger(__name__)
 class VoipCall(models.Model):
     _inherit = "voip.call"
 
+    # Compatibility field for third-party inherited views that expect it on voip.call.
+    application_count = fields.Integer(string="Applications", default=0)
     recording_url = fields.Char(
         string="Recording URL",
         compute="_compute_recording_url",

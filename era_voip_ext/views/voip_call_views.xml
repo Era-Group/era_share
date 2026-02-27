@@ -31,6 +31,20 @@
         </field>
     </record>
 
+    <record id="view_voip_call_form_hr_applications_access_fix" model="ir.ui.view">
+        <field name="name">voip.call.form.hr.applications.access.fix</field>
+        <field name="model">voip.call</field>
+        <field name="inherit_id" ref="voip_hr_recruitment.voip_call_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='voip_action_view_applications']" position="attributes">
+                <attribute name="groups">hr_recruitment.group_hr_recruitment_interviewer</attribute>
+            </xpath>
+            <xpath expr="//button[@name='voip_action_view_applications']/field[@name='application_count']" position="attributes">
+                <attribute name="groups">hr_recruitment.group_hr_recruitment_interviewer</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="action_voip_call_bulk_retranscript" model="ir.actions.server">
         <field name="name">Bulk Transcript Calls</field>
         <field name="model_id" ref="voip.model_voip_call"/>

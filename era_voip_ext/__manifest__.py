@@ -5,7 +5,7 @@
     "version": "19.0.1.0.0",
     "author": "Era Group",
     "license": "LGPL-3",
-    "depends": ["crm", "voip", "voip_ai"],
+    "depends": ["crm", "voip", "voip_ai", "voip_hr_recruitment"],
     "data": [
         "data/ai_agent.xml",
         "views/crm_lead_views.xml",

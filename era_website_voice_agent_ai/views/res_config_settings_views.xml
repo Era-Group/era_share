@@ -51,6 +51,10 @@
               <field name="openai_realtime_widget_label"/>
             </setting>
 
+            <setting string="Require Push-to-Talk" help="If enabled, visitors must hold the microphone button to speak. Disable to keep the microphone live during the call.">
+              <field name="openai_realtime_require_ptt"/>
+            </setting>
+
             <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">
               <field name="openai_realtime_summary_prompt" widget="text" placeholder="لخص المكالمة الواردة بالعربية بشكل قصير ومباشر جدًا. 2-3 نقاط كحد أقصى، واذكر أي إجراء مطلوب إن وجد"/>
             </setting>

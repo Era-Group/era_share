@@ -189,10 +189,13 @@ function getConfig() {
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
   const embedModeRaw = w?.dataset?.embedMode || "";
   const embedMode = String(embedModeRaw).toLowerCase() === "1" || String(embedModeRaw).toLowerCase() === "true";
+  const requirePttRaw = w?.dataset?.requirePtt || "";
+  const requirePtt = !(String(requirePttRaw).toLowerCase() === "0" || String(requirePttRaw).toLowerCase() === "false");
   return {
     promptId: w?.dataset?.promptId || "",
     model: w?.dataset?.model || "gpt-realtime-mini",
     voice: voice,
+    requirePtt: requirePtt,
     callerPhone: w?.dataset?.callerPhone || "",
     callerCompany: w?.dataset?.callerCompany || "",
     embedMode: embedMode,
@@ -306,6 +309,19 @@ function resetNavigationIntent() {
   state.navigationIntent = false;
 }
 
+function requiresPushToTalk() {
+  if (typeof state.sessionMeta?.requirePtt === "boolean") {
+    return state.sessionMeta.requirePtt;
+  }
+  return !!getConfig().requirePtt;
+}
+
+function connectedStatusText() {
+  return requiresPushToTalk()
+    ? "متصل 🎙️ اضغط مطولًا على زر التحدث"
+    : "متصل 🎙️ الميكروفون مفتوح";
+}
+
 function clearPttIdleTimer() {
   if (state.pttIdleTimer) {
     clearTimeout(state.pttIdleTimer);
@@ -323,6 +339,7 @@ function resolvePttIdleTimeoutSeconds() {
 
 function armPttIdleTimer() {
   clearPttIdleTimer();
+  if (!requiresPushToTalk()) return;
   if (!state.running || state.stopping || state.micEnabled) return;
   const timeoutSeconds = resolvePttIdleTimeoutSeconds();
   const timeoutMs = Math.max(1, Math.round(timeoutSeconds * 1000));
@@ -340,7 +357,9 @@ function touchPttActivity() {
 function updatePushToTalkButton() {
   const btn = qs("oai-agent-ptt");
   if (!btn) return;
+  const required = requiresPushToTalk();
   const active = !!(state.running && state.micEnabled);
+  btn.classList.toggle("d-none", !required);
   btn.disabled = !state.running;
   btn.setAttribute("aria-pressed", active ? "true" : "false");
   btn.classList.toggle("is-live", active);
@@ -363,6 +382,7 @@ function setMicEnabled(enabled) {
 
 function startPushToTalk(ev) {
   if (ev) ev.preventDefault();
+  if (!requiresPushToTalk()) return;
   if (!state.running) return;
   touchPttActivity();
   setMicEnabled(true);
@@ -370,6 +390,7 @@ function startPushToTalk(ev) {
 
 function stopPushToTalk(ev) {
   if (ev && (ev.type === "keydown" || ev.type === "keyup")) ev.preventDefault();
+  if (!requiresPushToTalk()) return;
   setMicEnabled(false);
   armPttIdleTimer();
 }
@@ -669,6 +690,7 @@ async function startAgent(options = {}) {
     promptId: cfg.promptId,
     model: cfg.model,
     voice: cfg.voice,
+    requirePtt: cfg.requirePtt,
     callerPhone: cfg.callerPhone,
     callerCompany: cfg.callerCompany,
     embedMode: cfg.embedMode,
@@ -764,8 +786,8 @@ async function startAgent(options = {}) {
   const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
   state.micStream = micStream;
   micStream.getTracks().forEach((t) => pc.addTrack(t, micStream));
-  // Push-to-talk: keep microphone muted until the user presses the PTT button.
-  setMicEnabled(false);
+  // Keep the microphone muted only when push-to-talk is required.
+  setMicEnabled(!cfg.requirePtt);
   initRecorder(micStream);
 
   const dc = pc.createDataChannel("oai-events");
@@ -871,7 +893,7 @@ async function startAgent(options = {}) {
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
   dc.addEventListener("open", async () => {
-    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
+    setStatus(connectedStatusText());
 
     const sessionUpdate = {
       model: cfg.model,
@@ -1186,7 +1208,7 @@ async function tryResumeSession() {
   setStatus("جاري إعادة الاتصال...");
   try {
     await startAgent({ resume: continuity });
-    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
+    setStatus(connectedStatusText());
     showMobileStep(false);
     showCallActions(true);
     updatePushToTalkButton();

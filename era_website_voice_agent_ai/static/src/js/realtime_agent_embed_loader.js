@@ -39,11 +39,13 @@
   const model = (scriptEl.dataset.model || "").trim();
   const voice = (scriptEl.dataset.voice || "").trim();
   const label = (scriptEl.dataset.label || "").trim();
+  const requirePtt = (scriptEl.dataset.requirePtt || "").trim();
   const callerCompany = (scriptEl.dataset.callerCompany || "").trim();
   if (promptId) params.set("prompt_id", promptId);
   if (model) params.set("model", model);
   if (voice) params.set("voice", voice);
   if (label) params.set("widget_label", label);
+  if (requirePtt) params.set("require_ptt", requirePtt);
   if (callerCompany) params.set("caller_company", callerCompany);
 
   const frameSrc = `${baseUrl}/realtime_agent/embed/frame${params.toString() ? `?${params.toString()}` : ""}`;

@@ -33,6 +33,7 @@
              t-att-data-prompt-id="prompt_id or ''"
              t-att-data-model="model or 'gpt-realtime-mini'"
              t-att-data-voice="voice or 'alloy'"
+             t-att-data-require-ptt="require_ptt"
              t-att-data-caller-phone="caller_phone or ''"
              t-att-data-caller-company="caller_company or ''">
 

@@ -87,6 +87,15 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_widget_label",
         help="Text shown on the floating website widget button.",
     )
+    openai_realtime_require_ptt = fields.Boolean(
+        string="Require Push-to-Talk",
+        default=True,
+        config_parameter="openai.realtime_require_ptt",
+        help=(
+            "If enabled, the visitor must hold the microphone button to speak. "
+            "Disable to keep the microphone live for the whole session."
+        ),
+    )
 
     openai_realtime_summary_prompt = fields.Char(
         string="Summary Prompt",

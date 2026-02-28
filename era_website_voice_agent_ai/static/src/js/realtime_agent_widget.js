@@ -183,14 +183,18 @@ function createClientCallId() {
   return `call_${Date.now().toString(36)}_${rand}`;
 }
 
+function isTruthyFlag(value, defaultValue = false) {
+  if (value === undefined || value === null || value === "") return defaultValue;
+  return ["1", "true", "yes", "y", "t", "on"].includes(String(value).trim().toLowerCase());
+}
+
 function getConfig() {
   const w = widgetEl();
   const rawVoice = w?.dataset?.voice || "";
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
   const embedModeRaw = w?.dataset?.embedMode || "";
-  const embedMode = String(embedModeRaw).toLowerCase() === "1" || String(embedModeRaw).toLowerCase() === "true";
-  const requirePttRaw = w?.dataset?.requirePtt || "";
-  const requirePtt = !(String(requirePttRaw).toLowerCase() === "0" || String(requirePttRaw).toLowerCase() === "false");
+  const embedMode = isTruthyFlag(embedModeRaw, false);
+  const requirePtt = isTruthyFlag(w?.dataset?.requirePtt, true);
   return {
     promptId: w?.dataset?.promptId || "",
     model: w?.dataset?.model || "gpt-realtime-mini",

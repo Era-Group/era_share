@@ -158,9 +158,11 @@ class ResConfigSettings(models.TransientModel):
         if raw_embed in (None, ""):
             # Backward compatibility: until explicitly set, external embed follows the legacy single switch.
             raw_embed = raw_inside
+        raw_require_ptt = ICP.get_param("openai.realtime_require_ptt", default="1")
 
         res["openai_realtime_widget_enabled"] = _as_bool(raw_inside, default=True)
         res["openai_realtime_embed_enabled"] = _as_bool(raw_embed, default=True)
+        res["openai_realtime_require_ptt"] = _as_bool(raw_require_ptt, default=True)
         return res
 
     def set_values(self):
@@ -173,5 +175,9 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param(
             "openai.realtime_embed_enabled",
             "1" if self.openai_realtime_embed_enabled else "0",
+        )
+        ICP.set_param(
+            "openai.realtime_require_ptt",
+            "1" if self.openai_realtime_require_ptt else "0",
         )
         return res

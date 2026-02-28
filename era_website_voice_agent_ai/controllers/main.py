@@ -737,6 +737,11 @@ class RealtimeAgentController(http.Controller):
         interrupt_response_enabled = self._is_truthy(
             ICP.get_param("openai.realtime_interrupt_response_enabled", "0")
         )
+        try:
+            vad_threshold = float(ICP.get_param("openai.realtime_vad_threshold", "0.8") or 0.8)
+        except Exception:
+            vad_threshold = 0.8
+        vad_threshold = min(1.0, max(0.0, vad_threshold))
         idle_timeout_seconds = 0
         try:
             idle_timeout_seconds = int(
@@ -775,6 +780,7 @@ class RealtimeAgentController(http.Controller):
             "modalities": ["audio", "text"],
             "turn_detection": {
                 "type": "server_vad",
+                "threshold": vad_threshold,
                 "interrupt_response": interrupt_response_enabled,
             },
         }
@@ -911,6 +917,7 @@ class RealtimeAgentController(http.Controller):
             "value": client_secret,
             "prompt_fallback": False,
             "interrupt_response_enabled": interrupt_response_enabled,
+            "vad_threshold": vad_threshold,
             "idle_timeout_seconds": idle_timeout_seconds,
         }
         if prompt_warning:

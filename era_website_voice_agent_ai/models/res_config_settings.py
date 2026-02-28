@@ -51,6 +51,15 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_interrupt_response_enabled",
         help="If enabled, server VAD can interrupt the current assistant response when the user starts speaking.",
     )
+    openai_realtime_vad_threshold = fields.Float(
+        string="Realtime VAD Threshold",
+        default=0.8,
+        config_parameter="openai.realtime_vad_threshold",
+        help=(
+            "Voice activity detection threshold from 0.0 to 1.0. "
+            "Higher values require louder speech and reduce false triggers from ambient noise."
+        ),
+    )
     openai_realtime_idle_timeout_seconds = fields.Integer(
         string="Realtime Idle Timeout (Seconds)",
         default=0,

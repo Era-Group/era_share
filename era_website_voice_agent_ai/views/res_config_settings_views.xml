@@ -34,6 +34,10 @@
               <field name="openai_realtime_interrupt_response_enabled"/>
             </setting>
 
+            <setting string="Realtime VAD Threshold" help="0.0 to 1.0. Raise this to reduce false speech detection from room noise. Recommended noisy-room range: 0.8 to 0.95.">
+              <field name="openai_realtime_vad_threshold" placeholder="0.8"/>
+            </setting>
+
             <setting string="Realtime Idle Timeout (Seconds)" help="Silence timeout for visitor inactivity. Set 0 to disable.">
               <field name="openai_realtime_idle_timeout_seconds" placeholder="0"/>
             </setting>

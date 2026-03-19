@@ -279,3 +279,94 @@ msgstr "رابط التسجيل"
 #: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_crm_realtime_call_summary__lead_id
 msgid "Lead/Opportunity"
 msgstr "عميل محتمل/فرصة"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_widget_enabled
+msgid "Show Widget Inside Website"
+msgstr "إظهار الأداة داخل الموقع"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_widget_enabled
+msgid "Show or hide the floating widget on this Odoo website."
+msgstr "إظهار أو إخفاء الأداة العائمة في موقع أودو هذا."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_enabled
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Enable External Embed Widget"
+msgstr "تفعيل أداة التضمين الخارجية"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_enabled
+msgid "Allow or block the widget iframe for external websites using the embed script."
+msgstr "السماح أو منع إطار الأداة للمواقع الخارجية التي تستخدم سكربت التضمين."
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Allow or block loading the widget from external websites via embed script."
+msgstr "السماح أو منع تحميل الأداة من المواقع الخارجية عبر سكربت التضمين."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_auto_greet_enabled
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Auto-Start Assistant Greeting"
+msgstr "بدء ترحيب المساعد تلقائيًا"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_auto_greet_enabled
+msgid "If enabled, the Realtime assistant starts speaking automatically right after the connection opens."
+msgstr "إذا تم التفعيل، سيبدأ مساعد Realtime بالتحدث تلقائيًا فور فتح الاتصال."
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "If enabled, the assistant starts speaking automatically as soon as the Realtime connection is established."
+msgstr "إذا تم التفعيل، سيبدأ المساعد بالتحدث تلقائيًا بمجرد إنشاء اتصال Realtime."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_auto_greet_instruction
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Auto Greeting Instruction"
+msgstr "تعليمات الترحيب التلقائي"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_auto_greet_instruction
+msgid "Instruction sent in the first response.create call after connect. Use this to control how the assistant opens the conversation."
+msgstr "التعليمات التي تُرسل في أول استدعاء response.create بعد الاتصال. استخدمها للتحكم في كيفية بدء المساعد للمحادثة."
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Instruction used for the assistant's first spoken reply after connection."
+msgstr "التعليمات المستخدمة لأول رد منطوق من المساعد بعد الاتصال."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_allowed_origins
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Allowed Embed Origins"
+msgstr "مصادر التضمين المسموح بها"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_allowed_origins
+msgid "Optional allowlist of parent website origins allowed to embed the external widget iframe. Use one origin per line, e.g. https://example.com"
+msgstr "قائمة سماح اختيارية لمصادر المواقع الأب المسموح لها بتضمين إطار الأداة الخارجية. استخدم مصدرًا واحدًا في كل سطر، مثل https://example.com"
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Optional allowlist of parent website origins that can embed the external widget frame. One origin per line, e.g. https://example.com"
+msgstr "قائمة سماح اختيارية لمصادر المواقع الأب التي يمكنها تضمين إطار الأداة الخارجية. مصدر واحد في كل سطر، مثل https://example.com"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_script
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "External Embed Script"
+msgstr "سكربت التضمين الخارجي"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_script
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Copy/paste this script into any external website to show the floating voice widget."
+msgstr "انسخ/ألصق هذا السكربت في أي موقع خارجي لإظهار أداة الصوت العائمة."
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Copy/paste this script into any external website."
+msgstr "انسخ/ألصق هذا السكربت في أي موقع خارجي."

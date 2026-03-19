@@ -370,3 +370,75 @@ msgstr "انسخ/ألصق هذا السكربت في أي موقع خارجي ل
 #: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
 msgid "Copy/paste this script into any external website."
 msgstr "انسخ/ألصق هذا السكربت في أي موقع خارجي."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_interrupt_response_enabled
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Allow Agent Interruption"
+msgstr "السماح بمقاطعة الوكيل"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_interrupt_response_enabled
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "If enabled, the assistant response can be interrupted when the user speaks (server VAD)."
+msgstr "إذا تم التفعيل، يمكن مقاطعة رد المساعد عندما يتحدث المستخدم (VAD من الخادم)."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_vad_threshold
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Realtime VAD Threshold"
+msgstr "عتبة VAD الفورية"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_vad_threshold
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "0.0 to 1.0. Raise this to reduce false speech detection from room noise. Recommended noisy-room range: 0.8 to 0.95."
+msgstr "من 0.0 إلى 1.0. ارفع هذه القيمة لتقليل اكتشاف الكلام الخاطئ الناتج عن ضوضاء الغرفة. النطاق الموصى به للغرف المزعجة: من 0.8 إلى 0.95."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_idle_timeout_seconds
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Realtime Idle Timeout (Seconds)"
+msgstr "مهلة الخمول الفورية (بالثواني)"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_idle_timeout_seconds
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Silence timeout for visitor inactivity. Set 0 to disable."
+msgstr "مهلة الصمت عند عدم نشاط الزائر. اضبط القيمة على 0 للتعطيل."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_salesperson_user_id
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Assigned Salesperson"
+msgstr "مندوب المبيعات المعيّن"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_salesperson_user_id
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Default salesperson assigned to each website call summary and notified on assignment."
+msgstr "مندوب المبيعات الافتراضي الذي يُعيَّن لكل ملخص مكالمة من الموقع ويتم إشعاره عند التعيين."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_require_ptt
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Require Push-to-Talk"
+msgstr "تفعيل الضغط للتحدث"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_require_ptt
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "If enabled, visitors must hold the microphone button to speak. Disable to keep the microphone live during the call."
+msgstr "إذا تم التفعيل، يجب على الزوار الضغط المستمر على زر الميكروفون للتحدث. عطّله للإبقاء على الميكروفون نشطًا أثناء المكالمة."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_system_instructions_cfg
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Realtime System Instructions"
+msgstr "تعليمات النظام الفورية"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_system_instructions_cfg
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "System instructions sent directly to OpenAI Realtime sessions. If filled, this takes precedence over Prompt ID instructions."
+msgstr "تعليمات النظام التي تُرسل مباشرة إلى جلسات OpenAI Realtime. إذا تم تعبئتها، فستكون لها الأولوية على تعليمات معرّف الموجّه."

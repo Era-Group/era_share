@@ -104,7 +104,7 @@ class ResConfigSettings(models.TransientModel):
     )
     openai_realtime_auto_greet_instruction = fields.Char(
         string="Auto Greeting Instruction",
-        default="ابدأ بالترحيب بالزائر باللغة العربية، عرّف بنفسك، ثم اسأله كيف يمكنك مساعدته.",
+        default="ابدأ بالترحيب بالزائر باللغة العربية الحجازية، ثم كلمة تفضّل او كيف اخدمك او كيف اساعدك وامثالها. في اقل من 3 ثوان",
         config_parameter="openai.realtime_auto_greet_instruction",
         help=(
             "Instruction sent in the first response.create call after connect. "

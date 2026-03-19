@@ -102,8 +102,9 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_auto_greet_enabled",
         help="If enabled, the Realtime assistant starts speaking automatically right after the connection opens.",
     )
-    openai_realtime_auto_greet_instruction = fields.Text(
+    openai_realtime_auto_greet_instruction = fields.Char(
         string="Auto Greeting Instruction",
+        default="ابدأ بالترحيب بالزائر باللغة العربية، عرّف بنفسك، ثم اسأله كيف يمكنك مساعدته.",
         config_parameter="openai.realtime_auto_greet_instruction",
         help=(
             "Instruction sent in the first response.create call after connect. "

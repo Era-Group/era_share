@@ -689,7 +689,8 @@ function sendUserText(text) {
   state.responseInFlight = true;
 }
 
-function triggerAutoGreeting() {
+function triggerAutoGreeting(options = {}) {
+  if (options.resume) return;
   if (!state.sessionMeta?.autoGreetEnabled) return;
   if (state.responseInFlight) return;
   const instruction = String(state.sessionMeta?.autoGreetInstruction || "").trim();
@@ -936,7 +937,7 @@ async function startAgent(options = {}) {
       session: sessionUpdate,
     });
 
-    triggerAutoGreeting();
+    triggerAutoGreeting({ resume: !!resume });
 
     if (state.pendingText) {
       sendUserText(state.pendingText);

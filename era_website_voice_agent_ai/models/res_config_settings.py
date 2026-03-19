@@ -96,6 +96,20 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="openai.realtime_widget_label",
         help="Text shown on the floating website widget button.",
     )
+    openai_realtime_auto_greet_enabled = fields.Boolean(
+        string="Auto-Start Assistant Greeting",
+        default=False,
+        config_parameter="openai.realtime_auto_greet_enabled",
+        help="If enabled, the Realtime assistant starts speaking automatically right after the connection opens.",
+    )
+    openai_realtime_auto_greet_instruction = fields.Text(
+        string="Auto Greeting Instruction",
+        config_parameter="openai.realtime_auto_greet_instruction",
+        help=(
+            "Instruction sent in the first response.create call after connect. "
+            "Use this to control how the assistant opens the conversation."
+        ),
+    )
     openai_realtime_require_ptt = fields.Boolean(
         string="Require Push-to-Talk",
         default=True,
@@ -129,12 +143,16 @@ class ResConfigSettings(models.TransientModel):
 
     @api.depends(
         "openai_realtime_widget_label",
+        "openai_realtime_auto_greet_enabled",
+        "openai_realtime_auto_greet_instruction",
     )
     def _compute_openai_realtime_embed_script(self):
         ICP = self.env["ir.config_parameter"].sudo()
         base_url = (ICP.get_param("web.base.url") or "").strip().rstrip("/")
         for rec in self:
             label = (rec.openai_realtime_widget_label or "").strip()
+            auto_greet_enabled = bool(rec.openai_realtime_auto_greet_enabled)
+            auto_greet_instruction = (rec.openai_realtime_auto_greet_instruction or "").strip()
 
             lines = [
                 '<script',
@@ -142,6 +160,11 @@ class ResConfigSettings(models.TransientModel):
             ]
             if label:
                 lines.append(f'  data-label="{label}"')
+            if auto_greet_enabled:
+                lines.append('  data-auto-greet="1"')
+            if auto_greet_instruction:
+                safe_instruction = auto_greet_instruction.replace('"', '&quot;').replace("\n", "&#10;")
+                lines.append(f'  data-auto-greet-instruction="{safe_instruction}"')
             lines.extend(
                 [
                     '  data-right="14"',
@@ -167,10 +190,12 @@ class ResConfigSettings(models.TransientModel):
         if raw_embed in (None, ""):
             # Backward compatibility: until explicitly set, external embed follows the legacy single switch.
             raw_embed = raw_inside
+        raw_auto_greet = ICP.get_param("openai.realtime_auto_greet_enabled", default="0")
         raw_require_ptt = ICP.get_param("openai.realtime_require_ptt", default="1")
 
         res["openai_realtime_widget_enabled"] = _as_bool(raw_inside, default=True)
         res["openai_realtime_embed_enabled"] = _as_bool(raw_embed, default=True)
+        res["openai_realtime_auto_greet_enabled"] = _as_bool(raw_auto_greet, default=False)
         res["openai_realtime_require_ptt"] = _as_bool(raw_require_ptt, default=True)
         return res
 
@@ -184,6 +209,10 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param(
             "openai.realtime_embed_enabled",
             "1" if self.openai_realtime_embed_enabled else "0",
+        )
+        ICP.set_param(
+            "openai.realtime_auto_greet_enabled",
+            "1" if self.openai_realtime_auto_greet_enabled else "0",
         )
         ICP.set_param(
             "openai.realtime_require_ptt",

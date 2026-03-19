@@ -8,6 +8,8 @@
            t-att-data-prompt-id="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_prompt_id') or ''"
            t-att-data-model="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_model') or 'gpt-realtime-mini'"
            t-att-data-voice="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_voice') or 'alloy'"
+           t-att-data-auto-greet="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_auto_greet_enabled', '0')"
+           t-att-data-auto-greet-instruction="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_auto_greet_instruction') or ''"
            t-att-data-require-ptt="request.env['ir.config_parameter'].sudo().get_param('openai.realtime_require_ptt', '1')"
            t-att-data-caller-phone="(request.env.user.partner_id.phone or (request.env.user.partner_id.mobile if 'mobile' in request.env.user.partner_id._fields else '')) if not request.env.user._is_public() else ''"
            t-att-data-caller-company="request.env.user.partner_id.company_name if not request.env.user._is_public() else ''">

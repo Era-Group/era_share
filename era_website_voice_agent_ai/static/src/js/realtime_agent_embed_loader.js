@@ -39,12 +39,16 @@
   const model = (scriptEl.dataset.model || "").trim();
   const voice = (scriptEl.dataset.voice || "").trim();
   const label = (scriptEl.dataset.label || "").trim();
+  const autoGreet = (scriptEl.dataset.autoGreet || "").trim();
+  const autoGreetInstruction = (scriptEl.dataset.autoGreetInstruction || "").trim();
   const requirePtt = (scriptEl.dataset.requirePtt || "").trim();
   const callerCompany = (scriptEl.dataset.callerCompany || "").trim();
   if (promptId) params.set("prompt_id", promptId);
   if (model) params.set("model", model);
   if (voice) params.set("voice", voice);
   if (label) params.set("widget_label", label);
+  if (autoGreet) params.set("auto_greet", autoGreet);
+  if (autoGreetInstruction) params.set("auto_greet_instruction", autoGreetInstruction);
   if (requirePtt) params.set("require_ptt", requirePtt);
   if (callerCompany) params.set("caller_company", callerCompany);
 

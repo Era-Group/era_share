@@ -949,6 +949,10 @@ class RealtimeAgentController(http.Controller):
             "model": _pick("model", "openai.realtime_model", "gpt-realtime-mini"),
             "voice": _pick("voice", "openai.realtime_voice", "alloy"),
             "widget_label": _pick("widget_label", "openai.realtime_widget_label"),
+            "auto_greet": _pick("auto_greet", "openai.realtime_auto_greet_enabled", "0"),
+            "auto_greet_instruction": _pick(
+                "auto_greet_instruction", "openai.realtime_auto_greet_instruction"
+            ),
             "require_ptt": _pick("require_ptt", "openai.realtime_require_ptt", "1"),
             "caller_phone": (kwargs.get("caller_phone") or "").strip(),
             "caller_company": (kwargs.get("caller_company") or "").strip(),

@@ -55,6 +55,19 @@
               <field name="openai_realtime_widget_label"/>
             </setting>
 
+            <setting string="Auto-Start Assistant Greeting"
+                     help="If enabled, the assistant starts speaking automatically as soon as the Realtime connection is established.">
+              <field name="openai_realtime_auto_greet_enabled"/>
+            </setting>
+
+            <setting string="Auto Greeting Instruction"
+                     help="Instruction used for the assistant's first spoken reply after connection."
+                     invisible="not openai_realtime_auto_greet_enabled">
+              <field name="openai_realtime_auto_greet_instruction"
+                     widget="text"
+                     placeholder="ابدأ بالترحيب بالزائر باللغة العربية، عرّف بنفسك، ثم اسأله كيف يمكنك مساعدته."/>
+            </setting>
+
             <setting string="Require Push-to-Talk" help="If enabled, visitors must hold the microphone button to speak. Disable to keep the microphone live during the call.">
               <field name="openai_realtime_require_ptt"/>
             </setting>

@@ -194,11 +194,14 @@ function getConfig() {
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
   const embedModeRaw = w?.dataset?.embedMode || "";
   const embedMode = isTruthyFlag(embedModeRaw, false);
+  const autoGreetEnabled = isTruthyFlag(w?.dataset?.autoGreet, false);
   const requirePtt = isTruthyFlag(w?.dataset?.requirePtt, true);
   return {
     promptId: w?.dataset?.promptId || "",
     model: w?.dataset?.model || "gpt-realtime-mini",
     voice: voice,
+    autoGreetEnabled: autoGreetEnabled,
+    autoGreetInstruction: w?.dataset?.autoGreetInstruction || "",
     requirePtt: requirePtt,
     callerPhone: w?.dataset?.callerPhone || "",
     callerCompany: w?.dataset?.callerCompany || "",
@@ -686,6 +689,25 @@ function sendUserText(text) {
   state.responseInFlight = true;
 }
 
+function triggerAutoGreeting() {
+  if (!state.sessionMeta?.autoGreetEnabled) return;
+  if (state.responseInFlight) return;
+  const instruction = String(state.sessionMeta?.autoGreetInstruction || "").trim();
+  const response = {
+    modalities: ["audio", "text"],
+  };
+  if (instruction) {
+    response.instructions = instruction;
+  }
+  if (!safeSend({
+    type: "response.create",
+    response: response,
+  })) {
+    return;
+  }
+  state.responseInFlight = true;
+}
+
 async function startAgent(options = {}) {
   if (state.running || state.starting && state.pc) return;
   const resume = options.resume || null;
@@ -694,6 +716,8 @@ async function startAgent(options = {}) {
     promptId: cfg.promptId,
     model: cfg.model,
     voice: cfg.voice,
+    autoGreetEnabled: cfg.autoGreetEnabled,
+    autoGreetInstruction: cfg.autoGreetInstruction,
     requirePtt: cfg.requirePtt,
     callerPhone: cfg.callerPhone,
     callerCompany: cfg.callerCompany,
@@ -911,6 +935,8 @@ async function startAgent(options = {}) {
       type: "session.update",
       session: sessionUpdate,
     });
+
+    triggerAutoGreeting();
 
     if (state.pendingText) {
       sendUserText(state.pendingText);

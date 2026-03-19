@@ -286,9 +286,31 @@ msgid "Show Widget Inside Website"
 msgstr "إظهار الأداة داخل الموقع"
 
 #. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Show Widget Inside Website"
+msgstr "إظهار الأداة داخل الموقع"
+
+#. module: era_website_voice_agent_ai
 #: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_widget_enabled
 msgid "Show or hide the floating widget on this Odoo website."
 msgstr "إظهار أو إخفاء الأداة العائمة في موقع أودو هذا."
+
+#. module: era_website_voice_agent_ai
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Show or hide the floating widget on this Odoo website."
+msgstr "إظهار أو إخفاء الأداة العائمة في موقع أودو هذا."
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_widget_label
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Widget Button Label"
+msgstr "نص زر الأداة"
+
+#. module: era_website_voice_agent_ai
+#: model:ir.model.fields,help:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_widget_label
+#: model_terms:ir.ui.view,arch_db:era_website_voice_agent_ai.res_config_settings_view_form_inherit_openai_realtime
+msgid "Text shown on the floating website widget button."
+msgstr "النص الظاهر على زر أداة الموقع العائمة."
 
 #. module: era_website_voice_agent_ai
 #: model:ir.model.fields,field_description:era_website_voice_agent_ai.field_res_config_settings__openai_realtime_embed_enabled

@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+from datetime import timedelta
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
+
+FAILURE_STATUSES = {"failed", "error", "not_found", "not found"}
+QUEUE_LIKE_STATUSES = {"queued", "queue", "pending", "in_queue", "in queue", "processing", "in_progress", "in progress"}
 
 
 class EraSpyCallbackQueue(models.Model):
@@ -24,11 +28,10 @@ class EraSpyCallbackQueue(models.Model):
     payload_json = fields.Text()
     candidate_json = fields.Text()
     state = fields.Selection(
-        [("pending", "Pending"), ("done", "Done"), ("error", "Error")],
-        default="pending",
+        [("done", "Done"), ("error", "Error")],
+        default="done",
         required=True,
     )
-    attempts = fields.Integer(default=0)
     last_error = fields.Text()
 
     def init(self):
@@ -50,10 +53,47 @@ class EraSpyCallbackQueue(models.Model):
         except Exception as exc:
             _logger.warning("EraSpy queue dedupe skipped: %s", exc)
 
+        # Force-disable the old processing cron (was created under noupdate=1
+        # so XML changes cannot deactivate it).
+        try:
+            self.env.cr.execute(
+                """
+                UPDATE ir_cron SET active = FALSE
+                WHERE id IN (
+                    SELECT res_id FROM ir_model_data
+                    WHERE module = 'era_spy_crm'
+                    AND name = 'ir_cron_eraspy_process_queue'
+                )
+                AND active = TRUE
+                """
+            )
+            if self.env.cr.rowcount:
+                _logger.info("EraSpy: disabled legacy 'Process Callback Queue (CRM)' cron")
+        except Exception as exc:
+            _logger.warning("EraSpy: failed to disable legacy cron: %s", exc)
+
+        # Drop legacy columns removed from the model to prevent ORM errors.
+        for col in ("attempts",):
+            try:
+                self.env.cr.execute(
+                    "ALTER TABLE eraspy_callback_queue DROP COLUMN IF EXISTS %s" % col
+                )
+            except Exception:
+                pass
+
+        # Migrate legacy "pending" state to "error" (selection no longer has "pending").
+        try:
+            self.env.cr.execute(
+                "UPDATE eraspy_callback_queue SET state = 'error', "
+                "last_error = 'Migrated from legacy pending state' "
+                "WHERE state = 'pending'"
+            )
+        except Exception:
+            pass
+
     @api.model
-    def enqueue(self, lead, item, candidate):
-        import hashlib
-        
+    def log_callback(self, lead, item, candidate, state="done", error=False):
+        """Log a processed callback for audit purposes."""
         request_id = item.get("requestId") or item.get("request_id")
         identifier = item.get("item")
         status = item.get("status")
@@ -66,66 +106,21 @@ class EraSpyCallbackQueue(models.Model):
         )
         candidate_dict = candidate if isinstance(candidate, dict) else None
 
-        def is_failure(status_value, error_value):
-            status_lower = str(status_value or "").lower()
-            if status_lower in ("failed", "error", "not_found", "not found"):
-                return True
-            return bool(error_value)
-
-        incoming_success = bool(candidate_dict) and not is_failure(status, error_message)
-
-        # If no request_id, generate one from item identifier to prevent duplicates
-        if not request_id and identifier:
-            # Create a hash-based pseudo-request_id from identifier
-            request_id = "auto_" + hashlib.md5(str(identifier).encode()).hexdigest()[:16]
-
+        # Update existing record if one exists for this request_id
         if request_id:
-            domain = [("request_id", "=", str(request_id))]
-        else:
-            domain = [("state", "=", "pending"), ("request_id", "=", False)]
-            if lead:
-                domain.append(("lead_id", "=", lead.id))
-            else:
-                domain.append(("lead_id", "=", False))
-        existing = self.search(domain, limit=1)
-
-        if existing:
-            existing_success = False
-            if existing.candidate_json:
-                existing_success = True
-            else:
-                existing_status = str(existing.status or "").lower()
-                if existing_status and existing_status not in ("failed", "error", "not_found", "not found"):
-                    existing_success = True
-
-            # Only overwrite failed/empty records when a success arrives.
-            if not incoming_success or existing_success:
+            existing = self.search([("request_id", "=", str(request_id))], limit=1)
+            if existing:
+                existing.write({
+                    "lead_id": lead.id if lead else False,
+                    "identifier": identifier or existing.identifier,
+                    "status": status,
+                    "error_message": error_message,
+                    "payload_json": json.dumps(item, ensure_ascii=False),
+                    "candidate_json": json.dumps(candidate_dict, ensure_ascii=False) if candidate_dict else existing.candidate_json,
+                    "state": state,
+                    "last_error": error,
+                })
                 return existing
-
-            vals = {
-                "payload_json": json.dumps(item, ensure_ascii=False),
-                "candidate_json": json.dumps(candidate_dict, ensure_ascii=False) if candidate_dict else None,
-                "status": status,
-                "error_message": error_message,
-                "state": "pending",
-                "last_error": False,
-                "attempts": 0,
-            }
-            if request_id and not existing.request_id:
-                vals["request_id"] = str(request_id)
-            if identifier:
-                vals["identifier"] = identifier
-            if lead and not existing.lead_id:
-                vals["lead_id"] = lead.id
-            if lead and existing.lead_id and existing.lead_id.id != lead.id:
-                _logger.warning(
-                    "EraSpy queue request_id=%s already linked to lead_id=%s; ignoring new lead_id=%s",
-                    request_id,
-                    existing.lead_id.id,
-                    lead.id,
-                )
-            existing.write(vals)
-            return existing
 
         vals = {
             "lead_id": lead.id if lead else False,
@@ -135,117 +130,97 @@ class EraSpyCallbackQueue(models.Model):
             "error_message": error_message,
             "payload_json": json.dumps(item, ensure_ascii=False),
             "candidate_json": json.dumps(candidate_dict, ensure_ascii=False) if candidate_dict else None,
+            "state": state,
+            "last_error": error,
         }
         return self.create(vals)
 
     @api.model
-    def cron_process_queue(self, limit=120):
-        records = self.search([("state", "=", "pending")], limit=limit)
-        for record in records:
-            record._process_one()
-
-    def _process_one(self):
-        self.ensure_one()
-        self.attempts += 1
-        try:
-            if not self.lead_id:
-                self.state = "error"
-                self.last_error = "No lead matched"
-                return
-
-            try:
-                payload = json.loads(self.payload_json or "[]")
-            except json.JSONDecodeError as exc:
-                self.state = "error"
-                self.last_error = f"Payload JSON decode failed: {exc}"
-                return
-            try:
-                candidate_payload = json.loads(self.candidate_json or "{}") if self.candidate_json else None
-            except json.JSONDecodeError as exc:
-                self.state = "error"
-                self.last_error = f"Candidate JSON decode failed: {exc}"
-                candidate_payload = None
-
-            if isinstance(payload, dict):
-                payload = [payload]
-            if not isinstance(payload, list):
-                payload = []
-
-            applied_success = False
-            failure_status = None
-            write_vals = {}
-
-            for idx, entry in enumerate(payload):
-                if isinstance(entry, dict) and isinstance(entry.get("item"), dict):
-                    item = entry.get("item") or {}
-                    candidate = entry.get("candidate")
-                elif isinstance(entry, dict) and "item" in entry and "candidate" in entry and "status" not in entry:
-                    item = entry.get("item") or {}
-                    candidate = entry.get("candidate")
-                else:
-                    item = entry if isinstance(entry, dict) else {}
-                    candidate = None
-
-                if not candidate and isinstance(candidate_payload, list) and idx < len(candidate_payload):
-                    candidate = candidate_payload[idx]
-                elif not candidate and isinstance(candidate_payload, dict):
-                    candidate = candidate_payload
-
-                if not candidate and isinstance(item, dict):
-                    candidate = item.get("candidate") or item.get("profile")
-
-                status = item.get("status") if isinstance(item, dict) else None
-                error_message = (
-                    item.get("error")
-                    or item.get("message")
-                    or item.get("errorMessage")
-                    or item.get("error_message")
-                    or item.get("reason")
-                    or item.get("detail")
-                    or item.get("details")
-                ) if isinstance(item, dict) else None
-                status_lower = str(status or "").lower()
-                is_failure = status_lower in ("failed", "error", "not_found", "not found") or bool(error_message)
-                if status and status.lower() in ("failed", "error", "not_found", "not found") and not error_message:
-                    error_message = "No profile found"
-
-                if isinstance(candidate, dict) and candidate and not is_failure and not applied_success:
-                    write_vals = self.lead_id._prepare_eraspy_write_vals(candidate, overwrite=False)
-                    applied_success = True
-
-                if not applied_success and is_failure and not failure_status:
-                    failure_status = (status, error_message)
-
-            if not applied_success and failure_status:
-                status, error_message = failure_status
-                if status:
-                    write_vals.update(
-                        {
-                            "eraspy_last_status": f"{status}: {error_message}"[:255]
-                            if error_message
-                            else status[:255],
-                            "eraspy_last_checked": fields.Datetime.now(),
-                        }
-                    )
-            if self.payload_json:
-                write_vals["eraspy_debug_payload"] = self.payload_json[:4000]
-            if write_vals:
-                self.lead_id.write(write_vals)
-            self.state = "done"
-        except Exception as exc:
-            _logger.exception("EraSpy queue processing failed for id=%s", self.id)
-            self.last_error = str(exc)[:2000]
-            if "could not serialize access due to concurrent update" in str(exc).lower():
-                self.state = "pending"
-            else:
-                self.state = "error"
-
-    def action_retry(self):
-        for record in self:
-            record.write(
-                {
-                    "state": "pending",
-                    "last_error": False,
-                    "attempts": 0,
-                }
+    def cron_cleanup_hanging_leads(self, timeout_minutes=15):
+        """Mark leads stuck in 'Queued' status as failed."""
+        cutoff = fields.Datetime.now() - timedelta(minutes=timeout_minutes)
+        lead_model = self.env["crm.lead"].sudo()
+        queued_leads = lead_model.search([
+            ("eraspy_last_status", "ilike", "queued"),
+            ("eraspy_last_checked", "<", cutoff),
+        ])
+        if queued_leads:
+            _logger.warning(
+                "EraSpy cleanup: marking %s stuck lead(s) as failed (queued before %s)",
+                len(queued_leads), cutoff,
             )
+            queued_leads.write({
+                "eraspy_last_status": "failed: timed out",
+                "eraspy_last_checked": fields.Datetime.now(),
+            })
+
+    def _match_lead(self):
+        if "crm.lead" not in self.env:
+            return False
+        lead_model = self.env["crm.lead"].sudo()
+        identifier = (self.identifier or "").strip()
+
+        try:
+            item = json.loads(self.payload_json or "{}")
+        except json.JSONDecodeError:
+            item = {}
+        request_id = item.get("requestId") or item.get("request_id") or self.request_id
+
+        def build_or_domain(clauses):
+            if not clauses:
+                return []
+            domain = clauses[0]
+            for clause in clauses[1:]:
+                domain = ["|", domain, clause]
+            return domain
+
+        if request_id:
+            lead = lead_model.search([("eraspy_last_request_id", "=", str(request_id))], limit=1)
+            if lead:
+                return lead
+
+        if identifier:
+            lead = lead_model.search([("eraspy_last_identifier", "ilike", identifier)], limit=1)
+            if lead:
+                return lead
+
+        if identifier:
+            normalized = identifier.strip()
+            digits = "".join(ch for ch in normalized if ch.isdigit())
+            phone_probe = digits or normalized
+            clauses = [("email_from", "ilike", normalized)]
+            if "phone" in lead_model._fields:
+                clauses.append(("phone", "ilike", phone_probe))
+            if "mobile" in lead_model._fields:
+                clauses.append(("mobile", "ilike", phone_probe))
+            if "partner_id" in lead_model._fields and "phone" in self.env["res.partner"]._fields:
+                clauses.append(("partner_id.phone", "ilike", phone_probe))
+            if "partner_id" in lead_model._fields and "mobile" in self.env["res.partner"]._fields:
+                clauses.append(("partner_id.mobile", "ilike", phone_probe))
+            domain = build_or_domain(clauses)
+            if domain:
+                lead = lead_model.search(domain, limit=1)
+                if lead:
+                    return lead
+
+        try:
+            candidate = json.loads(self.candidate_json or "{}") if self.candidate_json else {}
+        except json.JSONDecodeError:
+            candidate = {}
+        if isinstance(candidate, dict):
+            emails = [e.get("value") for e in candidate.get("emails", []) if isinstance(e, dict)] or []
+            phones = [p.get("value") for p in candidate.get("phones", []) if isinstance(p, dict)] or []
+            clauses = []
+            if emails:
+                clauses.append(("email_from", "in", emails))
+            if phones and "phone" in lead_model._fields:
+                clauses.append(("phone", "in", phones))
+            if phones and "mobile" in lead_model._fields:
+                clauses.append(("mobile", "in", phones))
+            domain = build_or_domain(clauses)
+            if domain:
+                lead = lead_model.search(domain, limit=1)
+                if lead:
+                    return lead
+
+        return False

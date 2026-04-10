@@ -14,6 +14,17 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="eraspy_enrichment_state" invisible="1"/>
+                <button name="action_eraspy_enrich"
+                        type="object"
+                        string="Enrich Candidate"
+                        invisible="eraspy_enrichment_state == 'queued'"
+                        class="btn btn-primary"/>
+                <field name="eraspy_last_status" widget="eraspy_crm_status"
+                       readonly="1" nolabel="1"
+                       invisible="not eraspy_last_status"/>
+            </xpath>
             <xpath expr="//label[@for='phone']/following-sibling::div[1]" position="after">
                 <label for="linkedin_url" class="oe_inline"/>
                 <div class="o_row o_row_readonly">
@@ -28,20 +39,40 @@
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="EraSpy" name="eraspy">
-                    <group>
+                    <!-- Enrich button + live status -->
+                    <div class="d-flex align-items-center gap-3 mb-4">
                         <button name="action_eraspy_enrich"
                                 type="object"
-                                string="EraSpy Enrich"
-                                invisible="eraspy_in_queue"
-                                class="oe_highlight"/>
-                    </group>
-                    <group>
-                        <field name="eraspy_in_queue" invisible="1"/>
-                        <field name="eraspy_last_status" readonly="1"/>
-                        <field name="eraspy_last_checked" readonly="1"/>
-                        <field name="eraspy_more_data" readonly="1" widget="html"/>
-                        <!--field name="eraspy_debug_payload" readonly="1" widget="text" groups="base.group_system"/-->
-                    </group>
+                                string=" Enrich Candidate"
+                                invisible="eraspy_enrichment_state == 'queued'"
+                                class="btn btn-primary"/>
+                        <field name="eraspy_last_status" widget="eraspy_crm_status"
+                               readonly="1" nolabel="1"
+                               invisible="not eraspy_last_status"/>
+                    </div>
+
+                    <!-- More Data section -->
+                    <div class="mb-4" invisible="not eraspy_more_data">
+                        <h3 class="mb-2">
+                            <i class="fa fa-id-card-o text-primary me-1"/>
+                            Candidate Profile
+                        </h3>
+                        <div class="border rounded p-3 bg-white" style="direction: ltr; text-align: left;">
+                            <field name="eraspy_more_data" readonly="1" widget="html" nolabel="1"/>
+                        </div>
+                    </div>
+
+                    <!-- Metadata footer -->
+                    <div class="mt-3 p-3 bg-light rounded" style="font-size: 0.85em;">
+                        <group col="4">
+                            <field name="eraspy_last_status" readonly="1" string="Status"/>
+                            <field name="eraspy_last_checked" readonly="1" string="Last Checked"/>
+                            <field name="eraspy_last_request_id" readonly="1" string="Request ID"/>
+                            <field name="eraspy_last_identifier" readonly="1" string="Identifier"/>
+                            <field name="eraspy_profile_url" readonly="1" widget="url" string="Profile URL"/>
+                            <field name="eraspy_rating" readonly="1" string="Rating"/>
+                        </group>
+                    </div>
                 </page>
             </xpath>
         </field>

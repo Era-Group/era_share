@@ -21,6 +21,12 @@
         "views/hr_applicant_views.xml",
         "views/eraspy_applicant_callback_queue_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "era_spy_recruitment/static/src/components/*.js",
+            "era_spy_recruitment/static/src/components/*.xml",
+        ],
+    },
     "installable": True,
     "application": False,
     "license": "LGPL-3",

@@ -102,6 +102,13 @@ class EraSpyEnrichWizard(models.TransientModel):
                 skipped.append(lead.display_name)
                 continue
 
+            # Check if another lead already has enrichment data for
+            # any of these identifiers -- copy locally instead of calling API.
+            lead_model = self.env["crm.lead"]
+            if lead_model._try_copy_from_existing(lead, identifiers):
+                enriched += 1
+                continue
+
             request_payload = {
                 "endpoint": "/v1/candidate/search",
                 "items": identifiers,

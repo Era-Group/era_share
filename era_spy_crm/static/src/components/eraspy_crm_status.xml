@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="era_spy_crm.EraspyCrmStatusField">
+        <div class="d-inline-flex align-items-center">
+            <!-- Queued state: spinner badge -->
+            <span t-if="isQueued" class="badge rounded-pill text-bg-info" style="font-size: 0.75rem; padding: 5px 12px; font-weight: 500;">
+                <i class="fa fa-spinner fa-spin me-1"/>
+                Enriching...
+            </span>
+            <!-- Final state: small result badge -->
+            <span t-elif="value" t-attf-class="badge rounded-pill {{ badgeClass }}" style="font-size: 0.75rem; padding: 5px 12px; font-weight: 500;">
+                <i t-if="isFailed" class="fa fa-times-circle me-1"/>
+                <i t-else="" class="fa fa-check-circle me-1"/>
+                <t t-esc="value"/>
+            </span>
+        </div>
+    </t>
+</templates>

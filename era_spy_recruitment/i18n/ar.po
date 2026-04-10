@@ -71,7 +71,7 @@ msgstr "تقييم ارى"
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_debug_payload
 msgid "EraSpy Debug Payload"
-msgstr "EraSpy Debug Payload"
+msgstr "حمولة تصحيح EraSpy"
 
 #. module: era_spy_recruitment
 #: model:ir.model,name:era_spy_recruitment.model_eraspy_applicant_callback_queue

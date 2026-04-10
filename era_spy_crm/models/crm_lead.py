@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -15,39 +15,8 @@ class CrmLead(models.Model):
     eraspy_auto_enrich_pending = fields.Boolean(readonly=True, default=False)
     eraspy_auto_enrich_at = fields.Datetime(readonly=True)
 
-    def _auto_init(self):
-        """Backfill empty lead titles before schema enforces NOT NULL."""
-        result = super()._auto_init()
-        self.env.cr.execute(
-            """
-            UPDATE crm_lead
-               SET name = COALESCE(
-                   NULLIF(BTRIM(email_from), ''),
-                   NULLIF(BTRIM(partner_name), ''),
-                   'Lead #' || id::text
-               )
-             WHERE name IS NULL
-                OR BTRIM(name) = ''
-            """
-        )
-        if self.env.cr.rowcount:
-            _logger.warning(
-                "Backfilled %s crm.lead records with empty names to avoid NOT NULL failures.",
-                self.env.cr.rowcount,
-            )
-        return result
-
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get("name"):
-                continue
-            vals["name"] = (
-                vals.get("contact_name")
-                or vals.get("partner_name")
-                or vals.get("email_from")
-                or _("New Lead")
-            )
         records = super().create(vals_list)
         if self.env.context.get("eraspy_disable_auto_enrich"):
             return records
@@ -70,44 +39,60 @@ class CrmLead(models.Model):
     eraspy_rating = fields.Char(readonly=True)
     eraspy_debug_payload = fields.Text(
         string="EraSpy Debug Payload",
-        readonly=True
+        readonly=True,
+        groups="base.group_system",
     )
     eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
     eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
     eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
-    eraspy_in_queue = fields.Boolean(compute="_compute_eraspy_in_queue")
+    eraspy_enrichment_state = fields.Selection(
+        [("queued", "Queued"), ("done", "Done"), ("failed", "Failed")],
+        compute="_compute_eraspy_enrichment_state",
+        store=True,
+    )
 
     @api.depends("eraspy_last_status")
-    def _compute_eraspy_in_queue(self):
-        pending_ids = self._get_eraspy_pending_lead_ids()
+    def _compute_eraspy_enrichment_state(self):
         for lead in self:
-            status_lower = str(lead.eraspy_last_status or "").lower()
-            lead.eraspy_in_queue = bool(lead.id in pending_ids or "queue" in status_lower)
+            status = lead.eraspy_last_status
+            if not status:
+                lead.eraspy_enrichment_state = False
+            elif lead._is_eraspy_queue_status(status):
+                lead.eraspy_enrichment_state = "queued"
+            elif "failed" in status.lower() or "error" in status.lower() or "timed out" in status.lower() or "not_found" in status.lower() or "not found" in status.lower():
+                lead.eraspy_enrichment_state = "failed"
+            else:
+                lead.eraspy_enrichment_state = "done"
 
-    def _get_eraspy_pending_lead_ids(self):
-        if not self.ids:
-            return set()
-        pending_queue = self.env["eraspy.callback.queue"].sudo().search(
-            [("lead_id", "in", self.ids), ("state", "=", "pending")],
-        )
-        return set(pending_queue.mapped("lead_id").ids)
+    @staticmethod
+    def _is_eraspy_queue_status(status_value):
+        status_lower = str(status_value or "").strip().lower()
+        if not status_lower:
+            return False
+        if status_lower in ("queued", "queue", "pending", "in_queue", "in queue", "processing", "in_progress", "in progress"):
+            return True
+        return status_lower.startswith("queued:") or status_lower.startswith("queue:")
 
     def action_eraspy_enrich(self):
         lead_ids = self.ids or self.env.context.get("active_ids") or []
         if not lead_ids:
             raise UserError(_("Please select at least one lead."))
-        leads = self.browse(lead_ids)
-        pending_ids = leads._get_eraspy_pending_lead_ids()
-        blocked = leads.filtered(
-            lambda lead: lead.id in pending_ids or "queue" in str(lead.eraspy_last_status or "").lower()
-        )
-        if blocked:
-            names = ", ".join(blocked.mapped("display_name")[:5])
-            more = len(blocked) - 5
-            suffix = _(" and %s more") % more if more > 0 else ""
-            raise UserError(_("EraSpy enrichment is already queued for: %s%s") % (names, suffix))
         if len(lead_ids) > 80:
             raise UserError(_("You can enrich at most 80 leads at a time. Please split your selection."))
+
+        leads = self.browse(lead_ids)
+
+        # Auto-reset leads stuck in Queued for over 2 minutes
+        cutoff = fields.Datetime.now() - timedelta(minutes=2)
+        for lead in leads:
+            if (lead._is_eraspy_queue_status(lead.eraspy_last_status)
+                    and lead.eraspy_last_checked
+                    and lead.eraspy_last_checked < cutoff):
+                lead.write({
+                    "eraspy_last_status": "failed: timed out",
+                    "eraspy_last_checked": fields.Datetime.now(),
+                })
+
         ctx = dict(self.env.context or {})
         ctx.update(
             {
@@ -176,14 +161,14 @@ class CrmLead(models.Model):
         if not profile:
             raise UserError(_("EraSpy did not return any profile data."))
 
-        write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite)
+        write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite, skip_ai_match=True)
         if write_vals:
             _logger.info("Applying EraSpy profile to lead %s: %s", self.id, write_vals)
             self.write(write_vals)
         else:
             _logger.info("EraSpy returned data but nothing new to write for lead %s", self.id)
 
-    def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False):
+    def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False, skip_ai_match=False):
         """Build a single write dict for EraSpy updates."""
         self.ensure_one()
         if not profile:
@@ -364,6 +349,12 @@ class CrmLead(models.Model):
         more_data = self._build_eraspy_more_data(profile)
         if more_data:
             write_vals["eraspy_more_data"] = more_data
+
+        if not skip_ai_match and hasattr(self, "_build_eraspy_ai_match"):
+            ai_match = self._build_eraspy_ai_match(profile)
+            if ai_match:
+                write_vals["eraspy_ai_match"] = ai_match
+
         write_vals["eraspy_last_status"] = str(status)[:255]
         write_vals["eraspy_last_checked"] = fields.Datetime.now()
 
@@ -416,49 +407,9 @@ class CrmLead(models.Model):
     def _build_eraspy_more_data(self, profile):
         if not isinstance(profile, dict):
             return ""
-
-        ai_html = self._format_more_data_with_ai(profile)
-        if ai_html:
-            return ai_html
-
+        # Use fallback formatter directly -- AI formatting has a timeout
+        # that blocks the entire enrichment flow.
         return self._format_more_data_fallback(profile)
-
-    def _format_more_data_with_ai(self, profile):
-        try:
-            from odoo.addons.ai.utils.llm_api_service import LLMApiService
-        except Exception:
-            return ""
-
-        trimmed = self._trim_eraspy_profile(profile)
-        payload = json.dumps(trimmed, ensure_ascii=True)
-        system_prompts = [
-            "You format JSON into concise, readable HTML. Output only HTML.",
-            "Use <div>, <strong>, and bullet-like structure. Avoid tables. No scripts/styles.",
-        ]
-        user_prompts = [
-            "Format this JSON into a readable HTML summary with sections and bullets. "
-            "Keep it compact and easy to scan.",
-            payload,
-        ]
-        try:
-            llm_service = LLMApiService(self.env)
-            responses = llm_service.request_llm(
-                llm_model="gpt-5-mini",
-                system_prompts=system_prompts,
-                user_prompts=user_prompts,
-                temperature=0.2,
-            )
-        except Exception:
-            return ""
-
-        if not responses:
-            return ""
-        html = (responses[-1] or "").strip()
-        if html.startswith("```"):
-            html = html.replace("```html", "").replace("```", "").strip()
-        if "<" not in html:
-            return ""
-        return html[:4000]
 
     @staticmethod
     def _trim_eraspy_profile(profile):
@@ -572,3 +523,63 @@ class CrmLead(models.Model):
         lines.append("</div>")
         result = "\n".join(lines)
         return result[:4000]
+
+    def _try_copy_from_existing(self, lead, identifiers):
+        """Try to copy enrichment data from another lead or callback log."""
+        lead_model = self.env["crm.lead"].sudo()
+        queue_model = self.env["eraspy.callback.queue"].sudo()
+
+        for ident in identifiers:
+            # 1. Find a donor lead with this identifier
+            donor = lead_model.search([
+                ("eraspy_last_identifier", "ilike", ident),
+                ("eraspy_more_data", "!=", False),
+                ("id", "!=", lead.id),
+            ], limit=1)
+            if donor:
+                copy_fields = {}
+                for fname in ("eraspy_more_data", "eraspy_profile_url",
+                              "eraspy_rating", "eraspy_debug_payload"):
+                    val = donor[fname]
+                    if val:
+                        copy_fields[fname] = val
+                if copy_fields:
+                    copy_fields.update({
+                        "eraspy_last_status": "Enriched",
+                        "eraspy_last_checked": fields.Datetime.now(),
+                        "eraspy_last_identifier": ident,
+                    })
+                    lead.write(copy_fields)
+                    _logger.info(
+                        "EraSpy copied enrichment from lead %s to %s (identifier=%s)",
+                        donor.id, lead.id, ident,
+                    )
+                    return True
+
+            # 2. Find a callback log with candidate data for this identifier (last 20 days)
+            log_cutoff = fields.Datetime.now() - timedelta(days=20)
+            log_record = queue_model.search([
+                ("identifier", "ilike", ident),
+                ("candidate_json", "!=", False),
+                ("state", "=", "done"),
+                ("create_date", ">=", log_cutoff),
+            ], limit=1, order="create_date desc")
+            if log_record and log_record.candidate_json:
+                try:
+                    candidate = json.loads(log_record.candidate_json)
+                    if isinstance(candidate, dict) and candidate:
+                        write_vals = lead._prepare_eraspy_write_vals(
+                            candidate, overwrite=False, skip_ai_match=True,
+                        )
+                        if write_vals:
+                            write_vals["eraspy_last_identifier"] = ident
+                            lead.write(write_vals)
+                            _logger.info(
+                                "EraSpy copied enrichment from callback log %s to lead %s (identifier=%s)",
+                                log_record.id, lead.id, ident,
+                            )
+                            return True
+                except Exception:
+                    pass
+
+        return False

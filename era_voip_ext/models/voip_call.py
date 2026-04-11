@@ -120,7 +120,7 @@ class VoipCall(models.Model):
                  WHERE (
                         transcription_status = %s
                         OR (
-                            transcription_status = %s
+                            transcription_status IN (%s, %s)
                             AND state = %s
                             AND EXISTS (
                                 SELECT 1
@@ -137,19 +137,19 @@ class VoipCall(models.Model):
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,
-            ("pending", "no_audio", "terminated", "voip.call"),
+            ("pending", "no_audio", "error", "terminated", "voip.call"),
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.browse()
 
     @api.model
     def _reset_stuck_transcription_calls(self):
-        """Reset calls stuck in 'queued' for >1 hour.
+        """Reset calls stuck in 'queued' for >20 seconds.
         - If the OGG recording is readable and >= _MIN_RECORDING_SECONDS → reset to 'pending'.
         - If the attachment file is missing on disk → reset to 'no_audio'.
         - If no OGG attachment at all → skip (may have webm; let _transcribe_call handle it).
         """
-        cutoff = fields.Datetime.now() - timedelta(hours=1)
+        cutoff = fields.Datetime.now() - timedelta(seconds=20)
         self.env.cr.execute(
             f"SELECT id FROM {self._table} WHERE transcription_status = 'queued' AND write_date < %s",
             (cutoff,),
@@ -190,9 +190,10 @@ class VoipCall(models.Model):
                 reset_ids.append(call.id)
             else:
                 _logger.info(
-                    "Call %s: stuck in queued but recording too short (%.1fs < %.0fs) — skipping reset",
+                    "Call %s: stuck in queued but recording too short (%.1fs < %.0fs) — marking no_audio",
                     call.id, duration, _MIN_RECORDING_SECONDS,
                 )
+                no_audio_ids.append(call.id)
         if reset_ids:
             self.browse(reset_ids).write({"transcription_status": "pending"})
             _logger.info("Reset %d stuck call(s) to pending: %s", len(reset_ids), reset_ids)

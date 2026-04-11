@@ -144,8 +144,11 @@ class VoipCall(models.Model):
 
     @api.model
     def _reset_stuck_transcription_calls(self):
-        """Reset calls stuck in 'queued' for >1 hour back to 'pending', but only
-        if they have an OGG recording of at least _MIN_RECORDING_SECONDS."""
+        """Reset calls stuck in 'queued' for >1 hour.
+        - If the OGG recording is readable and >= _MIN_RECORDING_SECONDS → reset to 'pending'.
+        - If the attachment file is missing on disk → reset to 'no_audio'.
+        - If no OGG attachment at all → skip (may have webm; let _transcribe_call handle it).
+        """
         cutoff = fields.Datetime.now() - timedelta(hours=1)
         self.env.cr.execute(
             f"SELECT id FROM {self._table} WHERE transcription_status = 'queued' AND write_date < %s",
@@ -155,6 +158,7 @@ class VoipCall(models.Model):
         if not stuck_ids:
             return
         reset_ids = []
+        no_audio_ids = []
         for call in self.browse(stuck_ids):
             attachment = self.env["ir.attachment"].search(
                 [("res_model", "=", "voip.call"), ("res_id", "=", call.id),
@@ -168,7 +172,17 @@ class VoipCall(models.Model):
                 )
                 continue
             try:
-                duration = _ogg_duration_seconds(attachment.raw)
+                raw = attachment.raw
+                if not raw:
+                    raise FileNotFoundError("empty raw")
+                duration = _ogg_duration_seconds(raw)
+            except (FileNotFoundError, OSError):
+                _logger.warning(
+                    "Call %s: stuck in queued with missing/unreadable file — marking no_audio",
+                    call.id,
+                )
+                no_audio_ids.append(call.id)
+                continue
             except Exception:
                 _logger.warning("Call %s: could not read ogg duration — skipping reset", call.id)
                 continue
@@ -181,8 +195,15 @@ class VoipCall(models.Model):
                 )
         if reset_ids:
             self.browse(reset_ids).write({"transcription_status": "pending"})
-            self._commit_if_needed()
             _logger.info("Reset %d stuck call(s) to pending: %s", len(reset_ids), reset_ids)
+        if no_audio_ids:
+            self.browse(no_audio_ids).write({"transcription_status": "no_audio"})
+            _logger.warning(
+                "Marked %d stuck call(s) as no_audio (missing file): %s",
+                len(no_audio_ids), no_audio_ids,
+            )
+        if reset_ids or no_audio_ids:
+            self._commit_if_needed()
 
     @api.model
     def _cron_transcribe_recent_voip_call(self):

@@ -246,9 +246,7 @@ class EraSpyController(http.Controller):
                 clauses.append(("partner_id.phone", "ilike", phone_probe))
             if "partner_id" in lead_model._fields and "mobile" in lead_model.env["res.partner"]._fields:
                 clauses.append(("partner_id.mobile", "ilike", phone_probe))
-            domain = clauses[0]
-            for clause in clauses[1:]:
-                domain = ["|", domain, clause]
+            domain = ["|"] * (len(clauses) - 1) + clauses
             lead = lead_model.search(domain, limit=1)
 
         if not lead and isinstance(candidate_dict, dict):
@@ -260,9 +258,7 @@ class EraSpyController(http.Controller):
             if phones and "phone" in lead_model._fields:
                 clauses.append(("phone", "in", phones))
             if clauses:
-                domain = clauses[0]
-                for clause in clauses[1:]:
-                    domain = ["|", domain, clause]
+                domain = ["|"] * (len(clauses) - 1) + clauses
                 lead = lead_model.search(domain, limit=1)
 
         # Last resort for failures: find queued lead by identifier

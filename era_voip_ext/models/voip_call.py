@@ -134,7 +134,15 @@ class VoipCall(models.Model):
                 "audio/ogg",
                 #prompt=prompt,
             )
-        except (RequestException, JSONDecodeError, UserError):
+        except UserError as e:
+            if "too short" in str(e).lower():
+                _logger.warning("Call %s: transcription skipped – %s", call.id, e)
+            else:
+                _logger.exception("Call %s: transcription failed", call.id)
+            self._commit_if_needed()
+            self._safe_write(call, {"transcription_status": "error"})
+            return
+        except (RequestException, JSONDecodeError):
             _logger.exception("Call %s: transcription failed", call.id)
             self._commit_if_needed()
             self._safe_write(call, {"transcription_status": "error"})

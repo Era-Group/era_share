@@ -3,3 +3,9 @@
 */.DS_Store
 __pycache__/
 *.log
+.DS_Store
+*/.DS_Store
+*.egg-info/
+dist/
+build/
+*.egg

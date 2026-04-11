@@ -1,5 +1,6 @@
 import re
 import struct
+import time
 from datetime import timedelta
 from json.decoder import JSONDecodeError
 from logging import getLogger
@@ -185,8 +186,10 @@ class VoipCall(models.Model):
 
     @api.model
     def _cron_transcribe_recent_voip_call(self):
+        # Stop 100 s before the worker real-time limit (1200 s) to avoid being killed mid-write.
+        deadline = time.monotonic() + 1100
         self._reset_stuck_transcription_calls()
-        while True:
+        while time.monotonic() < deadline:
             call = self._get_next_pending_transcription_call()
             if not call:
                 break

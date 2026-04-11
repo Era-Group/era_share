@@ -924,7 +924,7 @@ class RealtimeAgentController(http.Controller):
             response["prompt_lookup_warning"] = prompt_warning
         return response
 
-    @http.route("/realtime_agent/embed/frame", type="http", auth="public", website=True, csrf=False)
+    @http.route("/realtime_agent/embed/frame", type="http", auth="public", website=True, csrf=False, sitemap=False)
     def realtime_agent_embed_frame(self, **kwargs):
         """Render a standalone widget frame for third-party website embedding."""
         ICP = request.env["ir.config_parameter"].sudo()
@@ -1172,6 +1172,7 @@ class RealtimeAgentController(http.Controller):
         methods=["POST"],
         website=True,
         csrf=False,
+        sitemap=False,
     )
     def realtime_agent_summary_audio_beacon(self, **post):
         """Receive unload-safe multipart uploads from navigator.sendBeacon."""

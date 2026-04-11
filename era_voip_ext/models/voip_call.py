@@ -1,4 +1,6 @@
 import re
+import struct
+from datetime import timedelta
 from json.decoder import JSONDecodeError
 from logging import getLogger
 
@@ -11,6 +13,48 @@ from odoo.exceptions import UserError
 from odoo.addons.era_voip_ext.utils.llm_api_service import LLMApiService
 
 _logger = getLogger(__name__)
+
+_MIN_RECORDING_SECONDS = 20.0
+
+
+def _ogg_duration_seconds(data: bytes) -> float:
+    """Return duration in seconds of an OGG/Opus or OGG/Vorbis stream, or 0.0 on failure."""
+    if not data or len(data) < 27:
+        return 0.0
+    idx = data.find(b'OggS')
+    if idx == -1:
+        return 0.0
+    if data[idx + 4] != 0:
+        return 0.0
+    n_seg = data[idx + 26]
+    hdr_end = idx + 27 + n_seg
+    if hdr_end > len(data):
+        return 0.0
+    pg_len = sum(data[idx + 27: hdr_end])
+    payload = data[hdr_end: hdr_end + pg_len]
+    sample_rate = None
+    if payload[:8] == b'OpusHead':
+        sample_rate = 48000
+    elif len(payload) > 22 and payload[1:7] == b'vorbis':
+        sample_rate = struct.unpack_from('<I', payload, 12)[0]
+    if not sample_rate:
+        return 0.0
+    pos = len(data) - 27
+    while pos >= 0:
+        pos = data.rfind(b'OggS', 0, pos + 4)
+        if pos == -1:
+            break
+        if pos + 14 > len(data):
+            pos -= 1
+            continue
+        if data[pos + 4] != 0:
+            pos -= 1
+            continue
+        granule = struct.unpack_from('<q', data, pos + 6)[0]
+        if granule > 0:
+            return granule / sample_rate
+        pos -= 1
+    return 0.0
 
 
 class VoipCall(models.Model):
@@ -82,7 +126,9 @@ class VoipCall(models.Model):
                                   FROM ir_attachment
                                  WHERE res_model = %s
                                    AND res_id = {self._table}.id
-                                   AND mimetype = %s
+                                   AND (mimetype = 'audio/ogg'
+                                        OR mimetype ILIKE 'audio/webm%%'
+                                        OR name ILIKE '%%.webm')
                             )
                         )
                     )
@@ -90,27 +136,79 @@ class VoipCall(models.Model):
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,
-            ("pending", "no_audio", "terminated", "voip.call", "audio/ogg"),
+            ("pending", "no_audio", "terminated", "voip.call"),
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.browse()
 
     @api.model
-    def _cron_transcribe_recent_voip_call(self):
-        call = self._get_next_pending_transcription_call()
-        if not call:
+    def _reset_stuck_transcription_calls(self):
+        """Reset calls stuck in 'queued' for >1 hour back to 'pending', but only
+        if they have an OGG recording of at least _MIN_RECORDING_SECONDS."""
+        cutoff = fields.Datetime.now() - timedelta(hours=1)
+        self.env.cr.execute(
+            f"SELECT id FROM {self._table} WHERE transcription_status = 'queued' AND write_date < %s",
+            (cutoff,),
+        )
+        stuck_ids = [row[0] for row in self.env.cr.fetchall()]
+        if not stuck_ids:
             return
-        self._transcribe_call(call)
+        reset_ids = []
+        for call in self.browse(stuck_ids):
+            attachment = self.env["ir.attachment"].search(
+                [("res_model", "=", "voip.call"), ("res_id", "=", call.id),
+                 ("mimetype", "=", "audio/ogg")],
+                limit=1,
+            )
+            if not attachment:
+                _logger.info(
+                    "Call %s: stuck in queued but has no ogg attachment — skipping reset",
+                    call.id,
+                )
+                continue
+            try:
+                duration = _ogg_duration_seconds(attachment.raw)
+            except Exception:
+                _logger.warning("Call %s: could not read ogg duration — skipping reset", call.id)
+                continue
+            if duration >= _MIN_RECORDING_SECONDS:
+                reset_ids.append(call.id)
+            else:
+                _logger.info(
+                    "Call %s: stuck in queued but recording too short (%.1fs < %.0fs) — skipping reset",
+                    call.id, duration, _MIN_RECORDING_SECONDS,
+                )
+        if reset_ids:
+            self.browse(reset_ids).write({"transcription_status": "pending"})
+            self._commit_if_needed()
+            _logger.info("Reset %d stuck call(s) to pending: %s", len(reset_ids), reset_ids)
+
+    @api.model
+    def _cron_transcribe_recent_voip_call(self):
+        self._reset_stuck_transcription_calls()
+        while True:
+            call = self._get_next_pending_transcription_call()
+            if not call:
+                break
+            self._transcribe_call(call)
 
     def _transcribe_call(self, call):
         if not self._safe_write(call, {"transcription_status": "queued"}):
             return
-        domain = [
-            ("res_model", "=", "voip.call"),
-            ("res_id", "=", call.id),
-            ("mimetype", "=", "audio/ogg"),
-        ]
-        recordings = self.env["ir.attachment"].search(domain, order="create_date desc")
+        # Prefer ogg; fall back to webm (both are supported by Whisper)
+        audio_domain_base = [("res_model", "=", "voip.call"), ("res_id", "=", call.id)]
+        recordings = self.env["ir.attachment"].search(
+            audio_domain_base + [("mimetype", "=", "audio/ogg")],
+            order="create_date desc",
+        )
+        if not recordings:
+            recordings = self.env["ir.attachment"].search(
+                audio_domain_base + ["|",
+                    ("mimetype", "ilike", "audio/webm"),
+                    ("name", "=ilike", "%.webm"),
+                ],
+                order="create_date desc",
+            )
 
         if not recordings:
             self._safe_write(call, {"transcription_status": "no_audio"})
@@ -125,13 +223,14 @@ class VoipCall(models.Model):
 
         recording = recordings[0]
         recording_data = recording.raw
+        recording_mimetype = recording.mimetype or "audio/ogg"
         self._commit_if_needed()
         prompt = "Output should be in Arabic and formatted as a call conversation between an employee and a customer based on the following text. example: [employee name] : [the script]. then new line then [customer name] : [the script]. "
 
         try:
             text = LLMApiService(self.env).get_transcription(
                 recording_data,
-                "audio/ogg",
+                recording_mimetype,
                 #prompt=prompt,
             )
         except UserError as e:

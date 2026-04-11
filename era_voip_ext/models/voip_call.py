@@ -133,11 +133,12 @@ class VoipCall(models.Model):
                             )
                         )
                     )
-              ORDER BY create_date DESC
+              ORDER BY (CASE WHEN transcription_status = %s THEN 1 ELSE 0 END),
+                       create_date DESC
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,
-            ("pending", "no_audio", "error", "terminated", "voip.call"),
+            ("pending", "no_audio", "error", "terminated", "voip.call", "error"),
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.browse()

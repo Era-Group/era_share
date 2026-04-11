@@ -247,15 +247,19 @@ class VoipCall(models.Model):
 
         recording = recordings[0]
         recording_data = recording.raw
-        recording_mimetype = recording.mimetype or "audio/ogg"
+        if not recording_data:
+            _logger.warning("Call %s: recording attachment %s has no data (missing file?)", call.id, recording.id)
+            self._safe_write(call, {"transcription_status": "no_audio"})
+            return
+        # Strip MIME parameters (e.g. "audio/webm;codecs=opus" → "audio/webm")
+        # so the Whisper API receives a clean base type it can recognise.
+        recording_mimetype = (recording.mimetype or "audio/ogg").split(";")[0].strip()
         self._commit_if_needed()
-        prompt = "Output should be in Arabic and formatted as a call conversation between an employee and a customer based on the following text. example: [employee name] : [the script]. then new line then [customer name] : [the script]. "
 
         try:
             text = LLMApiService(self.env).get_transcription(
                 recording_data,
                 recording_mimetype,
-                #prompt=prompt,
             )
         except UserError as e:
             if "too short" in str(e).lower():

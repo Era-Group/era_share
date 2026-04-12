@@ -112,7 +112,12 @@ class VoipCall(models.Model):
 
 
     @api.model
-    def _get_next_pending_transcription_call(self):
+    def _get_next_pending_transcription_call(self, exclude_ids=None):
+        exclude_clause = ""
+        params = ["pending", "no_audio", "error", "terminated", "voip.call", "error"]
+        if exclude_ids:
+            exclude_clause = f"AND id != ALL(%s)"
+            params.append(list(exclude_ids))
         self.env.cr.execute(
             f"""
                 SELECT id
@@ -133,12 +138,13 @@ class VoipCall(models.Model):
                             )
                         )
                     )
+                    {exclude_clause}
               ORDER BY (CASE WHEN transcription_status = %s THEN 1 ELSE 0 END),
                        create_date DESC
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,
-            ("pending", "no_audio", "error", "terminated", "voip.call", "error"),
+            params,
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.browse()
@@ -212,10 +218,12 @@ class VoipCall(models.Model):
         # Stop 100 s before the worker real-time limit (1200 s) to avoid being killed mid-write.
         deadline = time.monotonic() + 1100
         self._reset_stuck_transcription_calls()
+        seen = set()
         while time.monotonic() < deadline:
-            call = self._get_next_pending_transcription_call()
+            call = self._get_next_pending_transcription_call(exclude_ids=seen)
             if not call:
                 break
+            seen.add(call.id)
             self._transcribe_call(call)
 
     def _transcribe_call(self, call):
@@ -266,8 +274,10 @@ class VoipCall(models.Model):
         except UserError as e:
             if "too short" in str(e).lower():
                 _logger.warning("Call %s: transcription skipped – %s", call.id, e)
-            else:
-                _logger.exception("Call %s: transcription failed", call.id)
+                self._commit_if_needed()
+                self._safe_write(call, {"transcription_status": "no_audio"})
+                return
+            _logger.exception("Call %s: transcription failed", call.id)
             self._commit_if_needed()
             self._safe_write(call, {"transcription_status": "error"})
             return

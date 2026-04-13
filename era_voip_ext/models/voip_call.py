@@ -272,7 +272,8 @@ class VoipCall(models.Model):
                 recording_mimetype,
             )
         except UserError as e:
-            if "too short" in str(e).lower():
+            err_msg = str(e).lower()
+            if "too short" in err_msg or "file format" in err_msg:
                 _logger.warning("Call %s: transcription skipped – %s", call.id, e)
                 self._commit_if_needed()
                 self._safe_write(call, {"transcription_status": "no_audio"})

@@ -117,7 +117,7 @@ class VoipCall(models.Model):
         params = ["pending", "no_audio", "error", "terminated", "voip.call", "error"]
         if exclude_ids:
             exclude_clause = f"AND id != ALL(%s)"
-            params.append(list(exclude_ids))
+            params.insert(-1, list(exclude_ids))
         self.env.cr.execute(
             f"""
                 SELECT id

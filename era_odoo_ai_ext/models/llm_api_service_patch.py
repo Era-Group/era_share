@@ -23,7 +23,7 @@ def _resolve_custom_model(service, model_name, is_embedding=False):
         return model_name
 
     if is_embedding and model_name == CUSTOM_LLM_EMBEDDING_KEY:
-        return _custom_llm_param(service.env, "ai.custom_llm_embedding_model", "openrouter/free")
+        return _custom_llm_param(service.env, "ai.custom_llm_embedding_model") or None
 
     if not is_embedding and model_name == CUSTOM_LLM_MODEL_KEY:
         return _custom_llm_param(service.env, "ai.custom_llm_model", "openrouter/free")
@@ -346,6 +346,8 @@ def _patch_llm_api_service():
         user=None,
     ):
         model = _resolve_custom_model(self, model, is_embedding=True)
+        if self.provider == "custom_llm" and not model:
+            return None
         return original_get_embedding(
             self,
             input=input,

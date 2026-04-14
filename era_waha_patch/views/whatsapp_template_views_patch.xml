@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add missing role="alert" to the alert div in the WhatsApp template form view.
+         The vendor module (sadeem_waha_whatsapp) is missing this ARIA attribute. -->
+    <record id="view_whatsapp_template_form_patch" model="ir.ui.view">
+        <field name="name">whatsapp.template.form.patch</field>
+        <field name="model">sadeem.waha.whatsapp.template</field>
+        <field name="inherit_id" ref="sadeem_waha_whatsapp.view_whatsapp_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('alert-info')][not(@role)]" position="attributes">
+                <attribute name="role">alert</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

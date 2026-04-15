@@ -79,6 +79,8 @@ class EraSpyApplicantController(http.Controller):
             # All DB work in a single separate cursor — fast, atomic, no conflicts.
             # Retry once on serialization failure (concurrent update from enrich action).
             max_attempts = 2
+            matched_applicant_id = None      # set on success; used for AI match after cursor closes
+            matched_candidate_for_ai = None  # candidate data to pass to AI match generator
             for attempt in range(max_attempts):
                 try:
                     with request.env.registry.cursor() as cr:
@@ -131,7 +133,8 @@ class EraSpyApplicantController(http.Controller):
                                                 )
                                                 if write_vals:
                                                     applicant.write(write_vals)
-                                                    applicant._write_eraspy_ai_match_safely(prev_candidate)
+                                                    matched_applicant_id = applicant.id
+                                                    matched_candidate_for_ai = prev_candidate
                                                     copied = True
                                         except Exception:
                                             pass
@@ -189,7 +192,8 @@ class EraSpyApplicantController(http.Controller):
                         if write_vals:
                             applicant.write(write_vals)
                             if candidate_dict and not is_failure:
-                                applicant._write_eraspy_ai_match_safely(candidate_dict)
+                                matched_applicant_id = applicant.id
+                                matched_candidate_for_ai = candidate_dict
 
                         # Log to callback queue
                         env["eraspy.applicant.callback.queue"].log_callback(
@@ -200,22 +204,37 @@ class EraSpyApplicantController(http.Controller):
                     break  # success — exit retry loop
 
                 except Exception as exc:
+                    # Log INSIDE the except block so Python 3 exception context is preserved.
+                    _logger.exception("EraSpy callback failed: request_id=%s identifier=%s", request_id, identifier)
                     if attempt < max_attempts - 1 and "serialize" in str(exc).lower():
                         import time as _time
                         _time.sleep(1)
                         _logger.warning("EraSpy callback retry after serialization: request_id=%s", request_id)
                         continue  # retry
-                _logger.exception("EraSpy callback failed: request_id=%s identifier=%s", request_id, identifier)
-                # Try to log the error
+                    # Try to log the error to the queue
+                    try:
+                        with request.env.registry.cursor() as cr:
+                            env = api.Environment(cr, 1, {})
+                            env["eraspy.applicant.callback.queue"].log_callback(
+                                applicant=None, item=item, candidate=candidate_dict,
+                                state="error", error=str(exc)[:2000],
+                            )
+                    except Exception:
+                        pass
+
+            # Generate AI match in a fresh cursor AFTER the profile cursor has committed.
+            # Keeps the DB connection free during the slow AI HTTP call and ensures
+            # an AI failure never prevents profile data from being persisted.
+            if matched_applicant_id and matched_candidate_for_ai:
                 try:
                     with request.env.registry.cursor() as cr:
                         env = api.Environment(cr, 1, {})
-                        env["eraspy.applicant.callback.queue"].log_callback(
-                            applicant=None, item=item, candidate=candidate_dict,
-                            state="error", error=str(exc)[:2000],
-                        )
+                        ai_applicant = env["hr.applicant"].browse(matched_applicant_id)
+                        ai_applicant._write_eraspy_ai_match_safely(matched_candidate_for_ai)
                 except Exception:
-                    pass
+                    _logger.exception(
+                        "EraSpy AI match write failed for applicant %s", matched_applicant_id
+                    )
 
         # AI match in background — completely decoupled, never blocks the response.
         # Runs after the HTTP response is sent (best-effort).

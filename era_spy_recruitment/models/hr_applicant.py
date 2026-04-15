@@ -702,10 +702,11 @@ Output ONLY the HTML. Do not include explanations, comments, or metadata.
 """
         text = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
         if not text:
-            _logger.warning("EraSpy AI match empty response: applicant=%s", self.id)
-            return self._build_eraspy_ai_match_notice(
-                _("AI match was not generated because the AI service returned an empty response.")
-            )
+            # AI service is temporarily unavailable (timeout/empty response).
+            # Return empty so _write_eraspy_ai_match_safely skips the write entirely —
+            # eraspy_ai_match stays blank and the next callback retry will attempt again.
+            _logger.warning("EraSpy AI match empty response (AI service unavailable): applicant=%s", self.id)
+            return ""
         _logger.info("EraSpy AI match result: applicant=%s len=%s", self.id, len(text))
         text = text.strip()
         if text.startswith("```"):

@@ -174,17 +174,25 @@ class EraSpyApplicantController(http.Controller):
                         # Build write values
                         write_vals = {}
                         already_enriched = bool(applicant.eraspy_more_data)
+                        ai_match_done = bool(applicant.eraspy_ai_match)
                         if candidate_dict and not is_failure:
                             if already_enriched:
-                                # Applicant already has profile data — skip re-enrichment,
-                                # only schedule AI match below (separate task as requested).
-                                _logger.info(
-                                    "EraSpy callback: applicant %s already enriched, skipping profile "
-                                    "re-write for identifier=%s; will retry AI match only.",
-                                    applicant.id, identifier,
-                                )
-                                matched_applicant_id = applicant.id
-                                matched_candidate_for_ai = candidate_dict
+                                # Applicant already has profile data — skip re-enrichment.
+                                # Only schedule AI match if it hasn't been generated yet.
+                                if not ai_match_done:
+                                    _logger.info(
+                                        "EraSpy callback: applicant %s already enriched, skipping profile "
+                                        "re-write for identifier=%s; scheduling AI match retry.",
+                                        applicant.id, identifier,
+                                    )
+                                    matched_applicant_id = applicant.id
+                                    matched_candidate_for_ai = candidate_dict
+                                else:
+                                    _logger.info(
+                                        "EraSpy callback: applicant %s already enriched and has AI match, "
+                                        "nothing to do for identifier=%s.",
+                                        applicant.id, identifier,
+                                    )
                             else:
                                 write_vals = applicant._prepare_eraspy_write_vals(
                                     candidate_dict, overwrite=False, skip_ai_match=True,

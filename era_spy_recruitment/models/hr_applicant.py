@@ -172,6 +172,9 @@ class HrApplicant(models.Model):
                         "eraspy_last_request_id": str(request_id),
                         "eraspy_last_identifier": identifiers[0] if identifiers else False,
                         "eraspy_debug_payload": json.dumps(result, ensure_ascii=True)[:4000],
+                        # Clear any stale AI match (failure notice) so the callback
+                        # will regenerate it when the profile arrives.
+                        "eraspy_ai_match": False,
                     }
                 )
                 pending += 1
@@ -431,11 +434,11 @@ class HrApplicant(models.Model):
         # Save profile data first (skip AI match so a slow/failing AI call
         # never prevents the profile from being persisted).
         write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite, skip_ai_match=True)
-        if write_vals:
-            _logger.info("Applying EraSpy profile to applicant %s: %s", self.id, write_vals)
-            self.write(write_vals)
-        else:
-            _logger.info("EraSpy returned data but nothing new to write for applicant %s", self.id)
+        # Always clear any stale AI match (failure notice from a previous attempt)
+        # so it gets regenerated fresh below.
+        write_vals["eraspy_ai_match"] = False
+        _logger.info("Applying EraSpy profile to applicant %s: %s", self.id, write_vals)
+        self.write(write_vals)
 
         # Generate AI Qualification Match in a separate write so that a failure
         # here does not roll back the profile data already saved above.

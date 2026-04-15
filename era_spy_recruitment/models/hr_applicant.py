@@ -426,12 +426,23 @@ class HrApplicant(models.Model):
         if not profile:
             raise UserError(_("EraSpy did not return any profile data."))
 
+        # Save profile data first (skip AI match so a slow/failing AI call
+        # never prevents the profile from being persisted).
         write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite, skip_ai_match=True)
         if write_vals:
             _logger.info("Applying EraSpy profile to applicant %s: %s", self.id, write_vals)
             self.write(write_vals)
         else:
             _logger.info("EraSpy returned data but nothing new to write for applicant %s", self.id)
+
+        # Generate AI Qualification Match in a separate write so that a failure
+        # here does not roll back the profile data already saved above.
+        try:
+            ai_match = self._build_eraspy_ai_match(profile)
+            if ai_match:
+                self.write({"eraspy_ai_match": ai_match})
+        except Exception:
+            _logger.exception("EraSpy AI match generation failed for applicant %s", self.id)
 
     def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False, skip_ai_match=False):
         self.ensure_one()

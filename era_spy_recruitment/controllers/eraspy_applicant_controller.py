@@ -131,6 +131,7 @@ class EraSpyApplicantController(http.Controller):
                                                 )
                                                 if write_vals:
                                                     applicant.write(write_vals)
+                                                    applicant._write_eraspy_ai_match_safely(prev_candidate)
                                                     copied = True
                                         except Exception:
                                             pass
@@ -187,6 +188,8 @@ class EraSpyApplicantController(http.Controller):
 
                         if write_vals:
                             applicant.write(write_vals)
+                            if candidate_dict and not is_failure:
+                                applicant._write_eraspy_ai_match_safely(candidate_dict)
 
                         # Log to callback queue
                         env["eraspy.applicant.callback.queue"].log_callback(

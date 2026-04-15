@@ -4,6 +4,7 @@ import logging
 import re
 from datetime import timedelta
 from email.utils import parseaddr
+from html import escape
 from urllib.parse import urlsplit
 
 
@@ -411,6 +412,7 @@ class HrApplicant(models.Model):
                         if write_vals:
                             write_vals["eraspy_last_identifier"] = ident
                             applicant.write(write_vals)
+                            applicant._write_eraspy_ai_match_safely(candidate)
                             _logger.info(
                                 "EraSpy copied enrichment from callback log %s to applicant %s (identifier=%s)",
                                 log_record.id, applicant.id, ident,
@@ -437,6 +439,10 @@ class HrApplicant(models.Model):
 
         # Generate AI Qualification Match in a separate write so that a failure
         # here does not roll back the profile data already saved above.
+        self._write_eraspy_ai_match_safely(profile)
+
+    def _write_eraspy_ai_match_safely(self, profile):
+        self.ensure_one()
         try:
             ai_match = self._build_eraspy_ai_match(profile)
             if ai_match:
@@ -634,7 +640,9 @@ class HrApplicant(models.Model):
         job_title = self.job_id.name if getattr(self, "job_id", False) else ""
         if not job_description:
             if not job_title:
-                return ""
+                return self._build_eraspy_ai_match_notice(
+                    _("AI match was not generated because the applicant has no job position.")
+                )
             job_description = f"Job title only (no detailed description): {job_title}"
 
         trimmed = self._trim_eraspy_profile(profile)
@@ -695,11 +703,43 @@ Output ONLY the HTML. Do not include explanations, comments, or metadata.
         text = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
         if not text:
             _logger.warning("EraSpy AI match empty response: applicant=%s", self.id)
-            return ""
+            return self._build_eraspy_ai_match_notice(
+                _("AI match was not generated because the AI service returned an empty response.")
+            )
         _logger.info("EraSpy AI match result: applicant=%s len=%s", self.id, len(text))
+        text = text.strip()
         if text.startswith("```"):
-            text = text.replace("```", "").strip()
-        return text
+            text = re.sub(r"^```[a-zA-Z0-9]*\s*", "", text)
+            text = text.rsplit("```", 1)[0].strip()
+        if "<" not in text:
+            return self._plain_text_to_eraspy_ai_match_html(text)
+        return text[:4000]
+
+    @staticmethod
+    def _plain_text_to_eraspy_ai_match_html(text):
+        cleaned = (text or "").strip()
+        if not cleaned:
+            return ""
+        lines = [line.strip() for line in cleaned.splitlines() if line.strip()]
+        if not lines:
+            return ""
+        html_lines = [
+            '<div class="o_eraspy_ai_match" style="line-height:1.5;">',
+            "<div><strong>AI Qualification Match</strong></div>",
+        ]
+        for line in lines:
+            html_lines.append(f"<div>{escape(line)}</div>")
+        html_lines.append("</div>")
+        return "\n".join(html_lines)[:4000]
+
+    @staticmethod
+    def _build_eraspy_ai_match_notice(reason):
+        return (
+            '<div class="o_eraspy_ai_match" style="line-height:1.5;">'
+            "<div><strong>AI Qualification Match</strong></div>"
+            f"<div>{escape(str(reason or 'AI match was not generated.'))}</div>"
+            "</div>"
+        )
 
     def _get_job_description(self):
         job = getattr(self, "job_id", False)

@@ -154,12 +154,19 @@ class HrApplicant(models.Model):
         return cv_text
 
     def _get_cv_attachments(self):
-        attachments = self.attachment_ids
-        if hasattr(self, 'message_main_attachment_id') and self.message_main_attachment_id:
-            attachments |= self.message_main_attachment_id
-        if hasattr(self, 'message_ids'):
-            attachments |= self.message_ids.attachment_ids
-        return attachments.filtered(lambda attachment: attachment.type == 'binary')
+        # Prefer the designated main attachment (usually the CV uploaded on the applicant form).
+        # Avoid pulling all message/chatter attachments, which may include unrelated files
+        # (emails, offer letters, interview notes, etc.) that would pollute the CV text.
+        main = (
+            self.message_main_attachment_id
+            if hasattr(self, 'message_main_attachment_id') and self.message_main_attachment_id
+            else self.env['ir.attachment']
+        )
+        if main and main.type == 'binary':
+            return main
+
+        # Fall back to direct record attachments only (not chatter message attachments).
+        return self.attachment_ids.filtered(lambda attachment: attachment.type == 'binary')
 
     def _extract_text_from_attachment(self, attachment):
         content = None

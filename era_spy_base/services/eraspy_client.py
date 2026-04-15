@@ -214,13 +214,13 @@ class EraSpyClient(models.AbstractModel):
             timeout_value = 25
         read_timeout_default = timeout_value if timeout_value > 0 else 25
         read_timeout = self._get_int_param("era_spy.ai_agent_read_timeout", default=read_timeout_default, min_value=1)
-        if read_timeout < 120:
+        if read_timeout < 30:
             self._warn_param_once(
                 "era_spy.ai_agent_read_timeout",
-                "EraSpy AI agent read timeout config is too low (%s). Using safe minimum of 120 seconds.",
+                "EraSpy AI agent read timeout config is low (%s). Using 30 seconds minimum.",
                 read_timeout,
             )
-            read_timeout = 120
+            read_timeout = 30
         max_attempts = 1
         timeout_tuple = (connect_timeout, read_timeout)
         _logger.info(

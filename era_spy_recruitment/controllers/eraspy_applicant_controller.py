@@ -231,10 +231,18 @@ class EraSpyApplicantController(http.Controller):
                         env = api.Environment(cr, 1, {})
                         ai_applicant = env["hr.applicant"].browse(matched_applicant_id)
                         ai_applicant._write_eraspy_ai_match_safely(matched_candidate_for_ai)
-                except Exception:
-                    _logger.exception(
-                        "EraSpy AI match write failed for applicant %s", matched_applicant_id
-                    )
+                except Exception as exc:
+                    # Serialization errors are expected when concurrent callbacks update the
+                    # same applicant — log as warning, not error.
+                    msg = str(exc).lower()
+                    if "serialize" in msg or "concurrent" in msg:
+                        _logger.warning(
+                            "EraSpy AI match skipped for applicant %s (concurrent update)", matched_applicant_id
+                        )
+                    else:
+                        _logger.exception(
+                            "EraSpy AI match write failed for applicant %s", matched_applicant_id
+                        )
 
         # AI match in background — completely decoupled, never blocks the response.
         # Runs after the HTTP response is sent (best-effort).

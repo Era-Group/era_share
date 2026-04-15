@@ -134,7 +134,22 @@ class EraSpyApplicantCallbackQueue(models.Model):
             "state": state,
             "last_error": error,
         }
-        return self.create(vals)
+        # Use a savepoint to handle the race condition where two concurrent callbacks
+        # with the same request_id both pass the search check above and both attempt
+        # to INSERT — the second one would violate the unique constraint and abort the
+        # outer cursor without a savepoint.
+        try:
+            with self.env.cr.savepoint():
+                return self.create(vals)
+        except Exception:
+            # Concurrent insert won the race — find and update that record instead.
+            if request_id:
+                existing = self.search([("request_id", "=", str(request_id))], limit=1)
+                if existing:
+                    existing.write(vals)
+                    return existing
+            _logger.warning("EraSpy log_callback: could not insert or update for request_id=%s", request_id)
+            return self.browse()
 
     @api.model
     def cron_cleanup_hanging_applicants(self, timeout_minutes=15):

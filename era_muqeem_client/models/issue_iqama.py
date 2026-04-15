@@ -3,7 +3,6 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 
 
@@ -151,4 +150,3 @@ class IssueIqama(models.TransientModel):
             raise UserError(_("The request timed out. Please try again later."))
         except requests.exceptions.RequestException as e:
             raise UserError(_("An error occurred while connecting to the API: %s") % str(e))
-

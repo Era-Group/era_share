@@ -62,10 +62,11 @@ class CancellVisa(models.TransientModel):
 
         json_data = self.json_data
         url_muqeem = '3'
-        company = self.env.company
+        # Use the EMPLOYEE'S company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
         user = self.env.user.name
         employee_name = self.employee_id.name
         process = _("Cancel Exit Reentry")

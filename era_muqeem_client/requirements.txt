@@ -1,1 +1,1 @@
-hijri_converter
+hijridate==2.3.0

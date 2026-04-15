@@ -64,16 +64,16 @@ class CancelFinalExit(models.TransientModel):
 
 
     def cancel_final_exit(self):
-        company = self.env.company
+        # Use the EMPLOYEE'S company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
         if not credentials:
             raise ValidationError(_('Missing Username,Password'))
 
-        user_name,user_password = credentials
+        user_name, user_password = credentials
 
         if self.confirm == False:
             raise ValidationError(_("You cant proceed in process until you check"))
-        company = self.env['res.company'].search([], limit=1)
         json_data = self.json_data
         url_muqeem = '2'
         company = self.env.company

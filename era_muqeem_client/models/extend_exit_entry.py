@@ -2,7 +2,7 @@ import json
 import requests
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
-from hijri_converter import Gregorian
+from hijridate.convert import Gregorian
 from markupsafe import Markup, escape
 import logging
 from datetime import datetime
@@ -76,10 +76,11 @@ class ExtendExitEntry(models.TransientModel):
 
         json_data = self.json_data
         url_muqeem = '4'
-        company = self.env.company
+        # Use the EMPLOYEE'S company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem ,user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
 
         user = self.env.user.name
         employee_name = self.employee_id.name
@@ -232,5 +233,4 @@ class ExtendExitEntry(models.TransientModel):
                         record.update({'des': 'Fail'})
 
                         return company.show_popup(_('Error'), message_ar)
-
 

@@ -3,7 +3,7 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
+from hijridate.convert import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 from markupsafe import Markup
 import logging
@@ -75,10 +75,11 @@ class AccessIqama(models.TransientModel):
 
         json_data = self.json_data
         url_muqeem = '1'
-        company = self.env.company
+        # Use the EMPLOYEE'S company, not the active session company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem,user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
         user = self.env.user.name
         employee_name = self.employee_id.name
         process = _("Issue Exit Reentry")
@@ -92,10 +93,12 @@ class AccessIqama(models.TransientModel):
         }
         record = self.env['client.requests'].create(vals)
 
-        print('&&&&response_data',response_data)
-        statusCode=response_data.get('statusCode')
-        print('statusCode',statusCode)
-        lang=self.env.user.lang
+        if not response_data or not isinstance(response_data, dict):
+            record.update({'des': _('Error: No response from Muqeem service')})
+            raise ValidationError(_('No response received from Muqeem service. Please check the logs and try again.'))
+
+        statusCode = response_data.get('statusCode')
+        lang = self.env.user.lang
         if isinstance(response_data, dict):
             if statusCode == 200:
                 visa_pdf = response_data.get('response_data').get('ervisaPDF')
@@ -162,7 +165,6 @@ class AccessIqama(models.TransientModel):
                     record.update({'des': _('Fail')})
 
                     return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

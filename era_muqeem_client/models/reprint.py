@@ -35,14 +35,13 @@ class ReprintVisa(models.TransientModel):
 
     def reprint_reentry_exit(self):
 
-        company = self.env['res.company'].search([], limit=1)
-
         json_data = self.json_data
         url_muqeem = '8'
-        company = self.env.company
+        # Use the EMPLOYEE'S company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem,user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
         user = self.env.user.name
         employee = self.employee_id.name
         process = _("RePrint Reentry Exit")

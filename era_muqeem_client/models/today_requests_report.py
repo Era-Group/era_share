@@ -3,7 +3,7 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
+from hijridate.convert import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 import pytz
 from odoo.tools.misc import format_date
@@ -90,10 +90,11 @@ class TodayrequestReport(models.TransientModel):
 
         json_data = self.json_data
         url_muqeem = '9'
-        company = self.env.company
+        # Use the EMPLOYEE'S company if available, else fallback
+        company = (self.employee_id.company_id if hasattr(self, 'employee_id') and self.employee_id else False) or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem,user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
         user = self.env.user.name
         employee_name = self.employee_id.name
         process = _("Today Request Report")
@@ -265,4 +266,3 @@ class TodayrequestReport(models.TransientModel):
     #                 record.update({'des': 'Fail'})
     #
     #                 return company.show_popup(_('Error'), response_data.get('message'))
-

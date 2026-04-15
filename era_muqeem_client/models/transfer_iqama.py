@@ -3,7 +3,6 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 from markupsafe import Markup
 from datetime import datetime
@@ -38,14 +37,13 @@ class TransferIqama(models.TransientModel):
 
     def transfer_iqama(self):
 
-        company = self.env['res.company'].search([], limit=1)
-
         json_data = self.json_data
         url_muqeem = '10'
-        company = self.env.company
+        # Use the EMPLOYEE'S company
+        company = self.employee_id.company_id or self.env.company
         credentials = company._get_api_credentials_client()
-        user_name,user_password = credentials
-        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem,user_name,user_password)
+        user_name, user_password = credentials
+        response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
         user = self.env.user.name
         employee_name = self.employee_id.name
         process = _("Transfer Iqama")
@@ -192,7 +190,6 @@ class TransferIqama(models.TransientModel):
 
                         message_ar = "رقم صاحب العمل الذي تم إدخاله ليس ضمن المؤسسة"
                         return company.show_popup(_('Error'), message_ar)
-
 
 
 

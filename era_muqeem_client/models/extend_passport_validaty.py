@@ -3,7 +3,6 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 
 

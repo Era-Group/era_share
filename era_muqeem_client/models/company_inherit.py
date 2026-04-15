@@ -34,15 +34,17 @@ class CompanyInherit(models.Model):
         }
 
     def _get_api_credentials_client(self):
-        # settings = self.env['ir.config_parameter']
-        # mg_user_name = settings.sudo().get_param('era_muqeem_client.user_name')
-        # mg_user_password = settings.sudo().get_param('era_muqeem_client.user_pass')
-        current_company= self.env.company
-        mg_user_name =current_company.user
-        mg_user_password = current_company.password
-
-
-
+        """Return (user_name, password) for the current company (self).
+        Caller should call this on the EMPLOYEE'S company, not env.company.
+        """
+        self.ensure_one()
+        company = self
+        mg_user_name = company.user
+        mg_user_password = company.password
+        _logger.info(
+            "🔑 Muqeem credentials | Company: %s (id=%s) | User: %s | Password: %s",
+            company.name, company.id, mg_user_name, mg_user_password,
+        )
         return mg_user_name, mg_user_password
 
 
@@ -72,34 +74,28 @@ class CompanyInherit(models.Model):
         }
         response = requests.post(url, headers=headers, data=payload)
 
+        _logger.info('Muqeem API response status: %s', response.status_code)
         if response.status_code == 200:
             result = response.json()
+            _logger.info('Muqeem API raw result: %s', result)
 
             if result.get('error'):
-                _logger.info('error result: %s', result)
-                _logger.info('error: %s', result.get('error'))
-
-                raise ValidationError(_(' Invalid Username or Password or connection timeout' ))
+                _logger.error('Muqeem error: %s', result.get('error'))
+                error_data = result.get('error', {})
+                error_msg = error_data.get('data', {}).get('message', '') if isinstance(error_data, dict) else str(error_data)
+                raise ValidationError(_('Muqeem Error: %s', error_msg or 'Invalid Username or Password or connection timeout'))
 
             elif result.get('result'):
-               response=result.get('result')
-
-               _logger.info('Success result: %s', result)
-               _logger.info('Success result: %s', response)
-
-               return response
+                response_data = result.get('result')
+                _logger.info('Muqeem success result: %s', response_data)
+                return response_data
+            else:
+                _logger.error('Muqeem unexpected response format: %s', result)
+                raise ValidationError(_('Unexpected response from Muqeem service. Please try again.'))
         else:
-            _logger.error('Failed to call muqeem service, status code: %s, response: %s', response.status_code,
-
-                          response.text)
+            _logger.error('Muqeem service HTTP error: %s - %s', response.status_code, response.text)
             if response.status_code == 500:
-                raise ValidationError(_('Failed to call muqeem service'))
-
+                raise ValidationError(_('Failed to call muqeem service (Server Error)'))
             if response.status_code == 403:
-                raise ValidationError(_('Please check your subscription with Era Group  info@era.net.sa'))
-
-
-            return {
-                'status': 'error',
-                'message': 'Failed to call muqeem service'
-            }
+                raise ValidationError(_('Please check your subscription with Era Group info@era.net.sa'))
+            raise ValidationError(_('Failed to call muqeem service (HTTP %s)', response.status_code))

@@ -3,7 +3,6 @@ import base64
 from base64 import b64decode
 import requests
 from odoo import models, fields, api, _
-from hijri_converter import Gregorian
 from odoo.exceptions import AccessError, ValidationError, UserError
 from datetime import datetime
 
@@ -35,15 +34,6 @@ class PrintMuqeemReport(models.TransientModel):
         json_data = json.dumps(data)
         return json_data
 
-
-
-    @api.model
-    def default_get(self, fields_list):
-        res = super().default_get(fields_list)
-        if self.env.context.get('active_id') and self.env.context.get('active_model') == 'hr.employee':
-            res['employee_id'] = self.env.context['active_id']
-        return res
-
     @api.depends('iqamaNumber', 'language','print')
     def _compute_json_data(self):
         for record in self:
@@ -57,10 +47,11 @@ class PrintMuqeemReport(models.TransientModel):
 
             json_data = self.json_data
             url_muqeem = '6'
-            company = self.env.company
+            # Use the EMPLOYEE'S company
+            company = self.employee_id.company_id or self.env.company
             credentials = company._get_api_credentials_client()
-            user_name,user_password = credentials
-            response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem,user_name,user_password)
+            user_name, user_password = credentials
+            response_data = company.era_call_muqeem(json.loads(json_data), url_muqeem, user_name, user_password)
             # print('responsecon',response_data)
             user =self.env.user.name
             employee_name = self.employee_id.name
@@ -156,7 +147,6 @@ class PrintMuqeemReport(models.TransientModel):
                         record.update({'des': _('Fail')})
 
                         return company.show_popup(_('Error'), response_data.get('message'))
-
 
 
 

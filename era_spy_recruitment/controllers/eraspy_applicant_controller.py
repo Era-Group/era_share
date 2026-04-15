@@ -173,10 +173,22 @@ class EraSpyApplicantController(http.Controller):
 
                         # Build write values
                         write_vals = {}
+                        already_enriched = bool(applicant.eraspy_more_data)
                         if candidate_dict and not is_failure:
-                            write_vals = applicant._prepare_eraspy_write_vals(
-                                candidate_dict, overwrite=False, skip_ai_match=True,
-                            )
+                            if already_enriched:
+                                # Applicant already has profile data — skip re-enrichment,
+                                # only schedule AI match below (separate task as requested).
+                                _logger.info(
+                                    "EraSpy callback: applicant %s already enriched, skipping profile "
+                                    "re-write for identifier=%s; will retry AI match only.",
+                                    applicant.id, identifier,
+                                )
+                                matched_applicant_id = applicant.id
+                                matched_candidate_for_ai = candidate_dict
+                            else:
+                                write_vals = applicant._prepare_eraspy_write_vals(
+                                    candidate_dict, overwrite=False, skip_ai_match=True,
+                                )
                         if status_lower in FAILURE_STATUSES and not error_message:
                             error_message = "No profile found"
                         if is_failure and not status:
@@ -191,7 +203,7 @@ class EraSpyApplicantController(http.Controller):
 
                         if write_vals:
                             applicant.write(write_vals)
-                            if candidate_dict and not is_failure:
+                            if candidate_dict and not is_failure and not already_enriched:
                                 matched_applicant_id = applicant.id
                                 matched_candidate_for_ai = candidate_dict
 
@@ -274,9 +286,8 @@ class EraSpyApplicantController(http.Controller):
                 clauses.append(("phone", "ilike", phone_probe))
             if "mobile" in applicant_model._fields:
                 clauses.append(("mobile", "ilike", phone_probe))
-            domain = clauses[0]
-            for clause in clauses[1:]:
-                domain = ["|", domain, clause]
+            # Build flat OR domain in Odoo prefix notation: ['|'] * (n-1) + clauses
+            domain = ["|"] * (len(clauses) - 1) + clauses
             applicant = applicant_model.search(domain, limit=1)
 
         if not applicant and isinstance(candidate_dict, dict):
@@ -288,9 +299,7 @@ class EraSpyApplicantController(http.Controller):
             if phones and "phone" in applicant_model._fields:
                 clauses.append(("phone", "in", phones))
             if clauses:
-                domain = clauses[0]
-                for clause in clauses[1:]:
-                    domain = ["|", domain, clause]
+                domain = ["|"] * (len(clauses) - 1) + clauses
                 applicant = applicant_model.search(domain, limit=1)
 
         # Last resort for failures: find queued applicant by identifier

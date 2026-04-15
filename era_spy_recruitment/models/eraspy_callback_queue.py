@@ -185,10 +185,8 @@ class EraSpyApplicantCallbackQueue(models.Model):
         def build_or_domain(clauses):
             if not clauses:
                 return []
-            domain = clauses[0]
-            for clause in clauses[1:]:
-                domain = ["|", domain, clause]
-            return domain
+            # Flat OR domain in Odoo prefix notation: ['|'] * (n-1) + clauses
+            return ["|"] * (len(clauses) - 1) + clauses
 
         if request_id:
             applicant = applicant_model.search([("eraspy_last_request_id", "=", str(request_id))], limit=1)

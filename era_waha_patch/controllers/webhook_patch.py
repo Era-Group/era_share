@@ -32,20 +32,10 @@ class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
             if recent:
                 return
 
-            bus = request.env["bus.bus"].sudo()
-            for pid in partner_ids:
-                partner = request.env["res.partner"].sudo().browse(pid)
-                bus._sendone(partner, "era_waha_patch/whatsapp_incoming", {
-                    "phone_number": message.phone_number,
-                    "session_id": session.id,
-                    "chat_id": message.chat_id,
-                    "partner_id": message.partner_id.id or False,
-                    "partner_name": (
-                        message.partner_id.name
-                        if message.partner_id
-                        else message.phone_number
-                    ),
-                    "preview": (message.text or "")[:100],
-                })
+            message.with_user(request.env.ref("base.user_root")).message_post(
+                body="New WhatsApp message received from %s" % message.phone_number,
+                message_type="notification",
+                partner_ids=partner_ids,
+            )
         except Exception as e:
             _logger.error("Error sending notification: %s", e)

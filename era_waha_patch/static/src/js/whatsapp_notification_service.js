@@ -1,43 +1,25 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { Component, xml } from "@odoo/owl";
 import { WhatsappChatDialog } from "@sadeem_waha_whatsapp/js/whatsapp_chat_dialog";
+import { useService } from "@web/core/utils/hooks";
 
-const whatsappNotificationService = {
-    dependencies: ["bus_service", "notification", "dialog"],
+class OpenWhatsappChat extends Component {
+    static template = xml`<div/>`;
+    static props = ["*"];
 
-    start(env, { bus_service, notification, dialog }) {
-        bus_service.subscribe("era_waha_patch/whatsapp_incoming", (payload) => {
-            const phone = payload.phone_number || "";
-            const name = payload.partner_name || phone;
-            const preview = payload.preview || "";
-            const title = `💬 WhatsApp - ${name}`;
-            const message = preview || `New message from ${phone}`;
-
-            notification.add(message, {
-                title,
-                type: "info",
-                sticky: true,
-                buttons: [
-                    {
-                        name: "Open Chat",
-                        primary: true,
-                        onClick: () => {
-                            let chatId = phone.replace(/^\+/, "").replace(/\D/g, "");
-                            chatId = `${chatId}@c.us`;
-                            dialog.add(WhatsappChatDialog, {
-                                chatId,
-                                sessionId: payload.session_id,
-                                phoneNumber: phone,
-                                partnerId: payload.partner_id || false,
-                                partnerName: name,
-                            });
-                        },
-                    },
-                ],
-            });
+    setup() {
+        const dialog = useService("dialog");
+        const p = this.props.action.params || {};
+        dialog.add(WhatsappChatDialog, {
+            chatId: p.chat_id,
+            sessionId: p.session_id,
+            phoneNumber: p.phone_number,
+            partnerId: p.partner_id || false,
+            partnerName: p.partner_name || p.phone_number,
         });
-    },
-};
+    }
+}
 
-registry.category("services").add("whatsapp_incoming_notify", whatsappNotificationService);
+registry.category("actions").add("era_waha_open_chat", OpenWhatsappChat);

@@ -1,4 +1,5 @@
 import logging
+import re
 from odoo import models, api
 from odoo.exceptions import UserError
 
@@ -39,3 +40,18 @@ class WhatsAppMessageDedup(models.Model):
                 raise UserError("Duplicate waha message %s" % waha_id)
             deduped.append(vals)
         return super().create(deduped)
+
+    def get_formview_action(self, access_uid=None):
+        self.ensure_one()
+        phone = re.sub(r"\D", "", (self.phone_number or "").lstrip("+"))
+        return {
+            "type": "ir.actions.client",
+            "tag": "era_waha_open_chat",
+            "params": {
+                "chat_id": "%s@c.us" % phone,
+                "session_id": self.session_id.id,
+                "phone_number": self.phone_number or "",
+                "partner_id": self.partner_id.id or False,
+                "partner_name": self.partner_id.name or self.phone_number or "",
+            },
+        }

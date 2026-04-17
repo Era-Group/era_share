@@ -1,11 +1,15 @@
 import logging
 import re
+import zlib
 from odoo import models, api
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
 LOCK_NS = 0x57414D53  # 'WAMS'
+
+
+def _stable_hash(s):
+    return zlib.crc32(s.encode("utf-8")) & 0x7FFFFFFF
 
 
 class WhatsAppMessageDedup(models.Model):
@@ -24,12 +28,13 @@ class WhatsAppMessageDedup(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         deduped = []
+        skipped = self.browse()
         for vals in vals_list:
             waha_id = vals.get("waha_message_id")
             if not waha_id or waha_id == "false":
                 deduped.append(vals)
                 continue
-            lock_key = hash(waha_id) & 0x7FFFFFFF
+            lock_key = _stable_hash(waha_id)
             self.env.cr.execute(
                 "SELECT pg_advisory_xact_lock(%s, %s)", (LOCK_NS, lock_key)
             )
@@ -37,9 +42,12 @@ class WhatsAppMessageDedup(models.Model):
                 [("waha_message_id", "=", waha_id)], limit=1
             )
             if dup:
-                raise UserError("Duplicate waha message %s" % waha_id)
+                _logger.debug("Skipping duplicate waha message %s", waha_id)
+                skipped |= dup
+                continue
             deduped.append(vals)
-        return super().create(deduped)
+        created = super().create(deduped) if deduped else self.browse()
+        return created | skipped
 
     def get_formview_action(self, access_uid=None):
         self.ensure_one()

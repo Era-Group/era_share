@@ -10,6 +10,7 @@ import { Thread } from "@mail/core/common/thread_model";
 patch(Thread.prototype, {
     open(options) {
         if (this.model === "sadeem.waha.whatsapp.message") {
+            this.markAllMessagesAsRead();
             const store = this.store;
             store.env.services.orm
                 .read("sadeem.waha.whatsapp.message", [this.id], [

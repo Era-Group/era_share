@@ -22,21 +22,50 @@ class WhatsAppMessageDedup(models.Model):
     def create(self, vals_list):
         if len(vals_list) != 1:
             return super().create(vals_list)
-        waha_id = vals_list[0].get("waha_message_id")
+        vals = vals_list[0]
+        waha_id = vals.get("waha_message_id")
         if not waha_id or waha_id == "false":
             return super().create(vals_list)
+
         existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
         if existing:
             return existing
-        try:
-            with self.env.cr.savepoint():
-                return super().create(vals_list)
-        except Exception:
-            self.env.cr.clear()
-            existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
-            if existing:
-                return existing
-            raise
+
+        cr = self.env.cr
+        now = vals.get("create_date") or "now()"
+        cr.execute("""
+            INSERT INTO sadeem_waha_whatsapp_message
+                (session_id, partner_id, phone_number, chat_id, direction,
+                 message_type, status, text, waha_message_id, attachment_id,
+                 create_date, write_date)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+            ON CONFLICT (waha_message_id)
+                WHERE waha_message_id IS NOT NULL
+                  AND waha_message_id != ''
+                  AND waha_message_id != 'false'
+            DO NOTHING
+            RETURNING id
+        """, (
+            vals.get("session_id"),
+            vals.get("partner_id") or None,
+            vals.get("phone_number"),
+            vals.get("chat_id"),
+            vals.get("direction"),
+            vals.get("message_type", "text"),
+            vals.get("status", "delivered"),
+            vals.get("text"),
+            waha_id,
+            vals.get("attachment_id") or None,
+        ))
+        row = cr.fetchone()
+        if row:
+            self.env.cache.invalidate()
+            return self.browse(row[0])
+
+        existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
+        if existing:
+            return existing
+        return super().create(vals_list)
 
     def get_formview_action(self, access_uid=None):
         self.ensure_one()

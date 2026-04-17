@@ -9,6 +9,11 @@
     "data": [
         "views/whatsapp_template_views_patch.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "era_waha_patch/static/src/js/wizard_view_chat_button_patch.js",
+        ],
+    },
     "installable": True,
     "application": False,
 }

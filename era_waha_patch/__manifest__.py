@@ -12,6 +12,7 @@
     "assets": {
         "web.assets_backend": [
             "era_waha_patch/static/src/js/wizard_view_chat_button_patch.js",
+            "era_waha_patch/static/src/js/whatsapp_notification_service.js",
         ],
     },
     "installable": True,

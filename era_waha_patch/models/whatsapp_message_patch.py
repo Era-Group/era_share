@@ -1,6 +1,5 @@
 import logging
 import re
-from psycopg2 import IntegrityError
 from odoo import models, api
 
 _logger = logging.getLogger(__name__)
@@ -18,25 +17,6 @@ class WhatsAppMessageDedup(models.Model):
               AND waha_message_id != ''
               AND waha_message_id != 'false'
         """)
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        if len(vals_list) != 1:
-            return super().create(vals_list)
-        vals = vals_list[0]
-        waha_id = vals.get("waha_message_id")
-        if not waha_id or waha_id == "false":
-            return super().create(vals_list)
-        try:
-            with self.env.cr.savepoint():
-                return super().create(vals_list)
-        except IntegrityError:
-            existing = self.sudo().search(
-                [("waha_message_id", "=", waha_id)], limit=1
-            )
-            if existing:
-                return existing
-            raise
 
     def get_formview_action(self, access_uid=None):
         self.ensure_one()

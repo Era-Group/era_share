@@ -32,35 +32,42 @@ class WhatsAppMessageDedup(models.Model):
             return existing
 
         cr = self.env.cr
-        now = vals.get("create_date") or "now()"
-        cr.execute("""
-            INSERT INTO sadeem_waha_whatsapp_message
-                (session_id, partner_id, phone_number, chat_id, direction,
-                 message_type, status, text, waha_message_id, attachment_id,
-                 create_date, write_date)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
-            ON CONFLICT (waha_message_id)
-                WHERE waha_message_id IS NOT NULL
-                  AND waha_message_id != ''
-                  AND waha_message_id != 'false'
-            DO NOTHING
-            RETURNING id
-        """, (
-            vals.get("session_id"),
-            vals.get("partner_id") or None,
-            vals.get("phone_number"),
-            vals.get("chat_id"),
-            vals.get("direction"),
-            vals.get("message_type", "text"),
-            vals.get("status", "delivered"),
-            vals.get("text"),
-            waha_id,
-            vals.get("attachment_id") or None,
-        ))
-        row = cr.fetchone()
-        if row:
+        new_id = None
+        try:
+            with cr.savepoint():
+                cr.execute("""
+                    INSERT INTO sadeem_waha_whatsapp_message
+                        (session_id, partner_id, phone_number, chat_id, direction,
+                         message_type, status, text, waha_message_id, attachment_id,
+                         create_date, write_date)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+                    ON CONFLICT (waha_message_id)
+                        WHERE waha_message_id IS NOT NULL
+                          AND waha_message_id != ''
+                          AND waha_message_id != 'false'
+                    DO NOTHING
+                    RETURNING id
+                """, (
+                    vals.get("session_id"),
+                    vals.get("partner_id") or None,
+                    vals.get("phone_number"),
+                    vals.get("chat_id"),
+                    vals.get("direction"),
+                    vals.get("message_type", "text"),
+                    vals.get("status", "delivered"),
+                    vals.get("text"),
+                    waha_id,
+                    vals.get("attachment_id") or None,
+                ))
+                row = cr.fetchone()
+                if row:
+                    new_id = row[0]
+        except Exception:
+            pass
+
+        if new_id:
             self.env.cache.invalidate()
-            return self.browse(row[0])
+            return self.browse(new_id)
 
         existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
         if existing:

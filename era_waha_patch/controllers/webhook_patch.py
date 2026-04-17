@@ -1,14 +1,10 @@
 import logging
-from datetime import timedelta
-from odoo.fields import Datetime
 from odoo.http import request
 from odoo.addons.sadeem_waha_whatsapp.controllers.webhook_controller import (
     WhatsAppWebhookController,
 )
 
 _logger = logging.getLogger(__name__)
-
-NOTIFY_COOLDOWN_MINUTES = 2
 
 
 class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
@@ -20,16 +16,13 @@ class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
             if not partner_ids:
                 return
 
-            cutoff = Datetime.to_string(
-                Datetime.now() - timedelta(minutes=NOTIFY_COOLDOWN_MINUTES)
-            )
-            recent = request.env["mail.message"].sudo().search_count([
-                ("model", "=", "sadeem.waha.whatsapp.message"),
-                ("body", "ilike", message.phone_number),
-                ("message_type", "=", "notification"),
-                ("date", ">=", cutoff),
+            unread = request.env["mail.notification"].sudo().search_count([
+                ("res_partner_id", "in", partner_ids),
+                ("mail_message_id.model", "=", "sadeem.waha.whatsapp.message"),
+                ("mail_message_id.body", "ilike", message.phone_number),
+                ("is_read", "=", False),
             ], limit=1)
-            if recent:
+            if unread:
                 return
 
             message.with_user(request.env.ref("base.user_root")).message_post(

@@ -13,6 +13,10 @@ class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
         try:
             session = message.session_id
             partner_ids = session.notify_user_ids.mapped("partner_id").ids
+            _logger.warning(
+                "ERA_PATCH notify: msg=%s phone=%s partners=%s",
+                message.id, message.phone_number, partner_ids,
+            )
             if not partner_ids:
                 return
 
@@ -22,6 +26,7 @@ class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
                 ("mail_message_id.body", "ilike", message.phone_number),
                 ("is_read", "=", False),
             ], limit=1)
+            _logger.warning("ERA_PATCH unread=%s phone=%s", unread, message.phone_number)
             if unread:
                 return
 
@@ -30,5 +35,6 @@ class WhatsAppWebhookControllerPatch(WhatsAppWebhookController):
                 message_type="notification",
                 partner_ids=partner_ids,
             )
+            _logger.warning("ERA_PATCH notification sent for %s", message.phone_number)
         except Exception as e:
-            _logger.error("Error sending notification: %s", e)
+            _logger.error("ERA_PATCH error: %s", e)

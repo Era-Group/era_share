@@ -5,13 +5,14 @@ import { Component, xml } from "@odoo/owl";
 import { WhatsappChatDialog } from "@sadeem_waha_whatsapp/js/whatsapp_chat_dialog";
 import { useService } from "@web/core/utils/hooks";
 import { patch } from "@web/core/utils/patch";
-import { Store } from "@mail/core/common/store_service";
+import { Thread } from "@mail/core/common/thread_model";
 
-patch(Store.prototype, {
-    openDocument({ id, model }) {
-        if (model === "sadeem.waha.whatsapp.message") {
-            this.env.services.orm
-                .read("sadeem.waha.whatsapp.message", [id], [
+patch(Thread.prototype, {
+    open(options) {
+        if (this.model === "sadeem.waha.whatsapp.message") {
+            const store = this.store;
+            store.env.services.orm
+                .read("sadeem.waha.whatsapp.message", [this.id], [
                     "phone_number",
                     "session_id",
                     "chat_id",
@@ -20,18 +21,22 @@ patch(Store.prototype, {
                 .then((records) => {
                     if (!records.length) return;
                     const rec = records[0];
-                    const phone = (rec.phone_number || "").replace(/^\+/, "").replace(/\D/g, "");
-                    this.env.services.dialog.add(WhatsappChatDialog, {
+                    const phone = (rec.phone_number || "")
+                        .replace(/^\+/, "")
+                        .replace(/\D/g, "");
+                    store.env.services.dialog.add(WhatsappChatDialog, {
                         chatId: rec.chat_id || `${phone}@c.us`,
                         sessionId: rec.session_id[0],
                         phoneNumber: rec.phone_number || "",
                         partnerId: rec.partner_id ? rec.partner_id[0] : false,
-                        partnerName: rec.partner_id ? rec.partner_id[1] : rec.phone_number || "",
+                        partnerName: rec.partner_id
+                            ? rec.partner_id[1]
+                            : rec.phone_number || "",
                     });
                 });
-            return;
+            return true;
         }
-        super.openDocument(...arguments);
+        return super.open(...arguments);
     },
 });
 

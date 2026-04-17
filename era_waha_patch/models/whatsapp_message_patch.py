@@ -18,6 +18,26 @@ class WhatsAppMessageDedup(models.Model):
               AND waha_message_id != 'false'
         """)
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        if len(vals_list) != 1:
+            return super().create(vals_list)
+        waha_id = vals_list[0].get("waha_message_id")
+        if not waha_id or waha_id == "false":
+            return super().create(vals_list)
+        existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
+        if existing:
+            return existing
+        try:
+            with self.env.cr.savepoint():
+                return super().create(vals_list)
+        except Exception:
+            self.env.cr.clear()
+            existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
+            if existing:
+                return existing
+            raise
+
     def get_formview_action(self, access_uid=None):
         self.ensure_one()
         phone = re.sub(r"\D", "", (self.phone_number or "").lstrip("+"))

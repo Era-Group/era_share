@@ -70,9 +70,7 @@ class WhatsAppMessageDedup(models.Model):
             return self.browse(new_id)
 
         existing = self.sudo().search([("waha_message_id", "=", waha_id)], limit=1)
-        if existing:
-            return existing
-        return super().create(vals_list)
+        return existing or self.browse()
 
     def get_formview_action(self, access_uid=None):
         self.ensure_one()

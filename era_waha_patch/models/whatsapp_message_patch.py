@@ -1,15 +1,9 @@
 import logging
 import re
-import zlib
+from psycopg2 import IntegrityError
 from odoo import models, api
 
 _logger = logging.getLogger(__name__)
-
-LOCK_NS = 0x57414D53  # 'WAMS'
-
-
-def _stable_hash(s):
-    return zlib.crc32(s.encode("utf-8")) & 0x7FFFFFFF
 
 
 class WhatsAppMessageDedup(models.Model):
@@ -27,27 +21,22 @@ class WhatsAppMessageDedup(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        deduped = []
-        skipped = self.browse()
-        for vals in vals_list:
-            waha_id = vals.get("waha_message_id")
-            if not waha_id or waha_id == "false":
-                deduped.append(vals)
-                continue
-            lock_key = _stable_hash(waha_id)
-            self.env.cr.execute(
-                "SELECT pg_advisory_xact_lock(%s, %s)", (LOCK_NS, lock_key)
-            )
-            dup = self.sudo().search(
+        if len(vals_list) != 1:
+            return super().create(vals_list)
+        vals = vals_list[0]
+        waha_id = vals.get("waha_message_id")
+        if not waha_id or waha_id == "false":
+            return super().create(vals_list)
+        try:
+            with self.env.cr.savepoint():
+                return super().create(vals_list)
+        except IntegrityError:
+            existing = self.sudo().search(
                 [("waha_message_id", "=", waha_id)], limit=1
             )
-            if dup:
-                _logger.debug("Skipping duplicate waha message %s", waha_id)
-                skipped |= dup
-                continue
-            deduped.append(vals)
-        created = super().create(deduped) if deduped else self.browse()
-        return created | skipped
+            if existing:
+                return existing
+            raise
 
     def get_formview_action(self, access_uid=None):
         self.ensure_one()

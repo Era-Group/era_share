@@ -1,5 +1,6 @@
 import logging
 from odoo import models, api
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -22,7 +23,6 @@ class WhatsAppMessageDedup(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         deduped = []
-        existing = []
         for vals in vals_list:
             waha_id = vals.get("waha_message_id")
             if not waha_id or waha_id == "false":
@@ -36,10 +36,6 @@ class WhatsAppMessageDedup(models.Model):
                 [("waha_message_id", "=", waha_id)], limit=1
             )
             if dup:
-                existing.append(dup)
-            else:
-                deduped.append(vals)
-        created = super().create(deduped) if deduped else self.browse()
-        for rec in existing:
-            created |= rec
-        return created
+                raise UserError("Duplicate waha message %s" % waha_id)
+            deduped.append(vals)
+        return super().create(deduped)

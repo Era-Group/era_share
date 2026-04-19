@@ -59,7 +59,6 @@ class YusrAttendanceController(http.Controller):
             'check_in': fields.Datetime.now(),
         }
         if lat is not None and lon is not None:
-            # Odoo 18 hr_attendance has in_latitude/in_longitude fields
             vals.update({
                 'in_latitude': lat,
                 'in_longitude': lon,

@@ -2,7 +2,7 @@
 
 REST API backend module for the **Yusr** HR mobile application (Era Group).
 
-Provides a JWT-authenticated REST layer on top of Odoo 18, with a dedicated
+Provides a JWT-authenticated REST layer on top of Odoo 19, with a dedicated
 **Employee ID + PIN** login flow — separate from Odoo's portal/internal user login.
 
 ---

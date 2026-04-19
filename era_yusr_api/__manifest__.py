@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Era Yusr API',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'REST API backend for Yusr HR Mobile App (Employee ID + PIN login, JWT)',
     'description': """

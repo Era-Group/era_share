@@ -63,7 +63,7 @@ def _serialize_full_profile(emp):
         'work_email': emp.work_email,
         'work_phone': emp.work_phone,
         'mobile_phone': emp.mobile_phone,
-        'contract_start_date': emp.first_contract_date,
+        'contract_start_date': emp.first_contract_date if 'first_contract_date' in emp._fields else None,
         'identification_id': emp.identification_id,
         'avatar_url': f"/web/image/hr.employee/{emp.id}/image_256",
     }

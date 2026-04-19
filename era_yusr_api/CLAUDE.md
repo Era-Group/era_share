@@ -16,7 +16,7 @@
 **Yusr** (يُسر — "ease/convenience" in Arabic) is an integrated HR
 self-service mobile application for **Era Group** (Saudi Arabia,
 https://era.net.sa). It replaces paper-based HR processes with a digital
-experience backed by Odoo 18 ERP.
+experience backed by Odoo 19 ERP.
 
 ### Goals
 - Let employees manage attendance, leaves, payslips, and expenses from their phone
@@ -41,7 +41,7 @@ The project consists of **two separate Git repositories**:
 
 | Repo                 | Purpose                                    | Status         |
 |----------------------|--------------------------------------------|----------------|
-| `era_yusr_api`       | Odoo 18 backend module (REST API)          | ✅ COMPLETE    |
+| `era_yusr_api`       | Odoo 19 backend module (REST API)          | ✅ COMPLETE    |
 | `yusr-mobile`        | React Native (Expo) mobile app             | 🚧 TO BE BUILT |
 
 Both repos should live under the `Era-Group` GitHub organization.
@@ -93,7 +93,7 @@ Both repos should live under the `Era-Group` GitHub organization.
 
 ---
 
-## 5. Backend: `era_yusr_api` (Odoo 18 Module)
+## 5. Backend: `era_yusr_api` (Odoo 19 Module)
 
 ### 5.1 Module Structure
 ```
@@ -131,7 +131,7 @@ era_yusr_api/
 ```
 
 ### 5.2 Dependencies
-- **Odoo 18.0** (Community or Enterprise)
+- **Odoo 19.0** (Community or Enterprise)
 - Odoo modules: `hr`, `hr_attendance`, `hr_holidays`, `hr_expense`, `mail`,
   `calendar`, `resource`
 - Optional: `hr_payroll` (Enterprise only) — payslip endpoints degrade
@@ -511,12 +511,14 @@ EXPO_PUBLIC_SENTRY_DSN=
    for geofencing. If unset, geofence check silently passes (intentional
    fallback to avoid breaking check-in).
 
-3. **`hr.attendance` in Odoo 18 has `in_latitude/in_longitude`** fields
+3. **`hr.attendance` in Odoo 19 has `in_latitude/in_longitude`** fields
    (not `latitude_in`). Already handled in `controllers/attendance.py`.
 
-4. **Odoo 18 removed `hr_contract` from Community Edition.** Any code that
-   queried contracts needs to gate on Enterprise or use `first_contract_date`
-   directly on `hr.employee` (already done).
+4. **`hr_contract` is Enterprise-only in Odoo 19.** Any code that queries
+   contracts must gate on Enterprise or use `first_contract_date` directly
+   on `hr.employee` (already done — see `controllers/profile.py`). Note
+   that Odoo 19 also introduced versioned employee records (`date_version`);
+   this module doesn't rely on versioning and should continue to work.
 
 5. **RTL iOS quirk**: `I18nManager.forceRTL(true)` requires app restart
    to take effect. Handle with a first-launch restart via
@@ -536,7 +538,7 @@ EXPO_PUBLIC_SENTRY_DSN=
 9. **Geofence radius default is 200 m.** Too tight for some office
    configurations. Document the Settings screen for HR to adjust.
 
-10. **Odoo 18 leave flow**: creating a leave via `hr.leave.create()` does
+10. **Odoo 19 leave flow**: creating a leave via `hr.leave.create()` does
     not auto-confirm. Code explicitly calls `leave.action_confirm()`.
 
 ---
@@ -608,5 +610,5 @@ Begin with §7.3 authentication flow + §7.5 screen priority list.
 
 ---
 
-*Last updated: 2026-04-19*
+*Last updated: 2026-04-19 — ported from Odoo 18.0 to Odoo 19.0*
 *This file should be updated whenever major architectural decisions change.*

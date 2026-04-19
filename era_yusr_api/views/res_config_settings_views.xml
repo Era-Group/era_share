@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_yusr" model="ir.ui.view">
+        <field name="name">res.config.settings.yusr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Yusr Mobile API" string="Yusr Mobile API"
+                     name="era_yusr_api" groups="hr.group_hr_manager">
+                    <block title="JWT Authentication">
+                        <setting string="JWT Secret"
+                                 help="Secret used to sign mobile app tokens. Rotating this logs out all mobile users.">
+                            <field name="yusr_jwt_secret" password="True"/>
+                            <button name="action_generate_jwt_secret" type="object"
+                                    string="Generate Strong Secret" class="btn-link"/>
+                        </setting>
+                    </block>
+                    <block title="Geofencing">
+                        <setting string="Enforce Geofencing"
+                                 help="Only allow check-in within configured radius of company location.">
+                            <field name="yusr_geofence_enabled"/>
+                        </setting>
+                        <setting string="Geofence Radius"
+                                 help="Allowed check-in radius in meters.">
+                            <field name="yusr_geofence_radius"/>
+                            <span> meters</span>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

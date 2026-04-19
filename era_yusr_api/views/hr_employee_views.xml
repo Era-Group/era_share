@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend hr.employee form view -->
+    <record id="view_hr_employee_form_yusr" model="ir.ui.view">
+        <field name="name">hr.employee.form.yusr</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Yusr Mobile App" name="yusr_app" groups="hr.group_hr_user">
+                    <group>
+                        <group string="Login Credentials">
+                            <field name="employee_login_id" placeholder="e.g., EMP1023"/>
+                            <field name="yusr_access_enabled"/>
+                            <field name="pin_hash" invisible="1"/>
+                            <label for="pin_hash" string="PIN Status"/>
+                            <div>
+                                <span invisible="not pin_hash" class="text-success">
+                                    <i class="fa fa-check-circle"/> PIN is set
+                                </span>
+                                <span invisible="pin_hash" class="text-warning">
+                                    <i class="fa fa-exclamation-triangle"/> No PIN set
+                                </span>
+                                <button name="action_reset_pin"
+                                        type="object"
+                                        string="Reset PIN"
+                                        class="btn-link"
+                                        confirm="This will clear the employee's PIN. They will need to set a new one via HR. Continue?"
+                                        invisible="not pin_hash"/>
+                            </div>
+                        </group>
+                        <group string="Activity">
+                            <field name="yusr_last_login" readonly="1"/>
+                            <field name="yusr_failed_attempts" readonly="1"/>
+                            <field name="yusr_locked_until" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>How PIN is set:</strong> the employee's PIN is set by HR using
+                        a separate admin wizard, or through a one-time setup flow in the mobile app.
+                        For security, PINs are never displayed — only hashed values are stored.
+                    </div>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Wizard to set PIN for an employee -->
+    <record id="view_yusr_set_pin_wizard" model="ir.ui.view">
+        <field name="name">yusr.set.pin.wizard</field>
+        <field name="model">yusr.set.pin.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Set Employee PIN">
+                <group>
+                    <field name="employee_id" readonly="1"/>
+                    <field name="new_pin" password="True" placeholder="4-6 digits"/>
+                    <field name="confirm_pin" password="True" placeholder="Re-enter PIN"/>
+                </group>
+                <footer>
+                    <button name="action_set_pin" type="object" string="Set PIN" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_yusr_set_pin_wizard" model="ir.actions.act_window">
+        <field name="name">Set Yusr PIN</field>
+        <field name="res_model">yusr.set.pin.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="hr.model_hr_employee"/>
+        <field name="binding_view_types">form</field>
+    </record>
+
+</odoo>

@@ -6,9 +6,7 @@
     "author": "Era Group",
     "license": "LGPL-3",
     "depends": ["sadeem_waha_whatsapp"],
-    "data": [
-        "views/whatsapp_template_views_patch.xml",
-    ],
+    "data": [],
     "assets": {
         "web.assets_backend": [
             "era_waha_patch/static/src/js/wizard_view_chat_button_patch.js",

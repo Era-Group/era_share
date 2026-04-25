@@ -19,6 +19,7 @@ class YusrDevice(models.Model):
     last_seen = fields.Datetime(string='Last Seen', default=fields.Datetime.now)
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        ('device_token_unique', 'unique(device_token)', 'Device token must be unique.'),
-    ]
+    _device_token_unique = models.Constraint(
+        'unique(device_token)',
+        'Device token must be unique.',
+    )

@@ -14,7 +14,7 @@ class YusrDeviceController(http.Controller):
 
     @http.route(
         '/api/yusr/device/register',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def register(self, employee=None, **kwargs):
@@ -50,7 +50,7 @@ class YusrDeviceController(http.Controller):
 
     @http.route(
         '/api/yusr/device/unregister',
-        type='http', auth='public', methods=['DELETE', 'POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['DELETE', 'POST'], csrf=False
     )
     @yusr_authenticated
     def unregister(self, employee=None, **kwargs):

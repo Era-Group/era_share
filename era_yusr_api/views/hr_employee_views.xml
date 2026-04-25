@@ -13,23 +13,8 @@
                     <group>
                         <group string="Login Credentials">
                             <field name="employee_login_id" placeholder="e.g., EMP1023"/>
+                            <field name="pin" string="PIN" placeholder="4-6 digits"/>
                             <field name="yusr_access_enabled"/>
-                            <field name="pin_hash" invisible="1"/>
-                            <label for="pin_hash" string="PIN Status"/>
-                            <div>
-                                <span invisible="not pin_hash" class="text-success">
-                                    <i class="fa fa-check-circle"/> PIN is set
-                                </span>
-                                <span invisible="pin_hash" class="text-warning">
-                                    <i class="fa fa-exclamation-triangle"/> No PIN set
-                                </span>
-                                <button name="action_reset_pin"
-                                        type="object"
-                                        string="Reset PIN"
-                                        class="btn-link"
-                                        confirm="This will clear the employee's PIN. They will need to set a new one via HR. Continue?"
-                                        invisible="not pin_hash"/>
-                            </div>
                         </group>
                         <group string="Activity">
                             <field name="yusr_last_login" readonly="1"/>
@@ -37,11 +22,6 @@
                             <field name="yusr_locked_until" readonly="1"/>
                         </group>
                     </group>
-                    <div class="alert alert-info" role="alert">
-                        <strong>How PIN is set:</strong> the employee's PIN is set by HR using
-                        a separate admin wizard, or through a one-time setup flow in the mobile app.
-                        For security, PINs are never displayed — only hashed values are stored.
-                    </div>
                 </page>
             </xpath>
 

@@ -9,14 +9,6 @@
             <xpath expr="//form" position="inside">
                 <app data-string="Yusr Mobile API" string="Yusr Mobile API"
                      name="era_yusr_api" groups="hr.group_hr_manager">
-                    <block title="JWT Authentication">
-                        <setting string="JWT Secret"
-                                 help="Secret used to sign mobile app tokens. Rotating this logs out all mobile users.">
-                            <field name="yusr_jwt_secret" password="True"/>
-                            <button name="action_generate_jwt_secret" type="object"
-                                    string="Generate Strong Secret" class="btn-link"/>
-                        </setting>
-                    </block>
                     <block title="Geofencing">
                         <setting string="Enforce Geofencing"
                                  help="Only allow check-in within configured radius of company location.">

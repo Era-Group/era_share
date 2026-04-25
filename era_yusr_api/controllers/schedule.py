@@ -13,7 +13,7 @@ class YusrScheduleController(http.Controller):
 
     @http.route(
         '/api/yusr/schedule',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def schedule(self, employee=None, **kwargs):

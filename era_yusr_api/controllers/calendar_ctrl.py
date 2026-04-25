@@ -16,7 +16,7 @@ class YusrCalendarController(http.Controller):
 
     @http.route(
         '/api/yusr/calendar',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def calendar(self, employee=None, **kwargs):

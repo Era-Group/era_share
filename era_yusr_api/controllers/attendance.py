@@ -29,7 +29,7 @@ class YusrAttendanceController(http.Controller):
 
     @http.route(
         '/api/yusr/attendance/checkin',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def checkin(self, employee=None, **kwargs):
@@ -37,13 +37,17 @@ class YusrAttendanceController(http.Controller):
         lat = payload.get('latitude')
         lon = payload.get('longitude')
 
-        # Close any open attendance first (defensive)
         open_att = request.env['hr.attendance'].sudo().search([
             ('employee_id', '=', employee.id),
             ('check_out', '=', False),
         ], limit=1)
         if open_att:
-            return err("You are already checked in.", status=409, code='ALREADY_CHECKED_IN')
+            return ok({
+                'attendance_id': open_att.id,
+                'check_in': open_att.check_in,
+                'message': 'Already checked in.',
+                'already_checked_in': True,
+            })
 
         # Geofence check
         allowed, distance = self._check_geofence(employee, lat, lon)
@@ -78,7 +82,7 @@ class YusrAttendanceController(http.Controller):
 
     @http.route(
         '/api/yusr/attendance/checkout',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def checkout(self, employee=None, **kwargs):
@@ -111,7 +115,7 @@ class YusrAttendanceController(http.Controller):
 
     @http.route(
         '/api/yusr/attendance/status',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def status(self, employee=None, **kwargs):
@@ -134,7 +138,7 @@ class YusrAttendanceController(http.Controller):
 
     @http.route(
         '/api/yusr/attendance/records',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def records(self, employee=None, **kwargs):
@@ -160,13 +164,29 @@ class YusrAttendanceController(http.Controller):
             ('check_in', '<', datetime.combine(end, datetime.min.time())),
         ], order='check_in asc')
 
-        records = [{
-            'id': a.id,
-            'date': a.check_in.date().isoformat() if a.check_in else None,
-            'check_in': a.check_in,
-            'check_out': a.check_out,
-            'worked_hours': round(a.worked_hours or 0, 2),
-        } for a in atts]
+        # Skip placeholder rows: closed attendances whose duration is
+        # effectively zero (e.g. check_in 03:00:00 / check_out
+        # 03:00:01). These are bulk-imported junk in the Odoo DB and
+        # render on the mobile calendar as real check-ins, making
+        # non-working days look attended. Kept open attendances
+        # (check_out is False) — those are legitimate in-progress
+        # sessions.
+        PLACEHOLDER_THRESHOLD_SECONDS = 60
+        records = []
+        for a in atts:
+            if not a.check_in:
+                continue
+            if a.check_out:
+                duration = (a.check_out - a.check_in).total_seconds()
+                if duration < PLACEHOLDER_THRESHOLD_SECONDS:
+                    continue
+            records.append({
+                'id': a.id,
+                'date': a.check_in.date().isoformat(),
+                'check_in': a.check_in,
+                'check_out': a.check_out,
+                'worked_hours': round(a.worked_hours or 0, 2),
+            })
 
         total = sum(r['worked_hours'] for r in records)
 
@@ -181,7 +201,20 @@ class YusrAttendanceController(http.Controller):
     # Helpers
     # ------------------------------------------------------------------
     def _check_geofence(self, employee, lat, lon):
-        """Return (allowed: bool, distance_meters: float | None)."""
+        """Return (allowed: bool, distance_meters: float | None).
+
+        Evaluation order:
+          1. Global kill switch `era_yusr_api.geofence_enabled` (default
+             True) — if off, skip entirely.
+          2. hr.attendance.location records assigned to this employee
+             (from era_mobile_hr_api). Each location can have its own
+             `tolerance_meters`; fall back to the global radius if not
+             set. Employee is allowed if within ANY assigned location.
+          3. Company partner lat/lon — legacy behavior. Used only if
+             no hr.attendance.location records apply to the employee.
+          4. If nothing is configured at all, allow (don't lock users
+             out because HR hasn't filled in coordinates yet).
+        """
         ICP = request.env['ir.config_parameter'].sudo()
         enabled = ICP.get_param('era_yusr_api.geofence_enabled', 'True') == 'True'
         if not enabled:
@@ -189,18 +222,50 @@ class YusrAttendanceController(http.Controller):
         if lat is None or lon is None:
             return False, None
 
-        radius = int(ICP.get_param('era_yusr_api.geofence_radius', '200'))
+        default_radius = int(ICP.get_param('era_yusr_api.geofence_radius', '200'))
+        flat, flon = float(lat), float(lon)
 
-        # Try to get branch/company coordinates
-        # Assumes res.company has partner_id with partner_latitude/partner_longitude
+        # Step 2: hr.attendance.location records (from era_mobile_hr_api).
+        # Gate on the model existing — this module shouldn't hard-depend
+        # on era_mobile_hr_api being installed.
+        closest = None
+        if 'hr.attendance.location' in request.env:
+            Loc = request.env['hr.attendance.location'].sudo()
+            # Per-employee assignment; if no m2m match, don't fall back
+            # to "any location in the DB" (that could accidentally let
+            # an employee check in at another branch). We explicitly
+            # move on to the company-partner check.
+            locations = Loc.search([
+                ('active', '=', True),
+                ('employee_ids', 'in', employee.id),
+            ])
+            for loc in locations:
+                if not loc.latitude or not loc.longitude:
+                    continue
+                tol = (
+                    getattr(loc, 'tolerance_meters', False)
+                    or default_radius
+                )
+                d = _haversine(flat, flon, loc.latitude, loc.longitude)
+                if closest is None or d < closest:
+                    closest = d
+                if d <= tol:
+                    return True, d
+            if closest is not None:
+                # Employee had assigned locations but is outside all of
+                # them — reject with the nearest distance so the mobile
+                # can show "you are Xm from the nearest site".
+                return False, closest
+
+        # Step 3: fall back to res.company partner coordinates.
         company = employee.company_id
-        partner = company.partner_id
-        if not partner.partner_latitude or not partner.partner_longitude:
-            # Geofence enabled but no coords set -> allow but log
-            return True, None
+        partner = company.partner_id if company else False
+        if partner and partner.partner_latitude and partner.partner_longitude:
+            d = _haversine(
+                flat, flon,
+                partner.partner_latitude, partner.partner_longitude,
+            )
+            return d <= default_radius, d
 
-        distance = _haversine(
-            float(lat), float(lon),
-            partner.partner_latitude, partner.partner_longitude,
-        )
-        return distance <= radius, distance
+        # Step 4: nothing configured. Allow (don't lock people out).
+        return True, None

@@ -10,3 +10,4 @@ from . import schedule
 from . import calendar_ctrl
 from . import hr_requests
 from . import device
+from . import notifications

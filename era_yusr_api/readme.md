@@ -11,7 +11,8 @@ Provides a JWT-authenticated REST layer on top of Odoo 19, with a dedicated
 
 - **Employee ID + PIN authentication** (no portal/internal user login)
 - **JWT access + refresh tokens** (8 h / 30 d)
-- **PIN hashing** via `werkzeug.security.pbkdf2:sha256`
+- **PIN stored on the standard `hr.employee.pin` field** (shared with the
+  Attendance Kiosk), verified with `hmac.compare_digest`
 - **Lockout after 5 failed attempts** (15 min)
 - **Geofenced attendance check-in** (Haversine distance)
 - **Push notification device registry** (`yusr.device`)
@@ -185,7 +186,9 @@ curl https://erp.era.net.sa/api/yusr/profile \
 
 - Always serve over **HTTPS** in production.
 - Rotate `era_yusr_api.jwt_secret` periodically — this invalidates all active sessions.
-- PINs are **hashed** with PBKDF2-SHA256 + 16-byte salt. Plain PINs are never stored or logged.
+- PINs are stored on the stock `hr.employee.pin` field (HR-restricted) and
+  verified with `hmac.compare_digest` to avoid timing leaks. Plain PINs are
+  never logged. The legacy `pin_hash` column was dropped in v19.0.2.0.0.
 - Accounts lock for **15 minutes** after **5 consecutive failed attempts**.
 - Consider adding rate limiting at the reverse proxy layer (nginx/Cloudflare).
 
@@ -210,7 +213,8 @@ era_yusr_api/
 │   ├── hr_requests.py
 │   └── device.py
 ├── models/
-│   ├── hr_employee.py     Adds employee_login_id, pin_hash, lockout
+│   ├── hr_employee.py     Adds employee_login_id + lockout fields;
+│   │                      PIN reuses the stock hr.employee.pin field
 │   ├── res_config_settings.py
 │   └── yusr_device.py
 ├── wizard/

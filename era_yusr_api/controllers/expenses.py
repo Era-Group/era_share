@@ -17,7 +17,7 @@ class YusrExpensesController(http.Controller):
 
     @http.route(
         '/api/yusr/expenses',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def list_expenses(self, employee=None, **kwargs):
@@ -40,7 +40,7 @@ class YusrExpensesController(http.Controller):
 
     @http.route(
         '/api/yusr/expenses/categories',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def categories(self, employee=None, **kwargs):
@@ -55,7 +55,7 @@ class YusrExpensesController(http.Controller):
 
     @http.route(
         '/api/yusr/expenses',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def create_expense(self, employee=None, **kwargs):

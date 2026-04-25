@@ -54,7 +54,8 @@ Both repos should live under the `Era-Group` GitHub organization.
 - **Backend module `era_yusr_api`** — fully implemented and syntax-verified
   - Employee ID + PIN authentication (no portal/internal-user login)
   - JWT access (8 h) + refresh (30 d) tokens
-  - PIN hashing via `werkzeug.security` PBKDF2-SHA256
+  - PIN stored on the standard `hr.employee.pin` field (shared with the
+    Attendance Kiosk) — set the PIN once and it works for both
   - Account lockout after 5 failed attempts (15 min)
   - 20+ REST endpoints (see §6 API Contract)
   - CORS preflight handler
@@ -77,8 +78,12 @@ Both repos should live under the `Era-Group` GitHub organization.
    login, no OAuth. This is a hard product requirement. Never suggest
    refactoring it to reuse `res.users` authentication.
 
-2. **PINs are 4–6 digits, numeric only.** Stored as PBKDF2 hash. Never
-   logged in plaintext anywhere.
+2. **PINs are 4–6 digits, numeric only.** Stored on the stock
+   `hr.employee.pin` field (same one used by the Attendance Kiosk).
+   This is intentional reuse — one PIN covers Yusr login + Kiosk
+   check-in. Verification uses `hmac.compare_digest`. PINs are never
+   logged anywhere; the field is HR-restricted by Odoo's standard ACLs.
+   The legacy `pin_hash` column was dropped in migration `19.0.2.0.0`.
 
 3. **Geofencing is server-side enforced.** The mobile app sends GPS
    coordinates; the backend computes distance from company location and
@@ -114,7 +119,8 @@ era_yusr_api/
 │   ├── hr_requests.py
 │   └── device.py       push notification token registration
 ├── models/
-│   ├── hr_employee.py  adds employee_login_id, pin_hash, lockout fields
+│   ├── hr_employee.py  adds employee_login_id + lockout fields; reuses
+│   │                   the standard hr.employee.pin field for the PIN
 │   ├── res_config_settings.py
 │   └── yusr_device.py
 ├── wizard/
@@ -159,16 +165,17 @@ pip install PyJWT
 | Field                   | Type     | Notes                                    |
 |-------------------------|----------|------------------------------------------|
 | `employee_login_id`     | Char     | unique, alphanumeric+`_-`, 3-32 chars    |
-| `pin_hash`              | Char     | PBKDF2 hash, readable only by HR group   |
 | `yusr_access_enabled`   | Boolean  | per-employee kill switch                 |
 | `yusr_last_login`       | Datetime | stamped on successful login              |
 | `yusr_failed_attempts`  | Integer  | resets on success; triggers lockout at 5 |
 | `yusr_locked_until`     | Datetime | lockout expiry                           |
 
-Methods:
-- `set_pin(pin)` — validates format, hashes, stores
-- `verify_pin(pin)` — constant-time check
-- `authenticate_yusr(login_id, pin)` — **@api.model**, handles full login flow incl. lockout
+Methods (all on `hr.employee`):
+- `set_pin(pin)` — validates 4–6 digit format, writes to the standard
+  `pin` field, resets lockout counters
+- `verify_pin(pin)` — constant-time compare via `hmac.compare_digest`
+- `authenticate_yusr(login_id, pin)` — **@api.model**, handles full
+  login flow incl. lockout
 
 ### 5.6 Testing the Backend Manually
 

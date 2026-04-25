@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, AccessDenied
@@ -10,18 +9,16 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
     # --- Yusr mobile app credentials ---
+    # The login PIN is the standard Odoo hr.employee.pin field — the same
+    # one used by the Attendance Kiosk. No separate pin_hash column: we
+    # store plain-text to match Odoo's existing convention, so HR can set
+    # a PIN once and it works for both Kiosk check-in and the mobile app.
     employee_login_id = fields.Char(
         string='Employee Login ID',
         copy=False,
         index=True,
         help="Unique identifier used to log into the Yusr mobile app "
              "(e.g., EMP1023). Case-insensitive, alphanumeric."
-    )
-    pin_hash = fields.Char(
-        string='PIN Hash',
-        copy=False,
-        groups='hr.group_hr_user',
-        help="Hashed PIN code. Never stored in plain text."
     )
     yusr_access_enabled = fields.Boolean(
         string='Yusr Access Enabled',
@@ -44,11 +41,10 @@ class HrEmployee(models.Model):
         help="If set in the future, login is blocked until this time."
     )
 
-    _sql_constraints = [
-        ('employee_login_id_unique',
-         'unique(employee_login_id)',
-         'Employee Login ID must be unique.'),
-    ]
+    _employee_login_id_unique = models.Constraint(
+        'unique(employee_login_id)',
+        'Employee Login ID must be unique.',
+    )
 
     # ------------------------------------------------------------------
     # Validation
@@ -64,35 +60,36 @@ class HrEmployee(models.Model):
                 ))
 
     # ------------------------------------------------------------------
-    # PIN management
+    # PIN management (uses the standard hr.employee.pin field)
     # ------------------------------------------------------------------
     def set_pin(self, pin):
-        """Hash and store a PIN. Validates format (4-6 digits)."""
+        """Store a PIN on the standard hr.employee.pin field.
+        Validates format (4-6 digits). Also resets lockout state."""
         self.ensure_one()
         if not pin or not re.match(r'^\d{4,6}$', str(pin)):
             raise ValidationError(_("PIN must be 4 to 6 digits."))
         self.sudo().write({
-            'pin_hash': generate_password_hash(str(pin), method='pbkdf2:sha256', salt_length=16),
+            'pin': str(pin),
             'yusr_failed_attempts': 0,
             'yusr_locked_until': False,
         })
         return True
 
     def verify_pin(self, pin):
-        """Check a PIN against the stored hash. Returns True/False."""
+        """Constant-time compare the submitted PIN against the stored
+        plain-text PIN on hr.employee.pin. Returns True/False."""
         self.ensure_one()
-        if not self.pin_hash or not pin:
+        stored = self.sudo().pin or ''
+        if not stored or not pin:
             return False
-        try:
-            return check_password_hash(self.pin_hash, str(pin))
-        except Exception:
-            return False
+        import hmac
+        return hmac.compare_digest(stored, str(pin))
 
     def action_reset_pin(self):
         """Admin action: clear PIN so employee can set a new one via HR."""
         for emp in self:
             emp.sudo().write({
-                'pin_hash': False,
+                'pin': False,
                 'yusr_failed_attempts': 0,
                 'yusr_locked_until': False,
             })

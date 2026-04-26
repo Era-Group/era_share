@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_yusr_device_hr_user,yusr.device.hr.user,model_yusr_device,hr.group_hr_user,1,1,1,1
-access_yusr_device_hr_manager,yusr.device.hr.manager,model_yusr_device,hr.group_hr_manager,1,1,1,1
-access_yusr_set_pin_wizard_hr_user,yusr.set.pin.wizard.hr.user,model_yusr_set_pin_wizard,hr.group_hr_user,1,1,1,1
-access_yusr_leave_type_visibility_wizard,yusr.leave.type.visibility.wizard.hr,model_yusr_leave_type_visibility_wizard,hr_holidays.group_hr_holidays_manager,1,1,1,1
-access_yusr_leave_type_visibility_line,yusr.leave.type.visibility.line.hr,model_yusr_leave_type_visibility_line,hr_holidays.group_hr_holidays_manager,1,1,1,1

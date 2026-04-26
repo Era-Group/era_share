@@ -31,11 +31,12 @@ class EraEmpReassignWizard(models.TransientModel):
         string="Only Open Records",
         default=True,
         help=(
-            "If checked, closed business records (won/lost leads, done/cancelled "
-            "orders, closed tickets, past calendar events...) are skipped. "
+            "If checked, closed business records (won/lost leads, "
+            "closed tickets, past calendar events...) are skipped. "
             "Pending activities are always reassigned regardless of this flag, "
             "and regardless of their parent record's state — a won lead keeps "
-            "its salesperson, but its scheduled activity still moves to the new user."
+            "its salesperson, but its scheduled activity still moves to the "
+            "new user. Quotations are always limited to draft/sent state."
         ),
     )
 
@@ -44,7 +45,7 @@ class EraEmpReassignWizard(models.TransientModel):
     reassign_calendar = fields.Boolean(string="Calendar Events", default=True)
     reassign_helpdesk = fields.Boolean(string="Helpdesk Tickets", default=True)
     reassign_tasks = fields.Boolean(string="Project Tasks", default=True)
-    reassign_sale_orders = fields.Boolean(string="Sales Orders", default=True)
+    reassign_sale_orders = fields.Boolean(string="Quotations", default=True)
     reassign_partners = fields.Boolean(string="Customers (Salesperson)", default=True)
     reassign_invoices = fields.Boolean(string="Invoices (Salesperson)", default=True)
 
@@ -107,17 +108,16 @@ class EraEmpReassignWizard(models.TransientModel):
     # Record collectors — each returns a recordset (possibly empty)
     # ------------------------------------------------------------------
     def _get_activities(self):
-        # Reassign every still-actionable activity of the leaver: planned, due
-        # today, AND overdue. Done activities are either unlinked or archived
-        # (active=False, computed state='done'), so filtering on active=True
-        # excludes them explicitly. This is independent of the parent record's
-        # state — a future activity on a won lead must move even though the
-        # won lead itself stays put.
+        # Every active (non-Done) activity due today or later, across every
+        # model, that the leaver is connected to — assigned to them OR created
+        # by them. Done activities are archived (active=False), so the default
+        # active_test=True excludes them.
         self.ensure_one()
+        leaver = self.from_user_id.id
         Activity = self.env['mail.activity'].sudo()
         return Activity.search([
-            ('user_id', '=', self.from_user_id.id),
-            ('active', '=', True),
+            ('date_deadline', '>=', fields.Date.context_today(self)),
+            '|', ('user_id', '=', leaver), ('create_uid', '=', leaver),
         ])
 
     def _get_leads(self):
@@ -163,16 +163,17 @@ class EraEmpReassignWizard(models.TransientModel):
         return Task.search(domain)
 
     def _get_sale_orders(self):
+        # Quotations only (draft/sent) where the leaver is the salesperson.
+        # Confirmed/done/cancelled orders stay put — their lifecycle is settled
+        # and re-owning them risks disturbing another rep's pipeline.
         self.ensure_one()
         if 'sale.order' not in self.env:
             return self.env['mail.activity']
         SaleOrder = self.env['sale.order'].sudo()
-        domain = [('user_id', '=', self.from_user_id.id)]
-        if self.only_future:
-            # Reassign quotations and confirmed orders that still need follow-up.
-            # Done/cancelled orders are settled and don't need a salesperson.
-            domain += [('state', 'in', ('draft', 'sent', 'sale'))]
-        return SaleOrder.search(domain)
+        return SaleOrder.search([
+            ('user_id', '=', self.from_user_id.id),
+            ('state', 'in', ('draft', 'sent')),
+        ])
 
     def _get_partners(self):
         self.ensure_one()
@@ -249,8 +250,8 @@ class EraEmpReassignWizard(models.TransientModel):
             orders = self._get_sale_orders()
             if orders:
                 orders.write({'user_id': self.to_user_id.id})
-                self._post_message(orders, _("Sales order reassigned to %s.", self.to_user_id.name))
-                summary.append(_("%s sales orders", len(orders)))
+                self._post_message(orders, _("Quotation reassigned to %s.", self.to_user_id.name))
+                summary.append(_("%s quotations", len(orders)))
 
         if self.reassign_partners:
             partners = self._get_partners()

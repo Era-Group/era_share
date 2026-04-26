@@ -22,7 +22,7 @@ class YusrAuthController(http.Controller):
 
     @http.route(
         '/api/yusr/auth/login',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     def login(self, **kwargs):
         try:
@@ -56,7 +56,7 @@ class YusrAuthController(http.Controller):
 
     @http.route(
         '/api/yusr/auth/refresh',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     def refresh(self, **kwargs):
         try:
@@ -66,7 +66,12 @@ class YusrAuthController(http.Controller):
                 return err("refresh_token is required.", status=400)
 
             decoded = decode_token(request.env, refresh_token, expected_type='refresh')
-            employee = request.env['hr.employee'].sudo().browse(decoded['sub']).exists()
+            try:
+                employee_id = int(decoded['sub'])
+            except (KeyError, TypeError, ValueError):
+                return err("Malformed refresh token.", status=401,
+                           code='INVALID_REFRESH_TOKEN')
+            employee = request.env['hr.employee'].sudo().browse(employee_id).exists()
             if not employee or not employee.active or not employee.yusr_access_enabled:
                 return err("Employee not found or inactive.", status=401)
 
@@ -84,7 +89,7 @@ class YusrAuthController(http.Controller):
 
     @http.route(
         '/api/yusr/auth/logout',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def logout(self, employee=None, **kwargs):
@@ -97,7 +102,7 @@ class YusrAuthController(http.Controller):
 
     @http.route(
         '/api/yusr/auth/forgot-pin',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     def forgot_pin(self, **kwargs):
         """Create an HR activity requesting PIN reset."""
@@ -146,6 +151,13 @@ def _serialize_employee_brief(emp):
         'department': emp.department_id.name if emp.department_id else None,
         'manager': emp.parent_id.name if emp.parent_id else None,
         'avatar_url': f"/web/image/hr.employee/{emp.id}/image_128",
+        # Include contact fields on the login brief so the More screen
+        # can show phone/email on first launch before /profile is
+        # fetched. The mobile's buildEmployee accepts any of these
+        # names and keeps the first populated value.
+        'work_email': emp.work_email or '',
+        'mobile_phone': emp.mobile_phone or '',
+        'work_phone': emp.work_phone or '',
         'roles': _get_roles(emp),
     }
 

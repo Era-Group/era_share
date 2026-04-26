@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="yusr_leave_type_visibility_wizard_form" model="ir.ui.view">
+        <field name="name">yusr.leave.type.visibility.wizard.form</field>
+        <field name="model">yusr.leave.type.visibility.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Yusr — Leave Type Visibility">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Yusr Mobile — Leave Type Visibility</h1>
+                        <p class="text-muted">
+                            Every <code>hr.leave.type</code> record in the database is listed below
+                            (including ones hidden from the standard Time Off list by record rules or
+                            company scoping). Tick <b>Show in Yusr App</b> to make a type appear in
+                            the mobile picker and balances; untick to hide it. Archived types are
+                            shown for reference but will still be hidden by the endpoint's
+                            <code>active=True</code> filter.
+                        </p>
+                    </div>
+                    <field name="line_ids">
+                        <list editable="bottom" create="0" delete="0">
+                            <field name="name"/>
+                            <field name="company_name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="employee_requests"/>
+                            <field name="yusr_visible" widget="boolean_toggle"/>
+                            <field name="leave_type_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_apply" type="object"
+                            string="Apply" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="yusr_leave_type_visibility_wizard_action" model="ir.actions.act_window">
+        <field name="name">Yusr — Leave Type Visibility</field>
+        <field name="res_model">yusr.leave.type.visibility.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_yusr_leave_type_visibility"
+              name="Yusr Mobile Visibility"
+              action="yusr_leave_type_visibility_wizard_action"
+              parent="hr_holidays.menu_hr_holidays_configuration"
+              groups="hr_holidays.group_hr_holidays_manager"
+              sequence="100"/>
+</odoo>

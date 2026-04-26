@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Two tweaks to hr.leave.type's form:
+
+        1. Add "Show in Yusr Mobile App" so HR can opt individual types
+           into/out of the mobile app without archiving them.
+
+        2. Force "Allow Employee Requests" to always show. The stock form
+           hides it behind `invisible="not requires_allocation"`, so HR
+           can't tick it on types that don't require allocation (e.g.
+           Sick Leave UnPaid, Marriage, Maternity, Hajj, Study, Emergency
+           — the whole Saudi localization pack). The Yusr /leaves API
+           filters by `employee_requests=True`, so until HR can tick it,
+           those types stay invisible to the mobile.
+    -->
+    <record id="view_hr_leave_type_form_yusr" model="ir.ui.view">
+        <field name="name">hr.leave.type.form.yusr</field>
+        <field name="model">hr.leave.type</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_requests']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='employee_requests']" position="after">
+                <field name="yusr_visible"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

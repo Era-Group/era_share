@@ -16,13 +16,27 @@ ACCESS_TOKEN_TTL_MINUTES = 60 * 8        # 8 hours
 REFRESH_TOKEN_TTL_DAYS = 30              # 30 days
 ALGORITHM = 'HS256'
 
+CONFIG_PARAM_KEY = 'era_yusr_api.jwt_secret'
+
+
+def generate_secret():
+    """Return a fresh 64-byte URL-safe random secret."""
+    import secrets
+    return secrets.token_urlsafe(64)
+
 
 def _get_secret(env):
-    """Fetch JWT secret from ir.config_parameter. Fail hard if not set."""
-    secret = env['ir.config_parameter'].sudo().get_param('era_yusr_api.jwt_secret')
-    if not secret or secret == 'CHANGE_ME_IN_PRODUCTION':
+    """Fetch JWT secret from ir.config_parameter.
+
+    The secret is generated automatically on module install (via
+    post_init_hook) and on every module upgrade (via migrations/*/
+    post-migration.py). It is intentionally not exposed in the
+    Settings UI. Rotating it logs out every mobile user."""
+    from odoo.exceptions import AccessDenied
+    secret = env['ir.config_parameter'].sudo().get_param(CONFIG_PARAM_KEY)
+    if not secret:
         raise AccessDenied(
-            "JWT secret not configured. Set era_yusr_api.jwt_secret in system parameters."
+            "JWT secret not initialized. Reinstall era_yusr_api."
         )
     return secret
 
@@ -35,15 +49,17 @@ def generate_tokens(env, employee):
     secret = _get_secret(env)
     now = datetime.now(timezone.utc)
 
+    # PyJWT >= 2.8 enforces that the `sub` claim is a string (RFC 7519).
+    # Encode it as str(employee.id) and cast back to int at decode time.
     access_payload = {
-        'sub': employee.id,
+        'sub': str(employee.id),
         'employee_login_id': employee.employee_login_id or '',
         'type': 'access',
         'iat': now,
         'exp': now + timedelta(minutes=ACCESS_TOKEN_TTL_MINUTES),
     }
     refresh_payload = {
-        'sub': employee.id,
+        'sub': str(employee.id),
         'type': 'refresh',
         'iat': now,
         'exp': now + timedelta(days=REFRESH_TOKEN_TTL_DAYS),
@@ -83,7 +99,11 @@ def decode_token(env, token, expected_type='access'):
 def get_employee_from_token(env, token):
     """Decode access token and return the hr.employee recordset."""
     payload = decode_token(env, token, expected_type='access')
-    employee = env['hr.employee'].sudo().browse(payload['sub']).exists()
+    try:
+        employee_id = int(payload['sub'])
+    except (KeyError, TypeError, ValueError):
+        raise AccessDenied("Malformed token subject.")
+    employee = env['hr.employee'].sudo().browse(employee_id).exists()
     if not employee or not employee.active:
         raise AccessDenied("Employee not found or inactive.")
     return employee

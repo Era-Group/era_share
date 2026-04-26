@@ -18,7 +18,7 @@ class YusrHRRequestsController(http.Controller):
 
     @http.route(
         '/api/yusr/hr/requests',
-        type='http', auth='public', methods=['GET'], csrf=False, cors='*'
+        type='http', auth='none', methods=['GET'], csrf=False
     )
     @yusr_authenticated
     def list_requests(self, employee=None, **kwargs):
@@ -42,7 +42,7 @@ class YusrHRRequestsController(http.Controller):
 
     @http.route(
         '/api/yusr/hr/requests',
-        type='http', auth='public', methods=['POST'], csrf=False, cors='*'
+        type='http', auth='none', methods=['POST'], csrf=False
     )
     @yusr_authenticated
     def create_request(self, employee=None, **kwargs):

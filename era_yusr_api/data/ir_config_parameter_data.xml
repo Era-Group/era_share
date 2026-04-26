@@ -2,11 +2,6 @@
 <odoo>
     <data noupdate="1">
 
-        <record id="ir_config_param_yusr_jwt_secret" model="ir.config_parameter">
-            <field name="key">era_yusr_api.jwt_secret</field>
-            <field name="value">CHANGE_ME_IN_PRODUCTION</field>
-        </record>
-
         <record id="ir_config_param_yusr_geofence_enabled" model="ir.config_parameter">
             <field name="key">era_yusr_api.geofence_enabled</field>
             <field name="value">True</field>

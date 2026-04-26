@@ -76,6 +76,14 @@
                                 </span>
                             </div>
 
+                            <label for="reassign_rfqs" invisible="not has_purchase"/>
+                            <div invisible="not has_purchase">
+                                <field name="reassign_rfqs" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="rfqs_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
                             <label for="reassign_partners"/>
                             <div>
                                 <field name="reassign_partners" class="oe_inline"/>
@@ -99,6 +107,7 @@
                     <field name="has_calendar" invisible="1"/>
                     <field name="has_project" invisible="1"/>
                     <field name="has_sale" invisible="1"/>
+                    <field name="has_purchase" invisible="1"/>
                     <field name="has_account" invisible="1"/>
                 </sheet>
                 <footer>

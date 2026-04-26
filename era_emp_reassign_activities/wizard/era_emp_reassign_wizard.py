@@ -46,14 +46,16 @@ class EraEmpReassignWizard(models.TransientModel):
     reassign_helpdesk = fields.Boolean(string="Helpdesk Tickets", default=True)
     reassign_tasks = fields.Boolean(string="Project Tasks", default=True)
     reassign_sale_orders = fields.Boolean(string="Quotations", default=True)
+    reassign_rfqs = fields.Boolean(string="Requests for Quotation", default=True)
     reassign_partners = fields.Boolean(string="Customers (Salesperson)", default=True)
-    reassign_invoices = fields.Boolean(string="Invoices (Salesperson)", default=True)
+    reassign_invoices = fields.Boolean(string="Draft Invoices (Salesperson)", default=True)
 
     has_helpdesk = fields.Boolean(compute='_compute_module_availability')
     has_crm = fields.Boolean(compute='_compute_module_availability')
     has_calendar = fields.Boolean(compute='_compute_module_availability')
     has_project = fields.Boolean(compute='_compute_module_availability')
     has_sale = fields.Boolean(compute='_compute_module_availability')
+    has_purchase = fields.Boolean(compute='_compute_module_availability')
     has_account = fields.Boolean(compute='_compute_module_availability')
 
     activities_count = fields.Integer(compute='_compute_counts')
@@ -62,6 +64,7 @@ class EraEmpReassignWizard(models.TransientModel):
     helpdesk_count = fields.Integer(compute='_compute_counts')
     tasks_count = fields.Integer(compute='_compute_counts')
     sale_orders_count = fields.Integer(compute='_compute_counts')
+    rfqs_count = fields.Integer(compute='_compute_counts')
     partners_count = fields.Integer(compute='_compute_counts')
     invoices_count = fields.Integer(compute='_compute_counts')
 
@@ -73,6 +76,7 @@ class EraEmpReassignWizard(models.TransientModel):
         has_calendar = 'calendar.event' in env
         has_project = 'project.task' in env
         has_sale = 'sale.order' in env
+        has_purchase = 'purchase.order' in env
         has_account = 'account.move' in env
         for wiz in self:
             wiz.has_helpdesk = has_helpdesk
@@ -80,6 +84,7 @@ class EraEmpReassignWizard(models.TransientModel):
             wiz.has_calendar = has_calendar
             wiz.has_project = has_project
             wiz.has_sale = has_sale
+            wiz.has_purchase = has_purchase
             wiz.has_account = has_account
 
     @api.depends('from_user_id', 'only_future')
@@ -92,6 +97,7 @@ class EraEmpReassignWizard(models.TransientModel):
                 wiz.helpdesk_count = 0
                 wiz.tasks_count = 0
                 wiz.sale_orders_count = 0
+                wiz.rfqs_count = 0
                 wiz.partners_count = 0
                 wiz.invoices_count = 0
                 continue
@@ -101,6 +107,7 @@ class EraEmpReassignWizard(models.TransientModel):
             wiz.helpdesk_count = len(wiz._get_helpdesk_tickets())
             wiz.tasks_count = len(wiz._get_tasks())
             wiz.sale_orders_count = len(wiz._get_sale_orders())
+            wiz.rfqs_count = len(wiz._get_rfqs())
             wiz.partners_count = len(wiz._get_partners())
             wiz.invoices_count = len(wiz._get_invoices())
 
@@ -177,24 +184,41 @@ class EraEmpReassignWizard(models.TransientModel):
             '|', ('user_id', '=', leaver), ('create_uid', '=', leaver),
         ])
 
+    def _get_rfqs(self):
+        # Requests for Quotation only (purchase.order in draft/sent) where the
+        # leaver is the buyer/purchase rep (user_id) or the creator. Confirmed
+        # purchase orders ('purchase'/'done'/'cancel') stay put — the supplier
+        # commitment is settled and re-owning them risks disturbing the active
+        # buyer's pipeline.
+        self.ensure_one()
+        if 'purchase.order' not in self.env:
+            return self.env['mail.activity']
+        leaver = self.from_user_id.id
+        Purchase = self.env['purchase.order'].sudo()
+        return Purchase.search([
+            ('state', 'in', ('draft', 'sent')),
+            '|', ('user_id', '=', leaver), ('create_uid', '=', leaver),
+        ])
+
     def _get_partners(self):
         self.ensure_one()
         Partner = self.env['res.partner'].sudo()
         return Partner.search([('user_id', '=', self.from_user_id.id)])
 
     def _get_invoices(self):
+        # Non-posted customer invoices/refunds/receipts (state='draft') where
+        # the leaver is the Salesperson or the creator. Posted/cancelled moves
+        # are settled and stay put.
         self.ensure_one()
         if 'account.move' not in self.env:
             return self.env['mail.activity']
+        leaver = self.from_user_id.id
         Move = self.env['account.move'].sudo()
-        domain = [
-            ('invoice_user_id', '=', self.from_user_id.id),
+        return Move.search([
             ('move_type', 'in', ('out_invoice', 'out_refund', 'out_receipt')),
-        ]
-        if self.only_future:
-            # Skip cancelled invoices; draft and posted both still need an owner.
-            domain += [('state', '!=', 'cancel')]
-        return Move.search(domain)
+            ('state', '=', 'draft'),
+            '|', ('invoice_user_id', '=', leaver), ('create_uid', '=', leaver),
+        ])
 
     # ------------------------------------------------------------------
     # Main action
@@ -254,6 +278,13 @@ class EraEmpReassignWizard(models.TransientModel):
                 orders.write({'user_id': self.to_user_id.id})
                 self._post_message(orders, _("Quotation reassigned to %s.", self.to_user_id.name))
                 summary.append(_("%s quotations", len(orders)))
+
+        if self.reassign_rfqs and self.has_purchase:
+            rfqs = self._get_rfqs()
+            if rfqs:
+                rfqs.write({'user_id': self.to_user_id.id})
+                self._post_message(rfqs, _("RFQ reassigned to %s.", self.to_user_id.name))
+                summary.append(_("%s RFQs", len(rfqs)))
 
         if self.reassign_partners:
             partners = self._get_partners()

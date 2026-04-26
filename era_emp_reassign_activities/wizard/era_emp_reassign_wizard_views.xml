@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_era_emp_reassign_wizard_form" model="ir.ui.view">
+        <field name="name">era.emp.reassign.wizard.form</field>
+        <field name="model">era.emp.reassign.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reassign Employee Work">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        Transfer the pending work of the source user to a new owner.
+                        This is typically used when an employee leaves the company so that
+                        scheduled activities, open leads, meetings and tickets do not stay
+                        forgotten on the inactive account.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="from_user_id" options="{'no_create': True}"
+                                   readonly="context.get('default_from_user_id')"/>
+                            <field name="to_user_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="only_future"/>
+                        </group>
+                    </group>
+
+                    <separator string="What to reassign"/>
+                    <group>
+                        <group>
+                            <label for="reassign_activities"/>
+                            <div>
+                                <field name="reassign_activities" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="activities_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_leads" invisible="not has_crm"/>
+                            <div invisible="not has_crm">
+                                <field name="reassign_leads" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="leads_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_calendar" invisible="not has_calendar"/>
+                            <div invisible="not has_calendar">
+                                <field name="reassign_calendar" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="calendar_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+                        </group>
+                        <group>
+                            <label for="reassign_helpdesk" invisible="not has_helpdesk"/>
+                            <div invisible="not has_helpdesk">
+                                <field name="reassign_helpdesk" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="helpdesk_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_tasks" invisible="not has_project"/>
+                            <div invisible="not has_project">
+                                <field name="reassign_tasks" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="tasks_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_sale_orders" invisible="not has_sale"/>
+                            <div invisible="not has_sale">
+                                <field name="reassign_sale_orders" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="sale_orders_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_partners"/>
+                            <div>
+                                <field name="reassign_partners" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="partners_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+
+                            <label for="reassign_invoices" invisible="not has_account"/>
+                            <div invisible="not has_account">
+                                <field name="reassign_invoices" class="oe_inline"/>
+                                <span class="text-muted ms-2">
+                                    (<field name="invoices_count" class="oe_inline" readonly="1"/> records)
+                                </span>
+                            </div>
+                        </group>
+                    </group>
+
+                    <field name="has_helpdesk" invisible="1"/>
+                    <field name="has_crm" invisible="1"/>
+                    <field name="has_calendar" invisible="1"/>
+                    <field name="has_project" invisible="1"/>
+                    <field name="has_sale" invisible="1"/>
+                    <field name="has_account" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button name="action_reassign" type="object"
+                            string="Reassign" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

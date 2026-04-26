@@ -4,6 +4,7 @@ from markupsafe import Markup
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import SQL
 
 
 _logger = logging.getLogger(__name__)
@@ -240,6 +241,7 @@ class EraEmpReassignWizard(models.TransientModel):
                         'user_id': self.to_user_id.id,
                         'note': remark + existing,
                     })
+                self._reassign_create_uid(activities)
                 summary.append(_("%s activities", len(activities)))
 
         if self.reassign_leads and self.has_crm:
@@ -276,6 +278,7 @@ class EraEmpReassignWizard(models.TransientModel):
             orders = self._get_sale_orders()
             if orders:
                 orders.write({'user_id': self.to_user_id.id})
+                self._reassign_create_uid(orders)
                 self._post_message(orders, _("Quotation reassigned to %s.", self.to_user_id.name))
                 summary.append(_("%s quotations", len(orders)))
 
@@ -283,6 +286,7 @@ class EraEmpReassignWizard(models.TransientModel):
             rfqs = self._get_rfqs()
             if rfqs:
                 rfqs.write({'user_id': self.to_user_id.id})
+                self._reassign_create_uid(rfqs)
                 self._post_message(rfqs, _("RFQ reassigned to %s.", self.to_user_id.name))
                 summary.append(_("%s RFQs", len(rfqs)))
 
@@ -300,6 +304,7 @@ class EraEmpReassignWizard(models.TransientModel):
             invoices = self._get_invoices()
             if invoices:
                 invoices.write({'invoice_user_id': self.to_user_id.id})
+                self._reassign_create_uid(invoices)
                 self._post_message(
                     invoices,
                     _("Invoice salesperson reassigned to %s.", self.to_user_id.name),
@@ -338,6 +343,23 @@ class EraEmpReassignWizard(models.TransientModel):
             fields.Date.context_today(self),
         )
         return Markup("<p><i>%s</i></p>") % text
+
+    def _reassign_create_uid(self, records):
+        # Set create_uid := to_user via raw SQL. Odoo's ORM write() drops
+        # log_access columns (create_uid/create_date/write_uid/write_date)
+        # except for SUPERUSER during registry init, so a normal write()
+        # would silently no-op. We want create_uid moved so the next wizard
+        # run for the same leaver doesn't re-match these records via the
+        # `create_uid = leaver` branch — the transfer should be idempotent.
+        if not records:
+            return
+        self.env.execute_query(SQL(
+            "UPDATE %(table)s SET create_uid = %(uid)s WHERE id IN %(ids)s",
+            table=SQL.identifier(records._table),
+            uid=self.to_user_id.id,
+            ids=tuple(records.ids),
+        ))
+        records.invalidate_recordset(['create_uid'])
 
     def _post_message(self, records, body):
         for rec in records:

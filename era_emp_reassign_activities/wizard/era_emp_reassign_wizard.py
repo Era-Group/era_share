@@ -163,16 +163,18 @@ class EraEmpReassignWizard(models.TransientModel):
         return Task.search(domain)
 
     def _get_sale_orders(self):
-        # Quotations only (draft/sent) where the leaver is the salesperson.
-        # Confirmed/done/cancelled orders stay put — their lifecycle is settled
-        # and re-owning them risks disturbing another rep's pipeline.
+        # Quotations only (draft/sent) the leaver is connected to — assigned
+        # as salesperson OR created by them. Confirmed/done/cancelled orders
+        # stay put: their lifecycle is settled and re-owning them risks
+        # disturbing another rep's pipeline.
         self.ensure_one()
         if 'sale.order' not in self.env:
             return self.env['mail.activity']
+        leaver = self.from_user_id.id
         SaleOrder = self.env['sale.order'].sudo()
         return SaleOrder.search([
-            ('user_id', '=', self.from_user_id.id),
             ('state', 'in', ('draft', 'sent')),
+            '|', ('user_id', '=', leaver), ('create_uid', '=', leaver),
         ])
 
     def _get_partners(self):

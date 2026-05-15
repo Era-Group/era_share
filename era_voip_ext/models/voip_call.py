@@ -618,7 +618,7 @@ class VoipCall(models.Model):
                    AND transcript IS NOT NULL
                    AND transcript <> ''
                    {exclude_clause}
-              ORDER BY create_date DESC
+              ORDER BY create_date ASC
                  LIMIT 1
                  FOR UPDATE SKIP LOCKED
             """,

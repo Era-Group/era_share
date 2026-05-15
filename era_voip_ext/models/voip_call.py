@@ -526,12 +526,16 @@ class VoipCall(models.Model):
         reason_html = escape(reason).replace("\n", Markup("<br/>"))
         reason_line = Markup("<b>%s:</b><br/>%s") % (_("سبب التقييم"), reason_html)
         body = rating_line + Markup("<br/>") + reason_line
-        lead.sudo().message_post(
-            body=body,
-            subject=_("تقييم مكالمة هاتفية"),
-            message_type="comment",
-            subtype_xmlid="mail.mt_note",
-        )
+        odoobot = self.env.ref("base.partner_root", raise_if_not_found=False)
+        post_kwargs = {
+            "body": body,
+            "subject": _("تقييم مكالمة هاتفية"),
+            "message_type": "comment",
+            "subtype_xmlid": "mail.mt_note",
+        }
+        if odoobot:
+            post_kwargs["author_id"] = odoobot.id
+        lead.sudo().message_post(**post_kwargs)
         return True
 
     def action_retranscript(self):

@@ -4,6 +4,7 @@
         <field name="name">voip.call.form.recording.link</field>
         <field name="model">voip.call</field>
         <field name="inherit_id" ref="voip.voip_call_view_form"/>
+        <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='transcript']" position="attributes">
                 <attribute name="widget">text</attribute>
@@ -12,19 +13,31 @@
             <xpath expr="//sheet" position="inside">
                 <group name="transcription_actions">
                     <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
-                    <button name="action_reanalyze_call" type="object" string="Re-analyze Call" class="btn-secondary"/>
                 </group>
                 <group name="recording_link_group">
                     <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
                 </group>
-                <group name="call_analysis_group" string="تحليل المكالمة">
-                    <field name="analysis_status"/>
-                    <field name="sales_evaluation"/>
-                    <field name="sales_evaluation_reason"/>
-                    <field name="call_summary_long"/>
-                    <field name="call_obstacles"/>
-                    <field name="call_recommendations"/>
-                </group>
+            </xpath>
+            <xpath expr="//notebook/page[1]" position="before">
+                <page string="تحليل المكالمة" name="call_analysis">
+                    <group>
+                        <button name="action_reanalyze_call" type="object" string="Re-analyze Call" class="btn-secondary"/>
+                    </group>
+                    <group>
+                        <field name="analysis_status"/>
+                        <field name="sales_evaluation"/>
+                        <field name="sales_evaluation_reason"/>
+                    </group>
+                    <group string="ملخص المكالمة">
+                        <field name="call_summary_long" nolabel="1"/>
+                    </group>
+                    <group string="المعوقات">
+                        <field name="call_obstacles" nolabel="1"/>
+                    </group>
+                    <group string="التوصيات">
+                        <field name="call_recommendations" nolabel="1"/>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

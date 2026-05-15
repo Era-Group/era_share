@@ -472,15 +472,65 @@ class VoipCall(models.Model):
         if rating not in allowed_ratings:
             rating = False
 
+        reason = self._coerce_analysis_text(data.get("sales_rating_reason"))
         vals = {
             "call_summary_long": summary or False,
             "call_obstacles": obstacles or False,
             "call_recommendations": recommendations or False,
             "sales_evaluation": rating,
-            "sales_evaluation_reason": self._coerce_analysis_text(data.get("sales_rating_reason")) or False,
+            "sales_evaluation_reason": reason or False,
             "analysis_status": "done",
         }
-        return self._safe_write(call, vals)
+        if not self._safe_write(call, vals):
+            return False
+        if reason:
+            try:
+                self._post_evaluation_to_lead(call, rating, reason)
+            except Exception:
+                _logger.exception(
+                    "Call %s: failed to post evaluation to related lead", call.id,
+                )
+        return True
+
+    def _find_related_lead(self, call):
+        Lead = self.env.get("crm.lead")
+        if Lead is None:
+            return False
+        if call._fields.get("res_model") and call._fields.get("res_id"):
+            if call.res_model == "crm.lead" and call.res_id:
+                lead = Lead.browse(call.res_id).exists()
+                if lead:
+                    return lead
+        if call._fields.get("lead_id") and call.lead_id:
+            return call.lead_id
+        if call.partner_id:
+            lead = Lead.search(
+                [
+                    ("partner_id", "=", call.partner_id.id),
+                    ("active", "=", True),
+                ],
+                order="write_date desc, id desc",
+                limit=1,
+            )
+            if lead:
+                return lead
+        return False
+
+    def _post_evaluation_to_lead(self, call, rating, reason):
+        lead = self._find_related_lead(call)
+        if not lead:
+            return False
+        rating_label = dict(self._fields["sales_evaluation"].selection).get(rating) or ""
+        body_lines = [_("<b>تقييم المكالمة:</b> ") + (rating_label or _("غير محدد"))]
+        body_lines.append(_("<b>سبب التقييم:</b><br/>") + reason.replace("\n", "<br/>"))
+        body = "<br/>".join(body_lines)
+        lead.sudo().message_post(
+            body=body,
+            subject=_("تقييم مكالمة هاتفية"),
+            message_type="comment",
+            subtype_xmlid="mail.mt_note",
+        )
+        return True
 
     def action_retranscript(self):
         self.ensure_one()

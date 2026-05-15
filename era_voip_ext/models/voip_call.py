@@ -348,7 +348,7 @@ class VoipCall(models.Model):
                 summary_response = ai_agent.with_user(odoobot).get_direct_response(prompt=text)
                 if summary_response:
                     summary = summary_response[0]
-        except (RequestException, JSONDecodeError, UserError):
+        except (RequestException, JSONDecodeError, UserError, ValueError):
             _logger.exception("Call %s: one-liner summary generation failed", call.id)
         self._commit_if_needed()
 
@@ -379,7 +379,7 @@ class VoipCall(models.Model):
                 formatted = response[0]
                 lines = [line.strip() for line in formatted.splitlines() if line.strip()]
                 return "\n".join(lines)
-        except (RequestException, JSONDecodeError, UserError):
+        except (RequestException, JSONDecodeError, UserError, ValueError):
             _logger.exception("Call %s: transcript formatting failed", self.id)
         return "..."
 
@@ -446,7 +446,7 @@ class VoipCall(models.Model):
         try:
             odoobot = self.env.ref('base.user_root')
             response = ai_agent.with_user(odoobot).get_direct_response(prompt=clean)
-        except (RequestException, JSONDecodeError, UserError):
+        except (RequestException, JSONDecodeError, UserError, ValueError):
             _logger.exception("Call %s: analysis call failed", call.id)
             self._commit_if_needed()
             self._safe_write(call, {"analysis_status": "error"})

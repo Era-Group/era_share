@@ -344,7 +344,8 @@ class VoipCall(models.Model):
         try:
             ai_agent = self.env.ref("voip_ai.voip_call_summary_agent", raise_if_not_found=False)
             if ai_agent and transcript:
-                summary_response = ai_agent.get_direct_response(prompt=text)
+                odoobot = self.env.ref('base.user_root')
+                summary_response = ai_agent.with_user(odoobot).get_direct_response(prompt=text)
                 if summary_response:
                     summary = summary_response[0]
         except (RequestException, JSONDecodeError, UserError):
@@ -372,7 +373,8 @@ class VoipCall(models.Model):
             ai_agent = self.env.ref("era_voip_ext.voip_call_formatting_agent", raise_if_not_found=False)
             if not ai_agent:
                 return text
-            response = ai_agent.get_direct_response(prompt=f"{prompt}\n\n{text}")
+            odoobot = self.env.ref('base.user_root')
+            response = ai_agent.with_user(odoobot).get_direct_response(prompt=f"{prompt}\n\n{text}")
             if response:
                 formatted = response[0]
                 lines = [line.strip() for line in formatted.splitlines() if line.strip()]
@@ -442,7 +444,8 @@ class VoipCall(models.Model):
             return False
 
         try:
-            response = ai_agent.get_direct_response(prompt=clean)
+            odoobot = self.env.ref('base.user_root')
+            response = ai_agent.with_user(odoobot).get_direct_response(prompt=clean)
         except (RequestException, JSONDecodeError, UserError):
             _logger.exception("Call %s: analysis call failed", call.id)
             self._commit_if_needed()

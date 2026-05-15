@@ -394,6 +394,29 @@ class VoipCall(models.Model):
         except (ValueError, JSONDecodeError):
             return None
 
+    @staticmethod
+    def _coerce_analysis_text(value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value.strip()
+        if isinstance(value, (list, tuple)):
+            lines = []
+            for item in value:
+                if item is None:
+                    continue
+                item_str = item if isinstance(item, str) else json.dumps(item, ensure_ascii=False)
+                item_str = item_str.strip()
+                if not item_str:
+                    continue
+                if not item_str.startswith("-"):
+                    item_str = f"- {item_str}"
+                lines.append(item_str)
+            return "\n".join(lines)
+        if isinstance(value, dict):
+            return json.dumps(value, ensure_ascii=False)
+        return str(value).strip()
+
     def _analyze_call(self, call, transcript_text):
         if not call:
             return False
@@ -433,9 +456,9 @@ class VoipCall(models.Model):
             self._safe_write(call, {"analysis_status": "error"})
             return False
 
-        summary = (data.get("summary") or "").strip()
-        obstacles = (data.get("obstacles") or "").strip()
-        recommendations = (data.get("recommendations") or "").strip()
+        summary = self._coerce_analysis_text(data.get("summary"))
+        obstacles = self._coerce_analysis_text(data.get("obstacles"))
+        recommendations = self._coerce_analysis_text(data.get("recommendations"))
         if data.get("is_meaningful") is False or len(summary) < _MIN_ANALYSIS_SUMMARY_CHARS:
             _logger.info(
                 "Call %s: analysis not substantive (summary=%d chars, is_meaningful=%s) — skipping",
@@ -445,7 +468,7 @@ class VoipCall(models.Model):
             return False
 
         allowed_ratings = {"weak", "medium", "good", "excellent"}
-        rating = (data.get("sales_rating") or "").strip().lower()
+        rating = self._coerce_analysis_text(data.get("sales_rating")).lower()
         if rating not in allowed_ratings:
             rating = False
 
@@ -454,7 +477,7 @@ class VoipCall(models.Model):
             "call_obstacles": obstacles or False,
             "call_recommendations": recommendations or False,
             "sales_evaluation": rating,
-            "sales_evaluation_reason": (data.get("sales_rating_reason") or "").strip() or False,
+            "sales_evaluation_reason": self._coerce_analysis_text(data.get("sales_rating_reason")) or False,
             "analysis_status": "done",
         }
         return self._safe_write(call, vals)

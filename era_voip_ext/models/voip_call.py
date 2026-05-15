@@ -523,6 +523,15 @@ class VoipCall(models.Model):
                 return lead
         return False
 
+    def _build_call_link(self, call):
+        if not call or not call.id:
+            return ""
+        base_url = (
+            self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
+        ).rstrip("/")
+        path = f"/web#id={call.id}&model=voip.call&view_type=form"
+        return f"{base_url}{path}" if base_url else path
+
     def _post_evaluation_to_lead(self, call, rating, reason, summary,
                                  obstacles, recommendations):
         lead = self._find_related_lead(call)
@@ -550,6 +559,15 @@ class VoipCall(models.Model):
         sections.append(_block(_("ملخص المكالمة"), summary))
         sections.append(_block(_("المعوقات"), obstacles))
         sections.append(_block(_("التوصيات"), recommendations))
+        call_link = self._build_call_link(call)
+        if call_link:
+            sections.append(
+                Markup('<b>%s:</b> <a href="%s" target="_blank">#%s</a>') % (
+                    _("سجل المكالمة"),
+                    call_link,
+                    call.id,
+                )
+            )
         body = Markup("").join(sections)
         if not body:
             return False

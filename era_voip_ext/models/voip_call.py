@@ -653,7 +653,7 @@ class VoipCall(models.Model):
         skipped = 0
         to_queue = self.env["voip.call"]
         for call in self:
-            if call.analysis_status == "queued":
+            if call.analysis_status in ("queued", "done"):
                 skipped += 1
                 continue
             if not call.transcript:

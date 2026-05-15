@@ -20,22 +20,26 @@
             </xpath>
             <xpath expr="//notebook/page[1]" position="before">
                 <page string="تحليل المكالمة" name="call_analysis">
-                    <group>
+                    <div class="oe_button_box">
                         <button name="action_reanalyze_call" type="object" string="Re-analyze Call" class="btn-secondary"/>
-                    </group>
+                    </div>
                     <group>
-                        <field name="analysis_status"/>
-                        <field name="sales_evaluation"/>
-                        <field name="sales_evaluation_reason"/>
+                        <group>
+                            <field name="analysis_status"/>
+                            <field name="sales_evaluation"/>
+                        </group>
+                        <group>
+                            <field name="sales_evaluation_reason"/>
+                        </group>
                     </group>
-                    <group string="ملخص المكالمة">
-                        <field name="call_summary_long" nolabel="1"/>
+                    <group string="ملخص المكالمة" col="1">
+                        <field name="call_summary_long" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
                     </group>
-                    <group string="المعوقات">
-                        <field name="call_obstacles" nolabel="1"/>
+                    <group string="المعوقات" col="1">
+                        <field name="call_obstacles" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
                     </group>
-                    <group string="التوصيات">
-                        <field name="call_recommendations" nolabel="1"/>
+                    <group string="التوصيات" col="1">
+                        <field name="call_recommendations" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
                     </group>
                 </page>
             </xpath>

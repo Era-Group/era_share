@@ -6,6 +6,7 @@ from datetime import timedelta
 from json.decoder import JSONDecodeError
 from logging import getLogger
 
+from markupsafe import Markup, escape
 from psycopg2 import errors
 from requests.exceptions import RequestException
 
@@ -520,10 +521,11 @@ class VoipCall(models.Model):
         lead = self._find_related_lead(call)
         if not lead:
             return False
-        rating_label = dict(self._fields["sales_evaluation"].selection).get(rating) or ""
-        body_lines = [_("<b>تقييم المكالمة:</b> ") + (rating_label or _("غير محدد"))]
-        body_lines.append(_("<b>سبب التقييم:</b><br/>") + reason.replace("\n", "<br/>"))
-        body = "<br/>".join(body_lines)
+        rating_label = dict(self._fields["sales_evaluation"].selection).get(rating) or _("غير محدد")
+        rating_line = Markup("<b>%s:</b> %s") % (_("تقييم المكالمة"), rating_label)
+        reason_html = escape(reason).replace("\n", Markup("<br/>"))
+        reason_line = Markup("<b>%s:</b><br/>%s") % (_("سبب التقييم"), reason_html)
+        body = rating_line + Markup("<br/>") + reason_line
         lead.sudo().message_post(
             body=body,
             subject=_("تقييم مكالمة هاتفية"),

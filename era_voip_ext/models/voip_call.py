@@ -484,13 +484,19 @@ class VoipCall(models.Model):
         }
         if not self._safe_write(call, vals):
             return False
-        if reason:
-            try:
-                self._post_evaluation_to_lead(call, rating, reason)
-            except Exception:
-                _logger.exception(
-                    "Call %s: failed to post evaluation to related lead", call.id,
-                )
+        try:
+            self._post_evaluation_to_lead(
+                call,
+                rating=rating,
+                reason=reason,
+                summary=summary,
+                obstacles=obstacles,
+                recommendations=recommendations,
+            )
+        except Exception:
+            _logger.exception(
+                "Call %s: failed to post evaluation to related lead", call.id,
+            )
         return True
 
     def _find_related_lead(self, call):
@@ -517,19 +523,41 @@ class VoipCall(models.Model):
                 return lead
         return False
 
-    def _post_evaluation_to_lead(self, call, rating, reason):
+    def _post_evaluation_to_lead(self, call, rating, reason, summary,
+                                 obstacles, recommendations):
         lead = self._find_related_lead(call)
         if not lead:
             return False
-        rating_label = dict(self._fields["sales_evaluation"].selection).get(rating) or _("غير محدد")
-        rating_line = Markup("<b>%s:</b> %s") % (_("تقييم المكالمة"), rating_label)
-        reason_html = escape(reason).replace("\n", Markup("<br/>"))
-        reason_line = Markup("<b>%s:</b><br/>%s") % (_("سبب التقييم"), reason_html)
-        body = rating_line + Markup("<br/>") + reason_line
+        if not any([summary, obstacles, recommendations, reason, rating]):
+            return False
+
+        def _block(label, value):
+            if not value:
+                return Markup("")
+            html_value = escape(value).replace("\n", Markup("<br/>"))
+            return Markup("<b>%s:</b><br/>%s<br/><br/>") % (label, html_value)
+
+        rating_label = dict(self._fields["sales_evaluation"].selection).get(rating)
+        sections = []
+        if rating:
+            sections.append(
+                Markup("<b>%s:</b> %s<br/><br/>") % (
+                    _("تقييم الحالة البيعية"),
+                    rating_label or _("غير محدد"),
+                )
+            )
+        sections.append(_block(_("سبب التقييم"), reason))
+        sections.append(_block(_("ملخص المكالمة"), summary))
+        sections.append(_block(_("المعوقات"), obstacles))
+        sections.append(_block(_("التوصيات"), recommendations))
+        body = Markup("").join(sections)
+        if not body:
+            return False
+
         odoobot = self.env.ref("base.partner_root", raise_if_not_found=False)
         post_kwargs = {
             "body": body,
-            "subject": _("تقييم مكالمة هاتفية"),
+            "subject": _("تحليل مكالمة هاتفية"),
             "message_type": "comment",
             "subtype_xmlid": "mail.mt_note",
         }

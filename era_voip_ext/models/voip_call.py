@@ -606,7 +606,7 @@ class VoipCall(models.Model):
     @api.model
     def _get_next_pending_analysis_call(self, exclude_ids=None):
         exclude_clause = ""
-        params = ["pending"]
+        params = [["pending", "queued"]]
         if exclude_ids:
             exclude_clause = "AND id != ALL(%s)"
             params.append(list(exclude_ids))
@@ -614,7 +614,7 @@ class VoipCall(models.Model):
             f"""
                 SELECT id
                   FROM {self._table}
-                 WHERE analysis_status = %s
+                 WHERE analysis_status = ANY(%s)
                    AND transcript IS NOT NULL
                    AND transcript <> ''
                    {exclude_clause}

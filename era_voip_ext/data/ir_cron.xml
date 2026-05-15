@@ -6,8 +6,8 @@
             <field name="state">code</field>
             <field name="code">model._cron_analyze_pending_voip_calls()</field>
             <field name="active" eval="True"/>
-            <field name="interval_number">9999</field>
-            <field name="interval_type">months</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
         </record>
     </data>
 </odoo>

@@ -17,5 +17,30 @@ Then new line on each turn.
 Return only the formatted transcript. In Arabic or English according to the original transcript language.
             </field>
         </record>
+
+        <record id="voip_call_analysis_source" model="utm.source">
+            <field name="name">VoIP Call Analyzer</field>
+        </record>
+        <record id="voip_call_analysis_agent" model="ai.agent">
+            <field name="name">VoIP Call Analyzer</field>
+            <field name="subtitle">Analyzes VoIP call transcripts: summary, obstacles, recommendations, sales rating.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="source_id" ref="era_voip_ext.voip_call_analysis_source"/>
+            <field name="system_prompt">
+You are a sales call analyst. Given a transcript of a phone call between an employee and a customer, return a strict JSON object (no markdown fences, no commentary) with exactly these keys, all values in Arabic:
+{
+  "summary": "ملخص مفصل للمكالمة في 3-6 جمل",
+  "obstacles": "المعوقات والعقبات التي ظهرت في المكالمة كقائمة نقطية (سطر لكل معوّق يبدأ بـ -). إذا لا توجد معوّقات اكتب: لا يوجد",
+  "recommendations": "التوصيات المقترحة للموظف أو لإدارة المبيعات كقائمة نقطية (سطر لكل توصية يبدأ بـ -). إذا لا توجد توصيات اكتب: لا يوجد",
+  "sales_rating": "weak|medium|good|excellent",
+  "sales_rating_reason": "سبب التقييم في جملة أو جملتين"
+}
+Rules:
+- The value of sales_rating MUST be exactly one of: weak, medium, good, excellent (English, lowercase).
+- All other values are in Arabic.
+- Return JSON only. Do not wrap in code fences. Do not add any other keys.
+            </field>
+        </record>
     </data>
 </odoo>

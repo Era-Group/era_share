@@ -1,3 +1,4 @@
+import json
 import re
 import struct
 import time
@@ -72,6 +73,34 @@ class VoipCall(models.Model):
         compute="_compute_recording_url",
         sanitize=False,
     )
+
+    analysis_status = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("queued", "Queued"),
+            ("done", "Done"),
+            ("error", "Error"),
+            ("skipped", "Skipped"),
+        ],
+        string="Analysis Status",
+        default="pending",
+        copy=False,
+        index=True,
+    )
+    call_summary_long = fields.Text(string="ملخص المكالمة", copy=False)
+    call_obstacles = fields.Text(string="المعوقات", copy=False)
+    call_recommendations = fields.Text(string="التوصيات", copy=False)
+    sales_evaluation = fields.Selection(
+        [
+            ("weak", "ضعيف"),
+            ("medium", "متوسط"),
+            ("good", "جيد"),
+            ("excellent", "ممتاز"),
+        ],
+        string="تقييم الحالة البيعية",
+        copy=False,
+    )
+    sales_evaluation_reason = fields.Text(string="سبب التقييم", copy=False)
 
     def _commit_if_needed(self):
         if not modules.module.current_test:
@@ -325,7 +354,9 @@ class VoipCall(models.Model):
         }
         if summary:
             vals["summary"] = summary
-        self._safe_write(call, vals)
+        if not self._safe_write(call, vals):
+            return
+        self._analyze_call(call, text1 or text)
 
     def _format_transcript_with_agent(self, text):
         if not text:
@@ -347,12 +378,114 @@ class VoipCall(models.Model):
             _logger.exception("Call %s: transcript formatting failed", self.id)
         return "..."
 
+    def _parse_analysis_json(self, raw):
+        if not raw:
+            return None
+        text = raw.strip()
+        text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
+        text = re.sub(r"\s*```$", "", text)
+        match = re.search(r"\{.*\}", text, flags=re.DOTALL)
+        if not match:
+            return None
+        try:
+            return json.loads(match.group(0))
+        except (ValueError, JSONDecodeError):
+            return None
+
+    def _analyze_call(self, call, transcript_text):
+        if not call:
+            return False
+        if not transcript_text or not transcript_text.strip():
+            self._safe_write(call, {"analysis_status": "skipped"})
+            return False
+        if not self._safe_write(call, {"analysis_status": "queued"}):
+            return False
+        self._commit_if_needed()
+
+        ai_agent = self.env.ref(
+            "era_voip_ext.voip_call_analysis_agent", raise_if_not_found=False
+        )
+        if not ai_agent:
+            _logger.warning("Call %s: analysis agent not found", call.id)
+            self._safe_write(call, {"analysis_status": "error"})
+            return False
+
+        try:
+            response = ai_agent.get_direct_response(prompt=transcript_text)
+        except (RequestException, JSONDecodeError, UserError):
+            _logger.exception("Call %s: analysis call failed", call.id)
+            self._commit_if_needed()
+            self._safe_write(call, {"analysis_status": "error"})
+            return False
+
+        self._commit_if_needed()
+        raw = response[0] if response else ""
+        data = self._parse_analysis_json(raw)
+        if not data:
+            _logger.warning("Call %s: analysis response unparsable: %r", call.id, raw[:300])
+            self._safe_write(call, {"analysis_status": "error"})
+            return False
+
+        allowed_ratings = {"weak", "medium", "good", "excellent"}
+        rating = (data.get("sales_rating") or "").strip().lower()
+        if rating not in allowed_ratings:
+            rating = False
+
+        vals = {
+            "call_summary_long": (data.get("summary") or "").strip() or False,
+            "call_obstacles": (data.get("obstacles") or "").strip() or False,
+            "call_recommendations": (data.get("recommendations") or "").strip() or False,
+            "sales_evaluation": rating,
+            "sales_evaluation_reason": (data.get("sales_rating_reason") or "").strip() or False,
+            "analysis_status": "done",
+        }
+        return self._safe_write(call, vals)
+
     def action_retranscript(self):
         self.ensure_one()
         if self.transcription_status == "queued":
             raise UserError(_("This call is already being processed."))
         self._transcribe_call(self)
         return True
+
+    def action_reanalyze_call(self):
+        self.ensure_one()
+        if self.analysis_status == "queued":
+            raise UserError(_("This call is already being analyzed."))
+        if not self.transcript:
+            raise UserError(_("No transcript available to analyze."))
+        source = self.transcript.split("\n ------------ \n")[0] or self.transcript
+        self._analyze_call(self, source)
+        return True
+
+    def action_reanalyze_bulk(self):
+        processed = 0
+        skipped = 0
+        for call in self:
+            if call.analysis_status == "queued":
+                skipped += 1
+                continue
+            if not call.transcript:
+                skipped += 1
+                continue
+            source = call.transcript.split("\n ------------ \n")[0] or call.transcript
+            self._analyze_call(call, source)
+            processed += 1
+
+        message = _("Analyzed %(processed)s call(s).", processed=processed)
+        if skipped:
+            message += _(" Skipped %(skipped)s call(s).", skipped=skipped)
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Call Analysis Bulk Action"),
+                "message": message,
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def action_retranscript_bulk(self):
         processed = 0

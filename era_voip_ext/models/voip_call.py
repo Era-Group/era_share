@@ -17,6 +17,8 @@ from odoo.addons.era_voip_ext.utils.llm_api_service import LLMApiService
 _logger = getLogger(__name__)
 
 _MIN_RECORDING_SECONDS = 20.0
+_MIN_ANALYSIS_TRANSCRIPT_CHARS = 200
+_MIN_ANALYSIS_SUMMARY_CHARS = 40
 
 
 def _ogg_duration_seconds(data: bytes) -> float:
@@ -395,7 +397,12 @@ class VoipCall(models.Model):
     def _analyze_call(self, call, transcript_text):
         if not call:
             return False
-        if not transcript_text or not transcript_text.strip():
+        clean = (transcript_text or "").strip()
+        if not clean or len(clean) < _MIN_ANALYSIS_TRANSCRIPT_CHARS:
+            _logger.info(
+                "Call %s: transcript too short for analysis (%d chars) — skipping",
+                call.id, len(clean),
+            )
             self._safe_write(call, {"analysis_status": "skipped"})
             return False
         if not self._safe_write(call, {"analysis_status": "queued"}):
@@ -411,7 +418,7 @@ class VoipCall(models.Model):
             return False
 
         try:
-            response = ai_agent.get_direct_response(prompt=transcript_text)
+            response = ai_agent.get_direct_response(prompt=clean)
         except (RequestException, JSONDecodeError, UserError):
             _logger.exception("Call %s: analysis call failed", call.id)
             self._commit_if_needed()
@@ -426,15 +433,26 @@ class VoipCall(models.Model):
             self._safe_write(call, {"analysis_status": "error"})
             return False
 
+        summary = (data.get("summary") or "").strip()
+        obstacles = (data.get("obstacles") or "").strip()
+        recommendations = (data.get("recommendations") or "").strip()
+        if data.get("is_meaningful") is False or len(summary) < _MIN_ANALYSIS_SUMMARY_CHARS:
+            _logger.info(
+                "Call %s: analysis not substantive (summary=%d chars, is_meaningful=%s) — skipping",
+                call.id, len(summary), data.get("is_meaningful"),
+            )
+            self._safe_write(call, {"analysis_status": "skipped"})
+            return False
+
         allowed_ratings = {"weak", "medium", "good", "excellent"}
         rating = (data.get("sales_rating") or "").strip().lower()
         if rating not in allowed_ratings:
             rating = False
 
         vals = {
-            "call_summary_long": (data.get("summary") or "").strip() or False,
-            "call_obstacles": (data.get("obstacles") or "").strip() or False,
-            "call_recommendations": (data.get("recommendations") or "").strip() or False,
+            "call_summary_long": summary or False,
+            "call_obstacles": obstacles or False,
+            "call_recommendations": recommendations or False,
             "sales_evaluation": rating,
             "sales_evaluation_reason": (data.get("sales_rating_reason") or "").strip() or False,
             "analysis_status": "done",

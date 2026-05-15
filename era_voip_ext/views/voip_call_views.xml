@@ -11,12 +11,14 @@
                 <attribute name="style">white-space: pre-wrap;</attribute>
             </xpath>
             <xpath expr="//sheet" position="inside">
-                <group name="transcription_actions">
-                    <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
-                </group>
                 <group name="recording_link_group">
                     <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
                 </group>
+            </xpath>
+            <xpath expr="//page[@name='transcript']" position="inside">
+                <div class="oe_button_box">
+                    <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
+                </div>
             </xpath>
             <xpath expr="//notebook/page[1]" position="before">
                 <page string="تحليل المكالمة" name="call_analysis">

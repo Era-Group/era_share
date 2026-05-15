@@ -358,7 +358,7 @@ class VoipCall(models.Model):
             vals["summary"] = summary
         if not self._safe_write(call, vals):
             return
-        self._analyze_call(call, text or text1)
+        self._analyze_call(call, text1 or text)
 
     def _format_transcript_with_agent(self, text):
         if not text:
@@ -471,8 +471,8 @@ class VoipCall(models.Model):
         if not self.transcript:
             return ""
         parts = re.split(r"\n\s*-{4,}\s*\n", self.transcript, maxsplit=1)
-        if len(parts) == 2 and parts[1].strip():
-            return parts[1].strip()
+        if parts and parts[0].strip():
+            return parts[0].strip()
         return self.transcript.strip()
 
     @api.model

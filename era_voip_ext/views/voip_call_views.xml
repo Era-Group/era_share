@@ -55,6 +55,7 @@
         <field name="arch" type="xml">
             <xpath expr="//tree|//list" position="inside">
                 <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
+                <field name="sales_evaluation" string="تقييم" optional="show"/>
             </xpath>
         </field>
     </record>

@@ -466,19 +466,61 @@ class VoipCall(models.Model):
         self._transcribe_call(self)
         return True
 
+    def _transcript_for_analysis(self):
+        self.ensure_one()
+        if not self.transcript:
+            return ""
+        return self.transcript.split("\n ------------ \n")[0] or self.transcript
+
+    @api.model
+    def _get_next_pending_analysis_call(self, exclude_ids=None):
+        exclude_clause = ""
+        params = ["pending"]
+        if exclude_ids:
+            exclude_clause = "AND id != ALL(%s)"
+            params.append(list(exclude_ids))
+        self.env.cr.execute(
+            f"""
+                SELECT id
+                  FROM {self._table}
+                 WHERE analysis_status = %s
+                   AND transcript IS NOT NULL
+                   AND transcript <> ''
+                   {exclude_clause}
+              ORDER BY create_date DESC
+                 LIMIT 1
+                 FOR UPDATE SKIP LOCKED
+            """,
+            params,
+        )
+        row = self.env.cr.fetchone()
+        return self.browse(row[0]) if row else self.browse()
+
+    @api.model
+    def _cron_analyze_pending_voip_calls(self):
+        # Stop 100 s before the worker real-time limit (1200 s) to avoid being killed mid-write.
+        deadline = time.monotonic() + 1100
+        seen = set()
+        while time.monotonic() < deadline:
+            call = self._get_next_pending_analysis_call(exclude_ids=seen)
+            if not call:
+                break
+            seen.add(call.id)
+            self._analyze_call(call, call._transcript_for_analysis())
+
     def action_reanalyze_call(self):
         self.ensure_one()
         if self.analysis_status == "queued":
             raise UserError(_("This call is already being analyzed."))
         if not self.transcript:
             raise UserError(_("No transcript available to analyze."))
-        source = self.transcript.split("\n ------------ \n")[0] or self.transcript
-        self._analyze_call(self, source)
+        self._analyze_call(self, self._transcript_for_analysis())
         return True
 
     def action_reanalyze_bulk(self):
-        processed = 0
+        queued = 0
         skipped = 0
+        to_queue = self.env["voip.call"]
         for call in self:
             if call.analysis_status == "queued":
                 skipped += 1
@@ -486,11 +528,19 @@ class VoipCall(models.Model):
             if not call.transcript:
                 skipped += 1
                 continue
-            source = call.transcript.split("\n ------------ \n")[0] or call.transcript
-            self._analyze_call(call, source)
-            processed += 1
+            to_queue |= call
 
-        message = _("Analyzed %(processed)s call(s).", processed=processed)
+        if to_queue:
+            to_queue.write({"analysis_status": "pending"})
+            queued = len(to_queue)
+            cron = self.env.ref(
+                "era_voip_ext.ir_cron_analyze_pending_voip_calls",
+                raise_if_not_found=False,
+            )
+            if cron:
+                cron.sudo()._trigger()
+
+        message = _("Queued %(queued)s call(s) for analysis.", queued=queued)
         if skipped:
             message += _(" Skipped %(skipped)s call(s).", skipped=skipped)
 

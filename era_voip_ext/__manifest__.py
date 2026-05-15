@@ -8,6 +8,7 @@
     "depends": ["crm", "voip", "voip_ai", "voip_hr_recruitment"],
     "data": [
         "data/ai_agent.xml",
+        "data/ir_cron.xml",
         "views/crm_lead_views.xml",
         "views/voip_call_views.xml",
     ],

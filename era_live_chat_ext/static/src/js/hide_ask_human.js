@@ -16,7 +16,7 @@
     // Version marker — bump when shipping. The body data attribute lets you
     // confirm the latest build is actually loaded by inspecting <body> or
     // running `document.body.dataset.eraLivechatExt` in the console.
-    const VERSION = "19.0.1.2.0";
+    const VERSION = "19.0.1.3.0";
     try {
         document.body && document.body.setAttribute("data-era-livechat-ext", VERSION);
         // eslint-disable-next-line no-console
@@ -136,32 +136,22 @@
     }
 
     function stampNoOverflow(root) {
-        // 1. Strip the outer `h-100 overflow-auto o-scrollbar-thin` scroller
-        //    (user-identified) so it sizes to its content instead of forcing
-        //    100% height and an inner auto-scroll.
+        // 1. Outer + inner thread scrollers — KEEP their h-100 + overflow-y
+        //    so they still fill the chat panel and scroll long history (the
+        //    composer is a sibling positioned at the bottom of the flex
+        //    column; stripping h-100 here makes the thread shrink to
+        //    content and lifts the composer up the panel). Only kill
+        //    horizontal overflow — that's the bit that matters for the
+        //    Arabic-text-too-wide bug.
         root.querySelectorAll(
-            ".d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin"
+            ".d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin, .o-mail-Thread"
         ).forEach((el) => {
-            el.style.setProperty("height", "auto", "important");
-            el.style.setProperty("max-height", "none", "important");
-            el.style.setProperty("overflow", "visible", "important");
-            el.style.setProperty("overflow-x", "visible", "important");
-            el.style.setProperty("overflow-y", "visible", "important");
+            el.style.setProperty("overflow-x", "hidden", "important");
         });
 
-        // 2. .o-mail-Thread is a second scroller stacked inside the first —
-        //    same treatment.
-        root.querySelectorAll(".o-mail-Thread").forEach((el) => {
-            el.style.setProperty("overflow", "visible", "important");
-            el.style.setProperty("overflow-x", "visible", "important");
-            el.style.setProperty("overflow-y", "visible", "important");
-            el.style.setProperty("max-height", "none", "important");
-            el.style.setProperty("height", "auto", "important");
-        });
-
-        // 3. The bubble wrapper + rich-body both ship with `overflow-x:auto`.
-        //    That's what paints the thin scrollbar inside each bubble. Kill
-        //    overflow on both so text just wraps to the next line.
+        // 2. Bubble wrapper + rich-body both ship with `overflow-x:auto` —
+        //    that's the scrollbar painted inside each bubble. Kill all
+        //    overflow on them; the text just wraps to a new line instead.
         root.querySelectorAll(
             ".o-discuss-text-body, .o-mail-Message-richBody, .o-mail-Message-body"
         ).forEach((el) => {
@@ -172,21 +162,21 @@
             el.style.setProperty("min-width", "0", "important");
         });
 
-        // 4. Force `min-width:0` + `max-width:100%` down the whole flex
+        // 3. Force `min-width:0` + `max-width:100%` down the bubble's flex
         //    chain. Flex children default to `min-width:auto` (= min-content),
         //    which on un-broken Arabic words won't shrink below the longest
         //    syllable — that's what drags the chat panel into h-scroll.
+        //    Note: do NOT clear height / max-height here (Odoo flex layouts
+        //    in the thread rely on intrinsic sizing of these nodes).
         FLEX_CHAIN.forEach((sel) => {
             root.querySelectorAll(sel).forEach((el) => {
                 el.style.setProperty("min-width", "0", "important");
                 el.style.setProperty("max-width", "100%", "important");
-                el.style.setProperty("max-height", "none", "important");
-                el.style.setProperty("height", "auto", "important");
                 el.style.setProperty("box-sizing", "border-box", "important");
             });
         });
 
-        // 5. The actual text node — paragraphs inside the bubble. Force
+        // 4. The actual text node — paragraphs inside the bubble. Force
         //    aggressive wrapping so even an unbreakable token splits.
         root.querySelectorAll(
             ".o-mail-Message p, .o-mail-Message-richBody p, .o-mail-Message-body p"
@@ -198,14 +188,6 @@
             p.style.setProperty("min-width", "0", "important");
             p.style.setProperty("margin-bottom", "0", "important");
         });
-
-        // 6. Final clamp: overflow-x:hidden on the chat-popup root so any
-        //    surviving stray width can't drag the whole panel sideways.
-        const panel = findChatPanel(root);
-        if (panel) {
-            panel.style.setProperty("overflow-x", "hidden", "important");
-            panel.style.setProperty("max-width", "100vw", "important");
-        }
     }
 
     function scan(root) {

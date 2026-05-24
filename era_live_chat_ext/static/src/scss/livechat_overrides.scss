@@ -50,6 +50,12 @@
 .o-mail-Message-textContent {
     white-space: pre-wrap !important;
     hyphens: auto !important;
+    // A custom website font with taller line-height overflows Odoo's
+    // baked-in max-height on the bubble; let it grow to fit instead.
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+    overflow: visible !important;
 }
 
 // The bubble itself must never exceed its column. Some Odoo themes set a

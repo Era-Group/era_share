@@ -108,6 +108,14 @@
                 el.style.setProperty("word-break", "break-word", "important");
                 el.style.setProperty("white-space", "pre-wrap", "important");
                 el.style.setProperty("box-sizing", "border-box", "important");
+                // Custom website fonts often have a taller line-height than
+                // Odoo's default mail UI font; that overflows the bubble's
+                // baked-in max-height and triggers a per-bubble scrollbar.
+                // Let the bubble grow to fit instead.
+                el.style.setProperty("max-height", "none", "important");
+                el.style.setProperty("height", "auto", "important");
+                el.style.setProperty("overflow-y", "visible", "important");
+                el.style.setProperty("overflow", "visible", "important");
             });
         });
     }

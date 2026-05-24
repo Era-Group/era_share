@@ -1,0 +1,70 @@
+// Fatoratec livechat — keep long Arabic AI replies inside the bubble so the
+// panel never grows a horizontal scrollbar. Targets the Odoo 19 mail/discuss
+// classes the livechat widget reuses (.o-mail-*) plus the older livechat
+// window wrappers in case a fallback template is rendered.
+
+// Pick up the same font the host website uses. The widget renders into the
+// main document, so it normally inherits — but Odoo sets an explicit
+// font-family on .o-mail-* that wins over inheritance. Force it back to the
+// website's font stack (configurable via the SCSS variable below).
+$era-livechat-font: "Inter Tight", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Arabic",
+    "Segoe UI Arabic", "Tahoma", sans-serif !default;
+
+.o-mail-Thread,
+.o-mail-Message,
+.o-mail-Message-body,
+.o-mail-Message-content,
+.o-mail-Message-textContent,
+.o-livechat-Conversation,
+.o-livechat-root,
+.o_livechat_window,
+.o_livechat_window_content,
+.o_thread_window,
+.o_thread_window_content {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    word-wrap: break-word !important;
+    box-sizing: border-box !important;
+    font-family: $era-livechat-font !important;
+}
+
+// Catch every descendant — header titles, timestamps, composer input, buttons.
+.o-livechat-root,
+.o-livechat-Conversation,
+.o_livechat_window,
+.o_thread_window {
+    &,
+    & *,
+    & input,
+    & textarea,
+    & button {
+        font-family: $era-livechat-font !important;
+    }
+}
+
+.o-mail-Message-body,
+.o-mail-Message-content,
+.o-mail-Message-textContent {
+    white-space: pre-wrap !important;
+    hyphens: auto !important;
+}
+
+// The bubble itself must never exceed its column. Some Odoo themes set a
+// min-width on .o-mail-Message-bubble — clamp it.
+.o-mail-Message .o-mail-Message-bubble,
+.o-livechat-Conversation .o-mail-Message > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+// Hide the 'Ask Human' fallback button via class match. The JS file applies a
+// `.era-hide-ask-human` marker too — both kept so either path wins.
+.o-livechat-AskHuman,
+[class*="AskHuman"],
+.era-hide-ask-human {
+    display: none !important;
+    visibility: hidden !important;
+}

@@ -66,6 +66,25 @@
     box-sizing: border-box !important;
 }
 
+// The inner thread scroller — Odoo renders the message list inside a
+// flex-column with `h-100 overflow-auto`. With a custom website font that
+// has a taller line-height the bubble content overshoots the parent's
+// height, and the auto-overflow puts a scrollbar *inside the chat panel*
+// (not inside a single bubble — but visually it looks like one). Let the
+// scroller size to its content instead; the outer chat window already
+// handles its own scrolling if total history overflows.
+.o-livechat-root,
+.o-livechat-Conversation,
+.o_livechat_window,
+.o_thread_window {
+    .d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        overflow-y: visible !important;
+    }
+}
+
 // Hide the 'Ask Human' fallback button via class match. The JS file applies a
 // `.era-hide-ask-human` marker too — both kept so either path wins.
 .o-livechat-AskHuman,

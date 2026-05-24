@@ -101,6 +101,21 @@
                 container.style.setProperty("box-sizing", "border-box", "important");
             });
         });
+        // The inner thread scroller — `<div class="d-flex flex-column h-100
+        // overflow-auto o-scrollbar-thin ...">` — is the actual source of
+        // the vertical-scroll-inside-chat bug when the website font has a
+        // taller line-height. Strip its height + overflow inline; the outer
+        // chat window handles scrolling for long history on its own.
+        CHAT_ROOTS.forEach((rootSel) => {
+            root.querySelectorAll(
+                rootSel + " .d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin"
+            ).forEach((el) => {
+                el.style.setProperty("height", "auto", "important");
+                el.style.setProperty("max-height", "none", "important");
+                el.style.setProperty("overflow", "visible", "important");
+                el.style.setProperty("overflow-y", "visible", "important");
+            });
+        });
         BUBBLE_SELECTORS.forEach((sel) => {
             root.querySelectorAll(sel).forEach((el) => {
                 el.style.setProperty("max-width", "100%", "important");

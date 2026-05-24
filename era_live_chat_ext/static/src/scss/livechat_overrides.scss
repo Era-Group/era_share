@@ -23,13 +23,23 @@
 .o_thread_window,
 .o_thread_window_content {
     max-width: 100% !important;
-    overflow-x: hidden !important;
+    // `min-width: 0` is the standard flexbox-overflow fix — without it,
+    // flex children fall back to min-content (their longest unbreakable
+    // word) and refuse to shrink, dragging the panel into h-scroll.
+    min-width: 0 !important;
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
     word-wrap: break-word !important;
     box-sizing: border-box !important;
     font-family: var(--bs-body-font-family, inherit) !important;
 }
+
+// Do NOT set `overflow-x: hidden` on these elements: per CSS spec, setting
+// only one axis to hidden while the other stays `visible` computes the
+// `visible` axis to `auto`, which paints a vertical scrollbar inside the
+// chat whenever bubble content barely overflows. The JS file targets the
+// outermost chat panel for horizontal clipping instead — that's the only
+// element that should clip, and it has no v-scroll worth preserving.
 
 // Catch every descendant — header titles, timestamps, composer input, buttons.
 .o-livechat-root,
@@ -73,16 +83,13 @@
 // (not inside a single bubble — but visually it looks like one). Let the
 // scroller size to its content instead; the outer chat window already
 // handles its own scrolling if total history overflows.
-.o-livechat-root,
-.o-livechat-Conversation,
-.o_livechat_window,
-.o_thread_window {
-    .d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin {
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-        overflow-y: visible !important;
-    }
+// Unscoped on purpose — `o-scrollbar-thin` is Odoo-specific enough that
+// scoping under a livechat root made the selector miss in some themes.
+.d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
 }
 
 // Hide the 'Ask Human' fallback button via class match. The JS file applies a

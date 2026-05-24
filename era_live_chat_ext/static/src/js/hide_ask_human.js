@@ -93,44 +93,70 @@
         ".o-mail-Message > *",
     ];
 
+    // Walk up from a chat message until we hit a position:fixed/absolute
+    // element — that's almost certainly the chat-popup root. Caches the
+    // result so we don't recompute on every MutationObserver tick.
+    let cachedPanel = null;
+    function findChatPanel(root) {
+        if (cachedPanel && document.body.contains(cachedPanel)) return cachedPanel;
+        const msg = root.querySelector(".o-mail-Message");
+        if (!msg) return null;
+        let el = msg;
+        while (el && el !== document.body) {
+            const cs = getComputedStyle(el);
+            if (cs.position === "fixed" || cs.position === "absolute") {
+                cachedPanel = el;
+                return el;
+            }
+            el = el.parentElement;
+        }
+        return null;
+    }
+
     function stampNoOverflow(root) {
-        CHAT_ROOTS.forEach((sel) => {
-            root.querySelectorAll(sel).forEach((container) => {
-                container.style.setProperty("overflow-x", "hidden", "important");
-                container.style.setProperty("max-width", "100%", "important");
-                container.style.setProperty("box-sizing", "border-box", "important");
-            });
+        // 1. Strip h-100 + overflow-auto from the user-identified inner
+        //    thread scroller. Without this, the scroller pins itself to
+        //    100% of the chat panel height and its auto-overflow shows
+        //    a vertical scrollbar inside the chat whenever bubble content
+        //    barely exceeds the calculated row height (the taller line
+        //    height of a custom website font triggers this every time).
+        root.querySelectorAll(
+            ".d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin"
+        ).forEach((el) => {
+            el.style.setProperty("height", "auto", "important");
+            el.style.setProperty("max-height", "none", "important");
+            el.style.setProperty("overflow", "visible", "important");
+            el.style.setProperty("overflow-y", "visible", "important");
         });
-        // The inner thread scroller — `<div class="d-flex flex-column h-100
-        // overflow-auto o-scrollbar-thin ...">` — is the actual source of
-        // the vertical-scroll-inside-chat bug when the website font has a
-        // taller line-height. Strip its height + overflow inline; the outer
-        // chat window handles scrolling for long history on its own.
-        CHAT_ROOTS.forEach((rootSel) => {
-            root.querySelectorAll(
-                rootSel + " .d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin"
-            ).forEach((el) => {
-                el.style.setProperty("height", "auto", "important");
-                el.style.setProperty("max-height", "none", "important");
-                el.style.setProperty("overflow", "visible", "important");
-                el.style.setProperty("overflow-y", "visible", "important");
-            });
-        });
+
+        // 2. Clip the outermost chat panel horizontally so any inner
+        //    flex child with intrinsic width > panel width can't drag
+        //    the whole panel sideways. The panel root is detected by
+        //    walking up from a message until we find a positioned ancestor.
+        const panel = findChatPanel(root);
+        if (panel) {
+            panel.style.setProperty("overflow-x", "hidden", "important");
+            panel.style.setProperty("max-width", "100vw", "important");
+        }
+
+        // 3. Bubble text content — wrap long Arabic strings, never grow
+        //    a min-content shoulder past the column. `min-width: 0` is
+        //    the standard flexbox-overflow remedy (flex items default to
+        //    min-width: auto = min-content, which prevents shrinking
+        //    below their longest word). overflow: visible removes the
+        //    per-bubble scrollbar Odoo paints whenever content barely
+        //    exceeds the bubble's baked-in box.
         BUBBLE_SELECTORS.forEach((sel) => {
             root.querySelectorAll(sel).forEach((el) => {
+                el.style.setProperty("min-width", "0", "important");
                 el.style.setProperty("max-width", "100%", "important");
+                el.style.setProperty("max-height", "none", "important");
+                el.style.setProperty("height", "auto", "important");
+                el.style.setProperty("overflow", "visible", "important");
                 el.style.setProperty("overflow-wrap", "anywhere", "important");
                 el.style.setProperty("word-break", "break-word", "important");
                 el.style.setProperty("white-space", "pre-wrap", "important");
                 el.style.setProperty("box-sizing", "border-box", "important");
-                // Custom website fonts often have a taller line-height than
-                // Odoo's default mail UI font; that overflows the bubble's
-                // baked-in max-height and triggers a per-bubble scrollbar.
-                // Let the bubble grow to fit instead.
-                el.style.setProperty("max-height", "none", "important");
-                el.style.setProperty("height", "auto", "important");
-                el.style.setProperty("overflow-y", "visible", "important");
-                el.style.setProperty("overflow", "visible", "important");
             });
         });
     }

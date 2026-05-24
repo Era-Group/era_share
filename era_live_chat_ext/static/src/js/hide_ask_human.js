@@ -78,19 +78,31 @@
         });
     }
 
-    // Belt to the SCSS braces for the horizontal-scroll bug: stamp overflow
-    // + wrap rules inline so they win over Odoo's .o-mail-* declarations.
-    // Every container gets overflow-x:hidden; every bubble/body/content node
-    // gets max-width:100% + overflow-wrap:anywhere so long Arabic strings
-    // wrap inside the bubble instead of dragging the panel sideways.
-    const BUBBLE_SELECTORS = [
+    // Real DOM inspection (Odoo 19 livechat) revealed multiple overflow
+    // sources, all of which have to be neutralised together — fixing one
+    // just exposes the next:
+    //   - The bubble wrapper `.o-discuss-text-body` is `d-inline-block` +
+    //     `overflow-x: auto` → sizes to content and paints an h-scrollbar
+    //     when content exceeds its max-width.
+    //   - `.o-mail-Message-richBody` *also* has `overflow-x: auto`.
+    //   - Two stacked scrollers: the user-identified outer
+    //     `.d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin` and
+    //     `.o-mail-Thread` immediately inside it.
+    //   - The flex chain from `.o-mail-Message-core` down to the bubble
+    //     needs `min-width: 0` everywhere; Odoo only sets it on two nodes
+    //     (`.w-100.o-min-width-0`, `.o-mail-Message-content.o-min-width-0`),
+    //     and missing it on the others lets a long Arabic word push the
+    //     whole row past the chat panel.
+    const FLEX_CHAIN = [
         ".o-mail-Message",
-        ".o-mail-Message-bubble",
-        ".o-mail-Message-body",
+        ".o-mail-Message-core",
+        ".o-mail-Message-contentContainer",
         ".o-mail-Message-content",
         ".o-mail-Message-textContent",
-        ".o-mail-Message-core",
-        ".o-mail-Message > *",
+        ".o-mail-Message-body",
+        ".o-mail-Message-richBody",
+        ".o-mail-Message-bubble",
+        ".o-discuss-text-body",
     ];
 
     // Walk up from a chat message until we hit a position:fixed/absolute
@@ -114,51 +126,76 @@
     }
 
     function stampNoOverflow(root) {
-        // 1. Strip h-100 + overflow-auto from the user-identified inner
-        //    thread scroller. Without this, the scroller pins itself to
-        //    100% of the chat panel height and its auto-overflow shows
-        //    a vertical scrollbar inside the chat whenever bubble content
-        //    barely exceeds the calculated row height (the taller line
-        //    height of a custom website font triggers this every time).
+        // 1. Strip the outer `h-100 overflow-auto o-scrollbar-thin` scroller
+        //    (user-identified) so it sizes to its content instead of forcing
+        //    100% height and an inner auto-scroll.
         root.querySelectorAll(
             ".d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin"
         ).forEach((el) => {
             el.style.setProperty("height", "auto", "important");
             el.style.setProperty("max-height", "none", "important");
             el.style.setProperty("overflow", "visible", "important");
+            el.style.setProperty("overflow-x", "visible", "important");
             el.style.setProperty("overflow-y", "visible", "important");
         });
 
-        // 2. Clip the outermost chat panel horizontally so any inner
-        //    flex child with intrinsic width > panel width can't drag
-        //    the whole panel sideways. The panel root is detected by
-        //    walking up from a message until we find a positioned ancestor.
-        const panel = findChatPanel(root);
-        if (panel) {
-            panel.style.setProperty("overflow-x", "hidden", "important");
-            panel.style.setProperty("max-width", "100vw", "important");
-        }
+        // 2. .o-mail-Thread is a second scroller stacked inside the first —
+        //    same treatment.
+        root.querySelectorAll(".o-mail-Thread").forEach((el) => {
+            el.style.setProperty("overflow", "visible", "important");
+            el.style.setProperty("overflow-x", "visible", "important");
+            el.style.setProperty("overflow-y", "visible", "important");
+            el.style.setProperty("max-height", "none", "important");
+            el.style.setProperty("height", "auto", "important");
+        });
 
-        // 3. Bubble text content — wrap long Arabic strings, never grow
-        //    a min-content shoulder past the column. `min-width: 0` is
-        //    the standard flexbox-overflow remedy (flex items default to
-        //    min-width: auto = min-content, which prevents shrinking
-        //    below their longest word). overflow: visible removes the
-        //    per-bubble scrollbar Odoo paints whenever content barely
-        //    exceeds the bubble's baked-in box.
-        BUBBLE_SELECTORS.forEach((sel) => {
+        // 3. The bubble wrapper + rich-body both ship with `overflow-x:auto`.
+        //    That's what paints the thin scrollbar inside each bubble. Kill
+        //    overflow on both so text just wraps to the next line.
+        root.querySelectorAll(
+            ".o-discuss-text-body, .o-mail-Message-richBody, .o-mail-Message-body"
+        ).forEach((el) => {
+            el.style.setProperty("overflow", "visible", "important");
+            el.style.setProperty("overflow-x", "visible", "important");
+            el.style.setProperty("overflow-y", "visible", "important");
+            el.style.setProperty("max-width", "100%", "important");
+            el.style.setProperty("min-width", "0", "important");
+        });
+
+        // 4. Force `min-width:0` + `max-width:100%` down the whole flex
+        //    chain. Flex children default to `min-width:auto` (= min-content),
+        //    which on un-broken Arabic words won't shrink below the longest
+        //    syllable — that's what drags the chat panel into h-scroll.
+        FLEX_CHAIN.forEach((sel) => {
             root.querySelectorAll(sel).forEach((el) => {
                 el.style.setProperty("min-width", "0", "important");
                 el.style.setProperty("max-width", "100%", "important");
                 el.style.setProperty("max-height", "none", "important");
                 el.style.setProperty("height", "auto", "important");
-                el.style.setProperty("overflow", "visible", "important");
-                el.style.setProperty("overflow-wrap", "anywhere", "important");
-                el.style.setProperty("word-break", "break-word", "important");
-                el.style.setProperty("white-space", "pre-wrap", "important");
                 el.style.setProperty("box-sizing", "border-box", "important");
             });
         });
+
+        // 5. The actual text node — paragraphs inside the bubble. Force
+        //    aggressive wrapping so even an unbreakable token splits.
+        root.querySelectorAll(
+            ".o-mail-Message p, .o-mail-Message-richBody p, .o-mail-Message-body p"
+        ).forEach((p) => {
+            p.style.setProperty("white-space", "normal", "important");
+            p.style.setProperty("overflow-wrap", "anywhere", "important");
+            p.style.setProperty("word-break", "break-word", "important");
+            p.style.setProperty("max-width", "100%", "important");
+            p.style.setProperty("min-width", "0", "important");
+            p.style.setProperty("margin-bottom", "0", "important");
+        });
+
+        // 6. Final clamp: overflow-x:hidden on the chat-popup root so any
+        //    surviving stray width can't drag the whole panel sideways.
+        const panel = findChatPanel(root);
+        if (panel) {
+            panel.style.setProperty("overflow-x", "hidden", "important");
+            panel.style.setProperty("max-width", "100vw", "important");
+        }
     }
 
     function scan(root) {

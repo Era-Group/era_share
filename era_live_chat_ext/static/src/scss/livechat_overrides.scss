@@ -76,20 +76,45 @@
     box-sizing: border-box !important;
 }
 
-// The inner thread scroller — Odoo renders the message list inside a
-// flex-column with `h-100 overflow-auto`. With a custom website font that
-// has a taller line-height the bubble content overshoots the parent's
-// height, and the auto-overflow puts a scrollbar *inside the chat panel*
-// (not inside a single bubble — but visually it looks like one). Let the
-// scroller size to its content instead; the outer chat window already
-// handles its own scrolling if total history overflows.
-// Unscoped on purpose — `o-scrollbar-thin` is Odoo-specific enough that
-// scoping under a livechat root made the selector miss in some themes.
-.d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin {
+// Two stacked Odoo scrollers wrap the message list — both have to be
+// neutralised. The outer one was user-identified; the inner `.o-mail-Thread`
+// scroller appears immediately inside it and was missed by the previous
+// fix. `.o-scrollbar-thin` is Odoo-specific so leaving these unscoped is
+// safe.
+.d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin,
+.o-mail-Thread.overflow-auto,
+.o-mail-Thread {
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    overflow-x: visible !important;
     overflow-y: visible !important;
+}
+
+// The bubble wrapper (`.o-discuss-text-body`) and the rich-body container
+// both ship with `overflow-x: auto`. That's what paints the thin scrollbar
+// inside each message bubble whenever content barely exceeds the bubble's
+// max-width. Force overflow visible so text just wraps to a new line.
+.o-discuss-text-body,
+.o-mail-Message-richBody,
+.o-mail-Message-body {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+// Aggressive wrap on the actual text node — even an unbreakable URL/token
+// splits before it can drag the bubble past the column.
+.o-mail-Message p,
+.o-mail-Message-richBody p,
+.o-mail-Message-body p {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
 }
 
 // Hide the 'Ask Human' fallback button via class match. The JS file applies a

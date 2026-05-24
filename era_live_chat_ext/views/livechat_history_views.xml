@@ -9,6 +9,21 @@
         depending on operator config; this view has no extra filter so
         nothing is hidden.
     -->
+
+    <record id="view_era_livechat_history_list" model="ir.ui.view">
+        <field name="name">era.livechat.history.list</field>
+        <field name="model">discuss.channel</field>
+        <field name="arch" type="xml">
+            <list string="Chat History" default_order="create_date desc" create="false">
+                <field name="create_date" string="Started"/>
+                <field name="name"/>
+                <field name="livechat_operator_id" string="Operator / AI" optional="show"/>
+                <field name="country_id" optional="show"/>
+                <field name="livechat_end_dt" string="Ended" optional="show"/>
+            </list>
+        </field>
+    </record>
+
     <record id="action_era_livechat_history" model="ir.actions.act_window">
         <field name="name">All Chat History</field>
         <field name="res_model">discuss.channel</field>
@@ -27,20 +42,6 @@
                 Once visitors chat with your AI agent or human operators on the
                 website, every conversation will appear here — newest first.
             </p>
-        </field>
-    </record>
-
-    <record id="view_era_livechat_history_list" model="ir.ui.view">
-        <field name="name">era.livechat.history.list</field>
-        <field name="model">discuss.channel</field>
-        <field name="arch" type="xml">
-            <list string="Chat History" default_order="create_date desc" create="false">
-                <field name="create_date" string="Started"/>
-                <field name="name"/>
-                <field name="livechat_operator_id" string="Operator / AI" optional="show"/>
-                <field name="country_id" optional="show"/>
-                <field name="livechat_end_dt" string="Ended" optional="show"/>
-            </list>
         </field>
     </record>
 

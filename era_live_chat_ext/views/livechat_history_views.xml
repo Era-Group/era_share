@@ -4,35 +4,27 @@
     <!--
         All Live Chat History — exposes every discuss.channel of type
         'livechat' in a single menu, including conversations handled by
-        AI agents. Odoo's built-in "Sessions" view filters by livechat
-        channel + active state and can hide AI-only conversations
-        depending on operator config; this view has no extra filter so
-        nothing is hidden.
+        AI agents.
+
+        Odoo's built-in "Sessions" action (im_livechat.discuss_channel_action)
+        filters by `livechat_channel_id != False`. AI-only conversations
+        can be created without a livechat_channel_id and therefore never
+        show up there. This action keeps the same form + list views
+        im_livechat ships (so messages render correctly) but broadens
+        the domain to every channel of type 'livechat'.
     -->
-
-    <record id="view_era_livechat_history_list" model="ir.ui.view">
-        <field name="name">era.livechat.history.list</field>
-        <field name="model">discuss.channel</field>
-        <field name="arch" type="xml">
-            <list string="Chat History" default_order="create_date desc" create="false">
-                <field name="create_date" string="Started"/>
-                <field name="name"/>
-                <field name="livechat_operator_id" string="Operator / AI" optional="show"/>
-                <field name="country_id" optional="show"/>
-                <field name="livechat_end_dt" string="Ended" optional="show"/>
-            </list>
-        </field>
-    </record>
-
     <record id="action_era_livechat_history" model="ir.actions.act_window">
         <field name="name">All Chat History</field>
         <field name="res_model">discuss.channel</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('channel_type', '=', 'livechat')]</field>
         <field name="context">{'create': False}</field>
+        <field name="search_view_id" ref="im_livechat.discuss_channel_view_search"/>
         <field name="view_ids" eval="[
             (5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_livechat_history_list')}),
+            (0, 0, {'view_mode': 'list',   'view_id': ref('im_livechat.discuss_channel_view_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('im_livechat.discuss_channel_view_kanban')}),
+            (0, 0, {'view_mode': 'form',   'view_id': ref('im_livechat.discuss_channel_view_form')}),
         ]"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

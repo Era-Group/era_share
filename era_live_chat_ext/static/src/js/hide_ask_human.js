@@ -16,7 +16,7 @@
     // Version marker — bump when shipping. The body data attribute lets you
     // confirm the latest build is actually loaded by inspecting <body> or
     // running `document.body.dataset.eraLivechatExt` in the console.
-    const VERSION = "19.0.1.1.0";
+    const VERSION = "19.0.1.2.0";
     try {
         document.body && document.body.setAttribute("data-era-livechat-ext", VERSION);
         // eslint-disable-next-line no-console
@@ -230,10 +230,36 @@
         }
     }
 
+    // Collect every document we can reach: the main page plus every
+    // same-origin iframe + open shadow root that exists inside it.
+    // Owl mounts the embedded livechat widget into the main page in
+    // Odoo 19, but some themes wrap it in an iframe for isolation,
+    // and shadow-DOM mounts are possible in future Odoo versions.
+    function collectRoots(root, out) {
+        out.push(root);
+        if (!root.querySelectorAll) return;
+        root.querySelectorAll("iframe").forEach((iframe) => {
+            try {
+                const doc = iframe.contentDocument;
+                if (doc) collectRoots(doc, out);
+            } catch (e) { /* cross-origin */ }
+        });
+        root.querySelectorAll("*").forEach((el) => {
+            if (el.shadowRoot) {
+                try { collectRoots(el.shadowRoot, out); }
+                catch (e) { /* closed shadow root */ }
+            }
+        });
+    }
+
     function nuke() {
-        safe("scan",            () => scan(document));
-        safe("stampFont",       () => stampFont(document));
-        safe("stampNoOverflow", () => stampNoOverflow(document));
+        const roots = [];
+        collectRoots(document, roots);
+        for (const doc of roots) {
+            safe("scan",            () => scan(doc));
+            safe("stampFont",       () => stampFont(doc));
+            safe("stampNoOverflow", () => stampNoOverflow(doc));
+        }
     }
 
     // Initial sweep + short polling burst to catch lazy-mounted widgets, then

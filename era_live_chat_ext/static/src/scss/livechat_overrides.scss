@@ -41,13 +41,17 @@
 // outermost chat panel for horizontal clipping instead — that's the only
 // element that should clip, and it has no v-scroll worth preserving.
 
-// Catch every descendant — header titles, timestamps, composer input, buttons.
+// Catch every descendant — header titles, timestamps, composer input,
+// buttons. Excludes icon nodes (`<i>`, `.fa*`, `.oi`, `.material-icons`,
+// and any class containing fa-/oi-) because those use a dedicated glyph
+// font; overriding their font-family makes Font Awesome / Odoo Icons
+// render as empty squares.
 .o-livechat-root,
 .o-livechat-Conversation,
 .o_livechat_window,
 .o_thread_window {
     &,
-    & *,
+    & *:not(i):not(.fa):not(.fas):not(.far):not(.fab):not(.fal):not(.oi):not(.material-icons):not(.material-icons-outlined):not([class*="fa-"]):not([class*="oi-"]),
     & input,
     & textarea,
     & button {

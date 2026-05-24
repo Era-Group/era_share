@@ -16,7 +16,7 @@
     // Version marker — bump when shipping. The body data attribute lets you
     // confirm the latest build is actually loaded by inspecting <body> or
     // running `document.body.dataset.eraLivechatExt` in the console.
-    const VERSION = "19.0.1.3.0";
+    const VERSION = "19.0.1.4.0";
     try {
         document.body && document.body.setAttribute("data-era-livechat-ext", VERSION);
         // eslint-disable-next-line no-console
@@ -73,15 +73,34 @@
         }
     }
 
+    // Icon nodes (Font Awesome, Odoo Icons, Material Icons) use a dedicated
+    // font where each character code point is a glyph. Overriding their
+    // font-family with the website body font renders icons as empty
+    // squares — so the stamp has to skip them. The selector matches every
+    // common icon container plus any class containing fa-/oi- (action
+    // buttons in Odoo are usually a <button> with an icon <i> child).
+    const ICON_SELECTOR = [
+        "i",
+        ".fa", ".fas", ".far", ".fab", ".fal",
+        ".oi",
+        ".material-icons", ".material-icons-outlined",
+        "[class*='fa-']", "[class^='fa-']",
+        "[class*='oi-']", "[class^='oi-']",
+        "[class*=' fa-']", "[class*=' oi-']",
+    ].join(",");
+
     function stampFont(root) {
         const font = bodyFont();
         if (!font) return;
         CHAT_ROOTS.forEach((sel) => {
             root.querySelectorAll(sel).forEach((container) => {
                 // Stamp the container plus every descendant — input/textarea/
-                // button included, since each has its own UA default.
+                // button included, since each has its own UA default. Icons
+                // (matched by ICON_SELECTOR) are skipped so their glyph font
+                // stays intact.
                 container.style.setProperty("font-family", font, "important");
                 container.querySelectorAll("*").forEach((el) => {
+                    if (el.matches && el.matches(ICON_SELECTOR)) return;
                     el.style.setProperty("font-family", font, "important");
                 });
             });

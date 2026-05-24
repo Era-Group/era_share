@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Live Chat Extensions",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Website/Live Chat",
     "summary": "Fatoratec livechat UX tweaks: hide 'Ask Human' button + fix RTL horizontal overflow",
     "description": (
@@ -16,10 +16,23 @@
     "website": "https://fatoratec.com",
     "depends": ["im_livechat", "website"],
     "data": [],
+    # Register in every bundle the livechat widget might mount under. Odoo
+    # 19 renders the embedded popup against `im_livechat.assets_embed`; the
+    # public-page widgets (the button + the floating panel on plain website
+    # pages) load from `web.assets_frontend`. Listing in both is harmless —
+    # the same file just gets included twice — and guarantees the rules
+    # apply wherever the chat mounts.
     "assets": {
         "web.assets_frontend": [
             "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
             "era_live_chat_ext/static/src/js/hide_ask_human.js",
+        ],
+        "im_livechat.assets_embed": [
+            "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
+            "era_live_chat_ext/static/src/js/hide_ask_human.js",
+        ],
+        "mail.assets_messaging": [
+            "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
         ],
     },
     "installable": True,

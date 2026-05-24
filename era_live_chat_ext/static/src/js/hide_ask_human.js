@@ -13,6 +13,16 @@
 (function () {
     "use strict";
 
+    // Version marker — bump when shipping. The body data attribute lets you
+    // confirm the latest build is actually loaded by inspecting <body> or
+    // running `document.body.dataset.eraLivechatExt` in the console.
+    const VERSION = "19.0.1.1.0";
+    try {
+        document.body && document.body.setAttribute("data-era-livechat-ext", VERSION);
+        // eslint-disable-next-line no-console
+        console.log("[era_live_chat_ext] loaded v" + VERSION);
+    } catch (e) { /* body not ready yet — handled by the DOMContentLoaded path */ }
+
     const PHRASES = [
         "اسأل بشرياً",
         "اسأل بشريا",
@@ -209,10 +219,21 @@
         });
     }
 
+    // Wrap each pass in try/catch so a failure in one step (e.g. an Owl
+    // node detached mid-walk) doesn't skip the others. Errors surface in
+    // the console with the version marker so you know which build threw.
+    function safe(name, fn) {
+        try { fn(); }
+        catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn("[era_live_chat_ext v" + VERSION + "] " + name + " failed", e);
+        }
+    }
+
     function nuke() {
-        scan(document);
-        stampFont(document);
-        stampNoOverflow(document);
+        safe("scan",            () => scan(document));
+        safe("stampFont",       () => stampFont(document));
+        safe("stampNoOverflow", () => stampNoOverflow(document));
     }
 
     // Initial sweep + short polling burst to catch lazy-mounted widgets, then

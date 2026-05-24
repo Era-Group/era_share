@@ -16,7 +16,7 @@
     // Version marker — bump when shipping. The body data attribute lets you
     // confirm the latest build is actually loaded by inspecting <body> or
     // running `document.body.dataset.eraLivechatExt` in the console.
-    const VERSION = "19.0.2.1.0";
+    const VERSION = "19.0.2.1.1";
     try {
         document.body && document.body.setAttribute("data-era-livechat-ext", VERSION);
         // eslint-disable-next-line no-console

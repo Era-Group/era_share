@@ -78,6 +78,40 @@
         });
     }
 
+    // Belt to the SCSS braces for the horizontal-scroll bug: stamp overflow
+    // + wrap rules inline so they win over Odoo's .o-mail-* declarations.
+    // Every container gets overflow-x:hidden; every bubble/body/content node
+    // gets max-width:100% + overflow-wrap:anywhere so long Arabic strings
+    // wrap inside the bubble instead of dragging the panel sideways.
+    const BUBBLE_SELECTORS = [
+        ".o-mail-Message",
+        ".o-mail-Message-bubble",
+        ".o-mail-Message-body",
+        ".o-mail-Message-content",
+        ".o-mail-Message-textContent",
+        ".o-mail-Message-core",
+        ".o-mail-Message > *",
+    ];
+
+    function stampNoOverflow(root) {
+        CHAT_ROOTS.forEach((sel) => {
+            root.querySelectorAll(sel).forEach((container) => {
+                container.style.setProperty("overflow-x", "hidden", "important");
+                container.style.setProperty("max-width", "100%", "important");
+                container.style.setProperty("box-sizing", "border-box", "important");
+            });
+        });
+        BUBBLE_SELECTORS.forEach((sel) => {
+            root.querySelectorAll(sel).forEach((el) => {
+                el.style.setProperty("max-width", "100%", "important");
+                el.style.setProperty("overflow-wrap", "anywhere", "important");
+                el.style.setProperty("word-break", "break-word", "important");
+                el.style.setProperty("white-space", "pre-wrap", "important");
+                el.style.setProperty("box-sizing", "border-box", "important");
+            });
+        });
+    }
+
     function scan(root) {
         if (!root || !root.querySelectorAll) return;
         root.querySelectorAll("button, a, .btn").forEach((el) => {
@@ -92,6 +126,7 @@
     function nuke() {
         scan(document);
         stampFont(document);
+        stampNoOverflow(document);
     }
 
     // Initial sweep + short polling burst to catch lazy-mounted widgets, then

@@ -12,14 +12,50 @@
         show up there. This action keeps the same form + list views
         im_livechat ships (so messages render correctly) but broadens
         the domain to every channel of type 'livechat'.
+
+        We also need our own search view: im_livechat's search view
+        auto-applies an "Active sessions" filter that hides every closed
+        conversation. The search view below ships no default filters —
+        all sessions appear by default — and offers explicit
+        Active / Closed toggle filters the user can apply manually.
     -->
+
+    <record id="view_era_livechat_history_search" model="ir.ui.view">
+        <field name="name">era.livechat.history.search</field>
+        <field name="model">discuss.channel</field>
+        <field name="arch" type="xml">
+            <search string="Chat History">
+                <field name="name"/>
+                <field name="livechat_operator_id" string="Operator / AI"/>
+                <field name="country_id"/>
+                <filter name="active_only" string="Active"
+                        domain="[('livechat_end_dt', '=', False)]"/>
+                <filter name="closed_only" string="Closed"
+                        domain="[('livechat_end_dt', '!=', False)]"/>
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="last_7_days" string="Last 7 Days"
+                        domain="[('create_date', '&gt;=', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_operator" string="Operator / AI"
+                            context="{'group_by': 'livechat_operator_id'}"/>
+                    <filter name="group_by_country" string="Country"
+                            context="{'group_by': 'country_id'}"/>
+                    <filter name="group_by_date" string="Date"
+                            context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_era_livechat_history" model="ir.actions.act_window">
         <field name="name">All Chat History</field>
         <field name="res_model">discuss.channel</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('channel_type', '=', 'livechat')]</field>
         <field name="context">{'create': False}</field>
-        <field name="search_view_id" ref="im_livechat.discuss_channel_view_search"/>
+        <field name="search_view_id" ref="view_era_livechat_history_search"/>
         <field name="view_ids" eval="[
             (5, 0, 0),
             (0, 0, {'view_mode': 'list',   'view_id': ref('im_livechat.discuss_channel_view_tree')}),

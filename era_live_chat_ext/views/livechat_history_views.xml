@@ -26,17 +26,6 @@
         <field name="arch" type="xml">
             <search string="Chat History">
                 <field name="name"/>
-                <field name="livechat_operator_id" string="Operator / AI"/>
-                <filter name="today" string="Today"
-                        domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
-                <filter name="last_7_days" string="Last 7 Days"
-                        domain="[('create_date', '&gt;=', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_operator" string="Operator / AI"
-                            context="{'group_by': 'livechat_operator_id'}"/>
-                    <filter name="group_by_date" string="Date"
-                            context="{'group_by': 'create_date:day'}"/>
-                </group>
             </search>
         </field>
     </record>

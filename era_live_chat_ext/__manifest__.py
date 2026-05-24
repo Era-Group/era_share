@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Live Chat Extensions",
-    "version": "19.0.2.1.1",
+    "version": "19.0.2.1.2",
     "category": "Website/Live Chat",
     "summary": "Fatoratec livechat UX tweaks: hide 'Ask Human' button + fix RTL horizontal overflow",
     "description": (

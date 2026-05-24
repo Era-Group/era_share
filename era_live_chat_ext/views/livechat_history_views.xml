@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        All Live Chat History — exposes every discuss.channel of type
+        'livechat' in a single menu, including conversations handled by
+        AI agents. Odoo's built-in "Sessions" view filters by livechat
+        channel + active state and can hide AI-only conversations
+        depending on operator config; this view has no extra filter so
+        nothing is hidden.
+    -->
+    <record id="action_era_livechat_history" model="ir.actions.act_window">
+        <field name="name">All Chat History</field>
+        <field name="res_model">discuss.channel</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('channel_type', '=', 'livechat')]</field>
+        <field name="context">{'create': False}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_livechat_history_list')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No live chat conversations yet
+            </p>
+            <p>
+                Once visitors chat with your AI agent or human operators on the
+                website, every conversation will appear here — newest first.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_era_livechat_history_list" model="ir.ui.view">
+        <field name="name">era.livechat.history.list</field>
+        <field name="model">discuss.channel</field>
+        <field name="arch" type="xml">
+            <list string="Chat History" default_order="create_date desc" create="false">
+                <field name="create_date" string="Started"/>
+                <field name="name"/>
+                <field name="livechat_operator_id" string="Operator / AI" optional="show"/>
+                <field name="country_id" optional="show"/>
+                <field name="livechat_end_dt" string="Ended" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Menu under the existing Live Chat root, just below "Sessions". -->
+    <menuitem id="menu_era_livechat_history"
+              name="All Chat History"
+              parent="im_livechat.menu_livechat_root"
+              action="action_era_livechat_history"
+              sequence="20"/>
+
+</odoo>

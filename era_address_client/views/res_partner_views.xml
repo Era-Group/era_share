@@ -16,7 +16,7 @@
                     <button
                         name="action_resolve_short_address"
                         type="object"
-                        string="Resolve Short Address"
+                        string="اكمل العنوان"
                         class="btn-primary"
                         invisible="x_short_address == ''"
                     />

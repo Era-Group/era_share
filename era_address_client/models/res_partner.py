@@ -63,6 +63,13 @@ class ResPartner(models.Model):
                 'Check network connectivity and the server URL in settings.',
                 server_url,
             ))
+        except requests.HTTPError as exc:
+            status = exc.response.status_code if exc.response is not None else None
+            if status in (401, 403):
+                raise UserError(_('Contact info@era.net.sa to get access'))
+            raise UserError(_(
+                'Failed to connect to the address server: %s', str(exc)
+            ))
         except requests.RequestException as exc:
             raise UserError(_(
                 'Failed to connect to the address server: %s', str(exc)

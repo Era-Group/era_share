@@ -1,7 +1,7 @@
 {
     'name': 'ERA Address Client',
     'summary': 'Client for ERA Address Lookup service via service.era.net.sa',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'author': 'Era Group',
     'website': 'https://era.net.sa/',
     'category': 'Contacts',

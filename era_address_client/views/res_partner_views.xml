@@ -5,24 +5,22 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='street']" position="before">
-                <group>
-                    <label for="x_short_address" string="Short Address"/>
-                    <div class="o_row">
-                        <field
-                            name="x_short_address"
-                            placeholder="JCHA4298"
-                            nolabel="1"
-                        />
-                        <button
-                            name="action_resolve_short_address"
-                            type="object"
-                            string="Resolve Short Address"
-                            class="btn-primary"
-                            invisible="not x_short_address"
-                        />
-                    </div>
-                </group>
+            <xpath expr="//label[@for='street'][@string='Address']" position="before">
+                <label for="x_short_address" string="Short Address"/>
+                <div class="o_row">
+                    <field
+                        name="x_short_address"
+                        placeholder="JCHA4298"
+                        nolabel="1"
+                    />
+                    <button
+                        name="action_resolve_short_address"
+                        type="object"
+                        string="Resolve Short Address"
+                        class="btn-primary"
+                        invisible="not x_short_address"
+                    />
+                </div>
             </xpath>
         </field>
     </record>

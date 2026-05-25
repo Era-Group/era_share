@@ -18,7 +18,7 @@
                         type="object"
                         string="Resolve Short Address"
                         class="btn-primary"
-                        invisible="not x_short_address"
+                        invisible="x_short_address == ''"
                     />
                 </div>
             </xpath>

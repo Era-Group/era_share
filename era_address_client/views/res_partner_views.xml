@@ -22,8 +22,6 @@
                             invisible="not x_short_address"
                         />
                     </div>
-                    <field name="l10n_sa_edi_building_number" string="Building Number"/>
-                    <field name="l10n_sa_edi_plot_identification" string="Additional Number"/>
                 </group>
             </xpath>
         </field>

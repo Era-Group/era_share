@@ -89,13 +89,15 @@ class ResPartner(models.Model):
     def _map_lookup_result(self, result: dict) -> dict:
         """Map a resolved address dict to res.partner field values."""
         vals = {
-            'street':                        result.get('street', ''),
-            'street2':                       result.get('district', ''),
-            'city':                          result.get('city', ''),
-            'zip':                           result.get('postal_code', ''),
-            'l10n_sa_edi_building_number':   result.get('building_number', ''),
-            'l10n_sa_edi_plot_identification': result.get('additional_number', ''),
+            'street':  result.get('street', ''),
+            'street2': result.get('district', ''),
+            'city':    result.get('city', ''),
+            'zip':     result.get('postal_code', ''),
         }
+        if 'l10n_sa_edi_building_number' in self._fields:
+            vals['l10n_sa_edi_building_number'] = result.get('building_number', '')
+        if 'l10n_sa_edi_plot_identification' in self._fields:
+            vals['l10n_sa_edi_plot_identification'] = result.get('additional_number', '')
         country_code = result.get('country', '')
         if country_code:
             country = self.env['res.country'].search(

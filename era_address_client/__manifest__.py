@@ -5,7 +5,7 @@
     'author': 'Era Group',
     'website': 'https://era.net.sa/',
     'category': 'Contacts',
-    'depends': ['base', 'contacts', 'account', 'l10n_sa_edi'],
+    'depends': ['base', 'contacts'],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_config_parameter_data.xml',

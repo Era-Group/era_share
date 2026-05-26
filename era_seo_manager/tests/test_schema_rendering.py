@@ -18,8 +18,8 @@ class TestSchemaRendering(HttpCase):
 
     def _make_page_with_schema(self, seo_title='Rendering Test', url='/era-schema-render-test'):
         """Helper: create a page + Organisation template instance, return page."""
-        # Use sudo() for test setup: the admin user is not automatically in SEO groups.
-        sudo_env = self.env.sudo()
+        # Use su=True for test setup: the admin user is not automatically in SEO groups.
+        sudo_env = self.env(su=True)
         # Find or create an organization template.
         tpl = sudo_env['era.seo.schema.template'].search(
             [('code', '=', 'organization')], limit=1
@@ -86,7 +86,7 @@ class TestSchemaRendering(HttpCase):
         )
         page = self._make_page_with_schema(url='/era-schema-render-test-3')
         # Deactivate the instance.
-        instances = self.env.sudo()['era.seo.schema.instance'].search([
+        instances = self.env(su=True)['era.seo.schema.instance'].search([
             ('res_model', '=', 'website.page'),
             ('res_id', '=', page.id),
         ])

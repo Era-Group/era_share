@@ -35,4 +35,63 @@
       <meta t-if="seo.get('twitter_creator')" name="twitter:creator" t-att-content="seo.get('twitter_creator')"/>
     </t>
   </template>
+
+  <!--
+    era_seo_manager.era_seo_schema_ld
+    ==================================
+    Iterates the active era.seo.schema.instance records for the current
+    main_object and emits one <script type="application/ld+json"> per
+    instance in sequence order.
+
+    Performance: a single ORM search is executed inside the template;
+    no pre-fetch in the controller is required (per SPEC §8 Step 6).
+
+    Guard: emits nothing when:
+      - main_object is absent or does not carry era.seo.mixin fields
+      - era_seo_schema_engine_enabled = False in ir.config_parameter
+
+    NOTE: schemas are emitted even on noindex pages (staging/test) because
+    schema emission is independent of crawling directives — it lets us test
+    rendering without affecting index behaviour.
+
+    Per SPEC §8.4.
+  -->
+  <template id="era_seo_schema_ld" name="ERA JSON-LD Schemas">
+    <!--
+      Only proceed if:
+      1. main_object exists and carries era.seo.mixin (seo_title field)
+      2. The schema engine is enabled in settings
+    -->
+    <t t-if="main_object and main_object._fields.get('seo_title')">
+      <t t-set="_schema_enabled"
+         t-value="request.env['ir.config_parameter'].sudo().get_param('era_seo.schema_engine_enabled', 'True') not in ('False', '0', 'false', '')"/>
+      <t t-if="_schema_enabled">
+        <t t-set="_schema_instances"
+           t-value="request.env['era.seo.schema.instance'].sudo().search([
+               ('res_model', '=', main_object._name),
+               ('res_id',    '=', main_object.id),
+               ('active',    '=', True),
+           ], order='sequence asc')"/>
+        <t t-foreach="_schema_instances" t-as="_inst">
+          <script type="application/ld+json">
+            <t t-out="_inst.get_rendered_json_ld(main_object)"/>
+          </script>
+        </t>
+      </t>
+    </t>
+  </template>
+
+  <!--
+    Layout injection: inject era_seo_schema_ld into website.layout <head>.
+    Priority 25 places this AFTER Phase 1's meta_tags inject (priority 20),
+    ensuring meta tags come before JSON-LD in the head.
+  -->
+  <template id="layout_inherit_era_seo_schema_ld"
+            name="ERA JSON-LD Layout Inject"
+            inherit_id="website.layout"
+            priority="25">
+    <xpath expr="//head" position="inside">
+      <t t-call="era_seo_manager.era_seo_schema_ld"/>
+    </xpath>
+  </template>
 </odoo>

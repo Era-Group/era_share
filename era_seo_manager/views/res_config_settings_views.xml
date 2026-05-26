@@ -1,1 +1,75 @@
-<odoo/>
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    ERA SEO settings section inside Website → Configuration → Settings.
+    Per SPEC §16.
+  -->
+  <record id="res_config_settings_view_era_seo" model="ir.ui.view">
+    <field name="name">res.config.settings.era.seo</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@id='website']" position="after">
+        <app string="ERA SEO" name="era_seo" img="era_seo_manager/static/description/icon.png">
+          <block title="Organization Identity">
+            <setting string="Organization Name"
+                     help="Displayed in Organization and LocalBusiness schemas.">
+              <field name="era_seo_default_organization_name" placeholder="e.g. ERA — Excellence Resources Arabia"/>
+            </setting>
+            <setting string="Legal Name">
+              <field name="era_seo_default_legal_name"/>
+            </setting>
+            <setting string="Logo URL"
+                     help="Absolute URL to the organization logo (PNG/SVG). Used in schemas and OG tags.">
+              <field name="era_seo_default_logo_url" placeholder="https://example.com/logo.png"/>
+            </setting>
+            <setting string="Default OG Image URL"
+                     help="Fallback Open Graph image for pages without a custom OG image.">
+              <field name="era_seo_default_og_image_url"/>
+            </setting>
+            <setting string="Twitter Handle"
+                     help="Must start with @, e.g. @mycompany.">
+              <field name="era_seo_default_twitter_handle" placeholder="@mycompany"/>
+            </setting>
+          </block>
+
+          <block title="Social Profiles"
+                 help="Used in Organization schema sameAs array.">
+            <setting string="Facebook URL">
+              <field name="era_seo_social_facebook" placeholder="https://facebook.com/mycompany"/>
+            </setting>
+            <setting string="Twitter URL">
+              <field name="era_seo_social_twitter" placeholder="https://twitter.com/mycompany"/>
+            </setting>
+            <setting string="LinkedIn URL">
+              <field name="era_seo_social_linkedin" placeholder="https://linkedin.com/company/mycompany"/>
+            </setting>
+            <setting string="Instagram URL">
+              <field name="era_seo_social_instagram" placeholder="https://instagram.com/mycompany"/>
+            </setting>
+            <setting string="YouTube URL">
+              <field name="era_seo_social_youtube" placeholder="https://youtube.com/@mycompany"/>
+            </setting>
+          </block>
+
+          <block title="Site Verification">
+            <setting string="Google Site Verification"
+                     help="Content value for the google-site-verification meta tag.">
+              <field name="era_seo_google_site_verification"/>
+            </setting>
+            <setting string="Bing Site Verification">
+              <field name="era_seo_bing_site_verification"/>
+            </setting>
+          </block>
+
+          <block title="Schema Engine">
+            <setting string="Enable JSON-LD Schema Engine"
+                     help="When disabled, no schema scripts are emitted in page &lt;head&gt;.">
+              <field name="era_seo_schema_engine_enabled"/>
+            </setting>
+          </block>
+        </app>
+      </xpath>
+    </field>
+  </record>
+</odoo>

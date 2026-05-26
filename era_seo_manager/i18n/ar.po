@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-05-26 00:00+0000\n"
-"PO-Revision-Date: 2026-05-26 00:00+0000\n"
+"PO-Revision-Date: 2026-05-26 12:00+0000\n"
 "Last-Translator: ERA Translation Team\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -76,3 +76,260 @@ msgstr "السماح بالمقتطف"
 #: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_sitemap_include
 msgid "Include in sitemap"
 msgstr "تضمين في خريطة الموقع"
+
+# ---------------------------------------------------------------------------
+# Phase 2 — JSON-LD Schema Engine
+# ---------------------------------------------------------------------------
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_template
+msgid "SEO Schema Template"
+msgstr "قالب مخطط SEO"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__schema_type
+msgid "Schema @type"
+msgstr "نوع المخطط"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__category
+msgid "Category"
+msgstr "الفئة"
+
+#. module: era_seo_manager
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__core
+msgid "Core"
+msgstr "أساسي"
+
+#. module: era_seo_manager
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__content
+msgid "Content"
+msgstr "محتوى"
+
+#. module: era_seo_manager
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__commerce
+msgid "Commerce"
+msgstr "تجارة"
+
+#. module: era_seo_manager
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__event
+msgid "Event"
+msgstr "حدث"
+
+#. module: era_seo_manager
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__local
+msgid "Local"
+msgstr "محلي"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__body
+msgid "Template Body"
+msgstr "نص القالب"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__documentation_url
+msgid "Schema.org Docs URL"
+msgstr "رابط توثيق Schema.org"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__is_default
+msgid "Default Template"
+msgstr "القالب الافتراضي"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__required_fields_json
+msgid "Required Fields (JSON)"
+msgstr "الحقول المطلوبة (JSON)"
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_instance
+msgid "SEO Schema Instance"
+msgstr "نسخة مخطط SEO"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__template_id
+msgid "Schema Template"
+msgstr "قالب المخطط"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__res_model
+msgid "Record Model"
+msgstr "نموذج السجل"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__res_id
+msgid "Record ID"
+msgstr "معرّف السجل"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__data_json
+msgid "Context Overrides (JSON)"
+msgstr "تجاوزات السياق (JSON)"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__rendered_json
+msgid "Rendered JSON-LD"
+msgstr "JSON-LD المُصيَّر"
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_preview_wizard
+msgid "SEO Schema Preview"
+msgstr "معاينة مخطط SEO"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_preview_wizard__page_id
+msgid "Website Page"
+msgstr "صفحة الموقع"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_preview_wizard__rendered_output
+msgid "Rendered JSON-LD"
+msgstr "JSON-LD المُصيَّر"
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "No template selected."
+msgstr "لم يتم اختيار قالب."
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Select a website page to preview against."
+msgstr "اختر صفحة موقع للمعاينة."
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Render error: %s"
+msgstr "خطأ في التصيير: %s"
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Schema Preview"
+msgstr "معاينة المخطط"
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "Template body is not valid JSON (after placeholder substitution): %s"
+msgstr "نص القالب ليس JSON صالحاً (بعد استبدال الحقول): %s"
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "schema_type field (\"%s\") does not match the @type value inside body (\"%s\"). Update one to match the other."
+msgstr "حقل نوع المخطط (\"%s\") لا يطابق قيمة @type داخل النص (\"%s\"). يرجى تحديث أحدهما ليتطابق مع الآخر."
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "required_fields_json must be a valid JSON array: %s"
+msgstr "يجب أن تكون required_fields_json مصفوفة JSON صالحة: %s"
+
+#. module: era_seo_manager
+#: code:addons/era_seo_manager/models/seo_schema_instance.py:0
+msgid "Context overrides must be a valid JSON object: %s"
+msgstr "يجب أن تكون تجاوزات السياق كائن JSON صالح: %s"
+
+# ---------------------------------------------------------------------------
+# Phase 2 — Settings fields
+# ---------------------------------------------------------------------------
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_schema_engine_enabled
+msgid "Enable JSON-LD Schema Engine"
+msgstr "تفعيل محرك مخطط JSON-LD"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_organization_name
+msgid "Organization Name"
+msgstr "اسم المؤسسة"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_legal_name
+msgid "Legal Name"
+msgstr "الاسم القانوني"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_logo_url
+msgid "Logo URL"
+msgstr "رابط الشعار"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_og_image_url
+msgid "Default OG Image URL"
+msgstr "رابط صورة Open Graph الافتراضية"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_twitter_handle
+msgid "Twitter Handle"
+msgstr "حساب تويتر"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_facebook
+msgid "Facebook URL"
+msgstr "رابط فيسبوك"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_twitter
+msgid "Twitter URL"
+msgstr "رابط تويتر"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_linkedin
+msgid "LinkedIn URL"
+msgstr "رابط لينكدإن"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_instagram
+msgid "Instagram URL"
+msgstr "رابط إنستغرام"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_youtube
+msgid "YouTube URL"
+msgstr "رابط يوتيوب"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_google_site_verification
+msgid "Google Site Verification"
+msgstr "التحقق من موقع Google"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_bing_site_verification
+msgid "Bing Site Verification"
+msgstr "التحقق من موقع Bing"
+
+# ---------------------------------------------------------------------------
+# Phase 2 — Menu and view labels
+# ---------------------------------------------------------------------------
+
+#. module: era_seo_manager
+#: model:ir.ui.menu,name:era_seo_manager.menu_website_seo_root
+msgid "SEO"
+msgstr "تحسين محركات البحث"
+
+#. module: era_seo_manager
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_schema_templates
+msgid "Schema Templates"
+msgstr "قوالب المخططات"
+
+#. module: era_seo_manager
+#: model:ir.actions.act_window,name:era_seo_manager.action_seo_schema_template
+msgid "Schema Templates"
+msgstr "قوالب المخططات"
+
+#. module: era_seo_manager
+#: model:ir.actions.act_window,name:era_seo_manager.action_seo_schema_preview_wizard
+msgid "Schema Preview"
+msgstr "معاينة المخطط"

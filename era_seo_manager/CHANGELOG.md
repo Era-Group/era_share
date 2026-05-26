@@ -3,7 +3,7 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] — 19.0.2.0.0
+## [19.0.2.0.0] — 2026-05-26
 
 ### Added — Phase 2 (JSON-LD Schema Engine)
 - `era.seo.schema.template` model: reusable JSON-LD templates with placeholder support

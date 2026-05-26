@@ -1,6 +1,10 @@
 from . import (
     test_seo_mixin,
     test_schema_engine,
+    test_schema_template,
+    test_schema_instance,
+    test_schema_rendering,
+    test_builtin_templates,
     test_redirects,
     test_sitemap,
     test_robots,

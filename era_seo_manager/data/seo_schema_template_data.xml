@@ -1,1 +1,590 @@
-<odoo/>
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Built-in JSON-LD schema templates — Phase 2
+    ============================================
+    All 17 templates are shipped here.  They are loaded with noupdate="0"
+    so that module upgrades can refresh the bodies while preserving any
+    per-instance data_json overrides on deployed sites.
+
+    Placeholder grammar: {{ dotted.path | filter }}
+    Supported filters: json, string, default("value")
+    Max path depth: 5 segments.
+
+    The post_init_hook attaches "organization" and "website" instances to
+    each website's home page.  All other templates are opt-in per page.
+  -->
+  <data noupdate="0">
+
+    <!-- =================================================================
+         1. ORGANIZATION  (core)
+         https://schema.org/Organization
+         Required context: company.name, website.domain, company (social)
+    ================================================================= -->
+    <record id="schema_tpl_organization" model="era.seo.schema.template">
+      <field name="name">Organization</field>
+      <field name="code">organization</field>
+      <field name="schema_type">Organization</field>
+      <field name="category">core</field>
+      <field name="description">Site-wide organization identity. Attach to the home page.</field>
+      <field name="documentation_url">https://schema.org/Organization</field>
+      <field name="required_fields_json">["company.name", "website.domain"]</field>
+      <field name="is_default">True</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "{{ website.domain | default("") }}/#organization",
+  "name": "{{ company.name | default("") }}",
+  "legalName": "{{ settings.legal_name | default("") }}",
+  "url": "{{ website.domain | default("") }}/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ settings.logo_url | default("") }}"
+  },
+  "description": "{{ record.seo_description | default("") }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ company.street | default("") }}",
+    "addressLocality": "{{ company.city | default("") }}",
+    "addressCountry": "{{ company.country_id.code | default("") }}"
+  },
+  "areaServed": "{{ company.country_id.name | default("") }}",
+  "sameAs": {{ company.get_era_seo_social_profiles_json | json }}
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         2. LOCAL BUSINESS  (local)
+         https://schema.org/LocalBusiness
+    ================================================================= -->
+    <record id="schema_tpl_local_business" model="era.seo.schema.template">
+      <field name="name">Local Business</field>
+      <field name="code">local_business</field>
+      <field name="schema_type">LocalBusiness</field>
+      <field name="category">local</field>
+      <field name="description">Physical business location with address, phone, and opening hours.</field>
+      <field name="documentation_url">https://schema.org/LocalBusiness</field>
+      <field name="required_fields_json">["company.name", "company.street"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "{{ website.domain | default("") }}/#localbusiness",
+  "name": "{{ company.name | default("") }}",
+  "url": "{{ website.domain | default("") }}/",
+  "logo": "{{ settings.logo_url | default("") }}",
+  "image": "{{ settings.default_og_image_url | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ company.street | default("") }}",
+    "addressLocality": "{{ company.city | default("") }}",
+    "postalCode": "{{ company.zip | default("") }}",
+    "addressCountry": "{{ company.country_id.code | default("") }}"
+  },
+  "telephone": "{{ company.phone | default("") }}",
+  "email": "{{ company.email | default("") }}",
+  "sameAs": {{ company.get_era_seo_social_profiles_json | json }}
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         3. WEBSITE  (core)
+         https://schema.org/WebSite
+    ================================================================= -->
+    <record id="schema_tpl_website" model="era.seo.schema.template">
+      <field name="name">WebSite</field>
+      <field name="code">website</field>
+      <field name="schema_type">WebSite</field>
+      <field name="category">core</field>
+      <field name="description">Site-wide WebSite entity. Enables sitelinks search box. Attach to the home page.</field>
+      <field name="documentation_url">https://schema.org/WebSite</field>
+      <field name="required_fields_json">["website.domain", "website.name"]</field>
+      <field name="is_default">True</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ website.domain | default("") }}/#website",
+  "url": "{{ website.domain | default("") }}/",
+  "name": "{{ website.name | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "publisher": {
+    "@id": "{{ website.domain | default("") }}/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ website.domain | default("") }}/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         4. MOBILE APPLICATION  (core)
+         https://schema.org/MobileApplication
+         Used for Fatoratec and similar app-landing pages.
+    ================================================================= -->
+    <record id="schema_tpl_mobile_application" model="era.seo.schema.template">
+      <field name="name">Mobile Application</field>
+      <field name="code">mobile_application</field>
+      <field name="schema_type">MobileApplication</field>
+      <field name="category">core</field>
+      <field name="description">Mobile app schema. Use on app landing pages. Override name and store URLs via data_json.</field>
+      <field name="documentation_url">https://schema.org/MobileApplication</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "operatingSystem": "ANDROID, IOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         5. SOFTWARE APPLICATION  (core)
+         https://schema.org/SoftwareApplication
+    ================================================================= -->
+    <record id="schema_tpl_software_application" model="era.seo.schema.template">
+      <field name="name">Software Application</field>
+      <field name="code">software_application</field>
+      <field name="schema_type">SoftwareApplication</field>
+      <field name="category">core</field>
+      <field name="description">Web or desktop software. Similar to MobileApplication.</field>
+      <field name="documentation_url">https://schema.org/SoftwareApplication</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         6. ARTICLE  (content)
+         https://schema.org/Article
+    ================================================================= -->
+    <record id="schema_tpl_article" model="era.seo.schema.template">
+      <field name="name">Article</field>
+      <field name="code">article</field>
+      <field name="schema_type">Article</field>
+      <field name="category">content</field>
+      <field name="description">Generic article schema. Used on content pages and blog posts.</field>
+      <field name="documentation_url">https://schema.org/Article</field>
+      <field name="required_fields_json">["record.seo_title", "record.seo_description"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ settings.logo_url | default("") }}"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "{{ company.name | default("") }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ record.seo_canonical_url | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         7. BLOG POSTING  (content)
+         https://schema.org/BlogPosting
+         Phase 5 will wire datePublished/dateModified from blog.post fields.
+    ================================================================= -->
+    <record id="schema_tpl_blog_posting" model="era.seo.schema.template">
+      <field name="name">Blog Posting</field>
+      <field name="code">blog_posting</field>
+      <field name="schema_type">BlogPosting</field>
+      <field name="category">content</field>
+      <field name="description">Blog post with extended fields. Phase 5 will auto-wire datePublished from blog.post.</field>
+      <field name="documentation_url">https://schema.org/BlogPosting</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ settings.logo_url | default("") }}"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "{{ company.name | default("") }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ record.seo_canonical_url | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         8. NEWS ARTICLE  (content)
+         https://schema.org/NewsArticle
+    ================================================================= -->
+    <record id="schema_tpl_news_article" model="era.seo.schema.template">
+      <field name="name">News Article</field>
+      <field name="code">news_article</field>
+      <field name="schema_type">NewsArticle</field>
+      <field name="category">content</field>
+      <field name="description">News content. Eligible for Google News carousel.</field>
+      <field name="documentation_url">https://schema.org/NewsArticle</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ settings.logo_url | default("") }}"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "{{ company.name | default("") }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ record.seo_canonical_url | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         9. FAQ PAGE  (content)
+         https://schema.org/FAQPage
+         Override data_json with {"faq_items": [...]} to provide Q&A pairs.
+    ================================================================= -->
+    <record id="schema_tpl_faq_page" model="era.seo.schema.template">
+      <field name="name">FAQ Page</field>
+      <field name="code">faq_page</field>
+      <field name="schema_type">FAQPage</field>
+      <field name="category">content</field>
+      <field name="description">Frequently Asked Questions. Eligible for rich FAQ snippets in SERPs.</field>
+      <field name="documentation_url">https://schema.org/FAQPage</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "mainEntity": []
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         10. HOW-TO  (content)
+         https://schema.org/HowTo
+    ================================================================= -->
+    <record id="schema_tpl_how_to" model="era.seo.schema.template">
+      <field name="name">How To</field>
+      <field name="code">how_to</field>
+      <field name="schema_type">HowTo</field>
+      <field name="category">content</field>
+      <field name="description">Step-by-step guide. Eligible for rich how-to snippets.</field>
+      <field name="documentation_url">https://schema.org/HowTo</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "step": []
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         11. BREADCRUMB LIST  (core)
+         https://schema.org/BreadcrumbList
+    ================================================================= -->
+    <record id="schema_tpl_breadcrumb_list" model="era.seo.schema.template">
+      <field name="name">Breadcrumb List</field>
+      <field name="code">breadcrumb_list</field>
+      <field name="schema_type">BreadcrumbList</field>
+      <field name="category">core</field>
+      <field name="description">Navigation breadcrumbs for SERP display. Override itemListElement via data_json.</field>
+      <field name="documentation_url">https://schema.org/BreadcrumbList</field>
+      <field name="required_fields_json">["website.domain"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{{ website.name | default("Home") }}",
+      "item": "{{ website.domain | default("") }}/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ record.seo_title | default("") }}",
+      "item": "{{ record.seo_canonical_url | default("") }}"
+    }
+  ]
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         12. PRODUCT  (commerce)
+         https://schema.org/Product
+         NOTE: Phase 5 will wire this to product.template records via a
+         conditional data file.  For now the template is available for
+         manual attachment.  Guard this record with noupdate="0" to allow
+         future body upgrades.
+    ================================================================= -->
+    <record id="schema_tpl_product" model="era.seo.schema.template">
+      <field name="name">Product</field>
+      <field name="code">product</field>
+      <field name="schema_type">Product</field>
+      <field name="category">commerce</field>
+      <field name="description">E-commerce product. Phase 5 will auto-wire from product.template.</field>
+      <field name="documentation_url">https://schema.org/Product</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ company.name | default("") }}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "SAR",
+    "price": "0",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "{{ company.name | default("") }}"
+    }
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         13. SERVICE  (core)
+         https://schema.org/Service
+    ================================================================= -->
+    <record id="schema_tpl_service" model="era.seo.schema.template">
+      <field name="name">Service</field>
+      <field name="code">service</field>
+      <field name="schema_type">Service</field>
+      <field name="category">core</field>
+      <field name="description">Service offering page.</field>
+      <field name="documentation_url">https://schema.org/Service</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "provider": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  },
+  "areaServed": "{{ company.country_id.name | default("") }}"
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         14. PERSON  (content)
+         https://schema.org/Person
+         Used for author profiles in Phase 5.
+    ================================================================= -->
+    <record id="schema_tpl_person" model="era.seo.schema.template">
+      <field name="name">Person</field>
+      <field name="code">person</field>
+      <field name="schema_type">Person</field>
+      <field name="category">content</field>
+      <field name="description">Author or team member profile. Phase 5 will wire from era.blog.author.</field>
+      <field name="documentation_url">https://schema.org/Person</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "worksFor": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         15. EVENT  (event)
+         https://schema.org/Event
+    ================================================================= -->
+    <record id="schema_tpl_event" model="era.seo.schema.template">
+      <field name="name">Event</field>
+      <field name="code">event</field>
+      <field name="schema_type">Event</field>
+      <field name="category">event</field>
+      <field name="description">Event page. Override startDate and location via data_json.</field>
+      <field name="documentation_url">https://schema.org/Event</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "image": "{{ record.seo_og_image_url | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "startDate": "",
+  "endDate": "",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+  "location": {
+    "@type": "VirtualLocation",
+    "url": "{{ record.seo_canonical_url | default("") }}"
+  },
+  "organizer": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         16. VIDEO OBJECT  (content)
+         https://schema.org/VideoObject
+    ================================================================= -->
+    <record id="schema_tpl_video_object" model="era.seo.schema.template">
+      <field name="name">Video Object</field>
+      <field name="code">video_object</field>
+      <field name="schema_type">VideoObject</field>
+      <field name="category">content</field>
+      <field name="description">Video content page. Override thumbnailUrl and embedUrl via data_json.</field>
+      <field name="documentation_url">https://schema.org/VideoObject</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "{{ record.seo_title | default("") }}",
+  "description": "{{ record.seo_description | default("") }}",
+  "thumbnailUrl": "{{ record.seo_og_image_url | default("") }}",
+  "uploadDate": "",
+  "contentUrl": "{{ record.seo_canonical_url | default("") }}",
+  "embedUrl": "",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ website.domain | default("") }}/#organization",
+    "name": "{{ company.name | default("") }}"
+  }
+}]]></field>
+    </record>
+
+    <!-- =================================================================
+         17. AGGREGATE RATING  (commerce — composable)
+         https://schema.org/AggregateRating
+         NOT standalone — embed inside Product, LocalBusiness, etc.
+         by copying the aggregateRating property from this template's body.
+    ================================================================= -->
+    <record id="schema_tpl_aggregate_rating" model="era.seo.schema.template">
+      <field name="name">Aggregate Rating</field>
+      <field name="code">aggregate_rating</field>
+      <field name="schema_type">AggregateRating</field>
+      <field name="category">commerce</field>
+      <field name="description">Composable aggregate rating block. Not standalone — embed inside Product or LocalBusiness via data_json overrides.</field>
+      <field name="documentation_url">https://schema.org/AggregateRating</field>
+      <field name="required_fields_json">[]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "AggregateRating",
+  "ratingValue": "5",
+  "bestRating": "5",
+  "worstRating": "1",
+  "ratingCount": "1",
+  "reviewCount": "1"
+}]]></field>
+    </record>
+
+  </data>
+</odoo>

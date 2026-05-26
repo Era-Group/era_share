@@ -1,4 +1,3 @@
-import json
 import logging
 
 from odoo import _, api, fields, models
@@ -125,7 +124,7 @@ class ResCompany(models.Model):
             'era_seo.social_youtube',
         ]
         profiles = [ICP.get_param(k, '') for k in profile_keys]
-        return json.dumps([p for p in profiles if p])
+        return [p for p in profiles if p]
 
     def get_era_seo_logo_url(self):
         """Return the logo URL from settings, falling back to company logo attachment."""

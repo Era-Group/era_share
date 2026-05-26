@@ -171,6 +171,15 @@ def _resolve_path(path: str, context: dict):
         except Exception:  # noqa: BLE001
             return None
 
+    # Call no-argument bound methods automatically (e.g. company.get_era_seo_social_profiles_json).
+    # Only call bound methods (not classes or plain functions).
+    if callable(obj) and hasattr(obj, '__self__') and not isinstance(obj, type):
+        try:
+            obj = obj()
+        except Exception:  # noqa: BLE001
+            _logger.debug('era_seo_engine: calling callable at path %s failed', path)
+            return None
+
     return obj
 
 

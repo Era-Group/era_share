@@ -57,6 +57,15 @@ class TestEngineResolve(TransactionCase):
         ctx = {'meta': {'title': 'Hello'}}
         self.assertEqual(self._resolve_path('meta.title', ctx), 'Hello')
 
+    def test_callable_bound_method_is_called(self):
+        """Bound methods with no arguments are called automatically."""
+        class Obj:
+            def get_profiles(self):
+                return ['https://example.com']
+        ctx = {'company': Obj()}
+        result = self._resolve_path('company.get_profiles', ctx)
+        self.assertEqual(result, ['https://example.com'])
+
     # --- _resolve_placeholder -------------------------------------------------
 
     def test_plain_string(self):

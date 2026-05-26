@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Phase 1: add an "SEO" tab to the website.page backend form view.
+    Full menu structure (Website → SEO → ...) lands in Phase 2+.
+  -->
+  <record id="view_website_page_form_seo" model="ir.ui.view">
+    <field name="name">website.page.form.era.seo</field>
+    <field name="model">website.page</field>
+    <field name="inherit_id" ref="website.website_pages_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <notebook>
+          <page string="SEO" name="era_seo">
+            <group string="Title &amp; Description">
+              <field name="seo_title"/>
+              <field name="seo_title_length" string="Title length (chars)"/>
+              <field name="seo_description"/>
+              <field name="seo_description_length" string="Description length (chars)"/>
+              <field name="seo_keywords"/>
+            </group>
+            <group string="Open Graph">
+              <field name="seo_og_title"/>
+              <field name="seo_og_description"/>
+              <field name="seo_og_image" widget="image"/>
+              <field name="seo_og_type"/>
+            </group>
+            <group string="Twitter Card">
+              <field name="seo_twitter_card"/>
+              <field name="seo_twitter_site"/>
+              <field name="seo_twitter_creator"/>
+            </group>
+            <group string="Indexing &amp; Canonical">
+              <field name="seo_canonical_url"/>
+              <field name="seo_robots_index"/>
+              <field name="seo_robots_follow"/>
+              <field name="seo_robots_archive"/>
+              <field name="seo_robots_snippet"/>
+            </group>
+            <group string="Sitemap">
+              <field name="seo_sitemap_include"/>
+              <field name="seo_sitemap_priority"/>
+              <field name="seo_sitemap_changefreq"/>
+            </group>
+          </page>
+        </notebook>
+      </xpath>
+    </field>
+  </record>
+</odoo>

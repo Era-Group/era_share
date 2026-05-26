@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    ERA SEO — website.layout injection
+    ====================================
+    Inherits website.layout to:
+
+    1. Compute era_seo dict from seo_object when it carries era.seo.mixin fields.
+    2. Override the <title> element — our title variable is set BEFORE the stock
+       `<t t-if="not title">` guard runs, so the guard is a no-op and the stock
+       default is skipped. The original <title> element is replaced with a
+       conditional that only renders when era_seo is NOT active (graceful fallback).
+    3. Suppress stock meta description, keywords, robots-noindex, and OG/Twitter
+       when era_seo is active — era_seo_manager.meta_tags renders all of them.
+    4. Replace the stock canonical <link> with our version (uses seo_canonical_url
+       when set, otherwise falls back to website._get_canonical_url()).
+
+    Per SPEC §7.3.
+  -->
+  <template id="website_layout_seo_meta" name="ERA SEO Layout Inject"
+            inherit_id="website.layout" priority="20">
+
+    <!--
+      Step 1 — compute era_seo BEFORE the stock title guard.
+      Position "before" on //head/*[1] inserts our t-set FIRST in the head,
+      so era_seo is available to all subsequent xpath modifications.
+      If seo_title is set, we also pre-set the `title` variable so that the
+      stock `<t t-if="not title">` block is skipped entirely.
+    -->
+    <xpath expr="//head/*[1]" position="before">
+      <t t-if="seo_object and 'seo_title' in seo_object._fields">
+        <t t-set="era_seo" t-value="seo_object.sudo().get_seo_meta_dict()"/>
+        <t t-if="era_seo and era_seo.get('title')">
+          <t t-set="title" t-value="era_seo['title']"/>
+        </t>
+      </t>
+    </xpath>
+
+    <!--
+      Step 2 — replace the <title> element.
+      When era_seo is active, era_seo_manager.meta_tags renders <title>.
+      When it is not active, render the stock title as before.
+    -->
+    <xpath expr="//head/title" position="replace">
+      <title t-if="not era_seo"><t t-esc="title or 'Odoo'"/></title>
+    </xpath>
+
+    <!--
+      Step 3 — suppress stock meta description when era_seo is active.
+    -->
+    <xpath expr="//meta[@name='description']" position="replace">
+      <meta t-if="(meta_description or editable) and not era_seo"
+            name="description" t-att-content="meta_description"/>
+    </xpath>
+
+    <!--
+      Step 4 — suppress stock meta keywords when era_seo is active.
+    -->
+    <xpath expr="//meta[@name='keywords']" position="replace">
+      <meta t-if="(meta_keywords or editable) and not era_seo"
+            name="keywords" t-att-content="meta_keywords"/>
+    </xpath>
+
+    <!--
+      Step 5 — replace the stock robots noindex meta with our full directive.
+      Stock only emits this tag when no_index=True.  ERA emits it always (with
+      the full "index, follow, ..." string) so crawlers receive an explicit
+      directive on every page.
+    -->
+    <xpath expr="//meta[@name='robots']" position="replace">
+      <meta t-if="era_seo" name="robots" t-att-content="era_seo.get('robots')"/>
+      <meta t-if="not era_seo and no_index" name="robots" content="noindex"/>
+    </xpath>
+
+    <!--
+      Step 6 — suppress the stock OG / Twitter block when era_seo is active.
+      The block is identified by t-if="seo_object" wrapping opengraph_meta.
+      era_seo_manager.meta_tags renders OG and Twitter instead.
+    -->
+    <xpath expr="//t[@t-if='seo_object']" position="attributes">
+      <attribute name="t-if">seo_object and not era_seo</attribute>
+    </xpath>
+
+    <!--
+      Step 7 — replace the stock canonical link.
+      Use seo_canonical_url when the record provides one; fall back to the
+      stock website._get_canonical_url() so non-ERA pages are unaffected.
+    -->
+    <xpath expr="//link[@rel='canonical']" position="replace">
+      <link t-if="not era_seo" rel="canonical" t-att-href="website._get_canonical_url()"/>
+    </xpath>
+
+    <!--
+      Step 8 — inject era_seo_manager.meta_tags after the generator meta.
+      This places our full <title>, description, OG, Twitter, robots, and
+      canonical block early in the head, where crawlers expect to find them.
+    -->
+    <xpath expr="//meta[@name='generator']" position="after">
+      <t t-if="era_seo" t-call="era_seo_manager.meta_tags">
+        <t t-set="seo" t-value="era_seo"/>
+      </t>
+    </xpath>
+
+  </template>
+</odoo>

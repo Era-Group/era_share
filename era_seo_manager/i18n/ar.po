@@ -1,0 +1,66 @@
+# Arabic translation for era_seo_manager
+# Copyright (C) ERA — Excellence Resources Arabia
+# License: OPL-1
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-26 00:00+0000\n"
+"PO-Revision-Date: 2026-05-26 00:00+0000\n"
+"Last-Translator: ERA Translation Team\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. model:era.seo.mixin,field_string:seo_title
+msgid "SEO Title"
+msgstr "عنوان SEO"
+
+#. model:era.seo.mixin,field_string:seo_description
+msgid "Meta Description"
+msgstr "الوصف التعريفي"
+
+#. model:era.seo.mixin,field_string:seo_keywords
+msgid "Meta Keywords"
+msgstr "الكلمات المفتاحية"
+
+#. model:era.seo.mixin,field_string:seo_og_title
+msgid "OG Title"
+msgstr "عنوان Open Graph"
+
+#. model:era.seo.mixin,field_string:seo_og_description
+msgid "OG Description"
+msgstr "وصف Open Graph"
+
+#. model:era.seo.mixin,field_string:seo_og_image
+msgid "OG Image"
+msgstr "صورة Open Graph"
+
+#. model:era.seo.mixin,field_string:seo_canonical_url
+msgid "Canonical URL Override"
+msgstr "تجاوز رابط Canonical"
+
+#. model:era.seo.mixin,field_string:seo_robots_index
+msgid "Index this page"
+msgstr "فهرسة هذه الصفحة"
+
+#. model:era.seo.mixin,field_string:seo_robots_follow
+msgid "Follow links on this page"
+msgstr "تتبع الروابط في هذه الصفحة"
+
+#. model:era.seo.mixin,field_string:seo_robots_archive
+msgid "Allow archive"
+msgstr "السماح بالأرشفة"
+
+#. model:era.seo.mixin,field_string:seo_robots_snippet
+msgid "Allow snippet"
+msgstr "السماح بالمقتطف"
+
+#. model:era.seo.mixin,field_string:seo_sitemap_include
+msgid "Include in sitemap"
+msgstr "تضمين في خريطة الموقع"

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <!--
-    Phase 1: add an "SEO" tab to the website.page backend form view.
-    Full menu structure (Website → SEO → ...) lands in Phase 2+.
-  -->
+  <!-- ===================================================================
+       ERA SEO backend menu structure
+       Phase 1: SEO tab on website.page form
+       Phase 2: SEO root menu, Schema Templates, Schemas tab on page form
+  =================================================================== -->
+
+  <!-- SEO tab (Phase 1) + Schemas tab (Phase 2) on website.page form -->
   <record id="view_website_page_form_seo" model="ir.ui.view">
     <field name="name">website.page.form.era.seo</field>
     <field name="model">website.page</field>
@@ -43,8 +46,73 @@
               <field name="seo_sitemap_changefreq"/>
             </group>
           </page>
+
+          <!-- Phase 2: JSON-LD schema instances -->
+          <page string="Schemas" name="era_schemas">
+            <div class="mb-2">
+              <button name="action_open_rich_results_test"
+                      string="Validate JSON-LD"
+                      type="object"
+                      class="btn btn-secondary btn-sm"
+                      help="Open Google Rich Results Test with this page URL pre-filled."/>
+            </div>
+            <field name="seo_schema_instance_ids"
+                   context="{'default_res_model': 'website.page', 'default_res_id': active_id}"
+                   mode="tree"
+                   nolabel="1">
+              <tree string="Schema Instances" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="template_id"/>
+                <field name="active" optional="show"/>
+                <field name="name" optional="show"/>
+              </tree>
+              <form>
+                <group>
+                  <group string="Configuration">
+                    <field name="template_id"/>
+                    <field name="sequence"/>
+                    <field name="active"/>
+                  </group>
+                </group>
+                <notebook>
+                  <page string="Context Overrides" name="data_json">
+                    <field name="data_json"
+                           widget="ace"
+                           options="{'mode': 'json'}"
+                           style="min-height:200px;font-family:monospace;"
+                           nolabel="1"/>
+                  </page>
+                  <page string="Rendered Preview" name="rendered_json">
+                    <field name="rendered_json"
+                           readonly="1"
+                           widget="ace"
+                           options="{'mode': 'json', 'readOnly': true}"
+                           style="min-height:200px;font-family:monospace;"
+                           nolabel="1"/>
+                  </page>
+                </notebook>
+              </form>
+            </field>
+          </page>
         </notebook>
       </xpath>
     </field>
   </record>
+
+  <!-- Phase 2: SEO root menu under Website -->
+  <menuitem
+    id="menu_website_seo_root"
+    name="SEO"
+    parent="website.menu_website_configuration"
+    sequence="50"
+    groups="era_seo_manager.group_era_seo_user"/>
+
+  <menuitem
+    id="menu_seo_schema_templates"
+    name="Schema Templates"
+    parent="menu_website_seo_root"
+    action="action_seo_schema_template"
+    sequence="10"
+    groups="era_seo_manager.group_era_seo_user"/>
+
 </odoo>

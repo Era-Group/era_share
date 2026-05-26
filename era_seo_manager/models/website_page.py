@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 
 from odoo import api, models
 
@@ -145,3 +146,25 @@ class WebsitePage(models.Model):
         """
         self._cleanup_schema_instances()
         return super().unlink()
+
+    # --- Validation helpers --------------------------------------------------
+
+    def action_open_rich_results_test(self):
+        """Open Google Rich Results Test pre-filled with this page's URL.
+
+        Returns an ir.actions.act_url so the browser opens a new tab.
+        Per SPEC §8 Step 7 (Validate JSON-LD button).
+        """
+        self.ensure_one()
+        base = self.website_id.domain or ''
+        base = base.rstrip('/')
+        page_url = base + (self.url or '/')
+        test_url = (
+            'https://search.google.com/test/rich-results?url='
+            + urllib.parse.quote(page_url, safe='')
+        )
+        return {
+            'type': 'ir.actions.act_url',
+            'url': test_url,
+            'target': 'new',
+        }

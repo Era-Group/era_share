@@ -4,6 +4,16 @@ from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# ONDELETE PATTERN FOR POLYMORPHIC SCHEMA INSTANCES
+# ---------------------------------------------------------------------------
+# era.seo.schema.instance uses a polymorphic (res_model, res_id) reference
+# instead of a real FK, so the DB cannot enforce CASCADE.  Every model that
+# can host schema instances MUST override unlink() to delete its instances
+# first.  Copy the _cleanup_schema_instances() helper below into new host
+# models (Phase 5 blog.post, etc.) and call it from unlink().
+# ---------------------------------------------------------------------------
+
 
 class WebsitePage(models.Model):
     """Extend website.page with the ERA SEO mixin.
@@ -103,3 +113,35 @@ class WebsitePage(models.Model):
         result['default_opengraph'] = og
         result['default_twitter'] = tw
         return result
+
+    # --- Schema instance cleanup on page delete ------------------------------
+
+    def _cleanup_schema_instances(self):
+        """Delete all era.seo.schema.instance records for these pages.
+
+        Called from unlink() before the page records are removed.
+        Silently skips if the model is not installed (e.g. during a partial
+        test run where era.seo.schema.instance does not yet exist).
+        """
+        if 'era.seo.schema.instance' not in self.env:
+            return
+        instances = self.env['era.seo.schema.instance'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', 'in', self.ids),
+        ])
+        if instances:
+            _logger.debug(
+                'website_page.unlink: removing %d schema instance(s) for ids %s',
+                len(instances), self.ids,
+            )
+            instances.unlink()
+
+    def unlink(self):
+        """Override to cascade-delete schema instances before the page is removed.
+
+        Per SPEC §8 Step 2: polymorphic FKs have no DB-level CASCADE, so we
+        clean up instances here.  See the ONDELETE PATTERN comment at the top
+        of this file for how to replicate this in other host models.
+        """
+        self._cleanup_schema_instances()
+        return super().unlink()

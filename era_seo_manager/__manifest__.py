@@ -6,7 +6,7 @@ ERA SEO Manager
 ===============
 A unified SEO layer for Odoo 19 websites:
 - Per-page meta, OG, Twitter, canonical, robots directives
-- JSON-LD schema engine with 13+ built-in templates
+- JSON-LD schema engine with 17 built-in templates
 - Redirect manager (301/302) with bulk CSV import
 - Sitemap and robots.txt admin UI
 - SEO audit dashboard with actionable findings
@@ -18,7 +18,7 @@ A unified SEO layer for Odoo 19 websites:
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'depends': [
         'base',
         'web',
@@ -38,6 +38,7 @@ A unified SEO layer for Odoo 19 websites:
         'wizards/seo_bulk_update_wizard_views.xml',
         'wizards/seo_redirect_import_wizard_views.xml',
         'wizards/seo_audit_wizard_views.xml',
+        'wizards/seo_schema_preview_wizard_views.xml',
         'views/menus.xml',
         'views/res_config_settings_views.xml',
         'views/seo_schema_template_views.xml',

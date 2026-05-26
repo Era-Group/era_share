@@ -38,6 +38,17 @@ _logger = logging.getLogger(__name__)
 # Match {{ ... }} blocks (non-greedy, single-line).
 _PLACEHOLDER_RE = re.compile(r'\{\{([^}]+)\}\}')
 
+# Match a JSON string that contains one or more {{ ... }} placeholders embedded
+# alongside literal text.  E.g.:  "{{ x }}/#org"  or  "prefix-{{ x }}-suffix".
+# This pattern does NOT match  "{{ x }}"  alone (handled by _PLACEHOLDER_RE).
+_EMBEDDED_RE = re.compile(
+    r'"('                    # opening " — captured as prefix start
+    r'[^"]*'                 # literal prefix (may be empty)
+    r'\{\{[^}]+\}\}'         # first placeholder
+    r'[^"]*'                 # literal suffix / middle
+    r')"'                    # closing "
+)
+
 # Validate a dotted identifier path: letters, digits, underscores, dots only.
 # Max 5 segments (guards against runaway attribute traversal).
 _PATH_RE = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_.]*$')
@@ -233,11 +244,42 @@ def render_jsonld(
     if instance_data:
         ctx.update(instance_data)
 
-    def _replace(match):
+    def _replace_standalone(match):
+        """Replace a standalone {{ ... }} with a JSON-encoded value."""
         raw = match.group(1).strip()
         return _resolve_placeholder(raw, ctx)
 
-    rendered = _PLACEHOLDER_RE.sub(_replace, template_body)
+    def _replace_embedded(match):
+        """Replace {{ ... }} inside a JSON string with raw string fragments.
+
+        When a placeholder is embedded within a larger JSON string value, e.g.:
+            "{{ website.domain }}/#organization"
+        the surrounding double-quotes are the JSON string delimiters. We must
+        NOT add extra JSON-encoding (which would produce double double-quotes).
+        Instead we insert the raw Python string value directly.
+        """
+        inner = match.group(1)  # everything between the outer "..."
+
+        def _replace_inner(m):
+            raw = m.group(1).strip()
+            result = _resolve_placeholder(raw, ctx)
+            # Strip outer JSON string quotes if present (result is a JSON fragment).
+            # "value" → value   (unquote for inline insertion)
+            # null    → (empty string — keep null as literal text? use "" instead)
+            if result.startswith('"') and result.endswith('"') and len(result) >= 2:
+                return result[1:-1]  # strip surrounding JSON quotes
+            if result == 'null':
+                return ''
+            # Numbers, arrays, objects — convert to string for inline context.
+            return str(result)
+
+        resolved_inner = _PLACEHOLDER_RE.sub(_replace_inner, inner)
+        return '"' + resolved_inner + '"'
+
+    # Pass 1: handle {{ ... }} embedded in a larger string (e.g. "{{ x }}/#org").
+    rendered = _EMBEDDED_RE.sub(_replace_embedded, template_body)
+    # Pass 2: handle remaining standalone {{ ... }} placeholders.
+    rendered = _PLACEHOLDER_RE.sub(_replace_standalone, rendered)
 
     # Validate the output is parseable JSON.
     try:

@@ -9,7 +9,7 @@
     <field name="model">res.config.settings</field>
     <field name="inherit_id" ref="website.res_config_settings_view_form"/>
     <field name="arch" type="xml">
-      <xpath expr="//div[@id='website']" position="after">
+      <xpath expr="//app[@name='website']" position="after">
         <app string="ERA SEO" name="era_seo" img="era_seo_manager/static/description/icon.png">
           <block title="Organization Identity">
             <setting string="Organization Name"

@@ -10,14 +10,14 @@
     <field name="name">era.seo.schema.template.tree</field>
     <field name="model">era.seo.schema.template</field>
     <field name="arch" type="xml">
-      <tree string="Schema Templates" default_group_by="category">
+      <list string="Schema Templates" default_group_by="category">
         <field name="name"/>
         <field name="code"/>
         <field name="schema_type"/>
         <field name="category"/>
         <field name="active" optional="show"/>
         <field name="is_default" optional="show"/>
-      </tree>
+      </list>
     </field>
   </record>
 
@@ -30,17 +30,13 @@
         <field name="name"/>
         <field name="code"/>
         <field name="schema_type"/>
-        <separator/>
         <filter string="Core" name="cat_core" domain="[('category','=','core')]"/>
         <filter string="Content" name="cat_content" domain="[('category','=','content')]"/>
         <filter string="Commerce" name="cat_commerce" domain="[('category','=','commerce')]"/>
         <filter string="Event" name="cat_event" domain="[('category','=','event')]"/>
         <filter string="Local" name="cat_local" domain="[('category','=','local')]"/>
-        <separator/>
         <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
-        <group expand="0" string="Group By">
-          <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
-        </group>
+        <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
       </search>
     </field>
   </record>
@@ -55,7 +51,7 @@
           <button name="%(era_seo_manager.action_seo_schema_preview_wizard)d"
                   string="Preview"
                   type="action"
-                  context="{'default_template_id': active_id}"
+                  context="{'default_template_id': id}"
                   class="btn-secondary"
                   help="Render this template against a website page and inspect the output."/>
         </header>

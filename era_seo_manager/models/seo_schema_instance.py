@@ -63,13 +63,10 @@ class EraSeoSchemaInstance(models.Model):
             ON era_seo_schema_instance (res_model, res_id, active)
         """)
 
-    _sql_constraints = [
-        (
-            'template_required',
-            'CHECK(template_id IS NOT NULL)',
-            'A schema instance must reference a template.',
-        ),
-    ]
+    _template_not_null = models.Constraint(
+        'CHECK(template_id IS NOT NULL)',
+        'A schema instance must reference a template.',
+    )
 
     # --- Computes -------------------------------------------------------------
 

@@ -10,12 +10,12 @@
     <field name="name">era.seo.schema.instance.list</field>
     <field name="model">era.seo.schema.instance</field>
     <field name="arch" type="xml">
-      <tree string="Schema Instances" editable="bottom">
+      <list string="Schema Instances" editable="bottom">
         <field name="sequence" widget="handle"/>
         <field name="template_id"/>
         <field name="active" optional="show"/>
         <field name="name" optional="show"/>
-      </tree>
+      </list>
     </field>
   </record>
 

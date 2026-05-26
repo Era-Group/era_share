@@ -23,7 +23,7 @@
                   class="btn-primary"/>
           <button string="Close" special="cancel" class="btn-secondary"/>
         </footer>
-        <group string="Rendered Output" attrs="{'invisible': [('rendered_output', '=', False)]}">
+        <group string="Rendered Output" invisible="not rendered_output">
           <field name="rendered_output"
                  widget="ace"
                  options="{'mode': 'json', 'readOnly': true}"

@@ -71,19 +71,26 @@ class EraSeoSchemaTemplate(models.Model):
              'which templates to attach.',
     )
 
-    _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'Template code must be unique.'),
-    ]
+    _code_unique = models.Constraint(
+        'UNIQUE(code)',
+        'Template code must be unique.',
+    )
 
     # --- Constraints ----------------------------------------------------------
 
     @api.constrains('body')
     def _check_body_valid_json(self):
-        """Placeholders stripped → result must be parseable JSON."""
+        """Placeholders stripped → result must be parseable JSON.
+
+        Use ``null`` as the sentinel (no quotes) so it is valid JSON whether
+        the placeholder is a standalone value or embedded inside a string.
+        E.g. ``"{{ x }}/#org"`` → ``"null/#org"`` (valid), and
+             ``"key": {{ x | json }}`` → ``"key": null`` (also valid).
+        """
         for rec in self:
             if not rec.body:
                 continue
-            stripped = _PLACEHOLDER_RE.sub('"__placeholder__"', rec.body)
+            stripped = _PLACEHOLDER_RE.sub('null', rec.body)
             try:
                 json.loads(stripped)
             except json.JSONDecodeError as exc:
@@ -98,7 +105,7 @@ class EraSeoSchemaTemplate(models.Model):
         for rec in self:
             if not rec.body or not rec.schema_type:
                 continue
-            stripped = _PLACEHOLDER_RE.sub('"__placeholder__"', rec.body)
+            stripped = _PLACEHOLDER_RE.sub('null', rec.body)
             try:
                 parsed = json.loads(stripped)
             except json.JSONDecodeError:

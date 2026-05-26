@@ -57,15 +57,15 @@
                       help="Open Google Rich Results Test with this page URL pre-filled."/>
             </div>
             <field name="seo_schema_instance_ids"
-                   context="{'default_res_model': 'website.page', 'default_res_id': active_id}"
-                   mode="tree"
+                   context="{'default_res_model': 'website.page', 'default_res_id': id}"
+                   mode="list"
                    nolabel="1">
-              <tree string="Schema Instances" editable="bottom">
+              <list string="Schema Instances" editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="template_id"/>
                 <field name="active" optional="show"/>
                 <field name="name" optional="show"/>
-              </tree>
+              </list>
               <form>
                 <group>
                   <group string="Configuration">

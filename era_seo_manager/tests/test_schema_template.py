@@ -87,8 +87,12 @@ class TestSchemaTemplate(TransactionCase):
 
     def test_duplicate_code_raises(self):
         self._make(code='unique_code_test')
+        # Use a savepoint so the constraint violation doesn't abort the outer
+        # test transaction (PostgreSQL marks a transaction as aborted on any
+        # error, preventing proper rollback without an explicit savepoint).
         with self.assertRaises(Exception):
-            self._make(code='unique_code_test', name='Duplicate')
+            with self.env.cr.savepoint():
+                self._make(code='unique_code_test', name='Duplicate')
 
     # --- active / is_default ---------------------------------------------------
 

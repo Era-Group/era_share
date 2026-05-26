@@ -18,12 +18,14 @@ class TestSchemaRendering(HttpCase):
 
     def _make_page_with_schema(self, seo_title='Rendering Test', url='/era-schema-render-test'):
         """Helper: create a page + Organisation template instance, return page."""
+        # Use sudo() for test setup: the admin user is not automatically in SEO groups.
+        sudo_env = self.env.sudo()
         # Find or create an organization template.
-        tpl = self.env['era.seo.schema.template'].search(
+        tpl = sudo_env['era.seo.schema.template'].search(
             [('code', '=', 'organization')], limit=1
         )
         if not tpl:
-            tpl = self.env['era.seo.schema.template'].create({
+            tpl = sudo_env['era.seo.schema.template'].create({
                 'name': 'Organization',
                 'code': 'organization',
                 'schema_type': 'Organization',
@@ -31,13 +33,13 @@ class TestSchemaRendering(HttpCase):
                 'body': '{"@type": "Organization", "name": {{ company.name | default("ERA") }}}',
             })
 
-        view = self.env['ir.ui.view'].create({
+        view = sudo_env['ir.ui.view'].create({
             'name': 'ERA SEO Render Test View',
             'type': 'qweb',
             'arch': '<t t-name="era_seo_manager.render_test"><div>render test</div></t>',
             'key': 'era_seo_manager.render_test_view',
         })
-        page = self.env['website.page'].create({
+        page = sudo_env['website.page'].create({
             'view_id': view.id,
             'url': url,
             'is_published': True,
@@ -45,7 +47,7 @@ class TestSchemaRendering(HttpCase):
         })
         page.write({'seo_title': seo_title})
 
-        self.env['era.seo.schema.instance'].create({
+        sudo_env['era.seo.schema.instance'].create({
             'template_id': tpl.id,
             'res_model': 'website.page',
             'res_id': page.id,
@@ -84,7 +86,7 @@ class TestSchemaRendering(HttpCase):
         )
         page = self._make_page_with_schema(url='/era-schema-render-test-3')
         # Deactivate the instance.
-        instances = self.env['era.seo.schema.instance'].search([
+        instances = self.env.sudo()['era.seo.schema.instance'].search([
             ('res_model', '=', 'website.page'),
             ('res_id', '=', page.id),
         ])

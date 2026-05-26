@@ -17,50 +17,62 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#. model:era.seo.mixin,field_string:seo_title
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_title
 msgid "SEO Title"
 msgstr "عنوان SEO"
 
-#. model:era.seo.mixin,field_string:seo_description
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_description
 msgid "Meta Description"
 msgstr "الوصف التعريفي"
 
-#. model:era.seo.mixin,field_string:seo_keywords
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_keywords
 msgid "Meta Keywords"
 msgstr "الكلمات المفتاحية"
 
-#. model:era.seo.mixin,field_string:seo_og_title
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_title
 msgid "OG Title"
 msgstr "عنوان Open Graph"
 
-#. model:era.seo.mixin,field_string:seo_og_description
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_description
 msgid "OG Description"
 msgstr "وصف Open Graph"
 
-#. model:era.seo.mixin,field_string:seo_og_image
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_image
 msgid "OG Image"
 msgstr "صورة Open Graph"
 
-#. model:era.seo.mixin,field_string:seo_canonical_url
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_canonical_url
 msgid "Canonical URL Override"
 msgstr "تجاوز رابط Canonical"
 
-#. model:era.seo.mixin,field_string:seo_robots_index
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_index
 msgid "Index this page"
 msgstr "فهرسة هذه الصفحة"
 
-#. model:era.seo.mixin,field_string:seo_robots_follow
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_follow
 msgid "Follow links on this page"
 msgstr "تتبع الروابط في هذه الصفحة"
 
-#. model:era.seo.mixin,field_string:seo_robots_archive
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_archive
 msgid "Allow archive"
 msgstr "السماح بالأرشفة"
 
-#. model:era.seo.mixin,field_string:seo_robots_snippet
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_snippet
 msgid "Allow snippet"
 msgstr "السماح بالمقتطف"
 
-#. model:era.seo.mixin,field_string:seo_sitemap_include
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_sitemap_include
 msgid "Include in sitemap"
 msgstr "تضمين في خريطة الموقع"

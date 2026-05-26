@@ -9,11 +9,21 @@
     </record>
 
     <!--
+      In Odoo 19, res.groups uses privilege_id → res.groups.privilege,
+      and the privilege carries the category_id. category_id was removed
+      from res.groups directly.
+    -->
+    <record id="privilege_era_seo" model="res.groups.privilege">
+      <field name="name">SEO</field>
+      <field name="category_id" ref="module_era_seo_manager"/>
+    </record>
+
+    <!--
       group_era_seo_user — read SEO fields, no create/edit.
     -->
     <record id="group_era_seo_user" model="res.groups">
       <field name="name">SEO User</field>
-      <field name="category_id" ref="module_era_seo_manager"/>
+      <field name="privilege_id" ref="privilege_era_seo"/>
       <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
@@ -24,7 +34,7 @@
     -->
     <record id="group_era_seo_manager" model="res.groups">
       <field name="name">SEO Manager</field>
-      <field name="category_id" ref="module_era_seo_manager"/>
+      <field name="privilege_id" ref="privilege_era_seo"/>
       <field name="implied_ids" eval="[
           (4, ref('era_seo_manager.group_era_seo_user')),
           (4, ref('website.group_website_designer')),

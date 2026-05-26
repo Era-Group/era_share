@@ -36,7 +36,14 @@ class TestSchemaRendering(HttpCase):
         view = sudo_env['ir.ui.view'].create({
             'name': 'ERA SEO Render Test View',
             'type': 'qweb',
-            'arch': '<t t-name="era_seo_manager.render_test"><div>render test</div></t>',
+            # Must call website.layout so the <head> (and schema injection) is rendered.
+            'arch': (
+                '<t t-name="era_seo_manager.render_test_view">'
+                '<t t-call="website.layout">'
+                '<div id="wrap"><div class="container">render test</div></div>'
+                '</t>'
+                '</t>'
+            ),
             'key': 'era_seo_manager.render_test_view',
         })
         page = sudo_env['website.page'].create({

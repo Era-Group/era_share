@@ -20,4 +20,5 @@ from . import (
     content_block,
     res_partner,
     res_config_settings,
+    seo_status,
 )

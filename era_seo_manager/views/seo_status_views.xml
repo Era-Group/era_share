@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- ERA SEO Status Overview — form view + window action -->
+
+  <record id="view_seo_status_form" model="ir.ui.view">
+    <field name="name">era.seo.status.form</field>
+    <field name="model">era.seo.status</field>
+    <field name="arch" type="xml">
+      <form string="ERA SEO — Status Overview" create="false" edit="false" delete="false">
+        <sheet>
+
+          <!-- Header row: module version + quick link to settings -->
+          <div class="oe_title d-flex align-items-center justify-content-between mb-3">
+            <h1 class="mb-0">ERA SEO Manager</h1>
+            <div class="text-muted small">
+              v<field name="module_version" readonly="1" nolabel="1" class="d-inline"/>
+            </div>
+          </div>
+
+          <!-- ── Settings ────────────────────────────────────────────── -->
+          <group string="Settings" class="o_group_col_2">
+            <group string="Organization Identity">
+              <field name="schema_engine_enabled" readonly="1"/>
+              <field name="org_name" readonly="1"/>
+              <field name="legal_name" readonly="1"/>
+              <field name="logo_url" readonly="1"/>
+              <field name="twitter_handle" readonly="1"/>
+              <field name="social_profiles_set" readonly="1"
+                     string="Social Profiles Configured (out of 5)"/>
+            </group>
+            <group string="Site Verification">
+              <field name="google_verification" readonly="1"/>
+              <field name="bing_verification" readonly="1"/>
+            </group>
+          </group>
+
+          <!-- ── Pages ────────────────────────────────────────────────── -->
+          <group string="Pages">
+            <group>
+              <field name="total_pages" readonly="1"/>
+              <field name="published_pages" readonly="1"/>
+              <field name="pages_with_seo_title" readonly="1"/>
+            </group>
+            <group>
+              <field name="pages_with_seo_description" readonly="1"/>
+              <field name="pages_with_canonical" readonly="1"
+                     string="Pages with Custom Canonical URL"/>
+              <field name="pages_noindex" readonly="1"/>
+            </group>
+          </group>
+
+          <!-- ── Schema Engine ─────────────────────────────────────────── -->
+          <group string="JSON-LD Schema Engine">
+            <group>
+              <field name="templates_total" readonly="1"/>
+              <field name="templates_active" readonly="1"/>
+            </group>
+            <group>
+              <field name="instances_total" readonly="1"/>
+              <field name="instances_active" readonly="1"/>
+            </group>
+          </group>
+
+          <!-- ── Redirects &amp; Hreflang ─────────────────────────────── -->
+          <group string="Redirects &amp; Hreflang">
+            <group>
+              <field name="redirects_total" readonly="1"/>
+              <field name="redirects_active" readonly="1"/>
+            </group>
+            <group>
+              <field name="hreflang_rules" readonly="1"/>
+            </group>
+          </group>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_seo_status" model="ir.actions.act_window">
+    <field name="name">SEO Overview</field>
+    <field name="res_model">era.seo.status</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_seo_status_form"/>
+    <field name="target">current</field>
+  </record>
+
+</odoo>

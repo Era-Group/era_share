@@ -39,6 +39,7 @@ A unified SEO layer for Odoo 19 websites:
         'wizards/seo_redirect_import_wizard_views.xml',
         'wizards/seo_audit_wizard_views.xml',
         'wizards/seo_schema_preview_wizard_views.xml',
+        'views/seo_status_views.xml',
         'views/res_config_settings_views.xml',
         'views/seo_schema_template_views.xml',
         'views/seo_schema_instance_views.xml',

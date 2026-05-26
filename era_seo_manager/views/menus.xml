@@ -108,6 +108,14 @@
     groups="era_seo_manager.group_era_seo_user"/>
 
   <menuitem
+    id="menu_seo_overview"
+    name="Overview"
+    parent="menu_website_seo_root"
+    action="era_seo_manager.action_seo_status"
+    sequence="5"
+    groups="era_seo_manager.group_era_seo_user"/>
+
+  <menuitem
     id="menu_seo_schema_templates"
     name="Schema Templates"
     parent="menu_website_seo_root"

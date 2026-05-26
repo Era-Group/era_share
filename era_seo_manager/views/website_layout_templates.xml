@@ -5,7 +5,7 @@
     ====================================
     Inherits website.layout to:
 
-    1. Compute era_seo dict from seo_object when it carries era.seo.mixin fields.
+    1. Compute era_seo dict from main_object when it carries era.seo.mixin fields.
     2. Override the <title> element — our title variable is set BEFORE the stock
        `<t t-if="not title">` guard runs, so the guard is a no-op and the stock
        default is skipped. The original <title> element is replaced with a
@@ -24,13 +24,22 @@
       Step 1 — compute era_seo BEFORE the stock title guard.
       Position "before" on //head/*[1] inserts our t-set FIRST in the head,
       so era_seo is available to all subsequent xpath modifications.
-      If seo_title is set, we also pre-set the `title` variable so that the
-      stock `<t t-if="not title">` block is skipped entirely.
+
+      We use `main_object` (set by the controller before rendering) instead of
+      `seo_object`, which is only assigned inside stock website.layout's own
+      `<t t-if="not title">` block — that runs AFTER our injected code in the
+      merged template, so it would always be None here.
+
+      ERA mode is activated only when the record carries a non-empty seo_title.
+      Pages without any ERA data keep their stock rendering unchanged.
+      When ERA mode is active we also pre-set `title` so the stock
+      `<t t-if="not title">` guard is satisfied and skipped.
     -->
     <xpath expr="//head/*[1]" position="before">
-      <t t-if="seo_object and 'seo_title' in seo_object._fields">
-        <t t-set="era_seo" t-value="seo_object.sudo().get_seo_meta_dict()"/>
-        <t t-if="era_seo and era_seo.get('title')">
+      <t t-if="main_object and 'seo_title' in main_object._fields">
+        <t t-set="era_obj" t-value="main_object.sudo()"/>
+        <t t-if="era_obj.seo_title">
+          <t t-set="era_seo" t-value="era_obj.get_seo_meta_dict()"/>
           <t t-set="title" t-value="era_seo['title']"/>
         </t>
       </t>

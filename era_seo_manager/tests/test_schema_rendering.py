@@ -5,6 +5,8 @@ Uses HttpCase to fetch a real page and assert on the rendered HTML.
 Per SPEC §8 Step 6 / CLAUDE.md §6.
 """
 
+import html as _html
+
 from odoo.tests import HttpCase, tagged
 
 
@@ -72,9 +74,11 @@ class TestSchemaRendering(HttpCase):
         self._make_page_with_schema(url='/era-schema-render-test-1')
         response = self.url_open('/era-schema-render-test-1')
         self.assertEqual(response.status_code, 200)
+        # QWeb HTML-entity-encodes content inside script tags; unescape first.
+        decoded = _html.unescape(response.text)
         self.assertIn('application/ld+json', response.text)
-        self.assertIn('"@type"', response.text)
-        self.assertIn('Organization', response.text)
+        self.assertIn('"@type"', decoded)
+        self.assertIn('Organization', decoded)
 
     def test_schema_disabled_no_script_tag(self):
         """When schema engine is disabled, no ld+json tag should appear."""

@@ -1,5 +1,6 @@
 from . import (
     seo_mixin,
+    seo_schema_engine,  # pure-Python module, not a model
     seo_schema_instance,
     seo_schema_template,
     seo_redirect,

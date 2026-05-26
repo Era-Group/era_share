@@ -1,6 +1,8 @@
 import json
 import logging
 
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -141,9 +143,13 @@ class EraSeoSchemaInstance(models.Model):
                 )
 
         ctx = build_context(self.env, record=page_record)
-        return render_jsonld(
+        json_str = render_jsonld(
             self.template_id.body,
             ctx,
             record=page_record,
             instance_data=instance_data,
         )
+        # Wrap in Markup so QWeb's t-out does not HTML-entity-encode the JSON.
+        # JSON inside <script type="application/ld+json"> must be literal, not
+        # &quot;-encoded, or JSON parsers and rich-result validators will fail.
+        return Markup(json_str)

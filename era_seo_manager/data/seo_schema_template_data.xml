@@ -19,7 +19,7 @@
     <!-- =================================================================
          1. ORGANIZATION  (core)
          https://schema.org/Organization
-         Required context: company.name, website.domain, company (social)
+         Required context: company.name, site_url, company (social)
     ================================================================= -->
     <record id="schema_tpl_organization" model="era.seo.schema.template">
       <field name="name">Organization</field>
@@ -28,15 +28,15 @@
       <field name="category">core</field>
       <field name="description">Site-wide organization identity. Attach to the home page.</field>
       <field name="documentation_url">https://schema.org/Organization</field>
-      <field name="required_fields_json">["company.name", "website.domain"]</field>
+      <field name="required_fields_json">["company.name", "site_url"]</field>
       <field name="is_default">True</field>
       <field name="body"><![CDATA[{
   "@context": "https://schema.org",
   "@type": "Organization",
-  "@id": "{{ website.domain | default("") }}/#organization",
+  "@id": "{{ site_url }}/#organization",
   "name": "{{ company.name | default("") }}",
   "legalName": "{{ settings.legal_name | default("") }}",
-  "url": "{{ website.domain | default("") }}/",
+  "url": "{{ site_url }}/",
   "logo": {
     "@type": "ImageObject",
     "url": "{{ settings.logo_url | default("") }}"
@@ -69,9 +69,9 @@
       <field name="body"><![CDATA[{
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "{{ website.domain | default("") }}/#localbusiness",
+  "@id": "{{ site_url }}/#localbusiness",
   "name": "{{ company.name | default("") }}",
-  "url": "{{ website.domain | default("") }}/",
+  "url": "{{ site_url }}/",
   "logo": "{{ settings.logo_url | default("") }}",
   "image": "{{ settings.default_og_image_url | default("") }}",
   "description": "{{ record.seo_description | default("") }}",
@@ -99,23 +99,23 @@
       <field name="category">core</field>
       <field name="description">Site-wide WebSite entity. Enables sitelinks search box. Attach to the home page.</field>
       <field name="documentation_url">https://schema.org/WebSite</field>
-      <field name="required_fields_json">["website.domain", "website.name"]</field>
+      <field name="required_fields_json">["site_url", "website.name"]</field>
       <field name="is_default">True</field>
       <field name="body"><![CDATA[{
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "@id": "{{ website.domain | default("") }}/#website",
-  "url": "{{ website.domain | default("") }}/",
+  "@id": "{{ site_url }}/#website",
+  "url": "{{ site_url }}/",
   "name": "{{ website.name | default("") }}",
   "description": "{{ record.seo_description | default("") }}",
   "publisher": {
-    "@id": "{{ website.domain | default("") }}/#organization"
+    "@id": "{{ site_url }}/#organization"
   },
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": "{{ website.domain | default("") }}/search?q={search_term_string}"
+      "urlTemplate": "{{ site_url }}/search?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   }
@@ -152,7 +152,7 @@
   },
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   }
 }]]></field>
@@ -187,7 +187,7 @@
   },
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   }
 }]]></field>
@@ -215,7 +215,7 @@
   "url": "{{ record.seo_canonical_url | default("") }}",
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}",
     "logo": {
       "@type": "ImageObject",
@@ -256,7 +256,7 @@
   "url": "{{ record.seo_canonical_url | default("") }}",
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}",
     "logo": {
       "@type": "ImageObject",
@@ -296,7 +296,7 @@
   "url": "{{ record.seo_canonical_url | default("") }}",
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}",
     "logo": {
       "@type": "ImageObject",
@@ -373,7 +373,7 @@
       <field name="category">core</field>
       <field name="description">Navigation breadcrumbs for SERP display. Override itemListElement via data_json.</field>
       <field name="documentation_url">https://schema.org/BreadcrumbList</field>
-      <field name="required_fields_json">["website.domain"]</field>
+      <field name="required_fields_json">["site_url"]</field>
       <field name="is_default">False</field>
       <field name="body"><![CDATA[{
   "@context": "https://schema.org",
@@ -383,7 +383,7 @@
       "@type": "ListItem",
       "position": 1,
       "name": "{{ website.name | default("Home") }}",
-      "item": "{{ website.domain | default("") }}/"
+      "item": "{{ site_url }}/"
     },
     {
       "@type": "ListItem",
@@ -458,7 +458,7 @@
   "image": "{{ record.seo_og_image_url | default("") }}",
   "provider": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   },
   "areaServed": "{{ company.country_id.name | default("") }}"
@@ -488,7 +488,7 @@
   "url": "{{ record.seo_canonical_url | default("") }}",
   "worksFor": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   }
 }]]></field>
@@ -524,7 +524,7 @@
   },
   "organizer": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   }
 }]]></field>
@@ -554,7 +554,7 @@
   "embedUrl": "",
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ website.domain | default("") }}/#organization",
+    "@id": "{{ site_url }}/#organization",
     "name": "{{ company.name | default("") }}"
   }
 }]]></field>

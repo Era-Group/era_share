@@ -207,3 +207,74 @@ class TestSchemaInstance(EraSeoTestCase):
         result = inst.get_rendered_json_ld(page_record=self.test_page)
         parsed = json.loads(result)
         self.assertEqual(parsed['name'], 'Explicit Record Test')
+
+    # --- _get_for_render preload ---------------------------------------------
+
+    def test_get_for_render_returns_site_then_page(self):
+        """Site-bound instances come first, then page-bound, sequence asc within each."""
+        website = self.env['website'].search([], limit=1)
+        site_inst = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website',
+            'res_id': website.id,
+            'sequence': 20,
+        })
+        page_inst = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website.page',
+            'res_id': self.test_page.id,
+            'sequence': 10,
+        })
+        result = self.Instance._get_for_render(main_object=self.test_page, website=website)
+        ids = result.ids
+        self.assertIn(site_inst.id, ids)
+        self.assertIn(page_inst.id, ids)
+        # Site-bound must precede page-bound regardless of sequence.
+        self.assertLess(ids.index(site_inst.id), ids.index(page_inst.id))
+
+    def test_get_for_render_ignores_inactive(self):
+        website = self.env['website'].search([], limit=1)
+        active = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website',
+            'res_id': website.id,
+            'active': True,
+        })
+        inactive = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website',
+            'res_id': website.id,
+            'active': False,
+        })
+        result = self.Instance._get_for_render(website=website)
+        self.assertIn(active.id, result.ids)
+        self.assertNotIn(inactive.id, result.ids)
+
+    def test_get_for_render_with_only_website(self):
+        """main_object=None must still return site-wide schemas (the home-page case)."""
+        website = self.env['website'].search([], limit=1)
+        inst = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website',
+            'res_id': website.id,
+        })
+        result = self.Instance._get_for_render(main_object=None, website=website)
+        self.assertIn(inst.id, result.ids)
+
+    def test_get_for_render_skips_main_object_without_mixin(self):
+        """A record that does not carry era.seo.mixin is ignored as a target."""
+        # res.users does not carry seo_title — pass admin user as main_object.
+        admin = self.env.ref('base.user_admin')
+        website = self.env['website'].search([], limit=1)
+        site_inst = self.Instance.create({
+            'template_id': self.tpl.id,
+            'res_model': 'website',
+            'res_id': website.id,
+        })
+        result = self.Instance._get_for_render(main_object=admin, website=website)
+        # The admin-user record itself should not appear; only the site instance.
+        self.assertEqual(result.ids, [site_inst.id])
+
+    def test_get_for_render_returns_empty_with_no_args(self):
+        result = self.Instance._get_for_render(main_object=None, website=None)
+        self.assertEqual(len(result), 0)

@@ -3,6 +3,37 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.2.0] — 2026-05-27
+
+### Fixed — Absolute URLs in JSON-LD
+
+- **`"url": "/"` on every page** (`models/seo_schema_engine.py`, `data/seo_schema_template_data.xml`):
+  Templates resolved `{{ website.domain | default("") }}` to `""` when the
+  per-website Domain field was blank, producing `"@id": "/#organization"` and
+  `"url": "/"` — both flagged by Google Rich Results Test. Replaced with a new
+  `{{ site_url }}` context value that falls back to `web.base.url` and upgrades
+  bare hosts (`example.com`) to `https://example.com`. All 17 built-in
+  templates migrated; trailing slash is normalized away so paths concatenate
+  cleanly. Run `-u era_seo_manager` on existing sites to refresh the bodies.
+
+### Fixed — Duplicate `<meta name="robots">`
+
+- **Two robots tags on every ERA page** (`views/website_meta_templates.xml`):
+  Step 5 of `website_layout_templates.xml` already replaces the stock
+  `<meta name="robots">` with the ERA directive; `meta_tags` was emitting a
+  second one. Removed the duplicate from `meta_tags`; the layout xpath is the
+  single source of truth. Regression test added (`test_single_robots_meta_emitted`).
+
+### Changed — Schema preload moved out of QWeb
+
+- **Two ad-hoc `search()` calls in `era_seo_schema_ld` template** replaced
+  with a single `era.seo.schema.instance._get_for_render(main_object, website)`
+  model method. Combines site-wide and page-specific instances in one SQL
+  query and returns them ordered (site-bound first, then page-bound, sequence
+  ascending within each group). Satisfies CLAUDE.md §9 "no queries inside
+  QWeb templates". Tests cover ordering, inactive filtering, and the
+  homepage-with-no-main_object case.
+
 ## [19.0.2.1.0] — 2026-05-27
 
 ### Added — Phase 2 post-release fixes & UX

@@ -154,3 +154,78 @@ class TestEngineResolve(TransactionCase):
         if page:
             ctx = self.build_context(self.env, record=page)
             self.assertEqual(ctx['record'], page)
+
+    # --- site_url -------------------------------------------------------------
+
+    def test_site_url_in_context(self):
+        """build_context always exposes a site_url key."""
+        ctx = self.build_context(self.env)
+        self.assertIn('site_url', ctx)
+        self.assertIsInstance(ctx['site_url'], str)
+
+    def test_site_url_strips_trailing_slash(self):
+        """site_url must never carry a trailing slash so templates can append /path cleanly."""
+        from odoo.addons.era_seo_manager.models.seo_schema_engine import _resolve_site_url
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        old = ICP.get_param('web.base.url')
+        try:
+            ICP.set_param('web.base.url', 'https://example.com/')
+            # Resolve with no website -> falls back to ICP.
+            site_url = _resolve_site_url(ICP, None)
+            self.assertEqual(site_url, 'https://example.com')
+        finally:
+            if old is not False and old is not None:
+                ICP.set_param('web.base.url', old)
+
+    def test_site_url_falls_back_to_web_base_url(self):
+        """Empty website.domain must yield the ICP web.base.url."""
+        from odoo.addons.era_seo_manager.models.seo_schema_engine import _resolve_site_url
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        # Build a stand-in website with an empty domain.
+        website = type('W', (), {'domain': ''})()
+        old = ICP.get_param('web.base.url')
+        try:
+            ICP.set_param('web.base.url', 'https://fallback.test')
+            self.assertEqual(_resolve_site_url(ICP, website), 'https://fallback.test')
+        finally:
+            if old is not False and old is not None:
+                ICP.set_param('web.base.url', old)
+
+    def test_site_url_upgrades_bare_host_to_https(self):
+        """A bare host like 'example.com' is upgraded to https://example.com."""
+        from odoo.addons.era_seo_manager.models.seo_schema_engine import _resolve_site_url
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        website = type('W', (), {'domain': 'example.com'})()
+        self.assertEqual(_resolve_site_url(ICP, website), 'https://example.com')
+
+    def test_site_url_preserves_explicit_scheme(self):
+        """Explicit http:// is preserved (e.g. local dev)."""
+        from odoo.addons.era_seo_manager.models.seo_schema_engine import _resolve_site_url
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        website = type('W', (), {'domain': 'http://localhost:8069'})()
+        self.assertEqual(_resolve_site_url(ICP, website), 'http://localhost:8069')
+
+    def test_site_url_used_in_template_render(self):
+        """End-to-end: a template referencing {{ site_url }} resolves correctly."""
+        import json
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        old = ICP.get_param('web.base.url')
+        try:
+            ICP.set_param('web.base.url', 'https://render.test')
+            body = '{"@type": "Thing", "url": "{{ site_url }}/path"}'
+            ctx = self.build_context(self.env)
+            result = self.render_jsonld(body, ctx)
+            parsed = json.loads(result)
+            # Either the configured website.domain OR our fallback wins.
+            # Both must be absolute, neither '/'.
+            self.assertTrue(parsed['url'].startswith('http'))
+            self.assertTrue(parsed['url'].endswith('/path'))
+            self.assertNotEqual(parsed['url'], '/path')
+        finally:
+            if old is not False and old is not None:
+                ICP.set_param('web.base.url', old)

@@ -91,6 +91,10 @@ def build_context(env, record=None):
         # Site objects
         'website': website,
         'company': company,
+        # Absolute origin (https://host[:port]) for use in JSON-LD URLs.
+        # Falls back from website.domain -> web.base.url -> ''. Always returned
+        # without a trailing slash so callers can append paths cleanly.
+        'site_url': _resolve_site_url(ICP, website),
         # Record being rendered
         'record': record,
     }
@@ -105,6 +109,33 @@ def build_context(env, record=None):
         pass
 
     return ctx
+
+
+# ---------------------------------------------------------------------------
+# Site URL resolution
+# ---------------------------------------------------------------------------
+
+def _resolve_site_url(icp, website):
+    """Return absolute origin (scheme+host) for the active website.
+
+    Order of precedence:
+      1. ``website.domain`` (Odoo's per-website override; may be bare host
+         or a full URL).
+      2. ``web.base.url`` ICP (the system-wide fallback Odoo configures
+         on first launch and after every login through the server).
+      3. Empty string.
+
+    A bare host like ``example.com`` is upgraded to ``https://example.com``.
+    The trailing slash is always stripped so templates can do
+    ``{{ site_url }}/path`` without ending up with ``//``.
+    """
+    raw = (website and website.domain) or ''
+    if not raw:
+        raw = icp.get_param('web.base.url') or ''
+    raw = (raw or '').strip()
+    if raw and not raw.startswith(('http://', 'https://')):
+        raw = 'https://' + raw
+    return raw.rstrip('/')
 
 
 # ---------------------------------------------------------------------------

@@ -137,6 +137,27 @@ class TestSchemaRendering(HttpCase):
                       'Site-level schema must render even when main_object is None.')
         self.assertIn('Organization', decoded)
 
+    def test_single_robots_meta_emitted(self):
+        """Exactly one <meta name="robots"> appears on an ERA page.
+
+        Regression for the duplicate-tag bug: the meta_tags template used to
+        emit its own robots tag in addition to the Step 5 layout xpath, so
+        ERA pages shipped with two identical robots metas.
+        """
+        self.env['ir.config_parameter'].sudo().set_param(
+            'era_seo.schema_engine_enabled', 'True'
+        )
+        self._make_page_with_schema(url='/era-schema-render-test-robots')
+        response = self.url_open('/era-schema-render-test-robots')
+        self.assertEqual(response.status_code, 200)
+        # Count occurrences. Anything other than 1 indicates a regression
+        # (0 = layout xpath silently dropped; 2 = dedupe regressed).
+        count = response.text.count('name="robots"')
+        self.assertEqual(
+            count, 1,
+            'Expected exactly one <meta name="robots"> on the page, got %d' % count,
+        )
+
     def test_inactive_instance_not_rendered(self):
         """Inactive schema instances must not appear in the page output."""
         self.env['ir.config_parameter'].sudo().set_param(

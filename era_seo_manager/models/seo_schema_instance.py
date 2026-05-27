@@ -108,6 +108,68 @@ class EraSeoSchemaInstance(models.Model):
                     _('Context overrides must be a valid JSON object: %s') % str(exc)
                 ) from exc
 
+    # --- Preload API ----------------------------------------------------------
+
+    @api.model
+    def _get_for_render(self, main_object=None, website=None):
+        """Return the active schema instances to render on the current page.
+
+        Combines two sources in a single SQL query:
+          - Site-wide instances bound to ``website`` (res_model='website').
+          - Page-specific instances bound to ``main_object`` if it carries
+            ``era.seo.mixin`` (detected by the ``seo_title`` field).
+
+        Results are ordered with site-wide schemas first, then page-specific
+        schemas; within each group records keep their ``sequence`` order.
+
+        Preferred over ad-hoc searches in QWeb (CLAUDE.md §9: no queries
+        inside templates). Called once per page render from the
+        ``era_seo_schema_ld`` template.
+
+        :param main_object: The record the page is rendering (may be None on
+                            controller routes like ``/``).
+        :param website:     The active website recordset.
+        :returns:           A recordset of ``era.seo.schema.instance``.
+        """
+        Instance = self.sudo()
+        clauses = []
+
+        if website:
+            clauses.append([
+                ('res_model', '=', 'website'),
+                ('res_id', '=', website.id),
+            ])
+
+        if (main_object
+                and hasattr(main_object, '_name')
+                and 'seo_title' in main_object._fields
+                and main_object.id):
+            clauses.append([
+                ('res_model', '=', main_object._name),
+                ('res_id', '=', main_object.id),
+            ])
+
+        if not clauses:
+            return Instance
+
+        # Build domain: active=True AND (clause_1 OR clause_2 OR ...)
+        target = []
+        for _i in range(len(clauses) - 1):
+            target.append('|')
+        for clause in clauses:
+            target.append('&')
+            target.extend(clause)
+        domain = [('active', '=', True)] + target
+
+        instances = Instance.search(domain)
+
+        # Stable order: website-bound first (sort key 0), then page-bound
+        # (sort key 1); within each group sequence ascending then id.
+        def _sort_key(rec):
+            return (0 if rec.res_model == 'website' else 1, rec.sequence, rec.id)
+
+        return instances.sorted(key=_sort_key)
+
     # --- Public rendering API -------------------------------------------------
 
     def get_rendered_json_ld(self, page_record=None):

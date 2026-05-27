@@ -48,6 +48,8 @@ class TestBlogAutoRebuild(TransactionCase):
         super().setUpClass()
         cls.ICP = cls.env['ir.config_parameter'].sudo()
         cls.ICP.set_param('era_seo.ai_enabled', 'True')
+        cls.env.user.write({'group_ids': [(4, cls.env.ref(
+            'era_seo_manager.group_era_seo_manager').id)]})
         cls.blog = cls.env['blog.blog'].create({'name': 'Test Blog'})
 
     # A body with >= 50 words of visible text (8 words x 8 = 64), so the

@@ -33,7 +33,7 @@ class TestFillSeo(TransactionCase):
         cls.Page = cls.env['website.page']
         cls.Log = cls.env['era.seo.ai.fix.log']
         cls.env['ir.config_parameter'].sudo().set_param('era_seo.ai_enabled', 'True')
-        cls.env.user.write({'groups_id': [(4, cls.env.ref(
+        cls.env.user.write({'group_ids': [(4, cls.env.ref(
             'era_seo_manager.group_era_seo_manager').id)]})
 
     def _make_page(self, url='/fill-test', **vals):
@@ -159,7 +159,7 @@ class TestFillSeo(TransactionCase):
     def test_fill_requires_manager_group(self):
         page = self._make_page(url='/fill-acl')
         # Drop the manager group for this test.
-        self.env.user.write({'groups_id': [(3, self.env.ref(
+        self.env.user.write({'group_ids': [(3, self.env.ref(
             'era_seo_manager.group_era_seo_manager').id)]})
         from odoo.exceptions import AccessError
         try:
@@ -167,5 +167,5 @@ class TestFillSeo(TransactionCase):
                 with self.assertRaises(AccessError):
                     page.action_ai_fill_seo()
         finally:
-            self.env.user.write({'groups_id': [(4, self.env.ref(
+            self.env.user.write({'group_ids': [(4, self.env.ref(
                 'era_seo_manager.group_era_seo_manager').id)]})

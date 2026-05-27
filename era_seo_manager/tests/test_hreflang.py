@@ -21,6 +21,11 @@ class TestHreflangModel(TransactionCase):
 
     def test_at_most_one_xdefault_per_record(self):
         Hreflang = self.Hreflang
+        # Use a second language so the unique (res_model, res_id, lang_id)
+        # index doesn't reject the second row before the x-default check.
+        lang_ar = self.env['res.lang'].search([('code', '!=', 'en_US')], limit=1)
+        if not lang_ar:
+            lang_ar = self.env['res.lang']._activate_lang('ar_001')
         Hreflang.create({
             'res_model': 'website.page',
             'res_id': 99999,
@@ -28,12 +33,12 @@ class TestHreflangModel(TransactionCase):
             'url': 'https://example.com/',
             'is_xdefault': True,
         })
-        # A second x-default on the SAME record is rejected.
+        # A second x-default on the SAME record (different lang) is rejected.
         with self.assertRaises(ValidationError):
             Hreflang.create({
                 'res_model': 'website.page',
                 'res_id': 99999,
-                'lang_id': self.lang_en.id,
+                'lang_id': lang_ar.id,
                 'url': 'https://example.com/dup',
                 'is_xdefault': True,
             })
@@ -92,14 +97,21 @@ class TestHreflangSync(TransactionCase):
 
     def test_unlink_removes_hreflang_rows(self):
         page = self._make_page(url='/hreflang-unlink-test')
-        # Manually attach one row so we can verify cleanup even on minimal
-        # test DBs where _sync may have produced no entries.
-        self.Hreflang.sudo().create({
-            'res_model': 'website.page',
-            'res_id': page.id,
-            'lang_id': self.env['res.lang'].search([], limit=1).id,
-            'url': 'https://example.com/will-be-deleted',
-        })
+        # Ensure at least one hreflang row exists (sync may have already
+        # created entries; only add one if none were auto-created).
+        lang = self.env['res.lang'].search([], limit=1)
+        existing = self.Hreflang.sudo().search([
+            ('res_model', '=', 'website.page'),
+            ('res_id', '=', page.id),
+            ('lang_id', '=', lang.id),
+        ], limit=1)
+        if not existing:
+            self.Hreflang.sudo().create({
+                'res_model': 'website.page',
+                'res_id': page.id,
+                'lang_id': lang.id,
+                'url': 'https://example.com/will-be-deleted',
+            })
         page_id = page.id
         page.unlink()
         leftover = self.Hreflang.search([
@@ -129,13 +141,25 @@ class TestHreflangSync(TransactionCase):
         """Rows marked is_manual must NOT be overwritten by re-sync."""
         page = self._make_page(url='/hreflang-manual-test')
         lang = self.env['res.lang'].search([], limit=1)
-        manual = self.Hreflang.sudo().create({
-            'res_model': 'website.page',
-            'res_id': page.id,
-            'lang_id': lang.id,
-            'url': 'https://my-cdn.example/forced',
-            'is_manual': True,
-        })
+        # Sync may have auto-created a row for this lang; find or create.
+        manual = self.Hreflang.sudo().search([
+            ('res_model', '=', 'website.page'),
+            ('res_id', '=', page.id),
+            ('lang_id', '=', lang.id),
+        ], limit=1)
+        if manual:
+            manual.write({
+                'url': 'https://my-cdn.example/forced',
+                'is_manual': True,
+            })
+        else:
+            manual = self.Hreflang.sudo().create({
+                'res_model': 'website.page',
+                'res_id': page.id,
+                'lang_id': lang.id,
+                'url': 'https://my-cdn.example/forced',
+                'is_manual': True,
+            })
         # Force a re-sync via write of a hreflang-affecting field.
         page.write({'url': '/hreflang-manual-test-renamed'})
         manual.invalidate_recordset()

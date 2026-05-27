@@ -214,29 +214,34 @@ class TestAuditRunner(TransactionCase):
         f = self.Finding.search([
             ('res_id', '=', page.id),
             ('check_code', '=', 'missing_seo_title'),
-        ])
+        ], limit=1)
         self.assertTrue(f)
         self.assertFalse(f.is_resolved)
 
-        # Fix the page, re-run -> the finding should auto-resolve.
+        # Fix the page, re-run -> all per-language findings should auto-resolve.
         page.write({'seo_title': 'Now I have a proper SEO title here'})
         self.Run.create({})._run_audit()
-        f.invalidate_recordset()
-        self.assertTrue(f.is_resolved, 'A no-longer-detected issue must auto-resolve.')
+        all_f = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertTrue(all(r.is_resolved for r in all_f),
+                        'A no-longer-detected issue must auto-resolve.')
 
     def test_reappearing_issue_reopens(self):
         page = self._make_page(url='/audit-reopen')
         page.write({'seo_title': False})
         self.Run.create({})._run_audit()
-        f = self.Finding.search([
+        all_f = self.Finding.search([
             ('res_id', '=', page.id), ('check_code', '=', 'missing_seo_title')])
-        # Manually resolve it.
-        f.action_mark_resolved()
-        self.assertTrue(f.is_resolved)
+        # Manually resolve all per-language findings.
+        all_f.action_mark_resolved()
+        self.assertTrue(all(r.is_resolved for r in all_f))
         # Issue still present on next run -> reopen.
         self.Run.create({})._run_audit()
-        f.invalidate_recordset()
-        self.assertFalse(f.is_resolved, 'Still-present issue must reopen.')
+        all_f.invalidate_recordset()
+        self.assertTrue(all(not r.is_resolved for r in all_f),
+                        'Still-present issue must reopen.')
 
     def test_counts_compute(self):
         page = self._make_page(url='/audit-counts-test')

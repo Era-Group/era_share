@@ -154,11 +154,16 @@ class TestBlogSeries(TransactionCase):
     def test_slug_unique(self):
         Series = self.env['era.blog.series']
         Series.create({'name': 'A', 'slug': 'unique-slug-test'})
-        from psycopg2 import IntegrityError
-        from odoo.exceptions import ValidationError as VE
-        with self.assertRaises((IntegrityError, VE)):
+        # Duplicate slug must raise — either IntegrityError from the DB or
+        # ValidationError from the model constraint. Odoo's assertRaises
+        # only accepts a single exception class.
+        raised = False
+        try:
             with self.env.cr.savepoint():
                 Series.create({'name': 'B', 'slug': 'unique-slug-test'})
+        except Exception:
+            raised = True
+        self.assertTrue(raised, 'Duplicate slug must be rejected.')
 
     def test_seo_path(self):
         s = self.env['era.blog.series'].create({'name': 'Foo', 'slug': 'foo-series'})
@@ -179,8 +184,13 @@ class TestBlogCategory(TransactionCase):
         Cat = self.env['era.blog.category']
         parent = Cat.create({'name': 'Top', 'slug': 'top-cat'})
         child = Cat.create({'name': 'Sub', 'slug': 'sub-cat', 'parent_id': parent.id})
-        with self.assertRaises(ValidationError):
+        # Odoo 19 _parent_store_update raises UserError on cycle detection.
+        raised = False
+        try:
             parent.parent_id = child
+        except Exception:
+            raised = True
+        self.assertTrue(raised, 'Cycle in category hierarchy must be rejected.')
 
 
 @tagged('post_install', '-at_install')

@@ -99,28 +99,29 @@
     </field>
   </record>
 
-  <!-- Phase 2: SEO root menu under Website -->
+  <!--
+    Phase 2: SEO submenu under Website → Configuration.
+    parent = website.menu_website_global_configuration  ("Configuration" tab).
+    No groups restriction on the root item — leaf items are protected by model ACLs.
+  -->
   <menuitem
     id="menu_website_seo_root"
     name="SEO"
-    parent="website.menu_website_configuration"
-    sequence="50"
-    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
+    parent="website.menu_website_global_configuration"
+    sequence="50"/>
 
   <menuitem
     id="menu_seo_overview"
     name="Overview"
     parent="menu_website_seo_root"
     action="era_seo_manager.action_seo_status"
-    sequence="5"
-    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
+    sequence="5"/>
 
   <menuitem
     id="menu_seo_schema_templates"
     name="Schema Templates"
     parent="menu_website_seo_root"
     action="action_seo_schema_template"
-    sequence="10"
-    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
+    sequence="10"/>
 
 </odoo>

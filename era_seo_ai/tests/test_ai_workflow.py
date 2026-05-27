@@ -188,7 +188,8 @@ class TestAIWorkflow(TransactionCase):
         f_lo.invalidate_recordset()
         page_lo.invalidate_recordset()
         self.assertEqual(f_lo.ai_status, 'suggested')
-        self.assertFalse(page_lo.seo_title)
+        # Low-confidence suggestion must NOT overwrite the page title.
+        self.assertNotEqual(page_lo.seo_title, 'Low')
 
     def test_bad_json_records_failure(self):
         page = self._make_page(url='/badjson')

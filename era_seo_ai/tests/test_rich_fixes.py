@@ -17,8 +17,8 @@ from odoo.addons.era_seo_ai.models.ai_client import AIClient
 
 # 1x1 transparent PNG, base64 — a valid value for a Binary image field.
 _PNG_1PX = (
-    b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNk'
-    b'+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+    b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4'
+    b'z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg=='
 )
 
 

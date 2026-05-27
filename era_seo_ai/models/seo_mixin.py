@@ -120,6 +120,8 @@ class EraSeoMixin(models.AbstractModel):
             if written_fields:
                 filled_records += 1
 
+            # Collect per-record error messages (from exceptions caught above).
+            rec_errors = [e for e in errors if '%s#%s' % (rec._name, rec.id) in str(e)]
             Log.create({
                 'check_code': 'ai_fill',
                 'kind': 'fill',
@@ -138,6 +140,7 @@ class EraSeoMixin(models.AbstractModel):
                 'applied': bool(written_fields),
                 'applied_date': fields.Datetime.now() if written_fields else False,
                 'applied_user_id': self.env.user.id if written_fields else False,
+                'error_message': '\n'.join(str(e) for e in rec_errors) if rec_errors else False,
             })
 
         if errors:

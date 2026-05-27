@@ -19,7 +19,7 @@ from datetime import datetime
 from odoo import _, fields, models
 from odoo.exceptions import AccessError, UserError
 
-from .ai_client import AIClient, AnthropicUnavailable
+from .ai_client import AIClient, AIUnavailable
 
 _logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class EraSeoAuditFinding(models.Model):
                 continue
             try:
                 proposal = client.suggest_fix(rec, target)
-            except AnthropicUnavailable as exc:
+            except AIUnavailable as exc:
                 errors.append(str(exc))
                 continue
             except Exception as exc:  # noqa: BLE001
@@ -130,10 +130,6 @@ class EraSeoAuditFinding(models.Model):
                 'proposed_value': proposal['proposed_value'],
                 'explanation': proposal['explanation'],
                 'confidence': proposal['confidence'],
-                'input_tokens': proposal['usage'].get('input_tokens') or 0,
-                'output_tokens': proposal['usage'].get('output_tokens') or 0,
-                'cache_read_input_tokens': proposal['usage'].get('cache_read_input_tokens') or 0,
-                'cache_creation_input_tokens': proposal['usage'].get('cache_creation_input_tokens') or 0,
             })
             rec.write({
                 'ai_status': 'suggested',

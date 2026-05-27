@@ -1,5 +1,41 @@
 # Changelog
 
+## [19.0.2.0.0] — 2026-05-27
+
+### Changed — switched from the Anthropic SDK to Odoo's built-in AI agent
+
+The whole AI layer now goes through Odoo 19 Enterprise's **AI** app
+(`ai.agent.get_direct_response`) instead of calling the Anthropic SDK
+directly. No more `pip install anthropic`, no second API key to manage —
+the provider, model, and key are whatever the admin configured under
+**Settings → AI**.
+
+- **Dependency:** `era_seo_ai` now `depends` on the `ai` addon and no
+  longer declares `external_dependencies` (`anthropic`). `requirements.txt`
+  removed.
+- **Settings:** the API-key + model-dropdown fields are replaced by a
+  single **AI Agent** picker (`era_seo.ai_agent_id`). Empty falls back to
+  the site's "Ask AI" agent. The **Test API Key** button became
+  **Test Agent** (round-trips a one-word prompt through the chosen agent).
+- **Client:** `ai_client.AIClient` now builds the per-finding prompt and
+  passes the SEO house-style rules as the agent's `context_message`
+  (extra system context). The response is a list of strings; we parse the
+  first one as JSON, tolerating code fences and surrounding prose.
+- **Exception:** `AnthropicUnavailable` → `AIUnavailable`.
+- **Audit log:** token/cache columns dropped — Odoo's
+  `get_direct_response` doesn't surface per-call usage. The log keeps the
+  proposal, confidence, agent/model name, applied-by/when, and errors.
+- **Model field** `ai_model_used` now stores the agent's `llm_model`
+  (e.g. `gpt-4o`, `claude-...`) or "mechanical" for the no-call slug fix.
+
+Behavior, the three actions (Suggest / Apply / Suggest+Auto-Apply), the
+auto-fixable check list, and the manager-group gating are unchanged.
+
+### Requirements
+
+- Requires the Odoo **AI** app (Enterprise). On Community the module
+  won't install (no `ai` dependency available) — that's intended.
+
 ## [19.0.1.0.0] — 2026-05-27
 
 ### Added — AI auto-fix for SEO audit findings

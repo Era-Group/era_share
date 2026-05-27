@@ -1,12 +1,12 @@
-"""ERA SEO AI — audit log of API calls.
+"""ERA SEO AI — audit log of AI fix calls.
 
-One row per Claude call. Captures the request (defect, prompt, target), the
-response (proposed value, explanation, confidence), token usage (so admins
-can see the cache-hit rate over time), and the user who triggered the call.
+One row per ``ai.agent`` call. Captures the request (defect, target), the
+response (proposed value, explanation, confidence, which agent/model
+answered), whether it was applied, and any error.
 
-Token usage in particular is the only way to confirm prompt caching is
-actually working — ``cache_read_input_tokens`` should be > 0 on every call
-after the first one in any 5-minute window.
+Token usage is intentionally not tracked: Odoo's
+``ai.agent.get_direct_response`` does not surface per-call usage to the
+caller. Cost reporting, if needed, lives in the AI app.
 """
 from odoo import api, fields, models
 
@@ -29,29 +29,14 @@ class EraSeoAiFixLog(models.Model):
     target_id = fields.Integer(string='Target ID')
     target_url = fields.Char(string='Target URL')
 
-    model = fields.Char(string='Claude Model')
+    model = fields.Char(string='AI Model / Agent')
     field_written = fields.Char(string='Field')
 
     proposed_value = fields.Text(string='Proposed Value')
     explanation = fields.Text()
     confidence = fields.Float(string='Confidence', digits=(3, 2))
 
-    input_tokens = fields.Integer(readonly=True)
-    output_tokens = fields.Integer(readonly=True)
-    cache_read_input_tokens = fields.Integer(readonly=True)
-    cache_creation_input_tokens = fields.Integer(readonly=True)
-    cache_hit = fields.Boolean(
-        string='Cache Hit',
-        compute='_compute_cache_hit',
-        store=True,
-        help='True when the request was served at least partly from the prompt cache.',
-    )
-
-    applied = fields.Boolean(
-        string='Applied',
-        default=False,
-        help='True when the proposed value was written back to the target record.',
-    )
+    applied = fields.Boolean(string='Applied', default=False)
     applied_date = fields.Datetime(readonly=True)
     applied_user_id = fields.Many2one('res.users', readonly=True)
 
@@ -70,8 +55,3 @@ class EraSeoAiFixLog(models.Model):
             rec.name = 'AI Fix · {} · {}'.format(
                 rec.check_code or '?', rec.target_url or '?',
             )
-
-    @api.depends('cache_read_input_tokens')
-    def _compute_cache_hit(self):
-        for rec in self:
-            rec.cache_hit = bool(rec.cache_read_input_tokens)

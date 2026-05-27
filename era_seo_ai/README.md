@@ -1,84 +1,58 @@
 # `era_seo_ai`
 
-Claude-powered auto-fix for SEO audit findings in `era_seo_manager`. When
-the audit flags a missing title, missing meta description, oversized
-title/description, or bad URL slug, this addon lets the admin click
-**Suggest Fix (AI)** and get a structured proposal back from Claude.
+Auto-fix for SEO audit findings in `era_seo_manager`, powered by **Odoo's
+built-in AI agent** (the `ai` app in Odoo 19 Enterprise). When the audit
+flags a missing title, missing meta description, oversized title/
+description, or bad URL slug, the admin clicks **Suggest Fix (AI)** and the
+configured agent proposes a value.
+
+No third-party Python package, no separate API key — the LLM provider,
+model, and credentials all come from whatever is configured under
+**Settings → AI**.
 
 ## What you get
 
-| Workflow | Button | Behavior |
+| Workflow | Where | Behavior |
 |---|---|---|
-| One-by-one review | **Suggest Fix (AI)** on a finding | Claude reads the page's content, proposes a value, scores its own confidence. Admin reviews and clicks **Apply Fix** to write. |
-| Batch on selected findings | List view → cog menu → **Suggest AI Fix** | Same flow, applied to every selected finding. |
-| Trusted batch | Cog menu → **Suggest + Auto-Apply (≥0.8)** | Suggests for all; auto-applies the high-confidence ones; leaves lower-confidence ones for admin review. |
-| Audit trail | **SEO Audit → AI Fix Log** | Every call logged with the prompt, the proposal, token usage, and whether prompt caching kicked in. |
+| One-by-one review | **Suggest Fix (AI)** on a finding | The agent reads the page content, proposes a value, scores its own confidence. Review, then **Apply Fix** to write. |
+| Batch on selected findings | List → cog → **Suggest AI Fix** | Same flow across all selected findings. |
+| Trusted batch | Cog → **Suggest + Auto-Apply (≥0.8)** | Suggests for all; auto-applies the high-confidence ones; leaves the rest for review. |
+| Audit trail | **SEO Audit → AI Fix Log** | Every call logged with the proposal, confidence, agent/model, and applied-by/when. |
 
 ## What gets fixed
 
-Currently the AI workflow handles these check codes:
-
-- `missing_seo_title` → generates a 50-60 char title
-- `missing_meta_description` → generates a 140-160 char description
-- `title_too_long` → shortens to ≤ 60 chars
-- `title_too_short` → expands toward 50-60
-- `description_too_long` / `description_too_short` → analogous
-- `slug_contains_uppercase` → mechanical lowercase (no API call)
-- `slug_contains_stopwords` → AI-rewritten slug
-- `slug_too_long` → AI-rewritten slug
+- `missing_seo_title` / `title_too_long` / `title_too_short`
+- `missing_meta_description` / `description_too_long` / `description_too_short`
+- `slug_contains_uppercase` (mechanical lowercase — no AI call)
+- `slug_contains_stopwords` / `slug_too_long`
 
 All other check codes (missing H1, orphan page, missing schema, broken
-redirect chain, etc.) require human judgement and remain manual.
+redirect chain, etc.) need human judgement and stay manual.
 
-## Configuration
+## Setup
 
-**Website → Configuration → Settings → ERA SEO — AI Auto-Fix**
+1. Install and configure the Odoo **AI** app (Apps → AI), including a
+   provider and at least one agent. A generic agent is fine — this addon
+   sends the SEO house-style rules with every request.
+2. Install `era_seo_ai` (it `depends` on `ai`).
+3. **Website → Configuration → Settings → ERA SEO — AI Auto-Fix**:
+   - Tick **Enable AI Auto-Fix**.
+   - Pick an **AI Agent** (or leave empty to use the "Ask AI" agent).
+   - Click **Test Agent** to confirm.
 
-1. Tick **Enable AI Auto-Fix**.
-2. Pick a model:
-   - **Haiku 4.5** — default. ~$1 / 1M input tokens. Plenty for SEO copy.
-   - **Sonnet 4.6** — for nuanced multilingual nuance.
-   - **Opus 4.7** — highest quality, ~5× the cost of Haiku.
-3. Provide an Anthropic API key by **one** of:
-   - Setting `ANTHROPIC_API_KEY` on the Odoo host (**preferred** — per
-     CLAUDE.md security playbook §03).
-   - Pasting it into **API Key** here (stored in ICP). The field uses
-     a `password` widget so it doesn't render in plain text, but it
-     is readable by anyone with admin access to System Parameters.
-4. Click **Test API Key** to confirm.
+## How it talks to the AI
 
-## Costs and prompt caching
+`ai_client.AIClient` calls:
 
-The system prompt is intentionally ~5K tokens — role, output schema,
-brand voice, length rules, and six worked examples. This is above the
-4096-token minimum for prompt caching on Haiku/Opus, so:
-
-- **First call in a 5-min window:** ~1.25× the input price for the
-  cached portion (cache write).
-- **Every subsequent call:** ~10% of the input price for the cached
-  portion (cache read).
-
-After the first call, a batch of 100 findings on Haiku 4.5 costs
-roughly **$0.01** in API spend, dominated by the per-call user message
-+ output tokens. Check the **AI Fix Log** → `cache_read_input_tokens`
-column to confirm caching is working in practice.
-
-## Install
-
-```bash
-# 1. Install the anthropic SDK on the Odoo host
-pip install anthropic
-
-# 2. Set the API key
-export ANTHROPIC_API_KEY=sk-ant-...
-
-# 3. Install or upgrade
-odoo-bin -c odoo.conf -d <db> -u era_seo_ai --stop-after-init
+```python
+agent.get_direct_response(prompt=<per-finding INPUT block>,
+                          context_message=<SEO house-style rules>)
 ```
 
-On Odoo.sh, add `anthropic>=0.40` to your repo's top-level
-`requirements.txt` and let the next build pick it up; the API key is
-configured via the staging/production environment-variable UI.
+`get_direct_response` returns a list of strings; the client parses the
+first as a JSON object `{proposed_value, explanation, confidence}`,
+tolerating code fences and surrounding prose. The agent's own provider /
+model / key (set in the AI app) decide cost and quality.
 
 ## License
 

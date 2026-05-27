@@ -7,27 +7,24 @@
     <field name="arch" type="xml">
       <xpath expr="//block[@id='website_info_settings']" position="after">
         <block title="ERA SEO — AI Auto-Fix" id="era_seo_ai_settings"
-               help="Claude-powered Suggest Fix / Apply Fix on SEO audit findings.">
+               help="Use Odoo's AI agent to Suggest / Apply fixes on SEO audit findings.">
           <setting id="era_seo_ai_enabled" string="Enable AI Auto-Fix"
-                   help="Master switch. When off, all AI buttons hide and no API calls happen.">
+                   help="Master switch. When off, all AI buttons hide and no AI calls happen.">
             <field name="era_seo_ai_enabled"/>
           </setting>
-          <setting id="era_seo_ai_model" string="AI Model"
+          <setting id="era_seo_ai_agent_id" string="AI Agent"
                    invisible="not era_seo_ai_enabled">
-            <field name="era_seo_ai_model"/>
+            <field name="era_seo_ai_agent_id"
+                   options="{'no_create': True}"/>
             <div class="text-muted small mt-2">
-              Haiku is fast and cheap (~$1 / 1M input tokens), Sonnet is the balanced default,
-              Opus is highest quality. Prompt caching applies regardless: after the first call
-              in a 5-minute window the system prompt is served at 10% of input price.
+              The agent carries the provider, model, and API key — all configured
+              in the <b>AI</b> app. Leave empty to fall back to the site's
+              "Ask AI" agent. The SEO house-style rules are sent with every
+              request, so a generic agent works fine.
             </div>
-          </setting>
-          <setting id="era_seo_ai_api_key" string="API Key"
-                   invisible="not era_seo_ai_enabled"
-                   help="Optional. Set ANTHROPIC_API_KEY on the Odoo host instead when possible — that takes precedence over any key saved here.">
-            <field name="era_seo_ai_api_key" password="True"/>
             <div class="mt-2">
-              <button name="action_test_ai_api_key" type="object"
-                      string="Test API Key" class="btn btn-secondary btn-sm"/>
+              <button name="action_test_ai_agent" type="object"
+                      string="Test Agent" class="btn btn-secondary btn-sm"/>
             </div>
           </setting>
         </block>

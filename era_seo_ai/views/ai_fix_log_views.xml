@@ -12,10 +12,6 @@
         <field name="model"/>
         <field name="field_written" optional="show"/>
         <field name="confidence" widget="progressbar" optional="show"/>
-        <field name="input_tokens" optional="show"/>
-        <field name="output_tokens" optional="show"/>
-        <field name="cache_read_input_tokens" string="Cached" optional="show"/>
-        <field name="cache_hit" widget="boolean_toggle" readonly="1" optional="show"/>
         <field name="applied" widget="boolean_toggle" readonly="1"/>
         <field name="triggered_user_id" optional="hide"/>
       </list>
@@ -59,17 +55,6 @@
           <group string="Error" invisible="not error_message">
             <field name="error_message" nolabel="1"/>
           </group>
-          <group string="Usage (tokens)">
-            <group>
-              <field name="input_tokens"/>
-              <field name="output_tokens"/>
-            </group>
-            <group>
-              <field name="cache_creation_input_tokens"/>
-              <field name="cache_read_input_tokens"/>
-              <field name="cache_hit" readonly="1"/>
-            </group>
-          </group>
         </sheet>
       </form>
     </field>
@@ -84,7 +69,6 @@
         <field name="check_code"/>
         <field name="model"/>
         <filter name="applied" string="Applied" domain="[('applied', '=', True)]"/>
-        <filter name="cache_hit" string="Cache Hit" domain="[('cache_hit', '=', True)]"/>
         <filter name="errors" string="Errors" domain="[('error_message', '!=', False)]"/>
         <group>
           <filter name="group_check" string="Check"

@@ -1,5 +1,24 @@
 # Changelog
 
+## [19.0.6.0.0] — 2026-05-27
+
+### Added — AI Suggest / Fix on the Audit Run form
+
+The embedded findings list on an audit run now exposes the AI workflow
+directly, so you don't have to open each finding or the standalone list:
+
+- **Header buttons** on the run form (shown when the run has any
+  AI-fixable, unresolved finding):
+  - **Suggest Fixes (AI)** — generates suggestions for every AI-fixable
+    finding in the run (`action_ai_suggest_findings`).
+  - **Auto-Fix (≥0.8)** — suggests and auto-applies the high-confidence
+    ones (`action_ai_fix_findings`), behind a confirm dialog.
+- **Inline row buttons** on each finding in the embedded list — a
+  per-row **Suggest** (magic wand) and **Apply** (check), plus the AI
+  status badge.
+- `era.seo.audit.run.ai_fixable_count` computed field gates the header
+  buttons.
+
 ## [19.0.5.0.0] — 2026-05-27
 
 ### Changed — finding fixes respect the finding's language

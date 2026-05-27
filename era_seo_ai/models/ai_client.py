@@ -58,6 +58,31 @@ chars. Match the page's language. Never invent facts or exceed the caps. \
 Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no signal."""
 
 
+# Context for the multi-field "fill all recommended SEO fields" task. Sent as
+# the agent's context_message; overrides the output shape for this task while
+# the agent's own system prompt still supplies the SEO craft (length rules,
+# language matching, Saudi keywords).
+FILL_CONTEXT = """You are filling the recommended SEO meta fields for ONE web page \
+of ERA (Saudi-market Odoo partner, Arabic + English). Use the page content \
+provided. Reply with ONE JSON object and nothing else — no markdown fences, \
+no prose:
+
+  {"seo_title": "<string>", "seo_description": "<string>", "seo_og_title": "<string>", "seo_og_description": "<string>", "seo_keywords": "<comma,separated,3-6 terms>", "explanation": "<one sentence>", "confidence": <0.0-1.0>}
+
+Rules:
+- seo_title: <= 60 chars, primary keyword first, brand last if it fits. No ALL CAPS.
+- seo_description: 140-160 chars, one sentence ending with a period, soft CTA, keyword near the start.
+- seo_og_title: may equal seo_title, or a slightly punchier social variant <= 65 chars.
+- seo_og_description: may equal seo_description, or a social-friendly variant <= 200 chars.
+- seo_keywords: 3-6 comma-separated terms actually supported by the page content (this is the ONLY field where a comma list is allowed).
+- Match the page's language throughout (Arabic content -> Arabic copy).
+- Never invent facts not in the page content. Never exceed the caps.
+- Confidence: 0.9+ when the page makes the answer obvious; 0.4-0.7 for thin/generic pages; below 0.4 when there is almost no signal.
+
+Always return all seven keys. If the page is too thin for a field, still
+provide a safe best-effort value and lower the confidence."""
+
+
 def _icp(env, key, default=None):
     return env['ir.config_parameter'].sudo().get_param(key, default)
 
@@ -147,6 +172,41 @@ class AIClient:
             'model': agent.llm_model or _('AI agent'),
         }
 
+    def fill_seo(self, record, overwrite=False):
+        """Generate ALL recommended SEO meta fields for one record.
+
+        :param record: any record carrying era.seo.mixin
+        :param overwrite: passed through to the prompt so the model knows
+                          whether it's filling blanks or rewriting.
+        :returns: dict {fields: {seo_title, seo_description, seo_og_title,
+                  seo_og_description, seo_keywords}, explanation, confidence,
+                  model, raw_json}
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+
+        agent = self._resolve_agent()
+        prompt = self._build_fill_prompt(record, overwrite=overwrite)
+        response = agent.get_direct_response(prompt=prompt, context_message=FILL_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_fill_json(raw)
+
+        return {
+            'fields': {
+                'seo_title': parsed.get('seo_title') or '',
+                'seo_description': parsed.get('seo_description') or '',
+                'seo_og_title': parsed.get('seo_og_title') or '',
+                'seo_og_description': parsed.get('seo_og_description') or '',
+                'seo_keywords': parsed.get('seo_keywords') or '',
+            },
+            'explanation': parsed.get('explanation', ''),
+            'confidence': float(parsed.get('confidence', 0.0)),
+            'model': agent.llm_model or _('AI agent'),
+            'raw_json': raw,
+        }
+
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------
@@ -184,34 +244,10 @@ class AIClient:
             raise ValueError(_('AI response missing "proposed_value".'))
         return parsed
 
-    @staticmethod
-    def _build_prompt(finding, target, field):
-        from lxml import html as lxml_html
-        content_html = getattr(target, 'content', None) or getattr(target, 'arch', None) or ''
-        try:
-            text = lxml_html.fragment_fromstring(content_html, create_parent='div').text_content()
-            text = ' '.join(text.split())
-        except Exception:  # noqa: BLE001
-            text = ''
-        excerpt = text[:1500] if text else '(no content available)'
-
+    @classmethod
+    def _build_prompt(cls, finding, target, field):
+        excerpt, h1, lang = cls._extract_page_signal(target)
         current = (target.url or '') if field == 'url' else (getattr(target, field, None) or '')
-
-        sample = (excerpt + ' ' + (current or ''))[:500]
-        arabic = sum(1 for c in sample if '؀' <= c <= 'ۿ')
-        lang = 'ar' if arabic > len(sample) * 0.1 else 'en'
-
-        h1 = ''
-        try:
-            doc = lxml_html.fragment_fromstring(content_html, create_parent='div')
-            node = doc.find('.//h1')
-            if node is not None:
-                h1 = (node.text_content() or '').strip()
-        except Exception:  # noqa: BLE001
-            pass
-        if not h1:
-            h1 = getattr(target, 'name', '') or ''
-
         return (
             'INPUT:\n'
             '  defect: {code}\n'
@@ -229,3 +265,74 @@ class AIClient:
                 lang=lang,
             )
         )
+
+    @classmethod
+    def _build_fill_prompt(cls, record, overwrite=False):
+        excerpt, h1, lang = cls._extract_page_signal(record)
+        url = getattr(record, 'url', None) or record._get_seo_path() or '/'
+        return (
+            'INPUT:\n'
+            '  mode: {mode}\n'
+            '  url: {url}\n'
+            '  page_h1: "{h1}"\n'
+            '  current_title: {title}\n'
+            '  current_description: {desc}\n'
+            '  page_excerpt: "{excerpt}"\n'
+            '  language_hint: {lang}\n'
+            'OUTPUT:'.format(
+                mode='rewrite all' if overwrite else 'fill missing',
+                url=url,
+                h1=h1.replace('"', "'"),
+                title=json.dumps(record.seo_title) if record.seo_title else 'null',
+                desc=json.dumps(record.seo_description) if record.seo_description else 'null',
+                excerpt=excerpt.replace('"', "'"),
+                lang=lang,
+            )
+        )
+
+    @staticmethod
+    def _extract_page_signal(record):
+        """Return (excerpt, h1, language_hint) from a record's content."""
+        from lxml import html as lxml_html
+        content_html = getattr(record, 'content', None) or getattr(record, 'arch', None) or ''
+        text = ''
+        h1 = ''
+        try:
+            doc = lxml_html.fragment_fromstring(content_html, create_parent='div')
+            text = ' '.join((doc.text_content() or '').split())
+            node = doc.find('.//h1')
+            if node is not None:
+                h1 = (node.text_content() or '').strip()
+        except Exception:  # noqa: BLE001
+            text = re.sub(r'<[^>]+>', ' ', content_html)
+        excerpt = text[:1500] if text else '(no content available)'
+        if not h1:
+            h1 = getattr(record, 'name', '') or ''
+
+        sample = (excerpt + ' ' + (h1 or ''))[:500]
+        arabic = sum(1 for c in sample if '؀' <= c <= 'ۿ')
+        lang = 'ar' if arabic > len(sample) * 0.1 else 'en'
+        return excerpt, h1, lang
+
+    @staticmethod
+    def _parse_fill_json(raw):
+        """Parse the multi-field fill JSON; require at least one usable field."""
+        text = (raw or '').strip()
+        fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
+        if fence:
+            text = fence.group(1).strip()
+        if not text.startswith('{'):
+            brace = re.search(r'\{.*\}', text, re.DOTALL)
+            if brace:
+                text = brace.group(0)
+        try:
+            parsed = json.loads(text)
+        except (json.JSONDecodeError, TypeError) as exc:
+            raise ValueError(
+                _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
+            ) from exc
+        if not any(parsed.get(k) for k in
+                   ('seo_title', 'seo_description', 'seo_og_title',
+                    'seo_og_description', 'seo_keywords')):
+            raise ValueError(_('AI fill response contained no usable SEO fields.'))
+        return parsed

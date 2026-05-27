@@ -18,6 +18,14 @@ class EraSeoAiFixLog(models.Model):
 
     name = fields.Char(compute='_compute_name', store=True)
 
+    kind = fields.Selection(
+        [('fix', 'Finding Fix'), ('fill', 'Full SEO Fill')],
+        default='fix',
+        index=True,
+        help='"Finding Fix" patches one audit finding; "Full SEO Fill" '
+             'generates all recommended meta fields on a record at once.',
+    )
+
     finding_id = fields.Many2one(
         'era.seo.audit.finding',
         string='Audit Finding',

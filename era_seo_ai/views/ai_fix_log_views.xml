@@ -7,6 +7,7 @@
       <list string="AI Fix Log" decoration-success="applied"
             decoration-danger="error_message">
         <field name="create_date"/>
+        <field name="kind" widget="badge" optional="show"/>
         <field name="check_code"/>
         <field name="target_url"/>
         <field name="model"/>
@@ -70,7 +71,11 @@
         <field name="model"/>
         <filter name="applied" string="Applied" domain="[('applied', '=', True)]"/>
         <filter name="errors" string="Errors" domain="[('error_message', '!=', False)]"/>
+        <filter name="fills" string="Full Fills" domain="[('kind', '=', 'fill')]"/>
+        <filter name="fixes" string="Finding Fixes" domain="[('kind', '=', 'fix')]"/>
         <group>
+          <filter name="group_kind" string="Kind"
+                  context="{'group_by': 'kind'}"/>
           <filter name="group_check" string="Check"
                   context="{'group_by': 'check_code'}"/>
           <filter name="group_model" string="Model"

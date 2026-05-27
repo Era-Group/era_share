@@ -1,5 +1,44 @@
 # Changelog
 
+## [19.0.3.0.0] — 2026-05-27
+
+### Added — proactive "AI: Fill SEO" across the whole SEO suite
+
+Beyond reactive audit-finding fixes, the AI can now fill the recommended
+meta fields on any SEO record in one call. Because every SEO-bearing model
+inherits ``era.seo.mixin``, the action lives on the mixin and is available
+everywhere — website pages, blog posts, series, categories, authors — and
+filling the fields cascades into the rendered JSON-LD (schema templates
+read the same ``seo_*`` fields).
+
+- `era.seo.mixin.action_ai_fill_seo()` — fills only the EMPTY fields among
+  `seo_title`, `seo_description`, `seo_og_title`, `seo_og_description`,
+  `seo_keywords`.
+- `era.seo.mixin.action_ai_rewrite_seo()` — regenerates ALL of them.
+- `AIClient.fill_seo(record, overwrite)` — one agent call returns all five
+  fields plus an explanation and confidence, parsed from a single JSON
+  object (`FILL_CONTEXT` describes the multi-field shape; the dedicated
+  agent's system prompt still supplies the SEO craft).
+- **Action menu bindings**: two server actions ("AI: Fill Missing SEO",
+  "AI: Rewrite All SEO") on `website.page`, available from the list and
+  form cog menus (single or bulk). The `post_init_hook` additionally binds
+  them to `blog.post`, `era.blog.series`, `era.blog.category`, and
+  `era.blog.author` **when `era_seo_blog` is installed** — no hard
+  dependency, idempotent, so re-runs never duplicate the actions.
+- `era.seo.ai.fix.log` gains a `kind` field (`fix` vs `fill`); full-fill
+  runs log the complete multi-field JSON, the fields actually written, and
+  the applied state. New log filters/group-by for kind.
+- Tests (`tests/test_fill_seo.py`): fill-empties-only, no-overwrite,
+  rewrite-overwrites, kind=fill logging, bad-JSON-no-write, batch fill,
+  and manager-group gating.
+
+### How JSON-LD is covered
+
+No separate JSON-LD step: the schema templates resolve placeholders like
+`{{ record.seo_title }}` / `{{ record.seo_description }}` from the very
+fields this action fills, so an AI fill immediately improves the
+Organization / Article / BlogPosting / WebSite JSON-LD on the page.
+
 ## [19.0.2.1.0] — 2026-05-27
 
 ### Added — dedicated "ERA SEO Fixer" agent

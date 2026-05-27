@@ -13,16 +13,21 @@
         <app string="ERA SEO" name="era_seo" img="era_seo_manager/static/description/icon.png">
 
           <!-- ── Intro banner ─────────────────────────────────────────── -->
-          <div class="alert alert-info mb-4" role="alert">
-            <strong>ERA SEO Manager</strong> controls all SEO metadata emitted in your site's
-            <code>&lt;head&gt;</code> — meta tags, Open Graph, Twitter cards, canonical URLs,
-            JSON-LD schema scripts, site verification tokens, and more.
-            <br/>
-            Fill in the sections below <strong>top to bottom</strong>. Every field has a
-            <em>help tooltip</em> (hover the label) for guidance.
-            After saving, open
-            <strong>Website → SEO → Overview</strong> to verify the module has picked up
-            your changes.
+          <div class="alert alert-info mb-3" role="alert">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+              <div>
+                <strong>ERA SEO Manager</strong> controls all SEO metadata emitted in your site's
+                <code>&lt;head&gt;</code> — meta tags, Open Graph, Twitter cards, canonical URLs,
+                JSON-LD schema scripts, site verification tokens, and more.
+                <br/>
+                Fill in the sections below <strong>top to bottom</strong>. Every field has a
+                <em>help tooltip</em> (hover the label) for guidance.
+              </div>
+              <a type="action" name="%(era_seo_manager.action_seo_status)d"
+                 class="btn btn-primary btn-sm text-nowrap">
+                View Status Report
+              </a>
+            </div>
           </div>
 
           <!-- ── Organization Identity ─────────────────────────────────── -->

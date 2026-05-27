@@ -31,7 +31,7 @@ class EraSeoRedirect(models.Model):
     _order = 'sequence, id'
     _rec_name = 'name'
 
-    name = fields.Char(string='Display Name', compute='_compute_name', store=True)
+    name = fields.Char(string='Name', compute='_compute_name', store=True)
     sequence = fields.Integer(default=10, index=True)
 
     source_url = fields.Char(

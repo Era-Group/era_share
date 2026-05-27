@@ -26,7 +26,7 @@ class EraSeoHreflang(models.Model):
     _description = 'SEO Hreflang Entry'
     _order = 'res_model, res_id, is_xdefault desc, lang_id'
 
-    name = fields.Char(string='Display Name', compute='_compute_name', store=True)
+    name = fields.Char(string='Name', compute='_compute_name', store=True)
 
     res_model = fields.Char(string='Record Model', required=True, index=True)
     res_id = fields.Integer(string='Record ID', required=True, index=True)

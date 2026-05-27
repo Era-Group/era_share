@@ -32,7 +32,21 @@
 
 ---
 
-## 3. ميزات مستقبلية
+## 3. تحسينات بعد فحص staging (2026-05-27)
+
+- [ ] **`robots.txt` يحجب الموقع بالكامل**: على staging الحالي يوجد
+      `User-agent: *` + `Disallow: /` (تحت "custom"). لو ده مش مقصود
+      لمنع الفهرسة على staging، يجب إزالته من **Website → SEO → robots.txt**
+      أو من إعدادات الـ era.seo.robots.rule لما الموديل ده يكتمل.
+- [ ] **صفحات بدون SEO data لا تُصدر `<meta name="robots">`** نهائياً
+      (سلوك Odoo الافتراضي: يُصدرها فقط لو `no_index=True`).
+      تحسين مقترح: إصدار `<meta name="robots" content="index, follow">`
+      على كل صفحة افتراضياً (حتى بدون `era_seo`) ليكون التوجيه صريحاً
+      للمحركات. تعديل بسيط في `views/website_layout_templates.xml` Step 5.
+
+---
+
+## 4. ميزات مستقبلية
 
 - [ ] `era_seo_gsc_connector` — ربط Google Search Console (read-only)
       مذكور في CHANGELOG كـ future module
@@ -42,7 +56,7 @@
 
 ---
 
-## 4. ملاحظات للسيرفر الجديد
+## 5. ملاحظات للسيرفر الجديد
 
 ### التثبيت
 ```bash

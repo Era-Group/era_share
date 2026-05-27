@@ -40,7 +40,18 @@ Auto-installs on any DB that has both `era_seo_manager` and `website_blog`.
 ## Reading time
 
 Computed from `content` word count divided by 200 (standard reading speed).
-Minimum 1 minute for non-empty posts; 0 when content is empty.
+Minimum 1 minute for non-empty posts; 0 when content is empty. The word
+count uses the **richest language variant** of the content, so a post whose
+real article lives in a translation isn't measured against the (often stub)
+source language.
+
+## Form & meta
+
+The post form exposes a dedicated **ERA SEO** tab (the stock SEO fields are
+dev-only). The ERA `seo_*` fields and Odoo's stock `website_meta_*` are kept
+in sync both ways, so editors work in one place and the native meta/sitemap
+stay correct. With `era_seo_ai` installed, the **AI: Fill / Rewrite SEO**
+buttons appear via the `era_seo_blog_ai` bridge.
 
 ## Related posts algorithm
 

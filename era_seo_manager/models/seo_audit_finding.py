@@ -24,7 +24,7 @@ class EraSeoAuditFinding(models.Model):
     _description = 'SEO Audit Finding'
     _order = 'severity, check_code, id'
 
-    name = fields.Char(string='Display Name', compute='_compute_name', store=True)
+    name = fields.Char(string='Name', compute='_compute_name', store=True)
 
     run_id = fields.Many2one(
         'era.seo.audit.run',

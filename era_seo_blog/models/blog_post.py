@@ -37,6 +37,11 @@ _logger = logging.getLogger(__name__)
 _WORDS_PER_MINUTE = 200
 _TAG_SPLIT_RE = re.compile(r'\s+')
 
+# Schema template codes auto-attached to every blog post.
+_AUTO_SCHEMA_CODES = ('blog_posting', 'breadcrumb_list')
+# Code of the FAQ-only template; attached lazily when the post gains FAQs.
+_FAQ_SCHEMA_CODE = 'blog_faq_page'
+
 
 class BlogPost(models.Model):
     """blog.post + era.seo.mixin + Phase 5 enhancements."""
@@ -357,3 +362,108 @@ class BlogPost(models.Model):
             meta['canonical'] = self.era_canonical_external_url
         meta['og_type'] = 'article'
         return meta
+
+    # ------------------------------------------------------------------------
+    # Auto-attach JSON-LD schemas
+    # ------------------------------------------------------------------------
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        posts = super().create(vals_list)
+        posts._sync_era_default_schemas()
+        return posts
+
+    def write(self, vals):
+        result = super().write(vals)
+        # Refresh FAQ schema when FAQs or content fields change.
+        if any(k in vals for k in ('era_faq_ids', 'name', 'seo_title')):
+            self._sync_era_default_schemas()
+        return result
+
+    def _sync_era_default_schemas(self):
+        """Attach BlogPosting + BreadcrumbList unconditionally; attach
+        FAQPage iff the post carries at least one ``era.blog.faq`` row.
+
+        Idempotent: re-running creates nothing new when instances already
+        exist, and removes the FAQ instance if the post's last FAQ was
+        deleted. Safe to call from create/write/onchange.
+        """
+        if not self:
+            return
+        Template = self.env['era.seo.schema.template'].sudo()
+        Instance = self.env['era.seo.schema.instance'].sudo()
+
+        templates_by_code = {
+            t.code: t for t in Template.search(
+                [('code', 'in', list(_AUTO_SCHEMA_CODES) + [_FAQ_SCHEMA_CODE])]
+            )
+        }
+
+        for post in self.sudo():
+            # Unconditional auto-attach.
+            for code in _AUTO_SCHEMA_CODES:
+                tpl = templates_by_code.get(code)
+                if not tpl:
+                    continue
+                self._ensure_schema_instance(post, tpl, Instance)
+            # FAQPage: attach when FAQs exist, remove when they don't.
+            faq_tpl = templates_by_code.get(_FAQ_SCHEMA_CODE)
+            if faq_tpl:
+                if post.era_faq_ids:
+                    inst = self._ensure_schema_instance(post, faq_tpl, Instance)
+                    inst.write({'data_json': post._build_faq_data_json()})
+                else:
+                    self._remove_schema_instance(post, faq_tpl, Instance)
+
+    @staticmethod
+    def _ensure_schema_instance(post, template, Instance):
+        """Return the existing instance or create one. Idempotent."""
+        existing = Instance.search([
+            ('res_model', '=', 'blog.post'),
+            ('res_id', '=', post.id),
+            ('template_id', '=', template.id),
+        ], limit=1)
+        if existing:
+            return existing
+        return Instance.create({
+            'template_id': template.id,
+            'res_model': 'blog.post',
+            'res_id': post.id,
+            'active': True,
+        })
+
+    @staticmethod
+    def _remove_schema_instance(post, template, Instance):
+        Instance.search([
+            ('res_model', '=', 'blog.post'),
+            ('res_id', '=', post.id),
+            ('template_id', '=', template.id),
+        ]).unlink()
+
+    def _build_faq_data_json(self):
+        """Render the post's FAQs as a JSON dict for the FAQ schema instance.
+
+        Output shape (matches schema.org FAQPage.mainEntity):
+            {"faq_main_entity": [
+                {"@type": "Question",
+                 "name": "Q text",
+                 "acceptedAnswer": {"@type": "Answer", "text": "A text"}},
+                ...
+            ]}
+        """
+        import json
+        self.ensure_one()
+        items = []
+        for faq in self.era_faq_ids.filtered(lambda f: f.active).sorted(
+            key=lambda f: (f.sequence, f.id)
+        ):
+            answer_text = self._strip_html_to_text(faq.answer or '')
+            items.append({
+                '@type': 'Question',
+                'name': faq.question or '',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': answer_text,
+                },
+            })
+        return json.dumps({'faq_main_entity': items}, ensure_ascii=False)

@@ -42,3 +42,25 @@ class EraBlogFaq(models.Model):
     def _compute_name(self):
         for rec in self:
             rec.name = (rec.question or '')[:80]
+
+    # ------------------------------------------------------------------------
+    # Keep the parent post's FAQ schema instance in sync
+    # ------------------------------------------------------------------------
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records.post_id._sync_era_default_schemas()
+        return records
+
+    def write(self, vals):
+        result = super().write(vals)
+        if any(k in vals for k in ('question', 'answer', 'sequence', 'active', 'post_id')):
+            self.post_id._sync_era_default_schemas()
+        return result
+
+    def unlink(self):
+        posts = self.post_id
+        result = super().unlink()
+        posts.exists()._sync_era_default_schemas()
+        return result

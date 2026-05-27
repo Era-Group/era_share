@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Blog-specific JSON-LD template: FAQPage that renders the post's era.blog.faq
+    entries as Question / Answer pairs.
+
+    The stock `faq_page` template in era_seo_manager ships an empty mainEntity
+    array; this template's body references {{ faq_main_entity | json }}, which
+    the blog.post auto-attach hook populates via the per-instance data_json
+    override.
+
+    noupdate="0": upgrades may refresh the body if the schema changes.
+  -->
+  <data noupdate="0">
+    <record id="schema_tpl_blog_faq_page" model="era.seo.schema.template">
+      <field name="name">Blog FAQ Page</field>
+      <field name="code">blog_faq_page</field>
+      <field name="schema_type">FAQPage</field>
+      <field name="category">content</field>
+      <field name="description">FAQPage schema auto-populated from a blog post's era.blog.faq entries. Use the stock faq_page template for non-blog content.</field>
+      <field name="documentation_url">https://schema.org/FAQPage</field>
+      <field name="required_fields_json">["record.seo_title", "faq_main_entity"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "name": "{{ record.seo_title | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "mainEntity": {{ faq_main_entity | json }}
+}]]></field>
+    </record>
+  </data>
+</odoo>

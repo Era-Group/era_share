@@ -3,6 +3,47 @@
 All notable changes to `era_seo_blog` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.1.1.0] — 2026-05-27
+
+### Added — Frontend rendering + auto-schema attach
+
+- **Auto-attached JSON-LD schemas** on `blog.post`:
+    - `BlogPosting` and `BreadcrumbList` attach on every post create.
+    - `FAQPage` attaches when at least one `era.blog.faq` row exists; the
+      per-instance `data_json` is rebuilt on every FAQ create/write/unlink
+      so the `mainEntity` array stays in sync with the visible accordion.
+    - A new schema template `blog_faq_page` (separate from the stock
+      `faq_page` template) renders the Q&A list via a `{{ faq_main_entity | json }}`
+      placeholder.
+    - `post_init_hook` backfills existing posts on first install.
+
+- **Frontend template overrides** on `website_blog.blog_post_complete`:
+    - Subtitle below the H1
+    - Reading time + word count meta line
+    - Collapsible TOC (gated by `era_show_toc`)
+    - Author box with avatar, role, bio (gated by `era_show_author_box`)
+    - FAQ accordion (Bootstrap)
+    - Related-posts card grid (gated by `era_show_related`)
+    - Series prev/next nav with link to the series landing
+    - Share buttons for X, LinkedIn, Facebook, WhatsApp (gated by `era_show_share_buttons`)
+
+- **Landing-page controllers + template** for the URLs the new auto-attached
+  schemas (and the new post templates) link to:
+    - `/blog/series/<slug>` → series landing
+    - `/blog/category/<slug>` → category landing
+    - `/blog/author/<slug>` → author landing
+  All three render the shared `era_seo_blog.blog_landing` QWeb template;
+  the controller sets `main_object` so the corresponding ERA SEO schema
+  instances attached to the landing record also render in `<head>`.
+
+### Tests
+
+- `tests/test_auto_schemas.py`: BlogPosting + BreadcrumbList attach,
+  FAQPage lifecycle (attach / detach / data_json content), idempotent
+  re-sync.
+- `tests/test_feeds.py`: RSS / Atom / JSON status codes, content types,
+  Cache-Control header, unknown-format 404.
+
 ## [19.0.1.0.0] — 2026-05-27
 
 ### Added — Initial release (extracted from `era_seo_manager`)

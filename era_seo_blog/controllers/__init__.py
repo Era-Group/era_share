@@ -1,1 +1,1 @@
-from . import feed
+from . import feed, blog

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Ready-to-use marketing content block presenting the value of ERA's SEO
+    service (Phase 8 feature, "dogfooded"). noupdate="1" so admin edits in the
+    website editor survive module upgrades. Reuse it via the website editor
+    (Content Blocks) or a QWeb t-call by code "seo_service_value".
+  -->
+  <data noupdate="1">
+  <record id="content_block_seo_service_value" model="era.content.block" context="{'lang': 'ar_001'}">
+    <field name="name">قيمة خدمة تحسين محركات البحث</field>
+    <field name="code">seo_service_value</field>
+    <field name="block_type">custom</field>
+    <field name="seo_title">خدمة تحسين محركات البحث (SEO) | ERA</field>
+    <field name="seo_description">خدمة SEO من ERA: محتوى عربي وإنجليزي مهيّأ، بيانات منظمة تلقائية، وظهور أوسع في نتائج جوجل لجذب عملاء أكثر.</field>
+    <field name="seo_keywords">تحسين محركات البحث, SEO, بيانات منظمة, الظهور في جوجل, السعودية</field>
+    <field name="content_html" type="html">
+      <div class="container">
+        <h2 class="text-center mb-3">لماذا خدمة تحسين محركات البحث (SEO) من ERA؟</h2>
+        <p class="lead text-center mb-5">نحوّل موقعك إلى قناة لجذب العملاء — بمحتوى عربي وإنجليزي مهيّأ لمحركات البحث، وبيانات منظمة تفهمها جوجل وتمنحك ظهورًا أوسع.</p>
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <h3 class="h5">ظهور أوسع في نتائج البحث</h3>
+            <p>نولّد البيانات المنظمة (Structured Data) تلقائيًا — أسئلة شائعة ومسارات تنقّل — فتظهر صفحاتك بنتائج غنية (Rich Results) تأخذ مساحة أكبر على صفحة جوجل وتجذب نقرات أكثر.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3 class="h5">عربي وإنجليزي بإتقان</h3>
+            <p>كل العناوين والأوصاف والكلمات المفتاحية مهيّأة باللغتين، مع روابط hreflang صحيحة تضمن وصول كل نسخة للجمهور المناسب.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3 class="h5">تحديث تلقائي دائم</h3>
+            <p>تتجدد البيانات المنظمة لحظة عرض الصفحة من محتواها الفعلي، فأي تعديل تجريه ينعكس فورًا دون أي عمل يدوي.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3 class="h5">إدارة مركزية وإعادة استخدام</h3>
+            <p>كتلة محتوى واحدة تُدار من مكان واحد وتُستخدم في عدة صفحات — اتساق كامل في الرسالة وصيانة أسهل.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3 class="h5">بدون برمجة</h3>
+            <p>فريق المحتوى يسحب ويُفلت لبنات جاهزة ويكتب النص، وتحسين محركات البحث يعمل تلقائيًا تحت الغطاء.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3 class="h5">قياس ومتابعة مستمرة</h3>
+            <p>تدقيق دوري يرصد النواقص ويقترح إصلاحات ذكية، لتبقى صفحاتك دائمًا في أفضل حالة أمام محركات البحث.</p>
+          </div>
+        </div>
+        <div class="text-center mt-5">
+          <a href="/contactus" class="btn btn-primary btn-lg">اطلب استشارة SEO مجانية</a>
+        </div>
+      </div>
+    </field>
+  </record>
+  </data>
+</odoo>

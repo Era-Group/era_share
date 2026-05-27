@@ -3,6 +3,17 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.8.1.0] — 2026-05-28
+
+### Added — ready "SEO service value" content block
+
+Ships a marketing `era.content.block` (`code = seo_service_value`, Arabic
+copy) that presents the value of the SEO service — wider search visibility
+via auto structured data, bilingual content, always-fresh data, central
+reuse, no-code editing, ongoing auditing. `noupdate="1"` so edits in the
+website editor survive upgrades. Drop it on any page from **Content Blocks**
+or `t-call` it by code.
+
 ## [19.0.8.0.0] — 2026-05-27
 
 ### Added — Phase 8: content blocks + website-builder snippets (SPEC §14)

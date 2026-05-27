@@ -20,7 +20,7 @@ RSS/Atom/JSON feeds) ship in the optional ``era_seo_blog`` addon.
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.8.0.0',
+    'version': '19.0.8.1.0',
     'depends': [
         'base',
         'web',
@@ -36,6 +36,7 @@ RSS/Atom/JSON feeds) ship in the optional ``era_seo_blog`` addon.
         'data/seo_schema_template_data.xml',
         'data/seo_robots_default_data.xml',
         'data/seo_default_settings.xml',
+        'data/seo_service_content_block.xml',
         'wizards/seo_bulk_update_wizard_views.xml',
         'wizards/seo_redirect_import_wizard_views.xml',
         'wizards/seo_audit_wizard_views.xml',

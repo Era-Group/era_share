@@ -92,7 +92,7 @@
                 domain="[('hit_count', '=', 0)]"/>
         <filter name="recent_hits" string="Hit in Last 30 Days"
                 domain="[('last_hit_date', '>=', (datetime.datetime.now() - relativedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-        <group expand="0" string="Group By">
+        <group>
           <filter name="group_type" string="Type"
                   context="{'group_by': 'redirect_type'}"/>
           <filter name="group_website" string="Website"
@@ -195,7 +195,7 @@
                 domain="[('last_seen', '>=', (datetime.datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
         <filter name="frequent" string="Hot (10+ hits)"
                 domain="[('hit_count', '>=', 10)]"/>
-        <group expand="0" string="Group By">
+        <group>
           <filter name="group_website" string="Website"
                   context="{'group_by': 'website_id'}"/>
         </group>

@@ -23,10 +23,10 @@
                 Fill in the sections below <strong>top to bottom</strong>. Every field has a
                 <em>help tooltip</em> (hover the label) for guidance.
               </div>
-              <a type="action" name="%(era_seo_manager.action_seo_status)d"
-                 class="btn btn-primary btn-sm text-nowrap">
-                View Status Report
-              </a>
+              <button name="action_open_seo_status"
+                      type="object"
+                      string="View Status Report"
+                      class="btn btn-primary btn-sm text-nowrap"/>
             </div>
           </div>
 

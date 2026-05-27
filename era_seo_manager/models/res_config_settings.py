@@ -135,3 +135,7 @@ class ResCompany(models.Model):
             return url
         base = ICP.get_param('web.base.url', '')
         return '{}/web/image/res.company/{}/logo'.format(base, self.id) if base else ''
+
+    def action_open_seo_status(self):
+        """Open the ERA SEO Status Report form."""
+        return self.env.ref('era_seo_manager.action_seo_status').read()[0]

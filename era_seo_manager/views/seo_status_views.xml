@@ -11,139 +11,133 @@
         <sheet>
 
           <!-- ── Header ──────────────────────────────────────────────── -->
-          <div class="d-flex align-items-center justify-content-between mb-4">
+          <div class="oe_title d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0">ERA SEO Manager — Status Report</h2>
             <div class="d-flex align-items-center gap-3">
-              <img src="/era_seo_manager/static/description/icon.png"
-                   style="width:48px;height:48px;border-radius:8px;"
-                   alt="ERA SEO"/>
-              <div>
-                <h2 class="mb-0">ERA SEO Manager</h2>
-                <span class="text-muted small">
-                  v<field name="module_version" readonly="1" nolabel="1" class="d-inline"/>
-                  — Status Report
-                </span>
-              </div>
+              <span class="text-muted small">
+                v<field name="module_version" readonly="1" nolabel="1" class="d-inline"/>
+              </span>
+              <button name="action_go_settings"
+                      string="Open Settings"
+                      type="object"
+                      class="btn btn-secondary btn-sm"/>
             </div>
-            <button name="action_go_settings"
-                    string="Open Settings"
-                    type="object"
-                    class="btn btn-secondary btn-sm"/>
           </div>
 
           <!-- ── Setup Checklist ─────────────────────────────────────── -->
-          <div class="alert alert-info mb-4" role="alert">
-            <h5 class="alert-heading mb-2">Setup Checklist</h5>
-            <p class="mb-2 small text-muted">
-              Every item below should be ticked before going live. Open
-              <strong>Settings → ERA SEO</strong> to fill in missing values.
-            </p>
-            <table class="table table-sm table-borderless mb-0" style="max-width:600px;">
-              <tbody>
-                <tr>
-                  <td style="width:24px;">
-                    <span t-if="record.ok_org_name.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Organization Name</td>
-                  <td class="text-muted small">
-                    <field name="org_name" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_logo.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Logo URL</td>
-                  <td class="text-muted small">
-                    <field name="logo_url" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_og_image.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Default OG Image</td>
-                  <td class="text-muted small">
-                    <field name="og_image_url" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_twitter.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Twitter / X Handle</td>
-                  <td class="text-muted small">
-                    <field name="twitter_handle" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_google_verification.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Google Search Console Verified</td>
-                  <td class="text-muted small">
-                    <field name="google_verification" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_bing_verification.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Bing Webmaster Tools Verified</td>
-                  <td class="text-muted small">
-                    <field name="bing_verification" readonly="1" nolabel="1" class="d-inline"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_schema_engine.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>JSON-LD Schema Engine Enabled</td>
-                  <td class="text-muted small"/>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_has_instances.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-danger fw-bold">✘</span>
-                  </td>
-                  <td>Schema Instances Attached to Pages</td>
-                  <td class="text-muted small">
-                    <field name="instances_active" readonly="1" nolabel="1" class="d-inline"/> active
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_title_coverage.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-warning fw-bold">!</span>
-                  </td>
-                  <td>SEO Title Coverage ≥ 80%</td>
-                  <td class="text-muted small">
-                    <field name="seo_title_pct" readonly="1" nolabel="1" class="d-inline"/>%
-                    (<field name="pages_with_seo_title" readonly="1" nolabel="1" class="d-inline"/>
-                    of <field name="total_pages" readonly="1" nolabel="1" class="d-inline"/> pages)
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span t-if="record.ok_desc_coverage.raw_value" class="text-success fw-bold">✔</span>
-                    <span t-else="" class="text-warning fw-bold">!</span>
-                  </td>
-                  <td>SEO Description Coverage ≥ 80%</td>
-                  <td class="text-muted small">
-                    <field name="seo_desc_pct" readonly="1" nolabel="1" class="d-inline"/>%
-                    (<field name="pages_with_seo_description" readonly="1" nolabel="1" class="d-inline"/>
-                    of <field name="total_pages" readonly="1" nolabel="1" class="d-inline"/> pages)
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <group string="Setup Checklist">
+            <div class="col-12">
+              <p class="text-muted small mb-3">
+                All items below should be configured before going live.
+                Items marked <strong class="text-danger">✘ Not set</strong> need
+                attention — open <strong>Settings → ERA SEO</strong> to fix them.
+              </p>
+
+              <!-- Organization Name -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_org_name">✔</strong>
+                <strong class="text-danger" invisible="ok_org_name">✘</strong>
+                <span>Organization Name:</span>
+                <span class="text-muted small">
+                  <field name="org_name" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Logo URL -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_logo">✔</strong>
+                <strong class="text-danger" invisible="ok_logo">✘</strong>
+                <span>Logo URL:</span>
+                <span class="text-muted small">
+                  <field name="logo_url" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Default OG Image -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_og_image">✔</strong>
+                <strong class="text-danger" invisible="ok_og_image">✘</strong>
+                <span>Default OG Image:</span>
+                <span class="text-muted small">
+                  <field name="og_image_url" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Twitter Handle -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_twitter">✔</strong>
+                <strong class="text-danger" invisible="ok_twitter">✘</strong>
+                <span>Twitter / X Handle:</span>
+                <span class="text-muted small">
+                  <field name="twitter_handle" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Google Verification -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_google_verification">✔</strong>
+                <strong class="text-danger" invisible="ok_google_verification">✘</strong>
+                <span>Google Search Console Verified:</span>
+                <span class="text-muted small">
+                  <field name="google_verification" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Bing Verification -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_bing_verification">✔</strong>
+                <strong class="text-danger" invisible="ok_bing_verification">✘</strong>
+                <span>Bing Webmaster Tools Verified:</span>
+                <span class="text-muted small">
+                  <field name="bing_verification" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Schema Engine -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_schema_engine">✔</strong>
+                <strong class="text-danger" invisible="ok_schema_engine">✘</strong>
+                <span>JSON-LD Schema Engine:</span>
+                <span class="text-muted small">
+                  <field name="schema_engine_enabled" readonly="1" nolabel="1" class="d-inline"/>
+                </span>
+              </div>
+
+              <!-- Schema Instances -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_has_instances">✔</strong>
+                <strong class="text-danger" invisible="ok_has_instances">✘</strong>
+                <span>Schema Instances Attached to Pages:</span>
+                <span class="text-muted small">
+                  <field name="instances_active" readonly="1" nolabel="1" class="d-inline"/> active
+                </span>
+              </div>
+
+              <!-- SEO Title Coverage -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_title_coverage">✔</strong>
+                <strong class="text-warning" invisible="ok_title_coverage">!</strong>
+                <span>SEO Title Coverage ≥ 80%:</span>
+                <span class="text-muted small">
+                  <field name="seo_title_pct" readonly="1" nolabel="1" class="d-inline"/>%
+                  (<field name="pages_with_seo_title" readonly="1" nolabel="1" class="d-inline"/>
+                  of <field name="total_pages" readonly="1" nolabel="1" class="d-inline"/> pages)
+                </span>
+              </div>
+
+              <!-- SEO Description Coverage -->
+              <div class="d-flex align-items-baseline gap-2 mb-1">
+                <strong class="text-success" invisible="not ok_desc_coverage">✔</strong>
+                <strong class="text-warning" invisible="ok_desc_coverage">!</strong>
+                <span>SEO Description Coverage ≥ 80%:</span>
+                <span class="text-muted small">
+                  <field name="seo_desc_pct" readonly="1" nolabel="1" class="d-inline"/>%
+                  (<field name="pages_with_seo_description" readonly="1" nolabel="1" class="d-inline"/>
+                  of <field name="total_pages" readonly="1" nolabel="1" class="d-inline"/> pages)
+                </span>
+              </div>
+            </div>
+          </group>
 
           <!-- ── Social Profiles ─────────────────────────────────────── -->
           <group string="Social Profiles">
@@ -160,15 +154,15 @@
               <field name="total_pages" readonly="1"/>
               <field name="published_pages" readonly="1"/>
               <field name="pages_with_seo_title" readonly="1"/>
-              <field name="pages_with_seo_description" readonly="1"/>
+              <field name="seo_title_pct" readonly="1" string="Title Coverage (%)"/>
             </group>
             <group>
+              <field name="pages_with_seo_description" readonly="1"/>
+              <field name="seo_desc_pct" readonly="1" string="Description Coverage (%)"/>
               <field name="pages_with_canonical" readonly="1"/>
               <field name="pages_noindex" readonly="1"/>
-              <field name="seo_title_pct" readonly="1" string="Title Coverage (%)"/>
-              <field name="seo_desc_pct" readonly="1" string="Description Coverage (%)"/>
             </group>
-            <div class="col-12 mt-2">
+            <div class="col-12 mt-1">
               <button name="action_open_pages"
                       string="Open Pages List"
                       type="object"
@@ -187,7 +181,7 @@
               <field name="instances_total" readonly="1"/>
               <field name="instances_active" readonly="1"/>
             </group>
-            <div class="col-12 mt-2 d-flex gap-2">
+            <div class="col-12 mt-1 d-flex gap-2">
               <button name="action_open_schema_templates"
                       string="Schema Templates"
                       type="object"

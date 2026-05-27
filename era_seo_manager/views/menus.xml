@@ -105,7 +105,7 @@
     name="SEO"
     parent="website.menu_website_configuration"
     sequence="50"
-    groups="era_seo_manager.group_era_seo_user"/>
+    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
 
   <menuitem
     id="menu_seo_overview"
@@ -113,7 +113,7 @@
     parent="menu_website_seo_root"
     action="era_seo_manager.action_seo_status"
     sequence="5"
-    groups="era_seo_manager.group_era_seo_user"/>
+    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
 
   <menuitem
     id="menu_seo_schema_templates"
@@ -121,6 +121,6 @@
     parent="menu_website_seo_root"
     action="action_seo_schema_template"
     sequence="10"
-    groups="era_seo_manager.group_era_seo_user"/>
+    groups="era_seo_manager.group_era_seo_user,base.group_system"/>
 
 </odoo>

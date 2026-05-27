@@ -132,6 +132,73 @@ class TestAuditRunner(TransactionCase):
         self.assertEqual(action['res_model'], 'website.page')
         self.assertEqual(action['res_id'], page.id)
 
+    def test_rerun_does_not_duplicate_findings(self):
+        """Two runs over the same defect yield ONE finding, not two."""
+        page = self._make_page(url='/audit-no-dupe')
+        page.write({'seo_title': False, 'seo_description': 'desc'})
+
+        self.Run.create({})._run_audit()
+        self.Run.create({})._run_audit()
+
+        findings = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertEqual(len(findings), 1, 'Re-running must upsert, not duplicate.')
+
+    def test_rerun_updates_existing_in_place(self):
+        page = self._make_page(url='/audit-update')
+        page.write({'seo_title': False})
+        run1 = self.Run.create({})
+        run1._run_audit()
+        f = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertEqual(len(f), 1)
+        first_id = f.id
+
+        run2 = self.Run.create({})
+        run2._run_audit()
+        f2 = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertEqual(len(f2), 1)
+        self.assertEqual(f2.id, first_id, 'Same row reused across runs.')
+        self.assertEqual(f2.run_id, run2, 'run_id re-points at the latest run.')
+
+    def test_fixed_issue_auto_resolves(self):
+        page = self._make_page(url='/audit-autoresolve')
+        page.write({'seo_title': False, 'seo_description': 'd'})
+        self.Run.create({})._run_audit()
+        f = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertTrue(f)
+        self.assertFalse(f.is_resolved)
+
+        # Fix the page, re-run -> the finding should auto-resolve.
+        page.write({'seo_title': 'Now I have a proper SEO title here'})
+        self.Run.create({})._run_audit()
+        f.invalidate_recordset()
+        self.assertTrue(f.is_resolved, 'A no-longer-detected issue must auto-resolve.')
+
+    def test_reappearing_issue_reopens(self):
+        page = self._make_page(url='/audit-reopen')
+        page.write({'seo_title': False})
+        self.Run.create({})._run_audit()
+        f = self.Finding.search([
+            ('res_id', '=', page.id), ('check_code', '=', 'missing_seo_title')])
+        # Manually resolve it.
+        f.action_mark_resolved()
+        self.assertTrue(f.is_resolved)
+        # Issue still present on next run -> reopen.
+        self.Run.create({})._run_audit()
+        f.invalidate_recordset()
+        self.assertFalse(f.is_resolved, 'Still-present issue must reopen.')
+
     def test_counts_compute(self):
         page = self._make_page(url='/audit-counts-test')
         page.write({'seo_title': False, 'seo_description': False})

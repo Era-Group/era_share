@@ -3,6 +3,33 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.6.1.0] — 2026-05-27
+
+### Fixed — audit findings no longer duplicate across runs
+
+Every audit run used to create a fresh finding row, so the same defect on
+the same page piled up one row per run (5 runs → 5 identical "Meta
+Description Too Short" rows). Findings are now **upserted** by
+`(check_code, res_model, res_id)`:
+
+- `_add_finding` searches for an existing finding for the same check +
+  target and **updates it in place** (refreshing severity / name /
+  details and re-pointing `run_id` at the current run); only genuinely
+  new defects create a row. AI-fill fields on the existing finding are
+  preserved.
+- A re-detected finding that had been resolved is **reopened**.
+- After each run, findings on the scanned pages that were *not* re-detected
+  **auto-resolve** (the issue was fixed) — scoped to the pages actually
+  scanned, so other websites / unscanned records are untouched.
+- `era.seo.audit.finding` gains a UNIQUE index on
+  `(check_code, res_model, res_id)`; `run_id` is now "Last Detected In"
+  (`ondelete='set null'`, optional) so findings persist when an old run is
+  deleted.
+- Pre-migration `19.0.6.1.0` de-dups existing finding rows (keeps the
+  newest per key, carries "resolved" forward) before the index is created.
+- Tests: re-run-no-duplicate, update-in-place (same row id, run_id
+  re-points), fixed-issue-auto-resolves, reappearing-issue-reopens.
+
 ## [19.0.6.0.0] — 2026-05-27
 
 ### Added — Phase 7 (SEO Audit Dashboard, SPEC §13)

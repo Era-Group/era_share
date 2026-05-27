@@ -138,10 +138,14 @@ class EraSeoAuditRun(models.Model):
         self.write({
             'state': 'running',
             'date_started': fields.Datetime.now(),
-            'finding_ids': [(5, 0, 0)],
             'pages_scanned': 0,
             'error_message': False,
         })
+
+        # Track the (check_code, res_model, res_id) keys detected this run so
+        # we can (a) upsert instead of duplicating and (b) auto-resolve
+        # findings on scanned pages that no longer occur.
+        self._seen_finding_keys = set()
 
         try:
             pages = self._scope_pages()
@@ -155,6 +159,7 @@ class EraSeoAuditRun(models.Model):
                         'audit.run %d: check %s failed: %s',
                         self.id, check_method.__name__, exc,
                     )
+            self._auto_resolve_fixed(pages)
             self.write({
                 'state': 'done',
                 'date_finished': fields.Datetime.now(),
@@ -165,6 +170,33 @@ class EraSeoAuditRun(models.Model):
                 'state': 'failed',
                 'date_finished': fields.Datetime.now(),
                 'error_message': str(exc),
+            })
+
+    def _auto_resolve_fixed(self, pages):
+        """Mark unresolved findings on scanned pages that were NOT re-detected.
+
+        If a page was scanned this run and a previously-open finding for it
+        is no longer in ``_seen_finding_keys``, the issue has been fixed —
+        resolve it (preserving history) rather than leaving a stale row.
+        Scoped to the pages actually scanned so other websites / unscanned
+        records are never touched.
+        """
+        Finding = self.env['era.seo.audit.finding'].sudo()
+        if not pages:
+            return
+        open_findings = Finding.search([
+            ('is_resolved', '=', False),
+            ('res_model', '=', 'website.page'),
+            ('res_id', 'in', pages.ids),
+        ])
+        stale = open_findings.filtered(
+            lambda f: (f.check_code, f.res_model, f.res_id) not in self._seen_finding_keys
+        )
+        if stale:
+            stale.write({
+                'is_resolved': True,
+                'resolved_date': fields.Datetime.now(),
+                'resolved_user_id': self.env.user.id,
             })
 
     # ------------------------------------------------------------------------
@@ -210,18 +242,47 @@ class EraSeoAuditRun(models.Model):
     # ------------------------------------------------------------------------
 
     def _add_finding(self, page, severity, code, name, details=None, suggested=None):
-        """Create one ``era.seo.audit.finding`` row attached to this run."""
-        self.env['era.seo.audit.finding'].sudo().create({
+        """Upsert one finding keyed by (check_code, res_model, res_id).
+
+        Re-detecting the same defect updates the existing row (refreshes
+        severity/name/details, re-points run_id at this run, and reopens it
+        if it had been resolved) instead of creating a duplicate. Only
+        genuinely new defects create a new row. AI-fill fields on the
+        existing finding are preserved.
+        """
+        Finding = self.env['era.seo.audit.finding'].sudo()
+        # Remember we saw this key so _auto_resolve_fixed leaves it alone.
+        if getattr(self, '_seen_finding_keys', None) is not None:
+            self._seen_finding_keys.add((code, page._name, page.id))
+
+        vals = {
             'run_id': self.id,
             'severity': severity,
-            'check_code': code,
             'check_name': name,
-            'res_model': page._name,
-            'res_id': page.id,
             'url': page.url or '/',
             'details': details or '',
             'suggested_fix': suggested or '',
-        })
+        }
+        existing = Finding.search([
+            ('check_code', '=', code),
+            ('res_model', '=', page._name),
+            ('res_id', '=', page.id),
+        ], limit=1)
+        if existing:
+            if existing.is_resolved:
+                vals.update({
+                    'is_resolved': False,
+                    'resolved_date': False,
+                    'resolved_user_id': False,
+                })
+            existing.write(vals)
+        else:
+            vals.update({
+                'check_code': code,
+                'res_model': page._name,
+                'res_id': page.id,
+            })
+            Finding.create(vals)
 
     # ------------------------------------------------------------------------
     # Checks — title / description

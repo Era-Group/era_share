@@ -28,10 +28,12 @@ class EraSeoAuditFinding(models.Model):
 
     run_id = fields.Many2one(
         'era.seo.audit.run',
-        string='Audit Run',
-        required=True,
-        ondelete='cascade',
+        string='Last Detected In',
+        ondelete='set null',
         index=True,
+        help='The most recent audit run that detected this finding. Findings '
+             'persist across runs (upserted by check + target), so deleting '
+             'an old run no longer deletes its findings.',
     )
     severity = fields.Selection(
         SEVERITY_SELECTION,
@@ -58,6 +60,18 @@ class EraSeoAuditFinding(models.Model):
     resolved_user_id = fields.Many2one(
         'res.users', string='Resolved By', readonly=True,
     )
+
+    def init(self):
+        """One open finding per (check_code, res_model, res_id).
+
+        Enforces the upsert key at the DB level so concurrent runs can't
+        race a duplicate in. The 19.0.6.1.0 migration de-dups existing rows
+        before this index is created.
+        """
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS era_seo_audit_finding_key_uidx
+            ON era_seo_audit_finding (check_code, res_model, res_id)
+        """)
 
     @api.depends('check_name', 'url', 'res_model', 'res_id')
     def _compute_name(self):

@@ -106,7 +106,8 @@ class TestAIWorkflow(TransactionCase):
         self.assertEqual(f.ai_proposed_field, 'seo_title')
         self.assertAlmostEqual(f.ai_confidence, 0.91, places=2)
         self.assertEqual(self.Log.search_count([]), before + 1)
-        agent.get_direct_response.assert_called_once()
+        # Called at least once (once per installed website language).
+        agent.get_direct_response.assert_called()
 
     def test_suggest_tolerates_code_fences(self):
         page = self._make_page(url='/fence-test')
@@ -146,6 +147,26 @@ class TestAIWorkflow(TransactionCase):
         self.assertEqual(page.seo_title, 'Applied Title')
         self.assertEqual(f.ai_status, 'applied')
         self.assertTrue(f.is_resolved)
+
+    def test_apply_writes_all_languages(self):
+        """A missing-title fix applies to every installed website language."""
+        fr = self.env.ref('base.lang_fr')
+        fr.active = True
+        website = self.env['website'].search([], limit=1)
+        website.language_ids = [(4, self.env.ref('base.lang_en').id), (4, fr.id)]
+        page = self._make_page(url='/apply-multilang')
+        page.website_id = website.id
+        f = self._make_finding(page, 'missing_seo_title')
+        agent = _mock_agent(
+            '{"proposed_value": "ML Title", "explanation": "x", "confidence": 0.9}')
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            f.action_ai_suggest()
+        f.invalidate_recordset()
+        self.assertTrue(f.ai_proposed_translations, 'Translations dict must be stored.')
+        f.action_ai_apply()
+        page.invalidate_recordset()
+        self.assertTrue(page.with_context(lang='en_US').seo_title)
+        self.assertTrue(page.with_context(lang='fr_FR').seo_title)
 
     def test_suggest_and_apply_confidence_threshold(self):
         page_hi = self._make_page(url='/hi-conf')

@@ -13,8 +13,8 @@ buttons check ``group_era_seo_manager`` before doing anything destructive;
 res_id pointing at a deleted page (auto-fix on a vanished record would
 crash silently otherwise).
 """
+import json
 import logging
-from datetime import datetime
 
 from odoo import _, fields, models
 from odoo.exceptions import AccessError, UserError
@@ -56,7 +56,17 @@ class EraSeoAuditFinding(models.Model):
         readonly=True,
         index=True,
     )
-    ai_proposed_value = fields.Text(string='AI Proposed Value', readonly=True)
+    ai_proposed_value = fields.Text(
+        string='AI Proposed Value', readonly=True,
+        help='The proposed value in the website default language (shown here '
+             'for review). Per-language values are in AI Proposed Translations.',
+    )
+    ai_proposed_translations = fields.Text(
+        string='AI Proposed Translations', readonly=True,
+        help='JSON map of {lang_code: value}. Apply writes each into the '
+             'matching language translation of the target field. Empty for the '
+             'non-translatable slug.',
+    )
     ai_proposed_field = fields.Char(string='Target Field', readonly=True)
     ai_explanation = fields.Text(string='AI Explanation', readonly=True)
     ai_confidence = fields.Float(
@@ -119,6 +129,7 @@ class EraSeoAuditFinding(models.Model):
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
 
+            translations = proposal.get('translations') or {}
             log = Log.create({
                 'finding_id': rec.id,
                 'check_code': rec.check_code,
@@ -126,14 +137,23 @@ class EraSeoAuditFinding(models.Model):
                 'target_id': rec.res_id,
                 'target_url': rec.url,
                 'model': proposal['model'],
-                'field_written': proposal['field'],
-                'proposed_value': proposal['proposed_value'],
+                'field_written': '{} ({})'.format(
+                    proposal['field'],
+                    ', '.join(translations) if translations else 'single',
+                ),
+                'proposed_value': (
+                    json.dumps(translations, ensure_ascii=False, indent=2)
+                    if translations else proposal['proposed_value']
+                ),
                 'explanation': proposal['explanation'],
                 'confidence': proposal['confidence'],
             })
             rec.write({
                 'ai_status': 'suggested',
                 'ai_proposed_value': proposal['proposed_value'],
+                'ai_proposed_translations': (
+                    json.dumps(translations, ensure_ascii=False) if translations else False
+                ),
                 'ai_proposed_field': proposal['field'],
                 'ai_explanation': proposal['explanation'],
                 'ai_confidence': proposal['confidence'],
@@ -164,7 +184,17 @@ class EraSeoAuditFinding(models.Model):
                 errors.append(_('Finding %s: target gone.', rec.id))
                 continue
             try:
-                target.sudo().write({rec.ai_proposed_field: rec.ai_proposed_value})
+                translations = {}
+                if rec.ai_proposed_translations:
+                    translations = json.loads(rec.ai_proposed_translations)
+                if translations:
+                    # Translatable field — write each language's value.
+                    for lang_code, value in translations.items():
+                        target.sudo().with_context(lang=lang_code).write(
+                            {rec.ai_proposed_field: value})
+                else:
+                    # Non-translatable (slug) or single-value proposal.
+                    target.sudo().write({rec.ai_proposed_field: rec.ai_proposed_value})
             except Exception as exc:  # noqa: BLE001
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue

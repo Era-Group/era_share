@@ -1,5 +1,39 @@
 # Changelog
 
+## [19.0.4.0.0] — 2026-05-27
+
+### Added — AI suggestions now cover every installed website language
+
+The translatable SEO fields (`seo_title`, `seo_description`,
+`seo_og_title`, `seo_og_description`, `seo_keywords`) are generated in
+EACH installed website language and written into the matching translation,
+so the `/ar/...` version gets Arabic meta and the `/en/...` version gets
+English — instead of one detected language for all.
+
+- `AIClient.fill_seo(record, overwrite, lang)` now takes a target language;
+  it reads the page signal from `record.with_context(lang=...)` and emits a
+  hard "write all output in <language>" instruction in the prompt.
+- `era.seo.mixin._ai_fill_seo` loops the record's website languages
+  (`_era_hreflang_languages`, falling back to all active langs), calls the
+  agent once per language, and writes each result with
+  `with_context(lang=...)`. "Fill missing" now checks emptiness
+  per-language; "Rewrite all" overwrites every language.
+- `AIClient.suggest_fix` returns a `translations` dict `{lang: value}` for
+  translatable fields (one agent call per language) and a single value for
+  the non-translatable slug. The finding stores it in a new
+  `ai_proposed_translations` field; **Apply Fix** writes each language's
+  value into its translation. `ai_proposed_value` keeps the default-language
+  value for form display.
+- The AI Fix Log records the per-language JSON and lists the languages
+  covered in the "Field" column.
+
+### Notes
+
+- Cost scales with language count: a fill/suggest on an N-language site is
+  N agent calls. The dedicated SEO agent's prompt-side caching still applies.
+- The slug (`url`) is generated once — Odoo handles URL translation
+  separately from field translation.
+
 ## [19.0.3.0.0] — 2026-05-27
 
 ### Added — proactive "AI: Fill SEO" across the whole SEO suite

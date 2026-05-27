@@ -34,6 +34,8 @@
                    invisible="ai_status not in ('suggested', 'applied')"/>
             <field name="ai_proposed_value"
                    invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_proposed_translations"
+                   invisible="ai_status not in ('suggested', 'applied') or not ai_proposed_translations"/>
             <field name="ai_confidence" widget="progressbar"
                    invisible="ai_status not in ('suggested', 'applied')"/>
             <field name="ai_model_used"

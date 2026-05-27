@@ -107,6 +107,27 @@ class TestFillSeo(TransactionCase):
         self.assertTrue(p1.seo_title)
         self.assertTrue(p2.seo_title)
 
+    def test_fill_covers_all_website_languages(self):
+        """Fill writes a translation for every installed website language."""
+        fr = self.env.ref('base.lang_fr')
+        fr.active = True
+        website = self.env['website'].search([], limit=1)
+        en = self.env.ref('base.lang_en')
+        website.language_ids = [(4, en.id), (4, fr.id)]
+        page = self._make_page(url='/multilang', website_id=website.id)
+
+        agent = _mock_agent(_FULL_REPLY)
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            page.action_ai_fill_seo()
+
+        page.invalidate_recordset()
+        self.assertTrue(page.with_context(lang='en_US').seo_title,
+                        'English translation must be filled.')
+        self.assertTrue(page.with_context(lang='fr_FR').seo_title,
+                        'French translation must be filled.')
+        # One agent call per language.
+        self.assertGreaterEqual(agent.get_direct_response.call_count, 2)
+
     def test_fill_requires_manager_group(self):
         page = self._make_page(url='/fill-acl')
         # Drop the manager group for this test.

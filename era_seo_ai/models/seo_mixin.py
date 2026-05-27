@@ -10,6 +10,7 @@ Because the JSON-LD schema templates read these same fields
 (``record.seo_title``, ``record.seo_description``, ...), filling them also
 enriches the rendered JSON-LD with no separate step.
 """
+import json
 import logging
 
 from odoo import _, fields, models
@@ -53,33 +54,40 @@ class EraSeoMixin(models.AbstractModel):
         errors = []
 
         for rec in self:
-            try:
-                proposal = client.fill_seo(rec, overwrite=overwrite)
-            except AIUnavailable as exc:
-                raise UserError(str(exc)) from exc
-            except Exception as exc:  # noqa: BLE001
-                _logger.exception('AI fill_seo failed for %s#%s', rec._name, rec.id)
-                Log.create({
-                    'check_code': 'ai_fill',
-                    'kind': 'fill',
-                    'target_model': rec._name,
-                    'target_id': rec.id,
-                    'target_url': getattr(rec, 'url', False) or rec._get_seo_path(),
-                    'error_message': str(exc),
-                })
-                errors.append(_('%s#%s: %s', rec._name, rec.id, exc))
-                continue
+            languages, _default = rec._ai_fill_languages()
+            written_fields = set()
+            langs_done = []
+            last_proposal = None
+            raw_by_lang = {}
 
-            proposed = proposal['fields']
-            vals = {}
-            for fname in FILL_FIELDS:
-                new_val = proposed.get(fname)
-                if not new_val:
+            for lang in languages:
+                try:
+                    proposal = client.fill_seo(rec, overwrite=overwrite, lang=lang)
+                except AIUnavailable as exc:
+                    raise UserError(str(exc)) from exc
+                except Exception as exc:  # noqa: BLE001
+                    _logger.exception(
+                        'AI fill_seo failed for %s#%s [%s]', rec._name, rec.id, lang.code)
+                    errors.append(_('%s#%s [%s]: %s', rec._name, rec.id, lang.code, exc))
                     continue
-                if overwrite or not rec[fname]:
-                    vals[fname] = new_val
-            if vals:
-                rec.write(vals)
+
+                last_proposal = proposal
+                raw_by_lang[lang.code] = proposal['raw_json']
+                proposed = proposal['fields']
+                lang_rec = rec.with_context(lang=lang.code)
+                vals = {}
+                for fname in FILL_FIELDS:
+                    new_val = proposed.get(fname)
+                    if not new_val:
+                        continue
+                    if overwrite or not lang_rec[fname]:
+                        vals[fname] = new_val
+                if vals:
+                    lang_rec.write(vals)
+                    written_fields |= set(vals.keys())
+                    langs_done.append(lang.code)
+
+            if written_fields:
                 filled_records += 1
 
             Log.create({
@@ -88,14 +96,18 @@ class EraSeoMixin(models.AbstractModel):
                 'target_model': rec._name,
                 'target_id': rec.id,
                 'target_url': getattr(rec, 'url', False) or rec._get_seo_path(),
-                'model': proposal['model'],
-                'field_written': ', '.join(vals.keys()) or '(no empty fields)',
-                'proposed_value': proposal['raw_json'],
-                'explanation': proposal.get('explanation', ''),
-                'confidence': proposal.get('confidence', 0.0),
-                'applied': bool(vals),
-                'applied_date': fields.Datetime.now() if vals else False,
-                'applied_user_id': self.env.user.id if vals else False,
+                'model': last_proposal['model'] if last_proposal else False,
+                'field_written': (
+                    '{} ({})'.format(', '.join(sorted(written_fields)),
+                                     ', '.join(langs_done))
+                    if written_fields else '(nothing to fill)'
+                ),
+                'proposed_value': json.dumps(raw_by_lang, ensure_ascii=False, indent=2),
+                'explanation': last_proposal.get('explanation', '') if last_proposal else '',
+                'confidence': last_proposal.get('confidence', 0.0) if last_proposal else 0.0,
+                'applied': bool(written_fields),
+                'applied_date': fields.Datetime.now() if written_fields else False,
+                'applied_user_id': self.env.user.id if written_fields else False,
             })
 
         if errors:
@@ -105,8 +117,26 @@ class EraSeoMixin(models.AbstractModel):
                   filled_records, len(errors), '\n'.join(errors[:5])),
             )
         return self._ai_notify(
-            'success', _('AI filled SEO fields on %d record(s).', filled_records),
+            'success',
+            _('AI filled SEO fields on %d record(s) across all website languages.',
+              filled_records),
         )
+
+    def _ai_fill_languages(self):
+        """Resolve the languages to generate for this record.
+
+        Reuses era.seo.mixin._era_hreflang_languages (website-scoped) when
+        present; falls back to all active res.lang.
+        """
+        self.ensure_one()
+        try:
+            langs, default_lang = self._era_hreflang_languages()
+            if langs:
+                return langs, default_lang
+        except Exception:  # noqa: BLE001
+            pass
+        active = self.env['res.lang'].search([('active', '=', True)])
+        return active, active[:1]
 
     # ------------------------------------------------------------------
     # Helpers

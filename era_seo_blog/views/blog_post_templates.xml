@@ -49,7 +49,7 @@
        Step B — TOC after the post header (inline, collapsible)
   =================================================================== -->
   <template id="blog_post_toc"
-            inherit_id="website_blog.blog_post_complete"
+            inherit_id="website_blog.blog_post_content"
             name="ERA Blog: auto table of contents">
     <xpath expr="//div[@t-field='blog_post.content']" position="before">
       <t t-if="blog_post.era_show_toc and blog_post.era_toc_html">
@@ -70,7 +70,7 @@
        Step C/D — Author box BEFORE and AFTER the post body
   =================================================================== -->
   <template id="blog_post_author_box_top"
-            inherit_id="website_blog.blog_post_complete"
+            inherit_id="website_blog.blog_post_content"
             name="ERA Blog: author box (top)">
     <xpath expr="//div[@t-field='blog_post.content']" position="before">
       <t t-if="blog_post.era_show_author_box and blog_post.era_author_profile_id">

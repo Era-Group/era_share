@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    era_seo_manager.meta_tags
+    =========================
+    Standalone template rendered inside <head> when the current page record
+    inherits era.seo.mixin. Called via t-call with `seo` set to the dict
+    returned by get_seo_meta_dict().
+
+    og:locale is NOT emitted here; it is injected site-wide (regardless of
+    ERA mode) by the xpath in website_layout_templates.xml.
+
+    Per SPEC §7.3.
+  -->
+  <template id="meta_tags" name="ERA SEO Meta Tags">
+    <t t-if="seo">
+      <title><t t-esc="seo.get('title') or website.name"/></title>
+      <meta name="description" t-att-content="seo.get('description')"/>
+      <meta t-if="seo.get('keywords')" name="keywords" t-att-content="seo.get('keywords')"/>
+      <meta name="robots" t-att-content="seo.get('robots')"/>
+      <link rel="canonical" t-att-href="seo.get('canonical')"/>
+
+      <!-- Open Graph -->
+      <meta property="og:title" t-att-content="seo.get('og_title')"/>
+      <meta property="og:description" t-att-content="seo.get('og_description')"/>
+      <meta property="og:type" t-att-content="seo.get('og_type')"/>
+      <meta property="og:url" t-att-content="seo.get('canonical')"/>
+      <meta t-if="seo.get('og_image')" property="og:image" t-att-content="seo.get('og_image')"/>
+      <meta property="og:site_name" t-att-content="website.name"/>
+
+      <!-- Twitter Card -->
+      <meta name="twitter:card" t-att-content="seo.get('twitter_card')"/>
+      <meta name="twitter:title" t-att-content="seo.get('og_title')"/>
+      <meta name="twitter:description" t-att-content="seo.get('og_description')"/>
+      <meta t-if="seo.get('og_image')" name="twitter:image" t-att-content="seo.get('og_image')"/>
+      <meta t-if="seo.get('twitter_site')" name="twitter:site" t-att-content="seo.get('twitter_site')"/>
+      <meta t-if="seo.get('twitter_creator')" name="twitter:creator" t-att-content="seo.get('twitter_creator')"/>
+    </t>
+  </template>
+
+  <!--
+    era_seo_manager.era_seo_schema_ld
+    ==================================
+    Emits one <script type="application/ld+json"> per active schema instance
+    in sequence order. Two sources are combined:
+
+      _site_schemas  — instances bound to `website` (res_model='website').
+                       These are site-wide: Organization, WebSite, etc.
+                       They render on EVERY page regardless of main_object.
+
+      _page_schemas  — instances bound to the current page record
+                       (res_model=main_object._name). These render only when
+                       a page carrying era.seo.mixin is the host.
+
+    This fixes the regression where main_object=None on controller-rendered
+    routes (e.g. /) caused the predicate to short-circuit and emit nothing.
+
+    Guard: emits nothing when the schema engine is disabled in settings.
+
+    Per SPEC §8.4.
+  -->
+  <template id="era_seo_schema_ld" name="ERA JSON-LD Schemas">
+    <t t-set="_schema_enabled"
+       t-value="request.env['ir.config_parameter'].sudo().get_param('era_seo.schema_engine_enabled', 'True') not in ('False', '0', 'false', '')"/>
+    <t t-if="_schema_enabled">
+
+      <!-- Site-wide schemas: always fetch, regardless of main_object -->
+      <t t-set="_site_schemas" t-value="
+          website
+          and request.env['era.seo.schema.instance'].sudo().search([
+              ('res_model', '=', 'website'),
+              ('res_id',    '=', website.id),
+              ('active',    '=', True),
+          ], order='sequence asc')
+          or request.env['era.seo.schema.instance']
+      "/>
+
+      <!-- Page-specific schemas: only when main_object carries era.seo.mixin -->
+      <t t-set="_page_schemas" t-value="
+          main_object
+          and 'seo_title' in main_object._fields
+          and request.env['era.seo.schema.instance'].sudo().search([
+              ('res_model', '=', main_object._name),
+              ('res_id',    '=', main_object.id),
+              ('active',    '=', True),
+          ], order='sequence asc')
+          or request.env['era.seo.schema.instance']
+      "/>
+
+      <t t-set="_all_schemas" t-value="_site_schemas + _page_schemas"/>
+      <t t-foreach="_all_schemas" t-as="inst">
+        <script type="application/ld+json">
+          <t t-out="inst.get_rendered_json_ld(main_object or website)"/>
+        </script>
+      </t>
+    </t>
+  </template>
+
+  <!--
+    Layout injection: inject era_seo_schema_ld into website.layout <head>.
+    Priority 25 places this AFTER Phase 1's meta_tags inject (priority 20),
+    ensuring meta tags come before JSON-LD in the head.
+  -->
+  <template id="layout_inherit_era_seo_schema_ld"
+            name="ERA JSON-LD Layout Inject"
+            inherit_id="website.layout"
+            priority="25">
+    <xpath expr="//head" position="inside">
+      <t t-call="era_seo_manager.era_seo_schema_ld"/>
+    </xpath>
+  </template>
+</odoo>

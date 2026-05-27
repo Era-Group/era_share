@@ -18,7 +18,7 @@ A unified SEO layer for Odoo 19 websites:
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.2.2.0',
+    'version': '19.0.3.0.0',
     'depends': [
         'base',
         'web',

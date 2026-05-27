@@ -6,6 +6,9 @@ access_era_seo_schema_template_manager,era.seo.schema.template (manager),model_e
 access_era_seo_schema_template_user,era.seo.schema.template (user),model_era_seo_schema_template,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_redirect_manager,era.seo.redirect (manager),model_era_seo_redirect,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_redirect_user,era.seo.redirect (user),model_era_seo_redirect,era_seo_manager.group_era_seo_user,1,0,0,0
+access_era_seo_redirect_log_manager,era.seo.redirect.log (manager),model_era_seo_redirect_log,era_seo_manager.group_era_seo_manager,1,1,1,1
+access_era_seo_redirect_log_user,era.seo.redirect.log (user),model_era_seo_redirect_log,era_seo_manager.group_era_seo_user,1,0,0,0
+access_era_seo_redirect_import_wizard,era.seo.redirect.import.wizard,model_era_seo_redirect_import_wizard,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_sitemap_config_manager,era.seo.sitemap.config (manager),model_era_seo_sitemap_config,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_sitemap_config_user,era.seo.sitemap.config (user),model_era_seo_sitemap_config,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_robots_rule_manager,era.seo.robots.rule (manager),model_era_seo_robots_rule,era_seo_manager.group_era_seo_manager,1,1,1,1

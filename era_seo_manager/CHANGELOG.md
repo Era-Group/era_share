@@ -3,6 +3,48 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.3.0.0] — 2026-05-27
+
+### Added — Phase 3 (Redirect Manager)
+
+- `era.seo.redirect` model: 301/302/307/308/410 redirects with optional
+  website + language scope, regex patterns with backreference substitution,
+  hit counter, last-hit timestamp, and origin tracking
+  (manual / import / auto_404 / auto_rename). SPEC §9.1.
+- `era.seo.redirect.log` model: 404 capture with hit-count upsert keyed on
+  `(path, website_id)`, self-referer stripping (privacy + log spam), and a
+  daily vacuum cron that prunes resolved entries after 30 days and
+  unresolved entries after 90 days. SPEC §9.4.
+- `ir.http._serve_fallback` override (`models/ir_http.py`): redirect lookup
+  runs before the standard 404 response. Loop protection via a short-lived
+  cookie (`era_seo_hops`) — once a chain exceeds `REDIRECT_HOP_LIMIT=5` we
+  return a 508. SPEC §9.2.
+- `era.seo.redirect.import.wizard`: CSV bulk import (UTF-8 + cp1256
+  fallback). Required columns `source` and `target`; optional `type`,
+  `website`, `lang`, `notes`, `is_regex`. Dry-run mode emits a counts and
+  errors report without writing; actual run upserts by
+  `(source, website, lang)` so re-imports update instead of duplicating.
+  SPEC §9.3.
+- Admin UI: **Website → Configuration → SEO** now exposes "Redirects",
+  "Import Redirects", and "404 Log" entries. List views show hit counters
+  inline; the 404 log has a one-click "Create Redirect" action that
+  pre-fills the source path and marks the new rule `created_from='auto_404'`.
+- Daily `ir.cron` (`cron_vacuum_redirect_log`) calls
+  `era.seo.redirect.log._vacuum_old_entries()`.
+- ACLs for both new models + the wizard. `era.seo.redirect` already had
+  manager/user rows from earlier phases; added log + wizard entries.
+- Tests (`tests/test_redirects.py`): plain match, scope priority,
+  regex with backreferences, `re.fullmatch` semantics, 410 Gone, path
+  normalization (query/fragment/absolute URL handling), self-loop
+  rejection, invalid-regex rejection, 404 log upsert + self-referer
+  drop, CSV import dry-run / real / idempotent re-import / missing
+  column / invalid type.
+
+### Removed
+
+- `models/ir_ui_view.py` placeholder — never held actual code; module
+  imports cleaned up.
+
 ## [19.0.2.2.0] — 2026-05-27
 
 ### Fixed — Absolute URLs in JSON-LD

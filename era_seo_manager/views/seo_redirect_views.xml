@@ -1,1 +1,246 @@
-<odoo/>
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- ===================================================================
+       era.seo.redirect — list, form, search, action
+       Phase 3 / SPEC §9
+  =================================================================== -->
+
+  <record id="view_seo_redirect_list" model="ir.ui.view">
+    <field name="name">era.seo.redirect.list</field>
+    <field name="model">era.seo.redirect</field>
+    <field name="arch" type="xml">
+      <list string="Redirects" multi_edit="1" decoration-muted="not is_active">
+        <field name="sequence" widget="handle"/>
+        <field name="source_url"/>
+        <field name="target_url"/>
+        <field name="redirect_type"/>
+        <field name="is_regex" optional="show"/>
+        <field name="website_id" optional="show"/>
+        <field name="lang_id" optional="hide"/>
+        <field name="hit_count" optional="show"/>
+        <field name="last_hit_date" optional="hide"/>
+        <field name="created_from" optional="hide"/>
+        <field name="is_active" widget="boolean_toggle"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_seo_redirect_form" model="ir.ui.view">
+    <field name="name">era.seo.redirect.form</field>
+    <field name="model">era.seo.redirect</field>
+    <field name="arch" type="xml">
+      <form string="Redirect">
+        <header>
+          <field name="created_from" widget="badge" readonly="1"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="Rule">
+              <field name="source_url" placeholder="/old-page"/>
+              <field name="target_url" placeholder="/new-page"
+                     invisible="redirect_type == '410'"
+                     required="redirect_type != '410'"/>
+              <field name="redirect_type"/>
+              <field name="is_regex"/>
+              <field name="is_active"/>
+              <field name="sequence"/>
+            </group>
+            <group string="Scope">
+              <field name="website_id"
+                     options="{'no_create': True, 'no_open': True}"/>
+              <field name="lang_id"
+                     options="{'no_create': True, 'no_open': True}"/>
+            </group>
+            <group string="Telemetry">
+              <field name="hit_count"/>
+              <field name="last_hit_date"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Notes" name="notes">
+              <field name="notes" placeholder="Optional context for this redirect."/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_seo_redirect_search" model="ir.ui.view">
+    <field name="name">era.seo.redirect.search</field>
+    <field name="model">era.seo.redirect</field>
+    <field name="arch" type="xml">
+      <search string="Redirects">
+        <field name="source_url"/>
+        <field name="target_url"/>
+        <field name="redirect_type"/>
+        <field name="website_id"/>
+        <filter name="active" string="Active"
+                domain="[('is_active', '=', True)]"/>
+        <filter name="inactive" string="Inactive"
+                domain="[('is_active', '=', False)]"/>
+        <separator/>
+        <filter name="regex" string="Regex" domain="[('is_regex', '=', True)]"/>
+        <filter name="gone" string="410 Gone"
+                domain="[('redirect_type', '=', '410')]"/>
+        <separator/>
+        <filter name="never_hit" string="Never Hit"
+                domain="[('hit_count', '=', 0)]"/>
+        <filter name="recent_hits" string="Hit in Last 30 Days"
+                domain="[('last_hit_date', '>=', (datetime.datetime.now() - relativedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+        <group expand="0" string="Group By">
+          <filter name="group_type" string="Type"
+                  context="{'group_by': 'redirect_type'}"/>
+          <filter name="group_website" string="Website"
+                  context="{'group_by': 'website_id'}"/>
+          <filter name="group_created_from" string="Origin"
+                  context="{'group_by': 'created_from'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_seo_redirect" model="ir.actions.act_window">
+    <field name="name">Redirects</field>
+    <field name="res_model">era.seo.redirect</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_seo_redirect_search"/>
+    <field name="context">{'search_default_active': 1}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Add a redirect to keep traffic on the right URLs.
+      </p>
+      <p>
+        Use the CSV import wizard for bulk loads (link in the actions menu).
+        Visit the 404 Log to find paths that are getting traffic but have no
+        matching page yet.
+      </p>
+    </field>
+  </record>
+
+  <!-- ===================================================================
+       era.seo.redirect.log — read-only operations dashboard
+  =================================================================== -->
+
+  <record id="view_seo_redirect_log_list" model="ir.ui.view">
+    <field name="name">era.seo.redirect.log.list</field>
+    <field name="model">era.seo.redirect.log</field>
+    <field name="arch" type="xml">
+      <list string="404 Log"
+            decoration-muted="is_resolved"
+            decoration-warning="hit_count > 10 and not is_resolved">
+        <field name="path"/>
+        <field name="hit_count"/>
+        <field name="last_seen"/>
+        <field name="first_seen" optional="hide"/>
+        <field name="last_referer" optional="hide"/>
+        <field name="last_user_agent" optional="hide"/>
+        <field name="website_id" optional="show"/>
+        <field name="is_resolved" widget="boolean_toggle"/>
+        <button name="action_create_redirect" type="object"
+                string="Create Redirect" icon="fa-arrow-right"
+                invisible="is_resolved"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_seo_redirect_log_form" model="ir.ui.view">
+    <field name="name">era.seo.redirect.log.form</field>
+    <field name="model">era.seo.redirect.log</field>
+    <field name="arch" type="xml">
+      <form string="404 Log Entry">
+        <header>
+          <button name="action_create_redirect" type="object"
+                  string="Create Redirect" class="oe_highlight"
+                  invisible="is_resolved"/>
+          <button name="action_mark_resolved" type="object"
+                  string="Mark Resolved"
+                  invisible="is_resolved"/>
+        </header>
+        <sheet>
+          <group>
+            <group>
+              <field name="path"/>
+              <field name="website_id"/>
+              <field name="hit_count"/>
+              <field name="is_resolved"/>
+            </group>
+            <group>
+              <field name="first_seen"/>
+              <field name="last_seen"/>
+              <field name="last_referer"/>
+              <field name="last_user_agent"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_seo_redirect_log_search" model="ir.ui.view">
+    <field name="name">era.seo.redirect.log.search</field>
+    <field name="model">era.seo.redirect.log</field>
+    <field name="arch" type="xml">
+      <search string="404 Log">
+        <field name="path"/>
+        <filter name="unresolved" string="Unresolved"
+                domain="[('is_resolved', '=', False)]"/>
+        <filter name="resolved" string="Resolved"
+                domain="[('is_resolved', '=', True)]"/>
+        <filter name="recent" string="Last 7 Days"
+                domain="[('last_seen', '>=', (datetime.datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+        <filter name="frequent" string="Hot (10+ hits)"
+                domain="[('hit_count', '>=', 10)]"/>
+        <group expand="0" string="Group By">
+          <filter name="group_website" string="Website"
+                  context="{'group_by': 'website_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_seo_redirect_log" model="ir.actions.act_window">
+    <field name="name">404 Log</field>
+    <field name="res_model">era.seo.redirect.log</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_seo_redirect_log_search"/>
+    <field name="context">{'search_default_unresolved': 1, 'search_default_recent': 1}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No 404s recorded yet — the site is healthy or no one has visited a
+        missing path since installation.
+      </p>
+      <p>
+        The log auto-vacuums resolved entries after 30 days and unresolved
+        ones after 90 days. Click any row to create a redirect from it.
+      </p>
+    </field>
+  </record>
+
+  <!-- ===================================================================
+       Menus
+  =================================================================== -->
+
+  <menuitem id="menu_seo_redirects"
+            name="Redirects"
+            parent="menu_website_seo_root"
+            action="action_seo_redirect"
+            sequence="20"/>
+
+  <menuitem id="menu_seo_redirect_import"
+            name="Import Redirects"
+            parent="menu_website_seo_root"
+            action="action_seo_redirect_import_wizard"
+            sequence="22"/>
+
+  <menuitem id="menu_seo_redirect_log"
+            name="404 Log"
+            parent="menu_website_seo_root"
+            action="action_seo_redirect_log"
+            sequence="25"/>
+
+</odoo>

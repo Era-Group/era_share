@@ -333,3 +333,94 @@ msgstr "قوالب المخططات"
 #: model:ir.actions.act_window,name:era_seo_manager.action_seo_schema_preview_wizard
 msgid "Schema Preview"
 msgstr "معاينة المخطط"
+
+# ---------------------------------------------------------------------------
+# Phase 3 — Redirect Manager
+# ---------------------------------------------------------------------------
+
+#. module: era_seo_manager
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirects
+msgid "Redirects"
+msgstr "إعادات التوجيه"
+
+#. module: era_seo_manager
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirect_log
+msgid "404 Log"
+msgstr "سجل 404"
+
+#. module: era_seo_manager
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirect_import
+msgid "Import Redirects"
+msgstr "استيراد إعادات التوجيه"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__source_url
+msgid "Source Path"
+msgstr "المسار الأصلي"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__target_url
+msgid "Target"
+msgstr "الوجهة"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__redirect_type
+msgid "Type"
+msgstr "النوع"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__is_regex
+msgid "Is Regex"
+msgstr "تعبير نمطي"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__hit_count
+msgid "Hit Count"
+msgstr "عدد الزيارات"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__last_hit_date
+msgid "Last Hit"
+msgstr "آخر زيارة"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__path
+msgid "Request Path"
+msgstr "مسار الطلب"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__last_seen
+msgid "Last Seen"
+msgstr "آخر ظهور"
+
+#. module: era_seo_manager
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__is_resolved
+msgid "Resolved"
+msgstr "تم الحل"
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect
+msgid "SEO Redirect"
+msgstr "إعادة توجيه SEO"
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect_log
+msgid "SEO 404 Log"
+msgstr "سجل 404"
+
+#. module: era_seo_manager
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect_import_wizard
+msgid "SEO Redirect Import Wizard"
+msgstr "معالج استيراد إعادات التوجيه"
+
+#. module: era_seo_manager
+msgid "Create Redirect"
+msgstr "إنشاء إعادة توجيه"
+
+#. module: era_seo_manager
+msgid "Mark Resolved"
+msgstr "تحديد كمحلول"
+
+#. module: era_seo_manager
+msgid "Dry Run"
+msgstr "تشغيل تجريبي"

@@ -36,7 +36,7 @@ class EraBlogFaq(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
 
-    name = fields.Char(string='Display Name', compute='_compute_name', store=True)
+    name = fields.Char(string='Name', compute='_compute_name', store=True)
 
     @api.depends('question')
     def _compute_name(self):

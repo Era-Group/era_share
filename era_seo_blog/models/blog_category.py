@@ -36,7 +36,7 @@ class EraBlogCategory(models.Model):
         ondelete='set null',
         index=True,
     )
-    parent_path = fields.Char(index=True, unaccent=False)
+    parent_path = fields.Char(index=True)
     child_ids = fields.One2many('era.blog.category', 'parent_id', string='Children')
     description = fields.Html(string='Description', translate=True, sanitize=True)
     sequence = fields.Integer(default=10)

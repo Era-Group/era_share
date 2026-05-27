@@ -17,6 +17,7 @@ access_era_seo_audit_run_manager,era.seo.audit.run (manager),model_era_seo_audit
 access_era_seo_audit_run_user,era.seo.audit.run (user),model_era_seo_audit_run,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_audit_finding_manager,era.seo.audit.finding (manager),model_era_seo_audit_finding,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_audit_finding_user,era.seo.audit.finding (user),model_era_seo_audit_finding,era_seo_manager.group_era_seo_user,1,0,0,0
+access_era_seo_audit_wizard,era.seo.audit.wizard,model_era_seo_audit_wizard,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_hreflang_manager,era.seo.hreflang (manager),model_era_seo_hreflang,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_hreflang_user,era.seo.hreflang (user),model_era_seo_hreflang,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_hreflang_public,era.seo.hreflang (public),model_era_seo_hreflang,base.group_public,1,0,0,0

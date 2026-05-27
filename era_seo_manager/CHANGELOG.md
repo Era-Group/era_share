@@ -3,6 +3,37 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.6.0.0] — 2026-05-27
+
+### Added — Phase 7 (SEO Audit Dashboard, SPEC §13)
+
+- `era.seo.audit.run` model with state machine (draft / running / done /
+  failed), start + finish timestamps, computed counts (critical /
+  warning / info / total / unresolved), optional per-website scope, and
+  `error_message` for failed runs.
+- `era.seo.audit.finding` model: one row per (run, check, target). Each
+  finding carries severity, check code + name, polymorphic
+  (res_model, res_id), URL, details, suggested fix, and a resolved
+  flag with timestamp + user.
+- **22 audit checks** implemented as `_check_*` methods on `audit.run`:
+  missing/long/short/duplicate seo_title; missing/long/short/duplicate
+  meta description; missing og_image; missing canonical; noindex in
+  sitemap; missing/multiple H1; missing alt; slug too long /
+  uppercase / stopwords; missing schema; thin content; orphan page;
+  broken redirect chain; redirect loop. Each check is wrapped in its
+  own savepoint so one failing check doesn't abort the run.
+- Wizard at **SEO → SEO Audit → Run SEO Audit** to launch a run from
+  the UI; admin can scope to one website.
+- Backend admin: list / form / search for both `audit.run` and
+  `audit.finding`, decorated by severity, with badges and one-click
+  "Open Target" / "Mark Resolved" actions. Three new menu entries
+  under SEO → SEO Audit (sequence 60).
+- Nightly cron `cron_seo_audit_nightly` (disabled by default; admin
+  flips `active` to enable).
+- Tests covering state transitions, missing-title, long-title,
+  duplicate-title, noindex-in-sitemap, slug uppercase, resolved flow,
+  open-target action, and counts compute.
+
 ## [19.0.5.1.0] — 2026-05-27
 
 ### Fixed — Hreflang stays in sync with website-level language changes

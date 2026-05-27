@@ -3,6 +3,33 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.7.0.0] — 2026-05-27
+
+### Changed — audit content checks are now per-language
+
+The title/description checks used to read `seo_title` / `seo_description`
+in a single language (the audit user's), so a too-short or missing
+description in another language slipped through — e.g. an Arabic title with
+an English description edited down to "Discover ERA's" was never flagged.
+
+- The six text-content checks (missing/long/short/duplicate title and
+  description) now loop **every installed website language** and read each
+  field with `with_context(lang=...)`. Each finding records the offending
+  `lang_id`, and its name carries the language code (`Meta Description Too
+  Short (14 chars) [ar_001]`).
+- The finding upsert key and unique index are now
+  `(check_code, res_model, res_id, lang_id)` — one open finding per
+  defect *per language*. Language-agnostic checks (slug, H1, schema,
+  redirects) keep `lang_id` empty.
+- Auto-resolve and the dedup logic are language-aware.
+- New `lang_id` column/filter/group-by on the Audit Findings views.
+- Pre-migration `19.0.7.0.0` drops the old `(check_code, res_model,
+  res_id)` unique index so the language-aware one can replace it.
+
+Paired with `era_seo_ai` ≥ 19.0.5.0.0: when a finding is language-scoped,
+"Suggest Fix" rewrites **only that language**, so fixing a short English
+description never clobbers a good Arabic one.
+
 ## [19.0.6.2.0] — 2026-05-27
 
 ### Fixed — "Optimize SEO" dialog edits no longer lost

@@ -32,7 +32,7 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.4.0.0',
+    'version': '19.0.5.0.0',
     'depends': [
         'era_seo_manager',
         'ai',

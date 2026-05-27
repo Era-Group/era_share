@@ -179,6 +179,12 @@ class AIClient:
 
         # Translatable text field — one call per installed language.
         languages, default_lang = self._record_languages(target_record)
+        # If the finding is scoped to one language (per-language audit), fix
+        # only that language so we don't overwrite good translations.
+        finding_lang = getattr(finding, 'lang_id', False)
+        if finding_lang:
+            languages = finding_lang
+            default_lang = finding_lang
         translations = {}
         confidences = []
         explanation = ''

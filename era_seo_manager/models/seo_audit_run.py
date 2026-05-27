@@ -148,10 +148,11 @@ class EraSeoAuditRun(models.Model):
             'error_message': False,
         })
 
-        # Track the (check_code, res_model, res_id) keys detected this run so
-        # we can (a) upsert instead of duplicating and (b) auto-resolve
-        # findings on scanned pages that no longer occur.
+        # Track the (check_code, res_model, res_id, lang_id) keys detected
+        # this run so we can (a) upsert instead of duplicating and (b)
+        # auto-resolve findings on scanned pages that no longer occur.
         _run_local.seen_finding_keys = set()
+        _run_local.audit_languages = None  # recomputed per run
 
         try:
             pages = self._scope_pages()
@@ -195,8 +196,10 @@ class EraSeoAuditRun(models.Model):
             ('res_model', '=', 'website.page'),
             ('res_id', 'in', pages.ids),
         ])
+        seen = getattr(_run_local, 'seen_finding_keys', set())
         stale = open_findings.filtered(
-            lambda f: (f.check_code, f.res_model, f.res_id) not in getattr(_run_local, 'seen_finding_keys', set())
+            lambda f: (f.check_code, f.res_model, f.res_id,
+                       f.lang_id.id if f.lang_id else False) not in seen
         )
         if stale:
             stale.write({
@@ -247,7 +250,8 @@ class EraSeoAuditRun(models.Model):
     # Finding helper
     # ------------------------------------------------------------------------
 
-    def _add_finding(self, page, severity, code, name, details=None, suggested=None):
+    def _add_finding(self, page, severity, code, name, details=None,
+                     suggested=None, lang=None):
         """Upsert one finding keyed by (check_code, res_model, res_id).
 
         Re-detecting the same defect updates the existing row (refreshes
@@ -257,10 +261,11 @@ class EraSeoAuditRun(models.Model):
         existing finding are preserved.
         """
         Finding = self.env['era.seo.audit.finding'].sudo()
+        lang_id = lang.id if lang else False
         # Remember we saw this key so _auto_resolve_fixed leaves it alone.
         seen = getattr(_run_local, 'seen_finding_keys', None)
         if seen is not None:
-            seen.add((code, page._name, page.id))
+            seen.add((code, page._name, page.id, lang_id))
 
         vals = {
             'run_id': self.id,
@@ -274,6 +279,7 @@ class EraSeoAuditRun(models.Model):
             ('check_code', '=', code),
             ('res_model', '=', page._name),
             ('res_id', '=', page.id),
+            ('lang_id', '=', lang_id),
         ], limit=1)
         if existing:
             if existing.is_resolved:
@@ -288,6 +294,7 @@ class EraSeoAuditRun(models.Model):
                 'check_code': code,
                 'res_model': page._name,
                 'res_id': page.id,
+                'lang_id': lang_id,
             })
             Finding.create(vals)
 
@@ -295,84 +302,132 @@ class EraSeoAuditRun(models.Model):
     # Checks — title / description
     # ------------------------------------------------------------------------
 
+    def _audit_languages(self, pages):
+        """Languages to check for per-language content defects.
+
+        Cached on _run_local for the duration of the run. Prefers the run's
+        website languages; falls back to the union across the scanned pages'
+        websites, then to every active language.
+        """
+        cached = getattr(_run_local, 'audit_languages', None)
+        if cached is not None:
+            return cached
+        Lang = self.env['res.lang']
+        if self.website_id:
+            langs = self.website_id.language_ids
+        else:
+            langs = pages.mapped('website_id.language_ids')
+        if not langs:
+            langs = Lang.search([('active', '=', True)])
+        _run_local.audit_languages = langs
+        return langs
+
     def _check_missing_seo_title(self, pages):
-        for p in pages.filtered(lambda r: not r.seo_title):
-            self._add_finding(
-                p, 'critical', 'missing_seo_title', 'Missing SEO Title',
-                details='The page has no seo_title and falls back to website name.',
-                suggested='Add a concise (~50 char) title in the SEO tab.',
-            )
+        for lang in self._audit_languages(pages):
+            for p in pages:
+                if not p.with_context(lang=lang.code).seo_title:
+                    self._add_finding(
+                        p, 'critical', 'missing_seo_title',
+                        'Missing SEO Title [{}]'.format(lang.code),
+                        details='No seo_title in {}; falls back to website name.'.format(lang.code),
+                        suggested='Add a concise (~50 char) title for {}.'.format(lang.code),
+                        lang=lang,
+                    )
 
     def _check_title_length(self, pages):
-        for p in pages.filtered(lambda r: r.seo_title):
-            n = len(p.seo_title)
-            if n > _TITLE_TOO_LONG:
-                self._add_finding(
-                    p, 'warning', 'title_too_long',
-                    'SEO Title Too Long ({} chars)'.format(n),
-                    details='SERP truncates beyond ~60 chars.',
-                    suggested='Shorten the title to {} chars or fewer.'.format(_TITLE_TOO_LONG),
-                )
-            elif n < _TITLE_TOO_SHORT:
-                self._add_finding(
-                    p, 'info', 'title_too_short',
-                    'SEO Title Too Short ({} chars)'.format(n),
-                    details='Short titles miss keyword opportunities.',
-                    suggested='Expand the title toward 50-60 chars with descriptive terms.',
-                )
+        for lang in self._audit_languages(pages):
+            for p in pages:
+                title = p.with_context(lang=lang.code).seo_title
+                if not title:
+                    continue
+                n = len(title)
+                if n > _TITLE_TOO_LONG:
+                    self._add_finding(
+                        p, 'warning', 'title_too_long',
+                        'SEO Title Too Long ({} chars) [{}]'.format(n, lang.code),
+                        details='SERP truncates beyond ~60 chars.',
+                        suggested='Shorten the title to {} chars or fewer.'.format(_TITLE_TOO_LONG),
+                        lang=lang,
+                    )
+                elif n < _TITLE_TOO_SHORT:
+                    self._add_finding(
+                        p, 'info', 'title_too_short',
+                        'SEO Title Too Short ({} chars) [{}]'.format(n, lang.code),
+                        details='Short titles miss keyword opportunities.',
+                        suggested='Expand the title toward 50-60 chars.',
+                        lang=lang,
+                    )
 
     def _check_duplicate_seo_title(self, pages):
-        groups = defaultdict(list)
-        for p in pages.filtered('seo_title'):
-            groups[p.seo_title].append(p)
-        for title, dupes in groups.items():
-            if len(dupes) > 1:
-                for p in dupes:
-                    others = ', '.join(d.url or '/' for d in dupes if d != p)
-                    self._add_finding(
-                        p, 'critical', 'duplicate_seo_title',
-                        'Duplicate SEO Title',
-                        details='Same title also used on: {}'.format(others),
-                        suggested='Make each page title unique.',
-                    )
+        for lang in self._audit_languages(pages):
+            groups = defaultdict(list)
+            for p in pages:
+                title = p.with_context(lang=lang.code).seo_title
+                if title:
+                    groups[title].append(p)
+            for title, dupes in groups.items():
+                if len(dupes) > 1:
+                    for p in dupes:
+                        others = ', '.join(d.url or '/' for d in dupes if d != p)
+                        self._add_finding(
+                            p, 'critical', 'duplicate_seo_title',
+                            'Duplicate SEO Title [{}]'.format(lang.code),
+                            details='Same {} title also on: {}'.format(lang.code, others),
+                            suggested='Make each page title unique.',
+                            lang=lang,
+                        )
 
     def _check_missing_meta_description(self, pages):
-        for p in pages.filtered(lambda r: not r.seo_description):
-            self._add_finding(
-                p, 'critical', 'missing_meta_description', 'Missing Meta Description',
-                suggested='Add a 140-160 char description in the SEO tab.',
-            )
+        for lang in self._audit_languages(pages):
+            for p in pages:
+                if not p.with_context(lang=lang.code).seo_description:
+                    self._add_finding(
+                        p, 'critical', 'missing_meta_description',
+                        'Missing Meta Description [{}]'.format(lang.code),
+                        suggested='Add a 140-160 char description for {}.'.format(lang.code),
+                        lang=lang,
+                    )
 
     def _check_description_length(self, pages):
-        for p in pages.filtered('seo_description'):
-            n = len(p.seo_description)
-            if n > _DESC_TOO_LONG:
-                self._add_finding(
-                    p, 'warning', 'description_too_long',
-                    'Meta Description Too Long ({} chars)'.format(n),
-                    suggested='Trim to {} chars or fewer.'.format(_DESC_TOO_LONG),
-                )
-            elif n < _DESC_TOO_SHORT:
-                self._add_finding(
-                    p, 'info', 'description_too_short',
-                    'Meta Description Too Short ({} chars)'.format(n),
-                    suggested='Expand toward 140-160 chars.',
-                )
+        for lang in self._audit_languages(pages):
+            for p in pages:
+                desc = p.with_context(lang=lang.code).seo_description
+                if not desc:
+                    continue
+                n = len(desc)
+                if n > _DESC_TOO_LONG:
+                    self._add_finding(
+                        p, 'warning', 'description_too_long',
+                        'Meta Description Too Long ({} chars) [{}]'.format(n, lang.code),
+                        suggested='Trim to {} chars or fewer.'.format(_DESC_TOO_LONG),
+                        lang=lang,
+                    )
+                elif n < _DESC_TOO_SHORT:
+                    self._add_finding(
+                        p, 'info', 'description_too_short',
+                        'Meta Description Too Short ({} chars) [{}]'.format(n, lang.code),
+                        suggested='Expand toward 140-160 chars.',
+                        lang=lang,
+                    )
 
     def _check_duplicate_meta_description(self, pages):
-        groups = defaultdict(list)
-        for p in pages.filtered('seo_description'):
-            groups[p.seo_description].append(p)
-        for desc, dupes in groups.items():
-            if len(dupes) > 1:
-                for p in dupes:
-                    others = ', '.join(d.url or '/' for d in dupes if d != p)
-                    self._add_finding(
-                        p, 'warning', 'duplicate_meta_description',
-                        'Duplicate Meta Description',
-                        details='Same description also used on: {}'.format(others),
-                        suggested='Make each description unique.',
-                    )
+        for lang in self._audit_languages(pages):
+            groups = defaultdict(list)
+            for p in pages:
+                desc = p.with_context(lang=lang.code).seo_description
+                if desc:
+                    groups[desc].append(p)
+            for desc, dupes in groups.items():
+                if len(dupes) > 1:
+                    for p in dupes:
+                        others = ', '.join(d.url or '/' for d in dupes if d != p)
+                        self._add_finding(
+                            p, 'warning', 'duplicate_meta_description',
+                            'Duplicate Meta Description [{}]'.format(lang.code),
+                            details='Same {} description also on: {}'.format(lang.code, others),
+                            suggested='Make each description unique.',
+                            lang=lang,
+                        )
 
     # ------------------------------------------------------------------------
     # Checks — OG / canonical / indexing

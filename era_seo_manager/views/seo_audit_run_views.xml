@@ -145,6 +145,7 @@
                decoration-warning="severity == 'warning'"
                decoration-info="severity == 'info'"/>
         <field name="check_name"/>
+        <field name="lang_id" optional="show"/>
         <field name="url"/>
         <field name="run_id"/>
         <field name="details" optional="hide"/>
@@ -215,6 +216,7 @@
         <field name="check_code"/>
         <field name="url"/>
         <field name="run_id"/>
+        <field name="lang_id"/>
         <filter name="unresolved" string="Unresolved"
                 domain="[('is_resolved', '=', False)]"/>
         <filter name="critical" string="Critical"
@@ -228,6 +230,8 @@
                   context="{'group_by': 'severity'}"/>
           <filter name="group_check" string="Check"
                   context="{'group_by': 'check_code'}"/>
+          <filter name="group_lang" string="Language"
+                  context="{'group_by': 'lang_id'}"/>
           <filter name="group_url" string="URL"
                   context="{'group_by': 'url'}"/>
         </group>

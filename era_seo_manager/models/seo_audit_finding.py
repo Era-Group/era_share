@@ -45,6 +45,15 @@ class EraSeoAuditFinding(models.Model):
 
     res_model = fields.Char(string='Target Model', index=True)
     res_id = fields.Integer(string='Target ID', index=True)
+    lang_id = fields.Many2one(
+        'res.lang',
+        string='Language',
+        ondelete='cascade',
+        index=True,
+        help='For per-language content checks (title / description), the '
+             'language this finding is about. Empty for language-agnostic '
+             'checks (slug, H1, schema, redirects).',
+    )
     url = fields.Char(string='URL')
 
     details = fields.Text(string='Details')
@@ -62,15 +71,19 @@ class EraSeoAuditFinding(models.Model):
     )
 
     def init(self):
-        """One open finding per (check_code, res_model, res_id).
+        """One open finding per (check_code, res_model, res_id, lang).
 
-        Enforces the upsert key at the DB level so concurrent runs can't
-        race a duplicate in. The 19.0.6.1.0 migration de-dups existing rows
-        before this index is created.
+        Language is part of the key so a defect can be reported independently
+        per installed website language (e.g. the English description is too
+        short while the Arabic one is fine). lang_id is NULL for
+        language-agnostic checks; COALESCE keeps those unique too. The
+        19.0.6.1.0 / 19.0.7.0.0 migrations de-dup existing rows before this
+        index is created.
         """
         self.env.cr.execute("""
-            CREATE UNIQUE INDEX IF NOT EXISTS era_seo_audit_finding_key_uidx
-            ON era_seo_audit_finding (check_code, res_model, res_id)
+            CREATE UNIQUE INDEX IF NOT EXISTS era_seo_audit_finding_key_lang_uidx
+            ON era_seo_audit_finding
+            (check_code, res_model, res_id, COALESCE(lang_id, 0))
         """)
 
     @api.depends('check_name', 'url', 'res_model', 'res_id')

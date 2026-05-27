@@ -132,6 +132,36 @@ class TestAuditRunner(TransactionCase):
         self.assertEqual(action['res_model'], 'website.page')
         self.assertEqual(action['res_id'], page.id)
 
+    def test_per_language_description_detection(self):
+        """A short description in one language is flagged even when another
+        language's description is fine."""
+        fr = self.env.ref('base.lang_fr')
+        fr.active = True
+        website = self.env['website'].search([], limit=1)
+        website.language_ids = [(4, self.env.ref('base.lang_en').id), (4, fr.id)]
+        page = self._make_page(url='/audit-perlang')
+        page.website_id = website.id
+        # English: fine (long). French: too short.
+        page.with_context(lang='en_US').write({
+            'seo_description': 'A perfectly adequate English meta description that '
+                               'comfortably clears the seventy character minimum bar.'})
+        page.with_context(lang='fr_FR').write({'seo_description': 'Trop court'})
+
+        self.Run.create({})._run_audit()
+
+        fr_finding = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'description_too_short'),
+            ('lang_id', '=', fr.id),
+        ])
+        en_finding = self.Finding.search([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'description_too_short'),
+            ('lang_id', '=', self.env.ref('base.lang_en').id),
+        ])
+        self.assertTrue(fr_finding, 'Short French description must be flagged.')
+        self.assertFalse(en_finding, 'Adequate English description must NOT be flagged.')
+
     def test_rerun_does_not_duplicate_findings(self):
         """Two runs over the same defect yield ONE finding, not two."""
         page = self._make_page(url='/audit-no-dupe')

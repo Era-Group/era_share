@@ -1,5 +1,17 @@
 # Changelog
 
+## [19.0.5.0.0] — 2026-05-27
+
+### Changed — finding fixes respect the finding's language
+
+`era_seo_manager` 19.0.7.0.0 makes audit findings language-scoped
+(`lang_id`). `AIClient.suggest_fix` now honours it: when a finding is
+about one language, the fix generates and writes **only that language's**
+translation instead of all of them — so fixing a short English description
+no longer overwrites a good Arabic one. Findings with no `lang_id`
+(language-agnostic, or older data) still fan out to all installed
+languages.
+
 ## [19.0.4.0.0] — 2026-05-27
 
 ### Added — AI suggestions now cover every installed website language

@@ -1,0 +1,27 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_seo_blog_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_seo_blog_ai
+msgid "AI: Fill SEO"
+msgstr "ذكاء: تعبئة SEO"
+
+#. module: era_seo_blog_ai
+msgid "AI: Rewrite SEO"
+msgstr "ذكاء: إعادة كتابة SEO"
+
+#. module: era_seo_blog_ai
+msgid "Regenerate every SEO field from the post content, overwriting current values?"
+msgstr "إعادة توليد كل حقول SEO من محتوى المقال مع استبدال القيم الحالية؟"

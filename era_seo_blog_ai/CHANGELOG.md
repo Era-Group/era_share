@@ -1,5 +1,11 @@
 # Changelog
 
+## [19.0.1.4.0] — 2026-05-28
+
+### Added — Arabic translation (i18n/ar.po)
+
+The SEO-tab AI buttons and the rebuild confirm dialog are now translated.
+
 ## [19.0.1.3.0] — 2026-05-27
 
 ### Changed — thin-post skip threshold is now words, not characters

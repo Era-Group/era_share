@@ -3,6 +3,15 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.8.2.0] — 2026-05-28
+
+### Added — Arabic translations for Phase 8 (+ valid ar.po)
+
+- `i18n/ar.po` now covers the content-block fields, the block-type labels,
+  the **Content Blocks** menu, and the seven **ERA SEO** snippet labels.
+- Removed three pre-existing duplicate `msgid`s (Rendered JSON-LD, Schema
+  Templates, Schema Preview) so the file passes a strict `msgfmt --check`.
+
 ## [19.0.8.1.0] — 2026-05-28
 
 ### Added — ready "SEO service value" content block

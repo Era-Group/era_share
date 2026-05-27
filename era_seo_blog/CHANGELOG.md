@@ -3,6 +3,14 @@
 All notable changes to `era_seo_blog` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.3.0] — 2026-05-28
+
+### Added — Arabic translation (i18n/ar.po)
+
+First Arabic translation for the addon: the editorial / taxonomy / display /
+reading-stats labels, the series, author-profile and FAQ fields, and the
+**ERA SEO**, **ERA Blog**, **Reading Stats** tabs.
+
 ## [19.0.2.2.0] — 2026-05-27
 
 ### Changed — compact post header (two columns)

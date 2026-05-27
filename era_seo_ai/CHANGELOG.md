@@ -1,5 +1,12 @@
 # Changelog
 
+## [19.0.8.4.0] — 2026-05-28
+
+### Added — Arabic translation (i18n/ar.po)
+
+Field labels, the AI buttons, status/kind selections, the confirm dialogs,
+and the common notifications are now translated to Arabic.
+
 ## [19.0.8.3.0] — 2026-05-28
 
 ### Added — AI fill on content blocks

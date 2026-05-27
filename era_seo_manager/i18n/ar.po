@@ -197,11 +197,6 @@ msgid "Website Page"
 msgstr "صفحة الموقع"
 
 #. module: era_seo_manager
-#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_preview_wizard__rendered_output
-msgid "Rendered JSON-LD"
-msgstr "JSON-LD المُصيَّر"
-
-#. module: era_seo_manager
 #: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
 msgid "No template selected."
 msgstr "لم يتم اختيار قالب."
@@ -324,16 +319,6 @@ msgstr "تحسين محركات البحث"
 msgid "Schema Templates"
 msgstr "قوالب المخططات"
 
-#. module: era_seo_manager
-#: model:ir.actions.act_window,name:era_seo_manager.action_seo_schema_template
-msgid "Schema Templates"
-msgstr "قوالب المخططات"
-
-#. module: era_seo_manager
-#: model:ir.actions.act_window,name:era_seo_manager.action_seo_schema_preview_wizard
-msgid "Schema Preview"
-msgstr "معاينة المخطط"
-
 # ---------------------------------------------------------------------------
 # Phase 3 — Redirect Manager
 # ---------------------------------------------------------------------------
@@ -424,3 +409,79 @@ msgstr "تحديد كمحلول"
 #. module: era_seo_manager
 msgid "Dry Run"
 msgstr "تشغيل تجريبي"
+
+#. module: era_seo_manager
+msgid "Block Type"
+msgstr "نوع الكتلة"
+
+#. module: era_seo_manager
+msgid "Content Blocks"
+msgstr "كتل المحتوى"
+
+#. module: era_seo_manager
+msgid "Create your first content block"
+msgstr "أنشئ أول كتلة محتوى"
+
+#. module: era_seo_manager
+msgid "Call to Action"
+msgstr "دعوة لاتخاذ إجراء"
+
+#. module: era_seo_manager
+msgid "Author Box"
+msgstr "صندوق الكاتب"
+
+#. module: era_seo_manager
+msgid "Related Posts"
+msgstr "مقالات ذات صلة"
+
+#. module: era_seo_manager
+msgid "Breadcrumbs"
+msgstr "مسار التنقّل"
+
+#. module: era_seo_manager
+msgid "Feature Grid"
+msgstr "شبكة المميزات"
+
+#. module: era_seo_manager
+msgid "Pricing Table"
+msgstr "جدول الأسعار"
+
+#. module: era_seo_manager
+msgid "Testimonial"
+msgstr "شهادة عميل"
+
+#. module: era_seo_manager
+msgid "Custom"
+msgstr "مخصّص"
+
+#. module: era_seo_manager
+msgid "ERA SEO"
+msgstr "ERA SEO"
+
+#. module: era_seo_manager
+msgid "ERA FAQ"
+msgstr "أسئلة شائعة — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Breadcrumbs"
+msgstr "مسار التنقّل — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Call to Action"
+msgstr "دعوة لاتخاذ إجراء — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Author Box"
+msgstr "صندوق الكاتب — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Related Posts"
+msgstr "مقالات ذات صلة — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Feature Grid"
+msgstr "شبكة المميزات — ERA"
+
+#. module: era_seo_manager
+msgid "ERA Pricing Table"
+msgstr "جدول الأسعار — ERA"

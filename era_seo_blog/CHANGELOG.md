@@ -3,6 +3,23 @@
 All notable changes to `era_seo_blog` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.1.1.1] — 2026-05-27
+
+### Fixed
+
+- Frontend overrides on `website_blog.blog_post_complete` targeted
+  `<section id="o_wblog_post_content">` but Odoo 19 wraps content in
+  `<div>`. Switched the xpath anchors to
+  `//div[hasclass('o_wblog_post_content_field')]` for before-body and
+  `//div[hasclass('o_wblog_post_footer')]` for after-body so the six
+  affected overrides (TOC, author box, FAQ accordion, related, series
+  nav, share buttons) actually render.
+- 1.1.0 → 1.1.1 migration script re-runs the schema backfill so staging
+  sites that already had 1.1.0 installed (and therefore missed the 1.1.0
+  migration, since the version delta only fires once per upgrade) still
+  get BlogPosting / BreadcrumbList / FAQPage instances attached on
+  `-u era_seo_blog`.
+
 ## [19.0.1.1.0] — 2026-05-27
 
 ### Added — Frontend rendering + auto-schema attach

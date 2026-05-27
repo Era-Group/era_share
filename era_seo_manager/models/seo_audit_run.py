@@ -8,6 +8,7 @@ Per SPEC §13.
 """
 import logging
 import re
+import threading
 from collections import Counter, defaultdict
 
 from lxml import html as lxml_html
@@ -15,6 +16,11 @@ from lxml import html as lxml_html
 from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
+
+# Thread-local storage for the current run's seen-finding key set.
+# Odoo ORM recordsets reject arbitrary attribute assignment, so we carry
+# this mutable state here instead of on ``self``.
+_run_local = threading.local()
 
 # Title/description length thresholds (chars). Per SPEC §13.2.
 _TITLE_TOO_LONG = 60
@@ -145,7 +151,7 @@ class EraSeoAuditRun(models.Model):
         # Track the (check_code, res_model, res_id) keys detected this run so
         # we can (a) upsert instead of duplicating and (b) auto-resolve
         # findings on scanned pages that no longer occur.
-        self._seen_finding_keys = set()
+        _run_local.seen_finding_keys = set()
 
         try:
             pages = self._scope_pages()
@@ -190,7 +196,7 @@ class EraSeoAuditRun(models.Model):
             ('res_id', 'in', pages.ids),
         ])
         stale = open_findings.filtered(
-            lambda f: (f.check_code, f.res_model, f.res_id) not in self._seen_finding_keys
+            lambda f: (f.check_code, f.res_model, f.res_id) not in getattr(_run_local, 'seen_finding_keys', set())
         )
         if stale:
             stale.write({
@@ -252,8 +258,9 @@ class EraSeoAuditRun(models.Model):
         """
         Finding = self.env['era.seo.audit.finding'].sudo()
         # Remember we saw this key so _auto_resolve_fixed leaves it alone.
-        if getattr(self, '_seen_finding_keys', None) is not None:
-            self._seen_finding_keys.add((code, page._name, page.id))
+        seen = getattr(_run_local, 'seen_finding_keys', None)
+        if seen is not None:
+            seen.add((code, page._name, page.id))
 
         vals = {
             'run_id': self.id,

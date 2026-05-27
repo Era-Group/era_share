@@ -388,3 +388,122 @@ class TestRedirectDispatch(TransactionCase):
         rule, target = self.Redirect._find_match(normalized)
         self.assertTrue(rule)
         self.assertEqual(target, '/dispatch-target')
+
+
+@tagged('post_install', '-at_install')
+class TestRedirectPolish(TransactionCase):
+    """Phase 3 polish: query string forwarding, lang-prefix, trailing slash,
+    system-path skip-list. Tests the hook helper classmethods directly."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from odoo.addons.era_seo_manager.models.ir_http import (
+            IrHttp,
+            _SYSTEM_PATH_PREFIXES,
+        )
+        cls.IrHttp = IrHttp
+        cls.system_prefixes = _SYSTEM_PATH_PREFIXES
+        cls.Redirect = cls.env['era.seo.redirect']
+
+    # --- System path skip-list ------------------------------------------------
+
+    def test_system_paths_are_skipped(self):
+        self.assertTrue(self.IrHttp._era_is_system_path('/web/login'))
+        self.assertTrue(self.IrHttp._era_is_system_path('/my/orders'))
+        self.assertTrue(self.IrHttp._era_is_system_path('/static/anything'))
+        self.assertTrue(self.IrHttp._era_is_system_path('/website/static/foo'))
+        self.assertTrue(self.IrHttp._era_is_system_path('/_health'))
+
+    def test_non_system_paths_pass_through(self):
+        self.assertFalse(self.IrHttp._era_is_system_path('/old-page'))
+        self.assertFalse(self.IrHttp._era_is_system_path('/blog/article'))
+        self.assertFalse(self.IrHttp._era_is_system_path('/web-portal'))
+        self.assertFalse(self.IrHttp._era_is_system_path('/myaccount'))
+        self.assertFalse(self.IrHttp._era_is_system_path('/'))
+
+    def test_system_prefixes_list_covers_admin_surfaces(self):
+        """Sanity guard: don't accidentally drop /web/ from the skip-list."""
+        self.assertIn('/web/', self.system_prefixes)
+        self.assertIn('/my/', self.system_prefixes)
+        self.assertIn('/odoo/', self.system_prefixes)
+
+    # --- Trailing slash toggle ------------------------------------------------
+
+    def test_toggle_adds_slash(self):
+        self.assertEqual(self.IrHttp._era_toggle_trailing_slash('/foo'), '/foo/')
+
+    def test_toggle_removes_slash(self):
+        self.assertEqual(self.IrHttp._era_toggle_trailing_slash('/foo/'), '/foo')
+
+    def test_toggle_root_returns_none(self):
+        self.assertIsNone(self.IrHttp._era_toggle_trailing_slash('/'))
+
+    def test_trailing_slash_lookup_matches_either_form(self):
+        """A rule for /foo also resolves a request for /foo/ (and vice versa)."""
+        self.Redirect.create({
+            'source_url': '/foo',
+            'target_url': '/bar',
+            'redirect_type': '301',
+        })
+        # Direct match on /foo
+        rule, _ = self.Redirect._find_match('/foo')
+        self.assertTrue(rule)
+        # /foo/ does not match the same plain rule directly...
+        rule_slash, _ = self.Redirect._find_match('/foo/')
+        self.assertFalse(rule_slash)
+        # ...but the hook's toggle helper produces the alternate form.
+        alt = self.IrHttp._era_toggle_trailing_slash('/foo/')
+        self.assertEqual(alt, '/foo')
+        rule_alt, _ = self.Redirect._find_match(alt)
+        self.assertTrue(rule_alt)
+
+
+class TestQueryStringForwarding(TransactionCase):
+    """Unit-test the query string merger without needing an HTTP request.
+
+    Builds a fake ``request`` object exposing ``httprequest.query_string``
+    and patches the module-level ``request`` proxy that ``_era_forward_query_string``
+    reads.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from odoo.addons.era_seo_manager.models import ir_http as ir_http_mod
+        cls.ir_http_mod = ir_http_mod
+
+    def _run_with_qs(self, qs_bytes, target):
+        """Temporarily monkey-patch ``request`` in the module to a fake."""
+        class _FakeHttp:
+            def __init__(self, qs):
+                self.query_string = qs
+        class _FakeRequest:
+            def __init__(self, qs):
+                self.httprequest = _FakeHttp(qs)
+        original = self.ir_http_mod.request
+        self.ir_http_mod.request = _FakeRequest(qs_bytes)
+        try:
+            return self.ir_http_mod.IrHttp._era_forward_query_string(target)
+        finally:
+            self.ir_http_mod.request = original
+
+    def test_appends_qs_when_target_has_none(self):
+        out = self._run_with_qs(b'utm=foo&ref=bar', '/new-page')
+        self.assertEqual(out, '/new-page?utm=foo&ref=bar')
+
+    def test_merges_with_existing_target_qs(self):
+        out = self._run_with_qs(b'utm=foo', '/new-page?keep=1')
+        self.assertEqual(out, '/new-page?keep=1&utm=foo')
+
+    def test_no_inbound_qs_keeps_target_unchanged(self):
+        out = self._run_with_qs(b'', '/new-page')
+        self.assertEqual(out, '/new-page')
+
+    def test_empty_target_passes_through(self):
+        out = self._run_with_qs(b'utm=foo', '')
+        self.assertEqual(out, '')
+
+    def test_works_on_absolute_url_target(self):
+        out = self._run_with_qs(b'utm=foo', 'https://example.com/new')
+        self.assertEqual(out, 'https://example.com/new?utm=foo')

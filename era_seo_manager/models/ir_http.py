@@ -7,14 +7,32 @@ Hook flow on every frontend request:
 
   1. ``_serve_fallback`` is called by Odoo when no route or website page
      matched the path.
-  2. We look up a redirect rule with the request scope (website + lang).
-  3. On hit:
+  2. System paths (``/web/``, ``/my/``, ``/static/``, ``/website/static/``)
+     and HEAD/OPTIONS requests are skipped entirely — they're never user
+     content and accidental redirects there can lock the admin out.
+  3. The request path is normalized (query/fragment stripped, leading slash
+     ensured) and the language prefix (e.g. ``/ar/``) is removed before
+     lookup, so a rule for ``/old`` also matches ``/ar/old``.
+  4. We look up a redirect rule with the request scope (website + lang).
+     If a plain match misses, we retry with the trailing slash toggled so
+     ``/foo`` and ``/foo/`` resolve to the same rule without forcing the
+     admin to author both.
+  5. On hit:
        - 410: return a 410 ``Gone`` response.
-       - Others: return a Werkzeug redirect (301/302/307/308). Increment the
-         per-request hop counter via cookie; if a chain exceeds the limit we
-         return 508 instead of bouncing the browser further.
-  4. On miss: log to ``era.seo.redirect.log`` (404 capture) and fall through
-     to the parent (real 404).
+       - Others: return a Werkzeug redirect (301/302/307/308). The original
+         query string is forwarded onto the target so tracking parameters
+         survive the hop. Hop counter via cookie aborts runaway chains
+         with 508 after ``REDIRECT_HOP_LIMIT`` bounces.
+  6. On miss: log to ``era.seo.redirect.log`` (404 capture) on a dedicated
+     cursor (Odoo rolls the main transaction back on 404) and fall through
+     to the parent.
+
+Coexistence with stock ``website.rewrite``:
+  Odoo's ``website`` module installs its own redirect handler that fires
+  earlier in dispatch (during route matching for ``website.page`` records).
+  Stock redirects therefore take precedence over ERA redirects for the same
+  path. In practice, choose one UI per site — mixing both is supported but
+  the stock entry wins on conflict.
 
 Per SPEC §9.2 / §9.4.
 """
@@ -35,6 +53,20 @@ _HOP_COOKIE = 'era_seo_hops'
 # don't want a stale counter to permanently 508 a user.
 _HOP_COOKIE_MAX_AGE = 10
 
+# Path prefixes the redirect hook MUST NOT touch. These are Odoo backend,
+# portal, and static asset URLs; redirecting them risks locking the admin
+# out of the instance.
+_SYSTEM_PATH_PREFIXES = (
+    '/web/',
+    '/my/',
+    '/odoo/',
+    '/static/',
+    '/website/static/',
+    '/longpolling/',
+    '/web_editor/',
+    '/_health',
+)
+
 
 class IrHttp(models.AbstractModel):
     _inherit = 'ir.http'
@@ -53,8 +85,18 @@ class IrHttp(models.AbstractModel):
         if not (request and getattr(request, 'httprequest', None)):
             return super()._serve_fallback()
 
+        # Skip non-GET/HEAD methods. POST/PUT/PATCH/DELETE on missing paths
+        # are usually API calls; redirecting them silently breaks clients.
+        method = (request.httprequest.method or '').upper()
+        if method not in ('GET', 'HEAD'):
+            return super()._serve_fallback()
+
         path = cls._era_path()
         if path is None:
+            return super()._serve_fallback()
+
+        # Skip system paths — never redirect /web/, /my/, /static/, etc.
+        if cls._era_is_system_path(path):
             return super()._serve_fallback()
 
         # 1. Redirect match?
@@ -72,23 +114,72 @@ class IrHttp(models.AbstractModel):
 
     @classmethod
     def _era_path(cls):
-        """Return the normalized request path, or None if we should bail out."""
+        """Return the normalized request path, or None if we should bail out.
+
+        Strips the language URL prefix (``/ar``, ``/en``, ...) when one is
+        present so a rule authored against ``/old`` matches both ``/old`` and
+        ``/ar/old``. The lang itself is resolved separately via
+        ``_era_lang()`` so per-language rules still work.
+        """
         try:
             raw = request.httprequest.path or '/'
         except Exception:  # noqa: BLE001
             return None
         Redirect = request.env['era.seo.redirect'].sudo()
-        return Redirect._normalize_path(raw)
+        path = Redirect._normalize_path(raw)
+        return cls._era_strip_lang_prefix(path)
+
+    @classmethod
+    def _era_is_system_path(cls, path):
+        return any(path == p.rstrip('/') or path.startswith(p)
+                   for p in _SYSTEM_PATH_PREFIXES)
+
+    @classmethod
+    def _era_strip_lang_prefix(cls, path):
+        """Drop the active language URL prefix from ``path`` when present.
+
+        Looks at the website's installed languages and removes a matching
+        leading segment. Returns the original path when nothing matches so
+        rules authored with an explicit prefix still work.
+        """
+        if not path or path == '/':
+            return path
+        try:
+            website = request.env['website'].get_current_website()
+            languages = website.language_ids if website else None
+        except Exception:  # noqa: BLE001
+            languages = None
+        if not languages:
+            return path
+        for lang in languages:
+            code = (lang.url_code or '').strip('/')
+            if not code:
+                continue
+            prefix = '/' + code
+            if path == prefix:
+                return '/'
+            if path.startswith(prefix + '/'):
+                return path[len(prefix):]
+        return path
 
     @classmethod
     def _era_try_redirect(cls, path):
-        """Look up a redirect rule for ``path``; return a Response or None."""
+        """Look up a redirect rule for ``path``; return a Response or None.
+
+        Performs the lookup twice when needed — once with the path as
+        normalized and once with the trailing slash toggled — so
+        ``/foo`` and ``/foo/`` are treated as the same source URL.
+        """
         env = request.env
         Redirect = env['era.seo.redirect'].sudo()
         website = cls._era_website()
         lang = cls._era_lang()
 
         rule, target = Redirect._find_match(path, website=website, lang=lang)
+        if not rule:
+            alt = cls._era_toggle_trailing_slash(path)
+            if alt and alt != path:
+                rule, target = Redirect._find_match(alt, website=website, lang=lang)
         if not rule:
             return None
 
@@ -118,7 +209,8 @@ class IrHttp(models.AbstractModel):
             return response
 
         rule._register_hit()
-        response = werkzeug.utils.redirect(target, code=int(rule.redirect_type))
+        final_target = cls._era_forward_query_string(target)
+        response = werkzeug.utils.redirect(final_target, code=int(rule.redirect_type))
         response.set_cookie(
             _HOP_COOKIE,
             str(hops + 1),
@@ -127,6 +219,38 @@ class IrHttp(models.AbstractModel):
             samesite='Lax',
         )
         return response
+
+    @classmethod
+    def _era_toggle_trailing_slash(cls, path):
+        """Return ``path`` with its trailing slash toggled, or None for root."""
+        if not path or path == '/':
+            return None
+        if path.endswith('/'):
+            return path.rstrip('/')
+        return path + '/'
+
+    @classmethod
+    def _era_forward_query_string(cls, target):
+        """Append the inbound request's query string to ``target`` when it
+        doesn't already carry one. Keeps UTM/affiliate/etc parameters alive
+        across the hop.
+
+        If the target is an absolute URL we still forward — Werkzeug accepts
+        either path or URL.
+        """
+        if not target:
+            return target
+        try:
+            qs = (request.httprequest.query_string or b'').decode('latin-1')
+        except Exception:  # noqa: BLE001
+            qs = ''
+        if not qs:
+            return target
+        if '?' in target:
+            # Author opted into their own query string; merge by appending
+            # the inbound params after a '&' so both sets survive.
+            return target + '&' + qs
+        return target + '?' + qs
 
     # ------------------------------------------------------------------
     # 404 logging

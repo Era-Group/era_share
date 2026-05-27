@@ -3,6 +3,37 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.3.1.0] — 2026-05-27
+
+### Added — Phase 3 polish
+
+- **Query string forwarding** (`models/ir_http.py`): tracking parameters
+  (UTM, affiliate, etc.) on the inbound URL are now appended to the
+  redirect target instead of silently dropped. When the target already
+  carries a query string, the inbound params are merged after a `&`.
+- **Lang prefix handling**: a rule for `/old` now also matches
+  `/ar/old`, `/en/old`, etc. The hook strips the active website's
+  language URL prefix before lookup so admins author one rule for all
+  languages instead of N rules per language.
+- **Trailing-slash equivalence**: `/foo` and `/foo/` resolve to the
+  same rule. If the first lookup misses, the hook retries with the
+  trailing slash toggled.
+- **System-path skip-list**: `/web/`, `/my/`, `/odoo/`, `/static/`,
+  `/website/static/`, `/longpolling/`, `/web_editor/`, `/_health` are
+  never intercepted. Prevents an admin from accidentally redirecting
+  `/web/login` and locking the instance.
+- **Method guard**: only `GET` and `HEAD` requests trigger redirect
+  resolution. `POST/PUT/PATCH/DELETE` on missing paths are usually API
+  calls and silently redirecting them breaks clients.
+- **Coexistence docs**: module docstring now documents the precedence
+  with stock `website.rewrite` (stock fires first; ERA on miss).
+
+### Tests
+
+- 16 new tests covering the polish surface
+  (`tests/test_redirects.py::TestRedirectPolish`,
+  `TestQueryStringForwarding`).
+
 ## [19.0.3.0.0] — 2026-05-27
 
 ### Added — Phase 3 (Redirect Manager)

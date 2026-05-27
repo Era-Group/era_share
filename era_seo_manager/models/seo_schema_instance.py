@@ -38,7 +38,7 @@ class EraSeoSchemaInstance(models.Model):
         'era.seo.schema.template',
         string='Schema Template',
         required=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
     res_model = fields.Char(string='Record Model', required=True, index=True)
     res_id = fields.Integer(string='Record ID', required=True, index=True)

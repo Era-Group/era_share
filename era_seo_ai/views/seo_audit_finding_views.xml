@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Extend the audit finding form + list to surface the AI workflow.
+    Buttons are gated by ``ai_supported`` (computed from check_code) so
+    they only appear on AI-fixable findings.
+  -->
+
+  <record id="view_seo_audit_finding_form_ai" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.form.ai</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="inherit_id" ref="era_seo_manager.view_seo_audit_finding_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header" position="inside">
+        <button name="action_ai_suggest" type="object"
+                string="Suggest Fix (AI)" class="btn btn-info"
+                invisible="not ai_supported or ai_status == 'applied'"/>
+        <button name="action_ai_apply" type="object"
+                string="Apply Fix" class="btn-primary"
+                invisible="ai_status != 'suggested'"/>
+        <field name="ai_status" widget="badge"
+               decoration-success="ai_status == 'applied'"
+               decoration-info="ai_status == 'suggested'"
+               decoration-warning="ai_status == 'failed'"
+               decoration-muted="ai_status in ('none', 'not_supported')"/>
+      </xpath>
+
+      <xpath expr="//sheet" position="inside">
+        <group string="AI Auto-Fix"
+               invisible="not ai_supported and ai_status == 'none'">
+          <group>
+            <field name="ai_supported" invisible="1"/>
+            <field name="ai_proposed_field"
+                   invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_proposed_value"
+                   invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_confidence" widget="progressbar"
+                   invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_model_used"
+                   invisible="ai_status not in ('suggested', 'applied')"/>
+          </group>
+          <group invisible="ai_status not in ('suggested', 'applied')">
+            <field name="ai_explanation" nolabel="1"/>
+          </group>
+        </group>
+      </xpath>
+    </field>
+  </record>
+
+  <!--
+    List view: show the AI status badge inline and add the action buttons
+    to the list header.
+  -->
+  <record id="view_seo_audit_finding_list_ai" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.list.ai</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="inherit_id" ref="era_seo_manager.view_seo_audit_finding_list"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='is_resolved']" position="before">
+        <field name="ai_supported" optional="hide"/>
+        <field name="ai_status" widget="badge" optional="show"
+               decoration-success="ai_status == 'applied'"
+               decoration-info="ai_status == 'suggested'"
+               decoration-warning="ai_status == 'failed'"
+               decoration-muted="ai_status in ('none', 'not_supported')"/>
+        <field name="ai_confidence" widget="progressbar" optional="show"/>
+      </xpath>
+    </field>
+  </record>
+
+  <!--
+    Server actions surface as items in the "Action" cog menu on the
+    finding list view. binding_model_id is what makes them appear there.
+  -->
+  <record id="action_seo_audit_finding_ai_suggest" model="ir.actions.server">
+    <field name="name">Suggest AI Fix</field>
+    <field name="model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+if records:
+    action = records.action_ai_suggest()
+    </field>
+  </record>
+
+  <record id="action_seo_audit_finding_ai_apply" model="ir.actions.server">
+    <field name="name">Apply AI Fix</field>
+    <field name="model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+if records:
+    action = records.action_ai_apply()
+    </field>
+  </record>
+
+  <record id="action_seo_audit_finding_ai_suggest_and_apply"
+          model="ir.actions.server">
+    <field name="name">Suggest + Auto-Apply (≥0.8 confidence)</field>
+    <field name="model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_model_id" ref="era_seo_manager.model_era_seo_audit_finding"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+if records:
+    action = records.action_ai_suggest_and_apply()
+    </field>
+  </record>
+</odoo>

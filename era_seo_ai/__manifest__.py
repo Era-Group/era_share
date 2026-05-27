@@ -49,5 +49,5 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
     'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
-    'auto_install': False,
+    'auto_install': True,
 }

@@ -1,5 +1,22 @@
 # Changelog
 
+## [19.0.7.1.0] — 2026-05-27
+
+### Fixed — AI buttons missing on the audit run form after an upgrade
+
+`ai_supported` was a **stored** computed field whose compute had no
+`@api.depends`, so it was evaluated once at finding creation and never
+again. Findings created before 19.0.7.0.0 kept `ai_supported = False`
+even though their check codes (`missing_og_image`, `missing_schema`,
+`image_missing_alt`, `thin_content`) became fixable — so
+`ai_fixable_count` stayed 0 and the run form hid **Suggest Fixes (AI)** /
+**Auto-Fix (≥0.8)**, and the per-row Suggest/Apply buttons.
+
+`ai_supported` is now **non-stored** (and gains `@api.depends('check_code')`),
+so it is always evaluated against the current `AI_FIXABLE_CODES`. After
+upgrading (`-u era_seo_ai`) the old findings re-evaluate correctly and
+the buttons reappear — no migration needed (Odoo drops the stale column).
+
 ## [19.0.7.0.0] — 2026-05-27
 
 ### Added — richer fixes for four more audit findings

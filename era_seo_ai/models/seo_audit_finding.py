@@ -16,7 +16,7 @@ crash silently otherwise).
 import json
 import logging
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 
 from .ai_client import AIClient, AIUnavailable
@@ -97,9 +97,14 @@ class EraSeoAuditFinding(models.Model):
     ai_supported = fields.Boolean(
         string='AI-Fixable',
         compute='_compute_ai_supported',
-        store=True,
+        # Intentionally NOT stored: AI_FIXABLE_CODES is a Python constant that
+        # grows between versions. A stored value computed before a code became
+        # fixable would stay stale (the compute has nothing to re-trigger it),
+        # leaving findings "not AI-fixable" forever and hiding the run's AI
+        # buttons. Evaluating on read keeps it correct after every upgrade.
     )
 
+    @api.depends('check_code')
     def _compute_ai_supported(self):
         for rec in self:
             rec.ai_supported = rec.check_code in AI_FIXABLE_CODES

@@ -14,20 +14,14 @@
 
           <!-- ── Intro banner ─────────────────────────────────────────── -->
           <div class="alert alert-info mb-3" role="alert">
-            <div class="d-flex align-items-start justify-content-between gap-3">
-              <div>
-                <strong>ERA SEO Manager</strong> controls all SEO metadata emitted in your site's
-                <code>&lt;head&gt;</code> — meta tags, Open Graph, Twitter cards, canonical URLs,
-                JSON-LD schema scripts, site verification tokens, and more.
-                <br/>
-                Fill in the sections below <strong>top to bottom</strong>. Every field has a
-                <em>help tooltip</em> (hover the label) for guidance.
-              </div>
-              <button name="action_open_seo_status"
-                      type="object"
-                      string="View Status Report"
-                      class="btn btn-primary btn-sm text-nowrap"/>
-            </div>
+            <strong>ERA SEO Manager</strong> controls all SEO metadata emitted in your site's
+            <code>&lt;head&gt;</code> — meta tags, Open Graph, Twitter cards, canonical URLs,
+            JSON-LD schema scripts, site verification tokens, and more.
+            <br/>
+            Fill in the sections below <strong>top to bottom</strong>. Every field has a
+            <em>help tooltip</em> (hover the label) for guidance.
+            To see what the module has configured, go to
+            <strong>Website → Configuration → SEO → Overview</strong>.
           </div>
 
           <!-- ── Organization Identity ─────────────────────────────────── -->

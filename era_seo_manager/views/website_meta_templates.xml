@@ -106,7 +106,7 @@
          t-value="request.env['era.seo.hreflang']._get_for_record(main_object)"/>
       <t t-foreach="_hreflang_entries" t-as="hl">
         <link rel="alternate"
-              t-att-hreflang="hl.is_xdefault and 'x-default' or hl.lang_id.code.replace('_', '-')"
+              t-att-hreflang="hl.is_xdefault and 'x-default' or (hl.lang_id.iso_code or hl.lang_id.code.replace('_', '-'))"
               t-att-href="hl.url"/>
       </t>
     </t>

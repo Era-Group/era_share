@@ -114,3 +114,49 @@ class EraSeoHreflang(models.Model):
             'era_seo.hreflang_enabled', 'True',
         )
         return flag in ('False', '0', 'false', '')
+
+    @api.model
+    def _era_resync_all_records(self):
+        """Walk every concrete model carrying ``era.seo.mixin`` and re-sync.
+
+        Called when a global setting changes that invalidates many rows
+        at once (e.g. the website's default language flipped). Detects
+        eligible models via duck-typing on ``_sync_era_hreflang_entries``,
+        so any future host model picks up the resweep automatically.
+
+        Failures on one record do not stop the loop; each model's batch
+        is wrapped in a savepoint.
+        """
+        total = 0
+        for model_name in list(self.env.registry.keys()):
+            Model = self.env[model_name]
+            if getattr(Model, '_abstract', True):
+                continue
+            if not hasattr(Model, '_sync_era_hreflang_entries'):
+                continue
+            try:
+                records = Model.sudo().search([])
+                if records:
+                    records._sync_era_hreflang_entries()
+                    total += len(records)
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning(
+                    'era.seo.hreflang resync: model %s skipped (%s)',
+                    model_name, exc,
+                )
+        _logger.info('era.seo.hreflang: resynced %d records across all host models', total)
+        return total
+
+    def action_resync_all(self):
+        """Server-action entry: re-sync every host model. Admin button."""
+        self._era_resync_all_records()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'message': 'Hreflang rows re-synced from every host record.',
+                'sticky': False,
+                'next': {'type': 'ir.actions.act_window_close'},
+            },
+        }

@@ -73,6 +73,15 @@
     </field>
   </record>
 
+  <record id="action_seo_hreflang_resync" model="ir.actions.server">
+    <field name="name">Resync All Hreflang Rows</field>
+    <field name="model_id" ref="model_era_seo_hreflang"/>
+    <field name="binding_model_id" ref="model_era_seo_hreflang"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">action = model.action_resync_all()</field>
+  </record>
+
   <record id="action_seo_hreflang" model="ir.actions.act_window">
     <field name="name">Hreflang</field>
     <field name="res_model">era.seo.hreflang</field>
@@ -86,7 +95,9 @@
       </p>
       <p>
         Tick <b>Manual Override</b> on a row to preserve a custom URL the
-        next time the host record is re-saved.
+        next time the host record is re-saved. Use the
+        <b>Resync All Hreflang Rows</b> action under the cog menu to
+        recompute every row at once.
       </p>
     </field>
   </record>

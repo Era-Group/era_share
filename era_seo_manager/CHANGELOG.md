@@ -3,6 +3,28 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.5.1.0] — 2026-05-27
+
+### Fixed — Hreflang stays in sync with website-level language changes
+
+- **Default-lang flip used to leave hreflang rows pointing at the old
+  URL prefix** (e.g. Arabic stayed at `/ar/about` after being promoted
+  to default — Odoo's routing moved it to `/about` but the hreflang
+  row didn't follow). Added a `website.write()` override that detects
+  changes to `default_lang_id` or `language_ids` and triggers
+  `era.seo.hreflang._era_resync_all_records()`, which iterates every
+  concrete model carrying `era.seo.mixin` (detected via duck-typing
+  on `_sync_era_hreflang_entries`) and recomputes every row.
+- Switched the rendered `hreflang` attribute from the locale code
+  (`ar_001`) to the language's ISO code (`ar`) when present, falling
+  back to a hyphen-normalised locale (`en-US`) otherwise. Google's
+  recommendation is ISO 639-1 / BCP 47.
+- New admin action **Resync All Hreflang Rows** under the Hreflang
+  list's Action menu, plus a programmatic
+  `era.seo.hreflang.action_resync_all()` server-action entry point.
+- 19.0.5.1.0 post-migrate runs the resweep automatically so existing
+  staging databases get fixed without re-saving each page.
+
 ## [19.0.5.0.0] — 2026-05-27
 
 ### Added — Phase 6 (Hreflang automation, SPEC §12)

@@ -9,7 +9,7 @@ import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import slugify
+from ..utils import slugify
 
 _logger = logging.getLogger(__name__)
 

@@ -98,7 +98,7 @@ class EraBlogFeedController(http.Controller):
     # ------------------------------------------------------------------------
 
     def _resolve_tag(self, slug):
-        from odoo.tools import slugify
+        from ..utils import slugify
         tags = request.env['blog.tag'].sudo().search([])
         for tag in tags:
             if slugify(tag.name) == slug:

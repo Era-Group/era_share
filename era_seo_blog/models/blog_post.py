@@ -30,7 +30,7 @@ from lxml import html as lxml_html
 from markupsafe import Markup
 
 from odoo import api, fields, models
-from odoo.tools import slugify
+from ..utils import slugify
 
 _logger = logging.getLogger(__name__)
 

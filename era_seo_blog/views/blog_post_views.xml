@@ -19,6 +19,17 @@
     <field name="inherit_id" ref="website_blog.view_blog_post_form"/>
     <field name="arch" type="xml">
 
+      <!-- 0. Compact the header: put "blog details" and "Publishing Options"
+           side by side (two columns) instead of one tall single column.
+           Create a wrapper group, then move both stock groups into it. -->
+      <xpath expr="//group[@name='blog_details']" position="before">
+        <group name="era_post_header"/>
+      </xpath>
+      <xpath expr="//group[@name='era_post_header']" position="inside">
+        <xpath expr="//group[@name='blog_details']" position="move"/>
+        <xpath expr="//group[@name='publishing_details']" position="move"/>
+      </xpath>
+
       <!-- 1. Hide the whole stock SEO page. It only held Meta Title /
            Description / Keywords, which duplicate the ERA SEO fields below and
            are kept in sync automatically (blog.post._sync_era_to_stock /

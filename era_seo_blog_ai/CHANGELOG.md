@@ -1,5 +1,13 @@
 # Changelog
 
+## [19.0.1.3.0] — 2026-05-27
+
+### Changed — thin-post skip threshold is now words, not characters
+
+The auto-rebuild now skips a content edit when the new body has fewer than
+**50 words** of visible text (was 300 characters). `_MIN_CONTENT_WORDS = 50`;
+`_era_ai_word_count` replaces `_era_ai_text_len`.
+
 ## [19.0.1.2.0] — 2026-05-27
 
 ### Changed — AI buttons moved to the top of the blog post form

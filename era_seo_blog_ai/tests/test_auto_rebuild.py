@@ -50,7 +50,8 @@ class TestBlogAutoRebuild(TransactionCase):
         cls.ICP.set_param('era_seo.ai_enabled', 'True')
         cls.blog = cls.env['blog.blog'].create({'name': 'Test Blog'})
 
-    # A body with >= 300 chars of visible text, so the auto-rebuild fires.
+    # A body with >= 50 words of visible text (8 words x 8 = 64), so the
+    # auto-rebuild fires.
     LONG_BODY = '<p>' + ('Cloud accounting and ZATCA compliance for Saudi SMEs. '
                          * 8) + '</p>'
 
@@ -79,8 +80,8 @@ class TestBlogAutoRebuild(TransactionCase):
         post = self._make_post()
         agent = _mock_agent(_FULL_REPLY)
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
-            # < 300 chars of text -> no AI call, no SEO written.
-            post.write({'content': '<p>Too short to bother.</p>'})
+            # < 50 words of text -> no AI call, no SEO written.
+            post.write({'content': '<p>Too short to bother running the AI.</p>'})
         post.invalidate_recordset()
         self.assertFalse(post.seo_title)
         agent.get_direct_response.assert_not_called()
@@ -147,8 +148,8 @@ class TestBlogAutoRebuild(TransactionCase):
             post.with_context(_era_ai_no_rebuild=True)
             ._era_ai_should_rebuild({'content': self.LONG_BODY}))
 
-    def test_text_len_strips_html(self):
+    def test_word_count_strips_html(self):
         post = self._make_post()
-        self.assertEqual(post._era_ai_text_len('<p>abc</p>'), 3)
-        self.assertEqual(post._era_ai_text_len(''), 0)
-        self.assertGreaterEqual(post._era_ai_text_len(self.LONG_BODY), 300)
+        self.assertEqual(post._era_ai_word_count('<p>one two three</p>'), 3)
+        self.assertEqual(post._era_ai_word_count(''), 0)
+        self.assertGreaterEqual(post._era_ai_word_count(self.LONG_BODY), 50)

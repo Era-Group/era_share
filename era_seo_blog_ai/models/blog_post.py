@@ -24,8 +24,8 @@ _logger = logging.getLogger(__name__)
 _ENABLED_TRUE = ('True', '1', 'true', 'yes', 'on')
 
 # Don't spend an AI call on a near-empty post: skip the auto-rebuild when the
-# new content has fewer than this many characters of visible text.
-_MIN_CONTENT_CHARS = 300
+# new content has fewer than this many words of visible text.
+_MIN_CONTENT_WORDS = 50
 
 
 class BlogPost(models.Model):
@@ -67,8 +67,8 @@ class BlogPost(models.Model):
         if not self._era_ai_enabled():
             return False
         # Skip thin posts — too little signal to generate good SEO, and not
-        # worth an AI call. Measured on the new content's visible text.
-        if self._era_ai_text_len(vals.get('content')) < _MIN_CONTENT_CHARS:
+        # worth an AI call. Measured in words on the new content's visible text.
+        if self._era_ai_word_count(vals.get('content')) < _MIN_CONTENT_WORDS:
             return False
         return True
 
@@ -77,17 +77,17 @@ class BlogPost(models.Model):
         return ICP.get_param('era_seo.ai_enabled', 'False') in _ENABLED_TRUE
 
     @staticmethod
-    def _era_ai_text_len(html):
-        """Length of the visible text in an HTML fragment (tags stripped)."""
+    def _era_ai_word_count(html):
+        """Number of words of visible text in an HTML fragment (tags stripped)."""
         if not html:
             return 0
         try:
             from lxml import html as lxml_html
-            doc = lxml_html.fragment_fromstring(html, create_parent='div')
-            text = ' '.join((doc.text_content() or '').split())
+            text = (lxml_html.fragment_fromstring(
+                html, create_parent='div').text_content() or '')
         except Exception:  # noqa: BLE001
-            text = ' '.join(re.sub(r'<[^>]+>', ' ', html).split())
-        return len(text)
+            text = re.sub(r'<[^>]+>', ' ', html)
+        return len(text.split())
 
     def _era_ai_rebuild_seo(self):
         """Regenerate ALL SEO meta from the current content. Best-effort."""

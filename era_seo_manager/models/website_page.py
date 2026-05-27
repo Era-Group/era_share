@@ -41,6 +41,13 @@ class WebsitePage(models.Model):
         records = super().create(vals_list)
         for rec in records:
             rec._sync_era_to_stock()
+        # Phase 6: auto-attach hreflang entries on first creation.
+        try:
+            records._sync_era_hreflang_entries()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                'website.page.create: hreflang sync skipped (%s)', exc,
+            )
         return records
 
     def write(self, vals):
@@ -49,6 +56,15 @@ class WebsitePage(models.Model):
         if era_keys.intersection(vals):
             for rec in self:
                 rec._sync_era_to_stock()
+        # Phase 6: refresh hreflang on URL/website/language-affecting changes.
+        hreflang_keys = {'url', 'website_id'}
+        if hreflang_keys.intersection(vals):
+            try:
+                self._sync_era_hreflang_entries()
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning(
+                    'website.page.write: hreflang sync skipped (%s)', exc,
+                )
         return result
 
     def _sync_era_to_stock(self):
@@ -138,13 +154,15 @@ class WebsitePage(models.Model):
             instances.unlink()
 
     def unlink(self):
-        """Override to cascade-delete schema instances before the page is removed.
+        """Override to cascade-delete schema instances + hreflang entries.
 
-        Per SPEC §8 Step 2: polymorphic FKs have no DB-level CASCADE, so we
-        clean up instances here.  See the ONDELETE PATTERN comment at the top
-        of this file for how to replicate this in other host models.
+        Per SPEC §8 Step 2 / §12: polymorphic FKs have no DB-level CASCADE,
+        so we clean up both schema instances and hreflang rows here. See the
+        ONDELETE PATTERN comment at the top of this file for how to
+        replicate this in other host models.
         """
         self._cleanup_schema_instances()
+        self._cleanup_era_hreflang()
         return super().unlink()
 
     # --- Validation helpers --------------------------------------------------

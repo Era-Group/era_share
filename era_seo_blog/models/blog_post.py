@@ -371,6 +371,10 @@ class BlogPost(models.Model):
     def create(self, vals_list):
         posts = super().create(vals_list)
         posts._sync_era_default_schemas()
+        try:
+            posts._sync_era_hreflang_entries()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('blog.post.create: hreflang sync skipped (%s)', exc)
         return posts
 
     def write(self, vals):
@@ -378,7 +382,23 @@ class BlogPost(models.Model):
         # Refresh FAQ schema when FAQs or content fields change.
         if any(k in vals for k in ('era_faq_ids', 'name', 'seo_title')):
             self._sync_era_default_schemas()
+        # Refresh hreflang on slug / blog change (affects website_url).
+        if any(k in vals for k in ('name', 'blog_id', 'website_url')):
+            try:
+                self._sync_era_hreflang_entries()
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('blog.post.write: hreflang sync skipped (%s)', exc)
         return result
+
+    def unlink(self):
+        """Cascade-delete polymorphic FK rows before the post is removed."""
+        if 'era.seo.schema.instance' in self.env:
+            self.env['era.seo.schema.instance'].sudo().search([
+                ('res_model', '=', 'blog.post'),
+                ('res_id', 'in', self.ids),
+            ]).unlink()
+        self._cleanup_era_hreflang()
+        return super().unlink()
 
     def _sync_era_default_schemas(self):
         """Attach BlogPosting + BreadcrumbList unconditionally; attach

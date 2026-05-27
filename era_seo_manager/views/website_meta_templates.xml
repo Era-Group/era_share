@@ -86,4 +86,43 @@
       <t t-call="era_seo_manager.era_seo_schema_ld"/>
     </xpath>
   </template>
+
+  <!--
+    era_seo_manager.hreflang_links
+    ===============================
+    Emits one <link rel="alternate" hreflang="…" href="…"/> per active
+    ``era.seo.hreflang`` row attached to either ``main_object`` or the
+    current ``website``. Rows flagged ``is_xdefault`` render as
+    ``hreflang="x-default"``. The full set is fetched in one query via
+    ``era.seo.hreflang._get_for_record``.
+
+    Per SPEC §12.3.
+  -->
+  <template id="hreflang_links" name="ERA Hreflang Links">
+    <t t-set="_hreflang_enabled"
+       t-value="not request.env['era.seo.hreflang'].sudo()._emit_disabled()"/>
+    <t t-if="_hreflang_enabled and main_object and 'seo_title' in main_object._fields">
+      <t t-set="_hreflang_entries"
+         t-value="request.env['era.seo.hreflang']._get_for_record(main_object)"/>
+      <t t-foreach="_hreflang_entries" t-as="hl">
+        <link rel="alternate"
+              t-att-hreflang="hl.is_xdefault and 'x-default' or hl.lang_id.code.replace('_', '-')"
+              t-att-href="hl.url"/>
+      </t>
+    </t>
+  </template>
+
+  <!--
+    Layout injection: hreflang links into <head>.
+    Priority 30 places this after meta (20) and schema (25), keeping the
+    head order: meta → schema → hreflang.
+  -->
+  <template id="layout_inherit_era_hreflang"
+            name="ERA Hreflang Layout Inject"
+            inherit_id="website.layout"
+            priority="30">
+    <xpath expr="//head" position="inside">
+      <t t-call="era_seo_manager.hreflang_links"/>
+    </xpath>
+  </template>
 </odoo>

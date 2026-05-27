@@ -1,1 +1,99 @@
-<odoo/>
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_seo_hreflang_list" model="ir.ui.view">
+    <field name="name">era.seo.hreflang.list</field>
+    <field name="model">era.seo.hreflang</field>
+    <field name="arch" type="xml">
+      <list string="Hreflang Entries"
+            decoration-muted="not active"
+            decoration-info="is_xdefault">
+        <field name="res_model"/>
+        <field name="res_id"/>
+        <field name="lang_id"/>
+        <field name="url"/>
+        <field name="is_xdefault" widget="boolean_toggle"/>
+        <field name="is_manual" widget="boolean_toggle" optional="show"/>
+        <field name="active" widget="boolean_toggle" optional="show"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_seo_hreflang_form" model="ir.ui.view">
+    <field name="name">era.seo.hreflang.form</field>
+    <field name="model">era.seo.hreflang</field>
+    <field name="arch" type="xml">
+      <form string="Hreflang Entry">
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="Target">
+              <field name="res_model"/>
+              <field name="res_id"/>
+              <field name="lang_id"
+                     options="{'no_create': True, 'no_open': True}"/>
+            </group>
+            <group string="URL">
+              <field name="url"
+                     placeholder="https://example.com/page"/>
+              <field name="is_xdefault"/>
+              <field name="is_manual"
+                     help="Tick this to keep your URL when the host record is re-saved. Otherwise auto-sync will recompute it."/>
+              <field name="active"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_seo_hreflang_search" model="ir.ui.view">
+    <field name="name">era.seo.hreflang.search</field>
+    <field name="model">era.seo.hreflang</field>
+    <field name="arch" type="xml">
+      <search string="Hreflang Entries">
+        <field name="res_model"/>
+        <field name="url"/>
+        <field name="lang_id"/>
+        <filter name="active" string="Active"
+                domain="[('active', '=', True)]"/>
+        <filter name="xdefault" string="x-default"
+                domain="[('is_xdefault', '=', True)]"/>
+        <filter name="manual" string="Manual Overrides"
+                domain="[('is_manual', '=', True)]"/>
+        <group>
+          <filter name="group_model" string="Host Model"
+                  context="{'group_by': 'res_model'}"/>
+          <filter name="group_lang" string="Language"
+                  context="{'group_by': 'lang_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_seo_hreflang" model="ir.actions.act_window">
+    <field name="name">Hreflang</field>
+    <field name="res_model">era.seo.hreflang</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_seo_hreflang_search"/>
+    <field name="context">{'search_default_active': 1}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Hreflang entries auto-populate when you save a page on a
+        multilingual site.
+      </p>
+      <p>
+        Tick <b>Manual Override</b> on a row to preserve a custom URL the
+        next time the host record is re-saved.
+      </p>
+    </field>
+  </record>
+
+  <menuitem id="menu_seo_hreflang"
+            name="Hreflang"
+            parent="menu_website_seo_root"
+            action="action_seo_hreflang"
+            sequence="30"/>
+</odoo>

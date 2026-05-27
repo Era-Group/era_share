@@ -3,6 +3,33 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.5.0.0] — 2026-05-27
+
+### Added — Phase 6 (Hreflang automation, SPEC §12)
+
+- `era.seo.hreflang` model with polymorphic `(res_model, res_id, lang_id)`
+  uniqueness, `is_xdefault` flag (one per record group, enforced),
+  `is_manual` flag so admin overrides survive auto-sync.
+- `era.seo.mixin._sync_era_hreflang_entries()` upserts one row per active
+  website language, marks the default-lang row as `x-default`, prunes
+  stale rows when a language leaves the website, and respects `is_manual`.
+- `website.page` create/write/unlink hooks: auto-sync on create, refresh
+  on URL/website_id changes, cascade-delete on unlink.
+- `era_seo_blog/blog.post` gets the same wiring: hreflang sync on
+  create/write/unlink, plus a polymorphic FK cleanup for both
+  `era.seo.schema.instance` and `era.seo.hreflang` rows.
+- Frontend: new QWeb template `era_seo_manager.hreflang_links` and a
+  priority-30 inherit on `website.layout` that emits one
+  `<link rel="alternate" hreflang="…" href="…"/>` per row plus the
+  `hreflang="x-default"` row. Gated by the
+  `era_seo.hreflang_enabled` ICP kill switch.
+- Admin UI: list / form / search on `era.seo.hreflang`, plus a
+  **Website → Configuration → SEO → Hreflang** menu entry (sequence 30).
+- Migration `19.0.5.0.0/post-migrate.py` backfills hreflang on every
+  existing website.page so the admin UI is immediately populated.
+- Tests: x-default uniqueness constraint, lang-prefix path computation,
+  active-only retrieval, manual override preservation, unlink cascade.
+
 ## [19.0.4.0.0] — 2026-05-27
 
 ### Changed — `website_blog` dependency removed

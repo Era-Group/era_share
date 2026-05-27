@@ -122,7 +122,7 @@
   <record id="view_blog_post_list_era_columns" model="ir.ui.view">
     <field name="name">blog.post.list.era.columns</field>
     <field name="model">blog.post</field>
-    <field name="inherit_id" ref="website_blog.view_blog_post_tree"/>
+    <field name="inherit_id" ref="website_blog.view_blog_post_list"/>
     <field name="arch" type="xml">
       <xpath expr="//field[@name='blog_id']" position="after">
         <field name="era_category_id" optional="show"/>

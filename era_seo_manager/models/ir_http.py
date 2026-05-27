@@ -134,18 +134,25 @@ class IrHttp(models.AbstractModel):
 
     @classmethod
     def _era_log_404(cls, path):
-        """Best-effort: record the unmatched path. Never raises."""
+        """Best-effort: record the unmatched path. Never raises.
+
+        Uses a dedicated cursor so the write commits independently of the main
+        request transaction.  Odoo rolls back that transaction for every 404
+        response (NotFound is raised in _serve_ir_http_fallback after
+        _serve_fallback returns None), which would silently discard any write
+        made on the request cursor.
+        """
         try:
-            Log = request.env['era.seo.redirect.log'].sudo()
             website = cls._era_website()
+            website_id = website.id if website else False
             referer = request.httprequest.headers.get('Referer')
             user_agent = request.httprequest.headers.get('User-Agent', '')
-            Log._record_miss(
-                path,
-                website=website,
-                referer=referer,
-                user_agent=user_agent,
-            )
+            with request.env.registry.cursor() as cr:
+                env = request.env(cr=cr)
+                Log = env['era.seo.redirect.log'].sudo()
+                ws = env['website'].browse(website_id) if website_id else None
+                Log._record_miss(path, website=ws, referer=referer, user_agent=user_agent)
+                cr.commit()
         except Exception as exc:  # noqa: BLE001
             _logger.debug('era.seo.redirect.log: skipped (%s)', exc)
 

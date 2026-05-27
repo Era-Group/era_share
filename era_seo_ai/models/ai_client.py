@@ -42,36 +42,20 @@ _FIELD_MAP = {
     'slug_too_long': ('url', True),
 }
 
-# House-style rules passed as the agent's extra system context on every call.
-# Kept tight — the agent already has its own base system prompt; this just
-# pins the SEO conventions and the required output shape.
-SEO_CONTEXT = """You are an SEO copywriter for ERA — Excellence Resources Arabia, a Gold \
-Odoo Partner serving the Saudi market in Arabic and English. Fix one SEO \
-defect on one page. Respond with ONE JSON object and nothing else — no \
-markdown fences, no prose.
+# Extra system context sent with every call. The dedicated SEO agent
+# (data/ai_agent_data.xml) already carries the full SEO craft in its own
+# system_prompt; this is a compact reinforcement of the OUTPUT CONTRACT so
+# the reply stays parseable even when a non-SEO fallback agent is used.
+SEO_CONTEXT = """You are fixing one SEO defect for ERA (Saudi-market Odoo partner, \
+Arabic + English). Reply with ONE JSON object and nothing else — no markdown \
+fences, no prose:
 
-JSON shape (all keys required):
   {"proposed_value": "<string>", "explanation": "<one sentence>", "confidence": <0.0-1.0>}
 
-Rules by field:
-- seo_title: 50-60 chars, hard cap 60. Primary keyword first, brand last if it fits. No ALL CAPS.
-- seo_description: 140-160 chars, hard cap 160. One sentence ending with a period. Include a soft CTA. Repeat the primary keyword once near the start.
-- url slug: lowercase; hyphens between words; drop stop-words (the, a, an, in, on, of, for, and; ال, في, من, إلى, على); 3-5 meaningful words; cap 75 chars; no leading/trailing hyphen.
-
-Language: match the page's language. Arabic content gets Arabic copy.
-Never invent facts not in the page content. Never exceed the hard caps.
-Confidence: 0.9+ when the page makes the answer obvious; 0.4-0.7 for thin/generic pages; below 0.4 when there is almost no signal.
-
-Example input:
-  defect: missing_seo_title
-  url: /accounting/cloud
-  current_value: null
-  page_h1: "Cloud Accounting for Small Businesses"
-  page_excerpt: "VAT-compliant invoices, ZATCA-ready, built for Saudi SMEs."
-  language_hint: en
-Example output:
-  {"proposed_value": "Cloud Accounting for Saudi SMEs | ZATCA-Ready", "explanation": "Primary keyword first, audience and ZATCA hook from the body; 54 chars.", "confidence": 0.92}
-"""
+Length caps: seo_title <= 60 chars (keyword first); seo_description <= 160 chars \
+(one sentence, soft CTA); url slug lowercase, hyphenated, no stop-words, <= 75 \
+chars. Match the page's language. Never invent facts or exceed the caps. \
+Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no signal."""
 
 
 def _icp(env, key, default=None):

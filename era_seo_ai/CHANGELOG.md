@@ -1,5 +1,30 @@
 # Changelog
 
+## [19.0.2.1.0] — 2026-05-27
+
+### Added — dedicated "ERA SEO Fixer" agent
+
+- Ships a purpose-built `ai.agent` (`era_seo_ai.agent_seo`, name
+  "ERA SEO Fixer") whose `system_prompt` carries the full SEO craft:
+  field-by-field length/keyword rules, Arabic/English language matching,
+  Saudi-market keyword guidance, confidence scoring, hard limits, and six
+  worked examples (including an Arabic one).
+- The agent is loaded with **`noupdate="1"`** — created once on first
+  install, never recreated or overwritten on upgrade. The stable XML id
+  guarantees no duplicate, and admin edits to the prompt/model survive
+  module updates.
+- `llm_model` is intentionally omitted so the record installs cleanly on
+  any provider (it falls back to the field default; admins retarget it in
+  the AI app to match their configured provider).
+- `post_init_hook` points `era_seo.ai_agent_id` at this agent **only when
+  the setting is still empty**, so a re-install never overrides a
+  deliberate admin choice.
+- The client's `SEO_CONTEXT` (sent as the agent's `context_message`) is
+  trimmed to a compact OUTPUT-CONTRACT reminder, since the deep
+  instructions now live in the agent's own `system_prompt`. It still
+  carries enough to keep a non-SEO fallback agent producing parseable
+  JSON.
+
 ## [19.0.2.0.0] — 2026-05-27
 
 ### Changed — switched from the Anthropic SDK to Odoo's built-in AI agent

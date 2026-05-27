@@ -1,5 +1,73 @@
-"""Tests for era_geo — AI crawler model, robots.txt, and /llms.txt."""
+"""Tests for era_geo — AI crawler model, robots.txt, /llms.txt, GEO audit."""
 from odoo.tests import HttpCase, TransactionCase, tagged
+
+
+@tagged('post_install', '-at_install')
+class TestGeoAudit(TransactionCase):
+    """GEO citability checks bolted onto the SEO audit run."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Page = cls.env['website.page']
+        cls.Run = cls.env['era.seo.audit.run']
+        cls.Finding = cls.env['era.seo.audit.finding']
+        cls.ICP = cls.env['ir.config_parameter'].sudo()
+
+    def _make_page(self, url, arch):
+        view = self.env['ir.ui.view'].create({
+            'name': 'geo audit view',
+            'type': 'qweb',
+            'arch': arch,
+            'key': 'era_geo.audit_view_' + url.replace('/', '_'),
+        })
+        return self.Page.create({'view_id': view.id, 'url': url})
+
+    def _findings(self, run, code):
+        return self.Finding.search([('run_id', '=', run.id),
+                                    ('check_code', '=', code)])
+
+    def test_llms_disabled_flags_finding(self):
+        self._make_page('/', '<div><h1>Home</h1><h2>About</h2><p>x</p></div>')
+        self.ICP.set_param('era_geo.llms_enabled', 'False')
+        run = self.Run.create({})
+        run._run_audit()
+        self.assertTrue(self._findings(run, 'geo_llms_txt_disabled'))
+        self.ICP.set_param('era_geo.llms_enabled', 'True')
+
+    def test_blocked_answer_bot_flags_finding(self):
+        self._make_page('/', '<div><h1>Home</h1><h2>About</h2><p>x</p></div>')
+        bot = self.env.ref('era_geo.crawler_perplexitybot')
+        bot.allowed = False
+        run = self.Run.create({})
+        run._run_audit()
+        self.assertTrue(self._findings(run, 'geo_answer_bots_blocked'))
+        bot.allowed = True
+
+    def test_no_heading_structure_flags_finding(self):
+        words = ' '.join(['word'] * 200)
+        page = self._make_page('/geo-flat', '<div><p>%s</p></div>' % words)
+        run = self.Run.create({})
+        run._run_audit()
+        f = self.Finding.search([
+            ('run_id', '=', run.id),
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'geo_no_heading_structure'),
+        ])
+        self.assertTrue(f)
+
+    def test_headings_present_no_finding(self):
+        words = ' '.join(['word'] * 200)
+        page = self._make_page(
+            '/geo-structured', '<div><h2>Intro</h2><p>%s</p></div>' % words)
+        run = self.Run.create({})
+        run._run_audit()
+        f = self.Finding.search([
+            ('run_id', '=', run.id),
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'geo_no_heading_structure'),
+        ])
+        self.assertFalse(f)
 
 
 @tagged('post_install', '-at_install')

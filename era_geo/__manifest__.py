@@ -24,7 +24,7 @@ Future phases: GEO audit (citability checks), answer-ready content blocks.
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'depends': [
         'era_seo_manager',
     ],

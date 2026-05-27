@@ -3,6 +3,26 @@
 All notable changes to `era_geo` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.0.0] — 2026-05-28
+
+### Added — GEO readiness checks in the SEO audit (Phase 2)
+
+The audit run gains three citability checks, shown in the same audit
+dashboard:
+
+- **`geo_llms_txt_disabled`** (site) — /llms.txt is off, so AI engines have
+  no curated content map.
+- **`geo_answer_bots_blocked`** (site) — one or more answer/search crawlers
+  (OAI-SearchBot, PerplexityBot, ChatGPT-User, Perplexity-User) are blocked,
+  so your pages can't be cited.
+- **`geo_no_heading_structure`** (page) — a substantial page (≥150 words)
+  with no H2/H3, which AI engines can't chunk/extract well.
+
+Site-level findings attach to the homepage so they fit the per-page finding
+model and auto-resolve when fixed. Implemented by inheriting
+`era.seo.audit.run._get_check_methods` — no change to `era_seo_manager`.
+Tests cover all three (and the no-finding case).
+
 ## [19.0.1.0.0] — 2026-05-28
 
 ### Added — Generative Engine Optimization (Phase 1)

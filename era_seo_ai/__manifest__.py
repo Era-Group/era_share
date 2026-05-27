@@ -24,6 +24,10 @@ Auto-fixable checks (others surface as "not AI-fixable" in the UI):
   - ``missing_meta_description`` / ``description_too_long`` / ``description_too_short``
   - ``slug_contains_uppercase`` (mechanical, no AI call)
   - ``slug_contains_stopwords`` / ``slug_too_long``
+  - ``missing_og_image`` (mechanical — sets the company logo)
+  - ``missing_schema`` (AI picks a JSON-LD template, attaches an instance)
+  - ``image_missing_alt`` (AI writes alt text, injected into the content imgs)
+  - ``thin_content`` (AI proposes an HTML block, appended on review)
 
 Requires the Odoo **AI** app (Enterprise). Configure the agent under
 **Settings → ERA SEO → AI Auto-Fix**.
@@ -32,7 +36,7 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.6.0.0',
+    'version': '19.0.7.0.0',
     'depends': [
         'era_seo_manager',
         'ai',

@@ -30,8 +30,10 @@
                invisible="not ai_supported and ai_status == 'none'">
           <group>
             <field name="ai_supported" invisible="1"/>
-            <field name="ai_proposed_field"
+            <field name="ai_fix_type"
                    invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_proposed_field"
+                   invisible="ai_status not in ('suggested', 'applied') or not ai_proposed_field"/>
             <field name="ai_proposed_value"
                    invisible="ai_status not in ('suggested', 'applied')"/>
             <field name="ai_proposed_translations"

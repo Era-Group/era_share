@@ -30,6 +30,8 @@ _logger = logging.getLogger(__name__)
 
 # Auto-fixable check codes -> (target field, needs_ai). A False second
 # element means we can fix it mechanically without calling the model.
+# These are the "single field value" fixes; the richer fixes (schema attach,
+# image alt, OG image, content expansion) are dispatched separately below.
 _FIELD_MAP = {
     'missing_seo_title': ('seo_title', True),
     'title_too_long': ('seo_title', True),
@@ -41,6 +43,17 @@ _FIELD_MAP = {
     'slug_contains_stopwords': ('url', True),
     'slug_too_long': ('url', True),
 }
+
+# Richer fix types, dispatched in suggest_fix() to dedicated handlers.
+_SCHEMA_CODES = {'missing_schema'}
+_OG_IMAGE_CODES = {'missing_og_image'}
+_IMAGE_ALT_CODES = {'image_missing_alt'}
+_THIN_CONTENT_CODES = {'thin_content'}
+
+# Thin-content proposals rewrite live page HTML and need a human eye, so we
+# cap their confidence below the 0.8 auto-apply threshold — a manual "Apply"
+# still works, but "Suggest + Auto-Apply" never silently injects body copy.
+_THIN_CONTENT_MAX_CONFIDENCE = 0.6
 
 # Extra system context sent with every call. The dedicated SEO agent
 # (data/ai_agent_data.xml) already carries the full SEO craft in its own
@@ -81,6 +94,62 @@ Rules:
 
 Always return all seven keys. If the page is too thin for a field, still
 provide a safe best-effort value and lower the confidence."""
+
+
+# Context for "which JSON-LD schema fits this page?" — the agent picks ONE
+# template code from a provided allow-list, never inventing a new one.
+SCHEMA_CONTEXT = """You are choosing the single best JSON-LD schema for ONE web page \
+of ERA (Saudi-market Odoo partner). You are given the page content and a list of \
+available templates (code — @type — description). Pick the ONE template whose @type \
+best matches what the page is about. Reply with ONE JSON object and nothing else:
+
+  {"template_code": "<one code from the list>", "explanation": "<one sentence>", "confidence": <0.0-1.0>}
+
+Rules:
+- template_code MUST be exactly one of the provided codes. Never invent a code.
+- Prefer the most specific fitting type (e.g. a service page -> a Service/Offer \
+template over a generic WebPage/Organization one).
+- If nothing fits well, pick the most generic available template and set confidence \
+below 0.5.
+- Confidence: 0.9+ when the page clearly is that type; 0.4-0.7 when it is a guess."""
+
+
+# Context for generating image alt text. The agent gets the page topic plus a
+# numbered list of images (filename + nearby text) and returns one alt per image.
+ALT_CONTEXT = """You are writing accessibility + SEO alt text for images on ONE web \
+page of ERA (Saudi-market Odoo partner). You are given the page topic and a numbered \
+list of images (filename and nearby text). Reply with ONE JSON object and nothing else:
+
+  {"alts": ["<alt for image 1>", "<alt for image 2>", ...], "explanation": "<one sentence>", "confidence": <0.0-1.0>}
+
+Rules:
+- Return exactly one alt string per image, in the SAME order as the input list.
+- Each alt: <= 125 chars, describes what the image SHOWS, no "image of"/"picture of" \
+prefix, no keyword stuffing.
+- Match the page's language (Arabic page -> Arabic alt).
+- Use the filename and nearby text as hints; if an image is clearly decorative \
+(spacer, divider, icon with no meaning), return an empty string "" for it.
+- Never invent specific facts (names, numbers) that aren't supported by the context."""
+
+
+# Context for expanding thin content. The agent returns a small block of HTML
+# to append, written in the page's language and on the page's actual topic.
+THIN_CONTENT_CONTEXT = """You are expanding a thin web page for ERA (Saudi-market Odoo \
+partner) with genuinely useful, on-topic content — never filler or Lorem ipsum. You are \
+given the page topic and current content. Reply with ONE JSON object and nothing else:
+
+  {"html": "<a block of valid HTML to APPEND to the page>", "explanation": "<one sentence>", "confidence": <0.0-1.0>}
+
+Rules:
+- html MUST be a small, valid, self-contained HTML fragment: 2-4 short <h2>/<h3> + <p> \
+sections (optionally one <ul>). No <html>/<head>/<body>, no <script>, no inline styles, \
+no <section> wrappers — just headings, paragraphs, and lists.
+- Stay strictly on the page's existing topic. Expand depth (benefits, how it works, FAQs) \
+using only what the topic plausibly supports. NEVER invent specific facts, prices, names, \
+dates, or statistics.
+- Match the page's language throughout.
+- Confidence reflects how much real signal the page gave you; a generic page = low \
+confidence. This output is always reviewed by a human before it is applied."""
 
 
 def _icp(env, key, default=None):
@@ -137,45 +206,72 @@ class AIClient:
     # ------------------------------------------------------------------
 
     def suggest_fix(self, finding, target_record):
-        """Generate a proposed value for one audit finding, per language.
+        """Generate a proposed fix for one audit finding.
 
-        Translatable fields (seo_title, seo_description) are generated in
-        EACH installed website language and returned as a ``translations``
-        dict keyed by lang code. The non-translatable slug (``url``) is
-        generated once.
+        Dispatches by check code to the matching handler. Every handler
+        returns the same uniform dict so the finding model can store and
+        apply it without knowing the fix type:
 
-        :returns: dict {field, translations: {lang: value}, proposed_value
-                  (default-lang for display), explanation, confidence, model}
+          {
+            'fix_type': 'field' | 'og_image' | 'schema' | 'image_alt'
+                        | 'thin_content',
+            'field': <str|False>,          # target field for 'field'/'og_image'
+            'translations': {lang: value}, # 'field' text fixes only
+            'proposed_value': <str>,       # human-readable display value
+            'payload': <dict>,             # structured data for non-field fixes
+            'explanation': <str>,
+            'confidence': <float 0.0-1.0>,
+            'model': <str>,
+          }
+
         :raises AIUnavailable / ValueError
         """
         ok, reason = self.is_available()
         if not ok:
             raise AIUnavailable(reason)
 
+        code = finding.check_code
+        if code in _OG_IMAGE_CODES:
+            return self._fix_og_image(finding, target_record)
+        if code in _SCHEMA_CODES:
+            return self._fix_schema(finding, target_record)
+        if code in _IMAGE_ALT_CODES:
+            return self._fix_image_alt(finding, target_record)
+        if code in _THIN_CONTENT_CODES:
+            return self._fix_thin_content(finding, target_record)
+        return self._fix_field(finding, target_record)
+
+    # ------------------------------------------------------------------
+    # Fix handlers — one per family of check codes
+    # ------------------------------------------------------------------
+
+    def _fix_field(self, finding, target_record):
+        """Single-field fix: seo_title / seo_description (per language) or slug.
+
+        Translatable fields (seo_title, seo_description) are generated in
+        EACH installed website language and returned as a ``translations``
+        dict keyed by lang code. The non-translatable slug (``url``) is
+        generated once.
+        """
         field, mechanical = self._field_and_mechanical_fix(finding, target_record)
         if mechanical is not None:
-            return {
-                'field': field,
-                'translations': {},          # url: single value, no translations
-                'proposed_value': mechanical,
-                'explanation': _('Mechanical fix applied without calling the AI.'),
-                'confidence': 1.0,
-                'model': 'mechanical',
-            }
+            return self._result(
+                'field', field=field, proposed_value=mechanical,
+                explanation=_('Mechanical fix applied without calling the AI.'),
+                confidence=1.0, model='mechanical',
+            )
 
         agent = self._resolve_agent()
 
         # Slug is not field-translated — generate once.
         if field == 'url':
             parsed = self._call_finding(agent, finding, target_record, field, lang=None)
-            return {
-                'field': field,
-                'translations': {},
-                'proposed_value': parsed['proposed_value'],
-                'explanation': parsed.get('explanation', ''),
-                'confidence': float(parsed.get('confidence', 0.0)),
-                'model': agent.llm_model or _('AI agent'),
-            }
+            return self._result(
+                'field', field=field, proposed_value=parsed['proposed_value'],
+                explanation=parsed.get('explanation', ''),
+                confidence=float(parsed.get('confidence', 0.0)),
+                model=agent.llm_model or _('AI agent'),
+            )
 
         # Translatable text field — one call per installed language.
         languages, default_lang = self._record_languages(target_record)
@@ -198,13 +294,116 @@ class AIClient:
         default_code = (default_lang.code if default_lang
                         else (languages[:1].code if languages else self.env.lang))
         primary = translations.get(default_code) or next(iter(translations.values()), '')
+        return self._result(
+            'field', field=field, translations=translations,
+            proposed_value=primary, explanation=explanation,
+            confidence=min(confidences) if confidences else 0.0,
+            model=agent.llm_model or _('AI agent'),
+        )
+
+    def _fix_og_image(self, finding, target_record):
+        """Mechanical: propose the company logo as the OG image.
+
+        No AI call — shared links need *some* card image and the company
+        logo is the safe universal default the admin can later replace.
+        """
+        company = self.env.company
+        has_logo = bool(company.logo)
+        return self._result(
+            'og_image', field='seo_og_image',
+            proposed_value=(
+                _('Use the company logo (%s) as the social/OG image.', company.name)
+                if has_logo else _('No company logo is set to use as the OG image.')
+            ),
+            payload={'source': 'company_logo', 'company_id': company.id},
+            explanation=_('Sets the Open Graph image so shared links render a card.'),
+            confidence=1.0 if has_logo else 0.0,
+            model='mechanical',
+        )
+
+    def _fix_schema(self, finding, target_record):
+        """AI picks the best JSON-LD template (from the installed allow-list)."""
+        Template = self.env['era.seo.schema.template'].sudo()
+        templates = Template.search([('active', '=', True)])
+        if not templates:
+            raise ValueError(_('No active schema templates are available to attach.'))
+        allowed = {t.code for t in templates}
+
+        agent = self._resolve_agent()
+        prompt = self._build_schema_prompt(target_record, templates)
+        response = agent.get_direct_response(prompt=prompt, context_message=SCHEMA_CONTEXT)
+        parsed = self._parse_choice_json(
+            response[0] if response else '', 'template_code', allowed)
+        code = parsed['template_code']
+        tpl = templates.filtered(lambda t: t.code == code)[:1]
+        return self._result(
+            'schema', proposed_value=_('Attach JSON-LD schema: %s', tpl.name or code),
+            payload={'template_code': code},
+            explanation=parsed.get('explanation', ''),
+            confidence=float(parsed.get('confidence', 0.0)),
+            model=agent.llm_model or _('AI agent'),
+        )
+
+    def _fix_image_alt(self, finding, target_record):
+        """AI writes alt text for every <img> on the page that lacks one."""
+        images = self._images_without_alt(target_record)
+        if not images:
+            raise ValueError(_('No images without alt text were found on the page.'))
+
+        agent = self._resolve_agent()
+        prompt = self._build_alt_prompt(target_record, images)
+        response = agent.get_direct_response(prompt=prompt, context_message=ALT_CONTEXT)
+        parsed = self._parse_alt_json(response[0] if response else '', len(images))
+        alts = parsed['alts']
+        pairs = [
+            {'src': images[i]['src'], 'alt': alts[i]}
+            for i in range(len(images))
+            if (alts[i] or '').strip()
+        ]
+        if not pairs:
+            raise ValueError(_('The AI did not return any usable alt text.'))
+        preview = '\n'.join(
+            '{} → {}'.format((p['src'] or '(no src)')[:50], p['alt']) for p in pairs
+        )
+        return self._result(
+            'image_alt', field='content', proposed_value=preview,
+            payload={'alts': pairs},
+            explanation=parsed.get('explanation', ''),
+            confidence=float(parsed.get('confidence', 0.0)),
+            model=agent.llm_model or _('AI agent'),
+        )
+
+    def _fix_thin_content(self, finding, target_record):
+        """AI proposes an HTML block to append; confidence is capped for review."""
+        agent = self._resolve_agent()
+        prompt = self._build_thin_prompt(target_record)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=THIN_CONTENT_CONTEXT)
+        parsed = self._parse_html_json(response[0] if response else '')
+        html = parsed['html']
+        confidence = min(float(parsed.get('confidence', 0.0)), _THIN_CONTENT_MAX_CONFIDENCE)
+        return self._result(
+            'thin_content', field='content',
+            proposed_value=self._html_preview(html),
+            payload={'html': html},
+            explanation=parsed.get('explanation', ''),
+            confidence=confidence,
+            model=agent.llm_model or _('AI agent'),
+        )
+
+    @staticmethod
+    def _result(fix_type, field=False, translations=None, proposed_value='',
+                payload=None, explanation='', confidence=0.0, model=''):
+        """Build the uniform suggest_fix return dict."""
         return {
+            'fix_type': fix_type,
             'field': field,
-            'translations': translations,
-            'proposed_value': primary,
+            'translations': translations or {},
+            'proposed_value': proposed_value,
+            'payload': payload or {},
             'explanation': explanation,
-            'confidence': min(confidences) if confidences else 0.0,
-            'model': agent.llm_model or _('AI agent'),
+            'confidence': confidence,
+            'model': model,
         }
 
     def _call_finding(self, agent, finding, target_record, field, lang):
@@ -416,3 +615,161 @@ class AIClient:
                     'seo_og_description', 'seo_keywords')):
             raise ValueError(_('AI fill response contained no usable SEO fields.'))
         return parsed
+
+    # ------------------------------------------------------------------
+    # Schema / image-alt / thin-content prompts, parsers, extractors
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _loads_json(raw):
+        """Parse a JSON object from model output, tolerating fences/prose."""
+        text = (raw or '').strip()
+        fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
+        if fence:
+            text = fence.group(1).strip()
+        if not text.startswith('{'):
+            brace = re.search(r'\{.*\}', text, re.DOTALL)
+            if brace:
+                text = brace.group(0)
+        try:
+            return json.loads(text)
+        except (json.JSONDecodeError, TypeError) as exc:
+            raise ValueError(
+                _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
+            ) from exc
+
+    @classmethod
+    def _build_schema_prompt(cls, target, templates):
+        excerpt, h1, detected = cls._extract_page_signal(target)
+        listing = '\n'.join(
+            '  - {code} — {stype} — {desc}'.format(
+                code=t.code,
+                stype=t.schema_type or '',
+                desc=(t.description or '').replace('\n', ' ')[:120],
+            )
+            for t in templates
+        )
+        url = getattr(target, 'url', None) or '/'
+        return (
+            'INPUT:\n'
+            '  url: {url}\n'
+            '  page_h1: "{h1}"\n'
+            '  page_excerpt: "{excerpt}"\n'
+            '  language_hint: {detected}\n'
+            '  available_templates:\n{listing}\n'
+            'OUTPUT:'.format(
+                url=url, h1=h1.replace('"', "'"),
+                excerpt=excerpt.replace('"', "'"),
+                detected=detected, listing=listing,
+            )
+        )
+
+    @classmethod
+    def _build_alt_prompt(cls, target, images):
+        _excerpt, h1, detected = cls._extract_page_signal(target)
+        listing = '\n'.join(
+            '  {idx}. filename: {src} | nearby: "{near}"'.format(
+                idx=i + 1,
+                src=(img['src'] or '(none)')[:120],
+                near=(img['near'] or '').replace('"', "'")[:160],
+            )
+            for i, img in enumerate(images)
+        )
+        return (
+            'INPUT:\n'
+            '  page_topic: "{h1}"\n'
+            '  language_hint: {detected}\n'
+            '  images ({n}):\n{listing}\n'
+            'OUTPUT:'.format(
+                h1=h1.replace('"', "'"), detected=detected,
+                n=len(images), listing=listing,
+            )
+        )
+
+    @classmethod
+    def _build_thin_prompt(cls, target):
+        excerpt, h1, detected = cls._extract_page_signal(target)
+        return (
+            'INPUT:\n'
+            '  page_topic: "{h1}"\n'
+            '  language_hint: {detected}\n'
+            '  current_content_excerpt: "{excerpt}"\n'
+            'OUTPUT:'.format(
+                h1=h1.replace('"', "'"), detected=detected,
+                excerpt=excerpt.replace('"', "'"),
+            )
+        )
+
+    @classmethod
+    def _parse_choice_json(cls, raw, key, allowed):
+        """Parse a single-choice JSON and validate the chosen value."""
+        parsed = cls._loads_json(raw)
+        value = parsed.get(key)
+        if value not in allowed:
+            raise ValueError(
+                _('AI chose "%s" which is not one of the available options.', value)
+            )
+        return parsed
+
+    @classmethod
+    def _parse_alt_json(cls, raw, expected):
+        parsed = cls._loads_json(raw)
+        alts = parsed.get('alts')
+        if not isinstance(alts, list) or not alts:
+            raise ValueError(_('AI alt-text response had no "alts" list.'))
+        # Tolerate count drift: pad with '' or truncate to the image count.
+        if len(alts) < expected:
+            alts = alts + [''] * (expected - len(alts))
+        elif len(alts) > expected:
+            alts = alts[:expected]
+        parsed['alts'] = [str(a or '') for a in alts]
+        return parsed
+
+    @classmethod
+    def _parse_html_json(cls, raw):
+        parsed = cls._loads_json(raw)
+        html = (parsed.get('html') or '').strip()
+        if not html:
+            raise ValueError(_('AI content-expansion response had no "html".'))
+        parsed['html'] = html
+        return parsed
+
+    @staticmethod
+    def _images_without_alt(record):
+        """Return [{'src', 'near'}] for every <img> lacking alt text.
+
+        ``near`` is a short slice of surrounding text to give the model a
+        hint about what each image depicts.
+        """
+        from lxml import html as lxml_html
+        content_html = (getattr(record, 'content', None)
+                        or getattr(record, 'arch', None) or '')
+        if not content_html:
+            return []
+        try:
+            doc = lxml_html.fragment_fromstring(content_html, create_parent='div')
+        except Exception:  # noqa: BLE001
+            return []
+        out = []
+        for img in doc.xpath('//img'):
+            if (img.get('alt') or '').strip():
+                continue
+            src = img.get('src') or img.get('data-src') or ''
+            parent = img.getparent()
+            near = ''
+            if parent is not None:
+                near = ' '.join((parent.text_content() or '').split())[:160]
+            out.append({'src': src, 'near': near})
+        return out
+
+    @staticmethod
+    def _html_preview(html):
+        """A short plain-text preview of an HTML block, for the finding form."""
+        from lxml import html as lxml_html
+        try:
+            doc = lxml_html.fragment_fromstring(html, create_parent='div')
+            text = ' '.join((doc.text_content() or '').split())
+        except Exception:  # noqa: BLE001
+            text = re.sub(r'<[^>]+>', ' ', html)
+            text = ' '.join(text.split())
+        return text[:300] + ('…' if len(text) > 300 else '')

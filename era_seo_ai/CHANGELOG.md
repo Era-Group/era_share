@@ -1,5 +1,62 @@
 # Changelog
 
+## [19.0.7.0.0] — 2026-05-27
+
+### Added — richer fixes for four more audit findings
+
+The AI workflow now covers four checks it previously marked
+"not AI-fixable" — the warnings from the audit dashboard:
+
+- **`missing_og_image`** — *mechanical, no AI call.* Sets the page's OG
+  image to the company logo (the safe universal default an admin can
+  replace). Confidence 1.0 when a logo exists, so **Auto-Fix (≥0.8)**
+  applies it.
+- **`missing_schema`** — the agent reads the page and picks the single
+  best JSON-LD template from the **installed allow-list** (it can never
+  invent a code). Apply attaches one `era.seo.schema.instance` for that
+  template, so the page starts emitting structured data. Re-apply is a
+  no-op (won't duplicate the instance).
+- **`image_missing_alt`** — the agent writes alt text for every `<img>`
+  on the page that lacks one (using filename + nearby text as hints, one
+  alt per image, decorative images get `""`). Apply injects the `alt`
+  attributes into the page content, matching by `src` then document
+  order. Content writes preserve XML validity for the QWeb `arch`
+  (XML parser) vs. plain HTML fields (HTML parser).
+- **`thin_content`** — the agent proposes a small, on-topic HTML block
+  (headings + paragraphs, no scripts/styles, no invented facts). Apply
+  appends it to the page content. **Confidence is capped at 0.6** so
+  "Suggest + Auto-Apply" never silently injects body copy — a human must
+  click Apply.
+
+### Changed
+
+- `AIClient.suggest_fix` is now a dispatcher returning a uniform
+  `{fix_type, field, translations, proposed_value, payload, explanation,
+  confidence, model}` for every fix family. Existing field/slug fixes
+  report `fix_type='field'` and are unchanged.
+- `era.seo.audit.finding` gains `ai_fix_type` + `ai_fix_payload` (JSON).
+  **Apply Fix** dispatches on `ai_fix_type`: write field(s), set the OG
+  image, attach a schema instance, inject image alts, or append HTML.
+  Old suggestions (no `ai_fix_type`) default to `field` — no migration
+  needed.
+- `AI_FIXABLE_CODES` extended with the four new codes; the finding form
+  shows the `Fix Type`.
+
+### Tests
+
+- `tests/test_rich_fixes.py` — mocked-agent coverage for all four:
+  OG-image mechanical path + apply, schema suggest/apply (and rejection
+  of an invented template code), image-alt injection on both the HTML
+  and QWeb-`arch` content paths (plus the no-images failure), and
+  thin-content confidence capping / no-auto-apply / manual append.
+
+### Notes
+
+- Image-alt and thin-content fixes rewrite live page content. Both go
+  through the existing manager-group gate and the explicit Apply step,
+  and a parse/serialize failure raises cleanly without writing — a
+  corrupted page is never persisted.
+
 ## [19.0.6.0.0] — 2026-05-27
 
 ### Added — AI Suggest / Fix on the Audit Run form

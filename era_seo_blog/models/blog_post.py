@@ -269,7 +269,9 @@ class BlogPost(models.Model):
             return ''
         try:
             doc = lxml_html.fragment_fromstring(html, create_parent='div')
-            return ' '.join(doc.text_content().split())
+            # itertext yields text per node; joining preserves word boundaries
+            # that text_content() would smash together across block elements.
+            return ' '.join(' '.join(doc.itertext()).split())
         except Exception:  # noqa: BLE001
             return re.sub(r'<[^>]+>', ' ', html)
 

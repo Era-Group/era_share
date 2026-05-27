@@ -272,8 +272,10 @@ class TestSchemaInstance(EraSeoTestCase):
             'res_id': website.id,
         })
         result = self.Instance._get_for_render(main_object=admin, website=website)
-        # The admin-user record itself should not appear; only the site instance.
-        self.assertEqual(result.ids, [site_inst.id])
+        # The admin-user record itself should not appear; the site instance must.
+        self.assertIn(site_inst.id, result.ids)
+        # No instance should reference a res.users record.
+        self.assertFalse(result.filtered(lambda r: r.res_model == 'res.users'))
 
     def test_get_for_render_returns_empty_with_no_args(self):
         result = self.Instance._get_for_render(main_object=None, website=None)

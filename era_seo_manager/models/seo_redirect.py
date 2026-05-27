@@ -205,6 +205,8 @@ class EraSeoRedirect(models.Model):
                     score += 1
                 return score
             best = sorted(plain, key=lambda r: (-_scope_score(r), r.sequence, r.id))[0]
+            if best.redirect_type == '410':
+                return best, None
             return best, best.target_url
 
         # --- Regex match -----------------------------------------------------

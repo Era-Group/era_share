@@ -33,8 +33,8 @@ class TestFillSeo(TransactionCase):
         cls.Page = cls.env['website.page']
         cls.Log = cls.env['era.seo.ai.fix.log']
         cls.env['ir.config_parameter'].sudo().set_param('era_seo.ai_enabled', 'True')
-        cls.env.user.groups_id = [(4, cls.env.ref(
-            'era_seo_manager.group_era_seo_manager').id)]
+        cls.env.user.write({'groups_id': [(4, cls.env.ref(
+            'era_seo_manager.group_era_seo_manager').id)]})
 
     def _make_page(self, url='/fill-test', **vals):
         view = self.env['ir.ui.view'].create({
@@ -159,13 +159,13 @@ class TestFillSeo(TransactionCase):
     def test_fill_requires_manager_group(self):
         page = self._make_page(url='/fill-acl')
         # Drop the manager group for this test.
-        self.env.user.groups_id = [(3, self.env.ref(
-            'era_seo_manager.group_era_seo_manager').id)]
+        self.env.user.write({'groups_id': [(3, self.env.ref(
+            'era_seo_manager.group_era_seo_manager').id)]})
         from odoo.exceptions import AccessError
         try:
             with patch.object(AIClient, '_resolve_agent', return_value=_mock_agent(_FULL_REPLY)):
                 with self.assertRaises(AccessError):
                     page.action_ai_fill_seo()
         finally:
-            self.env.user.groups_id = [(4, self.env.ref(
-                'era_seo_manager.group_era_seo_manager').id)]
+            self.env.user.write({'groups_id': [(4, self.env.ref(
+                'era_seo_manager.group_era_seo_manager').id)]})

@@ -164,12 +164,10 @@ class TestSchemaRendering(HttpCase):
             'era_seo.schema_engine_enabled', 'True'
         )
         page = self._make_page_with_schema(url='/era-schema-render-test-3')
-        # Deactivate the instance.
-        instances = self.env(su=True)['era.seo.schema.instance'].search([
-            ('res_model', '=', 'website.page'),
-            ('res_id', '=', page.id),
-        ])
-        instances.write({'active': False})
+        # Deactivate ALL schema instances (page-level and site-level) so
+        # nothing can emit ld+json on this page.
+        all_instances = self.env(su=True)['era.seo.schema.instance'].search([])
+        all_instances.write({'active': False})
 
         response = self.url_open('/era-schema-render-test-3')
         self.assertEqual(response.status_code, 200)

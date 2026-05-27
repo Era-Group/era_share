@@ -163,36 +163,45 @@ class TestAuditRunner(TransactionCase):
         self.assertFalse(en_finding, 'Adequate English description must NOT be flagged.')
 
     def test_rerun_does_not_duplicate_findings(self):
-        """Two runs over the same defect yield ONE finding, not two."""
+        """Two runs over the same defect yield ONE finding per lang, not two."""
         page = self._make_page(url='/audit-no-dupe')
         page.write({'seo_title': False, 'seo_description': 'desc'})
 
         self.Run.create({})._run_audit()
-        self.Run.create({})._run_audit()
-
-        findings = self.Finding.search([
+        count_after_run1 = self.Finding.search_count([
             ('res_id', '=', page.id),
             ('check_code', '=', 'missing_seo_title'),
         ])
-        self.assertEqual(len(findings), 1, 'Re-running must upsert, not duplicate.')
+        self.assertGreaterEqual(count_after_run1, 1)
+
+        self.Run.create({})._run_audit()
+        count_after_run2 = self.Finding.search_count([
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'missing_seo_title'),
+        ])
+        self.assertEqual(count_after_run2, count_after_run1,
+                         'Re-running must upsert, not duplicate.')
 
     def test_rerun_updates_existing_in_place(self):
         page = self._make_page(url='/audit-update')
         page.write({'seo_title': False})
         run1 = self.Run.create({})
         run1._run_audit()
+        # Pick one finding (first language) to track its row id.
         f = self.Finding.search([
             ('res_id', '=', page.id),
             ('check_code', '=', 'missing_seo_title'),
-        ])
-        self.assertEqual(len(f), 1)
+        ], limit=1)
+        self.assertTrue(f)
         first_id = f.id
+        lang_id = f.lang_id.id
 
         run2 = self.Run.create({})
         run2._run_audit()
         f2 = self.Finding.search([
             ('res_id', '=', page.id),
             ('check_code', '=', 'missing_seo_title'),
+            ('lang_id', '=', lang_id),
         ])
         self.assertEqual(len(f2), 1)
         self.assertEqual(f2.id, first_id, 'Same row reused across runs.')

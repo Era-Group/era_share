@@ -27,6 +27,18 @@ _FULL_REPLY = (
     '"explanation": "Derived from the post body.", "confidence": 0.9}'
 )
 
+# Reply that also carries the blog-specific fields the bridge adds.
+_FULL_REPLY_BLOG = (
+    '{"seo_title": "AI Generated Title", '
+    '"seo_description": "An AI generated meta description.", '
+    '"seo_og_title": "AI OG Title", '
+    '"seo_og_description": "AI OG description.", '
+    '"seo_keywords": "blog, seo, ai", '
+    '"era_subtitle": "An AI written subtitle", '
+    '"era_excerpt": "An AI written excerpt for feeds and list cards.", '
+    '"explanation": "Derived from the post body.", "confidence": 0.9}'
+)
+
 
 @tagged('post_install', '-at_install')
 class TestBlogAutoRebuild(TransactionCase):
@@ -37,6 +49,10 @@ class TestBlogAutoRebuild(TransactionCase):
         cls.ICP = cls.env['ir.config_parameter'].sudo()
         cls.ICP.set_param('era_seo.ai_enabled', 'True')
         cls.blog = cls.env['blog.blog'].create({'name': 'Test Blog'})
+
+    # A body with >= 300 chars of visible text, so the auto-rebuild fires.
+    LONG_BODY = '<p>' + ('Cloud accounting and ZATCA compliance for Saudi SMEs. '
+                         * 8) + '</p>'
 
     def _make_post(self, content='<p>Original body content.</p>'):
         # create() does not trigger the rebuild (only content *edits* do),
@@ -52,19 +68,29 @@ class TestBlogAutoRebuild(TransactionCase):
         post.write({'seo_title': 'Hand-written'})
         with patch.object(AIClient, '_resolve_agent',
                           return_value=_mock_agent(_FULL_REPLY)):
-            post.write({'content': '<h1>New Topic</h1><p>Fresh body.</p>'})
+            post.write({'content': self.LONG_BODY})
         post.invalidate_recordset()
         # Rewrite overwrites the hand-written value.
         self.assertEqual(post.seo_title, 'AI Generated Title')
         self.assertTrue(post.seo_description)
         self.assertEqual(post.seo_keywords, 'blog, seo, ai')
 
+    def test_thin_content_skips_rebuild(self):
+        post = self._make_post()
+        agent = _mock_agent(_FULL_REPLY)
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            # < 300 chars of text -> no AI call, no SEO written.
+            post.write({'content': '<p>Too short to bother.</p>'})
+        post.invalidate_recordset()
+        self.assertFalse(post.seo_title)
+        agent.get_direct_response.assert_not_called()
+
     def test_no_rebuild_when_ai_disabled(self):
         self.ICP.set_param('era_seo.ai_enabled', 'False')
         post = self._make_post()
         agent = _mock_agent(_FULL_REPLY)
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
-            post.write({'content': '<p>Edited while AI is off.</p>'})
+            post.write({'content': self.LONG_BODY})
         post.invalidate_recordset()
         self.assertFalse(post.seo_title)
         agent.get_direct_response.assert_not_called()
@@ -84,15 +110,45 @@ class TestBlogAutoRebuild(TransactionCase):
         agent = _mock_agent('not valid json at all')
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             # Must not raise — the content save has to succeed regardless.
-            post.write({'content': '<p>Body that breaks the AI parse.</p>'})
+            post.write({'content': self.LONG_BODY})
         post.invalidate_recordset()
-        self.assertEqual(post.content, '<p>Body that breaks the AI parse.</p>')
+        self.assertEqual(post.content, self.LONG_BODY)
         self.assertFalse(post.seo_title)
+
+    def test_fill_fields_include_blog_fields(self):
+        post = self._make_post()
+        names = [s['name'] for s in post._ai_fill_fields()]
+        self.assertIn('era_subtitle', names)
+        self.assertIn('era_excerpt', names)
+        # Core fields still present.
+        self.assertIn('seo_title', names)
+        self.assertIn('seo_keywords', names)
+
+    def test_rewrite_fills_blog_specific_fields(self):
+        post = self._make_post()
+        with patch.object(AIClient, '_resolve_agent',
+                          return_value=_mock_agent(_FULL_REPLY_BLOG)):
+            post.action_ai_rewrite_seo()
+        post.invalidate_recordset()
+        self.assertEqual(post.era_subtitle, 'An AI written subtitle')
+        self.assertTrue(post.era_excerpt)
+        self.assertEqual(post.seo_title, 'AI Generated Title')
 
     def test_should_rebuild_flag(self):
         post = self._make_post()
-        self.assertTrue(post._era_ai_should_rebuild({'content': 'x'}))
+        # Long enough content + enabled -> rebuild.
+        self.assertTrue(post._era_ai_should_rebuild({'content': self.LONG_BODY}))
+        # Thin content -> skip.
+        self.assertFalse(post._era_ai_should_rebuild({'content': '<p>short</p>'}))
+        # Non-content write -> skip.
         self.assertFalse(post._era_ai_should_rebuild({'name': 'x'}))
+        # Recursion guard -> skip.
         self.assertFalse(
             post.with_context(_era_ai_no_rebuild=True)
-            ._era_ai_should_rebuild({'content': 'x'}))
+            ._era_ai_should_rebuild({'content': self.LONG_BODY}))
+
+    def test_text_len_strips_html(self):
+        post = self._make_post()
+        self.assertEqual(post._era_ai_text_len('<p>abc</p>'), 3)
+        self.assertEqual(post._era_ai_text_len(''), 0)
+        self.assertGreaterEqual(post._era_ai_text_len(self.LONG_BODY), 300)

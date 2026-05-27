@@ -1,5 +1,30 @@
 # Changelog
 
+## [19.0.8.0.0] — 2026-05-27
+
+### Changed — the AI "Fill SEO" field set is now extensible per model
+
+The proactive fill used to hardcode the five core meta fields. It now asks
+the record which fields to produce via ``era.seo.mixin._ai_fill_fields()``,
+so any host model can add its own SEO/content fields and have them filled
+in **every installed website language** like the core ones.
+
+- `era.seo.mixin._ai_fill_fields()` returns a list of
+  `{'name', 'rule'}` specs (core: seo_title, seo_description, seo_og_title,
+  seo_og_description, seo_keywords). Override and `super()` + append.
+- `AIClient.fill_seo(..., field_specs=...)` and `_build_fill_prompt` build
+  the JSON contract **dynamically** from the specs (each field + its rule +
+  the exact output keys), instead of a fixed five-key shape. `FILL_CONTEXT`
+  is now generic and opens with an explicit "ignore earlier output-format"
+  line so the dedicated SEO agent doesn't fall back to its single-fix
+  `proposed_value` contract.
+- `_parse_fill_json(raw, field_names)` validates against the requested keys.
+- `era_seo_blog_ai` uses this to add the blog `era_subtitle` /
+  `era_excerpt` fields to the fill.
+
+Backward compatible: the core fields and existing behavior are unchanged;
+`FILL_FIELDS` is kept as a name-tuple alias.
+
 ## [19.0.7.3.0] — 2026-05-27
 
 ### Changed — allow system-triggered SEO fill to skip the manager gate

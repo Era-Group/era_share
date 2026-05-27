@@ -26,7 +26,7 @@ auto-rebuild is skipped and the buttons surface the usual "disabled" notice.
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'depends': [
         'era_seo_blog',
         'era_seo_ai',

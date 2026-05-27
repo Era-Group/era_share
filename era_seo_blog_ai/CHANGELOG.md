@@ -1,5 +1,19 @@
 # Changelog
 
+## [19.0.1.1.0] — 2026-05-27
+
+### Added — blog-specific fields in the AI fill + thin-content skip
+
+- **Blog fields filled too.** `blog.post._ai_fill_fields` (new extension
+  point in `era_seo_ai` 19.0.8.0.0) now also fills the blog `era_subtitle`
+  and `era_excerpt` — in every installed website language, like the core
+  meta. The excerpt feeds the meta-description fallback and the BlogPosting
+  JSON-LD, so filling it improves both. Applies to the SEO-tab buttons and
+  the auto-rebuild.
+- **Skip thin posts.** The auto-rebuild no longer runs when the new content
+  has fewer than 300 characters of visible text (`_MIN_CONTENT_CHARS`) —
+  too little signal for useful SEO, and it saves the AI call.
+
 ## [19.0.1.0.0] — 2026-05-27
 
 ### Added — blog ↔ AI bridge (auto-installs when both are present)

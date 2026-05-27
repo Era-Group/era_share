@@ -15,6 +15,7 @@ Design notes:
   the write carries ``_era_ai_no_rebuild`` so it can't re-trigger.
 """
 import logging
+import re
 
 from odoo import models
 
@@ -22,9 +23,31 @@ _logger = logging.getLogger(__name__)
 
 _ENABLED_TRUE = ('True', '1', 'true', 'yes', 'on')
 
+# Don't spend an AI call on a near-empty post: skip the auto-rebuild when the
+# new content has fewer than this many characters of visible text.
+_MIN_CONTENT_CHARS = 300
+
 
 class BlogPost(models.Model):
     _inherit = 'blog.post'
+
+    def _ai_fill_fields(self):
+        """Add the blog-specific SEO/content fields to the AI fill set.
+
+        Both are translatable, so the fill writes a value per installed
+        website language. ``era_excerpt`` also feeds the meta description
+        fallback and the BlogPosting JSON-LD, so filling it improves both.
+        """
+        specs = super()._ai_fill_fields()
+        specs += [
+            {'name': 'era_subtitle',
+             'rule': 'a short editorial subtitle/dek that complements the title, '
+                     '<= 120 chars, no trailing period'},
+            {'name': 'era_excerpt',
+             'rule': '1-2 sentence plain-text summary for feeds and blog list '
+                     'cards, <= 300 chars, no HTML'},
+        ]
+        return specs
 
     def write(self, vals):
         result = super().write(vals)
@@ -41,11 +64,30 @@ class BlogPost(models.Model):
             return False
         if self.env.context.get('_era_ai_no_rebuild'):
             return False
-        return self._era_ai_enabled()
+        if not self._era_ai_enabled():
+            return False
+        # Skip thin posts — too little signal to generate good SEO, and not
+        # worth an AI call. Measured on the new content's visible text.
+        if self._era_ai_text_len(vals.get('content')) < _MIN_CONTENT_CHARS:
+            return False
+        return True
 
     def _era_ai_enabled(self):
         ICP = self.env['ir.config_parameter'].sudo()
         return ICP.get_param('era_seo.ai_enabled', 'False') in _ENABLED_TRUE
+
+    @staticmethod
+    def _era_ai_text_len(html):
+        """Length of the visible text in an HTML fragment (tags stripped)."""
+        if not html:
+            return 0
+        try:
+            from lxml import html as lxml_html
+            doc = lxml_html.fragment_fromstring(html, create_parent='div')
+            text = ' '.join((doc.text_content() or '').split())
+        except Exception:  # noqa: BLE001
+            text = ' '.join(re.sub(r'<[^>]+>', ' ', html).split())
+        return len(text)
 
     def _era_ai_rebuild_seo(self):
         """Regenerate ALL SEO meta from the current content. Best-effort."""

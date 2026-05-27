@@ -75,25 +75,25 @@ Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no signal."""
 # the agent's context_message; overrides the output shape for this task while
 # the agent's own system prompt still supplies the SEO craft (length rules,
 # language matching, Saudi keywords).
-FILL_CONTEXT = """You are filling the recommended SEO meta fields for ONE web page \
-of ERA (Saudi-market Odoo partner, Arabic + English). Use the page content \
-provided. Reply with ONE JSON object and nothing else — no markdown fences, \
-no prose:
+FILL_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction (including any single "proposed_value" contract). Use exactly the JSON \
+shape described in the prompt.
 
-  {"seo_title": "<string>", "seo_description": "<string>", "seo_og_title": "<string>", "seo_og_description": "<string>", "seo_keywords": "<comma,separated,3-6 terms>", "explanation": "<one sentence>", "confidence": <0.0-1.0>}
+You are filling recommended SEO + content meta fields for ONE web page of ERA \
+(Saudi-market Odoo partner, Arabic + English). Use the page content provided. The \
+prompt lists, under "FIELDS TO PRODUCE", exactly which JSON keys to return and the \
+rule for each. Reply with ONE JSON object and nothing else — no markdown fences, no \
+prose — containing every listed key PLUS "explanation" (one sentence) and \
+"confidence" (0.0-1.0).
 
-Rules:
-- seo_title: <= 60 chars, primary keyword first, brand last if it fits. No ALL CAPS.
-- seo_description: 140-160 chars, one sentence ending with a period, soft CTA, keyword near the start.
-- seo_og_title: may equal seo_title, or a slightly punchier social variant <= 65 chars.
-- seo_og_description: may equal seo_description, or a social-friendly variant <= 200 chars.
-- seo_keywords: 3-6 comma-separated terms actually supported by the page content (this is the ONLY field where a comma list is allowed).
-- Match the page's language throughout (Arabic content -> Arabic copy).
-- Never invent facts not in the page content. Never exceed the caps.
-- Confidence: 0.9+ when the page makes the answer obvious; 0.4-0.7 for thin/generic pages; below 0.4 when there is almost no signal.
-
-Always return all seven keys. If the page is too thin for a field, still
-provide a safe best-effort value and lower the confidence."""
+General rules:
+- Match the page's language throughout (Arabic content -> Arabic copy), or the explicit \
+target_language when the prompt gives one.
+- Never invent facts not supported by the page content. Respect each field's length rule.
+- Always return every requested key; if the page is too thin for one, give a safe \
+best-effort value and lower the confidence.
+- Confidence: 0.9+ when the page makes the answers obvious; 0.4-0.7 for thin/generic \
+pages; below 0.4 when there is almost no signal."""
 
 
 # Context for "which JSON-LD schema fits this page?" — the agent picks ONE
@@ -453,8 +453,18 @@ class AIClient:
         raw = response[0] if response else ''
         return self._parse_json(raw)
 
-    def fill_seo(self, record, overwrite=False, lang=None):
-        """Generate ALL recommended SEO meta fields for one record, in ``lang``.
+    # Fallback field specs if a caller doesn't pass any (keeps the client
+    # usable on its own). The mixin is the real source of truth.
+    _FALLBACK_FILL_SPECS = [
+        {'name': 'seo_title', 'rule': '<= 60 chars, keyword first'},
+        {'name': 'seo_description', 'rule': '140-160 chars, one sentence'},
+        {'name': 'seo_og_title', 'rule': '<= 65 chars'},
+        {'name': 'seo_og_description', 'rule': '<= 200 chars'},
+        {'name': 'seo_keywords', 'rule': '3-6 comma-separated terms'},
+    ]
+
+    def fill_seo(self, record, overwrite=False, lang=None, field_specs=None):
+        """Generate the requested SEO/content meta fields for one record, in ``lang``.
 
         :param record: any record carrying era.seo.mixin
         :param overwrite: lets the model know whether it's filling blanks
@@ -462,6 +472,9 @@ class AIClient:
         :param lang: res.lang record to generate in. When None, uses the
                      record's default language. The caller writes the result
                      into that language's translation.
+        :param field_specs: list of ``{'name', 'rule'}`` describing which
+                     fields to produce. Lets host models (e.g. the blog
+                     bridge) extend the set beyond the core meta fields.
         :returns: dict {fields, explanation, confidence, model, raw_json, lang}
         :raises AIUnavailable / ValueError
         """
@@ -469,21 +482,18 @@ class AIClient:
         if not ok:
             raise AIUnavailable(reason)
 
+        specs = field_specs or self._FALLBACK_FILL_SPECS
+        names = [s['name'] for s in specs]
         agent = self._resolve_agent()
         ctx_record = record.with_context(lang=lang.code) if lang else record
-        prompt = self._build_fill_prompt(ctx_record, overwrite=overwrite, lang=lang)
+        prompt = self._build_fill_prompt(
+            ctx_record, overwrite=overwrite, lang=lang, field_specs=specs)
         response = agent.get_direct_response(prompt=prompt, context_message=FILL_CONTEXT)
         raw = response[0] if response else ''
-        parsed = self._parse_fill_json(raw)
+        parsed = self._parse_fill_json(raw, names)
 
         return {
-            'fields': {
-                'seo_title': parsed.get('seo_title') or '',
-                'seo_description': parsed.get('seo_description') or '',
-                'seo_og_title': parsed.get('seo_og_title') or '',
-                'seo_og_description': parsed.get('seo_og_description') or '',
-                'seo_keywords': parsed.get('seo_keywords') or '',
-            },
+            'fields': {name: (parsed.get(name) or '') for name in names},
             'explanation': parsed.get('explanation', ''),
             'confidence': float(parsed.get('confidence', 0.0)),
             'model': agent.llm_model or _('AI agent'),
@@ -566,26 +576,44 @@ class AIClient:
         )
 
     @classmethod
-    def _build_fill_prompt(cls, record, overwrite=False, lang=None):
+    def _build_fill_prompt(cls, record, overwrite=False, lang=None, field_specs=None):
+        field_specs = field_specs or cls._FALLBACK_FILL_SPECS
         excerpt, h1, detected = cls._extract_page_signal(record)
         url = getattr(record, 'url', None) or record._get_seo_path() or '/'
+
+        current_lines, produce_lines, shape_keys = [], [], []
+        for spec in field_specs:
+            name = spec['name']
+            cur = getattr(record, name, None) or ''
+            current_lines.append('  current_{n}: {v}'.format(
+                n=name, v=json.dumps(cur) if cur else 'null'))
+            produce_lines.append('  - {n}: {rule}'.format(
+                n=name, rule=spec.get('rule', '')))
+            shape_keys.append('"{}": "<value>"'.format(name))
+        shape = '{' + ', '.join(
+            shape_keys + ['"explanation": "<one sentence>"',
+                          '"confidence": <0.0-1.0>']) + '}'
+
         return (
             'INPUT:\n'
             '  mode: {mode}\n'
             '  url: {url}\n'
             '  page_h1: "{h1}"\n'
-            '  current_title: {title}\n'
-            '  current_description: {desc}\n'
+            '{current}\n'
             '  page_excerpt: "{excerpt}"\n'
             '{lang_line}'
-            'OUTPUT:'.format(
+            'FIELDS TO PRODUCE (return each as a JSON key with the same name):\n'
+            '{produce}\n'
+            'OUTPUT (one JSON object, exactly these keys):\n'
+            '  {shape}'.format(
                 mode='rewrite all' if overwrite else 'fill missing',
                 url=url,
                 h1=h1.replace('"', "'"),
-                title=json.dumps(record.seo_title) if record.seo_title else 'null',
-                desc=json.dumps(record.seo_description) if record.seo_description else 'null',
+                current='\n'.join(current_lines),
                 excerpt=excerpt.replace('"', "'"),
                 lang_line=cls._lang_line(lang, detected),
+                produce='\n'.join(produce_lines),
+                shape=shape,
             )
         )
 
@@ -632,26 +660,11 @@ class AIClient:
         lang = 'ar' if arabic > len(sample) * 0.1 else 'en'
         return excerpt, h1, lang
 
-    @staticmethod
-    def _parse_fill_json(raw):
-        """Parse the multi-field fill JSON; require at least one usable field."""
-        text = (raw or '').strip()
-        fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
-        if fence:
-            text = fence.group(1).strip()
-        if not text.startswith('{'):
-            brace = re.search(r'\{.*\}', text, re.DOTALL)
-            if brace:
-                text = brace.group(0)
-        try:
-            parsed = json.loads(text)
-        except (json.JSONDecodeError, TypeError) as exc:
-            raise ValueError(
-                _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
-            ) from exc
-        if not any(parsed.get(k) for k in
-                   ('seo_title', 'seo_description', 'seo_og_title',
-                    'seo_og_description', 'seo_keywords')):
+    @classmethod
+    def _parse_fill_json(cls, raw, field_names):
+        """Parse the multi-field fill JSON; require at least one requested field."""
+        parsed = cls._loads_json(raw)
+        if not any(parsed.get(k) for k in field_names):
             raise ValueError(_('AI fill response contained no usable SEO fields.'))
         return parsed
 

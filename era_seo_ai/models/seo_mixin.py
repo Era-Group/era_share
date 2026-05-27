@@ -20,19 +20,41 @@ from .ai_client import AIClient, AIUnavailable
 
 _logger = logging.getLogger(__name__)
 
-# Fields the AI fills, in write order. All live on era.seo.mixin so every
-# host model has them.
-FILL_FIELDS = (
-    'seo_title',
-    'seo_description',
-    'seo_og_title',
-    'seo_og_description',
-    'seo_keywords',
-)
+# The core SEO meta the AI fills, in write order, with the per-field rule
+# the prompt passes to the agent. All live on era.seo.mixin, so every host
+# model gets them. Host models add their own via ``_ai_fill_fields`` —
+# e.g. era_seo_blog_ai appends the blog subtitle/excerpt.
+_CORE_FILL_SPECS = [
+    {'name': 'seo_title',
+     'rule': '<= 60 chars, primary keyword first, brand last if it fits, no ALL CAPS'},
+    {'name': 'seo_description',
+     'rule': '140-160 chars, one sentence ending with a period, soft CTA, '
+             'keyword near the start'},
+    {'name': 'seo_og_title',
+     'rule': 'may equal seo_title, or a punchier social variant, <= 65 chars'},
+    {'name': 'seo_og_description',
+     'rule': 'may equal seo_description, or a social-friendly variant, <= 200 chars'},
+    {'name': 'seo_keywords',
+     'rule': '3-6 comma-separated terms actually supported by the content '
+             '(the ONLY field allowed to be a comma list)'},
+]
+
+# Back-compat alias: the plain field-name tuple some callers may reference.
+FILL_FIELDS = tuple(s['name'] for s in _CORE_FILL_SPECS)
 
 
 class EraSeoMixin(models.AbstractModel):
     _inherit = 'era.seo.mixin'
+
+    def _ai_fill_fields(self):
+        """Return the AI-fillable field specs for this record.
+
+        Each spec is ``{'name': <field>, 'rule': <prompt hint>}``. The field
+        must be translatable so per-language fills land in the right
+        translation. Host models override and ``super()`` + append their own
+        SEO fields (the blog bridge adds ``era_subtitle`` / ``era_excerpt``).
+        """
+        return list(_CORE_FILL_SPECS)
 
     def action_ai_fill_seo(self):
         """Fill EMPTY recommended SEO fields on each record using the AI agent."""
@@ -55,6 +77,8 @@ class EraSeoMixin(models.AbstractModel):
 
         for rec in self:
             languages, _default = rec._ai_fill_languages()
+            field_specs = rec._ai_fill_fields()
+            field_names = [s['name'] for s in field_specs]
             written_fields = set()
             langs_done = []
             last_proposal = None
@@ -62,7 +86,8 @@ class EraSeoMixin(models.AbstractModel):
 
             for lang in languages:
                 try:
-                    proposal = client.fill_seo(rec, overwrite=overwrite, lang=lang)
+                    proposal = client.fill_seo(
+                        rec, overwrite=overwrite, lang=lang, field_specs=field_specs)
                 except AIUnavailable as exc:
                     raise UserError(str(exc)) from exc
                 except Exception as exc:  # noqa: BLE001
@@ -76,7 +101,7 @@ class EraSeoMixin(models.AbstractModel):
                 proposed = proposal['fields']
                 lang_rec = rec.with_context(lang=lang.code)
                 vals = {}
-                for fname in FILL_FIELDS:
+                for fname in field_names:
                     new_val = proposed.get(fname)
                     if not new_val:
                         continue

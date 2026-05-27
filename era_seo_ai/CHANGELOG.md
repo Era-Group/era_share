@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.0.7.3.0] — 2026-05-27
+
+### Changed — allow system-triggered SEO fill to skip the manager gate
+
+`era.seo.mixin._ai_check_manager` now returns early when the context flag
+`_era_ai_system` is set, so a system automation can fill/rewrite SEO on
+behalf of an editor who lacks the SEO-Manager group. Used by the new
+`era_seo_blog_ai` auto-rebuild (regenerate blog SEO when content changes).
+Interactive button/action paths are unchanged — they still require the
+group.
+
 ## [19.0.7.2.0] — 2026-05-27
 
 ### Fixed — image-alt suggestion no longer "Failed"s on real pages

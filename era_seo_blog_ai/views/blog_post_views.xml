@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Add the one-click AI SEO actions to the blog post SEO tab. Gated to the
+    SEO Manager group (the server-side methods re-check anyway). Inserted
+    just above the ERA SEO extended fields so they're the first thing in the
+    section.
+  -->
+  <record id="view_blog_post_form_era_seo_ai" model="ir.ui.view">
+    <field name="name">blog.post.form.era.seo.ai</field>
+    <field name="model">blog.post</field>
+    <field name="inherit_id" ref="era_seo_blog.view_blog_post_form_era_seo"/>
+    <field name="arch" type="xml">
+      <xpath expr="//page[@name='seo']//field[@name='seo_title']" position="before">
+        <div class="o_row mb-2" groups="era_seo_manager.group_era_seo_manager">
+          <button name="action_ai_fill_seo" type="object"
+                  string="AI: Fill SEO" class="btn-info" icon="fa-magic"/>
+          <button name="action_ai_rewrite_seo" type="object"
+                  string="AI: Rewrite SEO" class="btn-secondary" icon="fa-refresh"
+                  confirm="Regenerate every SEO field from the post content, overwriting current values?"/>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

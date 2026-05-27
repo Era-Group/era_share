@@ -143,6 +143,12 @@ class EraSeoMixin(models.AbstractModel):
     # ------------------------------------------------------------------
 
     def _ai_check_manager(self):
+        # System-triggered automations (e.g. era_seo_blog_ai auto-rebuild on
+        # content change) run on behalf of whoever edited the content, who is
+        # not necessarily a SEO manager. The admin opts into the automation by
+        # enabling AI auto-fix, so the per-user gate doesn't apply there.
+        if self.env.context.get('_era_ai_system'):
+            return
         if not self.env.user.has_group('era_seo_manager.group_era_seo_manager'):
             raise AccessError(_('AI SEO fill requires the SEO Manager group.'))
 

@@ -19,12 +19,12 @@
     <field name="inherit_id" ref="website_blog.view_blog_post_form"/>
     <field name="arch" type="xml">
 
-      <!-- 1. Hide the stock Meta Title / Description / Keywords. They duplicate
-           the ERA SEO fields below and are kept in sync automatically
-           (blog.post._sync_era_to_stock / _sync_stock_to_era), so editors work
-           in one place. The stock SEO page is dev-only anyway. -->
-      <xpath expr="//page[@name='seo']/group[@name='default_opengraph']"
-             position="attributes">
+      <!-- 1. Hide the whole stock SEO page. It only held Meta Title /
+           Description / Keywords, which duplicate the ERA SEO fields below and
+           are kept in sync automatically (blog.post._sync_era_to_stock /
+           _sync_stock_to_era). Hiding just the fields left an empty tab, so we
+           hide the page; editors use the "ERA SEO" tab instead. -->
+      <xpath expr="//page[@name='seo']" position="attributes">
         <attribute name="invisible">1</attribute>
       </xpath>
 

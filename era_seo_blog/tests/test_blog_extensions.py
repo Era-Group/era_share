@@ -53,6 +53,21 @@ class TestBlogPostExtensions(TransactionCase):
         self.assertEqual(post.era_word_count, 600)
         self.assertEqual(post.era_reading_time_minutes, 3)
 
+    def test_word_count_uses_richest_language(self):
+        """If the source language is a stub, count the richest translation.
+
+        Regression: the English source often stays 'Start writing here...'
+        (3 words) while the real article is a translation; the count must
+        reflect the language that actually carries the content.
+        """
+        self.env.ref('base.lang_fr').active = True
+        post = self._make_post(content='<p>one two three</p>')  # en: 3 words
+        self.assertEqual(post.era_word_count, 3)
+        rich = '<p>%s</p>' % ' '.join(['mot'] * 50)
+        post.with_context(lang='fr_FR').write({'content': rich})
+        post.invalidate_recordset()
+        self.assertEqual(post.era_word_count, 50)
+
     # --- Excerpt fallback ----------------------------------------------------
 
     def test_excerpt_uses_explicit_value(self):

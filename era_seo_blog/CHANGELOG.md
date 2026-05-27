@@ -3,6 +3,21 @@
 All notable changes to `era_seo_blog` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.1.0] — 2026-05-27
+
+### Fixed — Word Count stuck at 3; empty stock SEO tab
+
+- **Word Count / Reading Time** read only `content` in one language. The
+  English *source* content often stays the default `Start writing here...`
+  stub (3 words) while the real article is a translation, so the stored
+  stat reported 3. The compute now counts the **richest language variant**
+  of `content` (via stored translations), and a post-migration recomputes
+  existing posts.
+- **Empty "SEO" tab.** 19.0.2.0.0 hid the stock Meta fields but left an
+  empty stock SEO tab. The whole stock SEO page is now hidden (its fields
+  are dev-only and synced from the ERA SEO tab), so there's no empty tab —
+  just **ERA SEO**, **ERA Blog**, **Reading Stats**.
+
 ## [19.0.2.0.0] — 2026-05-27
 
 ### Fixed — duplicate Title/Description on the post form; ERA SEO now visible

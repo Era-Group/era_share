@@ -176,12 +176,40 @@ class BlogPost(models.Model):
     @api.depends('content')
     def _compute_era_text_stats(self):
         for rec in self:
-            text = self._strip_html_to_text(rec.content or '')
-            words = [w for w in _TAG_SPLIT_RE.split(text) if w.strip()]
-            rec.era_word_count = len(words)
+            # Count the richest language variant, not just rec.content. The
+            # English source often stays the "Start writing here..." stub while
+            # the real article lives in another language's translation; a stored
+            # compute reading only the source would report that stub's 3 words.
+            best = 0
+            for html in rec._era_content_variants():
+                text = self._strip_html_to_text(html or '')
+                n = len([w for w in _TAG_SPLIT_RE.split(text) if w.strip()])
+                if n > best:
+                    best = n
+            rec.era_word_count = best
             rec.era_reading_time_minutes = (
-                max(1, round(len(words) / _WORDS_PER_MINUTE)) if words else 0
+                max(1, round(best / _WORDS_PER_MINUTE)) if best else 0
             )
+
+    def _era_content_variants(self):
+        """All stored language variants of ``content`` (else the plain value).
+
+        Lets word count / reading time reflect whichever language actually
+        carries the article, instead of the (possibly stub) source language.
+        """
+        self.ensure_one()
+        field = self._fields['content']
+        try:
+            stored = field._get_stored_translations(self)
+        except Exception:  # noqa: BLE001
+            stored = None
+        if stored:
+            # Skip the '_<lang>' source-snapshot keys used for staleness checks.
+            variants = [v for k, v in stored.items()
+                        if not k.startswith('_') and v]
+            if variants:
+                return variants
+        return [rec_content if (rec_content := self.content) else '']
 
     @api.depends('era_excerpt', 'content', 'subtitle')
     def _compute_era_excerpt_effective(self):

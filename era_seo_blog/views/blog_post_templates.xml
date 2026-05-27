@@ -26,7 +26,7 @@
   <template id="blog_post_subtitle_meta"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: subtitle + reading time">
-    <xpath expr="//div[hasclass('o_wblog_post_title')]" position="inside">
+    <xpath expr="//div[contains(@t-attf-class, 'o_wblog_post_title')]" position="inside">
       <div t-if="blog_post.era_subtitle" class="o_wblog_post_subtitle text-muted h5 mt-2">
         <t t-esc="blog_post.era_subtitle"/>
       </div>
@@ -51,7 +51,7 @@
   <template id="blog_post_toc"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: auto table of contents">
-    <xpath expr="//div[hasclass('o_wblog_post_content_field')]" position="before">
+    <xpath expr="//div[@t-field='blog_post.content']" position="before">
       <t t-if="blog_post.era_show_toc and blog_post.era_toc_html">
         <details class="o_era_blog_toc_container card my-3" open="open">
           <summary class="card-header h6 m-0">
@@ -72,7 +72,7 @@
   <template id="blog_post_author_box_top"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: author box (top)">
-    <xpath expr="//div[hasclass('o_wblog_post_content_field')]" position="before">
+    <xpath expr="//div[@t-field='blog_post.content']" position="before">
       <t t-if="blog_post.era_show_author_box and blog_post.era_author_profile_id">
         <t t-set="author" t-value="blog_post.era_author_profile_id"/>
         <div class="o_era_blog_author_box card my-3">
@@ -106,7 +106,7 @@
   <template id="blog_post_faq_accordion"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: FAQ accordion">
-    <xpath expr="//div[hasclass('o_wblog_post_footer')]" position="before">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
       <t t-if="blog_post.era_faq_ids">
         <section class="o_era_blog_faq my-4">
           <h3 class="mb-3" t-translation="off">Frequently Asked Questions</h3>
@@ -143,7 +143,7 @@
   <template id="blog_post_related"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: related posts">
-    <xpath expr="//div[hasclass('o_wblog_post_footer')]" position="before">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
       <t t-if="blog_post.era_show_related and blog_post.era_related_post_ids">
         <section class="o_era_blog_related my-4">
           <h3 class="mb-3" t-translation="off">Related Posts</h3>
@@ -179,7 +179,7 @@
   <template id="blog_post_series_nav"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: series navigation">
-    <xpath expr="//div[hasclass('o_wblog_post_footer')]" position="before">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
       <t t-if="blog_post.era_series_id">
         <nav class="o_era_blog_series_nav my-4 d-flex justify-content-between"
              t-attf-aria-label="Series navigation: #{blog_post.era_series_id.name}">
@@ -223,7 +223,7 @@
   <template id="blog_post_share_buttons"
             inherit_id="website_blog.blog_post_complete"
             name="ERA Blog: share buttons">
-    <xpath expr="//div[hasclass('o_wblog_post_footer')]" position="before">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
       <t t-if="blog_post.era_show_share_buttons">
         <t t-set="post_url"
            t-value="(request.env['ir.config_parameter'].sudo().get_param('web.base.url') or '').rstrip('/') + (blog_post.website_url or '/')"/>

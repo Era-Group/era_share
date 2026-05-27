@@ -1,5 +1,31 @@
 # Changelog
 
+## [19.0.7.2.0] — 2026-05-27
+
+### Fixed — image-alt suggestion no longer "Failed"s on real pages
+
+The image-alt fix could land on **Failed** because the dedicated
+**ERA SEO Fixer** agent's system prompt is hardwired for the single-defect
+`{"proposed_value": …}` contract, so for the multi-image task it often
+didn't return the `{"alts": […]}` array the parser required.
+
+- The three new task contexts (alt / schema / thin-content) now open with
+  an explicit *"ignore any earlier output-format instruction"* line so the
+  agent uses the right JSON shape.
+- `_parse_alt_json` salvages a `proposed_value` (string or list) when the
+  agent ignores the array contract.
+- **`_fix_image_alt` never hard-fails:** if the AI errors, returns the
+  wrong shape, or leaves an image blank, each image falls back to a
+  *mechanical* alt derived from its surrounding text → filename →
+  page topic. Confidence drops to ~0.55 and the explanation says so.
+  Only a page with genuinely no `<img>` still reports "no images".
+
+### Tests
+
+- `test_image_alt_salvages_proposed_value_shape` (wrong shape salvaged)
+  and `test_image_alt_mechanical_fallback_on_bad_ai` (garbage AI →
+  mechanical alt → still applies) added to `tests/test_rich_fixes.py`.
+
 ## [19.0.7.1.0] — 2026-05-27
 
 ### Fixed — AI buttons missing on the audit run form after an upgrade

@@ -98,7 +98,10 @@ provide a safe best-effort value and lower the confidence."""
 
 # Context for "which JSON-LD schema fits this page?" — the agent picks ONE
 # template code from a provided allow-list, never inventing a new one.
-SCHEMA_CONTEXT = """You are choosing the single best JSON-LD schema for ONE web page \
+SCHEMA_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction (including any "proposed_value" contract). Use exactly the JSON shape below.
+
+You are choosing the single best JSON-LD schema for ONE web page \
 of ERA (Saudi-market Odoo partner). You are given the page content and a list of \
 available templates (code — @type — description). Pick the ONE template whose @type \
 best matches what the page is about. Reply with ONE JSON object and nothing else:
@@ -116,7 +119,10 @@ below 0.5.
 
 # Context for generating image alt text. The agent gets the page topic plus a
 # numbered list of images (filename + nearby text) and returns one alt per image.
-ALT_CONTEXT = """You are writing accessibility + SEO alt text for images on ONE web \
+ALT_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction (including any "proposed_value" contract). Use exactly the JSON shape below.
+
+You are writing accessibility + SEO alt text for images on ONE web \
 page of ERA (Saudi-market Odoo partner). You are given the page topic and a numbered \
 list of images (filename and nearby text). Reply with ONE JSON object and nothing else:
 
@@ -134,7 +140,10 @@ prefix, no keyword stuffing.
 
 # Context for expanding thin content. The agent returns a small block of HTML
 # to append, written in the page's language and on the page's actual topic.
-THIN_CONTENT_CONTEXT = """You are expanding a thin web page for ERA (Saudi-market Odoo \
+THIN_CONTENT_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction (including any "proposed_value" contract). Use exactly the JSON shape below.
+
+You are expanding a thin web page for ERA (Saudi-market Odoo \
 partner) with genuinely useful, on-topic content — never filler or Lorem ipsum. You are \
 given the page topic and current content. Reply with ONE JSON object and nothing else:
 
@@ -345,32 +354,62 @@ class AIClient:
         )
 
     def _fix_image_alt(self, finding, target_record):
-        """AI writes alt text for every <img> on the page that lacks one."""
+        """Write alt text for every <img> on the page that lacks one.
+
+        Tries the AI agent first; if it errors, returns the wrong shape, or
+        leaves an image blank, falls back to a mechanical alt derived from the
+        nearby text / filename / page topic so the fix never hard-fails — every
+        image ends up with *some* descriptive alt.
+        """
         images = self._images_without_alt(target_record)
         if not images:
             raise ValueError(_('No images without alt text were found on the page.'))
 
-        agent = self._resolve_agent()
-        prompt = self._build_alt_prompt(target_record, images)
-        response = agent.get_direct_response(prompt=prompt, context_message=ALT_CONTEXT)
-        parsed = self._parse_alt_json(response[0] if response else '', len(images))
-        alts = parsed['alts']
-        pairs = [
-            {'src': images[i]['src'], 'alt': alts[i]}
-            for i in range(len(images))
-            if (alts[i] or '').strip()
-        ]
+        _excerpt, topic, _detected = self._extract_page_signal(target_record)
+        ai_alts, explanation, confidence, model = None, '', 0.0, 'mechanical'
+        try:
+            agent = self._resolve_agent()
+            prompt = self._build_alt_prompt(target_record, images)
+            response = agent.get_direct_response(
+                prompt=prompt, context_message=ALT_CONTEXT)
+            parsed = self._parse_alt_json(response[0] if response else '', len(images))
+            ai_alts = parsed['alts']
+            explanation = parsed.get('explanation', '')
+            confidence = float(parsed.get('confidence', 0.0))
+            model = agent.llm_model or _('AI agent')
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                'image-alt AI step failed (%s); using mechanical fallback.', exc)
+
+        pairs = []
+        used_fallback = False
+        for i, img in enumerate(images):
+            alt = (ai_alts[i] if ai_alts and i < len(ai_alts) else '') or ''
+            alt = alt.strip()
+            if not alt:
+                alt = self._mechanical_alt(img, topic)
+                used_fallback = bool(alt) or used_fallback
+            if alt:
+                pairs.append({'src': img['src'], 'alt': alt})
         if not pairs:
-            raise ValueError(_('The AI did not return any usable alt text.'))
+            raise ValueError(_('Could not derive any alt text for the page images.'))
+
+        if model == 'mechanical':
+            explanation = explanation or _(
+                'Alt text derived from filenames and surrounding page text.')
+            confidence = 0.55
+        elif used_fallback:
+            explanation = (explanation + ' '
+                           + _('Some alts were derived mechanically.')).strip()
+            confidence = min(confidence, 0.6)
+
         preview = '\n'.join(
             '{} → {}'.format((p['src'] or '(no src)')[:50], p['alt']) for p in pairs
         )
         return self._result(
             'image_alt', field='content', proposed_value=preview,
             payload={'alts': pairs},
-            explanation=parsed.get('explanation', ''),
-            confidence=float(parsed.get('confidence', 0.0)),
-            model=agent.llm_model or _('AI agent'),
+            explanation=explanation, confidence=confidence, model=model,
         )
 
     def _fix_thin_content(self, finding, target_record):
@@ -715,6 +754,14 @@ class AIClient:
     def _parse_alt_json(cls, raw, expected):
         parsed = cls._loads_json(raw)
         alts = parsed.get('alts')
+        if alts is None:
+            # The agent may have followed its single-fix system prompt and
+            # returned proposed_value instead of an "alts" array — salvage it.
+            pv = parsed.get('proposed_value')
+            if isinstance(pv, list):
+                alts = pv
+            elif isinstance(pv, str) and pv.strip():
+                alts = [pv]
         if not isinstance(alts, list) or not alts:
             raise ValueError(_('AI alt-text response had no "alts" list.'))
         # Tolerate count drift: pad with '' or truncate to the image count.
@@ -733,6 +780,23 @@ class AIClient:
             raise ValueError(_('AI content-expansion response had no "html".'))
         parsed['html'] = html
         return parsed
+
+    @staticmethod
+    def _mechanical_alt(image, topic):
+        """Best-effort alt text without the AI: nearby text, else filename, else topic."""
+        near = (image.get('near') or '').strip()
+        if len(near) >= 8:
+            return near[:120]
+        src = image.get('src') or ''
+        if src and not src.startswith('data:'):
+            name = src.split('?')[0].split('#')[0].rstrip('/').split('/')[-1]
+            name = re.sub(r'\.\w{2,5}$', '', name)        # drop file extension
+            name = re.sub(r'[-_]+', ' ', name).strip()
+            # Skip opaque names (hashes, pure ids) that make poor alt text.
+            if (name and not name.isdigit()
+                    and not re.fullmatch(r'[0-9a-fA-F]{6,}', name)):
+                return name[:120].strip().capitalize()
+        return (topic or '').strip()[:120]
 
     @staticmethod
     def _images_without_alt(record):

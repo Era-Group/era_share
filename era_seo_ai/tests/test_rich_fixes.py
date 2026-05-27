@@ -198,6 +198,41 @@ class TestRichFixes(TransactionCase):
         self.assertEqual(f.ai_status, 'applied')
         self.assertIn('Project gallery thumbnail', page.arch)
 
+    def test_image_alt_salvages_proposed_value_shape(self):
+        """Agent returns the single-fix {proposed_value} shape -> salvaged."""
+        page = self._make_page(
+            '/alt-salvage',
+            arch='<div><h1>Team</h1><img src="/t.png"/>'
+                 '<p>Meet the team.</p></div>')
+        f = self._make_finding(page, 'image_missing_alt')
+        agent = _mock_agent('{"proposed_value": "The ERA team", "confidence": 0.8}')
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            f.action_ai_suggest()
+        f.invalidate_recordset()
+        self.assertEqual(f.ai_status, 'suggested')
+        self.assertEqual(f.ai_fix_type, 'image_alt')
+        self.assertIn('The ERA team', f.ai_proposed_value)
+
+    def test_image_alt_mechanical_fallback_on_bad_ai(self):
+        """Agent returns garbage -> mechanical alt from nearby text, no failure."""
+        page = self._make_page(
+            '/alt-fallback',
+            arch='<div><h1>Our Riyadh Office</h1><img src="/x.png"/>'
+                 '<p>A view of the Riyadh headquarters lobby.</p></div>')
+        f = self._make_finding(page, 'image_missing_alt')
+        agent = _mock_agent('total nonsense, not json')
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            f.action_ai_suggest()
+        f.invalidate_recordset()
+        self.assertEqual(f.ai_status, 'suggested',
+                         'Image-alt must not hard-fail when the AI misbehaves.')
+        self.assertEqual(f.ai_model_used, 'mechanical')
+        self.assertTrue(f.ai_proposed_value.strip())
+        # Applying still injects alt into the content.
+        f.action_ai_apply()
+        page.invalidate_recordset()
+        self.assertIn('alt=', page.arch)
+
     def test_image_alt_no_missing_images_fails_gracefully(self):
         page = self._make_page(
             '/alt-none',

@@ -20,12 +20,6 @@ access_era_seo_audit_finding_user,era.seo.audit.finding (user),model_era_seo_aud
 access_era_seo_hreflang_manager,era.seo.hreflang (manager),model_era_seo_hreflang,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_seo_hreflang_user,era.seo.hreflang (user),model_era_seo_hreflang,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_hreflang_public,era.seo.hreflang (public),model_era_seo_hreflang,base.group_public,1,0,0,0
-access_era_blog_category_manager,era.blog.category (manager),model_era_blog_category,era_seo_manager.group_era_seo_manager,1,1,1,1
-access_era_blog_category_user,era.blog.category (user),model_era_blog_category,era_seo_manager.group_era_seo_user,1,0,0,0
-access_era_blog_series_manager,era.blog.series (manager),model_era_blog_series,era_seo_manager.group_era_seo_manager,1,1,1,1
-access_era_blog_series_user,era.blog.series (user),model_era_blog_series,era_seo_manager.group_era_seo_user,1,0,0,0
-access_era_blog_author_manager,era.blog.author (manager),model_era_blog_author,era_seo_manager.group_era_seo_manager,1,1,1,1
-access_era_blog_author_user,era.blog.author (user),model_era_blog_author,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_content_block_manager,era.content.block (manager),model_era_content_block,era_seo_manager.group_era_seo_manager,1,1,1,1
 access_era_content_block_user,era.content.block (user),model_era_content_block,era_seo_manager.group_era_seo_user,1,0,0,0
 access_era_seo_schema_preview_wizard_user,era.seo.schema.preview.wizard (user),model_era_seo_schema_preview_wizard,era_seo_manager.group_era_seo_user,1,1,1,1

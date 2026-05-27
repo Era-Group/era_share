@@ -1,29 +1,30 @@
 {
     'name': 'ERA SEO Manager',
-    'summary': 'Complete SEO, schema, redirects, sitemap, and blog enhancement for Odoo 19',
+    'summary': 'Complete SEO, schema, redirects, sitemap, and audit for Odoo 19',
     'description': """
 ERA SEO Manager
 ===============
 A unified SEO layer for Odoo 19 websites:
 - Per-page meta, OG, Twitter, canonical, robots directives
 - JSON-LD schema engine with 17 built-in templates
-- Redirect manager (301/302) with bulk CSV import
+- Redirect manager (301/302/307/308/410) with bulk CSV import + 404 log
 - Sitemap and robots.txt admin UI
 - SEO audit dashboard with actionable findings
-- Blog enhancements: reading time, related posts, series, TOC, author profiles
 - Hreflang automation for multilingual websites
 - Full Arabic / RTL support
+
+Blog enhancements (reading time, related posts, series, TOC, author profiles,
+RSS/Atom/JSON feeds) ship in the optional ``era_seo_blog`` addon.
     """,
     'author': 'ERA — Excellence Resources Arabia',
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.1.0',
+    'version': '19.0.4.0.0',
     'depends': [
         'base',
         'web',
         'website',
-        'website_blog',
         'mail',
         'portal',
     ],
@@ -50,12 +51,8 @@ A unified SEO layer for Odoo 19 websites:
         'views/seo_audit_run_views.xml',
         'views/seo_audit_dashboard.xml',
         'views/seo_hreflang_views.xml',
-        'views/blog_post_views.xml',
-        'views/blog_series_views.xml',
-        'views/blog_author_views.xml',
         'views/content_block_views.xml',
         'views/content_block_snippets.xml',
-        'views/blog_post_templates.xml',
         'views/website_layout_templates.xml',
         'views/website_meta_templates.xml',
         'reports/seo_audit_report.xml',
@@ -78,5 +75,5 @@ A unified SEO layer for Odoo 19 websites:
     'uninstall_hook': 'uninstall_hook',
     'installable': True,
     'application': True,
-    'auto_install': False,
+    'auto_install': True,
 }

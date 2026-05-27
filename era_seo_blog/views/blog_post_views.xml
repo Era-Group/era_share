@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    blog.post form extensions for ERA SEO Blog
+    ==========================================
+
+    Adds two new tabs to the stock blog.post form (which already has a
+    "SEO" page from website_blog):
+
+      - "ERA SEO": full era.seo.mixin fields (title, description, OG, Twitter,
+        canonical, robots, sitemap) so ERA configuration is editable.
+      - "ERA Blog": series, category, author profile, display toggles,
+        canonical-external override, FAQ entries, related posts.
+      - "Reading Stats": reading time, word count, generated TOC.
+  -->
+  <record id="view_blog_post_form_era_seo" model="ir.ui.view">
+    <field name="name">blog.post.form.era.seo</field>
+    <field name="model">blog.post</field>
+    <field name="inherit_id" ref="website_blog.view_blog_post_form"/>
+    <field name="arch" type="xml">
+
+      <!-- 1. Extend the existing SEO page with ERA mixin fields. -->
+      <xpath expr="//page[@name='seo']" position="inside">
+        <separator string="ERA SEO — Extended"/>
+        <group string="Title &amp; Description">
+          <field name="seo_title"/>
+          <field name="seo_title_length" string="Title length (chars)"/>
+          <field name="seo_description"/>
+          <field name="seo_description_length" string="Description length (chars)"/>
+          <field name="seo_keywords"/>
+        </group>
+        <group string="Open Graph">
+          <field name="seo_og_title"/>
+          <field name="seo_og_description"/>
+          <field name="seo_og_image" widget="image"/>
+          <field name="seo_og_type"/>
+        </group>
+        <group string="Twitter Card">
+          <field name="seo_twitter_card"/>
+          <field name="seo_twitter_site"/>
+          <field name="seo_twitter_creator"/>
+        </group>
+        <group string="Indexing &amp; Canonical">
+          <field name="seo_canonical_url"/>
+          <field name="era_canonical_external_url"/>
+          <field name="seo_robots_index"/>
+          <field name="seo_robots_follow"/>
+          <field name="seo_robots_archive"/>
+          <field name="seo_robots_snippet"/>
+        </group>
+        <group string="Sitemap">
+          <field name="seo_sitemap_include"/>
+          <field name="seo_sitemap_priority"/>
+          <field name="seo_sitemap_changefreq"/>
+        </group>
+      </xpath>
+
+      <!-- 2. Append ERA Blog tab and Stats tab -->
+      <xpath expr="//page[@name='seo']" position="after">
+        <page string="ERA Blog" name="era_blog">
+          <group>
+            <group string="Editorial">
+              <field name="era_subtitle"/>
+              <field name="era_excerpt"
+                     placeholder="Short summary used in feeds and lists. Auto-generated when empty."/>
+              <field name="era_author_profile_id"
+                     options="{'no_create': True}"/>
+            </group>
+            <group string="Taxonomy">
+              <field name="era_category_id"
+                     options="{'no_create': True}"/>
+              <field name="era_series_id"
+                     options="{'no_create': True}"/>
+              <field name="era_series_sequence"
+                     invisible="not era_series_id"/>
+            </group>
+            <group string="Display">
+              <field name="era_show_toc"/>
+              <field name="era_show_author_box"/>
+              <field name="era_show_related"/>
+              <field name="era_show_share_buttons"/>
+            </group>
+            <group string="Series Navigation"
+                   invisible="not era_series_id">
+              <field name="era_series_prev_id" readonly="1"/>
+              <field name="era_series_next_id" readonly="1"/>
+            </group>
+          </group>
+          <separator string="FAQ Entries"/>
+          <field name="era_faq_ids">
+            <list editable="bottom">
+              <field name="sequence" widget="handle"/>
+              <field name="question"/>
+              <field name="answer" widget="text"/>
+              <field name="active" optional="show"/>
+            </list>
+          </field>
+          <separator string="Related Posts (auto-computed)"/>
+          <field name="era_related_post_ids" readonly="1">
+            <list>
+              <field name="name"/>
+              <field name="published_date"/>
+            </list>
+          </field>
+        </page>
+
+        <page string="Reading Stats" name="era_stats">
+          <group>
+            <group string="Length">
+              <field name="era_word_count" readonly="1"/>
+              <field name="era_reading_time_minutes" readonly="1"/>
+            </group>
+          </group>
+          <separator string="Auto-Generated Table of Contents"/>
+          <field name="era_toc_html" readonly="1" nolabel="1"/>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Quick info on the blog list view -->
+  <record id="view_blog_post_list_era_columns" model="ir.ui.view">
+    <field name="name">blog.post.list.era.columns</field>
+    <field name="model">blog.post</field>
+    <field name="inherit_id" ref="website_blog.view_blog_post_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='blog_id']" position="after">
+        <field name="era_category_id" optional="show"/>
+        <field name="era_series_id" optional="show"/>
+        <field name="era_author_profile_id" optional="hide"/>
+        <field name="era_reading_time_minutes" optional="show"
+               string="Read (min)"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

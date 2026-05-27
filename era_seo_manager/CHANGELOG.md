@@ -3,6 +3,37 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.4.0.0] — 2026-05-27
+
+### Changed — `website_blog` dependency removed
+
+`era_seo_manager` no longer depends on `website_blog`. Sites that don't
+run a blog can now install the core SEO layer without pulling in the
+blog module.
+
+Blog enhancements (reading time, TOC, related posts, series, categories,
+authors, FAQ, RSS/Atom/JSON feeds) moved to the new sibling addon
+**`era_seo_blog`**, which depends on both `era_seo_manager` and
+`website_blog` and auto-installs whenever both are present.
+
+### Removed
+
+- `models/blog_post.py`, `blog_series.py`, `blog_category.py`,
+  `blog_author.py` (stubs that anticipated Phase 5 — now live in
+  `era_seo_blog`)
+- `controllers/blog.py`, `controllers/feed.py` (stubs)
+- `views/blog_post_views.xml`, `blog_series_views.xml`,
+  `blog_author_views.xml`, `blog_post_templates.xml`
+- `tests/test_blog_extensions.py`
+- Blog ACL rows in `security/ir.model.access.csv`
+
+### Migration
+
+Existing sites that have `website_blog` will pick up `era_seo_blog`
+automatically on next module-list update. No data loss — the blog SEO
+fields on existing posts were never written to by Phase 1-3 since the
+stub models had no extra fields.
+
 ## [19.0.3.1.0] — 2026-05-27
 
 ### Added — Phase 3 polish

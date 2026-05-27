@@ -531,7 +531,7 @@ class EraSeoAuditRun(models.Model):
         """
         urls_by_id = {p.id: (p.url or '').strip() for p in pages if (p.url or '').strip()}
         # Build content index once.
-        contents = {p.id: (p.content or p.arch or '') for p in pages}
+        contents = {p.id: (p.arch or '') for p in pages}
         for p in pages:
             url = urls_by_id.get(p.id)
             if not url or url == '/':

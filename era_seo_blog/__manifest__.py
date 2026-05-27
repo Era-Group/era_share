@@ -22,7 +22,7 @@ stock ``website_blog`` module and want the full editorial / SEO treatment:
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.1.1',
+    'version': '19.0.2.0.0',
     'depends': [
         'era_seo_manager',
         'website_blog',

@@ -105,7 +105,12 @@ class EraSeoMixin(models.AbstractModel):
                     new_val = proposed.get(fname)
                     if not new_val:
                         continue
-                    if overwrite or not lang_rec[fname]:
+                    # "Fill missing" must look at THIS language's own stored
+                    # translation — not lang_rec[fname], which falls back to the
+                    # source-language value and would make every non-default
+                    # language look already-filled (so Arabic kept showing the
+                    # English text). Rewrite overwrites unconditionally.
+                    if overwrite or rec._ai_lang_needs_fill(fname, lang.code):
                         vals[fname] = new_val
                 if vals:
                     lang_rec.write(vals)
@@ -162,6 +167,31 @@ class EraSeoMixin(models.AbstractModel):
             pass
         active = self.env['res.lang'].search([('active', '=', True)])
         return active, active[:1]
+
+    def _ai_lang_needs_fill(self, fname, lang_code):
+        """True when ``fname`` has no value of its OWN in ``lang_code``.
+
+        For translatable fields, ``rec.with_context(lang=X)[fname]`` returns
+        the source-language value as a fallback when X has no translation, so
+        it can't tell "translated" from "falling back". We read the raw stored
+        translations instead, so "fill missing" actually fills each language
+        that lacks its own translation (e.g. Arabic showing the English text).
+        """
+        self.ensure_one()
+        field = self._fields.get(fname)
+        if field is None:
+            return False
+        if not getattr(field, 'translate', False):
+            return not self[fname]
+        try:
+            stored = field._get_stored_translations(self)
+        except Exception:  # noqa: BLE001
+            # API moved — fall back to the (imperfect) context read.
+            return not self.with_context(lang=lang_code)[fname]
+        if not stored:
+            return True
+        value = stored.get(lang_code)
+        return not (value and str(value).strip())
 
     # ------------------------------------------------------------------
     # Helpers

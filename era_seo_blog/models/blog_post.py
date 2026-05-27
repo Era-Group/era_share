@@ -367,9 +367,24 @@ class BlogPost(models.Model):
     # Auto-attach JSON-LD schemas
     # ------------------------------------------------------------------------
 
+    # ERA SEO field  <->  stock website.seo.metadata field. Mirrors
+    # era_seo_manager.website_page so the ERA fields (which the SEO tab and
+    # the AI fill edit) and Odoo's native website_meta_* never diverge: the
+    # blog frontend + sitemap read the stock columns, while JSON-LD and the
+    # ERA tooling read seo_*. Last-write-wins, guarded by _era_no_sync.
+    _ERA_TO_STOCK = {
+        'seo_title': 'website_meta_title',
+        'seo_description': 'website_meta_description',
+        'seo_keywords': 'website_meta_keywords',
+    }
+    _STOCK_TO_ERA = {v: k for k, v in _ERA_TO_STOCK.items()}
+
     @api.model_create_multi
     def create(self, vals_list):
         posts = super().create(vals_list)
+        for post in posts:
+            post._sync_era_to_stock()
+            post._sync_stock_to_era()
         posts._sync_era_default_schemas()
         try:
             posts._sync_era_hreflang_entries()
@@ -379,6 +394,15 @@ class BlogPost(models.Model):
 
     def write(self, vals):
         result = super().write(vals)
+        # Keep ERA seo_* and stock website_meta_* in sync (both directions,
+        # last-write-wins) unless we're already inside a sync write.
+        if not self.env.context.get('_era_no_sync'):
+            if set(self._ERA_TO_STOCK).intersection(vals):
+                for post in self:
+                    post._sync_era_to_stock()
+            elif set(self._STOCK_TO_ERA).intersection(vals):
+                for post in self:
+                    post._sync_stock_to_era()
         # Refresh FAQ schema when FAQs or content fields change.
         if any(k in vals for k in ('era_faq_ids', 'name', 'seo_title')):
             self._sync_era_default_schemas()
@@ -389,6 +413,30 @@ class BlogPost(models.Model):
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('blog.post.write: hreflang sync skipped (%s)', exc)
         return result
+
+    def _sync_era_to_stock(self):
+        """Mirror ERA seo_* into the stock website_meta_* columns (per-language)."""
+        if self.env.context.get('_era_no_sync'):
+            return
+        update = {}
+        for era_field, stock_field in self._ERA_TO_STOCK.items():
+            value = self[era_field]
+            if value and self[stock_field] != value:
+                update[stock_field] = value
+        if update:
+            self.with_context(_era_no_sync=True).write(update)
+
+    def _sync_stock_to_era(self):
+        """Mirror stock website_meta_* edits back into the ERA seo_* fields."""
+        if self.env.context.get('_era_no_sync'):
+            return
+        update = {}
+        for stock_field, era_field in self._STOCK_TO_ERA.items():
+            value = self[stock_field]
+            if value and self[era_field] != value:
+                update[era_field] = value
+        if update:
+            self.with_context(_era_no_sync=True).write(update)
 
     def unlink(self):
         """Cascade-delete polymorphic FK rows before the post is removed."""

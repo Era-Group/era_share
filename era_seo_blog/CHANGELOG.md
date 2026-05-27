@@ -3,6 +3,26 @@
 All notable changes to `era_seo_blog` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.0.0] — 2026-05-27
+
+### Fixed — duplicate Title/Description on the post form; ERA SEO now visible
+
+The SEO tab showed two sets of Title/Description/Keywords — Odoo's stock
+`website_meta_*` and ERA's `seo_*` — that weren't linked, and the ERA
+fields were buried *inside* the stock SEO page, which is dev-mode only
+(`base.group_no_one`), so normal SEO managers couldn't see them at all.
+
+- **Sync.** `blog.post` now mirrors `seo_* ↔ website_meta_*` bidirectionally
+  (last-write-wins, guarded by `_era_no_sync`), the same pattern
+  `website.page` already uses. So the ERA fields (and the AI fill) drive
+  Odoo's native meta/sitemap, and the stock "Optimize SEO" dialog flows
+  back into the ERA fields. A post-migration backfills existing posts.
+- **Layout.** The ERA SEO fields moved out of the dev-only stock SEO page
+  into their own visible **ERA SEO** tab (Title & Description, Open Graph,
+  Twitter, Indexing & Canonical, Sitemap). The stock Meta
+  Title/Description/Keywords group is hidden on the form (kept in sync
+  underneath), so editors work in one place.
+
 ## [19.0.1.1.1] — 2026-05-27
 
 ### Fixed

@@ -128,6 +128,34 @@ class TestFillSeo(TransactionCase):
         # One agent call per language.
         self.assertGreaterEqual(agent.get_direct_response.call_count, 2)
 
+    def test_fill_generates_own_translation_not_fallback(self):
+        """Fill-missing must fill a language that only falls back to the source.
+
+        Regression: a non-default language with no own translation reads back
+        the source value, so the old emptiness check skipped it (Arabic kept
+        showing English). Now it inspects the raw stored translations.
+        """
+        fr = self.env.ref('base.lang_fr')
+        fr.active = True
+        website = self.env['website'].search([], limit=1)
+        en = self.env.ref('base.lang_en')
+        website.language_ids = [(4, en.id), (4, fr.id)]
+        page = self._make_page(url='/fill-fallback', website_id=website.id)
+        # Pre-set ONLY the English title; French has no own value (falls back).
+        page.with_context(lang='en_US').write({'seo_title': 'Hand EN Title'})
+
+        with patch.object(AIClient, '_resolve_agent',
+                          return_value=_mock_agent(_FULL_REPLY)):
+            page.action_ai_fill_seo()
+        page.invalidate_recordset()
+
+        stored = page._fields['seo_title']._get_stored_translations(page)
+        # English kept its hand-written value (own translation, not overwritten).
+        self.assertEqual(stored.get('en_US'), 'Hand EN Title')
+        # French got its OWN generated value (not just the English fallback).
+        self.assertTrue(stored.get('fr_FR'),
+                        'French must get its own seo_title translation.')
+
     def test_fill_requires_manager_group(self):
         page = self._make_page(url='/fill-acl')
         # Drop the manager group for this test.

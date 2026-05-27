@@ -1,5 +1,22 @@
 # Changelog
 
+## [19.0.8.2.0] — 2026-05-27
+
+### Fixed — "Fill SEO" now fills every language, not just the default
+
+"AI: Fill SEO" (fill-missing) checked `rec.with_context(lang=X)[field]` to
+decide if a field was empty. For translatable fields that read returns the
+**source-language fallback** when X has no translation, so every non-default
+language looked already-filled and was skipped — Arabic kept showing the
+English text.
+
+`_ai_fill_seo` now asks `_ai_lang_needs_fill(field, lang)`, which inspects
+the field's **raw stored translations** (`_get_stored_translations`) and
+returns True when that specific language has no value of its own. So
+fill-missing now generates the Arabic translation (and any other language)
+that was only falling back. Rewrite-all is unchanged (it overwrites every
+language regardless).
+
 ## [19.0.8.1.0] — 2026-05-27
 
 ### Fixed — per-language fills/fixes now actually use the target language

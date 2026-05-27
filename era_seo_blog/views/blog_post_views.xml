@@ -19,44 +19,55 @@
     <field name="inherit_id" ref="website_blog.view_blog_post_form"/>
     <field name="arch" type="xml">
 
-      <!-- 1. Extend the existing SEO page with ERA mixin fields. -->
-      <xpath expr="//page[@name='seo']" position="inside">
-        <separator string="ERA SEO — Extended"/>
-        <group string="Title &amp; Description">
-          <field name="seo_title"/>
-          <field name="seo_title_length" string="Title length (chars)"/>
-          <field name="seo_description"/>
-          <field name="seo_description_length" string="Description length (chars)"/>
-          <field name="seo_keywords"/>
-        </group>
-        <group string="Open Graph">
-          <field name="seo_og_title"/>
-          <field name="seo_og_description"/>
-          <field name="seo_og_image" widget="image"/>
-          <field name="seo_og_type"/>
-        </group>
-        <group string="Twitter Card">
-          <field name="seo_twitter_card"/>
-          <field name="seo_twitter_site"/>
-          <field name="seo_twitter_creator"/>
-        </group>
-        <group string="Indexing &amp; Canonical">
-          <field name="seo_canonical_url"/>
-          <field name="era_canonical_external_url"/>
-          <field name="seo_robots_index"/>
-          <field name="seo_robots_follow"/>
-          <field name="seo_robots_archive"/>
-          <field name="seo_robots_snippet"/>
-        </group>
-        <group string="Sitemap">
-          <field name="seo_sitemap_include"/>
-          <field name="seo_sitemap_priority"/>
-          <field name="seo_sitemap_changefreq"/>
-        </group>
+      <!-- 1. Hide the stock Meta Title / Description / Keywords. They duplicate
+           the ERA SEO fields below and are kept in sync automatically
+           (blog.post._sync_era_to_stock / _sync_stock_to_era), so editors work
+           in one place. The stock SEO page is dev-only anyway. -->
+      <xpath expr="//page[@name='seo']/group[@name='default_opengraph']"
+             position="attributes">
+        <attribute name="invisible">1</attribute>
       </xpath>
 
-      <!-- 2. Append ERA Blog tab and Stats tab -->
+      <!-- 2. ERA SEO, ERA Blog and Reading Stats as their own visible tabs.
+           (Previously the ERA fields lived inside the dev-only stock SEO page,
+           so normal SEO managers could not see them.) -->
       <xpath expr="//page[@name='seo']" position="after">
+        <page string="ERA SEO" name="era_seo">
+          <group>
+            <group string="Title &amp; Description">
+              <field name="seo_title"/>
+              <field name="seo_title_length" string="Title length (chars)"/>
+              <field name="seo_description"/>
+              <field name="seo_description_length" string="Description length (chars)"/>
+              <field name="seo_keywords"/>
+            </group>
+            <group string="Open Graph">
+              <field name="seo_og_title"/>
+              <field name="seo_og_description"/>
+              <field name="seo_og_image" widget="image"/>
+              <field name="seo_og_type"/>
+            </group>
+            <group string="Twitter Card">
+              <field name="seo_twitter_card"/>
+              <field name="seo_twitter_site"/>
+              <field name="seo_twitter_creator"/>
+            </group>
+            <group string="Indexing &amp; Canonical">
+              <field name="seo_canonical_url"/>
+              <field name="era_canonical_external_url"/>
+              <field name="seo_robots_index"/>
+              <field name="seo_robots_follow"/>
+              <field name="seo_robots_archive"/>
+              <field name="seo_robots_snippet"/>
+            </group>
+            <group string="Sitemap">
+              <field name="seo_sitemap_include"/>
+              <field name="seo_sitemap_priority"/>
+              <field name="seo_sitemap_changefreq"/>
+            </group>
+          </group>
+        </page>
+
         <page string="ERA Blog" name="era_blog">
           <group>
             <group string="Editorial">

@@ -67,8 +67,10 @@ fences, no prose:
 
 Length caps: seo_title <= 60 chars (keyword first); seo_description <= 160 chars \
 (one sentence, soft CTA); url slug lowercase, hyphenated, no stop-words, <= 75 \
-chars. Match the page's language. Never invent facts or exceed the caps. \
-Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no signal."""
+chars. When the prompt gives a target_language, write proposed_value in THAT \
+language regardless of the content's language (this overrides matching the \
+content language); otherwise match the page's language. Never invent facts or \
+exceed the caps. Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no signal."""
 
 
 # Context for the multi-field "fill all recommended SEO fields" task. Sent as
@@ -87,8 +89,11 @@ prose — containing every listed key PLUS "explanation" (one sentence) and \
 "confidence" (0.0-1.0).
 
 General rules:
-- Match the page's language throughout (Arabic content -> Arabic copy), or the explicit \
-target_language when the prompt gives one.
+- LANGUAGE: when the prompt gives a target_language, write the value of EVERY field \
+in THAT language, regardless of the content's language — this overrides matching the \
+content language. The page content may be English while you must answer in Arabic (or \
+vice-versa); do it. Only fall back to the page's own language when no target_language \
+is given.
 - Never invent facts not supported by the page content. Respect each field's length rule.
 - Always return every requested key; if the page is too thin for one, give a safe \
 best-effort value and lower the confidence.
@@ -630,7 +635,9 @@ class AIClient:
             name = lang.name or lang.code
             return (
                 '  target_language: {name} ({code})\n'
-                '  REQUIRED: write proposed_value (and all text) in {name}.\n'.format(
+                '  HARD REQUIREMENT: write EVERY output value in {name}. The page '
+                'content may be in another language — compose/translate in {name} '
+                'regardless; never answer in the content\'s language.\n'.format(
                     name=name, code=lang.code,
                 )
             )

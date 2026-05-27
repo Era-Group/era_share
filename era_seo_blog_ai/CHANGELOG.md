@@ -1,5 +1,13 @@
 # Changelog
 
+## [19.0.1.2.0] — 2026-05-27
+
+### Changed — AI buttons moved to the top of the blog post form
+
+The *AI: Fill SEO* / *AI: Rewrite SEO* buttons moved out of the SEO tab
+into a form **header** (the stock blog.post form has none, so we add one
+before the sheet). They're now in the top action bar, visible from any tab.
+
 ## [19.0.1.1.0] — 2026-05-27
 
 ### Added — blog-specific fields in the AI fill + thin-content skip

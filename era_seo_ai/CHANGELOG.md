@@ -1,5 +1,25 @@
 # Changelog
 
+## [19.0.8.1.0] — 2026-05-27
+
+### Fixed — per-language fills/fixes now actually use the target language
+
+The Arabic translation of a fill/fix was coming out in English: the agent's
+system prompt ("match the page's language") overrode the per-call target
+language, so an English post produced English for its Arabic translation.
+
+The target-language instruction is now authoritative:
+- `_lang_line` is a HARD REQUIREMENT to write **every** output value in the
+  target language, explicitly overriding the content's language ("the page
+  content may be in another language — compose/translate in <lang>
+  regardless").
+- `FILL_CONTEXT` and `SEO_CONTEXT` state that a given `target_language`
+  overrides matching the content language.
+
+So a per-language fill on an Arabic + English site writes real Arabic into
+the Arabic translation and English into the English one, instead of the
+same source text in both.
+
 ## [19.0.8.0.0] — 2026-05-27
 
 ### Changed — the AI "Fill SEO" field set is now extensible per model

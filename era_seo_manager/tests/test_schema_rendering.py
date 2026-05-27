@@ -90,6 +90,53 @@ class TestSchemaRendering(HttpCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('application/ld+json', response.text)
 
+    def test_site_schema_renders_on_homepage(self):
+        """Site-level schemas (res_model='website') must render on the home page.
+
+        The home page controller does not set main_object, so the old
+        ``main_object and ...`` guard would short-circuit to False, emitting
+        nothing. The dual-source renderer fixes this by fetching site schemas
+        independently. Phase 2.1 regression test.
+        """
+        self.env['ir.config_parameter'].sudo().set_param(
+            'era_seo.schema_engine_enabled', 'True'
+        )
+        sudo_env = self.env(su=True)
+        website = sudo_env['website'].search([], limit=1)
+        tpl = sudo_env['era.seo.schema.template'].search(
+            [('code', '=', 'organization')], limit=1
+        )
+        if not tpl:
+            tpl = sudo_env['era.seo.schema.template'].create({
+                'name': 'Organization',
+                'code': 'organization',
+                'schema_type': 'Organization',
+                'category': 'core',
+                'body': '{"@type": "Organization", "name": {{ company.name | default("ERA") }}}',
+            })
+
+        # Attach at website level (not website.page).
+        existing = sudo_env['era.seo.schema.instance'].search([
+            ('res_model', '=', 'website'),
+            ('res_id', '=', website.id),
+            ('template_id', '=', tpl.id),
+        ], limit=1)
+        if not existing:
+            sudo_env['era.seo.schema.instance'].create({
+                'template_id': tpl.id,
+                'res_model': 'website',
+                'res_id': website.id,
+                'sequence': 10,
+                'active': True,
+            })
+
+        response = self.url_open('/')
+        self.assertEqual(response.status_code, 200)
+        decoded = _html.unescape(response.text)
+        self.assertIn('application/ld+json', response.text,
+                      'Site-level schema must render even when main_object is None.')
+        self.assertIn('Organization', decoded)
+
     def test_inactive_instance_not_rendered(self):
         """Inactive schema instances must not appear in the page output."""
         self.env['ir.config_parameter'].sudo().set_param(

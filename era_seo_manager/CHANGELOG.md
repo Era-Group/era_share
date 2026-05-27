@@ -49,6 +49,35 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   wrapped with `self.env.cr.savepoint()` so the sub-transaction rolls back cleanly.
 - All 121 tests pass (`era_seo_manager: 121 tests`).
 
+### Fixed — Phase 2.1 rendering (critical)
+
+- **JSON-LD not emitting on controller-rendered routes** (`website_meta_templates.xml`):
+  The `era_seo_schema_ld` template guarded schema fetching with
+  `main_object and ...`, which short-circuits to `False` on routes (e.g. `/`)
+  where `main_object` is `None`. Fixed by fetching site-wide schemas
+  (`res_model='website'`) and page schemas independently, then concatenating;
+  empty-recordset fallback (`or env['era.seo.schema.instance']`) ensures
+  safe `+` concatenation in all cases.
+
+- **Default schemas attached to `website.page` instead of `website`**
+  (`__init__.py` `post_init_hook`, `migrations/19.0.2.1.0/post-migrate.py`):
+  Post-init hook was creating instances on the home `website.page` record,
+  causing Organization and WebSite schemas to render only on `/`, not site-wide.
+  Fixed hook to create instances at `res_model='website'`; migration script
+  moves existing misplaced instances to the correct model and removes old ones.
+
+- **`og:locale` meta tag never emits** (`website_layout_templates.xml`):
+  `og:locale` was inside the `t-if="seo"` gate in `meta_tags`, making it
+  unreachable on non-ERA pages. Moved to a dedicated xpath in the layout
+  inject (Step 9) that runs on every page regardless of ERA mode, using
+  `request.lang.code` with fallback to `website.default_lang_id.iso_code`.
+
+### Tests
+
+- `test_schema_rendering.py`: added `test_site_schema_renders_on_homepage`
+  covering the case where `main_object` is `None` but the website has
+  site-level schema instances attached — regression test for Bug 1 above.
+
 ## [19.0.2.0.0] — 2026-05-26
 
 ### Added — Phase 2 (JSON-LD Schema Engine)

@@ -37,9 +37,9 @@ def post_init_hook(env):
         'era_seo_manager post_init_hook: migrated %d website.page records', migrated
     )
 
-    # --- Phase 2: attach default schemas to each website's home page ---------
+    # --- Phase 2: attach default schemas at website level (site-wide) --------
     _logger.info(
-        'era_seo_manager post_init_hook: attaching default schema instances to home pages'
+        'era_seo_manager post_init_hook: attaching default schema instances to websites'
     )
     default_templates = env['era.seo.schema.template'].search([('is_default', '=', True)])
     if not default_templates:
@@ -53,42 +53,30 @@ def post_init_hook(env):
     websites = env['website'].sudo().search([])
 
     for website in websites:
-        # Locate the home page for this website.
-        home_page = env['website.page'].sudo().search([
-            ('website_id', '=', website.id),
-            ('url', '=', '/'),
-        ], limit=1)
-        if not home_page:
-            _logger.info(
-                'era_seo_manager post_init_hook: no home page (url="/") for website %d, '
-                'skipping.', website.id
-            )
-            continue
-
         for seq, tpl in enumerate(default_templates, start=10):
-            # Skip if an instance for this template already exists on this page.
+            # Skip if an instance for this template already exists on this website.
             existing = Instance.sudo().search([
-                ('res_model', '=', 'website.page'),
-                ('res_id', '=', home_page.id),
+                ('res_model', '=', 'website'),
+                ('res_id', '=', website.id),
                 ('template_id', '=', tpl.id),
             ], limit=1)
             if existing:
                 _logger.debug(
                     'era_seo_manager post_init_hook: instance for %s already exists on '
-                    'website %d home page, skipping.', tpl.code, website.id
+                    'website %d, skipping.', tpl.code, website.id
                 )
                 continue
 
             Instance.sudo().create({
                 'template_id': tpl.id,
-                'res_model': 'website.page',
-                'res_id': home_page.id,
+                'res_model': 'website',
+                'res_id': website.id,
                 'sequence': seq,
                 'active': True,
             })
             _logger.info(
                 'era_seo_manager post_init_hook: created %s schema instance on '
-                'website %d home page.', tpl.code, website.id
+                'website %d.', tpl.code, website.id
             )
 
     _logger.info('era_seo_manager post_init_hook: done.')

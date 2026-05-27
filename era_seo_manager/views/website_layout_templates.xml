@@ -110,5 +110,22 @@
       </t>
     </xpath>
 
+    <!--
+      Step 9 — og:locale on every page, regardless of ERA mode.
+      request.lang.code returns e.g. 'en_US' or 'ar_001'; BCP 47 uses '-'.
+      Falls back to website.default_lang_id.iso_code when request is absent
+      (e.g. during server-side rendering without an HTTP context).
+    -->
+    <xpath expr="//meta[@name='generator']" position="after">
+      <t t-set="_era_locale" t-value="
+          request and request.lang and request.lang.code
+          or (website.default_lang_id and website.default_lang_id.iso_code)
+          or ''
+      "/>
+      <meta t-if="_era_locale"
+            property="og:locale"
+            t-att-content="_era_locale.replace('_', '-')"/>
+    </xpath>
+
   </template>
 </odoo>

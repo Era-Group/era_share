@@ -647,7 +647,9 @@ class AIClient:
     def _extract_page_signal(record):
         """Return (excerpt, h1, language_hint) from a record's content."""
         from lxml import html as lxml_html
-        content_html = getattr(record, 'content', None) or getattr(record, 'arch', None) or ''
+        content_html = (getattr(record, 'content', None)
+                        or getattr(record, 'arch', None)
+                        or getattr(record, 'content_html', None) or '')
         text = ''
         h1 = ''
         try:

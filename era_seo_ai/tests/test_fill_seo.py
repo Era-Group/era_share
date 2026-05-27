@@ -156,6 +156,22 @@ class TestFillSeo(TransactionCase):
         self.assertTrue(stored.get('fr_FR'),
                         'French must get its own seo_title translation.')
 
+    def test_fill_content_block_uses_content_html(self):
+        """AI fill works on era.content.block, reading its content_html signal."""
+        block = self.env['era.content.block'].create({
+            'name': 'Pricing FAQs',
+            'code': 'pricing_faqs_ai',
+            'block_type': 'faq',
+            'content_html': '<h2>Pricing FAQ</h2><p>VAT-ready cloud accounting '
+                            'plans for Saudi SMEs, ZATCA compliant.</p>',
+        })
+        with patch.object(AIClient, '_resolve_agent',
+                          return_value=_mock_agent(_FULL_REPLY)):
+            block.action_ai_fill_seo()
+        block.invalidate_recordset()
+        self.assertEqual(block.seo_title, 'Cloud Accounting for Saudi SMEs | ERA')
+        self.assertTrue(block.seo_description)
+
     def test_fill_requires_manager_group(self):
         page = self._make_page(url='/fill-acl')
         # Drop the manager group for this test.

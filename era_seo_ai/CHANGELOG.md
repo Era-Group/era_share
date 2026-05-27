@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.0.8.3.0] — 2026-05-28
+
+### Added — AI fill on content blocks
+
+The **AI: Fill SEO** / **AI: Rewrite SEO** buttons now appear on the
+`era.content.block` form (header), so reusable blocks get their meta
+generated like pages and posts. `era.content.block` already inherits
+`era.seo.mixin`, so the actions existed — this adds the buttons (gated to
+the SEO Manager group) and teaches `_extract_page_signal` to read the
+block's `content_html` (it previously only looked at `content` / `arch`).
+
 ## [19.0.8.2.0] — 2026-05-27
 
 ### Fixed — "Fill SEO" now fills every language, not just the default

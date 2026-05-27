@@ -36,7 +36,7 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.8.2.0',
+    'version': '19.0.8.3.0',
     'depends': [
         'era_seo_manager',
         'ai',
@@ -46,6 +46,7 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
         'data/ai_agent_data.xml',
         'data/server_actions.xml',
         'views/res_config_settings_views.xml',
+        'views/content_block_views.xml',
         'views/seo_audit_finding_views.xml',
         'views/seo_audit_run_views.xml',
         'views/ai_fix_log_views.xml',

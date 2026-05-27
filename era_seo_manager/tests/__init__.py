@@ -11,4 +11,5 @@ from . import (
     test_audit,
     test_hreflang,
     test_controllers,
+    test_content_block,
 )

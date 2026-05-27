@@ -20,7 +20,7 @@ RSS/Atom/JSON feeds) ship in the optional ``era_seo_blog`` addon.
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.7.1.0',
+    'version': '19.0.8.0.0',
     'depends': [
         'base',
         'web',

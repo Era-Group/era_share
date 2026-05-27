@@ -3,6 +3,34 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.8.0.0] — 2026-05-27
+
+### Added — Phase 8: content blocks + website-builder snippets (SPEC §14)
+
+- **`era.content.block`** is now a full model (was a stub): `name`, unique
+  `code`, `block_type`, translatable `content_html`, `schema_template_id`,
+  and it inherits `era.seo.mixin`. Backend admin under **Website → SEO →
+  Content Blocks**.
+- **Seven draggable snippets** in a new **ERA SEO** category of the builder
+  blocks panel: FAQ, Breadcrumbs, Call to Action, Author Box, Related Posts,
+  Feature Grid, Pricing Table.
+- **Auto structured data**, injected on the published page only (so it's
+  never saved into the page arch and always matches the live content):
+  - **FAQ** snippet → `FAQPage` JSON-LD built from the accordion Q&A.
+  - **Breadcrumbs** snippet → `BreadcrumbList` JSON-LD built from the URL,
+    which also renders the visible breadcrumb chain.
+  - Implemented as Odoo 19 public `Interaction`s in
+    `static/src/js/seo_snippets.js`.
+- Tests: model (unique/charset code, mixin fields, seo path) and a render
+  check that all seven snippet templates produce their root markup, plus the
+  FAQ/Breadcrumbs JS hooks. One demo content block.
+
+### Notes
+
+- The JSON-LD injection and the in-builder drag/drop are browser behaviors;
+  validate them interactively on staging (unit tests cover the model and the
+  server-side template render, not the runtime JS).
+
 ## [19.0.7.0.0] — 2026-05-27
 
 ### Changed — audit content checks are now per-language

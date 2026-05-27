@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Known AI/LLM crawlers. noupdate="1": seeded once, admin edits (and the
+    allowed/blocked choice) survive upgrades. Default allowed=True so install
+    changes nothing in robots.txt behavior (explicit "Allow: /"); admins flip
+    the ones they want to block to emit "Disallow: /".
+  -->
+  <data noupdate="1">
+
+    <!-- OpenAI -->
+    <record id="crawler_gptbot" model="era.geo.ai.crawler">
+      <field name="name">OpenAI GPTBot</field>
+      <field name="user_agent">GPTBot</field>
+      <field name="vendor">OpenAI</field>
+      <field name="purpose">training</field>
+      <field name="documentation_url">https://platform.openai.com/docs/gptbot</field>
+    </record>
+    <record id="crawler_chatgpt_user" model="era.geo.ai.crawler">
+      <field name="name">OpenAI ChatGPT-User</field>
+      <field name="user_agent">ChatGPT-User</field>
+      <field name="vendor">OpenAI</field>
+      <field name="purpose">search</field>
+    </record>
+    <record id="crawler_oai_searchbot" model="era.geo.ai.crawler">
+      <field name="name">OpenAI OAI-SearchBot</field>
+      <field name="user_agent">OAI-SearchBot</field>
+      <field name="vendor">OpenAI</field>
+      <field name="purpose">search</field>
+    </record>
+
+    <!-- Anthropic -->
+    <record id="crawler_claudebot" model="era.geo.ai.crawler">
+      <field name="name">Anthropic ClaudeBot</field>
+      <field name="user_agent">ClaudeBot</field>
+      <field name="vendor">Anthropic</field>
+      <field name="purpose">training</field>
+    </record>
+    <record id="crawler_anthropic_ai" model="era.geo.ai.crawler">
+      <field name="name">Anthropic anthropic-ai</field>
+      <field name="user_agent">anthropic-ai</field>
+      <field name="vendor">Anthropic</field>
+      <field name="purpose">both</field>
+    </record>
+    <record id="crawler_claude_web" model="era.geo.ai.crawler">
+      <field name="name">Anthropic Claude-Web</field>
+      <field name="user_agent">Claude-Web</field>
+      <field name="vendor">Anthropic</field>
+      <field name="purpose">search</field>
+    </record>
+
+    <!-- Perplexity -->
+    <record id="crawler_perplexitybot" model="era.geo.ai.crawler">
+      <field name="name">PerplexityBot</field>
+      <field name="user_agent">PerplexityBot</field>
+      <field name="vendor">Perplexity</field>
+      <field name="purpose">search</field>
+    </record>
+    <record id="crawler_perplexity_user" model="era.geo.ai.crawler">
+      <field name="name">Perplexity-User</field>
+      <field name="user_agent">Perplexity-User</field>
+      <field name="vendor">Perplexity</field>
+      <field name="purpose">search</field>
+    </record>
+
+    <!-- Google / Apple training opt-out tokens -->
+    <record id="crawler_google_extended" model="era.geo.ai.crawler">
+      <field name="name">Google-Extended (Gemini/Vertex)</field>
+      <field name="user_agent">Google-Extended</field>
+      <field name="vendor">Google</field>
+      <field name="purpose">training</field>
+    </record>
+    <record id="crawler_applebot_extended" model="era.geo.ai.crawler">
+      <field name="name">Applebot-Extended</field>
+      <field name="user_agent">Applebot-Extended</field>
+      <field name="vendor">Apple</field>
+      <field name="purpose">training</field>
+    </record>
+
+    <!-- Others -->
+    <record id="crawler_ccbot" model="era.geo.ai.crawler">
+      <field name="name">Common Crawl CCBot</field>
+      <field name="user_agent">CCBot</field>
+      <field name="vendor">Common Crawl</field>
+      <field name="purpose">training</field>
+    </record>
+    <record id="crawler_bytespider" model="era.geo.ai.crawler">
+      <field name="name">ByteDance Bytespider</field>
+      <field name="user_agent">Bytespider</field>
+      <field name="vendor">ByteDance</field>
+      <field name="purpose">training</field>
+    </record>
+    <record id="crawler_amazonbot" model="era.geo.ai.crawler">
+      <field name="name">Amazonbot</field>
+      <field name="user_agent">Amazonbot</field>
+      <field name="vendor">Amazon</field>
+      <field name="purpose">both</field>
+    </record>
+    <record id="crawler_meta_external" model="era.geo.ai.crawler">
+      <field name="name">Meta-ExternalAgent</field>
+      <field name="user_agent">Meta-ExternalAgent</field>
+      <field name="vendor">Meta</field>
+      <field name="purpose">training</field>
+    </record>
+    <record id="crawler_cohere_ai" model="era.geo.ai.crawler">
+      <field name="name">cohere-ai</field>
+      <field name="user_agent">cohere-ai</field>
+      <field name="vendor">Cohere</field>
+      <field name="purpose">both</field>
+    </record>
+    <record id="crawler_diffbot" model="era.geo.ai.crawler">
+      <field name="name">Diffbot</field>
+      <field name="user_agent">Diffbot</field>
+      <field name="vendor">Diffbot</field>
+      <field name="purpose">training</field>
+    </record>
+
+  </data>
+</odoo>

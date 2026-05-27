@@ -1,0 +1,99 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_geo
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_geo
+msgid "AI Crawler (GEO)"
+msgstr "زاحف ذكاء اصطناعي (GEO)"
+
+#. module: era_geo
+msgid "AI Crawlers"
+msgstr "زواحف الذكاء الاصطناعي"
+
+#. module: era_geo
+msgid "GEO (AI Engines)"
+msgstr "GEO (محركات الذكاء)"
+
+#. module: era_geo
+msgid "Manage AI Crawlers"
+msgstr "إدارة زواحف الذكاء"
+
+#. module: era_geo
+msgid "User-Agent Token"
+msgstr "رمز User-Agent"
+
+#. module: era_geo
+msgid "Vendor"
+msgstr "المزوّد"
+
+#. module: era_geo
+msgid "Purpose"
+msgstr "الغرض"
+
+#. module: era_geo
+msgid "Allowed"
+msgstr "مسموح"
+
+#. module: era_geo
+msgid "Blocked"
+msgstr "محظور"
+
+#. module: era_geo
+msgid "Docs URL"
+msgstr "رابط التوثيق"
+
+#. module: era_geo
+msgid "Search / Answer"
+msgstr "بحث / إجابة"
+
+#. module: era_geo
+msgid "Model Training"
+msgstr "تدريب النماذج"
+
+#. module: era_geo
+msgid "Search & Training"
+msgstr "بحث وتدريب"
+
+#. module: era_geo
+msgid "Other"
+msgstr "أخرى"
+
+#. module: era_geo
+msgid "ERA GEO — Generative Engine Optimization"
+msgstr "ERA GEO — تحسين محركات الإجابة التوليدية"
+
+#. module: era_geo
+msgid "Publish /llms.txt"
+msgstr "نشر /llms.txt"
+
+#. module: era_geo
+msgid "Site Summary (llms.txt)"
+msgstr "ملخّص الموقع (llms.txt)"
+
+#. module: era_geo
+msgid "Max Items in /llms.txt"
+msgstr "أقصى عدد عناصر في /llms.txt"
+
+#. module: era_geo
+msgid "Include Blog in /llms.txt"
+msgstr "تضمين المدونة في /llms.txt"
+
+#. module: era_geo
+msgid "Open /llms.txt"
+msgstr "فتح /llms.txt"
+
+#. module: era_geo
+msgid "No AI crawlers yet"
+msgstr "لا توجد زواحف ذكاء بعد"

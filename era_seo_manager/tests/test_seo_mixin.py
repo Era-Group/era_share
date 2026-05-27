@@ -193,7 +193,41 @@ class TestStockFieldSync(EraSeoTestCase):
 
     def test_no_sync_when_era_no_sync_context(self):
         """_era_no_sync context flag prevents sync (used by post_init_hook)."""
-        self.test_page.write({'seo_title': False, 'website_meta_title': 'Stock Only'})
+        self.test_page.with_context(_era_no_sync=True).write({
+            'seo_title': False, 'website_meta_title': 'Stock Only'})
         self.test_page.with_context(_era_no_sync=True).write({'seo_title': 'ERA Only'})
         # website_meta_title should NOT have been overwritten
         self.assertEqual(self.test_page.website_meta_title, 'Stock Only')
+
+    # --- Reverse sync: stock "Optimize SEO" dialog edits -> ERA fields -------
+
+    def test_stock_description_syncs_back_to_era(self):
+        """Editing website_meta_description (the builder's SEO dialog) updates
+        seo_description — which is what the frontend actually renders."""
+        self.test_page.write({'website_meta_description': 'Edited in dialog'})
+        self.assertEqual(self.test_page.seo_description, 'Edited in dialog')
+
+    def test_stock_title_syncs_back_to_era(self):
+        self.test_page.write({'website_meta_title': 'Dialog Title'})
+        self.assertEqual(self.test_page.seo_title, 'Dialog Title')
+
+    def test_dialog_edit_survives_resave(self):
+        """A dialog edit must not be reverted by a subsequent sync pass."""
+        self.test_page.write({'seo_description': 'Original'})
+        self.assertEqual(self.test_page.website_meta_description, 'Original')
+        # User edits the description in the stock dialog.
+        self.test_page.write({'website_meta_description': 'User Edit'})
+        self.assertEqual(self.test_page.seo_description, 'User Edit')
+        # Touch an unrelated field; the edit must stick (no revert to 'Original').
+        self.test_page.write({'seo_robots_index': False})
+        self.assertEqual(self.test_page.seo_description, 'User Edit')
+        self.assertEqual(self.test_page.website_meta_description, 'User Edit')
+
+    def test_era_still_wins_when_both_written(self):
+        """If both fields are written at once, the ERA value is authoritative."""
+        self.test_page.write({
+            'seo_description': 'ERA wins',
+            'website_meta_description': 'stock loses',
+        })
+        self.assertEqual(self.test_page.seo_description, 'ERA wins')
+        self.assertEqual(self.test_page.website_meta_description, 'ERA wins')

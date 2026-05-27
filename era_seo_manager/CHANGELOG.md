@@ -3,6 +3,30 @@
 All notable changes to `era_seo_manager` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.6.2.0] — 2026-05-27
+
+### Fixed — "Optimize SEO" dialog edits no longer lost
+
+The website builder's **Search Engine Optimization** dialog edits the stock
+`website_meta_*` fields, but the frontend renders the ERA `seo_*` fields and
+our sync was **one-way (ERA → stock)**. So a description typed into that
+dialog was never shown on the site and got reverted to the ERA value on the
+next sync — it looked like "nothing saved" (and produced the Arabic-title /
+English-description mismatch).
+
+- `website.page` sync is now **bidirectional, last-write-wins**: writing a
+  stock `website_meta_*` field mirrors it back into the matching ERA `seo_*`
+  field (`_sync_stock_to_era`), and writing an ERA field still mirrors to
+  stock (`_sync_era_to_stock`). The reverse sync runs in the record's
+  current language, so a dialog edit in Arabic updates the Arabic ERA
+  translation.
+- Both internal syncs use the `_era_no_sync` context guard, so there's no
+  write recursion. When both sides are written at once, ERA wins.
+- `create()` seeds both directions, so a page made through the dialog gets
+  its ERA fields populated immediately.
+- Tests: dialog edit → ERA propagation, edit survives an unrelated re-save
+  (no revert), and ERA-wins-when-both-written.
+
 ## [19.0.6.1.0] — 2026-05-27
 
 ### Fixed — audit findings no longer duplicate across runs

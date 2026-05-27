@@ -40,7 +40,10 @@ class WebsitePage(models.Model):
     def create(self, vals_list):
         records = super().create(vals_list)
         for rec in records:
+            # Seed both directions: ERA wins when both are set, otherwise
+            # whichever side carries data populates the other.
             rec._sync_era_to_stock()
+            rec._sync_stock_to_era()
         # Phase 6: auto-attach hreflang entries on first creation.
         try:
             records._sync_era_hreflang_entries()
@@ -50,12 +53,29 @@ class WebsitePage(models.Model):
             )
         return records
 
+    # ERA SEO field  <->  stock website.seo.metadata field
+    _ERA_TO_STOCK = {
+        'seo_title': 'website_meta_title',
+        'seo_description': 'website_meta_description',
+        'seo_keywords': 'website_meta_keywords',
+    }
+    _STOCK_TO_ERA = {v: k for k, v in _ERA_TO_STOCK.items()}
+
     def write(self, vals):
         result = super().write(vals)
-        era_keys = {'seo_title', 'seo_description', 'seo_keywords', 'seo_og_image_url'}
-        if era_keys.intersection(vals):
-            for rec in self:
-                rec._sync_era_to_stock()
+        if not self.env.context.get('_era_no_sync'):
+            # Bidirectional, last-write-wins. If an ERA field was written
+            # (our SEO tab / AI fill), mirror it into the stock website_meta_*
+            # columns. If instead a stock field was written (the website
+            # builder's "Optimize SEO" dialog), mirror it back into the ERA
+            # fields — which is what the frontend actually renders, so the
+            # dialog's edits now show up and aren't reverted by a later sync.
+            if set(self._ERA_TO_STOCK).intersection(vals):
+                for rec in self:
+                    rec._sync_era_to_stock()
+            elif set(self._STOCK_TO_ERA).intersection(vals):
+                for rec in self:
+                    rec._sync_stock_to_era()
         # Phase 6: refresh hreflang on URL/website/language-affecting changes.
         hreflang_keys = {'url', 'website_id'}
         if hreflang_keys.intersection(vals):
@@ -68,24 +88,38 @@ class WebsitePage(models.Model):
         return result
 
     def _sync_era_to_stock(self):
-        """Write ERA SEO fields into the delegated website_meta_* columns.
+        """Mirror ERA SEO fields into the delegated website_meta_* columns.
 
-        Called without the sync-skip context so it runs normally through super().
-        Skipped when called from the post_init_hook (which sets _era_no_sync).
+        Runs in the record's current language context, so per-language ERA
+        values land in the matching website_meta_* translation. Skipped under
+        the ``_era_no_sync`` guard (post_init_hook, and the reverse sync).
         """
         if self.env.context.get('_era_no_sync'):
             return
         update = {}
-        if self.seo_title and self.website_meta_title != self.seo_title:
-            update['website_meta_title'] = self.seo_title
-        if self.seo_description and self.website_meta_description != self.seo_description:
-            update['website_meta_description'] = self.seo_description
-        if self.seo_keywords and self.website_meta_keywords != self.seo_keywords:
-            update['website_meta_keywords'] = self.seo_keywords
+        for era_field, stock_field in self._ERA_TO_STOCK.items():
+            value = self[era_field]
+            if value and self[stock_field] != value:
+                update[stock_field] = value
         if update:
-            # Bypass our own write() to avoid recursion; write directly to
-            # website.page super (the ORM writes through _inherits to ir.ui.view).
-            super(WebsitePage, self).write(update)
+            self.with_context(_era_no_sync=True).write(update)
+
+    def _sync_stock_to_era(self):
+        """Mirror stock website_meta_* edits (Optimize SEO dialog) into the
+        authoritative ERA fields the frontend renders.
+
+        Current-language context, so editing the dialog in Arabic updates the
+        Arabic ERA translation. Guarded against recursion via _era_no_sync.
+        """
+        if self.env.context.get('_era_no_sync'):
+            return
+        update = {}
+        for stock_field, era_field in self._STOCK_TO_ERA.items():
+            value = self[stock_field]
+            if value and self[era_field] != value:
+                update[era_field] = value
+        if update:
+            self.with_context(_era_no_sync=True).write(update)
 
     # --- Enrich OG / Twitter via stock get_website_meta() override -----------
 

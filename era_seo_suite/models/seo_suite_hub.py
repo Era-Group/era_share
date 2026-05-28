@@ -283,16 +283,42 @@ class EraSeoSuiteHub(models.Model):
                     rec[fname] = raw or default
 
     def _inverse_settings(self):
+        # Intentionally a no-op. The shared inverse used to iterate
+        # `_SETTING_MAP` and write every key to ICP, but reading other fields
+        # mid-iteration triggers `_compute_settings`, which clobbers the
+        # value the user just toggled — and other in-cache values that
+        # happened to be False/empty at compute time end up persisted as
+        # such. `write()` below routes each modified setting straight to
+        # `ir.config_parameter` instead, so only the user's actual change
+        # is persisted.
+        return
+
+    def write(self, vals):
+        """Persist `_SETTING_MAP` fields directly to ir.config_parameter
+        and strip them from `vals` so the framework never calls the shared
+        `_inverse_settings`. See `_inverse_settings` for the why.
+
+        Only the fields the caller actually passed are touched; other
+        settings keep their existing ICP values intact.
+        """
         ICP = self.env['ir.config_parameter'].sudo()
-        for rec in self:
-            for fname, (key, kind, _default) in self._SETTING_MAP.items():
-                val = rec[fname]
+        setting_vals = {}
+        for fname in list(vals):
+            if fname in self._SETTING_MAP:
+                setting_vals[fname] = vals.pop(fname)
+        if setting_vals:
+            for fname, val in setting_vals.items():
+                key, kind, _default = self._SETTING_MAP[fname]
                 if kind == 'bool':
                     ICP.set_param(key, 'True' if val else 'False')
                 elif kind == 'int':
                     ICP.set_param(key, str(int(val or 0)))
                 else:
                     ICP.set_param(key, val or '')
+            # Drop the now-stale cache so the next read goes through
+            # `_compute_settings` and reflects the values just written.
+            self.invalidate_recordset(list(setting_vals))
+        return super().write(vals) if vals else True
 
     def _compute_ai_agent_name(self):
         """Display the configured AI agent's name (era_seo_ai), if any."""

@@ -20,7 +20,7 @@
           <div class="o_horizontal_separator small text-muted mb-2">Setup progress</div>
           <div class="d-flex flex-wrap gap-2">
             <span class="badge text-bg-light" invisible="step == 'welcome'">Welcome</span>
-            <span class="badge" t-attf-class="text-bg-#{'primary' if step == 'welcome' else 'light'}" invisible="step != 'welcome'">Welcome</span>
+            <span class="badge text-bg-primary" invisible="step != 'welcome'">Welcome</span>
 
             <span class="badge text-bg-light" invisible="step in ['welcome', 'org']">1. Organization</span>
             <span class="badge text-bg-primary" invisible="step != 'org'">1. Organization</span>

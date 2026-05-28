@@ -12,6 +12,24 @@
     <field name="model">website.page</field>
     <field name="inherit_id" ref="website.website_pages_form_view"/>
     <field name="arch" type="xml">
+      <!--
+        The stock website.page backend form has no header. Add one with the
+        AI button so admins can fill SEO + auto-pick a JSON-LD schema in one
+        click. Mirrors the pattern used in blog.post and content_block forms.
+      -->
+      <xpath expr="//sheet" position="before">
+        <header>
+          <button name="action_ai_fill_seo_and_schema" type="object"
+                  string="AI: Fill SEO + Schema"
+                  class="btn-primary"
+                  icon="fa-magic"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+          <button name="action_ai_fill_seo" type="object"
+                  string="AI: Fill SEO" icon="fa-magic"
+                  class="btn-secondary"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+        </header>
+      </xpath>
       <xpath expr="//sheet" position="inside">
         <notebook>
           <page string="SEO" name="era_seo">
@@ -49,7 +67,13 @@
 
           <!-- Phase 2: JSON-LD schema instances -->
           <page string="Schemas" name="era_schemas">
-            <div class="mb-2">
+            <div class="mb-2 d-flex gap-2">
+              <button name="action_add_schema_instance"
+                      string="Add Schema"
+                      type="object"
+                      class="btn btn-primary btn-sm"
+                      icon="fa-plus"
+                      groups="era_seo_suite.group_era_seo_manager"/>
               <button name="action_open_rich_results_test"
                       string="Validate JSON-LD"
                       type="object"

@@ -77,6 +77,18 @@ exceed the caps. Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no sig
 # the agent's context_message; overrides the output shape for this task while
 # the agent's own system prompt still supplies the SEO craft (length rules,
 # language matching, Saudi keywords).
+PICK_SCHEMA_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction. You are picking the single best JSON-LD schema.org template for one \
+web page. Choose ONE code from the AVAILABLE TEMPLATES list — pick the most \
+specific template that genuinely matches the page's purpose. Prefer Article / \
+BlogPosting / NewsArticle for editorial content; Organization / LocalBusiness for \
+brand pages; Product / Service for commerce; FAQPage when the page is \
+question-and-answer; Event for time-bound events. Reply with ONE JSON object: \
+{"code": "<one of the codes>", "reason": "<one short sentence>", \
+"confidence": <0.0-1.0>}. No markdown, no prose around the JSON.
+"""
+
+
 FILL_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
 instruction (including any single "proposed_value" contract). Use exactly the JSON \
 shape described in the prompt.
@@ -504,6 +516,73 @@ class AIClient:
             'model': agent.llm_model or _('AI agent'),
             'raw_json': raw,
             'lang': lang.code if lang else (self.env.lang or 'en_US'),
+        }
+
+    def pick_schema(self, record, templates):
+        """Ask the AI to choose the most appropriate JSON-LD schema template
+        for ``record`` from ``templates``.
+
+        :param record:    a record carrying era.seo.mixin (any page-ish thing)
+        :param templates: recordset of era.seo.schema.template to choose from
+        :returns: dict ``{'code': '<chosen template.code>', 'reason': str,
+                          'confidence': float}``. Caller validates `code` is
+                  in the supplied set.
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+        if not templates:
+            raise ValueError(_('No schema templates available for AI to pick from.'))
+
+        agent = self._resolve_agent()
+        prompt = self._build_pick_schema_prompt(record, templates)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=PICK_SCHEMA_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_pick_schema_json(raw, [t.code for t in templates])
+        return parsed
+
+    @classmethod
+    def _build_pick_schema_prompt(cls, record, templates):
+        excerpt, h1, detected = cls._extract_page_signal(record)
+        url = getattr(record, 'url', None) or record._get_seo_path() or '/'
+        template_lines = []
+        for t in templates:
+            desc = (t.description or t.schema_type or '').replace('\n', ' ').strip()
+            template_lines.append('  - {code} ({stype}): {desc}'.format(
+                code=t.code, stype=t.schema_type, desc=desc[:200]))
+        return (
+            'INPUT:\n'
+            '  url: {url}\n'
+            '  page_h1: "{h1}"\n'
+            '  page_excerpt: "{excerpt}"\n'
+            '  detected_lang: {detected}\n'
+            'AVAILABLE TEMPLATES (pick ONE by code):\n'
+            '{templates}\n'
+            'OUTPUT (one JSON object, exactly these keys):\n'
+            '  {{"code": "<one of the codes above>", '
+            '"reason": "<one short sentence>", '
+            '"confidence": <0.0-1.0>}}'.format(
+                url=url,
+                h1=h1.replace('"', "'"),
+                excerpt=excerpt.replace('"', "'")[:1500],
+                detected=detected or 'unknown',
+                templates='\n'.join(template_lines),
+            )
+        )
+
+    @classmethod
+    def _parse_pick_schema_json(cls, raw, valid_codes):
+        parsed = cls._parse_json(raw)
+        code = (parsed.get('code') or '').strip()
+        if code not in valid_codes:
+            raise ValueError(
+                _('AI returned schema code %r which is not in the available set.', code))
+        return {
+            'code': code,
+            'reason': str(parsed.get('reason') or '').strip(),
+            'confidence': float(parsed.get('confidence') or 0.0),
         }
 
     def _record_languages(self, record):

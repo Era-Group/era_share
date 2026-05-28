@@ -64,6 +64,98 @@ class EraSeoMixin(models.AbstractModel):
         """Regenerate ALL recommended SEO fields, overwriting existing values."""
         return self._ai_fill_seo(overwrite=True)
 
+    def action_ai_fill_seo_and_schema(self):
+        """Fill SEO meta AND ask the AI to pick the best JSON-LD schema.
+
+        One click → meta + JSON-LD instance attached. If a schema instance is
+        already attached, the pick step is skipped (we don't second-guess an
+        explicit human choice).
+        """
+        self._ai_check_manager()
+        # Step 1: fill empty SEO fields (existing behavior, including the
+        # per-language notify). Side effect: writes back to the record.
+        self._ai_fill_seo(overwrite=False)
+        # Step 2: pick + attach a schema if none is set yet.
+        attached = self._ai_pick_and_attach_schema()
+        if attached:
+            return self._ai_notify(
+                'success',
+                _('AI filled SEO fields and attached %(n)d schema instance(s).',
+                  n=attached),
+            )
+        return self._ai_notify(
+            'success',
+            _('AI filled SEO fields. Schema instances were already attached — '
+              'no change to schemas.'),
+        )
+
+    def _ai_pick_and_attach_schema(self):
+        """For each record without a schema instance, ask the AI for the
+        best-fit template and attach an instance. Returns count attached.
+
+        Failures per-record are logged and skipped — they don't block the rest.
+        """
+        client = AIClient(self.env)
+        ok, reason = client.is_available()
+        if not ok:
+            raise UserError(reason)
+
+        Template = self.env['era.seo.schema.template'].sudo()
+        Instance = self.env['era.seo.schema.instance'].sudo()
+        templates = Template.search([('active', '=', True)])
+        if not templates:
+            return 0
+
+        attached = 0
+        for rec in self:
+            existing = Instance.search([
+                ('res_model', '=', rec._name),
+                ('res_id', '=', rec.id),
+            ], limit=1)
+            if existing:
+                continue
+            try:
+                pick = client.pick_schema(rec, templates)
+            except (AIUnavailable, ValueError) as exc:
+                _logger.warning(
+                    'AI pick_schema skipped for %s#%s: %s',
+                    rec._name, rec.id, exc)
+                continue
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    'AI pick_schema failed for %s#%s', rec._name, rec.id)
+                continue
+            chosen = templates.filtered(lambda t: t.code == pick['code'])[:1]
+            if not chosen:
+                continue
+            Instance.create({
+                'res_model': rec._name,
+                'res_id': rec.id,
+                'template_id': chosen.id,
+            })
+            attached += 1
+        return attached
+
+    def action_add_schema_instance(self):
+        """Open a dialog to attach a new JSON-LD schema instance.
+
+        Used by the explicit "Add Schema" button — the embedded x2many list's
+        "Add a line" link can be hard to spot on a fresh form, and a clearly
+        labeled button surfaces the action.
+        """
+        self.ensure_one()
+        return {
+            'name': _('Add Schema'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'era.seo.schema.instance',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_res_model': self._name,
+                'default_res_id': self.id,
+            },
+        }
+
     def _ai_fill_seo(self, overwrite=False):
         self._ai_check_manager()
         client = AIClient(self.env)

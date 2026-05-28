@@ -12,6 +12,8 @@ import logging
 
 from odoo import _, api, fields, models
 
+from ..utils import slugify
+
 _logger = logging.getLogger(__name__)
 
 _TRUE = ('True', '1', 'true', 'yes', 'on')
@@ -593,13 +595,13 @@ class EraSeoSuiteHub(models.Model):
         cat_name = pick['category'].strip()
         cat = Category.search([('name', '=ilike', cat_name)], limit=1)
         if not cat:
-            cat = Category.create({'name': cat_name})
+            cat = Category.create({'name': cat_name, 'slug': slugify(cat_name)})
         vals = {'era_category_id': cat.id}
         if pick['series']:
             ser_name = pick['series'].strip()
             ser = Series.search([('name', '=ilike', ser_name)], limit=1)
             if not ser:
-                ser = Series.create({'name': ser_name})
+                ser = Series.create({'name': ser_name, 'slug': slugify(ser_name)})
             vals['era_series_id'] = ser.id
         post.write(vals)
 
@@ -780,7 +782,12 @@ class EraSeoSuiteHub(models.Model):
             cat = Category.sudo().search(
                 [('name', '=ilike', article['category'])], limit=1)
             if not cat:
-                cat = Category.sudo().create({'name': article['category']})
+                # `slug` is NOT NULL on era.blog.category; the model's
+                # _onchange_name only fires in the UI, so we slugify here.
+                cat = Category.sudo().create({
+                    'name': article['category'],
+                    'slug': slugify(article['category']),
+                })
             category = cat
 
         # Pick the default blog.blog — required FK on blog.post.

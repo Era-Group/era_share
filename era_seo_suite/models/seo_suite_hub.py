@@ -160,8 +160,16 @@ class EraSeoSuiteHub(models.Model):
         help='Master switch. When off, all AI buttons hide and no AI calls happen.')
     setting_ai_agent_name = fields.Char(
         string='AI Agent (current)', compute='_compute_ai_agent_name', readonly=True,
-        help='The AI agent that answers Suggest/Apply requests. To change it or test it, '
-             'open Website → Configuration → Settings → ERA SEO — AI Auto-Fix.')
+        help='Read-only display of the configured agent name. Kept for any view that '
+             'still references it; the picker below is the writable surface.')
+    setting_ai_agent_id = fields.Many2one(
+        'ai.agent',
+        string='AI Agent',
+        compute='_compute_ai_agent_id',
+        inverse='_inverse_ai_agent_id',
+        help='Which AI agent answers Suggest/Apply requests. The agent carries the '
+             'provider, model, and API key (configured in the AI app). Leave empty '
+             'to fall back to the site\'s "Ask AI" agent.')
 
     # --- GEO
     setting_llms_enabled = fields.Boolean(
@@ -299,6 +307,31 @@ class EraSeoSuiteHub(models.Model):
                         rec.setting_ai_agent_name = agent.name or ''
                 except (TypeError, ValueError):
                     pass
+
+    def _compute_ai_agent_id(self):
+        """Resolve the configured AI agent id (era_seo.ai_agent_id ICP) into a recordset."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        raw = ICP.get_param('era_seo.ai_agent_id')
+        Agent = self.env['ai.agent']
+        for rec in self:
+            rec.setting_ai_agent_id = False
+            if not raw:
+                continue
+            try:
+                agent = Agent.sudo().browse(int(raw))
+            except (TypeError, ValueError):
+                continue
+            # browse() doesn't hit the DB; .exists() filters out stale ids
+            # (e.g. the agent was deleted after the setting was saved).
+            if agent.exists():
+                rec.setting_ai_agent_id = agent.id
+
+    def _inverse_ai_agent_id(self):
+        """Persist the picked agent back to era_seo.ai_agent_id ICP."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        for rec in self:
+            ICP.set_param('era_seo.ai_agent_id',
+                          str(rec.setting_ai_agent_id.id) if rec.setting_ai_agent_id else '')
 
     def _compute_gsc_redirect_uri(self):
         base = (self.env['ir.config_parameter'].sudo()

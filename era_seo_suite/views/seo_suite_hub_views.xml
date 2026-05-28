@@ -195,16 +195,16 @@
               <group string="AI Auto-Fix">
                 <group>
                   <field name="setting_ai_enabled" widget="boolean_toggle"/>
-                  <field name="setting_ai_agent_name"
-                         invisible="not setting_ai_enabled"/>
+                  <field name="setting_ai_agent_id"
+                         invisible="not setting_ai_enabled"
+                         options="{'no_create': True}"/>
                 </group>
               </group>
               <div class="text-muted small mb-3" invisible="not setting_ai_enabled">
                 The agent carries the provider, model, and API key — all configured in the
                 <b>AI</b> app (Odoo Enterprise). Leave the picker empty to fall back to the
                 site's "Ask AI" agent. The SEO house-style rules are sent with every
-                request, so a generic agent works fine. To pick or test the agent, open
-                <i>Website → Configuration → Settings → ERA SEO — AI Auto-Fix</i>.
+                request, so a generic agent works fine.
               </div>
 
               <group string="GEO — /llms.txt &amp; AI crawlers">

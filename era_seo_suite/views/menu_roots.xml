@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Menu roots — loaded FIRST.
+
+    The suite-merge concentrated dozens of files into one addon. Many of
+    them use `<menuitem parent="…"/>` to attach into one of five SEO roots,
+    but those roots used to live in 7 separate modules; in the merged
+    addon they all sit in views/menus_*.xml or views/seo_audit_run_views_mgr.xml,
+    which (alphabetically) load AFTER the files that reference them. That
+    causes install to crash with
+        ValueError: External ID not found in the system: era_seo_suite.menu_X
+
+    This file defines the same 5 roots up front so any later `parent="…"`
+    reference resolves. The originals are kept where they are — Odoo's
+    XML loader idempotently updates an existing xmlid, so re-loading the
+    same record later is a no-op.
+  -->
+
+  <menuitem
+    id="menu_website_seo_root"
+    name="SEO"
+    parent="website.menu_website_global_configuration"
+    sequence="50"/>
+
+  <menuitem
+    id="menu_era_blog_root"
+    name="Blog"
+    parent="menu_website_seo_root"
+    sequence="40"/>
+
+  <menuitem
+    id="menu_era_geo_root"
+    name="GEO (AI Engines)"
+    parent="menu_website_seo_root"
+    sequence="45"/>
+
+  <menuitem
+    id="menu_era_gsc_root"
+    name="GSC"
+    parent="menu_website_seo_root"
+    sequence="60"/>
+
+  <menuitem
+    id="menu_seo_audit_root"
+    name="SEO Audit"
+    parent="menu_website_seo_root"
+    sequence="60"/>
+
+</odoo>

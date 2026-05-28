@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_res_config_settings_era_gsc" model="ir.ui.view">
+    <field name="name">res.config.settings.era.gsc</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//block[@id='website_info_settings']" position="after">
+        <block title="ERA SEO — Google Search Console" id="era_gsc_settings"
+               help="Pull search performance from GSC into Odoo.">
+          <setting id="era_gsc_oauth" string="OAuth Client"
+                   help="From Google Cloud Console — OAuth 2.0 Client (Web).">
+            <div class="content-group">
+              <div class="row">
+                <label for="era_gsc_client_id" class="col-lg-4 o_light_label"/>
+                <field name="era_gsc_client_id"
+                       placeholder="xxxxxxxx.apps.googleusercontent.com"/>
+              </div>
+              <div class="row">
+                <label for="era_gsc_client_secret" class="col-lg-4 o_light_label"/>
+                <field name="era_gsc_client_secret" password="True"/>
+              </div>
+              <div class="row">
+                <label for="era_gsc_pull_window_days" class="col-lg-4 o_light_label"/>
+                <field name="era_gsc_pull_window_days"/>
+              </div>
+              <div class="mt-2 text-muted small">
+                Add this exact redirect URI to your OAuth Client:
+                <code>&lt;your-base-url&gt;/era_gsc/oauth/callback</code>
+              </div>
+            </div>
+          </setting>
+        </block>
+      </xpath>
+    </field>
+  </record>
+</odoo>

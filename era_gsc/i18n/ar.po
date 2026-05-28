@@ -1,0 +1,155 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_gsc
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_gsc
+msgid "GSC"
+msgstr "GSC"
+
+#. module: era_gsc
+msgid "GSC Accounts"
+msgstr "حسابات GSC"
+
+#. module: era_gsc
+msgid "GSC Sites"
+msgstr "مواقع GSC"
+
+#. module: era_gsc
+msgid "GSC Queries"
+msgstr "استعلامات GSC"
+
+#. module: era_gsc
+msgid "GSC Account"
+msgstr "حساب GSC"
+
+#. module: era_gsc
+msgid "GSC Site"
+msgstr "موقع GSC"
+
+#. module: era_gsc
+msgid "GSC Search Query"
+msgstr "استعلام بحث GSC"
+
+#. module: era_gsc
+msgid "Accounts"
+msgstr "الحسابات"
+
+#. module: era_gsc
+msgid "Sites"
+msgstr "المواقع"
+
+#. module: era_gsc
+msgid "Queries"
+msgstr "الاستعلامات"
+
+#. module: era_gsc
+msgid "Connect with Google"
+msgstr "اتصال بـ Google"
+
+#. module: era_gsc
+msgid "Re-authorize"
+msgstr "إعادة المصادقة"
+
+#. module: era_gsc
+msgid "Discover Sites"
+msgstr "اكتشاف المواقع"
+
+#. module: era_gsc
+msgid "Pull All Now"
+msgstr "سحب الكل الآن"
+
+#. module: era_gsc
+msgid "Pull Now"
+msgstr "سحب الآن"
+
+#. module: era_gsc
+msgid "Connected"
+msgstr "متصل"
+
+#. module: era_gsc
+msgid "Not Connected"
+msgstr "غير متصل"
+
+#. module: era_gsc
+msgid "Error"
+msgstr "خطأ"
+
+#. module: era_gsc
+msgid "Google Email"
+msgstr "بريد Google"
+
+#. module: era_gsc
+msgid "Site URL"
+msgstr "رابط الموقع"
+
+#. module: era_gsc
+msgid "Permission Level"
+msgstr "مستوى الصلاحية"
+
+#. module: era_gsc
+msgid "Last Pulled"
+msgstr "آخر سحب"
+
+#. module: era_gsc
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: era_gsc
+msgid "Query"
+msgstr "الاستعلام"
+
+#. module: era_gsc
+msgid "Clicks"
+msgstr "النقرات"
+
+#. module: era_gsc
+msgid "Impressions"
+msgstr "مرات الظهور"
+
+#. module: era_gsc
+msgid "CTR"
+msgstr "CTR"
+
+#. module: era_gsc
+msgid "Position"
+msgstr "الموضع"
+
+#. module: era_gsc
+msgid "Last 7 Days"
+msgstr "آخر 7 أيام"
+
+#. module: era_gsc
+msgid "Last 28 Days"
+msgstr "آخر 28 يومًا"
+
+#. module: era_gsc
+msgid "Pull Window (days)"
+msgstr "نافذة السحب (أيام)"
+
+#. module: era_gsc
+msgid "OAuth Client"
+msgstr "عميل OAuth"
+
+#. module: era_gsc
+msgid "OAuth Client ID"
+msgstr "معرّف عميل OAuth"
+
+#. module: era_gsc
+msgid "OAuth Client Secret"
+msgstr "كلمة سر عميل OAuth"
+
+#. module: era_gsc
+msgid "Last Error"
+msgstr "آخر خطأ"

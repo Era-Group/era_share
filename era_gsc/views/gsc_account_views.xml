@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_gsc_account_list" model="ir.ui.view">
+    <field name="name">era.gsc.account.list</field>
+    <field name="model">era.gsc.account</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="email"/>
+        <field name="state" widget="badge"
+               decoration-success="state == 'connected'"
+               decoration-warning="state == 'draft'"
+               decoration-danger="state == 'error'"/>
+        <field name="site_count"/>
+        <field name="token_expires_at"/>
+        <field name="active" optional="hide"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_account_form" model="ir.ui.view">
+    <field name="name">era.gsc.account.form</field>
+    <field name="model">era.gsc.account</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_authorize" type="object"
+                  string="Connect with Google" class="btn-primary"
+                  invisible="state == 'connected'"/>
+          <button name="action_authorize" type="object"
+                  string="Re-authorize" class="btn-secondary"
+                  invisible="state != 'connected'"/>
+          <button name="action_discover_sites" type="object"
+                  string="Discover Sites" class="btn-secondary"
+                  invisible="state != 'connected'"/>
+          <button name="action_pull_all" type="object"
+                  string="Pull All Now" class="btn-secondary"
+                  invisible="state != 'connected' or site_count == 0"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,connected"/>
+        </header>
+        <sheet>
+          <div class="oe_button_box" name="button_box">
+            <button name="action_open_sites" type="object"
+                    class="oe_stat_button" icon="fa-globe"
+                    invisible="site_count == 0">
+              <field name="site_count" widget="statinfo" string="Sites"/>
+            </button>
+          </div>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" placeholder="e.g. Marketing — main"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="email"/>
+              <field name="token_expires_at"/>
+            </group>
+            <group>
+              <field name="active"/>
+            </group>
+          </group>
+          <group string="Last Error" invisible="not last_error">
+            <field name="last_error" nolabel="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_era_gsc_account" model="ir.actions.act_window">
+    <field name="name">GSC Accounts</field>
+    <field name="res_model">era.gsc.account</field>
+    <field name="view_mode">list,form</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Connect your first Google account</p>
+      <p>Create an account record, click <b>Connect with Google</b>, and grant
+         read access to Search Console.</p>
+    </field>
+  </record>
+</odoo>

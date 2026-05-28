@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_era_seo_suite_hub_user,era.seo.suite.hub user,model_era_seo_suite_hub,era_seo_manager.group_era_seo_user,1,1,0,0
+access_era_seo_suite_hub_manager,era.seo.suite.hub manager,model_era_seo_suite_hub,era_seo_manager.group_era_seo_manager,1,1,1,0

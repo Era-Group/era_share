@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- Top-level app menu — ERA SEO Suite. Opens the unified hub form. -->
+  <menuitem id="menu_era_seo_suite_root"
+            name="ERA SEO Suite"
+            action="action_open_era_seo_suite_hub"
+            sequence="55"/>
+</odoo>

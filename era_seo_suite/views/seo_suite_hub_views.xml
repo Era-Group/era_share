@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_seo_suite_hub_form" model="ir.ui.view">
+    <field name="name">era.seo.suite.hub.form</field>
+    <field name="model">era.seo.suite.hub</field>
+    <field name="arch" type="xml">
+      <form create="0" delete="0" duplicate="0" js_class="form">
+        <header>
+          <button name="action_refresh" type="object"
+                  string="Refresh" icon="fa-refresh" class="btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1 class="mb-0">ERA SEO Suite</h1>
+            <div class="text-muted">SEO · GEO · GSC — one screen, one click away.</div>
+          </div>
+
+          <notebook>
+
+            <!-- ============================ DASHBOARD ============================ -->
+            <page string="Dashboard" name="dashboard">
+              <group string="SEO" name="dash_seo">
+                <group>
+                  <field name="kpi_published_pages"/>
+                  <field name="kpi_active_redirects"/>
+                  <field name="kpi_schema_instances"/>
+                </group>
+                <group>
+                  <field name="kpi_audit_last_date"/>
+                  <field name="kpi_audit_open_findings"/>
+                  <field name="kpi_audit_critical"/>
+                </group>
+              </group>
+              <group string="GEO" name="dash_geo">
+                <group>
+                  <field name="kpi_geo_llms_enabled" widget="boolean_toggle" readonly="1"/>
+                  <field name="kpi_geo_crawlers_total"/>
+                  <field name="kpi_geo_crawlers_blocked"/>
+                </group>
+              </group>
+              <group string="GSC" name="dash_gsc">
+                <group>
+                  <field name="kpi_gsc_accounts_connected"/>
+                  <field name="kpi_gsc_sites"/>
+                  <field name="kpi_gsc_last_pull"/>
+                </group>
+                <group>
+                  <field name="kpi_gsc_clicks_28d"/>
+                  <field name="kpi_gsc_impressions_28d"/>
+                </group>
+              </group>
+            </page>
+
+            <!-- ============================== SEO =============================== -->
+            <page string="SEO" name="seo">
+              <div class="alert alert-light mb-3">
+                Manage every SEO surface from here. Buttons open the existing
+                lists; closing them returns you to this hub.
+              </div>
+              <group>
+                <group string="Pages &amp; Schema">
+                  <button name="%(era_seo_manager.action_seo_schema_template)d"
+                          type="action" string="Schema Templates"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_manager.action_era_content_block)d"
+                          type="action" string="Content Blocks"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_manager.action_seo_status)d"
+                          type="action" string="SEO Overview"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+                <group string="Routing">
+                  <button name="%(era_seo_manager.action_seo_redirect)d"
+                          type="action" string="Redirects"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_manager.action_seo_redirect_log)d"
+                          type="action" string="404 Log"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_manager.action_seo_hreflang)d"
+                          type="action" string="Hreflang"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+                <group string="Audit">
+                  <button name="%(era_seo_manager.action_seo_audit_run)d"
+                          type="action" string="Audit Runs"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_manager.action_seo_audit_finding)d"
+                          type="action" string="All Findings"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+            </page>
+
+            <!-- ============================== GEO =============================== -->
+            <page string="GEO" name="geo">
+              <div class="alert alert-light mb-3">
+                Generative Engine Optimization — discoverability and citation by
+                AI answer engines.
+              </div>
+              <group>
+                <group string="Status">
+                  <field name="kpi_geo_llms_enabled" widget="boolean_toggle" readonly="1"/>
+                  <field name="kpi_geo_crawlers_total"/>
+                  <field name="kpi_geo_crawlers_blocked"/>
+                </group>
+                <group string="Quick links">
+                  <button name="%(era_geo.action_era_geo_ai_crawler)d"
+                          type="action" string="Manage AI Crawlers"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+              <div class="mt-2 small text-muted">
+                Open <code>/llms.txt</code> on your domain to verify the live
+                output: <code>https://&lt;your-domain&gt;/llms.txt</code>
+              </div>
+            </page>
+
+            <!-- ============================== GSC =============================== -->
+            <page string="GSC" name="gsc">
+              <div class="alert alert-light mb-3">
+                Google Search Console connector — pull search performance into
+                Odoo.
+              </div>
+              <group>
+                <group string="Status">
+                  <field name="kpi_gsc_accounts_connected"/>
+                  <field name="kpi_gsc_sites"/>
+                  <field name="kpi_gsc_last_pull"/>
+                  <field name="kpi_gsc_clicks_28d"/>
+                  <field name="kpi_gsc_impressions_28d"/>
+                </group>
+                <group string="Quick links">
+                  <button name="%(era_gsc.action_era_gsc_account)d"
+                          type="action" string="Accounts"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_gsc.action_era_gsc_site)d"
+                          type="action" string="Sites"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_gsc.action_era_gsc_query)d"
+                          type="action" string="Queries"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+            </page>
+
+            <!-- ============================ SETTINGS ============================ -->
+            <page string="Settings" name="settings">
+              <div class="alert alert-light mb-3">
+                The most-used toggles, editable here. For the full
+                configuration of each module, use the action buttons.
+              </div>
+              <group>
+                <group string="AI Auto-Fix">
+                  <field name="setting_ai_enabled" widget="boolean_toggle"/>
+                </group>
+                <group string="GEO — /llms.txt">
+                  <field name="setting_llms_enabled" widget="boolean_toggle"/>
+                  <field name="setting_llms_summary"
+                         invisible="not setting_llms_enabled"
+                         placeholder="One-line site description for AI engines"/>
+                </group>
+                <group string="GSC">
+                  <field name="setting_gsc_pull_window"/>
+                </group>
+              </group>
+              <separator string="Full settings"/>
+              <div class="o_row mb-2">
+                <button name="action_open_website_settings" type="object"
+                        string="Open all Website Settings" icon="fa-cog"
+                        class="btn-secondary"/>
+              </div>
+              <div class="text-muted small">
+                Tip: full per-module settings (OAuth credentials, the AI agent,
+                schema preview wizards, …) still live under
+                <b>Website → Configuration → Settings</b>.
+              </div>
+            </page>
+
+            <!-- ============================== GUIDE ============================== -->
+            <page string="Guide" name="guide">
+              <div class="alert alert-light mb-3">
+                On-page setup walkthroughs. Click a section to expand.
+              </div>
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  AI Auto-Fix — first run
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>Install Odoo's AI app (Enterprise) and configure a provider with an API key.</li>
+                  <li>Settings → ERA SEO — AI Auto-Fix: tick Enable, pick the "ERA SEO Fixer" agent, click Test Agent.</li>
+                  <li>On any audit finding (or in batch), click Suggest Fix (AI) → review → Apply Fix.</li>
+                  <li>On pages / posts / content blocks, use AI: Fill SEO / AI: Rewrite SEO in the form header.</li>
+                </ol>
+              </details>
+
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  GEO — /llms.txt and AI crawlers
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>Toggle <i>Publish /llms.txt</i> above; set a one-line site summary.</li>
+                  <li>Open the GEO tab → Manage AI Crawlers; flip <i>Allowed</i> off on training-only bots if you want to block them from robots.txt.</li>
+                  <li>Verify the live output: <code>https://&lt;domain&gt;/llms.txt</code> and the AI section in <code>/robots.txt</code>.</li>
+                  <li>Run an SEO Audit; GEO checks (no answer summary, no headings, llms.txt off, answer-bots blocked) appear alongside SEO findings.</li>
+                </ol>
+              </details>
+
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  GSC — connect a Google account
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>In Google Cloud Console: create a project; enable <b>Search Console API</b>.</li>
+                  <li>Create OAuth 2.0 Client (Web app); add Redirect URI <code>&lt;base&gt;/era_gsc/oauth/callback</code>.</li>
+                  <li>In Odoo: Settings → ERA SEO — Google Search Console; paste Client ID + Secret.</li>
+                  <li>Open the GSC tab → Accounts → New → Connect with Google; grant read access.</li>
+                  <li>Sites are auto-discovered; click Pull Now on a site to fill in queries.</li>
+                </ol>
+              </details>
+            </page>
+
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Server action that lands on the singleton hub record. -->
+  <record id="action_open_era_seo_suite_hub" model="ir.actions.server">
+    <field name="name">Open ERA SEO Suite</field>
+    <field name="model_id" ref="model_era_seo_suite_hub"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_hub()</field>
+  </record>
+</odoo>

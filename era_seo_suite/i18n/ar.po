@@ -1,0 +1,211 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_seo_suite
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_seo_suite
+msgid "ERA SEO Suite"
+msgstr "حزمة ERA SEO"
+
+#. module: era_seo_suite
+msgid "ERA SEO Suite Hub"
+msgstr "لوحة حزمة ERA SEO"
+
+#. module: era_seo_suite
+msgid "SEO · GEO · GSC — one screen, one click away."
+msgstr "SEO · GEO · GSC — شاشة واحدة بنقرة واحدة."
+
+#. module: era_seo_suite
+msgid "Dashboard"
+msgstr "اللوحة"
+
+#. module: era_seo_suite
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: era_seo_suite
+msgid "SEO"
+msgstr "SEO"
+
+#. module: era_seo_suite
+msgid "GEO"
+msgstr "GEO"
+
+#. module: era_seo_suite
+msgid "GSC"
+msgstr "GSC"
+
+#. module: era_seo_suite
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: era_seo_suite
+msgid "Guide"
+msgstr "الدليل"
+
+#. module: era_seo_suite
+msgid "Published Pages"
+msgstr "الصفحات المنشورة"
+
+#. module: era_seo_suite
+msgid "Active Redirects"
+msgstr "إعادات التوجيه الفعّالة"
+
+#. module: era_seo_suite
+msgid "Schema Instances"
+msgstr "مخطّطات JSON-LD المرفقة"
+
+#. module: era_seo_suite
+msgid "Last Audit"
+msgstr "آخر تدقيق"
+
+#. module: era_seo_suite
+msgid "Open Findings"
+msgstr "النتائج المفتوحة"
+
+#. module: era_seo_suite
+msgid "Critical"
+msgstr "حرج"
+
+#. module: era_seo_suite
+msgid "AI Crawlers"
+msgstr "زواحف الذكاء"
+
+#. module: era_seo_suite
+msgid "AI Crawlers Blocked"
+msgstr "زواحف الذكاء المحظورة"
+
+#. module: era_seo_suite
+msgid "/llms.txt published"
+msgstr "/llms.txt منشور"
+
+#. module: era_seo_suite
+msgid "GSC Accounts Connected"
+msgstr "حسابات GSC المتّصلة"
+
+#. module: era_seo_suite
+msgid "GSC Sites"
+msgstr "مواقع GSC"
+
+#. module: era_seo_suite
+msgid "Clicks (28d)"
+msgstr "النقرات (28 يومًا)"
+
+#. module: era_seo_suite
+msgid "Impressions (28d)"
+msgstr "مرات الظهور (28 يومًا)"
+
+#. module: era_seo_suite
+msgid "GSC Last Pull"
+msgstr "آخر سحب GSC"
+
+#. module: era_seo_suite
+msgid "AI Auto-Fix Enabled"
+msgstr "تفعيل الإصلاح الآلي بالذكاء"
+
+#. module: era_seo_suite
+msgid "Publish /llms.txt"
+msgstr "نشر /llms.txt"
+
+#. module: era_seo_suite
+msgid "Site Summary (llms.txt)"
+msgstr "ملخّص الموقع (llms.txt)"
+
+#. module: era_seo_suite
+msgid "GSC Pull Window (days)"
+msgstr "نافذة سحب GSC (أيام)"
+
+#. module: era_seo_suite
+msgid "Schema Templates"
+msgstr "قوالب المخطّطات"
+
+#. module: era_seo_suite
+msgid "Content Blocks"
+msgstr "كتل المحتوى"
+
+#. module: era_seo_suite
+msgid "SEO Overview"
+msgstr "نظرة عامة SEO"
+
+#. module: era_seo_suite
+msgid "Redirects"
+msgstr "إعادات التوجيه"
+
+#. module: era_seo_suite
+msgid "404 Log"
+msgstr "سجل 404"
+
+#. module: era_seo_suite
+msgid "Hreflang"
+msgstr "Hreflang"
+
+#. module: era_seo_suite
+msgid "Audit Runs"
+msgstr "تشغيلات التدقيق"
+
+#. module: era_seo_suite
+msgid "All Findings"
+msgstr "كل النتائج"
+
+#. module: era_seo_suite
+msgid "Manage AI Crawlers"
+msgstr "إدارة زواحف الذكاء"
+
+#. module: era_seo_suite
+msgid "Accounts"
+msgstr "الحسابات"
+
+#. module: era_seo_suite
+msgid "Sites"
+msgstr "المواقع"
+
+#. module: era_seo_suite
+msgid "Queries"
+msgstr "الاستعلامات"
+
+#. module: era_seo_suite
+msgid "Open all Website Settings"
+msgstr "فتح كل إعدادات الموقع"
+
+#. module: era_seo_suite
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_seo_suite
+msgid "Quick links"
+msgstr "روابط سريعة"
+
+#. module: era_seo_suite
+msgid "Pages & Schema"
+msgstr "الصفحات والمخطّطات"
+
+#. module: era_seo_suite
+msgid "Routing"
+msgstr "التوجيه"
+
+#. module: era_seo_suite
+msgid "Audit"
+msgstr "التدقيق"
+
+#. module: era_seo_suite
+msgid "Full settings"
+msgstr "الإعدادات الكاملة"
+
+#. module: era_seo_suite
+msgid "AI Auto-Fix"
+msgstr "الإصلاح الآلي بالذكاء"
+
+#. module: era_seo_suite
+msgid "GEO — /llms.txt"
+msgstr "GEO — /llms.txt"

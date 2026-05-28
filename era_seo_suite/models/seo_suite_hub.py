@@ -109,6 +109,8 @@ class EraSeoSuiteHub(models.Model):
         'setting_gsc_client_id':    ('era_seo_suite.client_id',             'char', ''),
         'setting_gsc_client_secret':('era_seo_suite.client_secret',         'char', ''),
         'setting_gsc_pull_window':  ('era_seo_suite.pull_window_days',      'int', 28),
+        # ---------- Auto-publish (era_seo_suite) ----------
+        'setting_article_generator_active': ('era_seo.article_generator_active', 'bool', False),
     }
 
     # --- Organization
@@ -201,6 +203,15 @@ class EraSeoSuiteHub(models.Model):
         compute='_compute_gsc_redirect_uri', readonly=True,
         help='Add this exact URL to your OAuth client\'s "Authorized redirect URIs" in Google '
              'Cloud Console — including https and no trailing slash.')
+
+    # --- Auto-publish
+    setting_article_generator_active = fields.Boolean(
+        string='Auto-publish trend-aware article every 3 days',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='When on, the "ERA SEO: Auto-publish blog article" cron picks a '
+             'current trend in your domain, writes a full article, and '
+             'publishes it under the default blog. A notification email goes '
+             'to the SEO Manager group with the post link.')
 
     # =========================================================================
     # Computes
@@ -634,7 +645,7 @@ class EraSeoSuiteHub(models.Model):
             'name': article['title'],
             'blog_id': blog.id,
             'content': article['content_html'],
-            'is_published': False,  # Stays in draft for human review.
+            'is_published': True,  # Auto-publish per admin preference.
         }
         # SEO meta — set only when the post model carries the field, since
         # the mixin's field set varies a touch across installations.
@@ -676,12 +687,78 @@ class EraSeoSuiteHub(models.Model):
                 _logger.exception(
                     'cron_generate_blog_article: failed to attach generated image')
 
+        # Notify the SEO Manager group with the live URL.
+        try:
+            self._notify_managers_about_new_article(post, article)
+        except Exception:  # noqa: BLE001
+            _logger.exception(
+                'cron_generate_blog_article: notification email failed '
+                '(post still created)')
+
         _logger.info(
             'cron_generate_blog_article: created blog.post#%d "%s" '
             '(trend: %s, confidence %.2f)',
             post.id, article['title'][:80], article['trend_signal'][:80],
             article['confidence'])
         return post.id
+
+    def _notify_managers_about_new_article(self, post, article):
+        """Send a one-shot notification email to every member of the SEO
+        Manager group with the published article's URL + the AI's reasoning.
+        """
+        Mail = self.env['mail.mail'].sudo()
+        group = self.env.ref('era_seo_suite.group_era_seo_manager',
+                             raise_if_not_found=False)
+        if not group:
+            return
+        recipients = group.users.filtered(lambda u: u.email)
+        if not recipients:
+            _logger.info(
+                'cron_generate_blog_article: no SEO Manager has an email; '
+                'skipping notification')
+            return
+        base_url = self.env['ir.config_parameter'].sudo().get_param(
+            'web.base.url', '').rstrip('/')
+        # blog.post exposes website_url via the website mixin.
+        rel_url = getattr(post, 'website_url', None) or ''
+        full_url = (base_url + rel_url) if (base_url and rel_url) else (rel_url or '#')
+        body_html = self._build_article_notification_body(post, article, full_url)
+        for user in recipients:
+            Mail.create({
+                'subject': _('New article auto-published: %s', article['title'][:120]),
+                'body_html': body_html,
+                'email_to': user.email,
+                'email_from': self.env.user.email_formatted or
+                              self.env['ir.mail_server']._get_default_from_address(),
+            }).send()
+
+    @staticmethod
+    def _build_article_notification_body(post, article, full_url):
+        # Plain inline HTML — no template, so this doesn't depend on
+        # mail_template records being present after the upgrade.
+        return (
+            '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;'
+            'line-height:1.5;color:#333;">'
+            '<p>The ERA SEO Suite just auto-published a new blog article.</p>'
+            '<p><strong>Title:</strong> {title}<br/>'
+            '<strong>Trend signal:</strong> {trend}<br/>'
+            '<strong>AI confidence:</strong> {conf:.2f}</p>'
+            '<p>'
+            '<a href="{url}" style="display:inline-block;padding:8px 16px;'
+            'background:#7c4cff;color:#fff;text-decoration:none;border-radius:4px;">'
+            'Open the article</a>'
+            '</p>'
+            '<p style="color:#888;font-size:12px;">Reason for the pick: {reason}<br/>'
+            'You can pause auto-publishing any time from the suite hub '
+            '(Settings tab → Auto-publish toggle).</p>'
+            '</div>'
+        ).format(
+            title=(article.get('title') or '').replace('<', '&lt;'),
+            trend=(article.get('trend_signal') or '').replace('<', '&lt;'),
+            reason=(article.get('reason') or '').replace('<', '&lt;'),
+            conf=float(article.get('confidence') or 0.0),
+            url=full_url,
+        )
 
     def _generate_article_image(self, prompt):
         """Hook — return raw image bytes (PNG/JPEG) for the article's hero,

@@ -202,6 +202,9 @@
                   <field name="setting_ai_agent_id"
                          invisible="not setting_ai_enabled"
                          options="{'no_create': True}"/>
+                  <field name="setting_article_generator_active"
+                         widget="boolean_toggle"
+                         invisible="not setting_ai_enabled"/>
                 </group>
               </group>
               <div class="text-muted small mb-3" invisible="not setting_ai_enabled">
@@ -209,6 +212,12 @@
                 <b>AI</b> app (Odoo Enterprise). Leave the picker empty to fall back to the
                 site's "Ask AI" agent. The SEO house-style rules are sent with every
                 request, so a generic agent works fine.
+              </div>
+              <div class="text-muted small mb-3"
+                   invisible="not setting_article_generator_active">
+                Auto-publish runs every 3 days. The agent picks a current trend in
+                your domain, writes the article, publishes it, and emails the
+                SEO Manager group with the link.
               </div>
 
               <group string="GEO — /llms.txt &amp; AI crawlers">

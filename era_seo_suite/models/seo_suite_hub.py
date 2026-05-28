@@ -1079,7 +1079,10 @@ class EraSeoSuiteHub(models.Model):
                         'Authorization': 'Bearer %s' % api_key,
                         'Content-Type': 'application/json',
                     },
-                    json=body, timeout=120,
+                    # 10-minute timeout — the cron runs in the background,
+                    # so it's fine to wait. DALL-E 3 and gpt-image-1 can
+                    # both run several minutes at peak load.
+                    json=body, timeout=600,
                 )
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('image-gen openai: network error: %s', exc)
@@ -1101,7 +1104,9 @@ class EraSeoSuiteHub(models.Model):
                     return None, None
             if item.get('url'):
                 try:
-                    dl = _requests.get(item['url'], timeout=60)
+                    # Same rationale as the POST above — background job,
+                    # generous timeout for the PNG download.
+                    dl = _requests.get(item['url'], timeout=600)
                     dl.raise_for_status()
                     return dl.content, None
                 except Exception as exc:  # noqa: BLE001

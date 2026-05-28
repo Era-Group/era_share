@@ -27,6 +27,32 @@
 
             <!-- ============================ DASHBOARD ============================ -->
             <page string="Dashboard" name="dashboard">
+              <!-- Quick links — shortcuts to the surfaces the admin reaches
+                   most often, so the dashboard is the only screen they need
+                   open during day-to-day SEO work. -->
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <button name="%(era_seo_suite.action_era_seo_pages)d"
+                        type="action"
+                        string="Pages (SEO + Schemas)"
+                        class="btn btn-primary"
+                        icon="fa-file-text-o"/>
+                <button name="%(era_seo_suite.action_seo_audit_run)d"
+                        type="action"
+                        string="Audit Runs"
+                        class="btn btn-secondary"
+                        icon="fa-search"/>
+                <button name="%(era_seo_suite.action_seo_audit_finding)d"
+                        type="action"
+                        string="Findings"
+                        class="btn btn-secondary"
+                        icon="fa-flag"/>
+                <button name="%(era_seo_suite.action_seo_schema_template)d"
+                        type="action"
+                        string="Schema Templates"
+                        class="btn btn-secondary"
+                        icon="fa-code"/>
+              </div>
+
               <group string="SEO" name="dash_seo">
                 <group>
                   <field name="kpi_published_pages"/>

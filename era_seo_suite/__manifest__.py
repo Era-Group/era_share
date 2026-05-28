@@ -4,29 +4,30 @@
     'description': """
 ERA SEO Suite — Unified Hub
 ============================
-A single, prominent entry point in the main menu (**ERA SEO Suite**) that
-opens one screen with tabs for the whole SEO suite:
+The single, exclusive user-facing entry point for the whole SEO suite —
+one main-menu app, one screen, six tabs:
 
 - **Dashboard** — at-a-glance KPIs (pages, last audit, open findings,
   GSC clicks, llms.txt status, …).
-- **SEO** — launchpad: pages, schema templates, redirects, sitemap, robots,
-  hreflang, audits, content blocks.
-- **GEO** — llms.txt status, AI crawlers, GEO audit.
-- **GSC** — accounts, sites, queries.
-- **Settings** — the most-used toggles inline + buttons to the full
-  configuration panel of every module.
+- **SEO / GEO / GSC** — launchpad to every feature in the suite.
+- **Settings** — every ir.config_parameter the suite owns (21 fields, with
+  per-field help) lives here; the legacy per-module Settings blocks under
+  Website → Configuration → Settings are turned off.
 - **Guide** — collapsed, on-page setup walkthroughs for AI, GEO, GSC.
 
-The existing per-feature menus under Website → SEO continue to work; the
-new hub is an additional, faster entry point.
+The underlying modules (era_seo_manager, era_seo_ai, era_geo, era_gsc, the
+blog/ai bridges) stay intact for tests and migrations; this addon turns
+off their scattered menus + Settings blocks so the user experience is
+fully unified through the hub.
     """,
     'author': 'ERA — Excellence Resources Arabia',
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.3.0',
+    'version': '19.0.2.0.0',
     'depends': [
         'era_seo_manager',
+        'era_seo_ai',
         'era_geo',
         'era_gsc',
     ],
@@ -35,6 +36,10 @@ new hub is an additional, faster entry point.
         'data/seo_suite_data.xml',
         'views/seo_suite_hub_views.xml',
         'views/menus.xml',
+        # noupdate=1 — turns off the legacy SEO menus + per-module Settings
+        # blocks once the suite is installed. MUST load last so the menu +
+        # view xmlid refs it disables already exist.
+        'data/consolidate.xml',
     ],
     'installable': True,
     'application': True,

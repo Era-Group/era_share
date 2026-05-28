@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Visual consolidation: every user-facing entry of the suite (menus + the
+    Settings blocks) is funneled through the unified hub. The underlying
+    modules stay intact (their tests, migrations, and xmlids keep working)
+    — this file just turns off the legacy surfaces that would otherwise
+    duplicate them.
+
+    To bring them back (e.g. for development), set ``active`` to True on any
+    of these records via the Technical → User Interface menus.
+  -->
+  <data noupdate="1">
+
+    <!-- ============================================================
+         1. Hide the scattered "Website → SEO" menu tree.
+            Disabling the root cascades through its children, so the GEO
+            (era_geo) and GSC (era_gsc) sub-menus also disappear since
+            they parent under it.
+         ============================================================ -->
+    <record id="era_seo_manager.menu_website_seo_root" model="ir.ui.menu">
+      <field name="active" eval="False"/>
+    </record>
+
+    <!-- ============================================================
+         2. Hide the per-module Settings blocks under
+            "Website → Configuration → Settings".
+            All settings now live exclusively in the suite's Settings tab,
+            which round-trips through the same ir.config_parameter keys.
+         ============================================================ -->
+    <record id="era_seo_manager.res_config_settings_view_era_seo" model="ir.ui.view">
+      <field name="active" eval="False"/>
+    </record>
+    <record id="era_seo_ai.view_res_config_settings_era_seo_ai" model="ir.ui.view">
+      <field name="active" eval="False"/>
+    </record>
+    <record id="era_geo.view_res_config_settings_era_geo" model="ir.ui.view">
+      <field name="active" eval="False"/>
+    </record>
+    <record id="era_gsc.view_res_config_settings_era_gsc" model="ir.ui.view">
+      <field name="active" eval="False"/>
+    </record>
+
+  </data>
+</odoo>

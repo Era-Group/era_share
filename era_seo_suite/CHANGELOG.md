@@ -1,5 +1,27 @@
 # Changelog
 
+## [19.0.2.0.0] — 2026-05-28
+
+### Changed — suite is now the EXCLUSIVE user-facing surface
+
+Visual consolidation of the whole suite into the ERA SEO Suite app:
+
+- **Legacy menus disabled.** The root `era_seo_manager.menu_website_seo_root`
+  is set inactive, cascading to every sub-menu (Schema Templates, Audits,
+  Redirects, Hreflang, Content Blocks, GEO sub-menus, GSC sub-menus). They
+  now live exclusively under the suite tabs.
+- **Legacy Settings blocks disabled.** The per-module `res.config.settings`
+  inherits in `era_seo_manager`, `era_seo_ai`, `era_geo`, `era_gsc` are set
+  inactive. Settings are managed exclusively from the suite's Settings tab,
+  which round-trips the same `ir.config_parameter` keys (no data
+  migration; the values stay).
+- **Code stays modular.** The underlying addons keep their tests, history,
+  migrations, and xmlids — only their user-facing menu + Settings surfaces
+  are turned off. To re-enable any of them in development, flip `active`
+  back to True on the relevant record.
+- Adds `era_seo_ai` to the suite's depends list (was implicit via auto-
+  install; now explicit so the inactive-record refs always resolve).
+
 ## [19.0.1.3.0] — 2026-05-28
 
 ### Added — help texts and inline guides on every Setting

@@ -1,6 +1,6 @@
 {
     'name': 'Filestore Cleanup',
-    'version': '15.0.1.0.0',
+    'version': '19.0.1.0.0',
     'summary': 'Auto-cleanup system-generated report PDFs',
     'description': """
         Automatically deletes system-generated PDF reports for invoices,

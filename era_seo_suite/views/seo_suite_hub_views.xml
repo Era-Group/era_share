@@ -164,12 +164,25 @@
                 <group string="Auto-publish settings">
                   <field name="setting_article_generator_active"
                          widget="boolean_toggle"/>
+                  <field name="setting_article_interval_days"
+                         invisible="not setting_article_generator_active"/>
                   <field name="setting_trends_geo"
                          placeholder="US"
                          invisible="not setting_article_generator_active"/>
                   <field name="setting_article_lang"
                          placeholder="en_US / ar_001 (blank = auto-detect)"
                          invisible="not setting_article_generator_active"/>
+                </group>
+                <group string="Image generation"
+                       invisible="not setting_article_generator_active">
+                  <field name="setting_image_provider"/>
+                  <field name="setting_image_api_key" password="True"
+                         invisible="setting_image_provider == 'none'"
+                         placeholder="blank = reuse the AI agent's OpenAI key"/>
+                  <field name="setting_image_model"
+                         invisible="setting_image_provider == 'none'"/>
+                  <field name="setting_image_size"
+                         invisible="setting_image_provider == 'none'"/>
                 </group>
                 <group string="Status">
                   <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>
@@ -213,6 +226,13 @@
                   <field name="era_ai_confidence" string="Confidence" widget="float" digits="[3,2]"/>
                   <field name="is_published" string="Published" widget="boolean_toggle"/>
                   <field name="website_url" widget="url" string="URL" optional="show"/>
+                  <button name="action_era_ai_regenerate" type="object"
+                          string="Regenerate" icon="fa-refresh"
+                          help="Replace this article with a fresh AI proposal (same record)."
+                          confirm="Regenerate this article? Title, body, and SEO meta will be replaced."/>
+                  <button name="action_era_open_website" type="object"
+                          string="Open" icon="fa-external-link"
+                          help="Open the live URL of this article in a new tab."/>
                 </list>
               </field>
             </page>

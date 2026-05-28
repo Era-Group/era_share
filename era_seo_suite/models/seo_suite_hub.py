@@ -114,6 +114,12 @@ class EraSeoSuiteHub(models.Model):
         'setting_trends_geo':               ('era_seo.trends_geo',               'char', 'US'),
         'setting_article_prompt_addendum':  ('era_seo.article_prompt_addendum',  'char', ''),
         'setting_article_lang':             ('era_seo.article_lang',             'char', ''),
+        'setting_article_interval_days':    ('era_seo.article_interval_days',    'int',  3),
+        # Image generation
+        'setting_image_provider':           ('era_seo.image_provider',           'char', 'none'),
+        'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
+        'setting_image_model':              ('era_seo.image_model',              'char', 'dall-e-3'),
+        'setting_image_size':               ('era_seo.image_size',               'char', '1792x1024'),
     }
 
     # --- Organization
@@ -251,6 +257,34 @@ class EraSeoSuiteHub(models.Model):
              'an "ADMIN GUIDANCE" section. Use it to nudge tone of voice, '
              'preferred topics, audiences, forbidden subjects, regional '
              'angles, etc. Leave blank to use the suite\'s defaults.')
+    setting_article_interval_days = fields.Integer(
+        string='Frequency (days)',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='How often the auto-publisher cron runs. Saving this value '
+             'updates the cron entry — the change takes effect at the '
+             'NEXT scheduled tick.')
+    # --- Image generation
+    setting_image_provider = fields.Selection(
+        [('none', 'None (skip image)'),
+         ('openai', 'OpenAI (DALL-E)')],
+        string='Image provider',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Service used to generate the article hero image. "None" '
+             'leaves the post without a cover.')
+    setting_image_api_key = fields.Char(
+        string='Image API key',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='API key for the image provider. For OpenAI, leave blank to '
+             'reuse the key configured on the active AI agent (when it '
+             'happens to be an OpenAI agent).')
+    setting_image_model = fields.Char(
+        string='Image model',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Model identifier, e.g. dall-e-3, dall-e-2, gpt-image-1.')
+    setting_image_size = fields.Char(
+        string='Image size',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Provider-native size string (DALL-E: 1024x1024, 1792x1024, 1024x1792).')
 
     # =========================================================================
     # Computes
@@ -365,10 +399,28 @@ class EraSeoSuiteHub(models.Model):
                     ICP.set_param(key, str(int(val or 0)))
                 else:
                     ICP.set_param(key, val or '')
+            # Side effect: when the article-generator interval changes,
+            # push it onto the cron entry so the scheduler picks it up at
+            # the next tick.
+            if 'setting_article_interval_days' in setting_vals:
+                self._sync_article_cron_interval(
+                    int(setting_vals['setting_article_interval_days'] or 3))
             # Drop the now-stale cache so the next read goes through
             # `_compute_settings` and reflects the values just written.
             self.invalidate_recordset(list(setting_vals))
         return super().write(vals) if vals else True
+
+    @api.model
+    def _sync_article_cron_interval(self, days):
+        days = max(1, int(days or 1))
+        cron = self.env.ref(
+            'era_seo_suite.cron_generate_blog_article',
+            raise_if_not_found=False)
+        if cron and (cron.interval_number != days or cron.interval_type != 'days'):
+            cron.sudo().write({
+                'interval_number': days,
+                'interval_type': 'days',
+            })
 
     def _compute_ai_agent_name(self):
         """Display the configured AI agent's name (era_seo_ai), if any."""
@@ -860,15 +912,95 @@ class EraSeoSuiteHub(models.Model):
         )
 
     def _generate_article_image(self, prompt):
-        """Hook — return raw image bytes (PNG/JPEG) for the article's hero,
-        or None to skip.
+        """Return raw image bytes (PNG/JPEG) for the article's hero, or
+        None to skip.
 
-        Default returns None because Odoo's stock AI app doesn't expose
-        image generation. Wire up DALL-E / Stable Diffusion / etc. by
-        overriding this method in a small custom module that calls the
-        relevant provider and returns the bytes.
+        Dispatches on the `era_seo.image_provider` ICP setting:
+          - 'none'   (default) → returns None
+          - 'openai' → calls OpenAI's image-generation API
+        Override this method in a custom addon for additional providers
+        (Replicate / Stable Diffusion / etc.); return raw bytes or None.
         """
+        ICP = self.env['ir.config_parameter'].sudo()
+        provider = (ICP.get_param('era_seo.image_provider', 'none') or 'none').strip().lower()
+        if provider == 'openai':
+            return self._generate_image_openai(prompt)
         return None
+
+    def _generate_image_openai(self, prompt):
+        """Call OpenAI's images endpoint and return the raw PNG bytes.
+
+        Reads the API key from `era_seo.image_api_key`. Falls back to the
+        key configured on the active ai.agent record when that key is
+        blank AND the agent's provider is openai-compatible. Any failure
+        (no key, network, non-2xx) is logged at WARNING and returns None
+        so the cron continues.
+        """
+        import requests as _requests
+        import base64 as _base64
+        ICP = self.env['ir.config_parameter'].sudo()
+        api_key = (ICP.get_param('era_seo.image_api_key', '') or '').strip()
+        if not api_key:
+            api_key = self._reuse_ai_agent_openai_key()
+        if not api_key:
+            _logger.warning(
+                'image-gen openai: no API key configured (Blog Gen tab '
+                '→ Image API key); skipping')
+            return None
+        model = (ICP.get_param('era_seo.image_model', 'dall-e-3') or 'dall-e-3').strip()
+        size = (ICP.get_param('era_seo.image_size', '1792x1024') or '1792x1024').strip()
+        body = {
+            'model': model,
+            'prompt': prompt[:4000],   # API limit
+            'n': 1,
+            'size': size,
+            'response_format': 'b64_json',
+        }
+        try:
+            resp = _requests.post(
+                'https://api.openai.com/v1/images/generations',
+                headers={
+                    'Authorization': 'Bearer %s' % api_key,
+                    'Content-Type': 'application/json',
+                },
+                json=body, timeout=60,
+            )
+            resp.raise_for_status()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen openai: API call failed: %s', exc)
+            return None
+        try:
+            data = resp.json()
+            b64 = data['data'][0]['b64_json']
+            return _base64.b64decode(b64)
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen openai: malformed response: %s', exc)
+            return None
+
+    def _reuse_ai_agent_openai_key(self):
+        """Best-effort: read the API key off the configured ai.agent when
+        it's an OpenAI agent, so admins don't have to paste the same key
+        twice. Returns '' when none found.
+        """
+        Agent = self.env.get('ai.agent')
+        if Agent is None:
+            return ''
+        ICP = self.env['ir.config_parameter'].sudo()
+        agent_id = ICP.get_param('era_seo.ai_agent_id')
+        try:
+            agent = Agent.sudo().browse(int(agent_id)) if agent_id else False
+        except (TypeError, ValueError):
+            agent = False
+        if not agent or not agent.exists():
+            return ''
+        # ai.agent's key field name has varied across Odoo versions; try
+        # the common ones and silently give up if none are present.
+        for fname in ('api_key', 'llm_api_key', 'provider_api_key'):
+            if fname in agent._fields:
+                val = (agent[fname] or '').strip()
+                if val:
+                    return val
+        return ''
 
     # ------------------------------------------------------------------------
     # Google Trends — pull current daily trends for a geo

@@ -17,7 +17,7 @@ Design notes:
 import logging
 import re
 
-from odoo import fields, models
+from odoo import _, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -42,6 +42,74 @@ class BlogPost(models.Model):
         string='AI Confidence', readonly=True, digits=(3, 2),
         help='Self-reported confidence (0.0-1.0) when the agent proposed '
              'this article.')
+
+    def action_era_ai_regenerate(self):
+        """Replace this post's title / subtitle / content / SEO meta with a
+        fresh AI proposal — keeps the same record, useful when the original
+        run produced something thin or off-tone. Trend signal and confidence
+        are also refreshed.
+        """
+        self.ensure_one()
+        Hub = self.env['era.seo.suite.hub'].sudo()
+        from .ai_client import AIClient, AIUnavailable
+        client = AIClient(self.env)
+        ok, reason = client.is_available()
+        if not ok:
+            from odoo.exceptions import UserError
+            raise UserError(reason)
+        ICP = self.env['ir.config_parameter'].sudo()
+        Category = self.env['era.blog.category'].sudo()
+        business_context = {
+            'org_name': ICP.get_param('era_seo.organization_name', ''),
+            'summary':  ICP.get_param('era_seo_suite.site_summary', ''),
+        }
+        past_titles = self.env['blog.post'].sudo().search(
+            [('id', '!=', self.id)], order='id desc', limit=30).mapped('name')
+        existing_categories = Category.search([], limit=50).mapped('name')
+        article = client.propose_article(
+            business_context, past_titles, existing_categories,
+            lang_code=(ICP.get_param('era_seo.article_lang', '') or '').strip() or None,
+            trending_now=Hub._fetch_google_trends(),
+            prompt_addendum=(ICP.get_param('era_seo.article_prompt_addendum', '') or '').strip() or None,
+        )
+        vals = {
+            'name': article['title'],
+            'content': article['content_html'],
+            'era_ai_generated_at': fields.Datetime.now(),
+            'era_ai_trend_signal': article.get('trend_signal') or '',
+            'era_ai_confidence': float(article.get('confidence') or 0.0),
+        }
+        for fname, src in [
+            ('seo_title', 'seo_title'),
+            ('seo_description', 'seo_description'),
+            ('seo_keywords', 'seo_keywords'),
+            ('era_subtitle', 'subtitle'),
+        ]:
+            if fname in self._fields and article.get(src):
+                vals[fname] = article[src]
+        self.write(vals)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'message': _('Regenerated: %s', article['title']),
+                'sticky': False,
+            },
+        }
+
+    def action_era_open_website(self):
+        """Open this post's live URL in a new tab."""
+        self.ensure_one()
+        url = getattr(self, 'website_url', '') or ''
+        if not url:
+            from odoo.exceptions import UserError
+            raise UserError(_('This post has no website URL yet.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'new',
+        }
 
     def _ai_fill_fields(self):
         """Add the blog-specific SEO/content fields to the AI fill set.

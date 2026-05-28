@@ -490,7 +490,12 @@ class AIClient:
         prompt = self._build_prompt(finding, ctx_record, field, lang=lang)
         response = agent.get_direct_response(prompt=prompt, context_message=SEO_CONTEXT)
         raw = response[0] if response else ''
-        return self._parse_json(raw)
+        parsed = self._parse_json(raw)
+        # The suggest_fix contract requires proposed_value — assert it here,
+        # not in _parse_json, since other callers use different JSON shapes.
+        if 'proposed_value' not in parsed:
+            raise ValueError(_('AI response missing "proposed_value".'))
+        return parsed
 
     # Fallback field specs if a caller doesn't pass any (keeps the client
     # usable on its own). The mixin is the real source of truth.
@@ -821,8 +826,11 @@ class AIClient:
             raise ValueError(
                 _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
             ) from exc
-        if 'proposed_value' not in parsed:
-            raise ValueError(_('AI response missing "proposed_value".'))
+        # NOTE: the legacy suggest_fix contract requires `proposed_value`,
+        # but every other caller uses a different JSON shape (propose_article:
+        # title/content_html; pick_schema: code; pick_blog_taxonomy: category;
+        # fill_seo: per-field names). Callers that need `proposed_value`
+        # validate it themselves — see `_field_and_mechanical_fix`.
         return parsed
 
     @classmethod

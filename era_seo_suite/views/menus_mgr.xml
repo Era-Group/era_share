@@ -162,36 +162,15 @@
     back to the default "open form" behavior, landing on the inherited
     backend form `website.page.form.era.seo`.
   -->
-  <record id="view_era_seo_website_page_list" model="ir.ui.view">
-    <field name="name">era.seo.website.page.list</field>
-    <field name="model">website.page</field>
-    <field name="arch" type="xml">
-      <list string="Pages (SEO + Schemas)" default_order="url asc">
-        <field name="name"/>
-        <field name="url"/>
-        <field name="website_id" groups="website.group_multi_website"/>
-        <field name="is_published"/>
-        <field name="website_indexed"/>
-      </list>
-    </field>
-  </record>
-
-  <record id="action_era_seo_pages" model="ir.actions.act_window">
-    <field name="name">Pages (SEO + Schemas)</field>
-    <field name="res_model">website.page</field>
-    <field name="view_mode">list,form</field>
-    <field name="view_ids" eval="[
-        (5, 0, 0),
-        (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_seo_website_page_list')}),
-    ]"/>
-    <field name="help" type="html">
-      <p class="o_view_nocontent_smiling_face">
-        No pages yet. Create one from the Website app, then come back here
-        to attach schema templates or tune SEO meta.
-      </p>
-    </field>
-  </record>
-
+  <!--
+    NOTE: `view_era_seo_website_page_list` + `action_era_seo_pages` used to
+    live here, but the hub's Dashboard quick-links bar references
+    `era_seo_suite.action_era_seo_pages` via `%(…)d`, and the hub view
+    loads BEFORE this file (intentionally — menus go last). The action
+    has been moved into `seo_suite_hub_views.xml` so it's defined before
+    the hub references it. This menuitem keeps the same xmlid reference;
+    Odoo resolves it at menu-load time.
+  -->
   <menuitem
     id="menu_seo_pages"
     name="Pages (SEO + Schemas)"

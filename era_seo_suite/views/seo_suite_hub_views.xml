@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+  <!--
+    Pages (SEO + Schemas) — own list view + action.
+
+    Defined here ABOVE the hub form because the Dashboard quick-links
+    bar at the top of the form references `era_seo_suite.action_era_seo_pages`
+    via `%(…)d`, and that expansion requires the action's database id
+    to exist by the time the form view is processed. The menuitem
+    in menus_mgr.xml references the same xmlid by name and resolves
+    at menu-load time.
+
+    Why a custom list view: Odoo 19's stock website.page list is
+        <list js_class="website_pages_list"
+              type="object" action="open_website_url" …>
+    which routes row-click to the public URL. That blocks SEO admins
+    from reaching the backend form (where our SEO + Schemas tabs live).
+    The minimal view below has no js_class / type / action, so
+    row-click falls back to the default "open form" behavior.
+  -->
+  <record id="view_era_seo_website_page_list" model="ir.ui.view">
+    <field name="name">era.seo.website.page.list</field>
+    <field name="model">website.page</field>
+    <field name="arch" type="xml">
+      <list string="Pages (SEO + Schemas)" default_order="url asc">
+        <field name="name"/>
+        <field name="url"/>
+        <field name="website_id" groups="website.group_multi_website"/>
+        <field name="is_published"/>
+        <field name="website_indexed"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="action_era_seo_pages" model="ir.actions.act_window">
+    <field name="name">Pages (SEO + Schemas)</field>
+    <field name="res_model">website.page</field>
+    <field name="view_mode">list,form</field>
+    <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_seo_website_page_list')}),
+    ]"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No pages yet. Create one from the Website app, then come back here
+        to attach schema templates or tune SEO meta.
+      </p>
+    </field>
+  </record>
+
   <record id="view_era_seo_suite_hub_form" model="ir.ui.view">
     <field name="name">era.seo.suite.hub.form</field>
     <field name="model">era.seo.suite.hub</field>

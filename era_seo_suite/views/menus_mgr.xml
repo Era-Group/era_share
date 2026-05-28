@@ -124,4 +124,32 @@
     action="action_seo_schema_template"
     sequence="10"/>
 
+  <!--
+    Direct list+form on website.page.
+    Odoo 19's stock "Website Pages" list opens the Website Builder when
+    you click a row, which hides the backend form with our SEO + Schemas
+    tabs. This action opens the inherited backend form on row-click
+    (target=current, no js_class override), so admins can attach schema
+    instances and tune meta from one place.
+  -->
+  <record id="action_era_seo_pages" model="ir.actions.act_window">
+    <field name="name">Pages (SEO + Schemas)</field>
+    <field name="res_model">website.page</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No pages yet. Create one from the Website app, then come back here
+        to attach schema templates or tune SEO meta.
+      </p>
+    </field>
+  </record>
+
+  <menuitem
+    id="menu_seo_pages"
+    name="Pages (SEO + Schemas)"
+    parent="menu_website_seo_root"
+    action="action_era_seo_pages"
+    sequence="15"/>
+
 </odoo>

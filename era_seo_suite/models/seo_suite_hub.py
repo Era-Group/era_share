@@ -121,7 +121,7 @@ class EraSeoSuiteHub(models.Model):
         'setting_image_provider':           ('era_seo.image_provider',           'char', 'openai'),
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
         'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
-        'setting_image_size':               ('era_seo.image_size',               'char', '1792x1024'),
+        'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
     }
 
     # --- Organization
@@ -1061,7 +1061,14 @@ class EraSeoSuiteHub(models.Model):
                 '→ Image API key); skipping')
             return None
         model = (ICP.get_param('era_seo.image_model', 'gpt-image-1') or 'gpt-image-1').strip()
-        size = (ICP.get_param('era_seo.image_size', '1792x1024') or '1792x1024').strip()
+        # Normalize the size string. Admins copy/paste from docs and end up
+        # with the Unicode multiplication sign U+00D7 ('×') instead of the
+        # ASCII 'x' OpenAI requires. Also fix the fullwidth variants for
+        # completeness, then lowercase.
+        size = (ICP.get_param('era_seo.image_size', '1024x1024') or '1024x1024').strip()
+        for ch in ('×', '✕', '✖', 'ｘ', 'Ｘ'):
+            size = size.replace(ch, 'x')
+        size = size.replace('X', 'x')
 
         def _call(call_prompt, call_model, call_size):
             # `response_format` is rejected by gpt-image-1 and some

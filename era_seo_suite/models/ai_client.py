@@ -651,6 +651,39 @@ class AIClient:
         for k in ('title', 'content_html'):
             if not (parsed.get(k) or '').strip():
                 raise ValueError(_('AI article proposal is missing %r.', k))
+        # Word-count enforcement: 600 floor. If the first response came
+        # back short, ask once more with a tighter directive. Many models
+        # will write to floor on the retry. We accept the longer of the
+        # two so a "compliant retry" still beats a hard error for the user.
+        wc = self._count_words(parsed.get('content_html', ''))
+        if wc < 600:
+            _logger.info(
+                'propose_article: first draft %d words (< 600 floor) — '
+                'retrying once with a stricter length directive', wc)
+            retry_prompt = prompt + (
+                '\n\nLENGTH ENFORCEMENT (RETRY):\n'
+                'Your previous draft was %d words. The minimum is 600 '
+                'words in the article body. Rewrite content_html so it '
+                'is at least 700 words. Keep the same trend_signal, '
+                'title, and category. Do NOT pad with filler or empty '
+                'restatements — extend with substantive examples, '
+                'practical steps, or specific details supported by the '
+                'topic. Return the same JSON shape.' % wc)
+            response = agent.get_direct_response(
+                prompt=retry_prompt, context_message=ARTICLE_CONTEXT)
+            raw2 = response[0] if response else ''
+            try:
+                parsed2 = self._parse_json(raw2)
+                wc2 = self._count_words(parsed2.get('content_html', ''))
+                if wc2 > wc and (parsed2.get('content_html') or '').strip():
+                    parsed = parsed2
+                    wc = wc2
+            except ValueError:
+                pass  # malformed retry — stick with the original.
+        if wc < 600:
+            _logger.warning(
+                'propose_article: final draft only %d words (floor is 600); '
+                'publishing anyway — review and extend manually if needed', wc)
         return {
             'title':           parsed.get('title', '').strip(),
             'subtitle':        parsed.get('subtitle', '').strip(),
@@ -695,7 +728,9 @@ class AIClient:
             'generic ("AI is changing everything"). Surface the chosen signal '
             'in `trend_signal`.\n'
             '  2. Write a complete article on that topic that the business '
-            'could publish today. Substantive — 400-700 words of HTML.\n'
+            'could publish today. Substantive — AT LEAST 600 words of HTML, '
+            'target 700-1000 words. Count words in the body text only. Hit '
+            'the floor or rewrite — a short article fails review.\n'
             '  3. Fill SEO meta and an image_prompt that an image-generation '
             'model could use as-is.\n'
             'OUTPUT (one JSON object, exactly these keys):\n'
@@ -806,6 +841,19 @@ class AIClient:
         if not needs_ai and finding.check_code == 'slug_contains_uppercase':
             return 'url', (target.url or '').lower()
         return field, None
+
+    @staticmethod
+    def _count_words(html):
+        """Strip tags from `html` and return the word count of the body.
+        Cheap regex-based stripper — accurate enough for the >= 600 floor;
+        does not try to handle entities or nested HTML edge cases.
+        """
+        if not html:
+            return 0
+        # 1. Drop tags. 2. Collapse whitespace. 3. Count non-empty tokens.
+        text = re.sub(r'<[^>]+>', ' ', html)
+        tokens = [t for t in re.split(r'\s+', text) if t.strip()]
+        return len(tokens)
 
     @staticmethod
     def _parse_json(raw):

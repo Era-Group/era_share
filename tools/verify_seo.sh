@@ -21,7 +21,20 @@ MODULES="era_seo_manager,era_seo_blog,era_seo_ai,era_seo_blog_ai"
 # `/module` selects every test in that module regardless of its @tagged value.
 TEST_TAGS="/era_seo_manager,/era_seo_blog,/era_seo_ai,/era_seo_blog_ai"
 ODOO_BIN="${ODOO_BIN:-odoo-bin}"
+ODOO_CONF="${ODOO_CONF:-}"
+# HttpCase tests reach into odoo.service.server.server.httpd, so we can't
+# use --no-http; pick a high port unlikely to collide with a running server.
+HTTP_PORT="${HTTP_PORT:-18069}"
 LOG="${LOG:-/tmp/era_seo_verify_$(date +%Y%m%d_%H%M%S).log}"
+
+# Pick up the standard on-prem config if the caller didn't override it. Tests
+# need the full addons_path; without -c, odoo-bin only sees the core paths and
+# can't find era_* modules.
+if [ -z "$ODOO_CONF" ] && [ -f /opt/odoo/odoo.conf ]; then
+  ODOO_CONF="/opt/odoo/odoo.conf"
+fi
+CONF_FLAG=()
+[ -n "$ODOO_CONF" ] && CONF_FLAG=(-c "$ODOO_CONF")
 
 # --- Resolve the database name --------------------------------------------
 if [ -z "${DB:-}" ]; then
@@ -47,12 +60,23 @@ echo "   log file : $LOG"
 echo "================================================================"
 
 # --- Run the upgrade + tests ----------------------------------------------
-"$ODOO_BIN" -d "$DB" \
+# --http-port avoids fighting a running server for port 8069. HttpCase tests
+# need a live server (they introspect odoo.service.server.server.httpd), so
+# we can't use --no-http.
+# --logfile overrides any `logfile = …` in the loaded conf so output reaches
+# this run's log instead of being silently appended to the server's log.
+"$ODOO_BIN" "${CONF_FLAG[@]}" -d "$DB" \
   -u "$MODULES" \
   --test-enable \
   --test-tags "$TEST_TAGS" \
   --stop-after-init \
-  --log-level=test 2>&1 | tee "$LOG"
+  --workers=0 \
+  --http-port="$HTTP_PORT" \
+  --logfile="$LOG" \
+  --log-level=test
+ODOO_EXIT=$?
+# Mirror the captured log to stdout so callers see what happened live.
+cat "$LOG"
 
 # --- Verdict ---------------------------------------------------------------
 echo
@@ -62,7 +86,11 @@ echo "================================================================"
 
 # Odoo logs failures/errors at level ERROR/CRITICAL; assertion failures show
 # "FAIL:" and exceptions show "ERROR ...: Traceback". Count the real markers.
-FAILS=$(grep -cE "(FAIL:|ERROR [0-9].*odoo\.tests|CRITICAL .*odoo\.tests|Traceback \(most recent call last\))" "$LOG")
+# Also count startup-level showstoppers (couldn't bind a port, couldn't find
+# the binary, etc.) so they don't slip through as a false PASS.
+FAILS=$(grep -cE "(FAIL:|ERROR [0-9].*odoo\.tests|CRITICAL .*odoo\.tests|Traceback \(most recent call last\)|Address already in use|Port [0-9]+ is in use|command not found)" "$LOG")
+# Treat a non-zero odoo-bin exit as failure even if no marker matched.
+[ "${ODOO_EXIT:-0}" -ne 0 ] && FAILS=$((FAILS + 1))
 # Odoo's own end-of-run summary line, if present.
 SUMMARY=$(grep -aiE "tests? when loading|[0-9]+ failed, [0-9]+ error" "$LOG" | tail -n 5)
 

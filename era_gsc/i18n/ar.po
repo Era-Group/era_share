@@ -153,3 +153,55 @@ msgstr "كلمة سر عميل OAuth"
 #. module: era_gsc
 msgid "Last Error"
 msgstr "آخر خطأ"
+
+#. module: era_gsc
+msgid "Google Search Console"
+msgstr "Google Search Console"
+
+#. module: era_gsc
+msgid "Pull search performance from Google Search Console."
+msgstr "اسحب بيانات أداء البحث من Google Search Console."
+
+#. module: era_gsc
+msgid "OAuth 2.0 Client (Web application) from Google Cloud Console — Credentials."
+msgstr "عميل OAuth 2.0 (تطبيق ويب) من Google Cloud Console — قسم Credentials."
+
+#. module: era_gsc
+msgid "How many days of search analytics each pull fetches. GSC data is ~2 days delayed."
+msgstr "عدد الأيام التي يجلبها كل سحب من تحليلات البحث. بيانات GSC متأخّرة بنحو يومين."
+
+#. module: era_gsc
+msgid "Authorized Redirect URI"
+msgstr "رابط Redirect المعتَمد"
+
+#. module: era_gsc
+msgid "Show setup guide"
+msgstr "عرض دليل الإعداد"
+
+#. module: era_gsc
+msgid "Open Google Cloud Console and create (or pick) a project."
+msgstr "افتح Google Cloud Console وأنشئ مشروعًا (أو اختر مشروعًا موجودًا)."
+
+#. module: era_gsc
+msgid "Under APIs & Services → Library, enable the Search Console API."
+msgstr "من APIs & Services → Library فعّل Search Console API."
+
+#. module: era_gsc
+msgid "Configure the OAuth consent screen (Internal or External)."
+msgstr "اضبط شاشة موافقة OAuth (Internal أو External)."
+
+#. module: era_gsc
+msgid "Under Credentials, create an OAuth client ID — Web application."
+msgstr "من Credentials أنشئ OAuth client ID نوع Web application."
+
+#. module: era_gsc
+msgid "Add the Redirect URI shown above to \"Authorized redirect URIs\" — exact match, including https and no trailing slash."
+msgstr "أضف الـ Redirect URI الظاهر أعلاه إلى \"Authorized redirect URIs\" — مطابقة تامة، بما يشمل https وعدم وجود / في النهاية."
+
+#. module: era_gsc
+msgid "Paste the Client ID and Client Secret in the fields above and save."
+msgstr "الصق Client ID و Client Secret في الحقول أعلاه ثم احفظ."
+
+#. module: era_gsc
+msgid "Go to Website → SEO → GSC → Accounts → New, then click \"Connect with Google\"."
+msgstr "اذهب إلى Website → SEO → GSC → Accounts → New ثم اضغط \"Connect with Google\"."

@@ -1,5 +1,18 @@
 # Changelog
 
+## [19.0.1.2.0] — 2026-05-28
+
+### Changed — cleaner settings page; setup guide is collapsed
+
+- Settings source text is now **English**; Arabic shows up via `ar.po` like
+  the rest of the suite.
+- The big numbered checklist is folded into a compact
+  `<details><summary>Show setup guide</summary>…</details>` — the page
+  shows only the three fields (Redirect URI, Client ID, Client Secret) and
+  the Pull Window by default, with the seven-step guide one click away.
+- The Redirect URI sits at the top of the OAuth Client setting (with
+  `CopyClipboardChar`) so the admin copies it before going to Google.
+
 ## [19.0.1.1.0] — 2026-05-28
 
 ### Added — on-page setup walkthrough in Settings

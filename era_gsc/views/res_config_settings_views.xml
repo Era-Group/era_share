@@ -6,66 +6,17 @@
     <field name="inherit_id" ref="website.res_config_settings_view_form"/>
     <field name="arch" type="xml">
       <xpath expr="//block[@id='website_info_settings']" position="after">
-        <block title="ERA SEO — Google Search Console" id="era_gsc_settings"
-               help="Pull search performance from GSC into Odoo.">
+        <block title="Google Search Console" id="era_gsc_settings"
+               help="Pull search performance from Google Search Console.">
 
-          <!-- ============== Setup instructions (one-time) ============== -->
-          <setting id="era_gsc_setup_steps" string="إعداد لمرّة واحدة"
-                   help="One-time Google Cloud setup. Follow the steps in order.">
-            <div class="content-group">
-              <p class="mb-2">
-                لربط GSC مع Odoo، نحتاج OAuth client من Google Cloud. اتبع الخطوات بالترتيب:
-              </p>
-              <ol class="ps-3 mb-3">
-                <li class="mb-2">
-                  افتح
-                  <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>
-                  وأنشئ مشروعًا جديدًا (أو اختر مشروعًا موجودًا).
-                </li>
-                <li class="mb-2">
-                  من قائمة <b>APIs &amp; Services → Library</b> فعّل
-                  <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com" target="_blank">
-                  <b>Search Console API</b></a>.
-                </li>
-                <li class="mb-2">
-                  من <b>APIs &amp; Services → OAuth consent screen</b> اضبط الـ consent
-                  (Internal أو External مع نطاقك)، واحفظ.
-                </li>
-                <li class="mb-2">
-                  من <b>APIs &amp; Services → Credentials → Create credentials →
-                  OAuth client ID</b> اختر <b>Web application</b>.
-                </li>
-                <li class="mb-2">
-                  في حقل <b>Authorized redirect URIs</b> أضف الرابط التالي
-                  <span class="text-muted small">(يتولّد بناءً على رابط موقعك)</span>:
-                  <div class="mt-1">
-                    <field name="era_gsc_redirect_uri" readonly="1" nolabel="1"
-                           widget="CopyClipboardChar"/>
-                  </div>
-                </li>
-                <li class="mb-2">
-                  انسخ <b>Client ID</b> و <b>Client Secret</b> والصقهما في الحقول أدناه ↓
-                </li>
-                <li class="mb-2">
-                  احفظ الإعدادات، ثم اذهب إلى
-                  <b>Website → SEO → GSC → Accounts → New</b>،
-                  أنشئ حساب، اضغط <b>Connect with Google</b>،
-                  وامنح صلاحية القراءة. الـ callback راح يرجّعك للفورم بحالة
-                  <b>Connected</b> ويكتشف مواقعك تلقائيًا.
-                </li>
-              </ol>
-              <div class="alert alert-info small mb-0">
-                <b>تنبيه:</b> رابط redirect لازم يكون مطابقًا تمامًا — بما في ذلك https
-                وعدم وجود "/" في النهاية. لو موقعك خلف بروكسي، تأكد أن
-                <code>web.base.url</code> في System Parameters يعكس الرابط العام الصحيح.
-              </div>
-            </div>
-          </setting>
-
-          <!-- ====================== OAuth client ====================== -->
           <setting id="era_gsc_oauth" string="OAuth Client"
-                   help="From Google Cloud Console — OAuth 2.0 Client (Web).">
+                   help="OAuth 2.0 Client (Web application) from Google Cloud Console — Credentials.">
             <div class="content-group">
+              <div class="row mb-2">
+                <label for="era_gsc_redirect_uri" class="col-lg-4 o_light_label"/>
+                <field name="era_gsc_redirect_uri" readonly="1" nolabel="1"
+                       widget="CopyClipboardChar"/>
+              </div>
               <div class="row">
                 <label for="era_gsc_client_id" class="col-lg-4 o_light_label"/>
                 <field name="era_gsc_client_id"
@@ -76,11 +27,26 @@
                 <field name="era_gsc_client_secret" password="True"
                        placeholder="••••••••••••••••"/>
               </div>
-              <div class="row">
-                <label for="era_gsc_pull_window_days" class="col-lg-4 o_light_label"/>
-                <field name="era_gsc_pull_window_days"/>
-              </div>
+              <details class="mt-3">
+                <summary class="text-primary" style="cursor: pointer;">
+                  Show setup guide
+                </summary>
+                <ol class="ps-3 mt-2 small text-muted">
+                  <li>Open Google Cloud Console and create (or pick) a project.</li>
+                  <li>Under APIs &amp; Services → Library, enable the Search Console API.</li>
+                  <li>Configure the OAuth consent screen (Internal or External).</li>
+                  <li>Under Credentials, create an OAuth client ID — Web application.</li>
+                  <li>Add the Redirect URI shown above to "Authorized redirect URIs" — exact match, including https and no trailing slash.</li>
+                  <li>Paste the Client ID and Client Secret in the fields above and save.</li>
+                  <li>Go to Website → SEO → GSC → Accounts → New, then click "Connect with Google".</li>
+                </ol>
+              </details>
             </div>
+          </setting>
+
+          <setting id="era_gsc_pull_window" string="Pull Window (days)"
+                   help="How many days of search analytics each pull fetches. GSC data is ~2 days delayed.">
+            <field name="era_gsc_pull_window_days"/>
           </setting>
 
         </block>

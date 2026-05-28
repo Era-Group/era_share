@@ -15,6 +15,7 @@ from odoo import models
 
 _TRUE = ('True', '1', 'true', 'yes', 'on')
 _GEO_MIN_WORDS = 150          # only flag heading structure on non-trivial pages
+_GEO_SUMMARY_MIN_WORDS = 300  # only flag missing answer summary on long pages
 _GEO_ANSWER_BOTS = ('OAI-SearchBot', 'PerplexityBot', 'ChatGPT-User',
                     'Perplexity-User')
 
@@ -26,7 +27,8 @@ class EraSeoAuditRun(models.Model):
         methods = super()._get_check_methods()
         for name in ('_check_geo_llms_txt',
                      '_check_geo_answer_bots',
-                     '_check_geo_heading_structure'):
+                     '_check_geo_heading_structure',
+                     '_check_geo_no_answer_summary'):
             if hasattr(self, name):
                 methods.append(getattr(self, name))
         return methods
@@ -97,3 +99,19 @@ class EraSeoAuditRun(models.Model):
                     suggested='Split the content into sections with clear H2/H3 '
                               'headings so AI can extract and cite it.',
                 )
+
+    def _check_geo_no_answer_summary(self, pages):
+        """Long page without a quotable GEO Answer Summary."""
+        for p in pages:
+            if (getattr(p, 'geo_answer_summary', False) or '').strip():
+                continue
+            if len(self._content_text(p).split()) < _GEO_SUMMARY_MIN_WORDS:
+                continue
+            self._add_finding(
+                p, 'info', 'geo_no_answer_summary',
+                'GEO: Missing answer summary',
+                details='Substantial pages with no GEO Answer Summary give AI '
+                        'engines no concise, quotable answer to cite.',
+                suggested='Add 1-2 short sentences in the page\'s GEO Answer '
+                          'Summary that directly answer the page question.',
+            )

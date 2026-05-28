@@ -97,3 +97,19 @@ msgstr "فتح /llms.txt"
 #. module: era_geo
 msgid "No AI crawlers yet"
 msgstr "لا توجد زواحف ذكاء بعد"
+
+#. module: era_geo
+msgid "GEO Answer Summary"
+msgstr "ملخّص الإجابة (GEO)"
+
+#. module: era_geo
+msgid "GEO Key Takeaways"
+msgstr "نقاط رئيسية (GEO)"
+
+#. module: era_geo
+msgid "GEO"
+msgstr "GEO"
+
+#. module: era_geo
+msgid "Key Takeaways"
+msgstr "النقاط الرئيسية"

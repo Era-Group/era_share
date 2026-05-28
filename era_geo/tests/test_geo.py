@@ -69,6 +69,59 @@ class TestGeoAudit(TransactionCase):
         ])
         self.assertFalse(f)
 
+    def test_long_page_without_answer_summary_flags(self):
+        words = ' '.join(['word'] * 400)
+        page = self._make_page(
+            '/geo-long', '<div><h2>X</h2><p>%s</p></div>' % words)
+        run = self.Run.create({})
+        run._run_audit()
+        f = self.Finding.search([
+            ('run_id', '=', run.id),
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'geo_no_answer_summary'),
+        ])
+        self.assertTrue(f)
+
+    def test_short_page_without_summary_no_finding(self):
+        words = ' '.join(['word'] * 50)  # < 300-word threshold
+        page = self._make_page(
+            '/geo-short', '<div><h2>X</h2><p>%s</p></div>' % words)
+        run = self.Run.create({})
+        run._run_audit()
+        f = self.Finding.search([
+            ('run_id', '=', run.id),
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'geo_no_answer_summary'),
+        ])
+        self.assertFalse(f)
+
+    def test_answer_summary_present_no_finding(self):
+        words = ' '.join(['word'] * 400)
+        page = self._make_page(
+            '/geo-summarised', '<div><h2>X</h2><p>%s</p></div>' % words)
+        page.geo_answer_summary = (
+            'ERA provides bilingual SEO and GEO services for the Saudi market.')
+        run = self.Run.create({})
+        run._run_audit()
+        f = self.Finding.search([
+            ('run_id', '=', run.id),
+            ('res_id', '=', page.id),
+            ('check_code', '=', 'geo_no_answer_summary'),
+        ])
+        self.assertFalse(f)
+
+    def test_geo_fields_in_ai_fill_specs(self):
+        """The defensive _ai_fill_fields override adds GEO fields to the spec
+        set when era_seo_ai contributes the base method."""
+        block = self.env['era.content.block'].create({
+            'name': 'GEO test block',
+            'code': 'geo_test_block',
+        })
+        specs = block._ai_fill_fields()
+        names = [s['name'] for s in specs]
+        self.assertIn('geo_answer_summary', names)
+        self.assertIn('geo_key_takeaways', names)
+
 
 @tagged('post_install', '-at_install')
 class TestGeoCrawlerModel(TransactionCase):

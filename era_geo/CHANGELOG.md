@@ -3,6 +3,34 @@
 All notable changes to `era_geo` are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.3.0.0] — 2026-05-28
+
+### Added — citation-ready content fields (Phase 3)
+
+Two new fields land on `era.seo.mixin` so every host model (website.page,
+blog.post, era.content.block, blog series/category/author) carries them:
+
+- **`geo_answer_summary`** (Text, translatable) — 1-2 short, quotable
+  sentences that AI engines lift verbatim when citing the page.
+- **`geo_key_takeaways`** (Html, translatable, sanitized) — a small `<ul>`
+  with 3-5 bullet takeaways for AI summary responses.
+
+Wiring:
+
+- **`/llms.txt`** uses `geo_answer_summary` as the per-item description when
+  set, falling back to `seo_description` (and `era_excerpt` for blog posts).
+- **New audit check `geo_no_answer_summary`** — flags substantial pages
+  (≥300 words) with no quotable summary set.
+- **AI fill** — `_ai_fill_fields` is extended defensively (uses `getattr`
+  on `super`), so the AI generates these GEO fields when `era_seo_ai` is
+  installed, and the module loads fine when it isn't.
+- A **GEO tab** is added to the content-block form so the fields are
+  editable; the website.page and blog.post forms can be extended later via
+  small bridges if you want the fields surfaced there too.
+
+Tests cover the audit check (long-page flag, short-page no-flag,
+summary-present no-flag) and the `_ai_fill_fields` extension.
+
 ## [19.0.2.0.0] — 2026-05-28
 
 ### Added — GEO readiness checks in the SEO audit (Phase 2)

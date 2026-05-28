@@ -107,7 +107,10 @@ class EraGeoLlms(http.Controller):
             if not url.startswith('/') or '<' in url or url.startswith('/website'):
                 continue
             title = (getattr(page, 'seo_title', False) or page.name or url).strip()
-            desc = _clean(getattr(page, 'seo_description', '') or '', desc_limit)
+            # GEO summary is quotable-for-AI; prefer it over the SERP meta.
+            desc = _clean(
+                getattr(page, 'geo_answer_summary', '')
+                or getattr(page, 'seo_description', '') or '', desc_limit)
             line = '- [%s](%s%s)' % (title, base, url)
             if desc:
                 line += ': %s' % desc
@@ -129,7 +132,8 @@ class EraGeoLlms(http.Controller):
                 continue
             title = (getattr(post, 'seo_title', False) or post.name or '').strip()
             desc = _clean(
-                getattr(post, 'seo_description', '')
+                getattr(post, 'geo_answer_summary', '')
+                or getattr(post, 'seo_description', '')
                 or getattr(post, 'era_excerpt', '') or '', desc_limit)
             line = '- [%s](%s%s)' % (title, base, url)
             if desc:

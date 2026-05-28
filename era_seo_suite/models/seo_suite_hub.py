@@ -118,7 +118,7 @@ class EraSeoSuiteHub(models.Model):
         'setting_article_lang':             ('era_seo.article_lang',             'char', ''),
         'setting_article_interval_days':    ('era_seo.article_interval_days',    'int',  3),
         # Image generation
-        'setting_image_provider':           ('era_seo.image_provider',           'char', 'none'),
+        'setting_image_provider':           ('era_seo.image_provider',           'char', 'openai'),
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
         'setting_image_model':              ('era_seo.image_model',              'char', 'dall-e-3'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1792x1024'),
@@ -1089,14 +1089,24 @@ class EraSeoSuiteHub(models.Model):
             return None
 
     def _reuse_ai_agent_openai_key(self):
-        """Best-effort: read the API key off the configured ai.agent when
-        it's an OpenAI agent, so admins don't have to paste the same key
-        twice. Returns '' when none found.
+        """Best-effort: locate an OpenAI API key already configured for the
+        AI app, so admins don't have to paste the same key twice. Returns
+        '' when none found.
+
+        Odoo 19's AI app stores provider keys in ir.config_parameter
+        under per-provider keys (the OpenAI one is `ai.openai_key`).
+        Older / forks may keep them on the ai.agent record — checked as a
+        secondary fallback.
         """
+        ICP = self.env['ir.config_parameter'].sudo()
+        # Primary: the AI app's own config slot.
+        key = (ICP.get_param('ai.openai_key') or '').strip()
+        if key:
+            return key
+        # Fallback: the agent record itself, in case a fork stores it there.
         Agent = self.env.get('ai.agent')
         if Agent is None:
             return ''
-        ICP = self.env['ir.config_parameter'].sudo()
         agent_id = ICP.get_param('era_seo.ai_agent_id')
         try:
             agent = Agent.sudo().browse(int(agent_id)) if agent_id else False
@@ -1104,8 +1114,6 @@ class EraSeoSuiteHub(models.Model):
             agent = False
         if not agent or not agent.exists():
             return ''
-        # ai.agent's key field name has varied across Odoo versions; try
-        # the common ones and silently give up if none are present.
         for fname in ('api_key', 'llm_api_key', 'provider_api_key'):
             if fname in agent._fields:
                 val = (agent[fname] or '').strip()

@@ -1,5 +1,24 @@
 # Changelog
 
+## [19.0.1.2.0] — 2026-05-28
+
+### Added — every ICP-backed setting in the hub Settings tab + a menu icon
+
+- The **Settings** tab now owns every ICP key the suite manages — 21 fields
+  in 6 sections: Organization, Social profiles, Search engine verification,
+  AI Auto-Fix, GEO (/llms.txt + AI crawlers), GSC (OAuth + pull window) —
+  with the GSC redirect URI rendered as a copy-to-clipboard field.
+- One declarative `_SETTING_MAP` drives shared compute/inverse, so adding a
+  new setting later is one line.
+- Round-trip through `ir.config_parameter` is unchanged — the legacy
+  per-module panels under *Website → Configuration → Settings* stay
+  in sync (they're the same ICP keys).
+- New `_compute_ai_agent_name` shows the currently-bound AI agent's name
+  (read-only) when `era_seo_ai` is installed.
+- **Menu icon**: a real `static/description/icon.png` (purple/teal
+  "SEO · ERA SUITE" mark) wired into the top-level menu via `web_icon`,
+  so the app shows up cleanly in the launcher.
+
 ## [19.0.1.1.0] — 2026-05-28
 
 ### Added — Run Audit Now button on the hub header

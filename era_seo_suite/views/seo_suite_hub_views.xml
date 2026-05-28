@@ -150,34 +150,80 @@
             <!-- ============================ SETTINGS ============================ -->
             <page string="Settings" name="settings">
               <div class="alert alert-light mb-3">
-                The most-used toggles, editable here. For the full
-                configuration of each module, use the action buttons.
+                All settings live here. Changes save through the standard
+                <b>Save</b> button at the top — they round-trip through
+                <code>ir.config_parameter</code>, so the legacy
+                <i>Website → Configuration → Settings</i> panels stay in sync.
               </div>
-              <group>
-                <group string="AI Auto-Fix">
-                  <field name="setting_ai_enabled" widget="boolean_toggle"/>
+
+              <group string="Organization (used in JSON-LD + OG)">
+                <group>
+                  <field name="setting_org_name"
+                         placeholder="ERA — Excellence Resources Arabia"/>
+                  <field name="setting_legal_name"/>
+                  <field name="setting_twitter_handle" placeholder="@era"/>
                 </group>
-                <group string="GEO — /llms.txt">
+                <group>
+                  <field name="setting_logo_url" placeholder="https://…/logo.png"/>
+                  <field name="setting_og_image_url" placeholder="https://…/og.png"/>
+                  <field name="setting_schema_engine" widget="boolean_toggle"/>
+                </group>
+              </group>
+
+              <group string="Social profiles">
+                <group>
+                  <field name="setting_social_facebook" placeholder="https://facebook.com/…"/>
+                  <field name="setting_social_twitter" placeholder="https://twitter.com/…"/>
+                  <field name="setting_social_linkedin" placeholder="https://linkedin.com/company/…"/>
+                </group>
+                <group>
+                  <field name="setting_social_instagram" placeholder="https://instagram.com/…"/>
+                  <field name="setting_social_youtube" placeholder="https://youtube.com/@…"/>
+                </group>
+              </group>
+
+              <group string="Search engine verification">
+                <group>
+                  <field name="setting_google_verify"
+                         placeholder="content of google-site-verification meta"/>
+                </group>
+                <group>
+                  <field name="setting_bing_verify"/>
+                </group>
+              </group>
+
+              <group string="AI Auto-Fix">
+                <group>
+                  <field name="setting_ai_enabled" widget="boolean_toggle"/>
+                  <field name="setting_ai_agent_name"
+                         invisible="not setting_ai_enabled"/>
+                </group>
+              </group>
+
+              <group string="GEO — /llms.txt &amp; AI crawlers">
+                <group>
                   <field name="setting_llms_enabled" widget="boolean_toggle"/>
                   <field name="setting_llms_summary"
                          invisible="not setting_llms_enabled"
                          placeholder="One-line site description for AI engines"/>
                 </group>
-                <group string="GSC">
+                <group invisible="not setting_llms_enabled">
+                  <field name="setting_llms_max_items"/>
+                  <field name="setting_llms_include_blog" widget="boolean_toggle"/>
+                </group>
+              </group>
+
+              <group string="GSC — Google Search Console">
+                <group>
+                  <field name="setting_gsc_redirect_uri" readonly="1"
+                         widget="CopyClipboardChar"/>
+                  <field name="setting_gsc_client_id"
+                         placeholder="xxxxxxxx.apps.googleusercontent.com"/>
+                  <field name="setting_gsc_client_secret" password="True"
+                         placeholder="••••••••••••••••"/>
                   <field name="setting_gsc_pull_window"/>
                 </group>
               </group>
-              <separator string="Full settings"/>
-              <div class="o_row mb-2">
-                <button name="action_open_website_settings" type="object"
-                        string="Open all Website Settings" icon="fa-cog"
-                        class="btn-secondary"/>
-              </div>
-              <div class="text-muted small">
-                Tip: full per-module settings (OAuth credentials, the AI agent,
-                schema preview wizards, …) still live under
-                <b>Website → Configuration → Settings</b>.
-              </div>
             </page>
 
             <!-- ============================== GUIDE ============================== -->

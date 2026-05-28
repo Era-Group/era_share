@@ -3,6 +3,7 @@
   <!-- Top-level app menu — ERA SEO Suite. Opens the unified hub form. -->
   <menuitem id="menu_era_seo_suite_root"
             name="ERA SEO Suite"
+            web_icon="era_seo_suite,static/description/icon.png"
             action="action_open_era_seo_suite_hub"
             sequence="55"/>
 </odoo>

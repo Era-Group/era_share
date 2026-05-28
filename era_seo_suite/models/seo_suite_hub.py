@@ -75,21 +75,98 @@ class EraSeoSuiteHub(models.Model):
         string='GSC Last Pull', compute='_compute_kpis')
 
     # =========================================================================
-    # Settings-tab toggles (round-trip through ir.config_parameter)
+    # Settings — every ICP-backed key the suite owns, in ONE declarative map.
+    # The shared _compute_settings / _inverse_settings round-trip them through
+    # ir.config_parameter, so the hub Settings tab is the canonical surface.
     # =========================================================================
 
+    # field_name -> (icp_key, kind, default)
+    # kinds: 'bool' | 'int' | 'char'
+    _SETTING_MAP = {
+        # ---------- Organization (era_seo_manager) ----------
+        'setting_org_name':         ('era_seo.organization_name',     'char', ''),
+        'setting_legal_name':       ('era_seo.legal_name',            'char', ''),
+        'setting_logo_url':         ('era_seo.logo_url',              'char', ''),
+        'setting_og_image_url':     ('era_seo.default_og_image_url',  'char', ''),
+        'setting_twitter_handle':   ('era_seo.twitter_handle',        'char', ''),
+        'setting_google_verify':    ('era_seo.google_site_verification', 'char', ''),
+        'setting_bing_verify':      ('era_seo.bing_site_verification',   'char', ''),
+        'setting_schema_engine':    ('era_seo.schema_engine_enabled', 'bool', True),
+        # ---------- Social profiles (era_seo_manager) ----------
+        'setting_social_facebook':  ('era_seo.social_facebook',       'char', ''),
+        'setting_social_twitter':   ('era_seo.social_twitter',        'char', ''),
+        'setting_social_linkedin':  ('era_seo.social_linkedin',       'char', ''),
+        'setting_social_instagram': ('era_seo.social_instagram',      'char', ''),
+        'setting_social_youtube':   ('era_seo.social_youtube',        'char', ''),
+        # ---------- AI Auto-Fix (era_seo_ai) ----------
+        'setting_ai_enabled':       ('era_seo.ai_enabled',            'bool', False),
+        # ---------- GEO (era_geo) ----------
+        'setting_llms_enabled':     ('era_geo.llms_enabled',          'bool', True),
+        'setting_llms_summary':     ('era_geo.site_summary',          'char', ''),
+        'setting_llms_max_items':   ('era_geo.llms_max_items',        'int', 100),
+        'setting_llms_include_blog':('era_geo.llms_include_blog',     'bool', True),
+        # ---------- GSC (era_gsc) ----------
+        'setting_gsc_client_id':    ('era_gsc.client_id',             'char', ''),
+        'setting_gsc_client_secret':('era_gsc.client_secret',         'char', ''),
+        'setting_gsc_pull_window':  ('era_gsc.pull_window_days',      'int', 28),
+    }
+
+    # --- Organization
+    setting_org_name = fields.Char(
+        string='Organization Name', compute='_compute_settings', inverse='_inverse_settings')
+    setting_legal_name = fields.Char(
+        string='Legal Name', compute='_compute_settings', inverse='_inverse_settings')
+    setting_logo_url = fields.Char(
+        string='Logo URL', compute='_compute_settings', inverse='_inverse_settings')
+    setting_og_image_url = fields.Char(
+        string='Default OG Image URL', compute='_compute_settings', inverse='_inverse_settings')
+    setting_twitter_handle = fields.Char(
+        string='Twitter Handle', compute='_compute_settings', inverse='_inverse_settings')
+    setting_google_verify = fields.Char(
+        string='Google Site Verification', compute='_compute_settings', inverse='_inverse_settings')
+    setting_bing_verify = fields.Char(
+        string='Bing Site Verification', compute='_compute_settings', inverse='_inverse_settings')
+    setting_schema_engine = fields.Boolean(
+        string='Schema Engine Enabled', compute='_compute_settings', inverse='_inverse_settings')
+
+    # --- Social
+    setting_social_facebook = fields.Char(
+        string='Facebook', compute='_compute_settings', inverse='_inverse_settings')
+    setting_social_twitter = fields.Char(
+        string='Twitter / X', compute='_compute_settings', inverse='_inverse_settings')
+    setting_social_linkedin = fields.Char(
+        string='LinkedIn', compute='_compute_settings', inverse='_inverse_settings')
+    setting_social_instagram = fields.Char(
+        string='Instagram', compute='_compute_settings', inverse='_inverse_settings')
+    setting_social_youtube = fields.Char(
+        string='YouTube', compute='_compute_settings', inverse='_inverse_settings')
+
+    # --- AI
     setting_ai_enabled = fields.Boolean(
-        string='AI Auto-Fix Enabled',
-        compute='_compute_settings', inverse='_inverse_setting_ai_enabled')
+        string='AI Auto-Fix Enabled', compute='_compute_settings', inverse='_inverse_settings')
+    setting_ai_agent_name = fields.Char(
+        string='AI Agent (current)', compute='_compute_ai_agent_name', readonly=True)
+
+    # --- GEO
     setting_llms_enabled = fields.Boolean(
-        string='Publish /llms.txt',
-        compute='_compute_settings', inverse='_inverse_setting_llms_enabled')
+        string='Publish /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
     setting_llms_summary = fields.Char(
-        string='Site Summary (llms.txt)',
-        compute='_compute_settings', inverse='_inverse_setting_llms_summary')
+        string='Site Summary (llms.txt)', compute='_compute_settings', inverse='_inverse_settings')
+    setting_llms_max_items = fields.Integer(
+        string='Max Items in /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
+    setting_llms_include_blog = fields.Boolean(
+        string='Include Blog in /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
+
+    # --- GSC
+    setting_gsc_client_id = fields.Char(
+        string='GSC OAuth Client ID', compute='_compute_settings', inverse='_inverse_settings')
+    setting_gsc_client_secret = fields.Char(
+        string='GSC OAuth Client Secret', compute='_compute_settings', inverse='_inverse_settings')
     setting_gsc_pull_window = fields.Integer(
-        string='GSC Pull Window (days)',
-        compute='_compute_settings', inverse='_inverse_setting_gsc_pull_window')
+        string='GSC Pull Window (days)', compute='_compute_settings', inverse='_inverse_settings')
+    setting_gsc_redirect_uri = fields.Char(
+        string='GSC Authorized Redirect URI',
+        compute='_compute_gsc_redirect_uri', readonly=True)
 
     # =========================================================================
     # Computes
@@ -157,37 +234,53 @@ class EraSeoSuiteHub(models.Model):
     # ------------------------------------------------------------------------
 
     def _compute_settings(self):
+        ICP = self.env['ir.config_parameter'].sudo()
         for rec in self:
-            rec.setting_ai_enabled = _icp_bool(
-                self.env, 'era_seo.ai_enabled', False)
-            rec.setting_llms_enabled = _icp_bool(
-                self.env, 'era_geo.llms_enabled', True)
-            rec.setting_llms_summary = _icp_get(
-                self.env, 'era_geo.site_summary', '')
-            try:
-                rec.setting_gsc_pull_window = int(_icp_get(
-                    self.env, 'era_gsc.pull_window_days', '28') or 28)
-            except (TypeError, ValueError):
-                rec.setting_gsc_pull_window = 28
+            for fname, (key, kind, default) in self._SETTING_MAP.items():
+                raw = ICP.get_param(key)
+                if kind == 'bool':
+                    rec[fname] = (raw in _TRUE) if raw not in ('', None) else default
+                elif kind == 'int':
+                    try:
+                        rec[fname] = int(raw) if raw not in ('', None) else default
+                    except (TypeError, ValueError):
+                        rec[fname] = default
+                else:
+                    rec[fname] = raw or default
 
-    def _inverse_setting_ai_enabled(self):
+    def _inverse_settings(self):
+        ICP = self.env['ir.config_parameter'].sudo()
         for rec in self:
-            _icp_set_bool(self.env, 'era_seo.ai_enabled', rec.setting_ai_enabled)
+            for fname, (key, kind, _default) in self._SETTING_MAP.items():
+                val = rec[fname]
+                if kind == 'bool':
+                    ICP.set_param(key, 'True' if val else 'False')
+                elif kind == 'int':
+                    ICP.set_param(key, str(int(val or 0)))
+                else:
+                    ICP.set_param(key, val or '')
 
-    def _inverse_setting_llms_enabled(self):
+    def _compute_ai_agent_name(self):
+        """Display the configured AI agent's name (era_seo_ai), if any."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        agent_id = ICP.get_param('era_seo.ai_agent_id')
         for rec in self:
-            _icp_set_bool(self.env, 'era_geo.llms_enabled', rec.setting_llms_enabled)
+            rec.setting_ai_agent_name = ''
+            if agent_id and 'ai.agent' in self.env:
+                try:
+                    agent = self.env['ai.agent'].sudo().browse(int(agent_id))
+                    if agent.exists():
+                        rec.setting_ai_agent_name = agent.name or ''
+                except (TypeError, ValueError):
+                    pass
 
-    def _inverse_setting_llms_summary(self):
+    def _compute_gsc_redirect_uri(self):
+        base = (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').rstrip('/')
+        uri = (base + '/era_gsc/oauth/callback') if base \
+            else '/era_gsc/oauth/callback'
         for rec in self:
-            self.env['ir.config_parameter'].sudo().set_param(
-                'era_geo.site_summary', rec.setting_llms_summary or '')
-
-    def _inverse_setting_gsc_pull_window(self):
-        for rec in self:
-            self.env['ir.config_parameter'].sudo().set_param(
-                'era_gsc.pull_window_days',
-                str(int(rec.setting_gsc_pull_window or 28)))
+            rec.setting_gsc_redirect_uri = uri
 
     # ------------------------------------------------------------------------
     # Open helpers used by the menu and Refresh button

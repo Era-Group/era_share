@@ -27,6 +27,7 @@ _STEPS = [
     'org',
     'social',
     'schema',
+    'robots',
     'ai',
     'geo',
     'gsc',
@@ -95,7 +96,8 @@ class EraSeoOnboardingWizard(models.TransientModel):
             ('org',     '1. Organization'),
             ('social',  '2. Social profiles'),
             ('schema',  '3. Schema engine'),
-            ('ai',      '4. AI Auto-Fix'),
+            ('robots',  '4. Robots & AI Crawlers'),
+            ('ai',      '5. AI Auto-Fix'),
             ('geo',     '5. GEO (/llms.txt)'),
             ('gsc',     '6. Google Search Console'),
             ('bulk_ai', '7. AI Bulk Fill'),
@@ -130,6 +132,17 @@ class EraSeoOnboardingWizard(models.TransientModel):
 
     # ---- Schema ------------------------------------------------------------
     schema_enabled = fields.Boolean(string='Enable Schema Engine', default=True)
+
+    # ---- Robots & AI Crawlers ---------------------------------------------
+    robots_url = fields.Char(string='robots.txt URL',
+                             compute='_compute_robots_state', readonly=True)
+    robots_preview = fields.Text(string='robots.txt preview (live)',
+                                 compute='_compute_robots_state', readonly=True)
+    robots_count_total = fields.Integer(compute='_compute_robots_state')
+    robots_count_allowed = fields.Integer(compute='_compute_robots_state')
+    robots_count_blocked = fields.Integer(compute='_compute_robots_state')
+    robots_count_training_allowed = fields.Integer(compute='_compute_robots_state')
+    robots_count_search_allowed = fields.Integer(compute='_compute_robots_state')
 
     # ---- AI ----------------------------------------------------------------
     ai_enabled = fields.Boolean(string='Enable AI Auto-Fix')
@@ -242,6 +255,82 @@ class EraSeoOnboardingWizard(models.TransientModel):
                 (rec.gsc_client_id or '').strip()
                 and (rec.gsc_client_secret or '').strip()
             )
+
+    def _compute_robots_state(self):
+        Crawler = self.env.get('era.geo.ai.crawler')
+        ICP = self.env['ir.config_parameter'].sudo()
+        base = (ICP.get_param('web.base.url') or '').rstrip('/')
+        robots_url = (base + '/robots.txt') if base else '/robots.txt'
+
+        if Crawler is None:
+            for rec in self:
+                rec.robots_url = robots_url
+                rec.robots_preview = _('Crawler model not installed yet.')
+                rec.robots_count_total = 0
+                rec.robots_count_allowed = 0
+                rec.robots_count_blocked = 0
+                rec.robots_count_training_allowed = 0
+                rec.robots_count_search_allowed = 0
+            return
+
+        crawlers = Crawler.sudo().search([])
+        total = len(crawlers)
+        allowed = sum(1 for c in crawlers if c.allowed)
+        blocked = total - allowed
+        # Per-purpose visibility into what's currently leaking.
+        training_allowed = sum(
+            1 for c in crawlers if c.allowed and c.purpose in ('training', 'both'))
+        search_allowed = sum(
+            1 for c in crawlers if c.allowed and c.purpose in ('search', 'both'))
+
+        # Live preview: render the same block the controller emits, so the
+        # admin sees what's actually being served right now.
+        try:
+            block = Crawler.sudo()._robots_block() or ''
+        except Exception:  # noqa: BLE001
+            block = _('(could not render the AI-crawler block — install or '
+                      'enable the GEO module first)')
+        preview = ('User-agent: *\n'
+                   'Allow: /\n'
+                   '\n'
+                   '# ↓ ERA SEO Suite — AI crawler directives ↓\n'
+                   + (block.strip() if block else '(no AI crawler rules yet)'))
+
+        for rec in self:
+            rec.robots_url = robots_url
+            rec.robots_preview = preview
+            rec.robots_count_total = total
+            rec.robots_count_allowed = allowed
+            rec.robots_count_blocked = blocked
+            rec.robots_count_training_allowed = training_allowed
+            rec.robots_count_search_allowed = search_allowed
+
+    # ---- Bulk crawler actions (called from the Robots step) ---------------
+
+    def action_robots_allow_all(self):
+        self.ensure_one()
+        self.env['era.geo.ai.crawler'].sudo().search([]).write({'allowed': True})
+        return self._go_step('robots')
+
+    def action_robots_block_training(self):
+        self.ensure_one()
+        crawlers = self.env['era.geo.ai.crawler'].sudo().search(
+            [('purpose', 'in', ('training', 'both'))])
+        crawlers.write({'allowed': False})
+        return self._go_step('robots')
+
+    def action_robots_block_search(self):
+        self.ensure_one()
+        crawlers = self.env['era.geo.ai.crawler'].sudo().search(
+            [('purpose', 'in', ('search', 'both'))])
+        crawlers.write({'allowed': False})
+        return self._go_step('robots')
+
+    def action_robots_manage(self):
+        """Open the full AI Crawlers list for fine-grained control."""
+        self.ensure_one()
+        return self.env['ir.actions.actions']._for_xml_id(
+            'era_seo_suite.action_era_geo_ai_crawler')
 
     def _compute_gsc_redirect_uri(self):
         base = (self.env['ir.config_parameter'].sudo()

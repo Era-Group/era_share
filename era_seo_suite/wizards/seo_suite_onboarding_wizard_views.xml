@@ -31,20 +31,23 @@
             <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema']">3. Schema</span>
             <span class="badge text-bg-primary" invisible="step != 'schema'">3. Schema</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai']">4. AI</span>
-            <span class="badge text-bg-primary" invisible="step != 'ai'">4. AI</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots']">4. Robots</span>
+            <span class="badge text-bg-primary" invisible="step != 'robots'">4. Robots</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo']">5. GEO</span>
-            <span class="badge text-bg-primary" invisible="step != 'geo'">5. GEO</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai']">5. AI</span>
+            <span class="badge text-bg-primary" invisible="step != 'ai'">5. AI</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc']">6. GSC</span>
-            <span class="badge text-bg-primary" invisible="step != 'gsc'">6. GSC</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo']">6. GEO</span>
+            <span class="badge text-bg-primary" invisible="step != 'geo'">6. GEO</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai']">7. AI Bulk Fill</span>
-            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">7. AI Bulk Fill</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc']">7. GSC</span>
+            <span class="badge text-bg-primary" invisible="step != 'gsc'">7. GSC</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">8. Blog</span>
-            <span class="badge text-bg-primary" invisible="step != 'blog'">8. Blog</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai']">8. AI Bulk Fill</span>
+            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">8. AI Bulk Fill</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">9. Blog</span>
+            <span class="badge text-bg-primary" invisible="step != 'blog'">9. Blog</span>
 
             <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
           </div>
@@ -110,8 +113,64 @@
           <field name="schema_enabled" widget="boolean_toggle"/>
         </group>
 
+        <!-- ================================================ Robots -->
+        <group invisible="step != 'robots'" string="4. Robots &amp; AI Crawlers">
+          <field name="robots_url" readonly="1"/>
+          <field name="robots_count_total" invisible="1"/>
+          <field name="robots_count_allowed" invisible="1"/>
+          <field name="robots_count_blocked" invisible="1"/>
+          <field name="robots_count_training_allowed" invisible="1"/>
+          <field name="robots_count_search_allowed" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Your <code>robots.txt</code> is served automatically and already
+            allows search engines. The suite adds an AI-crawler block —
+            review and adjust who's allowed to read your site.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2">
+            <div>
+              <b>Crawlers seeded:</b>
+              <field name="robots_count_total" readonly="1" nolabel="1"/> total —
+              <field name="robots_count_allowed" readonly="1" nolabel="1"/> allowed,
+              <field name="robots_count_blocked" readonly="1" nolabel="1"/> blocked.
+            </div>
+            <div class="small mt-1">
+              Training-only bots currently allowed:
+              <b><field name="robots_count_training_allowed" readonly="1" nolabel="1"/></b>
+              · Search / answer bots currently allowed:
+              <b><field name="robots_count_search_allowed" readonly="1" nolabel="1"/></b>
+            </div>
+          </div>
+
+          <div colspan="2">
+            <button name="action_robots_allow_all" type="object"
+                    string="Allow all AI bots" class="btn btn-secondary btn-sm me-1"
+                    icon="fa-check"/>
+            <button name="action_robots_block_training" type="object"
+                    string="Block training-only bots" class="btn btn-warning btn-sm me-1"
+                    icon="fa-ban"
+                    confirm="Block every crawler whose purpose is training (or search+training)?"/>
+            <button name="action_robots_block_search" type="object"
+                    string="Block search/answer bots" class="btn btn-warning btn-sm me-1"
+                    icon="fa-ban"
+                    confirm="Block every crawler whose purpose is search/answer (or search+training)? — usually NOT what you want; SEO suffers."/>
+            <button name="action_robots_manage" type="object"
+                    string="Manage individually" class="btn btn-link btn-sm"
+                    icon="fa-cog"/>
+          </div>
+
+          <div class="o_horizontal_separator mt-3 mb-2 text-uppercase fw-bolder small" colspan="2">
+            Live robots.txt preview
+          </div>
+          <field name="robots_preview" nolabel="1" readonly="1"
+                 widget="text" class="w-100"
+                 style="font-family:monospace;white-space:pre;min-height:200px;"
+                 colspan="2"/>
+        </group>
+
         <!-- ================================================ AI -->
-        <group invisible="step != 'ai'" string="4. AI Auto-Fix">
+        <group invisible="step != 'ai'" string="5. AI Auto-Fix">
           <div class="text-muted small mb-2" colspan="2">
             Lets the suite use Odoo's AI app to <b>Suggest</b> and
             <b>Apply</b> fixes on audit findings, and to <b>Fill SEO</b> on
@@ -146,7 +205,7 @@
         </group>
 
         <!-- ================================================ GEO -->
-        <group invisible="step != 'geo'" string="5. GEO — Generative Engine Optimization">
+        <group invisible="step != 'geo'" string="6. GEO — Generative Engine Optimization">
           <div class="text-muted small mb-2" colspan="2">
             Serves a Markdown site map at <code>/llms.txt</code> so AI
             answer engines (ChatGPT, Perplexity, Claude, Google AI
@@ -161,7 +220,7 @@
         </group>
 
         <!-- ================================================ GSC -->
-        <group invisible="step != 'gsc'" string="6. Google Search Console (optional)">
+        <group invisible="step != 'gsc'" string="7. Google Search Console (optional)">
           <field name="gsc_connected_count" invisible="1"/>
           <field name="gsc_can_connect" invisible="1"/>
 
@@ -209,7 +268,7 @@
         </group>
 
         <!-- ================================================ AI Bulk Fill -->
-        <group invisible="step != 'bulk_ai'" string="7. AI Bulk Fill (optional)">
+        <group invisible="step != 'bulk_ai'" string="8. AI Bulk Fill (optional)">
           <field name="bulk_ai_already_running" invisible="1"/>
           <field name="bulk_ai_pending_count" invisible="1"/>
 
@@ -252,7 +311,7 @@
         </group>
 
         <!-- ================================================ Blog setup -->
-        <group invisible="step != 'blog'" string="8. Blog setup (optional)">
+        <group invisible="step != 'blog'" string="9. Blog setup (optional)">
           <field name="blog_post_count" invisible="1"/>
           <field name="blog_uncategorized_count" invisible="1"/>
           <field name="blog_category_count" invisible="1"/>

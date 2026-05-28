@@ -2,6 +2,8 @@
 import logging
 from datetime import date, timedelta
 
+import requests
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 
@@ -69,6 +71,16 @@ class EraGscSite(models.Model):
                 dimensions=('date', 'query'),
                 row_limit=5000,
             )
+        except requests.HTTPError as exc:
+            # 4xx from the Google API is a user-config problem (revoked token,
+            # site not in the property, lacking permission). Surface it but
+            # don't spam the log with a traceback — `gsc_account` already
+            # re-logs at WARNING, and `last_error` captures the detail.
+            self.account_id.sudo().write({'state': 'error',
+                                          'last_error': str(exc)[:1000]})
+            _logger.warning('GSC search_analytics %s: %s', self.name, exc)
+            raise UserError(
+                _('GSC pull failed for %s: %s', self.name, exc)) from exc
         except Exception as exc:  # noqa: BLE001
             self.account_id.sudo().write({'state': 'error',
                                           'last_error': str(exc)[:1000]})

@@ -1060,33 +1060,67 @@ class EraSeoSuiteHub(models.Model):
             return None
         model = (ICP.get_param('era_seo.image_model', 'dall-e-3') or 'dall-e-3').strip()
         size = (ICP.get_param('era_seo.image_size', '1792x1024') or '1792x1024').strip()
-        body = {
-            'model': model,
-            'prompt': prompt[:4000],   # API limit
-            'n': 1,
-            'size': size,
-            'response_format': 'b64_json',
-        }
-        try:
-            resp = _requests.post(
-                'https://api.openai.com/v1/images/generations',
-                headers={
-                    'Authorization': 'Bearer %s' % api_key,
-                    'Content-Type': 'application/json',
-                },
-                json=body, timeout=60,
-            )
-            resp.raise_for_status()
-        except Exception as exc:  # noqa: BLE001
-            _logger.warning('image-gen openai: API call failed: %s', exc)
-            return None
-        try:
-            data = resp.json()
-            b64 = data['data'][0]['b64_json']
-            return _base64.b64decode(b64)
-        except Exception as exc:  # noqa: BLE001
-            _logger.warning('image-gen openai: malformed response: %s', exc)
-            return None
+
+        def _call(call_prompt, call_model, call_size):
+            body = {
+                'model': call_model,
+                'prompt': call_prompt[:4000],
+                'n': 1,
+                'size': call_size,
+                'response_format': 'b64_json',
+            }
+            try:
+                r = _requests.post(
+                    'https://api.openai.com/v1/images/generations',
+                    headers={
+                        'Authorization': 'Bearer %s' % api_key,
+                        'Content-Type': 'application/json',
+                    },
+                    json=body, timeout=60,
+                )
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('image-gen openai: network error: %s', exc)
+                return None, None
+            if r.status_code >= 400:
+                # Surface the OpenAI error body — without it a 400 is
+                # opaque ("content policy"? "invalid size"? "model not
+                # available for your account"?).
+                detail = (r.text or '')[:500].replace('\n', ' ')
+                return None, detail
+            try:
+                return _base64.b64decode(r.json()['data'][0]['b64_json']), None
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('image-gen openai: malformed 2xx response: %s', exc)
+                return None, None
+
+        # First attempt with admin-configured prompt + model + size.
+        image_bytes, err_detail = _call(prompt, model, size)
+        if image_bytes:
+            return image_bytes
+        if err_detail:
+            _logger.warning(
+                'image-gen openai: first attempt failed (model=%s size=%s) — %s',
+                model, size, err_detail)
+            # Two common 400 causes we can defuse with a retry:
+            #   * content-policy bounce on the prompt (Arabic political
+            #     figures, real-person likeness, brand logos, etc.);
+            #   * size unsupported for the configured model.
+            lower = err_detail.lower()
+            if 'content_policy' in lower or 'safety' in lower or 'must be one of' in lower:
+                neutral_prompt = (
+                    'A clean, brand-neutral editorial hero illustration suitable '
+                    'as a blog cover image. Minimalist, modern, photorealistic '
+                    'where reasonable. No text, no logos, no recognisable people.'
+                )
+                _logger.info(
+                    'image-gen openai: retrying with neutral prompt + 1024x1024')
+                image_bytes, err2 = _call(neutral_prompt, model, '1024x1024')
+                if image_bytes:
+                    return image_bytes
+                if err2:
+                    _logger.warning(
+                        'image-gen openai: retry also failed — %s', err2)
+        return None
 
     def _reuse_ai_agent_openai_key(self):
         """Best-effort: locate an OpenAI API key already configured for the

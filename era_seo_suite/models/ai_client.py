@@ -668,39 +668,48 @@ class AIClient:
         for k in ('title', 'content_html'):
             if not (parsed.get(k) or '').strip():
                 raise ValueError(_('AI article proposal is missing %r.', k))
-        # Word-count enforcement: 600 floor. If the first response came
-        # back short, ask once more with a tighter directive. Many models
-        # will write to floor on the retry. We accept the longer of the
-        # two so a "compliant retry" still beats a hard error for the user.
+        # Word-count enforcement: 600 floor.
+        # Up to two extension passes — each takes the current best draft
+        # and asks the agent to EXTEND it (not rewrite). Extending is
+        # easier on the model than "rewrite longer" and avoids losing
+        # good content from earlier passes. We keep the longest draft
+        # we've seen.
         wc = self._count_words(parsed.get('content_html', ''))
-        if wc < 600:
+        for attempt in range(1, 3):
+            if wc >= 600:
+                break
             _logger.info(
-                'propose_article: first draft %d words (< 600 floor) — '
-                'retrying once with a stricter length directive', wc)
-            retry_prompt = prompt + (
-                '\n\nLENGTH ENFORCEMENT (RETRY):\n'
-                'Your previous draft was %d words. The minimum is 600 '
-                'words in the article body. Rewrite content_html so it '
-                'is at least 700 words. Keep the same trend_signal, '
-                'title, and category. Do NOT pad with filler or empty '
-                'restatements — extend with substantive examples, '
-                'practical steps, or specific details supported by the '
-                'topic. Return the same JSON shape.' % wc)
-            response = agent.get_direct_response(
-                prompt=retry_prompt, context_message=ARTICLE_CONTEXT)
-            raw2 = response[0] if response else ''
+                'propose_article: draft is %d words (< 600); extension '
+                'pass %d/2', wc, attempt)
+            extend_prompt = (
+                'Below is the current draft article. It is %d words; the '
+                'editorial floor is 600 words (target 700-1000). Return '
+                'the SAME JSON shape, but with `content_html` EXTENDED to '
+                'at least 700 words by ADDING substantive material: '
+                'concrete examples, named tools / vendors / numbers, '
+                'specific Saudi-market context if relevant, a short FAQ '
+                'block, or a step-by-step section. Do not delete or '
+                'paraphrase existing content; preserve title, '
+                'trend_signal, category, image_prompt, and seo meta.\n\n'
+                'CURRENT DRAFT (as JSON):\n%s'
+            ) % (wc, json.dumps(parsed, ensure_ascii=False))
             try:
+                response = agent.get_direct_response(
+                    prompt=extend_prompt, context_message=ARTICLE_CONTEXT)
+                raw2 = response[0] if response else ''
                 parsed2 = self._parse_json(raw2)
                 wc2 = self._count_words(parsed2.get('content_html', ''))
-                if wc2 > wc and (parsed2.get('content_html') or '').strip():
-                    parsed = parsed2
-                    wc = wc2
-            except ValueError:
-                pass  # malformed retry — stick with the original.
+            except (ValueError, Exception):  # noqa: BLE001
+                # Malformed retry — stop trying, keep the best so far.
+                break
+            if (parsed2.get('content_html') or '').strip() and wc2 > wc:
+                parsed = parsed2
+                wc = wc2
         if wc < 600:
             _logger.warning(
-                'propose_article: final draft only %d words (floor is 600); '
-                'publishing anyway — review and extend manually if needed', wc)
+                'propose_article: final draft only %d words (floor is 600) '
+                'after retries; publishing anyway — review and extend '
+                'manually if needed', wc)
         return {
             'title':           parsed.get('title', '').strip(),
             'subtitle':        parsed.get('subtitle', '').strip(),

@@ -132,6 +132,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'web.assets_backend': [
         'era_seo_suite/static/src/scss/backend.scss',
         'era_seo_suite/static/src/js/seo_dashboard.js',
+        'era_seo_suite/static/src/js/blog_gen_poll.js',
         'era_seo_suite/static/src/xml/seo_dashboard.xml',
     ],
 },

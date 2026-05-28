@@ -88,6 +88,16 @@ class BlogPost(models.Model):
             if fname in self._fields and article.get(src):
                 vals[fname] = article[src]
         self.write(vals)
+        # Regenerate the hero image too — same pipeline as the cron.
+        try:
+            image_bytes = Hub._generate_article_image(article.get('image_prompt') or '')
+        except Exception:  # noqa: BLE001
+            image_bytes = None
+        if image_bytes:
+            try:
+                Hub._attach_article_image(self, image_bytes, article)
+            except Exception:  # noqa: BLE001
+                pass
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',

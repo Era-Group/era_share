@@ -221,6 +221,18 @@ class EraSeoSuiteHub(models.Model):
         compute='_compute_recent_ai_articles',
         string='Recent AI-generated articles')
 
+    # True while a background article-generation run is in flight. The Blog
+    # Gen tab polls this and reloads the record every 3 seconds until the
+    # cron clears the flag.
+    is_article_pending = fields.Boolean(
+        compute='_compute_is_article_pending', string='Article pending')
+
+    def _compute_is_article_pending(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        pending = ICP.get_param('era_seo.article_pending') in _TRUE
+        for rec in self:
+            rec.is_article_pending = pending
+
     def _compute_recent_ai_articles(self):
         Post = self.env.get('blog.post')
         if Post is None or 'era_ai_generated_at' not in Post._fields:
@@ -617,43 +629,36 @@ class EraSeoSuiteHub(models.Model):
     def action_generate_blog_article_now(self):
         """One-shot manual trigger for the auto-publish pipeline.
 
-        Bypasses the `era_seo.article_generator_active` gate so the admin can
-        produce an article on demand even when the cron is paused, and
-        returns a notification with the URL of the freshly created post.
+        Fire-and-forget: flips the pending flag, schedules the cron to run
+        immediately, and returns. The Blog Gen tab polls `is_article_pending`
+        every 3 seconds and reloads when the cron clears it.
         """
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
-        # Temporarily satisfy the gate for the duration of this call.
-        prior = ICP.get_param('era_seo.article_generator_active')
-        try:
-            ICP.set_param('era_seo.article_generator_active', 'True')
-            post_id = self.cron_generate_blog_article()
-        finally:
-            ICP.set_param('era_seo.article_generator_active', prior or 'False')
-        if not post_id:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'warning',
-                    'message': _('Article generation skipped — check the log '
-                                 'for the reason (AI unavailable, no blog '
-                                 'module, or agent error).'),
-                    'sticky': True,
-                },
-            }
-        post = self.env['blog.post'].sudo().browse(post_id)
-        base_url = ICP.get_param('web.base.url', '').rstrip('/')
-        rel = getattr(post, 'website_url', '') or ''
-        full_url = (base_url + rel) if (base_url and rel) else (rel or '#')
+        # Flag + manual override of the gate, both consumed by the cron at
+        # the start of its run. `_manual` is cleared inside the cron.
+        ICP.set_param('era_seo.article_pending', 'True')
+        ICP.set_param('era_seo.article_generator_manual', 'True')
+        # Schedule the cron to run as soon as possible. `_trigger` is the
+        # Odoo 17+ API for "fire this cron now".
+        cron = self.env.ref(
+            'era_seo_suite.cron_generate_blog_article',
+            raise_if_not_found=False)
+        if cron:
+            try:
+                cron.sudo()._trigger()
+            except Exception:  # noqa: BLE001
+                _logger.exception('Generate Now: cron _trigger failed')
+        self.invalidate_recordset(['is_article_pending'])
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'type': 'success',
-                'message': _('Published: %s', post.name or ''),
-                'links': [{'label': _('Open article'), 'url': full_url}],
-                'sticky': True,
+                'type': 'info',
+                'message': _('Generating article in the background. The tab '
+                             'refreshes every few seconds — the new article '
+                             'will appear in the table when it\'s ready.'),
+                'sticky': False,
             },
         }
 
@@ -714,10 +719,29 @@ class EraSeoSuiteHub(models.Model):
 
     @api.model
     def cron_generate_blog_article(self):
+        """Wrapper that keeps the pending flag consistent across success,
+        failure and re-entrancy. The actual work lives in `_run_article_gen`.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        # Mark pending so the Blog Gen tab's poll loop spins.
+        ICP.set_param('era_seo.article_pending', 'True')
+        try:
+            return self._run_article_gen()
+        finally:
+            # Always clear the pending flag — even when the run was a no-op
+            # because the gate was off or the AI was unavailable. The UI's
+            # spinner stops on the next poll tick.
+            ICP.set_param('era_seo.article_pending', 'False')
+
+    @api.model
+    def _run_article_gen(self):
         """Generate a fresh, trend-aware blog post from the AI agent.
 
         Cron entry runs every 3 days. Gated by
         `era_seo.article_generator_active` (default False — opt-in).
+        `era_seo.article_generator_manual` is a one-shot override flipped
+        by `action_generate_blog_article_now` so admins can produce an
+        article on demand even when the cron is paused.
 
         Pipeline:
           1. Read the site's business context (org name + /llms.txt summary)
@@ -733,7 +757,12 @@ class EraSeoSuiteHub(models.Model):
 
         Returns the created blog.post id, or False when nothing happened.
         """
-        if _icp_get(self.env, 'era_seo.article_generator_active') not in _TRUE:
+        ICP = self.env['ir.config_parameter'].sudo()
+        # Manual override (set by Generate Now) consumed in one shot.
+        manual = ICP.get_param('era_seo.article_generator_manual') in _TRUE
+        if manual:
+            ICP.set_param('era_seo.article_generator_manual', 'False')
+        if not manual and _icp_get(self.env, 'era_seo.article_generator_active') not in _TRUE:
             return False
         BlogPost = self.env.get('blog.post')
         Category = self.env.get('era.blog.category')
@@ -828,24 +857,23 @@ class EraSeoSuiteHub(models.Model):
 
         post = BlogPost.sudo().create(post_vals)
 
-        # Hero image — call the hook, attach if it returned bytes.
+        # Hero image — call the hook, attach to all relevant slots if it
+        # returned bytes.
         try:
             image_bytes = self._generate_article_image(article['image_prompt'])
         except Exception:  # noqa: BLE001
             _logger.exception(
                 'cron_generate_blog_article: image hook raised — skipping image')
             image_bytes = None
-        if image_bytes:
+        if not image_bytes:
+            provider = ICP.get_param('era_seo.image_provider', 'none') or 'none'
+            _logger.info(
+                'cron_generate_blog_article: no image generated '
+                '(provider=%s) — post.cover stays empty. Configure the Blog '
+                'Gen tab → Image generation to enable.', provider)
+        else:
             try:
-                import base64
-                vals = {}
-                # blog.post's stock cover field is `cover_properties` JSON
-                # in modern versions; era_seo_blog may add `era_cover_image`
-                # (Binary). Write whichever exists.
-                if 'era_cover_image' in BlogPost._fields:
-                    vals['era_cover_image'] = base64.b64encode(image_bytes)
-                if vals:
-                    post.write(vals)
+                self._attach_article_image(post, image_bytes, article)
             except Exception:  # noqa: BLE001
                 _logger.exception(
                     'cron_generate_blog_article: failed to attach generated image')
@@ -864,6 +892,74 @@ class EraSeoSuiteHub(models.Model):
             post.id, article['title'][:80], article['trend_signal'][:80],
             article['confidence'])
         return post.id
+
+    def _attach_article_image(self, post, image_bytes, article):
+        """Persist the generated image into every slot the blog + SEO stack
+        renders from:
+
+          * `seo_og_image` — Binary, on era.seo.mixin: drives the OG meta
+            tag and Twitter card. Social shares (FB / WhatsApp / LinkedIn
+            / Slack) will pick this up.
+          * `era_cover_image` — Binary, on era_seo_blog's blog.post
+            extension (when installed): the dedicated hero shown above
+            the body on /blog/<post>.
+          * `cover_properties` — stock blog.post JSON. Lets website_blog's
+            cover header render the image even on installations without
+            the era extension; we point it at the ir.attachment created
+            below so the same URL is reused everywhere.
+          * Inline `<img>` injected at the top of `content` so the image
+            shows inside the post body too (RSS / AMP / paragraphs).
+        """
+        import base64
+        import json as _json
+        b64 = base64.b64encode(image_bytes)
+
+        # 1. Stable URL via an ir.attachment.
+        att_name = '%s.png' % (article.get('title') or 'article')[:80]
+        Attachment = self.env['ir.attachment'].sudo()
+        att = Attachment.create({
+            'name': att_name,
+            'datas': b64,
+            'res_model': post._name,
+            'res_id': post.id,
+            'mimetype': 'image/png',
+            'public': True,
+        })
+        image_url = '/web/image/%d' % att.id
+
+        # 2. Direct binary slots — driven by `fields_get` so we silently
+        #    skip fields that don't exist on this install.
+        binary_targets = [n for n in ('seo_og_image', 'era_cover_image')
+                          if n in post._fields]
+        vals = {n: b64 for n in binary_targets}
+
+        # 3. Inject the image at the top of the article body. We re-fetch
+        #    the current content so this also works for the regenerate path.
+        if 'content' in post._fields:
+            current = post.content or ''
+            if image_url not in (current or ''):
+                vals['content'] = (
+                    '<p><img src="%s" alt="%s" class="img-fluid"/></p>%s' % (
+                        image_url,
+                        (article.get('title') or '').replace('"', '&quot;'),
+                        current,
+                    )
+                )
+
+        # 4. Stock cover_properties — website_blog renders it on the
+        #    post page header. Format covers both modern (image_src) and
+        #    legacy (background-image) shapes.
+        if 'cover_properties' in post._fields:
+            vals['cover_properties'] = _json.dumps({
+                'image_src': image_url,
+                'background-image': "url('%s')" % image_url,
+                'background_color_class': 'o_cc o_cc1',
+                'opacity': '0.6',
+                'resize_class': 'o_record_has_cover cover_full',
+            })
+
+        if vals:
+            post.write(vals)
 
     def _notify_managers_about_new_article(self, post, article):
         """Send a one-shot notification email to every member of the SEO

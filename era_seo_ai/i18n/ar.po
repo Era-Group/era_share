@@ -1,0 +1,275 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_seo_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_seo_ai
+msgid "AI Agent"
+msgstr "وكيل الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Auto-Fix"
+msgstr "الإصلاح الآلي بالذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Confidence"
+msgstr "ثقة الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Explanation"
+msgstr "شرح الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Fix Log"
+msgstr "سجل إصلاحات الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Model / Agent"
+msgstr "نموذج/وكيل الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Proposed Translations"
+msgstr "الترجمات المقترحة من الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI Proposed Value"
+msgstr "القيمة المقترحة من الذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "AI-Fixable"
+msgstr "قابل للإصلاح بالذكاء"
+
+#. module: era_seo_ai
+msgid "AI-Fixable Findings"
+msgstr "النتائج القابلة للإصلاح بالذكاء"
+
+#. module: era_seo_ai
+msgid "AI: Fill SEO"
+msgstr "ذكاء: تعبئة SEO"
+
+#. module: era_seo_ai
+msgid "AI: Rewrite SEO"
+msgstr "ذكاء: إعادة كتابة SEO"
+
+#. module: era_seo_ai
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: era_seo_ai
+msgid "Apply Fix"
+msgstr "تطبيق الإصلاح"
+
+#. module: era_seo_ai
+msgid "Applied"
+msgstr "مُطبَّق"
+
+#. module: era_seo_ai
+msgid "Audit Finding"
+msgstr "نتيجة التدقيق"
+
+#. module: era_seo_ai
+msgid "Auto-Fix (≥0.8)"
+msgstr "إصلاح آلي (≥0.8)"
+
+#. module: era_seo_ai
+msgid "Check"
+msgstr "تحقّق"
+
+#. module: era_seo_ai
+msgid "Check Code"
+msgstr "رمز الفحص"
+
+#. module: era_seo_ai
+msgid "Confidence"
+msgstr "الثقة"
+
+#. module: era_seo_ai
+msgid "Enable AI Auto-Fix"
+msgstr "تفعيل الإصلاح الآلي بالذكاء الاصطناعي"
+
+#. module: era_seo_ai
+msgid "Error"
+msgstr "خطأ"
+
+#. module: era_seo_ai
+msgid "Errors"
+msgstr "الأخطاء"
+
+#. module: era_seo_ai
+msgid "Explanation"
+msgstr "الشرح"
+
+#. module: era_seo_ai
+msgid "Failed"
+msgstr "فشل"
+
+#. module: era_seo_ai
+msgid "Field"
+msgstr "الحقل"
+
+#. module: era_seo_ai
+msgid "Finding Fix"
+msgstr "إصلاح نتيجة"
+
+#. module: era_seo_ai
+msgid "Finding Fixes"
+msgstr "إصلاحات النتائج"
+
+#. module: era_seo_ai
+msgid "Fix Payload (JSON)"
+msgstr "حمولة الإصلاح (JSON)"
+
+#. module: era_seo_ai
+msgid "Fix Type"
+msgstr "نوع الإصلاح"
+
+#. module: era_seo_ai
+msgid "Full Fills"
+msgstr "التعبئة الكاملة"
+
+#. module: era_seo_ai
+msgid "Full SEO Fill"
+msgstr "تعبئة SEO كاملة"
+
+#. module: era_seo_ai
+msgid "Kind"
+msgstr "النوع"
+
+#. module: era_seo_ai
+msgid "Model"
+msgstr "النموذج"
+
+#. module: era_seo_ai
+msgid "No Suggestion"
+msgstr "لا يوجد اقتراح"
+
+#. module: era_seo_ai
+msgid "Not AI-Fixable"
+msgstr "غير قابل للإصلاح بالذكاء"
+
+#. module: era_seo_ai
+msgid "Proposed Value"
+msgstr "القيمة المقترحة"
+
+#. module: era_seo_ai
+msgid "Proposed value"
+msgstr "القيمة المقترحة"
+
+#. module: era_seo_ai
+msgid "Request"
+msgstr "الطلب"
+
+#. module: era_seo_ai
+msgid "Response"
+msgstr "الرد"
+
+#. module: era_seo_ai
+msgid "Suggest"
+msgstr "اقتراح"
+
+#. module: era_seo_ai
+msgid "Suggest Fix (AI)"
+msgstr "اقترح إصلاحًا (ذكاء)"
+
+#. module: era_seo_ai
+msgid "Suggest Fixes (AI)"
+msgstr "اقترح إصلاحات (ذكاء)"
+
+#. module: era_seo_ai
+msgid "Suggested"
+msgstr "مُقترَح"
+
+#. module: era_seo_ai
+msgid "Target Field"
+msgstr "الحقل المستهدف"
+
+#. module: era_seo_ai
+msgid "Target ID"
+msgstr "معرّف الهدف"
+
+#. module: era_seo_ai
+msgid "Target Model"
+msgstr "النموذج المستهدف"
+
+#. module: era_seo_ai
+msgid "Target URL"
+msgstr "رابط الهدف"
+
+#. module: era_seo_ai
+msgid "Test Agent"
+msgstr "اختبار الوكيل"
+
+#. module: era_seo_ai
+msgid "Triggered By"
+msgstr "بدأها"
+
+#. module: era_seo_ai
+msgid "Generate AI suggestions for every AI-fixable finding and automatically apply the high-confidence ones. Continue?"
+msgstr "توليد اقتراحات الذكاء الاصطناعي لكل نتيجة قابلة للإصلاح وتطبيق عالية الثقة منها تلقائيًا. هل تريد المتابعة؟"
+
+#. module: era_seo_ai
+msgid "Regenerate every SEO field from the block content, overwriting current values?"
+msgstr "إعادة توليد كل حقول SEO من محتوى الكتلة مع استبدال القيم الحالية؟"
+
+#. module: era_seo_ai
+msgid "%d fix(es) applied."
+msgstr "تم تطبيق %d إصلاح."
+
+#. module: era_seo_ai
+msgid "AI suggestions ready for review."
+msgstr "اقتراحات الذكاء الاصطناعي جاهزة للمراجعة."
+
+#. module: era_seo_ai
+msgid "No AI-fixable findings in this run."
+msgstr "لا توجد نتائج قابلة للإصلاح بالذكاء الاصطناعي في هذا التشغيل."
+
+#. module: era_seo_ai
+msgid "AI SEO fill requires the SEO Manager group."
+msgstr "تتطلب تعبئة SEO بالذكاء الاصطناعي مجموعة مدير SEO."
+
+#. module: era_seo_ai
+msgid "AI auto-fix actions require the SEO Manager group."
+msgstr "تتطلب إجراءات الإصلاح الآلي مجموعة مدير SEO."
+
+#. module: era_seo_ai
+msgid "AI auto-fix is disabled in settings."
+msgstr "الإصلاح الآلي بالذكاء الاصطناعي معطّل في الإعدادات."
+
+#. module: era_seo_ai
+msgid "AI filled SEO fields on %d record(s) across all website languages."
+msgstr "عبّأ الذكاء الاصطناعي حقول SEO في %d سجل عبر جميع لغات الموقع."
+
+#. module: era_seo_ai
+msgid "Mechanical fix applied without calling the AI."
+msgstr "تم تطبيق إصلاح آلي دون استدعاء الذكاء الاصطناعي."
+
+#. module: era_seo_ai
+msgid "AI agent"
+msgstr "وكيل ذكاء اصطناعي"
+
+#. module: era_seo_ai
+msgid "Attach JSON-LD schema: %s"
+msgstr "إرفاق مخطط JSON-LD: %s"
+
+#. module: era_seo_ai
+msgid "Sets the Open Graph image so shared links render a card."
+msgstr "يضبط صورة Open Graph حتى تظهر الروابط المشاركة كبطاقة."
+
+#. module: era_seo_ai
+msgid "No images without alt text were found on the page."
+msgstr "لم يتم العثور على صور بدون نص بديل في الصفحة."
+
+#. module: era_seo_ai
+msgid "No company logo is configured to use as the OG image."
+msgstr "لا يوجد شعار للشركة لاستخدامه كصورة OG."

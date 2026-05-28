@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Add the AI SEO actions to the content-block form. The form has no header,
+    so we add one before the sheet (same as the blog bridge). Gated to the
+    SEO Manager group; the mixin methods re-check server-side.
+  -->
+  <record id="view_era_content_block_form_ai" model="ir.ui.view">
+    <field name="name">era.content.block.form.ai</field>
+    <field name="model">era.content.block</field>
+    <field name="inherit_id" ref="era_seo_manager.view_era_content_block_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="before">
+        <header>
+          <button name="action_ai_fill_seo" type="object"
+                  string="AI: Fill SEO" class="btn-primary" icon="fa-magic"
+                  groups="era_seo_manager.group_era_seo_manager"/>
+          <button name="action_ai_rewrite_seo" type="object"
+                  string="AI: Rewrite SEO" class="btn-secondary" icon="fa-refresh"
+                  groups="era_seo_manager.group_era_seo_manager"
+                  confirm="Regenerate every SEO field from the block content, overwriting current values?"/>
+        </header>
+      </xpath>
+    </field>
+  </record>
+</odoo>

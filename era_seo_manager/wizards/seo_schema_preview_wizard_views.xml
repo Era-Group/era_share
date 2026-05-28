@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- ===================================================================
+       era.seo.schema.preview.wizard — form view and action
+       Per SPEC §8 Step 7.
+  =================================================================== -->
+
+  <record id="view_seo_schema_preview_wizard_form" model="ir.ui.view">
+    <field name="name">era.seo.schema.preview.wizard.form</field>
+    <field name="model">era.seo.schema.preview.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Schema Preview">
+        <group>
+          <group string="Input">
+            <field name="template_id" readonly="1"/>
+            <field name="page_id"/>
+          </group>
+        </group>
+        <footer>
+          <button name="action_preview"
+                  string="Render Preview"
+                  type="object"
+                  class="btn-primary"/>
+          <button string="Close" special="cancel" class="btn-secondary"/>
+        </footer>
+        <group string="Rendered Output" invisible="not rendered_output">
+          <field name="rendered_output"
+                 widget="ace"
+                 options="{'mode': 'json', 'readOnly': true}"
+                 style="min-height:300px;font-family:monospace;"
+                 nolabel="1"/>
+        </group>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action referenced by the Preview button on the template form -->
+  <record id="action_seo_schema_preview_wizard" model="ir.actions.act_window">
+    <field name="name">Schema Preview</field>
+    <field name="res_model">era.seo.schema.preview.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_seo_schema_preview_wizard_form"/>
+    <field name="target">new</field>
+    <field name="context">{'default_template_id': active_id}</field>
+  </record>
+
+  <!-- ACL for the wizard is covered by group_era_seo_user in ir.model.access.csv -->
+</odoo>

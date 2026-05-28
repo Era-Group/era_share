@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Generic landing-page template used by the series / category / author
+    controllers in controllers/blog.py. Renders a hero header, optional
+    description / cover image / subtitle, and a simple list of posts.
+
+    The page also exposes ``main_object`` so the JSON-LD auto-attach hook
+    finds the series / category / author record and renders its schema in
+    <head> alongside the universal Organization / WebSite instances.
+  -->
+  <template id="blog_landing" name="ERA Blog Landing Page">
+    <t t-call="website.layout">
+      <div id="wrap" class="o_era_blog_landing">
+        <div class="container py-5">
+
+          <!-- Hero / header -->
+          <header class="mb-4">
+            <div class="d-flex align-items-start">
+              <img t-if="cover_image_url"
+                   t-att-src="cover_image_url"
+                   alt=""
+                   class="me-3"
+                   style="max-width:96px;max-height:96px;object-fit:cover;border-radius:8px;"/>
+              <div>
+                <div class="text-muted small text-uppercase">
+                  <t t-esc="page_kind"/>
+                </div>
+                <h1 class="mb-1"><t t-esc="page_title"/></h1>
+                <div t-if="subtitle" class="text-muted">
+                  <t t-esc="subtitle"/>
+                </div>
+              </div>
+            </div>
+            <div t-if="description" class="o_era_blog_landing_description mt-3">
+              <t t-out="description"/>
+            </div>
+          </header>
+
+          <!-- Post list -->
+          <section class="o_era_blog_landing_posts">
+            <t t-if="not posts">
+              <div class="alert alert-info" t-translation="off">
+                No published posts yet.
+              </div>
+            </t>
+            <div t-if="posts" class="row g-4">
+              <t t-foreach="posts" t-as="post">
+                <article class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h3 class="card-title h5">
+                        <a t-att-href="post.website_url"><t t-esc="post.name"/></a>
+                      </h3>
+                      <div t-if="post.era_subtitle" class="text-muted small mb-2">
+                        <t t-esc="post.era_subtitle"/>
+                      </div>
+                      <p class="card-text" t-if="post.era_excerpt_effective">
+                        <t t-esc="post.era_excerpt_effective"/>
+                      </p>
+                      <div class="text-muted small mt-2">
+                        <span t-if="post.published_date">
+                          <t t-esc="post.published_date" t-options="{'widget': 'date'}"/>
+                        </span>
+                        <span t-if="post.era_reading_time_minutes" class="ms-2">
+                          <i class="fa fa-clock-o me-1"/>
+                          <t t-esc="post.era_reading_time_minutes"/>
+                          <span t-translation="off"> min</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </t>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>

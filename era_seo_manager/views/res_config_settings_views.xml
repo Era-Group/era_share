@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    ERA SEO settings section inside Website → Configuration → Settings.
+    Per SPEC §16.
+  -->
+  <record id="res_config_settings_view_era_seo" model="ir.ui.view">
+    <field name="name">res.config.settings.era.seo</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//app[@name='website']" position="after">
+        <app string="ERA SEO" name="era_seo" img="era_seo_manager/static/description/icon.png">
+
+          <!-- ── Intro banner ─────────────────────────────────────────── -->
+          <div class="alert alert-info mb-3" role="alert">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+              <div>
+                <strong>ERA SEO Manager</strong> controls all SEO metadata emitted in your site's
+                <code>&lt;head&gt;</code> — meta tags, Open Graph, Twitter cards, canonical URLs,
+                JSON-LD schema scripts, site verification tokens, and more.
+                <br/>
+                Fill in the sections below <strong>top to bottom</strong>. Every field has a
+                <em>help tooltip</em> (hover the label) for guidance.
+              </div>
+              <button type="action"
+                      name="era_seo_manager.action_seo_status"
+                      string="View Status Report"
+                      class="btn btn-primary btn-sm text-nowrap"/>
+            </div>
+          </div>
+
+          <!-- ── Organization Identity ─────────────────────────────────── -->
+          <block title="Organization Identity">
+            <div class="text-muted small mb-3" style="padding-left:8px;">
+              These values appear in the <strong>Organization</strong> and
+              <strong>LocalBusiness</strong> JSON-LD schemas that Google uses for
+              Knowledge Panel entries. They also supply fallback values for Open Graph
+              and Twitter cards.
+            </div>
+            <setting string="Organization Name"
+                     help="The public-facing name of your company. Shown in Organization and LocalBusiness schemas and used as the og:site_name fallback.">
+              <field name="era_seo_default_organization_name"
+                     placeholder="e.g. ERA — Excellence Resources Arabia"/>
+            </setting>
+            <setting string="Legal Name"
+                     help="Full registered legal name of the company (may differ from the trading name). Included in the Organization schema's legalName field.">
+              <field name="era_seo_default_legal_name"
+                     placeholder="e.g. Excellence Resources Arabia Co. Ltd."/>
+            </setting>
+            <setting string="Logo URL"
+                     help="Absolute HTTPS URL to your organization logo (PNG or SVG, min 112×112 px). Used in the Organization schema logo field and as og:image fallback. Tip: upload the logo to Odoo attachments and copy the public URL.">
+              <field name="era_seo_default_logo_url"
+                     placeholder="https://example.com/logo.png"/>
+            </setting>
+            <setting string="Default OG Image URL"
+                     help="Fallback Open Graph image (1200×630 px recommended) for pages that do not have a custom OG image set. Shown when someone shares any page on social media.">
+              <field name="era_seo_default_og_image_url"
+                     placeholder="https://example.com/og-default.jpg"/>
+            </setting>
+            <setting string="Twitter / X Handle"
+                     help="Your company's Twitter/X account. Must start with @. Used in twitter:site and twitter:creator meta tags. Example: @mycompany">
+              <field name="era_seo_default_twitter_handle" placeholder="@mycompany"/>
+            </setting>
+          </block>
+
+          <!-- ── Social Profiles ───────────────────────────────────────── -->
+          <block title="Social Profiles">
+            <div class="text-muted small mb-3" style="padding-left:8px;">
+              Enter the <strong>full URLs</strong> to your company's social media profiles.
+              These are included in the Organization schema's <code>sameAs</code> array,
+              which tells Google all the places this organization appears online — helping
+              it build a more complete Knowledge Panel.
+              Leave blank any platforms you do not use.
+            </div>
+            <setting string="Facebook"
+                     help="Full URL to your Facebook page, e.g. https://facebook.com/mycompany">
+              <field name="era_seo_social_facebook"
+                     placeholder="https://facebook.com/mycompany"/>
+            </setting>
+            <setting string="Twitter / X"
+                     help="Full URL to your Twitter/X profile, e.g. https://twitter.com/mycompany">
+              <field name="era_seo_social_twitter"
+                     placeholder="https://twitter.com/mycompany"/>
+            </setting>
+            <setting string="LinkedIn"
+                     help="Full URL to your LinkedIn company page, e.g. https://linkedin.com/company/mycompany">
+              <field name="era_seo_social_linkedin"
+                     placeholder="https://linkedin.com/company/mycompany"/>
+            </setting>
+            <setting string="Instagram"
+                     help="Full URL to your Instagram profile, e.g. https://instagram.com/mycompany">
+              <field name="era_seo_social_instagram"
+                     placeholder="https://instagram.com/mycompany"/>
+            </setting>
+            <setting string="YouTube"
+                     help="Full URL to your YouTube channel, e.g. https://youtube.com/@mycompany">
+              <field name="era_seo_social_youtube"
+                     placeholder="https://youtube.com/@mycompany"/>
+            </setting>
+          </block>
+
+          <!-- ── Site Verification ─────────────────────────────────────── -->
+          <block title="Site Verification">
+            <div class="text-muted small mb-3" style="padding-left:8px;">
+              Site verification tokens prove to search engine tools that you own this
+              website. They are injected as <code>&lt;meta&gt;</code> tags in every
+              page's <code>&lt;head&gt;</code>.
+              <br/><br/>
+              <strong>How to get your Google token:</strong>
+              Go to <em>Google Search Console → Add property → choose your domain →
+              select "HTML tag" verification → copy only the <code>content="…"</code>
+              value</em> (not the full tag) and paste it below.
+              <br/>
+              <strong>How to get your Bing token:</strong>
+              Go to <em>Bing Webmaster Tools → Add site → HTML Meta Tag → copy the
+              <code>content</code> value</em>.
+            </div>
+            <setting string="Google Search Console"
+                     help="Paste only the content= value from the google-site-verification meta tag. Example: abc123XYZ. Do NOT paste the full &lt;meta&gt; tag.">
+              <field name="era_seo_google_site_verification"
+                     placeholder="abc123XYZverificationtoken"/>
+            </setting>
+            <setting string="Bing Webmaster Tools"
+                     help="Paste only the content= value from the msvalidate.01 meta tag provided by Bing Webmaster Tools.">
+              <field name="era_seo_bing_site_verification"
+                     placeholder="ABC123bingverificationtoken"/>
+            </setting>
+          </block>
+
+          <!-- ── Schema Engine ─────────────────────────────────────────── -->
+          <block title="JSON-LD Schema Engine">
+            <div class="text-muted small mb-3" style="padding-left:8px;">
+              When enabled, ERA SEO injects structured data (<code>application/ld+json</code>
+              scripts) into every page that has schema instances attached.
+              Go to <strong>Website → SEO → Schema Templates</strong> to browse the 17
+              built-in templates (Organization, WebSite, Article, Product, FAQ, Event…)
+              and attach them to pages via the page's <strong>Schemas</strong> tab.
+              <br/>
+              Validate output at
+              <a href="https://search.google.com/test/rich-results" target="_blank">
+                Google Rich Results Test
+              </a>.
+            </div>
+            <setting string="Enable JSON-LD Schema Engine"
+                     help="When disabled, no &lt;script type=application/ld+json&gt; tags are emitted anywhere on the site. Useful to temporarily suspend schema output without deleting instances.">
+              <field name="era_seo_schema_engine_enabled"/>
+            </setting>
+          </block>
+
+        </app>
+      </xpath>
+    </field>
+  </record>
+</odoo>

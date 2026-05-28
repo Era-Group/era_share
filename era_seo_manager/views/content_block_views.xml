@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- Backend admin for reusable content blocks (SPEC §14.1). -->
+
+  <record id="view_era_content_block_list" model="ir.ui.view">
+    <field name="name">era.content.block.list</field>
+    <field name="model">era.content.block</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="code"/>
+        <field name="block_type"/>
+        <field name="schema_template_id"/>
+        <field name="active" optional="hide"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_content_block_form" model="ir.ui.view">
+    <field name="name">era.content.block.form</field>
+    <field name="model">era.content.block</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" placeholder="e.g. Pricing FAQ"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="code" placeholder="e.g. pricing_faq"/>
+              <field name="block_type"/>
+            </group>
+            <group>
+              <field name="schema_template_id"/>
+              <field name="active"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Content" name="content">
+              <field name="content_html" widget="html"/>
+            </page>
+            <page string="SEO" name="seo">
+              <group>
+                <field name="seo_title"/>
+                <field name="seo_description"/>
+                <field name="seo_keywords"/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_era_content_block" model="ir.actions.act_window">
+    <field name="name">Content Blocks</field>
+    <field name="res_model">era.content.block</field>
+    <field name="view_mode">list,form</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Create your first content block</p>
+      <p>Reusable, schema-aware blocks for the website builder snippets.</p>
+    </field>
+  </record>
+
+  <menuitem
+    id="menu_seo_content_blocks"
+    name="Content Blocks"
+    parent="menu_website_seo_root"
+    action="action_era_content_block"
+    sequence="40"/>
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_seo_ai_fix_log_list" model="ir.ui.view">
+    <field name="name">era.seo.ai.fix.log.list</field>
+    <field name="model">era.seo.ai.fix.log</field>
+    <field name="arch" type="xml">
+      <list string="AI Fix Log" decoration-success="applied"
+            decoration-danger="error_message">
+        <field name="create_date"/>
+        <field name="kind" widget="badge" optional="show"/>
+        <field name="check_code"/>
+        <field name="target_url"/>
+        <field name="model"/>
+        <field name="field_written" optional="show"/>
+        <field name="confidence" widget="progressbar" optional="show"/>
+        <field name="applied" widget="boolean_toggle" readonly="1"/>
+        <field name="triggered_user_id" optional="hide"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_seo_ai_fix_log_form" model="ir.ui.view">
+    <field name="name">era.seo.ai.fix.log.form</field>
+    <field name="model">era.seo.ai.fix.log</field>
+    <field name="arch" type="xml">
+      <form string="AI Fix Log" create="false" edit="false">
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="Request">
+              <field name="finding_id"/>
+              <field name="check_code"/>
+              <field name="target_model"/>
+              <field name="target_id"/>
+              <field name="target_url"/>
+              <field name="field_written"/>
+              <field name="model"/>
+            </group>
+            <group string="Response">
+              <field name="confidence" widget="progressbar"/>
+              <field name="applied" widget="boolean_toggle"/>
+              <field name="applied_user_id"/>
+              <field name="applied_date"/>
+              <field name="triggered_user_id"/>
+            </group>
+          </group>
+          <group string="Proposed value" invisible="not proposed_value">
+            <field name="proposed_value" nolabel="1"/>
+          </group>
+          <group string="Explanation" invisible="not explanation">
+            <field name="explanation" nolabel="1"/>
+          </group>
+          <group string="Error" invisible="not error_message">
+            <field name="error_message" nolabel="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_era_seo_ai_fix_log_search" model="ir.ui.view">
+    <field name="name">era.seo.ai.fix.log.search</field>
+    <field name="model">era.seo.ai.fix.log</field>
+    <field name="arch" type="xml">
+      <search string="AI Fix Log">
+        <field name="target_url"/>
+        <field name="check_code"/>
+        <field name="model"/>
+        <filter name="applied" string="Applied" domain="[('applied', '=', True)]"/>
+        <filter name="errors" string="Errors" domain="[('error_message', '!=', False)]"/>
+        <filter name="fills" string="Full Fills" domain="[('kind', '=', 'fill')]"/>
+        <filter name="fixes" string="Finding Fixes" domain="[('kind', '=', 'fix')]"/>
+        <group>
+          <filter name="group_kind" string="Kind"
+                  context="{'group_by': 'kind'}"/>
+          <filter name="group_check" string="Check"
+                  context="{'group_by': 'check_code'}"/>
+          <filter name="group_model" string="Model"
+                  context="{'group_by': 'model'}"/>
+          <filter name="group_user" string="Triggered By"
+                  context="{'group_by': 'triggered_user_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_era_seo_ai_fix_log" model="ir.actions.act_window">
+    <field name="name">AI Fix Log</field>
+    <field name="res_model">era.seo.ai.fix.log</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_era_seo_ai_fix_log_search"/>
+  </record>
+
+  <menuitem id="menu_era_seo_ai_fix_log"
+            name="AI Fix Log"
+            parent="era_seo_manager.menu_seo_audit_root"
+            action="action_era_seo_ai_fix_log"
+            sequence="40"/>
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_blog_series_list" model="ir.ui.view">
+    <field name="name">era.blog.series.list</field>
+    <field name="model">era.blog.series</field>
+    <field name="arch" type="xml">
+      <list string="Series" decoration-muted="not active">
+        <field name="sequence" widget="handle"/>
+        <field name="name"/>
+        <field name="slug"/>
+        <field name="post_count" string="Posts"/>
+        <field name="active" widget="boolean_toggle"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_blog_series_form" model="ir.ui.view">
+    <field name="name">era.blog.series.form</field>
+    <field name="model">era.blog.series</field>
+    <field name="arch" type="xml">
+      <form string="Series">
+        <sheet>
+          <field name="cover_image" widget="image" class="oe_avatar"/>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" placeholder="Series name"/></h1>
+            <field name="slug" placeholder="series-slug"/>
+          </div>
+          <group>
+            <group>
+              <field name="sequence"/>
+              <field name="active"/>
+              <field name="color" widget="color_picker"/>
+            </group>
+            <group>
+              <field name="post_count" readonly="1"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Description" name="description">
+              <field name="description"/>
+            </page>
+            <page string="Posts in Series" name="posts">
+              <field name="post_ids" readonly="1">
+                <list>
+                  <field name="era_series_sequence" string="#"/>
+                  <field name="name"/>
+                  <field name="published_date"/>
+                  <field name="is_published"/>
+                </list>
+              </field>
+            </page>
+            <page string="SEO" name="seo">
+              <group>
+                <field name="seo_title"/>
+                <field name="seo_description"/>
+                <field name="seo_keywords"/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_era_blog_series" model="ir.actions.act_window">
+    <field name="name">Blog Series</field>
+    <field name="res_model">era.blog.series</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <menuitem id="menu_era_blog_series"
+            name="Series"
+            parent="menu_era_blog_root"
+            action="action_era_blog_series"
+            sequence="20"/>
+</odoo>

@@ -198,12 +198,18 @@
                 cron needs a configured AI agent to write articles.
               </div>
 
-              <group string="Custom prompt guidance"
-                     invisible="not setting_article_generator_active">
+              <!-- Pulled outside any <group> so the textarea spans the
+                   full tab width (groups force a half-width column). -->
+              <div invisible="not setting_article_generator_active">
+                <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">
+                  Custom prompt guidance
+                </div>
                 <field name="setting_article_prompt_addendum"
                        nolabel="1"
+                       class="w-100"
+                       widget="text"
                        placeholder="Free-form admin guidance — appended to every prompt under an &quot;ADMIN GUIDANCE&quot; section. Use it to nudge tone, audiences, regional angles, brands to mention/avoid, etc. Leave blank for defaults."/>
-              </group>
+              </div>
 
               <!-- Polling widget: while is_article_pending is True, the
                    form auto-reloads every 3 seconds so the new article

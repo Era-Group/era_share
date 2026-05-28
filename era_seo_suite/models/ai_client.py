@@ -713,6 +713,7 @@ class AIClient:
         return {
             'title':           parsed.get('title', '').strip(),
             'subtitle':        parsed.get('subtitle', '').strip(),
+            'excerpt':         parsed.get('excerpt', '').strip(),
             'content_html':    parsed.get('content_html', '').strip(),
             'seo_title':       parsed.get('seo_title', '').strip(),
             'seo_description': parsed.get('seo_description', '').strip(),
@@ -767,6 +768,8 @@ class AIClient:
             'model could use as-is.\n'
             'OUTPUT (one JSON object, exactly these keys):\n'
             '  {{"title": "<=70 chars", "subtitle": "<=140 chars (or empty)", '
+            '"excerpt": "1-2 sentence plain-text summary for blog list '
+            'cards and RSS, <=300 chars, no HTML", '
             '"content_html": "<full article body as HTML, no <html>/<body> '
             'wrappers, allow <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <a>>", '
             '"seo_title": "<=60 chars", "seo_description": "140-160 chars", '

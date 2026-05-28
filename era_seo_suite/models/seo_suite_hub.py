@@ -120,7 +120,7 @@ class EraSeoSuiteHub(models.Model):
         # Image generation
         'setting_image_provider':           ('era_seo.image_provider',           'char', 'openai'),
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
-        'setting_image_model':              ('era_seo.image_model',              'char', 'dall-e-3'),
+        'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1792x1024'),
     }
 
@@ -852,6 +852,8 @@ class EraSeoSuiteHub(models.Model):
         # Subtitle + category live on era_seo_blog's extension. Same guard.
         if 'era_subtitle' in BlogPost._fields and article['subtitle']:
             post_vals['era_subtitle'] = article['subtitle']
+        if 'era_excerpt' in BlogPost._fields and article.get('excerpt'):
+            post_vals['era_excerpt'] = article['excerpt']
         if 'era_category_id' in BlogPost._fields and category:
             post_vals['era_category_id'] = category.id
 
@@ -1058,7 +1060,7 @@ class EraSeoSuiteHub(models.Model):
                 'image-gen openai: no API key configured (Blog Gen tab '
                 '→ Image API key); skipping')
             return None
-        model = (ICP.get_param('era_seo.image_model', 'dall-e-3') or 'dall-e-3').strip()
+        model = (ICP.get_param('era_seo.image_model', 'gpt-image-1') or 'gpt-image-1').strip()
         size = (ICP.get_param('era_seo.image_size', '1792x1024') or '1792x1024').strip()
 
         def _call(call_prompt, call_model, call_size):
@@ -1115,33 +1117,55 @@ class EraSeoSuiteHub(models.Model):
                     return None, None
             return None, 'no b64_json or url in response'
 
-        # First attempt with admin-configured prompt + model + size.
-        image_bytes, err_detail = _call(prompt, model, size)
-        if image_bytes:
-            return image_bytes
-        if err_detail:
+        # Try the admin-configured model first; on "model does not exist"
+        # walk a fallback chain of widely-available alternatives. Different
+        # OpenAI tiers (project keys / org tiers / region) gate access to
+        # different image models — the chain insulates the cron from that.
+        model_chain = [model]
+        for fb in ('gpt-image-1', 'dall-e-3', 'dall-e-2'):
+            if fb not in model_chain:
+                model_chain.append(fb)
+
+        image_bytes = None
+        last_detail = None
+        for attempt_model in model_chain:
+            image_bytes, err_detail = _call(prompt, attempt_model, size)
+            if image_bytes:
+                return image_bytes
+            last_detail = err_detail
             _logger.warning(
-                'image-gen openai: first attempt failed (model=%s size=%s) — %s',
-                model, size, err_detail)
-            # Two common 400 causes we can defuse with a retry:
-            #   * content-policy bounce on the prompt (Arabic political
-            #     figures, real-person likeness, brand logos, etc.);
-            #   * size unsupported for the configured model.
+                'image-gen openai: failed (model=%s size=%s) — %s',
+                attempt_model, size, err_detail or '<no detail>')
+            if not err_detail:
+                break
             lower = err_detail.lower()
+            # Move on to next model on "does not exist" / "model_not_found"
+            # / "invalid model" — those won't get better with a different
+            # prompt.
+            if 'does not exist' in lower or 'model_not_found' in lower \
+                    or 'invalid_value' in lower and 'model' in lower:
+                continue
+            # Content policy / size: one prompt-level retry on the SAME model.
             if 'content_policy' in lower or 'safety' in lower or 'must be one of' in lower:
                 neutral_prompt = (
-                    'A clean, brand-neutral editorial hero illustration suitable '
-                    'as a blog cover image. Minimalist, modern, photorealistic '
-                    'where reasonable. No text, no logos, no recognisable people.'
+                    'A clean, brand-neutral editorial hero illustration '
+                    'suitable as a blog cover image. Minimalist, modern, '
+                    'photorealistic where reasonable. No text, no logos, '
+                    'no recognisable people.'
                 )
                 _logger.info(
                     'image-gen openai: retrying with neutral prompt + 1024x1024')
-                image_bytes, err2 = _call(neutral_prompt, model, '1024x1024')
+                image_bytes, err2 = _call(neutral_prompt, attempt_model, '1024x1024')
                 if image_bytes:
                     return image_bytes
-                if err2:
-                    _logger.warning(
-                        'image-gen openai: retry also failed — %s', err2)
+                last_detail = err2 or last_detail
+            # Other errors (auth, rate-limit, billing): bail — fallback
+            # models won't change the outcome.
+            break
+        if last_detail:
+            _logger.warning(
+                'image-gen openai: all model attempts failed — last error: %s',
+                last_detail)
         return None
 
     def _reuse_ai_agent_openai_key(self):

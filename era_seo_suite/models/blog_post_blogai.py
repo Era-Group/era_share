@@ -84,6 +84,7 @@ class BlogPost(models.Model):
             ('seo_description', 'seo_description'),
             ('seo_keywords', 'seo_keywords'),
             ('era_subtitle', 'subtitle'),
+            ('era_excerpt', 'excerpt'),
         ]:
             if fname in self._fields and article.get(src):
                 vals[fname] = article[src]

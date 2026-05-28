@@ -84,15 +84,24 @@ echo "================================================================"
 echo " RESULT"
 echo "================================================================"
 
-# Odoo logs failures/errors at level ERROR/CRITICAL; assertion failures show
-# "FAIL:" and exceptions show "ERROR ...: Traceback". Count the real markers.
-# Also count startup-level showstoppers (couldn't bind a port, couldn't find
-# the binary, etc.) so they don't slip through as a false PASS.
-FAILS=$(grep -cE "(FAIL:|ERROR [0-9].*odoo\.tests|CRITICAL .*odoo\.tests|Traceback \(most recent call last\)|Address already in use|Port [0-9]+ is in use|command not found)" "$LOG")
-# Treat a non-zero odoo-bin exit as failure even if no marker matched.
+# Odoo's own end-of-run summary line is the source of truth:
+#   "N failed, M error(s) of T tests when loading database '…'"
+# Trust it when present — bare "Traceback" greps misfire on tests that
+# intentionally exercise error paths (they log a traceback on purpose).
+SUMMARY=$(grep -aE "[0-9]+ failed, [0-9]+ error\(s\) of [0-9]+ tests" "$LOG" | tail -n 1)
+
+if [ -n "$SUMMARY" ]; then
+  # Parse "X failed, Y error(s) of Z tests" — PASS iff X=0 and Y=0.
+  FAILED_N=$(echo "$SUMMARY" | sed -nE 's/.*([0-9]+) failed, ([0-9]+) error.*/\1/p')
+  ERRORS_N=$(echo "$SUMMARY" | sed -nE 's/.*([0-9]+) failed, ([0-9]+) error.*/\2/p')
+  FAILS=$((FAILED_N + ERRORS_N))
+else
+  # No summary → odoo-bin probably never reached the test phase. Fall back
+  # to marker grep + exit code so silent failures (binary missing, port
+  # taken, registry crash) don't slip through as a false PASS.
+  FAILS=$(grep -cE "(FAIL:|ERROR [0-9].*odoo\.tests|CRITICAL .*odoo\.tests|Traceback \(most recent call last\)|Address already in use|Port [0-9]+ is in use|command not found)" "$LOG")
+fi
 [ "${ODOO_EXIT:-0}" -ne 0 ] && FAILS=$((FAILS + 1))
-# Odoo's own end-of-run summary line, if present.
-SUMMARY=$(grep -aiE "tests? when loading|[0-9]+ failed, [0-9]+ error" "$LOG" | tail -n 5)
 
 if [ -n "$SUMMARY" ]; then
   echo "Odoo summary:"

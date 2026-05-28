@@ -1,5 +1,18 @@
 # Changelog
 
+## [19.0.8.5.0] — 2026-05-28
+
+### Changed — audit run AI buttons stay visible after a run
+
+The **Suggest Fixes (AI)** / **Auto-Fix (≥0.8)** header buttons on
+`era.seo.audit.run` were hidden whenever `ai_fixable_count == 0`, so a run
+whose scanned pages happened to have no AI-fixable findings looked like the
+feature had vanished. They now stay visible once the run is **done** /
+**failed**, and the underlying actions already return a clean
+"No AI-fixable findings in this run." notification when there is nothing
+to do — so the buttons stay discoverable without ever firing a useless
+agent call.
+
 ## [19.0.8.4.0] — 2026-05-28
 
 ### Added — Arabic translation (i18n/ar.po)

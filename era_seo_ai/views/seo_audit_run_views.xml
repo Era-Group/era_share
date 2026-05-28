@@ -16,12 +16,15 @@
       <!-- Header buttons -->
       <xpath expr="//header" position="inside">
         <field name="ai_fixable_count" invisible="1"/>
+        <!-- Always shown after a run; the actions return a clean "no
+             AI-fixable findings" notification when there's nothing to do,
+             so the buttons stay discoverable. -->
         <button name="action_ai_suggest_findings" type="object"
                 string="Suggest Fixes (AI)" class="btn-info"
-                invisible="ai_fixable_count == 0"/>
+                invisible="state not in ('done', 'failed')"/>
         <button name="action_ai_fix_findings" type="object"
                 string="Auto-Fix (≥0.8)" class="btn-primary"
-                invisible="ai_fixable_count == 0"
+                invisible="state not in ('done', 'failed')"
                 confirm="Generate AI suggestions for every AI-fixable finding and automatically apply the high-confidence ones. Continue?"/>
       </xpath>
 

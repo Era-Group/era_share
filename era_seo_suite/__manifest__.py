@@ -27,6 +27,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'mail',
     'portal',
     'website_blog',
+    'ai',
 ],
     'data': [
     'security/seo_security.xml',

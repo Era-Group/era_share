@@ -43,6 +43,9 @@
             <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai']">7. AI Bulk Fill</span>
             <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">7. AI Bulk Fill</span>
 
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">8. Blog</span>
+            <span class="badge text-bg-primary" invisible="step != 'blog'">8. Blog</span>
+
             <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
           </div>
         </div>
@@ -159,6 +162,9 @@
 
         <!-- ================================================ GSC -->
         <group invisible="step != 'gsc'" string="6. Google Search Console (optional)">
+          <field name="gsc_connected_count" invisible="1"/>
+          <field name="gsc_can_connect" invisible="1"/>
+
           <div class="text-muted small mb-2" colspan="2">
             Connect GSC to pull search analytics directly into Odoo.
             <b>Optional</b> — skip if you don't have a Google Cloud OAuth
@@ -167,10 +173,39 @@
             Credentials</i>, add the Authorized Redirect URI below, and
             paste the Client ID / Secret here.
           </div>
+
+          <div class="alert alert-success" role="status" colspan="2"
+               invisible="not gsc_connected_count">
+            <b><field name="gsc_connected_count" readonly="1" nolabel="1"/></b>
+            account(s) already connected to Google Search Console. You can
+            re-connect or move on.
+          </div>
+
           <field name="gsc_redirect_uri" readonly="1"/>
           <field name="gsc_client_id" placeholder="…apps.googleusercontent.com"/>
           <field name="gsc_client_secret" password="True"/>
           <field name="gsc_pull_window"/>
+
+          <div class="mt-3" colspan="2">
+            <button name="action_connect_gsc" type="object"
+                    string="Connect to Google"
+                    class="btn btn-primary"
+                    icon="fa-google"
+                    invisible="not gsc_can_connect"
+                    confirm="Save these OAuth credentials and redirect to Google's consent screen?"/>
+            <span class="text-muted small ms-2" invisible="gsc_can_connect">
+              Paste both the Client ID and Client Secret above to enable the
+              connect button.
+            </span>
+          </div>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not gsc_can_connect">
+            Clicking <b>Connect to Google</b> saves your credentials and
+            takes you out of Odoo to Google's consent screen. After granting
+            access, you'll land back in Odoo with the connection live —
+            then re-open this wizard to finish the remaining steps.
+          </div>
         </group>
 
         <!-- ================================================ AI Bulk Fill -->
@@ -213,6 +248,46 @@
             language. Watch your provider dashboard if you have hundreds
             of pages. The run can be paused any time from the hub's
             Settings tab.
+          </div>
+        </group>
+
+        <!-- ================================================ Blog setup -->
+        <group invisible="step != 'blog'" string="8. Blog setup (optional)">
+          <field name="blog_post_count" invisible="1"/>
+          <field name="blog_uncategorized_count" invisible="1"/>
+          <field name="blog_category_count" invisible="1"/>
+          <field name="blog_series_count" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Lets the AI cron classify your existing blog posts into
+            categories and (where the content clearly is multi-part) into
+            series — alongside the SEO fill from the previous step. Existing
+            taxonomy is preferred over creating duplicates.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not blog_post_count">
+            You have <b><field name="blog_post_count" readonly="1" nolabel="1"/></b>
+            blog post(s), <b><field name="blog_category_count" readonly="1" nolabel="1"/></b>
+            categor(ies), <b><field name="blog_series_count" readonly="1" nolabel="1"/></b>
+            series. <b><field name="blog_uncategorized_count" readonly="1" nolabel="1"/></b>
+            post(s) still have no category.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="blog_post_count">
+            No blog posts found. Skip this step — there's nothing to classify yet.
+          </div>
+
+          <field name="blog_taxonomy_opt_in" widget="boolean_toggle"
+                 invisible="not blog_post_count"/>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not blog_taxonomy_opt_in">
+            The same cron processes blog posts in batches of 10 every 2
+            minutes. Each post triggers one extra AI call for taxonomy. If
+            you haven't ticked the bulk SEO fill on the previous step, the
+            cron is started here too so the work actually happens.
           </div>
         </group>
 

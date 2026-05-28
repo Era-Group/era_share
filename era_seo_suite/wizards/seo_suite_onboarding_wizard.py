@@ -31,6 +31,7 @@ _STEPS = [
     'geo',
     'gsc',
     'bulk_ai',
+    'blog',
     'done',
 ]
 
@@ -98,6 +99,7 @@ class EraSeoOnboardingWizard(models.TransientModel):
             ('geo',     '5. GEO (/llms.txt)'),
             ('gsc',     '6. Google Search Console'),
             ('bulk_ai', '7. AI Bulk Fill'),
+            ('blog',    '8. Blog setup'),
             ('done',    'Done'),
         ],
         default='welcome', required=True,
@@ -147,6 +149,8 @@ class EraSeoOnboardingWizard(models.TransientModel):
     gsc_pull_window = fields.Integer(string='Pull Window (days)', default=28)
     gsc_redirect_uri = fields.Char(string='Authorized Redirect URI',
                                    compute='_compute_gsc_redirect_uri', readonly=True)
+    gsc_connected_count = fields.Integer(compute='_compute_gsc_connected_count')
+    gsc_can_connect = fields.Boolean(compute='_compute_gsc_can_connect')
 
     # ---- AI Bulk Fill ------------------------------------------------------
     bulk_ai_opt_in = fields.Boolean(
@@ -158,6 +162,18 @@ class EraSeoOnboardingWizard(models.TransientModel):
     bulk_ai_already_running = fields.Boolean(compute='_compute_bulk_ai_already_running')
     bulk_ai_pending_count = fields.Integer(compute='_compute_bulk_ai_pending_count',
                                            string='Pages / posts pending fill')
+
+    # ---- Blog setup --------------------------------------------------------
+    blog_taxonomy_opt_in = fields.Boolean(
+        string='Auto-classify blog posts (AI)',
+        help='Have the cron, while it fills SEO fields, also ask the AI to '
+             'assign every blog post to a category (and series, when the '
+             'post is clearly part of a multi-part arc). Existing categories '
+             'and series are reused before new ones are created.')
+    blog_post_count = fields.Integer(compute='_compute_blog_counts')
+    blog_uncategorized_count = fields.Integer(compute='_compute_blog_counts')
+    blog_category_count = fields.Integer(compute='_compute_blog_counts')
+    blog_series_count = fields.Integer(compute='_compute_blog_counts')
 
     # =======================================================================
     # Computes
@@ -172,6 +188,23 @@ class EraSeoOnboardingWizard(models.TransientModel):
         n = Agent.sudo().search_count([]) if Agent is not None else 0
         for rec in self:
             rec.ai_agent_count = n
+
+    def _compute_blog_counts(self):
+        BlogPost = self.env.get('blog.post')
+        Category = self.env.get('era.blog.category')
+        Series = self.env.get('era.blog.series')
+        n_posts = (BlogPost.sudo().search_count([]) if BlogPost is not None else 0)
+        n_uncategorized = (
+            BlogPost.sudo().search_count([('era_category_id', '=', False)])
+            if BlogPost is not None else 0
+        )
+        n_cats = Category.sudo().search_count([]) if Category is not None else 0
+        n_series = Series.sudo().search_count([]) if Series is not None else 0
+        for rec in self:
+            rec.blog_post_count = n_posts
+            rec.blog_uncategorized_count = n_uncategorized
+            rec.blog_category_count = n_cats
+            rec.blog_series_count = n_series
 
     def _compute_bulk_ai_already_running(self):
         ICP = self.env['ir.config_parameter'].sudo()
@@ -195,6 +228,20 @@ class EraSeoOnboardingWizard(models.TransientModel):
                 continue
         for rec in self:
             rec.bulk_ai_pending_count = count
+
+    def _compute_gsc_connected_count(self):
+        Account = self.env.get('era.gsc.account')
+        n = (Account.sudo().search_count([('state', '=', 'connected')])
+             if Account is not None else 0)
+        for rec in self:
+            rec.gsc_connected_count = n
+
+    def _compute_gsc_can_connect(self):
+        for rec in self:
+            rec.gsc_can_connect = bool(
+                (rec.gsc_client_id or '').strip()
+                and (rec.gsc_client_secret or '').strip()
+            )
 
     def _compute_gsc_redirect_uri(self):
         base = (self.env['ir.config_parameter'].sudo()
@@ -250,6 +297,20 @@ class EraSeoOnboardingWizard(models.TransientModel):
             if self.bulk_ai_opt_in:
                 self.env['era.seo.suite.hub'].sudo().start_bulk_ai_fill()
             return
+        # Blog setup step flips a separate flag the same cron reads when
+        # processing blog.post records — categories + series are assigned
+        # alongside the SEO fill in the same tick.
+        if self.step == 'blog':
+            ICP = self.env['ir.config_parameter'].sudo()
+            ICP.set_param('era_seo.blog_taxonomy_active',
+                          'True' if self.blog_taxonomy_opt_in else 'False')
+            # If the user toggled taxonomy on but never opted into the bulk
+            # fill, we still need the cron to run — flip its gate too so
+            # it actually wakes up.
+            if self.blog_taxonomy_opt_in and \
+                    ICP.get_param('era_seo.bulk_ai_fill_active') not in _TRUE:
+                self.env['era.seo.suite.hub'].sudo().start_bulk_ai_fill()
+            return
         names = _STEP_FIELDS.get(self.step, [])
         if not names:
             return
@@ -303,6 +364,25 @@ class EraSeoOnboardingWizard(models.TransientModel):
         self.ensure_one()
         idx = _STEPS.index(self.step)
         return self._go_step(_STEPS[min(idx + 1, len(_STEPS) - 1)])
+
+    def action_connect_gsc(self):
+        """Persist the OAuth creds the user just typed, then kick off the
+        GSC authorize flow on a (created if needed) era.gsc.account record.
+
+        Returns the same act_url action GSC's account form returns — the
+        browser leaves Odoo for Google's consent screen and the OAuth
+        callback writes the tokens back. The user re-opens the wizard
+        afterwards to continue.
+        """
+        self.ensure_one()
+        # Persist whatever's in the GSC form first, so action_authorize
+        # finds the client_id when it looks it up via ICP.
+        self._save_current_step()
+        Account = self.env['era.gsc.account'].sudo()
+        account = Account.search([('active', '=', True)], limit=1)
+        if not account:
+            account = Account.create({'name': _('Default GSC connection')})
+        return account.action_authorize()
 
     def action_open_ai_config(self):
         """Jump to the AI app so the admin can configure a provider/key."""

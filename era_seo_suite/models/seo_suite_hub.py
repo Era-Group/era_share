@@ -443,6 +443,15 @@ class EraSeoSuiteHub(models.Model):
                     _logger.exception(
                         'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
                         model_name, rec.id)
+                # Blog posts also get the optional taxonomy classification
+                # in the same tick, so the user only needs one flag flipped.
+                if model_name == 'blog.post' and \
+                        _icp_get(self.env, 'era_seo.blog_taxonomy_active') in _TRUE:
+                    try:
+                        self._apply_blog_taxonomy(rec)
+                    except Exception:  # noqa: BLE001
+                        _logger.exception(
+                            'bulk_ai_fill: taxonomy failed for blog.post#%s', rec.id)
                 # Advance the cursor whether or not this record succeeded,
                 # so one persistently-broken record can't stall the queue.
                 ICP.set_param(key_last, str(rec.id))
@@ -456,6 +465,36 @@ class EraSeoSuiteHub(models.Model):
         else:
             _logger.info('bulk_ai_fill: processed %d record(s) this tick',
                          total_processed)
+
+    def _apply_blog_taxonomy(self, post):
+        """For one blog.post, pick a category + (optional) series via the AI
+        agent and attach them. Idempotent: skips posts that already have a
+        category set; reuses category/series by exact name (case-insensitive)
+        before creating a new one."""
+        # If the post already has a category, don't override it.
+        if getattr(post, 'era_category_id', False) and post.era_category_id:
+            return
+        # ai_client lives outside this module's models so we import lazily.
+        from .ai_client import AIClient
+        client = AIClient(self.env)
+        ok, _reason = client.is_available()
+        if not ok:
+            return
+        pick = client.pick_blog_taxonomy(post)
+        Category = self.env['era.blog.category'].sudo()
+        Series = self.env['era.blog.series'].sudo()
+        cat_name = pick['category'].strip()
+        cat = Category.search([('name', '=ilike', cat_name)], limit=1)
+        if not cat:
+            cat = Category.create({'name': cat_name})
+        vals = {'era_category_id': cat.id}
+        if pick['series']:
+            ser_name = pick['series'].strip()
+            ser = Series.search([('name', '=ilike', ser_name)], limit=1)
+            if not ser:
+                ser = Series.create({'name': ser_name})
+            vals['era_series_id'] = ser.id
+        post.write(vals)
 
     @api.model
     def start_bulk_ai_fill(self):
@@ -473,6 +512,49 @@ class EraSeoSuiteHub(models.Model):
         fresh start should use start_bulk_ai_fill which resets them)."""
         self.env['ir.config_parameter'].sudo().set_param(
             'era_seo.bulk_ai_fill_active', 'False')
+
+    # ------------------------------------------------------------------------
+    # Weekly audit + auto AI-fix
+    # ------------------------------------------------------------------------
+
+    @api.model
+    def cron_weekly_audit_and_fix(self):
+        """Run a fresh SEO audit and let the AI agent fix every newly-found,
+        AI-supported finding in one pass.
+
+        Driven by a weekly ir.cron entry. The fix step uses
+        ``action_ai_suggest_and_apply``, which only applies suggestions
+        whose AI confidence is above the agent's threshold — so an
+        unattended weekly run won't push low-confidence changes.
+
+        Gated by `era_seo.weekly_audit_active` (default True): users can
+        flip it off without disabling the cron entry.
+        """
+        if _icp_get(self.env, 'era_seo.weekly_audit_active', 'True') not in _TRUE:
+            return
+        Run = self.env['era.seo.audit.run'].sudo()
+        try:
+            run = Run.run_scheduled_audit()
+        except Exception:  # noqa: BLE001
+            _logger.exception('weekly_audit_and_fix: audit failed')
+            return
+        if not run:
+            return
+        # Only suggest+apply on findings the AI already knows how to fix
+        # AND that haven't been touched yet in this run.
+        findings = run.finding_ids.filtered(
+            lambda f: f.ai_supported and f.ai_status == 'none')
+        if not findings:
+            _logger.info(
+                'weekly_audit_and_fix: %s findings, none ai-supported / actionable',
+                len(run.finding_ids))
+            return
+        try:
+            findings.action_ai_suggest_and_apply()
+        except Exception:  # noqa: BLE001
+            _logger.exception(
+                'weekly_audit_and_fix: AI suggest+apply failed on %d findings',
+                len(findings))
 
     # ------------------------------------------------------------------------
     # Open helpers used by the menu and Refresh button

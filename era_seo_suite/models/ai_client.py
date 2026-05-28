@@ -77,6 +77,17 @@ exceed the caps. Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no sig
 # the agent's context_message; overrides the output shape for this task while
 # the agent's own system prompt still supplies the SEO craft (length rules,
 # language matching, Saudi keywords).
+BLOG_TAXONOMY_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction. You are classifying ONE blog post. Choose a short, brand-style \
+category name. Reuse one of the existing_categories verbatim if it cleanly \
+covers the post; only propose a new name when none of the existing ones fits. \
+Same rule for series — leave series empty unless the post is clearly one \
+chapter of a multi-part arc (and prefer an existing series name when it fits). \
+Reply with ONE JSON object: {"category": "...", "series": "..."or"", \
+"reason": "<one short sentence>", "confidence": <0.0-1.0>}. No markdown.
+"""
+
+
 PICK_SCHEMA_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
 instruction. You are picking the single best JSON-LD schema.org template for one \
 web page. Choose ONE code from the AVAILABLE TEMPLATES list — pick the most \
@@ -584,6 +595,64 @@ class AIClient:
             'reason': str(parsed.get('reason') or '').strip(),
             'confidence': float(parsed.get('confidence') or 0.0),
         }
+
+    def pick_blog_taxonomy(self, post):
+        """Ask the AI for a category (required) and series (optional) for
+        ``post`` based on its content.
+
+        :returns: dict ``{'category': str, 'series': str, 'reason': str,
+                          'confidence': float}``. `series` may be empty.
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+        agent = self._resolve_agent()
+        prompt = self._build_blog_taxonomy_prompt(post)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=BLOG_TAXONOMY_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_json(raw)
+        category = (parsed.get('category') or '').strip()
+        if not category:
+            raise ValueError(_('AI did not return a category.'))
+        series = (parsed.get('series') or '').strip()
+        return {
+            'category': category,
+            'series': series if series.lower() not in ('', 'none', 'null', 'n/a') else '',
+            'reason': str(parsed.get('reason') or '').strip(),
+            'confidence': float(parsed.get('confidence') or 0.0),
+        }
+
+    @classmethod
+    def _build_blog_taxonomy_prompt(cls, post):
+        excerpt, h1, detected = cls._extract_page_signal(post)
+        url = getattr(post, 'url', None) or post._get_seo_path() or '/'
+        # Surface existing taxonomy so the AI prefers reuse over proliferation.
+        env = post.env
+        existing_cats = env['era.blog.category'].sudo().search([], limit=50).mapped('name')
+        existing_series = env['era.blog.series'].sudo().search([], limit=50).mapped('name')
+        return (
+            'INPUT:\n'
+            '  url: {url}\n'
+            '  post_h1: "{h1}"\n'
+            '  post_excerpt: "{excerpt}"\n'
+            '  detected_lang: {detected}\n'
+            '  existing_categories: {cats}\n'
+            '  existing_series: {series}\n'
+            'OUTPUT (one JSON object, exactly these keys):\n'
+            '  {{"category": "<reuse existing if it fits, else propose a new short '
+            'name>", "series": "<empty unless the post is clearly part of a '
+            'multi-part series>", "reason": "<one short sentence>", '
+            '"confidence": <0.0-1.0>}}'.format(
+                url=url,
+                h1=h1.replace('"', "'"),
+                excerpt=excerpt.replace('"', "'")[:1500],
+                detected=detected or 'unknown',
+                cats=json.dumps(existing_cats[:20], ensure_ascii=False),
+                series=json.dumps(existing_series[:20], ensure_ascii=False),
+            )
+        )
 
     def _record_languages(self, record):
         """Return (languages_recordset, default_lang) for a record.

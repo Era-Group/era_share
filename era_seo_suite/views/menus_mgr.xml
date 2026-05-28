@@ -126,17 +126,40 @@
 
   <!--
     Direct list+form on website.page.
-    Odoo 19's stock "Website Pages" list opens the Website Builder when
-    you click a row, which hides the backend form with our SEO + Schemas
-    tabs. This action opens the inherited backend form on row-click
-    (target=current, no js_class override), so admins can attach schema
-    instances and tune meta from one place.
+
+    Odoo 19's stock list view for website.page is declared with
+        <list js_class="website_pages_list" type="object" action="open_website_url" …>
+    which hijacks every row-click and sends the user to the page's PUBLIC URL
+    instead of the form. That's fine for content editors but blocks SEO admins
+    from reaching the backend form (where the SEO + Schemas tabs live).
+
+    We define our own minimal list view WITHOUT type/action/js_class, and
+    point the action at it explicitly via view_ids. Row-click then falls
+    back to the default "open form" behavior, landing on the inherited
+    backend form `website.page.form.era.seo`.
   -->
+  <record id="view_era_seo_website_page_list" model="ir.ui.view">
+    <field name="name">era.seo.website.page.list</field>
+    <field name="model">website.page</field>
+    <field name="arch" type="xml">
+      <list string="Pages (SEO + Schemas)" default_order="url asc">
+        <field name="name"/>
+        <field name="url"/>
+        <field name="website_id" groups="website.group_multi_website"/>
+        <field name="is_published"/>
+        <field name="website_indexed"/>
+      </list>
+    </field>
+  </record>
+
   <record id="action_era_seo_pages" model="ir.actions.act_window">
     <field name="name">Pages (SEO + Schemas)</field>
     <field name="res_model">website.page</field>
     <field name="view_mode">list,form</field>
-    <field name="context">{}</field>
+    <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_seo_website_page_list')}),
+    ]"/>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">
         No pages yet. Create one from the Website app, then come back here

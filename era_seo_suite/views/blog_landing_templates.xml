@@ -40,7 +40,7 @@
           <!-- Post list -->
           <section class="o_era_blog_landing_posts">
             <t t-if="not posts">
-              <div class="alert alert-info" t-translation="off">
+              <div class="alert alert-info" role="status" t-translation="off">
                 No published posts yet.
               </div>
             </t>

@@ -57,7 +57,7 @@
 
             <!-- ============================== SEO =============================== -->
             <page string="SEO" name="seo">
-              <div class="alert alert-light mb-3">
+              <div class="alert alert-light mb-3" role="status">
                 Manage every SEO surface from here. Buttons open the existing
                 lists; closing them returns you to this hub.
               </div>
@@ -97,7 +97,7 @@
 
             <!-- ============================== GEO =============================== -->
             <page string="GEO" name="geo">
-              <div class="alert alert-light mb-3">
+              <div class="alert alert-light mb-3" role="status">
                 Generative Engine Optimization — discoverability and citation by
                 AI answer engines.
               </div>
@@ -121,7 +121,7 @@
 
             <!-- ============================== GSC =============================== -->
             <page string="GSC" name="gsc">
-              <div class="alert alert-light mb-3">
+              <div class="alert alert-light mb-3" role="status">
                 Google Search Console connector — pull search performance into
                 Odoo.
               </div>
@@ -149,7 +149,7 @@
 
             <!-- ============================ SETTINGS ============================ -->
             <page string="Settings" name="settings">
-              <div class="alert alert-light mb-3">
+              <div class="alert alert-light mb-3" role="status">
                 All settings live here. Changes save through the standard
                 <b>Save</b> button at the top — they round-trip through
                 <code>ir.config_parameter</code>, so the legacy
@@ -249,7 +249,7 @@
 
             <!-- ============================== GUIDE ============================== -->
             <page string="Guide" name="guide">
-              <div class="alert alert-light mb-3">
+              <div class="alert alert-light mb-3" role="status">
                 On-page setup walkthroughs. Click a section to expand.
               </div>
               <details class="mb-3">

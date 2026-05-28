@@ -1,29 +1,28 @@
 /** @odoo-module **/
 
 /**
- * Field widget that polls the parent record every 3 seconds while its own
- * boolean value is `true`, calling `record.load()` to re-fetch from the
- * server. When the value flips to `false` the timer stops on its own.
+ * Field widget that polls `is_article_pending` directly via the ORM
+ * service every 3 seconds. When the server-side flag flips to false the
+ * polling stops and the form record is reloaded so the "Recently
+ * generated" list, the spinner banner, and the Generate Now button
+ * pick up the new state.
+ *
+ * Why a direct ORM read instead of `record.load()`: in Odoo 19 the
+ * relational model caches the record's fields per request — calling
+ * `record.load()` in a tight loop didn't reliably re-fetch on every
+ * tick, so the spinner stayed up after the cron had already cleared
+ * the flag. A direct `orm.read(...)` always hits the server.
  *
  * Wired in the era.seo.suite.hub form view as
  *
  *     <field name="is_article_pending"
  *            widget="era_auto_refresh_when_true"
  *            invisible="1"/>
- *
- * The Generate Now button flips the underlying
- * `era_seo.article_pending` ICP to True; the cron clears it when done;
- * the polling here re-reads the record so the "Recently generated" table
- * updates in place.
- *
- * Implemented as a plain OWL Component (not extending BooleanField, which
- * isn't really designed as a base class) — we don't render anything user-
- * visible. The view's `invisible="1"` hides our mount point, but we still
- * need to render *something* so the component lifecycle fires.
  */
 
 import { registry } from "@web/core/registry";
-import { Component, onMounted, onWillUnmount, useState, xml } from "@odoo/owl";
+import { Component, onMounted, onWillUnmount, xml } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 const POLL_MS = 3000;
@@ -33,20 +32,22 @@ class EraAutoRefreshWhenTrue extends Component {
     static props = { ...standardFieldProps };
 
     setup() {
-        this.state = useState({});
+        this.orm = useService("orm");
         this._timer = null;
+        this._ticking = false;
 
         onMounted(() => this._maybeStart());
         onWillUnmount(() => this._stop());
     }
 
-    _isPending() {
+    /** Server-side value as of the last loaded record. */
+    _initialValue() {
         return Boolean(this.props.record?.data?.[this.props.name]);
     }
 
     _maybeStart() {
         if (this._timer) return;
-        if (!this._isPending()) return;
+        if (!this._initialValue()) return;
         this._timer = window.setInterval(() => this._tick(), POLL_MS);
     }
 
@@ -58,14 +59,31 @@ class EraAutoRefreshWhenTrue extends Component {
     }
 
     async _tick() {
+        // Don't overlap ticks if a previous read is still in flight.
+        if (this._ticking) return;
+        this._ticking = true;
         try {
-            await this.props.record.load();
+            const resId = this.props.record?.resId;
+            const model = this.props.record?.resModel;
+            const name = this.props.name;
+            if (!resId || !model) return;
+            const rows = await this.orm.read(model, [resId], [name]);
+            const pending = Boolean(rows?.[0]?.[name]);
+            if (!pending) {
+                this._stop();
+                // Reload the form record so the table + buttons reflect
+                // the post the cron just created.
+                try {
+                    await this.props.record.load();
+                } catch (_) {
+                    // Reload errors are non-fatal — the next user click
+                    // will re-fetch anyway.
+                }
+            }
         } catch (_) {
-            // Don't let a transient error kill the polling — try again next tick.
-            return;
-        }
-        if (!this._isPending()) {
-            this._stop();
+            // Transient ORM error — keep polling on the next tick.
+        } finally {
+            this._ticking = false;
         }
     }
 }

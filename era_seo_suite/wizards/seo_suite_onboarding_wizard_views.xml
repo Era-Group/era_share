@@ -67,9 +67,12 @@
               <li>Organization identity (logo, OG image, verifies)</li>
               <li>Social profiles</li>
               <li>Schema engine</li>
+              <li>Robots &amp; AI crawlers (robots.txt preview + bulk toggles)</li>
               <li>AI Auto-Fix (optional, needs the AI app)</li>
               <li>GEO — /llms.txt for AI engines</li>
               <li>Google Search Console (optional)</li>
+              <li>AI Bulk Fill (optional)</li>
+              <li>Blog setup (optional)</li>
             </ol>
           </div>
         </group>

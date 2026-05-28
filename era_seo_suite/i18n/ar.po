@@ -246,7 +246,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "<b>Run your first SEO audit</b> to see what's missing."
-msgstr ""
+msgstr "<b>شغّل أول تدقيق SEO</b> لترى ما الناقص."
 
 #. module: era_seo_suite
 #: model:era.content.block,content_html:era_seo_suite.content_block_seo_service_value
@@ -387,7 +387,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "A bulk-fill run is <b>already in progress</b>. Ticking again\n            restarts the cursor from the beginning of the queue."
-msgstr ""
+msgstr "هناك تشغيل تعبئة جماعية <b>قيد التشغيل بالفعل</b>. التحديد مرة أخرى يعيد المؤشر إلى بداية الطابور."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -447,7 +447,7 @@ msgstr "الإصلاح الآلي بالذكاء"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "AI Auto-Fix (optional, needs the AI app)"
-msgstr ""
+msgstr "الإصلاح التلقائي بالذكاء الاصطناعي (اختياري، يحتاج تطبيق AI)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_ai_enabled
@@ -463,6 +463,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "AI Auto-Fix — first run"
 msgstr "الإصلاح التلقائي بالذكاء الاصطناعي — أول تشغيل"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "AI Bulk Fill (optional)"
+msgstr "التعبئة المجمّعة بالذكاء الاصطناعي (اختياري)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_blog_post__era_ai_confidence
@@ -706,7 +711,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_logo_url
 msgid "Absolute URL — renders into Organization JSON-LD."
-msgstr ""
+msgstr "رابط مطلق — يُرَنْدَر داخل Organization JSON-LD."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_account__access_token
@@ -1311,6 +1316,11 @@ msgid "Blog post with extended fields. Phase 5 will auto-wire datePublished from
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Blog setup (optional)"
+msgstr "إعداد المدونة (اختياري)"
+
+#. module: era_seo_suite
 #: model:era.seo.schema.template,name:era_seo_suite.schema_tpl_breadcrumb_list
 msgid "Breadcrumb List"
 msgstr ""
@@ -1453,7 +1463,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Clicking <b>Connect to Google</b> saves your credentials and\n            takes you out of Odoo to Google's consent screen. After granting\n            access, you'll land back in Odoo with the connection live —\n            then re-open this wizard to finish the remaining steps."
-msgstr ""
+msgstr "الضغط على <b>اتصل بـ Google</b> يحفظ بياناتك وينقلك خارج Odoo إلى شاشة موافقة Google. بعد منح الصلاحية تعود إلى Odoo والاتصال مُفعّل — ثم أعد فتح هذا المعالج لإكمال بقية الخطوات."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_query__clicks
@@ -2321,7 +2331,7 @@ msgstr "فشل"
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_og_image_url
 msgid "Fallback OG image when a page has no per-page one."
-msgstr ""
+msgstr "صورة OG الاحتياطية عندما لا تملك الصفحة صورتها الخاصة."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.res_config_settings_view_era_seo
@@ -2356,7 +2366,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Feeds Organization JSON-LD, OG/Twitter meta, and the\n            site-verification meta tags Google and Bing look for."
-msgstr ""
+msgstr "يغذّي Organization JSON-LD ووسوم OG/Twitter ووسوم التحقق التي يبحث عنها Google و Bing."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_ai_fix_log__field_written
@@ -2453,7 +2463,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "For OAuth setup or AI agent tuning, jump into the relevant section."
-msgstr ""
+msgstr "لإعداد OAuth أو ضبط وكيل AI، اقفز للقسم المناسب."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_audit_finding__lang_id
@@ -2606,7 +2616,7 @@ msgstr "GEO — ‏/llms.txt وزواحف الذكاء الاصطناعي"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "GEO — /llms.txt for AI engines"
-msgstr ""
+msgstr "GEO — /llms.txt لمحركات الذكاء الاصطناعي"
 
 #. module: era_seo_suite
 #: model:ir.ui.menu,name:era_seo_suite.menu_era_gsc_root
@@ -2781,7 +2791,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Google Search Console (optional)"
-msgstr ""
+msgstr "Google Search Console (اختياري)"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
@@ -3198,7 +3208,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Joined into sameAs[] in Organization JSON-LD so search and AI\n            engines link your brand to its social presence. Leave any blank."
-msgstr ""
+msgstr "تُدمج في sameAs[] داخل Organization JSON-LD لتربط محركات البحث ومحركات AI علامتك بحضورها الاجتماعي. اترك أيّاً منها فارغاً."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_content_block_form_geo
@@ -3333,7 +3343,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Leave the agent empty to fall back to the site's default \"Ask AI\" agent."
-msgstr ""
+msgstr "اترك الوكيل فارغاً ليرجع إلى وكيل \"Ask AI\" الافتراضي للموقع."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__org_legal_name
@@ -3347,7 +3357,7 @@ msgstr "الاسم القانوني"
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_legal_name
 msgid "Legal entity if different from the brand."
-msgstr ""
+msgstr "الكيان القانوني إذا كان مختلفاً عن العلامة التجارية."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -3367,12 +3377,12 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Lets the AI cron classify your existing blog posts into\n            categories and (where the content clearly is multi-part) into\n            series — alongside the SEO fill from the previous step. Existing\n            taxonomy is preferred over creating duplicates."
-msgstr ""
+msgstr "يسمح للـ cron الخاص بالذكاء الاصطناعي بتصنيف مقالاتك الحالية في فئات و(عندما يكون المحتوى متعدد الأجزاء) في سلاسل — جنباً إلى جنب مع تعبئة SEO من الخطوة السابقة. تُفضّل التصنيفات الموجودة على إنشاء مكررات."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Lets the suite use Odoo's AI app to <b>Suggest</b> and\n            <b>Apply</b> fixes on audit findings, and to <b>Fill SEO</b> on\n            pages and blog posts. The provider, model, and API key live on\n            the AI agent (configured in the AI app), not here."
-msgstr ""
+msgstr "يسمح للحزمة باستخدام تطبيق AI الخاص بـ Odoo لـ <b>اقتراح</b> و<b>تطبيق</b> إصلاحات على نتائج التدقيق، ولـ <b>تعبئة SEO</b> على الصفحات والمقالات. المزوّد والموديل ومفتاح API كلها تعيش على وكيل AI (يُضبط في تطبيق AI)، وليس هنا."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -3479,7 +3489,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Master switch for the JSON-LD engine that renders structured\n            data into every page. When off, no schema is emitted regardless\n            of per-page settings. <b>Keep it on</b> unless you have a\n            specific reason to disable it."
-msgstr ""
+msgstr "مفتاح رئيسي لمحرك JSON-LD الذي يصدر بيانات مهيكلة لكل صفحة. عند الإيقاف لا تُصدَر أي بيانات بغضّ النظر عن إعدادات الصفحة الفردية. <b>أبقِه مُفعّلاً</b> إلا إذا كنت تملك سبباً محدداً لتعطيله."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_suite_hub__setting_schema_engine
@@ -3705,7 +3715,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "No blog posts found. Skip this step — there's nothing to classify yet."
-msgstr ""
+msgstr "لم يُعثر على أي مقالات. تخطَّ هذه الخطوة — لا يوجد شيء للتصنيف بعد."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -3972,7 +3982,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "One-line site description (falls back to the company name)"
-msgstr ""
+msgstr "وصف الموقع في سطر واحد (يرجع إلى اسم الشركة في حال الفراغ)"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
@@ -4051,7 +4061,7 @@ msgstr "افتح الهدف"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Open the <b>ERA SEO Suite hub</b> for the dashboard, KPIs, and quick links."
-msgstr ""
+msgstr "افتح <b>لوحة حزمة ERA SEO</b> للوحة المؤشرات والروابط السريعة."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -4155,7 +4165,7 @@ msgstr "اسم المنظمة"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Organization identity (logo, OG image, verifies)"
-msgstr ""
+msgstr "هوية المنظمة (الشعار، صورة OG، رموز التحقق)"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_redirect_search
@@ -4208,7 +4218,7 @@ msgstr "الصفحات (SEO + Schemas)"
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__bulk_ai_pending_count
 msgid "Pages / posts pending fill"
-msgstr ""
+msgstr "صفحات/مقالات تنتظر التعبئة"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_audit_run__pages_scanned
@@ -4785,6 +4795,11 @@ msgid "Reusable, schema-aware blocks for the website builder snippets."
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Robots &amp; AI crawlers (robots.txt preview + bulk toggles)"
+msgstr ""
+
+#. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_allowed
 msgid "Robots Count Allowed"
 msgstr ""
@@ -4837,7 +4852,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__bulk_ai_opt_in
 msgid "Run AI Bulk Fill now"
-msgstr ""
+msgstr "شغّل التعبئة المجمّعة بالذكاء الاصطناعي الآن"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_wizard_form
@@ -5027,7 +5042,7 @@ msgstr "SEO · GEO · GSC — شاشة واحدة بنقرة واحدة."
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Save these OAuth credentials and redirect to Google's consent screen?"
-msgstr ""
+msgstr "حفظ بيانات OAuth والانتقال إلى شاشة موافقة Google؟"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_schema_template__schema_type
@@ -5087,7 +5102,7 @@ msgstr "قوالب المخطّطات"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Schema engine"
-msgstr ""
+msgstr "محرك Schema"
 
 #. module: era_seo_suite
 #. odoo-python
@@ -5222,7 +5237,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Serves a Markdown site map at <code>/llms.txt</code> so AI\n            answer engines (ChatGPT, Perplexity, Claude, Google AI\n            Overviews) can discover and cite your content."
-msgstr ""
+msgstr "يقدّم خريطة موقع Markdown على <code>/llms.txt</code> ليتمكن مزودو الإجابات بالذكاء الاصطناعي (ChatGPT و Perplexity و Claude و Google AI Overviews) من اكتشاف محتواك والاستشهاد به."
 
 #. module: era_seo_suite
 #: model:era.seo.schema.template,name:era_seo_suite.schema_tpl_service
@@ -5467,7 +5482,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Social profiles"
-msgstr ""
+msgstr "الملفات الاجتماعية"
 
 #. module: era_seo_suite
 #: model:era.seo.schema.template,name:era_seo_suite.schema_tpl_software_application
@@ -5506,7 +5521,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_twitter_handle
 msgid "Start with @, e.g. @era."
-msgstr ""
+msgstr "تبدأ بـ @، مثل @era."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_audit_run__date_started
@@ -5721,12 +5736,12 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "The <b>AI</b> app isn't installed. Install it from the Apps\n            list, configure a provider with an API key, then re-open this\n            wizard."
-msgstr ""
+msgstr "تطبيق <b>AI</b> غير مُنصَّب. ثبّته من قائمة Apps، اضبط مزوّداً بمفتاح API، ثم أعد فتح هذا المعالج."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "The AI app is installed but no agent is configured yet."
-msgstr ""
+msgstr "تطبيق AI مُنصَّب لكن لم يُضبط أي وكيل بعد."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -5792,7 +5807,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "The same cron processes blog posts in batches of 10 every 2\n            minutes. Each post triggers one extra AI call for taxonomy. If\n            you haven't ticked the bulk SEO fill on the previous step, the\n            cron is started here too so the work actually happens."
-msgstr ""
+msgstr "نفس الـ cron يعالج المقالات في دفعات من ١٠ كل دقيقتين. كل مقالة تُحفّز نداء AI إضافياً واحداً للتصنيف. إذا لم تفعّل التعبئة الجماعية في الخطوة السابقة، يُشغّل الـ cron من هنا أيضاً حتى يتم العمل فعلاً."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -5844,7 +5859,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "Tip: budget-wise, the agent does 1 call per record per active\n            language. Watch your provider dashboard if you have hundreds\n            of pages. The run can be paused any time from the hub's\n            Settings tab."
-msgstr ""
+msgstr "تنبيه على التكلفة: الوكيل يقوم بنداء واحد لكل سجل لكل لغة فعّالة. راقب لوحة مزوّدك إذا كنت تملك مئات الصفحات. يمكن إيقاف التشغيل في أي وقت من تبويب الإعدادات في اللوحة."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
@@ -6191,7 +6206,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "We'll cover, in order:"
-msgstr ""
+msgstr "سنغطي بالترتيب:"
 
 #. module: era_seo_suite
 #: model:era.seo.schema.template,description:era_seo_suite.schema_tpl_software_application
@@ -6366,7 +6381,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "account(s) already connected to Google Search Console. You can\n            re-connect or move on."
-msgstr ""
+msgstr "حساب/حسابات متصلة بالفعل بـ Google Search Console. يمكنك إعادة الاتصال أو المتابعة."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -6447,12 +6462,12 @@ msgstr ""
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_bing_verify
 msgid "content=\"…\" from Bing Webmaster Tools' meta tag."
-msgstr ""
+msgstr "content=\"…\" من وسم Bing Webmaster Tools الـ HTML meta."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_onboarding_wizard__org_google_verify
 msgid "content=\"…\" from Google Search Console's HTML meta tag."
-msgstr ""
+msgstr "content=\"…\" من وسم Google Search Console الـ HTML meta."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.era_seo_snippets
@@ -6625,7 +6640,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "record(s) currently have an empty <i>SEO title</i> and would\n            be processed."
-msgstr ""
+msgstr "سجل/سجلات لديها حالياً <i>SEO title</i> فارغ وستتم معالجتها."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.era_seo_snippets
@@ -6679,7 +6694,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "to create one (or use Odoo's seeded \"Ask AI\" agent)."
-msgstr ""
+msgstr "لإنشاء واحد (أو استخدم وكيل \"Ask AI\" الافتراضي من Odoo)."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form

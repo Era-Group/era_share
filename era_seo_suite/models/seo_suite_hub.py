@@ -557,6 +557,144 @@ class EraSeoSuiteHub(models.Model):
                 len(findings))
 
     # ------------------------------------------------------------------------
+    # Auto-publish: trend-aware blog article every N days
+    # ------------------------------------------------------------------------
+
+    @api.model
+    def cron_generate_blog_article(self):
+        """Generate a fresh, trend-aware blog post from the AI agent.
+
+        Cron entry runs every 3 days. Gated by
+        `era_seo.article_generator_active` (default False — opt-in).
+
+        Pipeline:
+          1. Read the site's business context (org name + /llms.txt summary)
+             from ICP.
+          2. Collect the last 30 article titles so the agent doesn't
+             accidentally rehash one.
+          3. Ask the AI agent for {title, content_html, seo meta, suggested
+             category, image_prompt, trend_signal}.
+          4. Find/create the suggested category.
+          5. Create a blog.post with content + SEO meta.
+          6. Generate a hero image via `_generate_article_image(prompt)`
+             (default: returns no image — override or wire up a provider).
+
+        Returns the created blog.post id, or False when nothing happened.
+        """
+        if _icp_get(self.env, 'era_seo.article_generator_active') not in _TRUE:
+            return False
+        BlogPost = self.env.get('blog.post')
+        Category = self.env.get('era.blog.category')
+        if BlogPost is None or Category is None:
+            _logger.info(
+                'cron_generate_blog_article: blog modules not installed — '
+                'feature requires website_blog')
+            return False
+        ICP = self.env['ir.config_parameter'].sudo()
+        from .ai_client import AIClient, AIUnavailable
+        client = AIClient(self.env)
+        ok, reason = client.is_available()
+        if not ok:
+            _logger.warning('cron_generate_blog_article: AI unavailable: %s', reason)
+            return False
+
+        business_context = {
+            'org_name': ICP.get_param('era_seo.organization_name', ''),
+            'summary':  ICP.get_param('era_seo_suite.site_summary', ''),
+        }
+        past_titles = BlogPost.sudo().search(
+            [], order='id desc', limit=30).mapped('name')
+        existing_categories = Category.sudo().search([], limit=50).mapped('name')
+        try:
+            article = client.propose_article(
+                business_context, past_titles, existing_categories)
+        except (AIUnavailable, ValueError) as exc:
+            _logger.warning('cron_generate_blog_article: skipped — %s', exc)
+            return False
+        except Exception:  # noqa: BLE001
+            _logger.exception('cron_generate_blog_article: AI call failed')
+            return False
+
+        # Find or create the category the agent picked.
+        category = False
+        if article['category']:
+            cat = Category.sudo().search(
+                [('name', '=ilike', article['category'])], limit=1)
+            if not cat:
+                cat = Category.sudo().create({'name': article['category']})
+            category = cat
+
+        # Pick the default blog.blog — required FK on blog.post.
+        Blog = self.env['blog.blog'].sudo()
+        blog = Blog.search([], limit=1)
+        if not blog:
+            blog = Blog.create({'name': 'Blog'})
+
+        post_vals = {
+            'name': article['title'],
+            'blog_id': blog.id,
+            'content': article['content_html'],
+            'is_published': False,  # Stays in draft for human review.
+        }
+        # SEO meta — set only when the post model carries the field, since
+        # the mixin's field set varies a touch across installations.
+        seo_map = [
+            ('seo_title',       article['seo_title']),
+            ('seo_description', article['seo_description']),
+            ('seo_keywords',    article['seo_keywords']),
+        ]
+        for fname, value in seo_map:
+            if fname in BlogPost._fields and value:
+                post_vals[fname] = value
+        # Subtitle + category live on era_seo_blog's extension. Same guard.
+        if 'era_subtitle' in BlogPost._fields and article['subtitle']:
+            post_vals['era_subtitle'] = article['subtitle']
+        if 'era_category_id' in BlogPost._fields and category:
+            post_vals['era_category_id'] = category.id
+
+        post = BlogPost.sudo().create(post_vals)
+
+        # Hero image — call the hook, attach if it returned bytes.
+        try:
+            image_bytes = self._generate_article_image(article['image_prompt'])
+        except Exception:  # noqa: BLE001
+            _logger.exception(
+                'cron_generate_blog_article: image hook raised — skipping image')
+            image_bytes = None
+        if image_bytes:
+            try:
+                import base64
+                vals = {}
+                # blog.post's stock cover field is `cover_properties` JSON
+                # in modern versions; era_seo_blog may add `era_cover_image`
+                # (Binary). Write whichever exists.
+                if 'era_cover_image' in BlogPost._fields:
+                    vals['era_cover_image'] = base64.b64encode(image_bytes)
+                if vals:
+                    post.write(vals)
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    'cron_generate_blog_article: failed to attach generated image')
+
+        _logger.info(
+            'cron_generate_blog_article: created blog.post#%d "%s" '
+            '(trend: %s, confidence %.2f)',
+            post.id, article['title'][:80], article['trend_signal'][:80],
+            article['confidence'])
+        return post.id
+
+    def _generate_article_image(self, prompt):
+        """Hook — return raw image bytes (PNG/JPEG) for the article's hero,
+        or None to skip.
+
+        Default returns None because Odoo's stock AI app doesn't expose
+        image generation. Wire up DALL-E / Stable Diffusion / etc. by
+        overriding this method in a small custom module that calls the
+        relevant provider and returns the bytes.
+        """
+        return None
+
+    # ------------------------------------------------------------------------
     # Open helpers used by the menu and Refresh button
     # ------------------------------------------------------------------------
 

@@ -77,6 +77,17 @@ exceed the caps. Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no sig
 # the agent's context_message; overrides the output shape for this task while
 # the agent's own system prompt still supplies the SEO craft (length rules,
 # language matching, Saudi keywords).
+ARTICLE_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction. You are proposing AND writing one publishable blog article for a \
+business. Pick a topic that is genuinely current — surface the trend signal in \
+`trend_signal`. Do NOT repeat any title from `recent_post_titles`. Write the \
+article in `target_language` (or pick from `business_summary` if it says \
+'auto-detect'). The body must be substantive, factual, and grounded — no \
+hallucinated statistics or fake quotes. Reply with ONE JSON object exactly \
+matching the OUTPUT shape. No markdown fences, no prose around the JSON.
+"""
+
+
 BLOG_TAXONOMY_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
 instruction. You are classifying ONE blog post. Choose a short, brand-style \
 category name. Reuse one of the existing_categories verbatim if it cleanly \
@@ -595,6 +606,89 @@ class AIClient:
             'reason': str(parsed.get('reason') or '').strip(),
             'confidence': float(parsed.get('confidence') or 0.0),
         }
+
+    def propose_article(self, business_context, past_titles, existing_categories, lang_code=None):
+        """Ask the AI agent to propose a fresh, trend-aware blog article for
+        the site.
+
+        :param business_context: dict-ish — at least 'org_name' and 'summary'
+                                 describing what the site is about.
+        :param past_titles: iterable of recently-published article titles so
+                            the AI avoids restating them.
+        :param existing_categories: iterable of category names — encourages
+                                    reuse over proliferation.
+        :param lang_code: language to write the article in (e.g. 'ar_001').
+                          When None, the agent picks based on the site context.
+        :returns: dict ``{'title', 'subtitle', 'content_html', 'seo_title',
+                          'seo_description', 'seo_keywords', 'category',
+                          'image_prompt', 'trend_signal', 'reason',
+                          'confidence'}``.
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+        agent = self._resolve_agent()
+        prompt = self._build_article_prompt(
+            business_context, past_titles, existing_categories, lang_code)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=ARTICLE_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_json(raw)
+        for k in ('title', 'content_html'):
+            if not (parsed.get(k) or '').strip():
+                raise ValueError(_('AI article proposal is missing %r.', k))
+        return {
+            'title':           parsed.get('title', '').strip(),
+            'subtitle':        parsed.get('subtitle', '').strip(),
+            'content_html':    parsed.get('content_html', '').strip(),
+            'seo_title':       parsed.get('seo_title', '').strip(),
+            'seo_description': parsed.get('seo_description', '').strip(),
+            'seo_keywords':    parsed.get('seo_keywords', '').strip(),
+            'category':        parsed.get('category', '').strip(),
+            'image_prompt':    parsed.get('image_prompt', '').strip(),
+            'trend_signal':    parsed.get('trend_signal', '').strip(),
+            'reason':          parsed.get('reason', '').strip(),
+            'confidence':      float(parsed.get('confidence') or 0.0),
+        }
+
+    @classmethod
+    def _build_article_prompt(cls, business_context, past_titles, existing_categories, lang_code=None):
+        return (
+            'INPUT:\n'
+            '  business_name: "{name}"\n'
+            '  business_summary: "{summary}"\n'
+            '  target_language: {lang}\n'
+            '  recent_post_titles: {past}\n'
+            '  existing_categories: {cats}\n'
+            'TASK:\n'
+            '  1. Identify a CURRENT or EMERGING trend topic that is genuinely '
+            'relevant to this business and audience. Be specific (a concrete '
+            'tool, behaviour, event, or shift), not generic ("AI is changing '
+            'everything"). Surface the signal in `trend_signal`.\n'
+            '  2. Write a complete article on that topic that the business '
+            'could publish today. Substantive — 400-700 words of HTML.\n'
+            '  3. Fill SEO meta and an image_prompt that an image-generation '
+            'model could use as-is.\n'
+            'OUTPUT (one JSON object, exactly these keys):\n'
+            '  {{"title": "<=70 chars", "subtitle": "<=140 chars (or empty)", '
+            '"content_html": "<full article body as HTML, no <html>/<body> '
+            'wrappers, allow <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <a>>", '
+            '"seo_title": "<=60 chars", "seo_description": "140-160 chars", '
+            '"seo_keywords": "3-6 comma-separated terms", '
+            '"category": "<existing category if it fits, else a short new name>", '
+            '"image_prompt": "<one paragraph describing a hero image for this '
+            'article — concrete, no text overlay>", '
+            '"trend_signal": "<one sentence on the trend you picked and why now>", '
+            '"reason": "<one sentence on why this fits the business>", '
+            '"confidence": <0.0-1.0>}}'.format(
+                name=str(business_context.get('org_name') or '').replace('"', "'"),
+                summary=str(business_context.get('summary') or '').replace('"', "'")[:600],
+                lang=lang_code or 'auto-detect from business_summary',
+                past=json.dumps(list(past_titles)[:30], ensure_ascii=False),
+                cats=json.dumps(list(existing_categories)[:30], ensure_ascii=False),
+            )
+        )
 
     def pick_blog_taxonomy(self, post):
         """Ask the AI for a category (required) and series (optional) for

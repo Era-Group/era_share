@@ -38,6 +38,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'data/ir_cron_mgr.xml',
     'data/ir_cron_bulk_ai.xml',
     'data/ir_cron_weekly_audit.xml',
+    'data/ir_cron_article_generator.xml',
     'data/ir_sequence.xml',
     'data/schema_template_data.xml',
     'data/seo_default_settings.xml',

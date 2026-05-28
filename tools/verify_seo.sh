@@ -17,9 +17,9 @@
 #
 set -uo pipefail
 
-MODULES="era_seo_manager,era_seo_blog,era_seo_ai,era_seo_blog_ai"
+MODULES="era_seo_manager,era_seo_blog,era_seo_ai,era_seo_blog_ai,era_geo"
 # `/module` selects every test in that module regardless of its @tagged value.
-TEST_TAGS="/era_seo_manager,/era_seo_blog,/era_seo_ai,/era_seo_blog_ai"
+TEST_TAGS="/era_seo_manager,/era_seo_blog,/era_seo_ai,/era_seo_blog_ai,/era_geo"
 ODOO_BIN="${ODOO_BIN:-odoo-bin}"
 LOG="${LOG:-/tmp/era_seo_verify_$(date +%Y%m%d_%H%M%S).log}"
 

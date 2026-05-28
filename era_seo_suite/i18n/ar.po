@@ -445,7 +445,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "AI Auto-Fix — first run"
-msgstr ""
+msgstr "الإصلاح التلقائي بالذكاء الاصطناعي — أول تشغيل"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_blog_post__era_ai_confidence
@@ -1645,7 +1645,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Create OAuth 2.0 Client (Web app); add Redirect URI <code>&lt;base&gt;/era_gsc/oauth/callback</code>."
-msgstr ""
+msgstr "أنشئ OAuth 2.0 Client (Web app)، وأضف Redirect URI: <code>&lt;base&gt;/era_gsc/oauth/callback</code>."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -2553,7 +2553,7 @@ msgstr "GEO — /llms.txt و زواحف AI"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "GEO — /llms.txt and AI crawlers"
-msgstr ""
+msgstr "GEO — ‏/llms.txt وزواحف الذكاء الاصطناعي"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -2660,7 +2660,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "GSC — connect a Google account"
-msgstr ""
+msgstr "GSC — اربط حساب Google"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_form_ai
@@ -2999,12 +2999,12 @@ msgstr "مرات الظهور (28 يومًا)"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "In Google Cloud Console: create a project; enable <b>Search Console API</b>."
-msgstr ""
+msgstr "في Google Cloud Console: أنشئ مشروعاً، ثم فعّل <b>Search Console API</b>."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "In Odoo: Settings → ERA SEO — Google Search Console; paste Client ID + Secret."
-msgstr ""
+msgstr "في Odoo: الإعدادات → ERA SEO — Google Search Console، الصق Client ID و Secret."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_redirect_search
@@ -3087,7 +3087,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Install Odoo's AI app (Enterprise) and configure a provider with an API key."
-msgstr ""
+msgstr "ثبّت تطبيق AI من Odoo (Enterprise) واضبط مزوّداً بمفتاح API."
 
 #. module: era_seo_suite
 #. odoo-python
@@ -3873,17 +3873,17 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "On any audit finding (or in batch), click Suggest Fix (AI) → review → Apply Fix."
-msgstr ""
+msgstr "في أي نتيجة تدقيق (أو دفعة) اضغط Suggest Fix (AI) → راجع → Apply Fix."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "On pages / posts / content blocks, use AI: Fill SEO / AI: Rewrite SEO in the form header."
-msgstr ""
+msgstr "في الصفحات / المقالات / كتل المحتوى استخدم AI: Fill SEO / AI: Rewrite SEO من رأس النموذج."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "On-page setup walkthroughs. Click a section to expand.\n                To re-run the guided setup, use the <b>Setup Wizard</b>\n                button in the header above."
-msgstr ""
+msgstr "شروحات إعداد على نفس الصفحة. اضغط على قسم لتوسيعه. لإعادة تشغيل الإعداد الموجَّه استخدم زر <b>معالج الإعداد</b> في الأعلى."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_content_block_form_geo
@@ -4003,12 +4003,12 @@ msgstr "افتح تطبيق AI"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Open the GEO tab → Manage AI Crawlers; flip <i>Allowed</i> off on training-only bots if you want to block them from robots.txt."
-msgstr ""
+msgstr "افتح تبويب GEO → Manage AI Crawlers، ثم أوقف <i>Allowed</i> على الزواحف المخصصة للتدريب فقط إذا أردت حجبها من robots.txt."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Open the GSC tab → Accounts → New → Connect with Google; grant read access."
-msgstr ""
+msgstr "افتح تبويب GSC → Accounts → New → Connect with Google، ثم امنح صلاحية القراءة."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -4781,7 +4781,7 @@ msgstr "تشغيل تدقيق SEO + GEO جديد الآن؟ يفحص كل صفح
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Run an SEO Audit; GEO checks (no answer summary, no headings, llms.txt off, answer-bots blocked) appear alongside SEO findings."
-msgstr ""
+msgstr "شغّل تدقيق SEO؛ ستظهر فحوصات GEO (لا يوجد answer summary، لا توجد عناوين، llms.txt مغلق، الزواحف المُجيبة محجوبة) جنباً إلى جنب مع نتائج SEO."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -5192,7 +5192,7 @@ msgstr "تم حفظ الإعدادات. الحزمة جاهزة لتدقيق م�
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Settings → ERA SEO — AI Auto-Fix: tick Enable, pick the \"ERA SEO Fixer\" agent, click Test Agent."
-msgstr ""
+msgstr "الإعدادات → ERA SEO — AI Auto-Fix: فعّل، اختر وكيل \"ERA SEO Fixer\"، ثم اضغط Test Agent."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_status_form
@@ -5337,7 +5337,7 @@ msgstr "المواقع"
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Sites are auto-discovered; click Pull Now on a site to fill in queries."
-msgstr ""
+msgstr "تُكتشف المواقع تلقائياً؛ اضغط Pull Now على أحدها لتعبئة الاستعلامات."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -5668,7 +5668,7 @@ msgstr ""
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_redirect__target_url
-msgid "The destination path or full URL. May contain backreferences (\\\\1, \\\\2, ...) when \"Is Regex\" is set. Required for all redirect types except 410 (Gone)."
+msgid "The destination path or full URL. May contain backreferences (\\\\\\\\1, \\\\\\\\2, ...) when \"Is Regex\" is set. Required for all redirect types except 410 (Gone)."
 msgstr ""
 
 #. module: era_seo_suite
@@ -5799,7 +5799,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Toggle <i>Publish /llms.txt</i> above; set a one-line site summary."
-msgstr ""
+msgstr "فعّل <i>Publish /llms.txt</i> في الأعلى، واكتب وصفاً للموقع في سطر واحد."
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_audit_run__total_count
@@ -5819,7 +5819,7 @@ msgstr ""
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_redirect__is_regex
-msgid "Treat Source Path as a Python regex. Backreferences in Target (e.g. \\\\1) are substituted from regex capture groups."
+msgid "Treat Source Path as a Python regex. Backreferences in Target (e.g. \\\\\\\\1) are substituted from regex capture groups."
 msgstr ""
 
 #. module: era_seo_suite
@@ -6066,7 +6066,7 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Verify the live output: <code>https://&lt;domain&gt;/llms.txt</code> and the AI section in <code>/robots.txt</code>."
-msgstr ""
+msgstr "تحقّق من المخرجات الحية: <code>https://&lt;domain&gt;/llms.txt</code> وقسم AI في <code>/robots.txt</code>."
 
 #. module: era_seo_suite
 #: model:era.seo.schema.template,name:era_seo_suite.schema_tpl_video_object

@@ -1,5 +1,5 @@
 """ERA GSC — settings (Website → Configuration → Settings → ERA SEO — GSC)."""
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ResConfigSettings(models.TransientModel):
@@ -25,3 +25,19 @@ class ResConfigSettings(models.TransientModel):
         help='How many days of search analytics each Pull fetches '
              '(GSC data is ~2 days delayed).',
     )
+    era_gsc_redirect_uri = fields.Char(
+        string='Authorized Redirect URI',
+        compute='_compute_era_gsc_redirect_uri',
+        readonly=True,
+        help='Add this exact URL to the OAuth Client\'s '
+             '"Authorized redirect URIs" in Google Cloud Console.',
+    )
+
+    @api.depends('era_gsc_client_id')   # arbitrary trigger; value is global
+    def _compute_era_gsc_redirect_uri(self):
+        base = (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').rstrip('/')
+        uri = (base + '/era_gsc/oauth/callback') if base \
+            else '/era_gsc/oauth/callback'
+        for rec in self:
+            rec.era_gsc_redirect_uri = uri

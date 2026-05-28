@@ -1,5 +1,19 @@
 # Changelog
 
+## [19.0.1.1.0] — 2026-05-28
+
+### Added — on-page setup walkthrough in Settings
+
+The GSC settings block now carries the **one-time Google Cloud setup** as a
+numbered checklist in Arabic, with deep links to each Cloud Console section
+(Library, Search Console API, OAuth consent, Credentials), so the admin
+configures everything without leaving the page.
+
+A new computed field **`era_gsc_redirect_uri`** renders the exact
+`Authorized redirect URI` to paste into the OAuth client, derived from
+`web.base.url`; it's shown with the `CopyClipboardChar` widget so the admin
+copies it in one click. Both client id + secret got placeholders for clarity.
+
 ## [19.0.1.0.0] — 2026-05-28
 
 ### Added — Google Search Console connector (Phase 1)

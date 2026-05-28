@@ -8,6 +8,61 @@
       <xpath expr="//block[@id='website_info_settings']" position="after">
         <block title="ERA SEO — Google Search Console" id="era_gsc_settings"
                help="Pull search performance from GSC into Odoo.">
+
+          <!-- ============== Setup instructions (one-time) ============== -->
+          <setting id="era_gsc_setup_steps" string="إعداد لمرّة واحدة"
+                   help="One-time Google Cloud setup. Follow the steps in order.">
+            <div class="content-group">
+              <p class="mb-2">
+                لربط GSC مع Odoo، نحتاج OAuth client من Google Cloud. اتبع الخطوات بالترتيب:
+              </p>
+              <ol class="ps-3 mb-3">
+                <li class="mb-2">
+                  افتح
+                  <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>
+                  وأنشئ مشروعًا جديدًا (أو اختر مشروعًا موجودًا).
+                </li>
+                <li class="mb-2">
+                  من قائمة <b>APIs &amp; Services → Library</b> فعّل
+                  <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com" target="_blank">
+                  <b>Search Console API</b></a>.
+                </li>
+                <li class="mb-2">
+                  من <b>APIs &amp; Services → OAuth consent screen</b> اضبط الـ consent
+                  (Internal أو External مع نطاقك)، واحفظ.
+                </li>
+                <li class="mb-2">
+                  من <b>APIs &amp; Services → Credentials → Create credentials →
+                  OAuth client ID</b> اختر <b>Web application</b>.
+                </li>
+                <li class="mb-2">
+                  في حقل <b>Authorized redirect URIs</b> أضف الرابط التالي
+                  <span class="text-muted small">(يتولّد بناءً على رابط موقعك)</span>:
+                  <div class="mt-1">
+                    <field name="era_gsc_redirect_uri" readonly="1" nolabel="1"
+                           widget="CopyClipboardChar"/>
+                  </div>
+                </li>
+                <li class="mb-2">
+                  انسخ <b>Client ID</b> و <b>Client Secret</b> والصقهما في الحقول أدناه ↓
+                </li>
+                <li class="mb-2">
+                  احفظ الإعدادات، ثم اذهب إلى
+                  <b>Website → SEO → GSC → Accounts → New</b>،
+                  أنشئ حساب، اضغط <b>Connect with Google</b>،
+                  وامنح صلاحية القراءة. الـ callback راح يرجّعك للفورم بحالة
+                  <b>Connected</b> ويكتشف مواقعك تلقائيًا.
+                </li>
+              </ol>
+              <div class="alert alert-info small mb-0">
+                <b>تنبيه:</b> رابط redirect لازم يكون مطابقًا تمامًا — بما في ذلك https
+                وعدم وجود "/" في النهاية. لو موقعك خلف بروكسي، تأكد أن
+                <code>web.base.url</code> في System Parameters يعكس الرابط العام الصحيح.
+              </div>
+            </div>
+          </setting>
+
+          <!-- ====================== OAuth client ====================== -->
           <setting id="era_gsc_oauth" string="OAuth Client"
                    help="From Google Cloud Console — OAuth 2.0 Client (Web).">
             <div class="content-group">
@@ -18,18 +73,16 @@
               </div>
               <div class="row">
                 <label for="era_gsc_client_secret" class="col-lg-4 o_light_label"/>
-                <field name="era_gsc_client_secret" password="True"/>
+                <field name="era_gsc_client_secret" password="True"
+                       placeholder="••••••••••••••••"/>
               </div>
               <div class="row">
                 <label for="era_gsc_pull_window_days" class="col-lg-4 o_light_label"/>
                 <field name="era_gsc_pull_window_days"/>
               </div>
-              <div class="mt-2 text-muted small">
-                Add this exact redirect URI to your OAuth Client:
-                <code>&lt;your-base-url&gt;/era_gsc/oauth/callback</code>
-              </div>
             </div>
           </setting>
+
         </block>
       </xpath>
     </field>

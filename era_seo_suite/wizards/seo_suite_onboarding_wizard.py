@@ -30,6 +30,7 @@ _STEPS = [
     'ai',
     'geo',
     'gsc',
+    'bulk_ai',
     'done',
 ]
 
@@ -96,6 +97,7 @@ class EraSeoOnboardingWizard(models.TransientModel):
             ('ai',      '4. AI Auto-Fix'),
             ('geo',     '5. GEO (/llms.txt)'),
             ('gsc',     '6. Google Search Console'),
+            ('bulk_ai', '7. AI Bulk Fill'),
             ('done',    'Done'),
         ],
         default='welcome', required=True,
@@ -146,6 +148,17 @@ class EraSeoOnboardingWizard(models.TransientModel):
     gsc_redirect_uri = fields.Char(string='Authorized Redirect URI',
                                    compute='_compute_gsc_redirect_uri', readonly=True)
 
+    # ---- AI Bulk Fill ------------------------------------------------------
+    bulk_ai_opt_in = fields.Boolean(
+        string='Run AI Bulk Fill now',
+        help='Queue a background cron to walk every website page and blog post '
+             'and let the AI agent fill the empty SEO fields. Safe to leave '
+             'on — runs in batches of 10 every 2 minutes, stops automatically '
+             'when done, and re-running is idempotent.')
+    bulk_ai_already_running = fields.Boolean(compute='_compute_bulk_ai_already_running')
+    bulk_ai_pending_count = fields.Integer(compute='_compute_bulk_ai_pending_count',
+                                           string='Pages / posts pending fill')
+
     # =======================================================================
     # Computes
     # =======================================================================
@@ -159,6 +172,29 @@ class EraSeoOnboardingWizard(models.TransientModel):
         n = Agent.sudo().search_count([]) if Agent is not None else 0
         for rec in self:
             rec.ai_agent_count = n
+
+    def _compute_bulk_ai_already_running(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        flag = ICP.get_param('era_seo.bulk_ai_fill_active') in _TRUE
+        for rec in self:
+            rec.bulk_ai_already_running = flag
+
+    def _compute_bulk_ai_pending_count(self):
+        Hub = self.env['era.seo.suite.hub']
+        count = 0
+        for model_name in Hub._BULK_AI_MODELS:
+            Model = self.env.get(model_name)
+            if Model is None:
+                continue
+            try:
+                count += Model.sudo().search_count([
+                    '|', ('seo_title', '=', False), ('seo_title', '=', ''),
+                ])
+            except Exception:  # noqa: BLE001
+                # Model may exist without seo_title (extension not yet applied).
+                continue
+        for rec in self:
+            rec.bulk_ai_pending_count = count
 
     def _compute_gsc_redirect_uri(self):
         base = (self.env['ir.config_parameter'].sudo()
@@ -208,6 +244,12 @@ class EraSeoOnboardingWizard(models.TransientModel):
 
     def _save_current_step(self):
         """Persist whichever fields this step owns to ir.config_parameter."""
+        # Bulk-AI step has no ICP map entries — it just triggers the hub's
+        # start helper when the user opts in.
+        if self.step == 'bulk_ai':
+            if self.bulk_ai_opt_in:
+                self.env['era.seo.suite.hub'].sudo().start_bulk_ai_fill()
+            return
         names = _STEP_FIELDS.get(self.step, [])
         if not names:
             return

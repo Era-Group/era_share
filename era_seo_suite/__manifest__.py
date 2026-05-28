@@ -36,6 +36,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'data/geo_ai_crawler_data.xml',
     'data/ir_cron_gsc.xml',
     'data/ir_cron_mgr.xml',
+    'data/ir_cron_bulk_ai.xml',
     'data/ir_sequence.xml',
     'data/schema_template_data.xml',
     'data/seo_default_settings.xml',

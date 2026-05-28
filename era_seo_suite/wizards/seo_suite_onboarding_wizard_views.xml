@@ -40,6 +40,9 @@
             <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc']">6. GSC</span>
             <span class="badge text-bg-primary" invisible="step != 'gsc'">6. GSC</span>
 
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai']">7. AI Bulk Fill</span>
+            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">7. AI Bulk Fill</span>
+
             <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
           </div>
         </div>
@@ -168,6 +171,49 @@
           <field name="gsc_client_id" placeholder="…apps.googleusercontent.com"/>
           <field name="gsc_client_secret" password="True"/>
           <field name="gsc_pull_window"/>
+        </group>
+
+        <!-- ================================================ AI Bulk Fill -->
+        <group invisible="step != 'bulk_ai'" string="7. AI Bulk Fill (optional)">
+          <field name="bulk_ai_already_running" invisible="1"/>
+          <field name="bulk_ai_pending_count" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Have the AI agent walk every <b>page</b> and <b>blog post</b> on
+            your site and fill the empty SEO fields (title, description,
+            OG/Twitter, keywords) for each one. Runs in the background — 10
+            records every 2 minutes — so closing this wizard is safe; the
+            cron keeps going until the queue is empty, then stops itself.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not bulk_ai_pending_count">
+            <b><field name="bulk_ai_pending_count" readonly="1" nolabel="1"/></b>
+            record(s) currently have an empty <i>SEO title</i> and would
+            be processed.
+          </div>
+
+          <div class="alert alert-success" role="status" colspan="2"
+               invisible="bulk_ai_pending_count or bulk_ai_already_running">
+            Nothing to do — every page and post already has an SEO title.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="not bulk_ai_already_running">
+            A bulk-fill run is <b>already in progress</b>. Ticking again
+            restarts the cursor from the beginning of the queue.
+          </div>
+
+          <field name="bulk_ai_opt_in" widget="boolean_toggle"
+                 invisible="not bulk_ai_pending_count and not bulk_ai_already_running"/>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not bulk_ai_opt_in">
+            Tip: budget-wise, the agent does 1 call per record per active
+            language. Watch your provider dashboard if you have hundreds
+            of pages. The run can be paused any time from the hub's
+            Settings tab.
+          </div>
         </group>
 
         <!-- ================================================ Done -->

@@ -368,6 +368,113 @@ class EraSeoSuiteHub(models.Model):
             rec.setting_gsc_redirect_uri = uri
 
     # ------------------------------------------------------------------------
+    # Bulk AI fill — onboarding step + standalone cron
+    # ------------------------------------------------------------------------
+    #
+    # When the onboarding wizard's "AI Bulk Fill" checkbox is ticked, the
+    # wizard flips ``era_seo.bulk_ai_fill_active`` to True. A cron entry runs
+    # every couple of minutes, checks the flag, and walks website.page and
+    # blog.post records in batches — calling action_ai_fill_seo on each one
+    # whose seo fields are still empty. This keeps the request that closes
+    # the wizard fast (no synchronous AI calls) and stays robust under
+    # restart / cancel.
+    #
+    # State is kept entirely in ir.config_parameter (no schema change):
+    #   era_seo.bulk_ai_fill_active        bool   — cron checks this first
+    #   era_seo.bulk_ai_fill_batch_size    int    — how many per cron tick
+    #   era_seo.bulk_ai_fill_last_id__<m>  int    — high-water id per model
+
+    _BULK_AI_MODELS = ('website.page', 'blog.post')
+
+    @api.model
+    def cron_bulk_ai_fill(self):
+        """Cron entry point — process one batch of pending records.
+
+        Cron stays scheduled but is a no-op until
+        ``era_seo.bulk_ai_fill_active`` is True. The cron record itself can
+        be active=True permanently; the gate is the ICP flag.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        if _icp_get(self.env, 'era_seo.bulk_ai_fill_active') not in _TRUE:
+            return
+        try:
+            batch_size = int(ICP.get_param('era_seo.bulk_ai_fill_batch_size', '10'))
+        except (TypeError, ValueError):
+            batch_size = 10
+        if batch_size <= 0:
+            batch_size = 10
+
+        total_processed = 0
+        for model_name in self._BULK_AI_MODELS:
+            Model = self.env.get(model_name)
+            if Model is None:
+                continue
+            key_last = 'era_seo.bulk_ai_fill_last_id__' + model_name
+            try:
+                last_id = int(ICP.get_param(key_last, '0'))
+            except (TypeError, ValueError):
+                last_id = 0
+            # Records past the high-water mark that still look "needs SEO".
+            # We hit only records that have an era.seo.mixin extension (so
+            # action_ai_fill_seo exists). Filter on missing seo_title /
+            # seo_description so we don't burn tokens on records the user
+            # already filled by hand.
+            domain = [
+                ('id', '>', last_id),
+                '|', ('seo_title', '=', False), ('seo_title', '=', ''),
+            ]
+            try:
+                records = Model.sudo().search(domain, limit=batch_size, order='id')
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    'bulk_ai_fill: search failed on %s — skipping the model',
+                    model_name)
+                continue
+
+            if not records:
+                # All caught up for this model — leave the cursor where it
+                # is so newly-created records get picked up on the next pass.
+                continue
+
+            for rec in records:
+                try:
+                    rec.action_ai_fill_seo()
+                except Exception:  # noqa: BLE001
+                    _logger.exception(
+                        'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
+                        model_name, rec.id)
+                # Advance the cursor whether or not this record succeeded,
+                # so one persistently-broken record can't stall the queue.
+                ICP.set_param(key_last, str(rec.id))
+                total_processed += 1
+
+        # If nothing was processed across any model, the queue is drained.
+        # Flip the flag off so we don't keep waking the cron for no work.
+        if total_processed == 0:
+            ICP.set_param('era_seo.bulk_ai_fill_active', 'False')
+            _logger.info('bulk_ai_fill: queue drained, flag cleared')
+        else:
+            _logger.info('bulk_ai_fill: processed %d record(s) this tick',
+                         total_processed)
+
+    @api.model
+    def start_bulk_ai_fill(self):
+        """Turn on the bulk AI fill flag and reset the per-model cursors so
+        the next cron tick picks up from the beginning."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        for model_name in self._BULK_AI_MODELS:
+            ICP.set_param('era_seo.bulk_ai_fill_last_id__' + model_name, '0')
+        ICP.set_param('era_seo.bulk_ai_fill_active', 'True')
+
+    @api.model
+    def stop_bulk_ai_fill(self):
+        """Cancel an in-progress bulk run. Cursors are kept where they are so
+        the next start picks up rather than re-scans (callers that want a
+        fresh start should use start_bulk_ai_fill which resets them)."""
+        self.env['ir.config_parameter'].sudo().set_param(
+            'era_seo.bulk_ai_fill_active', 'False')
+
+    # ------------------------------------------------------------------------
     # Open helpers used by the menu and Refresh button
     # ------------------------------------------------------------------------
 

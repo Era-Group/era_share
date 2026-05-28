@@ -249,6 +249,16 @@
 
             <!-- ============================== GUIDE ============================== -->
             <page string="Guide" name="guide">
+              <div class="alert alert-light d-flex align-items-center justify-content-between mb-3" role="status">
+                <span>
+                  Re-run the guided setup any time — every step is pre-filled
+                  from your current settings, so it's safe to use as a review pass too.
+                </span>
+                <button name="%(era_seo_suite.action_era_seo_onboarding_wizard)d"
+                        type="action"
+                        string="Run Setup Wizard"
+                        class="btn btn-primary"/>
+              </div>
               <div class="alert alert-light mb-3" role="status">
                 On-page setup walkthroughs. Click a section to expand.
               </div>

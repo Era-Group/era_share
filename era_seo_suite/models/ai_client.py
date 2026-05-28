@@ -647,6 +647,23 @@ class AIClient:
         response = agent.get_direct_response(
             prompt=prompt, context_message=ARTICLE_CONTEXT)
         raw = response[0] if response else ''
+        # Refusal detection. When the model declines (often because a
+        # trends item is sensitive — politics, public figures, breaking
+        # news — or the admin's addendum tripped a safety rail) the body
+        # is plain prose ("I'm sorry, I can't…") instead of JSON. Retry
+        # once with a neutral prompt: no trend signal, no addendum, so
+        # the agent picks its own safe topic.
+        if self._looks_like_refusal(raw):
+            _logger.info(
+                'propose_article: agent refused (likely due to trend or '
+                'addendum). Retrying with a neutral prompt. First response: %r',
+                (raw or '')[:200])
+            neutral_prompt = self._build_article_prompt(
+                business_context, past_titles, existing_categories,
+                lang_code, trending_now=None, prompt_addendum=None)
+            response = agent.get_direct_response(
+                prompt=neutral_prompt, context_message=ARTICLE_CONTEXT)
+            raw = response[0] if response else ''
         parsed = self._parse_json(raw)
         for k in ('title', 'content_html'):
             if not (parsed.get(k) or '').strip():
@@ -841,6 +858,50 @@ class AIClient:
         if not needs_ai and finding.check_code == 'slug_contains_uppercase':
             return 'url', (target.url or '').lower()
         return field, None
+
+    # Phrases the major LLM providers use when refusing a request.
+    # Lower-cased; the check is substring against the lower-cased response.
+    _REFUSAL_MARKERS = (
+        "i'm sorry, i can't",
+        "i am sorry, i can't",
+        "i can't assist",
+        "i cannot assist",
+        "i'm not able to",
+        "i am not able to",
+        "i won't be able to",
+        "i can't help with that",
+        "i cannot help with that",
+        'i can’t assist',   # curly apostrophe
+        'i can’t help',
+        "as an ai",  # usually accompanies a refusal
+    )
+
+    @classmethod
+    def _looks_like_refusal(cls, raw):
+        """True when the response looks like a content-policy refusal —
+        a plain-prose apology instead of the requested JSON.
+
+        Conservative: only fires when the body doesn't parse as JSON
+        (so a JSON response containing the word "sorry" inside content
+        won't false-positive).
+        """
+        text = (raw or '').strip()
+        if not text:
+            return False
+        # If it parses as JSON we accept it — refusals are never JSON.
+        try:
+            json.loads(text)
+            return False
+        except (json.JSONDecodeError, TypeError):
+            pass
+        # Try the fenced/embedded variants the parser handles too.
+        try:
+            cls._parse_json(text)
+            return False
+        except ValueError:
+            pass
+        lower = text.lower()
+        return any(marker in lower for marker in cls._REFUSAL_MARKERS)
 
     @staticmethod
     def _count_words(html):

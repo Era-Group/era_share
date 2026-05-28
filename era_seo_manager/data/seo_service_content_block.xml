@@ -7,7 +7,7 @@
     (Content Blocks) or a QWeb t-call by code "seo_service_value".
   -->
   <data noupdate="1">
-  <record id="content_block_seo_service_value" model="era.content.block" context="{'lang': 'ar_001'}">
+  <record id="content_block_seo_service_value" model="era.content.block">
     <field name="name">قيمة خدمة تحسين محركات البحث</field>
     <field name="code">seo_service_value</field>
     <field name="block_type">custom</field>

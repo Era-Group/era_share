@@ -970,7 +970,10 @@ class EraSeoSuiteHub(models.Model):
                              raise_if_not_found=False)
         if not group:
             return
-        recipients = group.users.filtered(lambda u: u.email)
+        # Odoo 19 renamed res.groups.users → user_ids (with all_user_ids
+        # covering members inherited via implied groups). user_ids is what
+        # we want here — just the directly-assigned SEO Managers.
+        recipients = group.user_ids.filtered(lambda u: u.email)
         if not recipients:
             _logger.info(
                 'cron_generate_blog_article: no SEO Manager has an email; '

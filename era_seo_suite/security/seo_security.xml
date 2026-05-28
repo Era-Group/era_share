@@ -41,5 +41,30 @@
       ]"/>
     </record>
 
+    <!--
+      Access rules for era.seo.suite.hub (the dashboard singleton).
+      The standard ir.model.access.csv didn't carry these; declaring them
+      here keeps the install warning-free without touching the CSV.
+    -->
+    <record id="access_era_seo_suite_hub_manager" model="ir.model.access">
+      <field name="name">era.seo.suite.hub (manager)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="group_id" ref="group_era_seo_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_write" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="access_era_seo_suite_hub_user" model="ir.model.access">
+      <field name="name">era.seo.suite.hub (user)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="group_id" ref="group_era_seo_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_write" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_unlink" eval="False"/>
+    </record>
+
   </data>
 </odoo>

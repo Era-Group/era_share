@@ -11,31 +11,42 @@
  *            widget="era_auto_refresh_when_true"
  *            invisible="1"/>
  *
- * so the field is technically rendered (the widget needs a mount point)
- * but invisible to the user. The Generate Now button flips the underlying
- * `era_seo.article_pending` ICP to True, the cron clears it when done,
- * and the polling here re-reads the record so the "Recently generated"
- * table updates in place.
+ * The Generate Now button flips the underlying
+ * `era_seo.article_pending` ICP to True; the cron clears it when done;
+ * the polling here re-reads the record so the "Recently generated" table
+ * updates in place.
+ *
+ * Implemented as a plain OWL Component (not extending BooleanField, which
+ * isn't really designed as a base class) — we don't render anything user-
+ * visible. The view's `invisible="1"` hides our mount point, but we still
+ * need to render *something* so the component lifecycle fires.
  */
 
 import { registry } from "@web/core/registry";
-import { CheckBoxField } from "@web/views/fields/boolean/boolean_field";
-import { onMounted, onWillUnmount } from "@odoo/owl";
+import { Component, onMounted, onWillUnmount, useState, xml } from "@odoo/owl";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 const POLL_MS = 3000;
 
-class EraAutoRefreshWhenTrue extends CheckBoxField {
+class EraAutoRefreshWhenTrue extends Component {
+    static template = xml`<span class="d-none"/>`;
+    static props = { ...standardFieldProps };
+
     setup() {
-        super.setup();
+        this.state = useState({});
         this._timer = null;
+
         onMounted(() => this._maybeStart());
         onWillUnmount(() => this._stop());
     }
 
-    /** When the polled value already says "pending", arm the timer. */
+    _isPending() {
+        return Boolean(this.props.record?.data?.[this.props.name]);
+    }
+
     _maybeStart() {
         if (this._timer) return;
-        if (!this.props.record?.data?.[this.props.name]) return;
+        if (!this._isPending()) return;
         this._timer = window.setInterval(() => this._tick(), POLL_MS);
     }
 
@@ -49,17 +60,15 @@ class EraAutoRefreshWhenTrue extends CheckBoxField {
     async _tick() {
         try {
             await this.props.record.load();
-        } catch (e) {
+        } catch (_) {
             // Don't let a transient error kill the polling — try again next tick.
             return;
         }
-        if (!this.props.record?.data?.[this.props.name]) {
+        if (!this._isPending()) {
             this._stop();
         }
     }
 }
-
-EraAutoRefreshWhenTrue.template = "web.BooleanField";
 
 registry.category("fields").add("era_auto_refresh_when_true", {
     component: EraAutoRefreshWhenTrue,

@@ -1,32 +1,58 @@
-# `era_seo_suite` — Unified Hub
+# ERA SEO Suite — Unified
 
 **Platform:** Odoo 19 · **License:** OPL-1 · **Author:** ERA
 
-One prominent entry point in the main menu (**ERA SEO Suite**) that opens
-a single screen with tabs for the whole suite — instead of the scattered
-sub-menus under Website → SEO.
+The whole SEO suite in one module. Replaces these seven previously
+separate addons (now marked `installable: False`):
 
-## Tabs
-
-| Tab | What it shows |
+| Old module | What it contributed |
 |---|---|
-| **Dashboard** | KPIs: published pages, active redirects, schema instances, last audit + open findings, AI crawlers + /llms.txt status, GSC clicks/impressions (28 days), last GSC pull. |
-| **SEO** | Launchpad buttons → Schema Templates, Content Blocks, SEO Overview, Redirects, 404 Log, Hreflang, Audit Runs, All Findings. |
-| **GEO** | /llms.txt status, AI crawler counters, button to Manage AI Crawlers. |
-| **GSC** | Connected accounts, sites, last pull, 28-day clicks/impressions, buttons to Accounts / Sites / Queries. |
-| **Settings** | Inline toggles for the most-used flags (AI auto-fix, /llms.txt, site summary, GSC pull window). Button to the full Website settings page. |
-| **Guide** | Collapsed `<details>` walkthroughs: AI first run, GEO setup, GSC connect. |
+| `era_seo_manager` | Core SEO mixin, schema engine (17 templates), redirects, sitemap, robots, hreflang, audit dashboard, content blocks |
+| `era_seo_ai` | AI auto-fix + proactive Fill SEO via Odoo's AI agent |
+| `era_seo_blog` | Blog enhancements: series, categories, authors, FAQ, TOC, related posts, RSS/Atom/JSON feeds |
+| `era_seo_blog_ai` | Blog × AI bridge: AI buttons on posts + auto-rebuild on content change |
+| `era_geo` | `/llms.txt` + AI crawler control + GEO readiness checks |
+| `era_geo_ai` | GEO × AI bridge: AI fix for `geo_no_answer_summary` |
+| `era_gsc` | Google Search Console: OAuth, sites, daily analytics pull |
 
-## Notes
+Everything is accessed via a single top-level app **ERA SEO Suite** in the
+main menu, with a tabbed Hub: Dashboard / SEO / GEO / GSC / Settings / Guide.
 
-- `era_seo_suite` is `auto_install: True` and `application: True` — it shows
-  up as a top-level app whenever all of `era_seo_manager`, `era_geo`, and
-  `era_gsc` are installed.
-- The existing per-feature menus under Website → SEO continue to work; the
-  hub is an additional, faster entry point.
-- All Settings-tab toggles round-trip through `ir.config_parameter`, so
-  they mean the same thing as the corresponding fields in
-  Website → Configuration → Settings.
+## Install (fresh)
+
+```bash
+odoo-bin -i era_seo_suite --stop-after-init
+```
+
+## Migrating from the old separate modules
+
+The unified module duplicates the old xmlids under a new prefix
+(`era_seo_suite.*` instead of `era_seo_manager.*`, etc.), so the safest
+path on an existing database is:
+
+1. Stop the server.
+2. From Apps, **uninstall** every old `era_seo_*`, `era_geo*`, `era_gsc`
+   module. This drops their tables + xmlids cleanly.
+3. **Install** `era_seo_suite`.
+
+Custom records (blog posts, content blocks the admin authored, GSC accounts)
+are not noupdate-seeded, so re-creating them after install is required.
+Seed data (schema templates, default robots rules, the SEO Fixer AI agent)
+is re-seeded by the new module under the new xmlid prefix.
+
+## Code organisation
+
+When multiple old modules had a file with the same name (e.g. four modules
+each had `models/res_config_settings.py`), every copy lives under a
+`_<tag>` suffix so all of them load:
+
+- `_mgr` → from `era_seo_manager`
+- `_ai`  → from `era_seo_ai`
+- `_geo` → from `era_geo`
+- `_blog` / `_blogai` / `_geoai` / `_gsc` → respective bridges
+
+`models/__init__.py` orders imports so base classes load first (`_mgr` →
+`_ai` → `_geo` → `_blog` → bridges → `_gsc`).
 
 ## License
 

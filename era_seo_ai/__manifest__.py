@@ -52,7 +52,7 @@ Requires the Odoo **AI** app (Enterprise). Configure the agent under
         'views/ai_fix_log_views.xml',
     ],
     'post_init_hook': 'post_init_hook',
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

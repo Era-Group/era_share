@@ -63,32 +63,32 @@
               </div>
               <group>
                 <group string="Pages &amp; Schema">
-                  <button name="%(era_seo_manager.action_seo_schema_template)d"
+                  <button name="%(era_seo_suite.action_seo_schema_template)d"
                           type="action" string="Schema Templates"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_seo_manager.action_era_content_block)d"
+                  <button name="%(era_seo_suite.action_era_content_block)d"
                           type="action" string="Content Blocks"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_seo_manager.action_seo_status)d"
+                  <button name="%(era_seo_suite.action_seo_status)d"
                           type="action" string="SEO Overview"
                           class="btn-link" icon="fa-arrow-right"/>
                 </group>
                 <group string="Routing">
-                  <button name="%(era_seo_manager.action_seo_redirect)d"
+                  <button name="%(era_seo_suite.action_seo_redirect)d"
                           type="action" string="Redirects"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_seo_manager.action_seo_redirect_log)d"
+                  <button name="%(era_seo_suite.action_seo_redirect_log)d"
                           type="action" string="404 Log"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_seo_manager.action_seo_hreflang)d"
+                  <button name="%(era_seo_suite.action_seo_hreflang)d"
                           type="action" string="Hreflang"
                           class="btn-link" icon="fa-arrow-right"/>
                 </group>
                 <group string="Audit">
-                  <button name="%(era_seo_manager.action_seo_audit_run)d"
+                  <button name="%(era_seo_suite.action_seo_audit_run)d"
                           type="action" string="Audit Runs"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_seo_manager.action_seo_audit_finding)d"
+                  <button name="%(era_seo_suite.action_seo_audit_finding)d"
                           type="action" string="All Findings"
                           class="btn-link" icon="fa-arrow-right"/>
                 </group>
@@ -108,7 +108,7 @@
                   <field name="kpi_geo_crawlers_blocked"/>
                 </group>
                 <group string="Quick links">
-                  <button name="%(era_geo.action_era_geo_ai_crawler)d"
+                  <button name="%(era_seo_suite.action_era_geo_ai_crawler)d"
                           type="action" string="Manage AI Crawlers"
                           class="btn-link" icon="fa-arrow-right"/>
                 </group>
@@ -134,13 +134,13 @@
                   <field name="kpi_gsc_impressions_28d"/>
                 </group>
                 <group string="Quick links">
-                  <button name="%(era_gsc.action_era_gsc_account)d"
+                  <button name="%(era_seo_suite.action_era_gsc_account)d"
                           type="action" string="Accounts"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_gsc.action_era_gsc_site)d"
+                  <button name="%(era_seo_suite.action_era_gsc_site)d"
                           type="action" string="Sites"
                           class="btn-link" icon="fa-arrow-right"/>
-                  <button name="%(era_gsc.action_era_gsc_query)d"
+                  <button name="%(era_seo_suite.action_era_gsc_query)d"
                           type="action" string="Queries"
                           class="btn-link" icon="fa-arrow-right"/>
                 </group>

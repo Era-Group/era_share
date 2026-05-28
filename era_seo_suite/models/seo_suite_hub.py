@@ -101,14 +101,14 @@ class EraSeoSuiteHub(models.Model):
         # ---------- AI Auto-Fix (era_seo_ai) ----------
         'setting_ai_enabled':       ('era_seo.ai_enabled',            'bool', False),
         # ---------- GEO (era_geo) ----------
-        'setting_llms_enabled':     ('era_geo.llms_enabled',          'bool', True),
-        'setting_llms_summary':     ('era_geo.site_summary',          'char', ''),
-        'setting_llms_max_items':   ('era_geo.llms_max_items',        'int', 100),
-        'setting_llms_include_blog':('era_geo.llms_include_blog',     'bool', True),
+        'setting_llms_enabled':     ('era_seo_suite.llms_enabled',          'bool', True),
+        'setting_llms_summary':     ('era_seo_suite.site_summary',          'char', ''),
+        'setting_llms_max_items':   ('era_seo_suite.llms_max_items',        'int', 100),
+        'setting_llms_include_blog':('era_seo_suite.llms_include_blog',     'bool', True),
         # ---------- GSC (era_gsc) ----------
-        'setting_gsc_client_id':    ('era_gsc.client_id',             'char', ''),
-        'setting_gsc_client_secret':('era_gsc.client_secret',         'char', ''),
-        'setting_gsc_pull_window':  ('era_gsc.pull_window_days',      'int', 28),
+        'setting_gsc_client_id':    ('era_seo_suite.client_id',             'char', ''),
+        'setting_gsc_client_secret':('era_seo_suite.client_secret',         'char', ''),
+        'setting_gsc_pull_window':  ('era_seo_suite.pull_window_days',      'int', 28),
     }
 
     # --- Organization
@@ -235,7 +235,7 @@ class EraSeoSuiteHub(models.Model):
             rec.kpi_geo_crawlers_blocked = Crawler.sudo().search_count(
                 [('allowed', '=', False)]) if Crawler is not None else 0
             rec.kpi_geo_llms_enabled = _icp_bool(
-                self.env, 'era_geo.llms_enabled', True)
+                self.env, 'era_seo_suite.llms_enabled', True)
 
             rec.kpi_gsc_accounts_connected = GscAccount.sudo().search_count(
                 [('state', '=', 'connected')]) if GscAccount is not None else 0

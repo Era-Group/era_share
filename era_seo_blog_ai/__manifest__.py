@@ -34,7 +34,7 @@ auto-rebuild is skipped and the buttons surface the usual "disabled" notice.
     'data': [
         'views/blog_post_views.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

@@ -74,7 +74,7 @@ RSS/Atom/JSON feeds) ship in the optional ``era_seo_blog`` addon.
     },
     'post_init_hook': 'post_init_hook',
     'uninstall_hook': 'uninstall_hook',
-    'installable': True,
+    'installable': False,
     'application': True,
-    'auto_install': True,
+    'auto_install': False,
 }

@@ -1,47 +1,109 @@
 {
-    'name': 'ERA SEO Suite — Unified Hub',
-    'summary': 'One-screen hub: dashboard, SEO, GEO, GSC, settings, and guides',
+    'name': 'ERA SEO Suite — Unified',
+    'summary': 'Unified SEO + AI + GEO + GSC + Blog suite — one module, one app',
     'description': """
-ERA SEO Suite — Unified Hub
-============================
-The single, exclusive user-facing entry point for the whole SEO suite —
-one main-menu app, one screen, six tabs:
+ERA SEO Suite — Unified
+========================
+Single addon replacing the previous seven separate modules:
 
-- **Dashboard** — at-a-glance KPIs (pages, last audit, open findings,
-  GSC clicks, llms.txt status, …).
-- **SEO / GEO / GSC** — launchpad to every feature in the suite.
-- **Settings** — every ir.config_parameter the suite owns (21 fields, with
-  per-field help) lives here; the legacy per-module Settings blocks under
-  Website → Configuration → Settings are turned off.
-- **Guide** — collapsed, on-page setup walkthroughs for AI, GEO, GSC.
+    era_seo_manager + era_seo_ai + era_seo_blog + era_seo_blog_ai +
+    era_geo + era_geo_ai + era_gsc
 
-The underlying modules (era_seo_manager, era_seo_ai, era_geo, era_gsc, the
-blog/ai bridges) stay intact for tests and migrations; this addon turns
-off their scattered menus + Settings blocks so the user experience is
-fully unified through the hub.
+Everything ships in one box: core SEO mixin + schema engine + redirects +
+sitemap + robots + hreflang + audit, AI auto-fix and proactive Fill SEO,
+GEO (/llms.txt + AI crawlers + GEO audit), GSC (OAuth + analytics pull),
+blog enhancements (series, TOC, related, feeds), and the unified hub
+(Dashboard / SEO / GEO / GSC / Settings / Guide).
     """,
     'author': 'ERA — Excellence Resources Arabia',
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'depends': [
-        'era_seo_manager',
-        'era_seo_ai',
-        'era_geo',
-        'era_gsc',
-    ],
+    'base',
+    'web',
+    'website',
+    'mail',
+    'portal',
+    'website_blog',
+],
     'data': [
-        'security/ir.model.access.csv',
-        'data/seo_suite_data.xml',
-        'views/seo_suite_hub_views.xml',
-        'views/menus.xml',
-        # noupdate=1 — turns off the legacy SEO menus + per-module Settings
-        # blocks once the suite is installed. MUST load last so the menu +
-        # view xmlid refs it disables already exist.
-        'data/consolidate.xml',
+    'security/seo_security.xml',
+    'security/ir.model.access.csv',
+    'data/ai_agent_data.xml',
+    'data/consolidate.xml',
+    'data/geo_ai_crawler_data.xml',
+    'data/ir_cron_gsc.xml',
+    'data/ir_cron_mgr.xml',
+    'data/ir_sequence.xml',
+    'data/schema_template_data.xml',
+    'data/seo_default_settings.xml',
+    'data/seo_robots_default_data.xml',
+    'data/seo_schema_template_data.xml',
+    'data/seo_service_content_block.xml',
+    'data/seo_suite_data.xml',
+    'data/server_actions.xml',
+    'wizards/seo_audit_wizard_views.xml',
+    'wizards/seo_bulk_update_wizard_views.xml',
+    'wizards/seo_redirect_import_wizard_views.xml',
+    'wizards/seo_schema_preview_wizard_views.xml',
+    'views/ai_fix_log_views.xml',
+    'views/blog_author_views.xml',
+    'views/blog_category_views.xml',
+    'views/blog_landing_templates.xml',
+    'views/blog_post_templates.xml',
+    'views/blog_post_views_blog.xml',
+    'views/blog_post_views_blogai.xml',
+    'views/blog_series_views.xml',
+    'views/content_block_snippets.xml',
+    'views/content_block_views_ai.xml',
+    'views/content_block_views_geo.xml',
+    'views/content_block_views_mgr.xml',
+    'views/geo_ai_crawler_views.xml',
+    'views/gsc_account_views.xml',
+    'views/gsc_query_views.xml',
+    'views/gsc_site_views.xml',
+    'views/res_config_settings_views_ai.xml',
+    'views/res_config_settings_views_geo.xml',
+    'views/res_config_settings_views_gsc.xml',
+    'views/res_config_settings_views_mgr.xml',
+    'views/robots_templates.xml',
+    'views/seo_audit_dashboard.xml',
+    'views/seo_audit_finding_views.xml',
+    'views/seo_audit_run_views_ai.xml',
+    'views/seo_audit_run_views_mgr.xml',
+    'views/seo_hreflang_views.xml',
+    'views/seo_redirect_views.xml',
+    'views/seo_robots_rule_views.xml',
+    'views/seo_schema_instance_views.xml',
+    'views/seo_schema_template_views.xml',
+    'views/seo_sitemap_config_views.xml',
+    'views/seo_status_views.xml',
+    'views/seo_suite_hub_views.xml',
+    'views/website_layout_templates.xml',
+    'views/website_meta_templates.xml',
+    'views/menus.xml',
+    'views/menus_blog.xml',
+    'views/menus_gsc.xml',
+    'views/menus_mgr.xml',
+    'reports/seo_audit_report.xml',
+],
+    'demo': [
+    'demo/demo.xml',
+],
+    'assets': {
+    'web.assets_frontend': [
+        'era_seo_suite/static/src/scss/frontend.scss',
+        'era_seo_suite/static/src/js/seo_snippets.js',
     ],
+    'web.assets_backend': [
+        'era_seo_suite/static/src/scss/backend.scss',
+        'era_seo_suite/static/src/js/seo_dashboard.js',
+        'era_seo_suite/static/src/xml/seo_dashboard.xml',
+    ],
+},
     'installable': True,
     'application': True,
-    'auto_install': True,
+    'auto_install': False,
 }

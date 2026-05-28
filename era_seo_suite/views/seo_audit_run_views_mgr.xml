@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- ===================================================================
+       era.seo.audit.run — list / form / search
+  =================================================================== -->
+  <record id="view_seo_audit_run_list" model="ir.ui.view">
+    <field name="name">era.seo.audit.run.list</field>
+    <field name="model">era.seo.audit.run</field>
+    <field name="arch" type="xml">
+      <list string="SEO Audit Runs"
+            decoration-danger="critical_count > 0"
+            decoration-warning="warning_count > 0 and critical_count == 0"
+            decoration-muted="state == 'failed'">
+        <field name="name"/>
+        <field name="state" widget="badge"
+               decoration-success="state == 'done'"
+               decoration-info="state == 'running'"
+               decoration-danger="state == 'failed'"/>
+        <field name="website_id" optional="show"/>
+        <field name="pages_scanned"/>
+        <field name="critical_count" string="Critical"/>
+        <field name="warning_count" string="Warning"/>
+        <field name="info_count" string="Info"/>
+        <field name="unresolved_count" optional="show"/>
+        <field name="date_started"/>
+        <field name="date_finished" optional="show"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_seo_audit_run_form" model="ir.ui.view">
+    <field name="name">era.seo.audit.run.form</field>
+    <field name="model">era.seo.audit.run</field>
+    <field name="arch" type="xml">
+      <form string="Audit Run">
+        <header>
+          <button name="action_run" type="object" string="Run / Re-run"
+                  class="oe_highlight"
+                  invisible="state == 'running'"/>
+          <field name="state" widget="statusbar"
+                 statusbar_visible="draft,running,done"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <div class="alert alert-danger" role="alert"
+               invisible="state != 'failed'">
+            <strong>Audit failed:</strong> <field name="error_message" readonly="1" nolabel="1"/>
+          </div>
+          <group>
+            <group>
+              <field name="website_id" readonly="state != 'draft'"
+                     options="{'no_create': True}"/>
+              <field name="date_started"/>
+              <field name="date_finished"/>
+              <field name="pages_scanned"/>
+            </group>
+            <group string="Findings">
+              <field name="total_count"/>
+              <field name="critical_count"/>
+              <field name="warning_count"/>
+              <field name="info_count"/>
+              <field name="unresolved_count"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Findings" name="findings">
+              <field name="finding_ids" readonly="1">
+                <list decoration-danger="severity == 'critical'"
+                      decoration-warning="severity == 'warning'"
+                      decoration-muted="is_resolved">
+                  <field name="severity" widget="badge"
+                         decoration-danger="severity == 'critical'"
+                         decoration-warning="severity == 'warning'"
+                         decoration-info="severity == 'info'"/>
+                  <field name="check_name"/>
+                  <field name="url"/>
+                  <field name="details" optional="show"/>
+                  <field name="is_resolved" widget="boolean_toggle"/>
+                  <button name="action_open_target" type="object"
+                          string="Open" icon="fa-arrow-right"
+                          invisible="not res_id"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_seo_audit_run_search" model="ir.ui.view">
+    <field name="name">era.seo.audit.run.search</field>
+    <field name="model">era.seo.audit.run</field>
+    <field name="arch" type="xml">
+      <search string="Audit Runs">
+        <field name="name"/>
+        <field name="website_id"/>
+        <filter name="done" string="Completed" domain="[('state', '=', 'done')]"/>
+        <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+        <filter name="has_critical" string="Has Critical Issues"
+                domain="[('critical_count', '>', 0)]"/>
+        <group>
+          <filter name="group_website" string="Website"
+                  context="{'group_by': 'website_id'}"/>
+          <filter name="group_state" string="State"
+                  context="{'group_by': 'state'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_seo_audit_run" model="ir.actions.act_window">
+    <field name="name">SEO Audits</field>
+    <field name="res_model">era.seo.audit.run</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_seo_audit_run_search"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Run your first SEO audit.
+      </p>
+      <p>
+        Click <b>Run SEO Audit</b> under the SEO menu to scan every page
+        for missing meta, duplicate titles, broken canonicals, thin
+        content, orphan pages, redirect loops, and 16 other issues.
+      </p>
+    </field>
+  </record>
+
+  <!-- ===================================================================
+       era.seo.audit.finding — list / form / search
+  =================================================================== -->
+  <record id="view_seo_audit_finding_list" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.list</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="arch" type="xml">
+      <list string="Audit Findings"
+            decoration-danger="severity == 'critical' and not is_resolved"
+            decoration-warning="severity == 'warning' and not is_resolved"
+            decoration-muted="is_resolved">
+        <field name="severity" widget="badge"
+               decoration-danger="severity == 'critical'"
+               decoration-warning="severity == 'warning'"
+               decoration-info="severity == 'info'"/>
+        <field name="check_name"/>
+        <field name="lang_id" optional="show"/>
+        <field name="url"/>
+        <field name="run_id"/>
+        <field name="details" optional="hide"/>
+        <field name="is_resolved" widget="boolean_toggle"/>
+        <button name="action_open_target" type="object"
+                string="Open" icon="fa-arrow-right"
+                invisible="not res_id"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_seo_audit_finding_form" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.form</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="arch" type="xml">
+      <form string="Audit Finding">
+        <header>
+          <button name="action_mark_resolved" type="object"
+                  string="Mark Resolved" class="oe_highlight"
+                  invisible="is_resolved"/>
+          <button name="action_mark_unresolved" type="object"
+                  string="Mark Unresolved"
+                  invisible="not is_resolved"/>
+          <button name="action_open_target" type="object"
+                  string="Open Target"
+                  invisible="not res_id"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="check_name"/>
+            <h1><field name="check_name"/></h1>
+            <field name="check_code"/>
+          </div>
+          <group>
+            <group>
+              <field name="severity" widget="badge"
+                     decoration-danger="severity == 'critical'"
+                     decoration-warning="severity == 'warning'"
+                     decoration-info="severity == 'info'"/>
+              <field name="run_id"/>
+              <field name="url"/>
+              <field name="res_model"/>
+              <field name="res_id"/>
+            </group>
+            <group string="Resolution">
+              <field name="is_resolved"/>
+              <field name="resolved_date" readonly="1"/>
+              <field name="resolved_user_id" readonly="1"/>
+            </group>
+          </group>
+          <group string="Details">
+            <field name="details" nolabel="1" readonly="1"/>
+          </group>
+          <group string="Suggested Fix">
+            <field name="suggested_fix" nolabel="1" readonly="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_seo_audit_finding_search" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.search</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="arch" type="xml">
+      <search string="Audit Findings">
+        <field name="check_name"/>
+        <field name="check_code"/>
+        <field name="url"/>
+        <field name="run_id"/>
+        <field name="lang_id"/>
+        <filter name="unresolved" string="Unresolved"
+                domain="[('is_resolved', '=', False)]"/>
+        <filter name="critical" string="Critical"
+                domain="[('severity', '=', 'critical')]"/>
+        <filter name="warning" string="Warning"
+                domain="[('severity', '=', 'warning')]"/>
+        <filter name="info" string="Info"
+                domain="[('severity', '=', 'info')]"/>
+        <group>
+          <filter name="group_severity" string="Severity"
+                  context="{'group_by': 'severity'}"/>
+          <filter name="group_check" string="Check"
+                  context="{'group_by': 'check_code'}"/>
+          <filter name="group_lang" string="Language"
+                  context="{'group_by': 'lang_id'}"/>
+          <filter name="group_url" string="URL"
+                  context="{'group_by': 'url'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_seo_audit_finding" model="ir.actions.act_window">
+    <field name="name">Audit Findings</field>
+    <field name="res_model">era.seo.audit.finding</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_seo_audit_finding_search"/>
+    <field name="context">{'search_default_unresolved': 1}</field>
+  </record>
+
+  <!-- ===================================================================
+       Menus
+  =================================================================== -->
+  <menuitem id="menu_seo_audit_root"
+            name="SEO Audit"
+            parent="menu_website_seo_root"
+            sequence="60"/>
+
+  <menuitem id="menu_seo_audit_wizard"
+            name="Run SEO Audit"
+            parent="menu_seo_audit_root"
+            action="action_seo_audit_wizard"
+            sequence="10"/>
+
+  <menuitem id="menu_seo_audit_runs"
+            name="Audit Runs"
+            parent="menu_seo_audit_root"
+            action="action_seo_audit_run"
+            sequence="20"/>
+
+  <menuitem id="menu_seo_audit_findings"
+            name="All Findings"
+            parent="menu_seo_audit_root"
+            action="action_seo_audit_finding"
+            sequence="30"/>
+</odoo>

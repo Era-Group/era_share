@@ -38,7 +38,7 @@ record; only refresh tokens persist across restarts.
         'views/res_config_settings_views.xml',
         'views/menus.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

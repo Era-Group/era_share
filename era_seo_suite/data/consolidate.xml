@@ -18,7 +18,7 @@
             (era_geo) and GSC (era_gsc) sub-menus also disappear since
             they parent under it.
          ============================================================ -->
-    <record id="era_seo_manager.menu_website_seo_root" model="ir.ui.menu">
+    <record id="era_seo_suite.menu_website_seo_root" model="ir.ui.menu">
       <field name="active" eval="False"/>
     </record>
 
@@ -28,16 +28,16 @@
             All settings now live exclusively in the suite's Settings tab,
             which round-trips through the same ir.config_parameter keys.
          ============================================================ -->
-    <record id="era_seo_manager.res_config_settings_view_era_seo" model="ir.ui.view">
+    <record id="era_seo_suite.res_config_settings_view_era_seo" model="ir.ui.view">
       <field name="active" eval="False"/>
     </record>
-    <record id="era_seo_ai.view_res_config_settings_era_seo_ai" model="ir.ui.view">
+    <record id="era_seo_suite.view_res_config_settings_era_seo_ai" model="ir.ui.view">
       <field name="active" eval="False"/>
     </record>
-    <record id="era_geo.view_res_config_settings_era_geo" model="ir.ui.view">
+    <record id="era_seo_suite.view_res_config_settings_era_geo" model="ir.ui.view">
       <field name="active" eval="False"/>
     </record>
-    <record id="era_gsc.view_res_config_settings_era_gsc" model="ir.ui.view">
+    <record id="era_seo_suite.view_res_config_settings_era_gsc" model="ir.ui.view">
       <field name="active" eval="False"/>
     </record>
 

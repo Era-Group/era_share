@@ -39,7 +39,7 @@ stock ``website_blog`` module and want the full editorial / SEO treatment:
         'views/blog_landing_templates.xml',
     ],
     'post_init_hook': 'post_init_hook',
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

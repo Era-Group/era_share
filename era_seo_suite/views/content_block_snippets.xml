@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!--
+    ERA SEO website-builder snippets (SPEC §14.2). Seven draggable blocks
+    grouped under an "ERA SEO" category. FAQ + Breadcrumbs additionally emit
+    JSON-LD on the published page via the interactions in
+    static/src/snippets/era_seo_schema.js.
+  -->
+
+  <!-- ============================ FAQ ============================ -->
+  <template id="s_era_faq" name="ERA FAQ">
+    <t t-set="uniq" t-value="datetime.datetime.now().microsecond"/>
+    <section class="s_era_faq pt48 pb48" data-name="ERA FAQ">
+      <div class="container">
+        <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+        <div t-attf-id="era_faq{{uniq}}" class="accordion s_era_faq_list">
+          <div class="accordion-item s_era_faq_item" data-name="Question">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                      t-attf-data-bs-target="#era_faq{{uniq}}_1" aria-expanded="true"
+                      t-attf-aria-controls="era_faq{{uniq}}_1">
+                <span class="s_era_faq_q flex-grow-1">What is included in the price?</span>
+              </button>
+            </h3>
+            <div t-attf-id="era_faq{{uniq}}_1" class="accordion-collapse collapse show"
+                 t-attf-data-bs-parent="#era_faq{{uniq}}">
+              <div class="accordion-body s_era_faq_a">
+                <p>Every plan includes implementation support, training, and
+                   ongoing updates. Reach out for a tailored quote.</p>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item s_era_faq_item" data-name="Question">
+            <h3 class="accordion-header">
+              <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                      t-attf-data-bs-target="#era_faq{{uniq}}_2" aria-expanded="false"
+                      t-attf-aria-controls="era_faq{{uniq}}_2">
+                <span class="s_era_faq_q flex-grow-1">Do you support Arabic and English?</span>
+              </button>
+            </h3>
+            <div t-attf-id="era_faq{{uniq}}_2" class="accordion-collapse collapse"
+                 t-attf-data-bs-parent="#era_faq{{uniq}}">
+              <div class="accordion-body s_era_faq_a">
+                <p>Yes. All deliverables are bilingual (Arabic + English),
+                   including SEO metadata and structured data.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ============================ CTA ============================ -->
+  <template id="s_era_cta" name="ERA Call to Action">
+    <section class="s_era_cta o_cc o_cc2 pt48 pb48" data-name="ERA CTA">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-9">
+            <h2 class="h3-fs mb-1">Ready to grow your organic traffic?</h2>
+            <p class="lead mb-0">Talk to ERA about a bilingual SEO strategy
+               built for the Saudi market.</p>
+          </div>
+          <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+            <a href="/contactus" class="btn btn-primary btn-lg">Contact us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ======================== Author Box ======================== -->
+  <template id="s_era_author_box" name="ERA Author Box">
+    <section class="s_era_author_box pt32 pb32" data-name="ERA Author Box">
+      <div class="container">
+        <div class="card">
+          <div class="card-body d-flex gap-3 align-items-start">
+            <img src="/web/image/res.partner/1/avatar_128"
+                 class="rounded-circle s_era_author_avatar"
+                 style="width: 72px; height: 72px; object-fit: cover;"
+                 alt="Author"/>
+            <div>
+              <h3 class="h5 mb-1 s_era_author_name">Author Name</h3>
+              <p class="text-muted mb-2 s_era_author_role">SEO Consultant, ERA</p>
+              <p class="mb-2 s_era_author_bio">A short author biography goes here —
+                 expertise, focus areas, and a friendly note.</p>
+              <a href="#" class="btn btn-sm btn-outline-secondary">View profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ====================== Related Posts ======================= -->
+  <template id="s_era_related_posts" name="ERA Related Posts">
+    <section class="s_era_related_posts pt48 pb48" data-name="ERA Related Posts">
+      <div class="container">
+        <h2 class="h4 mb-4">Related articles</h2>
+        <div class="row g-4">
+          <t t-foreach="[1, 2, 3]" t-as="i">
+            <div class="col-lg-4 s_era_related_item" data-name="Related Post">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h3 class="h6 card-title">Related article title</h3>
+                  <p class="card-text small text-muted">A one-line teaser for the
+                     related article to entice the click.</p>
+                  <a href="#" class="stretched-link">Read more</a>
+                </div>
+              </div>
+            </div>
+          </t>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ======================= Breadcrumbs ======================== -->
+  <template id="s_era_breadcrumbs" name="ERA Breadcrumbs">
+    <section class="s_era_breadcrumbs pt8 pb8" data-name="ERA Breadcrumbs">
+      <div class="container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0 s_era_breadcrumbs_list">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+  </template>
+
+  <!-- ====================== Feature Grid ======================== -->
+  <template id="s_era_feature_grid" name="ERA Feature Grid">
+    <section class="s_era_feature_grid pt48 pb48" data-name="ERA Feature Grid">
+      <div class="container">
+        <div class="row g-4">
+          <t t-foreach="[1, 2, 3]" t-as="i">
+            <div class="col-lg-4 s_era_feature_item text-center" data-name="Feature">
+              <i class="fa fa-2x fa-bolt text-primary mb-3" role="img" aria-label="Feature"/>
+              <h3 class="h5">Feature title</h3>
+              <p class="text-muted">Describe the benefit of this feature in one or
+                 two short, concrete sentences.</p>
+            </div>
+          </t>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ====================== Pricing Table ======================= -->
+  <template id="s_era_pricing_table" name="ERA Pricing Table">
+    <section class="s_era_pricing_table pt48 pb48" data-name="ERA Pricing Table">
+      <div class="container">
+        <div class="row g-4 justify-content-center">
+          <t t-foreach="['Starter', 'Growth', 'Scale']" t-as="plan">
+            <div class="col-lg-4 s_era_pricing_item" data-name="Plan">
+              <div class="card h-100 text-center">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5"><t t-out="plan"/></h3>
+                  <p class="display-6 my-3">$<span class="s_era_price">99</span>
+                    <span class="fs-6 text-muted">/mo</span></p>
+                  <ul class="list-unstyled mb-4">
+                    <li>Feature one</li>
+                    <li>Feature two</li>
+                    <li>Feature three</li>
+                  </ul>
+                  <a href="/contactus" class="btn btn-primary mt-auto">Choose plan</a>
+                </div>
+              </div>
+            </div>
+          </t>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <!-- ===================== Builder registration ================= -->
+  <template id="era_seo_snippets" inherit_id="website.snippets" name="ERA SEO Snippets">
+    <!-- New category in the blocks panel. -->
+    <xpath expr="//t[@id='installed_snippets_hook']" position="after">
+      <t snippet-group="era_seo" t-snippet="website.s_snippet_group" string="ERA SEO"
+         t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_block.svg"/>
+    </xpath>
+    <!-- The seven snippets, in the ERA SEO group. -->
+    <xpath expr="//snippets[@id='snippet_structure']" position="inside">
+      <t t-snippet="era_seo_suite.s_era_faq" string="ERA FAQ" group="era_seo">
+        <keywords>faq, questions, answers, accordion, schema, faqpage, structured data</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_breadcrumbs" string="ERA Breadcrumbs" group="era_seo">
+        <keywords>breadcrumb, navigation, path, schema, breadcrumblist</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_cta" string="ERA Call to Action" group="era_seo">
+        <keywords>cta, call to action, button, conversion, contact</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_author_box" string="ERA Author Box" group="era_seo">
+        <keywords>author, bio, profile, byline, person</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_related_posts" string="ERA Related Posts" group="era_seo">
+        <keywords>related, posts, articles, recommended, cards</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_feature_grid" string="ERA Feature Grid" group="era_seo">
+        <keywords>features, grid, columns, benefits, icons</keywords>
+      </t>
+      <t t-snippet="era_seo_suite.s_era_pricing_table" string="ERA Pricing Table" group="era_seo">
+        <keywords>pricing, plans, table, tiers, comparison</keywords>
+      </t>
+    </xpath>
+  </template>
+</odoo>

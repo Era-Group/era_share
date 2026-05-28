@@ -23,7 +23,7 @@ both are present, so neither parent takes a hard dependency on the other.
         'era_seo_ai',
     ],
     'data': [],
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

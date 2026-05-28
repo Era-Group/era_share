@@ -36,7 +36,7 @@ Future phases: GEO audit (citability checks), answer-ready content blocks.
         'views/content_block_views.xml',
         'views/robots_templates.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
-    'auto_install': True,
+    'auto_install': False,
 }

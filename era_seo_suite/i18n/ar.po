@@ -221,3 +221,938 @@ msgstr "تشغيل تدقيق SEO + GEO جديد الآن؟ يفحص كل صفح
 #. module: era_seo_suite
 msgid "Audit Run"
 msgstr "تشغيل تدقيق"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_title
+msgid "SEO Title"
+msgstr "عنوان SEO"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_description
+msgid "Meta Description"
+msgstr "الوصف التعريفي"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_keywords
+msgid "Meta Keywords"
+msgstr "الكلمات المفتاحية"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_title
+msgid "OG Title"
+msgstr "عنوان Open Graph"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_description
+msgid "OG Description"
+msgstr "وصف Open Graph"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_og_image
+msgid "OG Image"
+msgstr "صورة Open Graph"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_canonical_url
+msgid "Canonical URL Override"
+msgstr "تجاوز رابط Canonical"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_index
+msgid "Index this page"
+msgstr "فهرسة هذه الصفحة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_follow
+msgid "Follow links on this page"
+msgstr "تتبع الروابط في هذه الصفحة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_archive
+msgid "Allow archive"
+msgstr "السماح بالأرشفة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_robots_snippet
+msgid "Allow snippet"
+msgstr "السماح بالمقتطف"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_mixin__seo_sitemap_include
+msgid "Include in sitemap"
+msgstr "تضمين في خريطة الموقع"
+# ---------------------------------------------------------------------------
+# Phase 2 — JSON-LD Schema Engine
+# ---------------------------------------------------------------------------
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_template
+msgid "SEO Schema Template"
+msgstr "قالب مخطط SEO"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__name
+msgid "Name"
+msgstr "الاسم"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__code
+msgid "Code"
+msgstr "الرمز"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__schema_type
+msgid "Schema @type"
+msgstr "نوع المخطط"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__category
+msgid "Category"
+msgstr "الفئة"
+#. module: era_seo_suite
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__core
+msgid "Core"
+msgstr "أساسي"
+#. module: era_seo_suite
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__content
+msgid "Content"
+msgstr "محتوى"
+#. module: era_seo_suite
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__commerce
+msgid "Commerce"
+msgstr "تجارة"
+#. module: era_seo_suite
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__event
+msgid "Event"
+msgstr "حدث"
+#. module: era_seo_suite
+#: model:ir.selection__era_seo_schema_template__category,name:era_seo_manager.selection__era_seo_schema_template__category__local
+msgid "Local"
+msgstr "محلي"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__body
+msgid "Template Body"
+msgstr "نص القالب"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__documentation_url
+msgid "Schema.org Docs URL"
+msgstr "رابط توثيق Schema.org"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__is_default
+msgid "Default Template"
+msgstr "القالب الافتراضي"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_template__required_fields_json
+msgid "Required Fields (JSON)"
+msgstr "الحقول المطلوبة (JSON)"
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_instance
+msgid "SEO Schema Instance"
+msgstr "نسخة مخطط SEO"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__template_id
+msgid "Schema Template"
+msgstr "قالب المخطط"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__res_model
+msgid "Record Model"
+msgstr "نموذج السجل"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__res_id
+msgid "Record ID"
+msgstr "معرّف السجل"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__data_json
+msgid "Context Overrides (JSON)"
+msgstr "تجاوزات السياق (JSON)"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_instance__rendered_json
+msgid "Rendered JSON-LD"
+msgstr "JSON-LD المُصيَّر"
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_schema_preview_wizard
+msgid "SEO Schema Preview"
+msgstr "معاينة مخطط SEO"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_schema_preview_wizard__page_id
+msgid "Website Page"
+msgstr "صفحة الموقع"
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "No template selected."
+msgstr "لم يتم اختيار قالب."
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Select a website page to preview against."
+msgstr "اختر صفحة موقع للمعاينة."
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Render error: %s"
+msgstr "خطأ في التصيير: %s"
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/wizards/seo_schema_preview_wizard.py:0
+msgid "Schema Preview"
+msgstr "معاينة المخطط"
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "Template body is not valid JSON (after placeholder substitution): %s"
+msgstr "نص القالب ليس JSON صالحاً (بعد استبدال الحقول): %s"
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "schema_type field (\"%s\") does not match the @type value inside body (\"%s\"). Update one to match the other."
+msgstr "حقل نوع المخطط (\"%s\") لا يطابق قيمة @type داخل النص (\"%s\"). يرجى تحديث أحدهما ليتطابق مع الآخر."
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/models/seo_schema_template.py:0
+msgid "required_fields_json must be a valid JSON array: %s"
+msgstr "يجب أن تكون required_fields_json مصفوفة JSON صالحة: %s"
+#. module: era_seo_suite
+#: code:addons/era_seo_manager/models/seo_schema_instance.py:0
+msgid "Context overrides must be a valid JSON object: %s"
+msgstr "يجب أن تكون تجاوزات السياق كائن JSON صالح: %s"
+# ---------------------------------------------------------------------------
+# Phase 2 — Settings fields
+# ---------------------------------------------------------------------------
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_schema_engine_enabled
+msgid "Enable JSON-LD Schema Engine"
+msgstr "تفعيل محرك مخطط JSON-LD"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_organization_name
+msgid "Organization Name"
+msgstr "اسم المؤسسة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_legal_name
+msgid "Legal Name"
+msgstr "الاسم القانوني"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_logo_url
+msgid "Logo URL"
+msgstr "رابط الشعار"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_og_image_url
+msgid "Default OG Image URL"
+msgstr "رابط صورة Open Graph الافتراضية"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_default_twitter_handle
+msgid "Twitter Handle"
+msgstr "حساب تويتر"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_facebook
+msgid "Facebook URL"
+msgstr "رابط فيسبوك"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_twitter
+msgid "Twitter URL"
+msgstr "رابط تويتر"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_linkedin
+msgid "LinkedIn URL"
+msgstr "رابط لينكدإن"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_instagram
+msgid "Instagram URL"
+msgstr "رابط إنستغرام"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_social_youtube
+msgid "YouTube URL"
+msgstr "رابط يوتيوب"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_google_site_verification
+msgid "Google Site Verification"
+msgstr "التحقق من موقع Google"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_res_config_settings__era_seo_bing_site_verification
+msgid "Bing Site Verification"
+msgstr "التحقق من موقع Bing"
+# ---------------------------------------------------------------------------
+# Phase 2 — Menu and view labels
+# ---------------------------------------------------------------------------
+#. module: era_seo_suite
+#: model:ir.ui.menu,name:era_seo_manager.menu_website_seo_root
+msgid "SEO"
+msgstr "تحسين محركات البحث"
+#. module: era_seo_suite
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_schema_templates
+msgid "Schema Templates"
+msgstr "قوالب المخططات"
+# ---------------------------------------------------------------------------
+# Phase 3 — Redirect Manager
+# ---------------------------------------------------------------------------
+#. module: era_seo_suite
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirects
+msgid "Redirects"
+msgstr "إعادات التوجيه"
+#. module: era_seo_suite
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirect_log
+msgid "404 Log"
+msgstr "سجل 404"
+#. module: era_seo_suite
+#: model:ir.ui.menu,name:era_seo_manager.menu_seo_redirect_import
+msgid "Import Redirects"
+msgstr "استيراد إعادات التوجيه"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__source_url
+msgid "Source Path"
+msgstr "المسار الأصلي"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__target_url
+msgid "Target"
+msgstr "الوجهة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__redirect_type
+msgid "Type"
+msgstr "النوع"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__is_regex
+msgid "Is Regex"
+msgstr "تعبير نمطي"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__hit_count
+msgid "Hit Count"
+msgstr "عدد الزيارات"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect__last_hit_date
+msgid "Last Hit"
+msgstr "آخر زيارة"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__path
+msgid "Request Path"
+msgstr "مسار الطلب"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__last_seen
+msgid "Last Seen"
+msgstr "آخر ظهور"
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_manager.field_era_seo_redirect_log__is_resolved
+msgid "Resolved"
+msgstr "تم الحل"
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect
+msgid "SEO Redirect"
+msgstr "إعادة توجيه SEO"
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect_log
+msgid "SEO 404 Log"
+msgstr "سجل 404"
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_manager.model_era_seo_redirect_import_wizard
+msgid "SEO Redirect Import Wizard"
+msgstr "معالج استيراد إعادات التوجيه"
+#. module: era_seo_suite
+msgid "Create Redirect"
+msgstr "إنشاء إعادة توجيه"
+#. module: era_seo_suite
+msgid "Mark Resolved"
+msgstr "تحديد كمحلول"
+#. module: era_seo_suite
+msgid "Dry Run"
+msgstr "تشغيل تجريبي"
+#. module: era_seo_suite
+msgid "Block Type"
+msgstr "نوع الكتلة"
+#. module: era_seo_suite
+msgid "Content Blocks"
+msgstr "كتل المحتوى"
+#. module: era_seo_suite
+msgid "Create your first content block"
+msgstr "أنشئ أول كتلة محتوى"
+#. module: era_seo_suite
+msgid "Call to Action"
+msgstr "دعوة لاتخاذ إجراء"
+#. module: era_seo_suite
+msgid "Author Box"
+msgstr "صندوق الكاتب"
+#. module: era_seo_suite
+msgid "Related Posts"
+msgstr "مقالات ذات صلة"
+#. module: era_seo_suite
+msgid "Breadcrumbs"
+msgstr "مسار التنقّل"
+#. module: era_seo_suite
+msgid "Feature Grid"
+msgstr "شبكة المميزات"
+#. module: era_seo_suite
+msgid "Pricing Table"
+msgstr "جدول الأسعار"
+#. module: era_seo_suite
+msgid "Testimonial"
+msgstr "شهادة عميل"
+#. module: era_seo_suite
+msgid "Custom"
+msgstr "مخصّص"
+#. module: era_seo_suite
+msgid "ERA SEO"
+msgstr "ERA SEO"
+#. module: era_seo_suite
+msgid "ERA FAQ"
+msgstr "أسئلة شائعة — ERA"
+#. module: era_seo_suite
+msgid "ERA Breadcrumbs"
+msgstr "مسار التنقّل — ERA"
+#. module: era_seo_suite
+msgid "ERA Call to Action"
+msgstr "دعوة لاتخاذ إجراء — ERA"
+#. module: era_seo_suite
+msgid "ERA Author Box"
+msgstr "صندوق الكاتب — ERA"
+#. module: era_seo_suite
+msgid "ERA Related Posts"
+msgstr "مقالات ذات صلة — ERA"
+#. module: era_seo_suite
+msgid "ERA Feature Grid"
+msgstr "شبكة المميزات — ERA"
+#. module: era_seo_suite
+msgid "ERA Pricing Table"
+msgstr "جدول الأسعار — ERA"
+#. module: era_seo_suite
+msgid "AI Agent"
+msgstr "وكيل الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Auto-Fix"
+msgstr "الإصلاح الآلي بالذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Confidence"
+msgstr "ثقة الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Explanation"
+msgstr "شرح الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Fix Log"
+msgstr "سجل إصلاحات الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Model / Agent"
+msgstr "نموذج/وكيل الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Proposed Translations"
+msgstr "الترجمات المقترحة من الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI Proposed Value"
+msgstr "القيمة المقترحة من الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "AI-Fixable"
+msgstr "قابل للإصلاح بالذكاء"
+#. module: era_seo_suite
+msgid "AI-Fixable Findings"
+msgstr "النتائج القابلة للإصلاح بالذكاء"
+#. module: era_seo_suite
+msgid "AI: Fill SEO"
+msgstr "ذكاء: تعبئة SEO"
+#. module: era_seo_suite
+msgid "AI: Rewrite SEO"
+msgstr "ذكاء: إعادة كتابة SEO"
+#. module: era_seo_suite
+msgid "Apply"
+msgstr "تطبيق"
+#. module: era_seo_suite
+msgid "Apply Fix"
+msgstr "تطبيق الإصلاح"
+#. module: era_seo_suite
+msgid "Applied"
+msgstr "مُطبَّق"
+#. module: era_seo_suite
+msgid "Audit Finding"
+msgstr "نتيجة التدقيق"
+#. module: era_seo_suite
+msgid "Auto-Fix (≥0.8)"
+msgstr "إصلاح آلي (≥0.8)"
+#. module: era_seo_suite
+msgid "Check"
+msgstr "تحقّق"
+#. module: era_seo_suite
+msgid "Check Code"
+msgstr "رمز الفحص"
+#. module: era_seo_suite
+msgid "Confidence"
+msgstr "الثقة"
+#. module: era_seo_suite
+msgid "Enable AI Auto-Fix"
+msgstr "تفعيل الإصلاح الآلي بالذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "Error"
+msgstr "خطأ"
+#. module: era_seo_suite
+msgid "Errors"
+msgstr "الأخطاء"
+#. module: era_seo_suite
+msgid "Explanation"
+msgstr "الشرح"
+#. module: era_seo_suite
+msgid "Failed"
+msgstr "فشل"
+#. module: era_seo_suite
+msgid "Field"
+msgstr "الحقل"
+#. module: era_seo_suite
+msgid "Finding Fix"
+msgstr "إصلاح نتيجة"
+#. module: era_seo_suite
+msgid "Finding Fixes"
+msgstr "إصلاحات النتائج"
+#. module: era_seo_suite
+msgid "Fix Payload (JSON)"
+msgstr "حمولة الإصلاح (JSON)"
+#. module: era_seo_suite
+msgid "Fix Type"
+msgstr "نوع الإصلاح"
+#. module: era_seo_suite
+msgid "Full Fills"
+msgstr "التعبئة الكاملة"
+#. module: era_seo_suite
+msgid "Full SEO Fill"
+msgstr "تعبئة SEO كاملة"
+#. module: era_seo_suite
+msgid "Kind"
+msgstr "النوع"
+#. module: era_seo_suite
+msgid "Model"
+msgstr "النموذج"
+#. module: era_seo_suite
+msgid "No Suggestion"
+msgstr "لا يوجد اقتراح"
+#. module: era_seo_suite
+msgid "Not AI-Fixable"
+msgstr "غير قابل للإصلاح بالذكاء"
+#. module: era_seo_suite
+msgid "Proposed Value"
+msgstr "القيمة المقترحة"
+#. module: era_seo_suite
+msgid "Proposed value"
+msgstr "القيمة المقترحة"
+#. module: era_seo_suite
+msgid "Request"
+msgstr "الطلب"
+#. module: era_seo_suite
+msgid "Response"
+msgstr "الرد"
+#. module: era_seo_suite
+msgid "Suggest"
+msgstr "اقتراح"
+#. module: era_seo_suite
+msgid "Suggest Fix (AI)"
+msgstr "اقترح إصلاحًا (ذكاء)"
+#. module: era_seo_suite
+msgid "Suggest Fixes (AI)"
+msgstr "اقترح إصلاحات (ذكاء)"
+#. module: era_seo_suite
+msgid "Suggested"
+msgstr "مُقترَح"
+#. module: era_seo_suite
+msgid "Target Field"
+msgstr "الحقل المستهدف"
+#. module: era_seo_suite
+msgid "Target ID"
+msgstr "معرّف الهدف"
+#. module: era_seo_suite
+msgid "Target Model"
+msgstr "النموذج المستهدف"
+#. module: era_seo_suite
+msgid "Target URL"
+msgstr "رابط الهدف"
+#. module: era_seo_suite
+msgid "Test Agent"
+msgstr "اختبار الوكيل"
+#. module: era_seo_suite
+msgid "Triggered By"
+msgstr "بدأها"
+#. module: era_seo_suite
+msgid "Generate AI suggestions for every AI-fixable finding and automatically apply the high-confidence ones. Continue?"
+msgstr "توليد اقتراحات الذكاء الاصطناعي لكل نتيجة قابلة للإصلاح وتطبيق عالية الثقة منها تلقائيًا. هل تريد المتابعة؟"
+#. module: era_seo_suite
+msgid "Regenerate every SEO field from the block content, overwriting current values?"
+msgstr "إعادة توليد كل حقول SEO من محتوى الكتلة مع استبدال القيم الحالية؟"
+#. module: era_seo_suite
+msgid "%d fix(es) applied."
+msgstr "تم تطبيق %d إصلاح."
+#. module: era_seo_suite
+msgid "AI suggestions ready for review."
+msgstr "اقتراحات الذكاء الاصطناعي جاهزة للمراجعة."
+#. module: era_seo_suite
+msgid "No AI-fixable findings in this run."
+msgstr "لا توجد نتائج قابلة للإصلاح بالذكاء الاصطناعي في هذا التشغيل."
+#. module: era_seo_suite
+msgid "AI SEO fill requires the SEO Manager group."
+msgstr "تتطلب تعبئة SEO بالذكاء الاصطناعي مجموعة مدير SEO."
+#. module: era_seo_suite
+msgid "AI auto-fix actions require the SEO Manager group."
+msgstr "تتطلب إجراءات الإصلاح الآلي مجموعة مدير SEO."
+#. module: era_seo_suite
+msgid "AI auto-fix is disabled in settings."
+msgstr "الإصلاح الآلي بالذكاء الاصطناعي معطّل في الإعدادات."
+#. module: era_seo_suite
+msgid "AI filled SEO fields on %d record(s) across all website languages."
+msgstr "عبّأ الذكاء الاصطناعي حقول SEO في %d سجل عبر جميع لغات الموقع."
+#. module: era_seo_suite
+msgid "Mechanical fix applied without calling the AI."
+msgstr "تم تطبيق إصلاح آلي دون استدعاء الذكاء الاصطناعي."
+#. module: era_seo_suite
+msgid "AI agent"
+msgstr "وكيل ذكاء اصطناعي"
+#. module: era_seo_suite
+msgid "Attach JSON-LD schema: %s"
+msgstr "إرفاق مخطط JSON-LD: %s"
+#. module: era_seo_suite
+msgid "Sets the Open Graph image so shared links render a card."
+msgstr "يضبط صورة Open Graph حتى تظهر الروابط المشاركة كبطاقة."
+#. module: era_seo_suite
+msgid "No images without alt text were found on the page."
+msgstr "لم يتم العثور على صور بدون نص بديل في الصفحة."
+#. module: era_seo_suite
+msgid "No company logo is configured to use as the OG image."
+msgstr "لا يوجد شعار للشركة لاستخدامه كصورة OG."
+#. module: era_seo_suite
+msgid "Subtitle"
+msgstr "العنوان الفرعي"
+#. module: era_seo_suite
+msgid "Excerpt"
+msgstr "المقتطف"
+#. module: era_seo_suite
+msgid "Excerpt (effective)"
+msgstr "المقتطف (الفعلي)"
+#. module: era_seo_suite
+msgid "Word Count"
+msgstr "عدد الكلمات"
+#. module: era_seo_suite
+msgid "Reading Time (min)"
+msgstr "وقت القراءة (دقيقة)"
+#. module: era_seo_suite
+msgid "Read (min)"
+msgstr "القراءة (دقيقة)"
+#. module: era_seo_suite
+msgid "Reading Stats"
+msgstr "إحصاءات القراءة"
+#. module: era_seo_suite
+msgid "Table of Contents"
+msgstr "جدول المحتويات"
+#. module: era_seo_suite
+msgid "Auto-Generated Table of Contents"
+msgstr "جدول محتويات مُولّد تلقائيًا"
+#. module: era_seo_suite
+msgid "ERA Blog"
+msgstr "مدونة ERA"
+#. module: era_seo_suite
+msgid "ERA SEO"
+msgstr "ERA SEO"
+#. module: era_seo_suite
+msgid "Editorial"
+msgstr "التحرير"
+#. module: era_seo_suite
+msgid "Taxonomy"
+msgstr "التصنيف"
+#. module: era_seo_suite
+msgid "Display"
+msgstr "العرض"
+#. module: era_seo_suite
+msgid "Category"
+msgstr "التصنيف"
+#. module: era_seo_suite
+msgid "Categories"
+msgstr "التصنيفات"
+#. module: era_seo_suite
+msgid "Parent Category"
+msgstr "التصنيف الأب"
+#. module: era_seo_suite
+msgid "Series"
+msgstr "السلسلة"
+#. module: era_seo_suite
+msgid "Series Navigation"
+msgstr "تنقّل السلسلة"
+#. module: era_seo_suite
+msgid "Position in Series"
+msgstr "الترتيب في السلسلة"
+#. module: era_seo_suite
+msgid "Previous in Series"
+msgstr "السابق في السلسلة"
+#. module: era_seo_suite
+msgid "Next in Series"
+msgstr "التالي في السلسلة"
+#. module: era_seo_suite
+msgid "Posts in Series"
+msgstr "مقالات السلسلة"
+#. module: era_seo_suite
+msgid "Related Posts"
+msgstr "مقالات ذات صلة"
+#. module: era_seo_suite
+msgid "Related Posts (auto-computed)"
+msgstr "مقالات ذات صلة (محسوبة تلقائيًا)"
+#. module: era_seo_suite
+msgid "Author Profile"
+msgstr "ملف الكاتب"
+#. module: era_seo_suite
+msgid "Authors"
+msgstr "الكُتّاب"
+#. module: era_seo_suite
+msgid "Bio"
+msgstr "نبذة"
+#. module: era_seo_suite
+msgid "Role / Title"
+msgstr "الدور / المسمى"
+#. module: era_seo_suite
+msgid "Linked User"
+msgstr "المستخدم المرتبط"
+#. module: era_seo_suite
+msgid "Personal Website"
+msgstr "الموقع الشخصي"
+#. module: era_seo_suite
+msgid "Cover Image"
+msgstr "صورة الغلاف"
+#. module: era_seo_suite
+msgid "Cover Image URL"
+msgstr "رابط صورة الغلاف"
+#. module: era_seo_suite
+msgid "FAQ Entries"
+msgstr "مدخلات الأسئلة الشائعة"
+#. module: era_seo_suite
+msgid "Question"
+msgstr "السؤال"
+#. module: era_seo_suite
+msgid "Answer"
+msgstr "الإجابة"
+#. module: era_seo_suite
+msgid "Slug"
+msgstr "اللاحقة (Slug)"
+#. module: era_seo_suite
+msgid "Post Count"
+msgstr "عدد المقالات"
+#. module: era_seo_suite
+msgid "Canonical (External)"
+msgstr "الرابط القانوني (خارجي)"
+#. module: era_seo_suite
+msgid "Title & Description"
+msgstr "العنوان والوصف"
+#. module: era_seo_suite
+msgid "Title length (chars)"
+msgstr "طول العنوان (أحرف)"
+#. module: era_seo_suite
+msgid "Description length (chars)"
+msgstr "طول الوصف (أحرف)"
+#. module: era_seo_suite
+msgid "Indexing & Canonical"
+msgstr "الفهرسة والرابط القانوني"
+#. module: era_seo_suite
+msgid "Show TOC"
+msgstr "إظهار جدول المحتويات"
+#. module: era_seo_suite
+msgid "Show Author Box"
+msgstr "إظهار صندوق الكاتب"
+#. module: era_seo_suite
+msgid "Show Related Posts"
+msgstr "إظهار المقالات ذات الصلة"
+#. module: era_seo_suite
+msgid "Show Share Buttons"
+msgstr "إظهار أزرار المشاركة"
+#. module: era_seo_suite
+msgid "AI: Fill SEO"
+msgstr "ذكاء: تعبئة SEO"
+#. module: era_seo_suite
+msgid "AI: Rewrite SEO"
+msgstr "ذكاء: إعادة كتابة SEO"
+#. module: era_seo_suite
+msgid "Regenerate every SEO field from the post content, overwriting current values?"
+msgstr "إعادة توليد كل حقول SEO من محتوى المقال مع استبدال القيم الحالية؟"
+#. module: era_seo_suite
+msgid "AI Crawler (GEO)"
+msgstr "زاحف ذكاء اصطناعي (GEO)"
+#. module: era_seo_suite
+msgid "AI Crawlers"
+msgstr "زواحف الذكاء الاصطناعي"
+#. module: era_seo_suite
+msgid "GEO (AI Engines)"
+msgstr "GEO (محركات الذكاء)"
+#. module: era_seo_suite
+msgid "Manage AI Crawlers"
+msgstr "إدارة زواحف الذكاء"
+#. module: era_seo_suite
+msgid "User-Agent Token"
+msgstr "رمز User-Agent"
+#. module: era_seo_suite
+msgid "Vendor"
+msgstr "المزوّد"
+#. module: era_seo_suite
+msgid "Purpose"
+msgstr "الغرض"
+#. module: era_seo_suite
+msgid "Allowed"
+msgstr "مسموح"
+#. module: era_seo_suite
+msgid "Blocked"
+msgstr "محظور"
+#. module: era_seo_suite
+msgid "Docs URL"
+msgstr "رابط التوثيق"
+#. module: era_seo_suite
+msgid "Search / Answer"
+msgstr "بحث / إجابة"
+#. module: era_seo_suite
+msgid "Model Training"
+msgstr "تدريب النماذج"
+#. module: era_seo_suite
+msgid "Search & Training"
+msgstr "بحث وتدريب"
+#. module: era_seo_suite
+msgid "Other"
+msgstr "أخرى"
+#. module: era_seo_suite
+msgid "ERA GEO — Generative Engine Optimization"
+msgstr "ERA GEO — تحسين محركات الإجابة التوليدية"
+#. module: era_seo_suite
+msgid "Publish /llms.txt"
+msgstr "نشر /llms.txt"
+#. module: era_seo_suite
+msgid "Site Summary (llms.txt)"
+msgstr "ملخّص الموقع (llms.txt)"
+#. module: era_seo_suite
+msgid "Max Items in /llms.txt"
+msgstr "أقصى عدد عناصر في /llms.txt"
+#. module: era_seo_suite
+msgid "Include Blog in /llms.txt"
+msgstr "تضمين المدونة في /llms.txt"
+#. module: era_seo_suite
+msgid "Open /llms.txt"
+msgstr "فتح /llms.txt"
+#. module: era_seo_suite
+msgid "No AI crawlers yet"
+msgstr "لا توجد زواحف ذكاء بعد"
+#. module: era_seo_suite
+msgid "GEO Answer Summary"
+msgstr "ملخّص الإجابة (GEO)"
+#. module: era_seo_suite
+msgid "GEO Key Takeaways"
+msgstr "نقاط رئيسية (GEO)"
+#. module: era_seo_suite
+msgid "GEO"
+msgstr "GEO"
+#. module: era_seo_suite
+msgid "Key Takeaways"
+msgstr "النقاط الرئيسية"
+#. module: era_seo_suite
+msgid "GSC"
+msgstr "GSC"
+#. module: era_seo_suite
+msgid "GSC Accounts"
+msgstr "حسابات GSC"
+#. module: era_seo_suite
+msgid "GSC Sites"
+msgstr "مواقع GSC"
+#. module: era_seo_suite
+msgid "GSC Queries"
+msgstr "استعلامات GSC"
+#. module: era_seo_suite
+msgid "GSC Account"
+msgstr "حساب GSC"
+#. module: era_seo_suite
+msgid "GSC Site"
+msgstr "موقع GSC"
+#. module: era_seo_suite
+msgid "GSC Search Query"
+msgstr "استعلام بحث GSC"
+#. module: era_seo_suite
+msgid "Accounts"
+msgstr "الحسابات"
+#. module: era_seo_suite
+msgid "Sites"
+msgstr "المواقع"
+#. module: era_seo_suite
+msgid "Queries"
+msgstr "الاستعلامات"
+#. module: era_seo_suite
+msgid "Connect with Google"
+msgstr "اتصال بـ Google"
+#. module: era_seo_suite
+msgid "Re-authorize"
+msgstr "إعادة المصادقة"
+#. module: era_seo_suite
+msgid "Discover Sites"
+msgstr "اكتشاف المواقع"
+#. module: era_seo_suite
+msgid "Pull All Now"
+msgstr "سحب الكل الآن"
+#. module: era_seo_suite
+msgid "Pull Now"
+msgstr "سحب الآن"
+#. module: era_seo_suite
+msgid "Connected"
+msgstr "متصل"
+#. module: era_seo_suite
+msgid "Not Connected"
+msgstr "غير متصل"
+#. module: era_seo_suite
+msgid "Error"
+msgstr "خطأ"
+#. module: era_seo_suite
+msgid "Google Email"
+msgstr "بريد Google"
+#. module: era_seo_suite
+msgid "Site URL"
+msgstr "رابط الموقع"
+#. module: era_seo_suite
+msgid "Permission Level"
+msgstr "مستوى الصلاحية"
+#. module: era_seo_suite
+msgid "Last Pulled"
+msgstr "آخر سحب"
+#. module: era_seo_suite
+msgid "Date"
+msgstr "التاريخ"
+#. module: era_seo_suite
+msgid "Query"
+msgstr "الاستعلام"
+#. module: era_seo_suite
+msgid "Clicks"
+msgstr "النقرات"
+#. module: era_seo_suite
+msgid "Impressions"
+msgstr "مرات الظهور"
+#. module: era_seo_suite
+msgid "CTR"
+msgstr "CTR"
+#. module: era_seo_suite
+msgid "Position"
+msgstr "الموضع"
+#. module: era_seo_suite
+msgid "Last 7 Days"
+msgstr "آخر 7 أيام"
+#. module: era_seo_suite
+msgid "Last 28 Days"
+msgstr "آخر 28 يومًا"
+#. module: era_seo_suite
+msgid "Pull Window (days)"
+msgstr "نافذة السحب (أيام)"
+#. module: era_seo_suite
+msgid "OAuth Client"
+msgstr "عميل OAuth"
+#. module: era_seo_suite
+msgid "OAuth Client ID"
+msgstr "معرّف عميل OAuth"
+#. module: era_seo_suite
+msgid "OAuth Client Secret"
+msgstr "كلمة سر عميل OAuth"
+#. module: era_seo_suite
+msgid "Last Error"
+msgstr "آخر خطأ"
+#. module: era_seo_suite
+msgid "Google Search Console"
+msgstr "Google Search Console"
+#. module: era_seo_suite
+msgid "Pull search performance from Google Search Console."
+msgstr "اسحب بيانات أداء البحث من Google Search Console."
+#. module: era_seo_suite
+msgid "OAuth 2.0 Client (Web application) from Google Cloud Console — Credentials."
+msgstr "عميل OAuth 2.0 (تطبيق ويب) من Google Cloud Console — قسم Credentials."
+#. module: era_seo_suite
+msgid "How many days of search analytics each pull fetches. GSC data is ~2 days delayed."
+msgstr "عدد الأيام التي يجلبها كل سحب من تحليلات البحث. بيانات GSC متأخّرة بنحو يومين."
+#. module: era_seo_suite
+msgid "Authorized Redirect URI"
+msgstr "رابط Redirect المعتَمد"
+#. module: era_seo_suite
+msgid "Show setup guide"
+msgstr "عرض دليل الإعداد"
+#. module: era_seo_suite
+msgid "Open Google Cloud Console and create (or pick) a project."
+msgstr "افتح Google Cloud Console وأنشئ مشروعًا (أو اختر مشروعًا موجودًا)."
+#. module: era_seo_suite
+msgid "Under APIs & Services → Library, enable the Search Console API."
+msgstr "من APIs & Services → Library فعّل Search Console API."
+#. module: era_seo_suite
+msgid "Configure the OAuth consent screen (Internal or External)."
+msgstr "اضبط شاشة موافقة OAuth (Internal أو External)."
+#. module: era_seo_suite
+msgid "Under Credentials, create an OAuth client ID — Web application."
+msgstr "من Credentials أنشئ OAuth client ID نوع Web application."
+#. module: era_seo_suite
+msgid "Add the Redirect URI shown above to \"Authorized redirect URIs\" — exact match, including https and no trailing slash."
+msgstr "أضف الـ Redirect URI الظاهر أعلاه إلى \"Authorized redirect URIs\" — مطابقة تامة، بما يشمل https وعدم وجود / في النهاية."
+#. module: era_seo_suite
+msgid "Paste the Client ID and Client Secret in the fields above and save."
+msgstr "الصق Client ID و Client Secret في الحقول أعلاه ثم احفظ."
+#. module: era_seo_suite
+msgid "Go to Website → SEO → GSC → Accounts → New, then click \"Connect with Google\"."
+msgstr "اذهب إلى Website → SEO → GSC → Accounts → New ثم اضغط \"Connect with Google\"."
+

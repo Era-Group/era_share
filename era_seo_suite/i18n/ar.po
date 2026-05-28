@@ -29,6 +29,12 @@ msgstr ""
 
 #. module: era_seo_suite
 #. odoo-python
+#: code:addons/era_seo_suite/wizards/seo_suite_onboarding_wizard.py:0
+msgid "(could not render the AI-crawler block — install or enable the GEO module first)"
+msgstr "(تعذّر توليد قسم زواحف AI — ثبّت أو فعّل وحدة GEO أولاً)"
+
+#. module: era_seo_suite
+#. odoo-python
 #: code:addons/era_seo_suite/models/seo_redirect.py:0
 msgid "(gone)"
 msgstr ""
@@ -152,10 +158,10 @@ msgid "308 — Permanent (Strict Method)"
 msgstr "308 — دائم (Method صارم)"
 
 #. module: era_seo_suite
-#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__ai
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__robots
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "4. AI Auto-Fix"
-msgstr "٤. الإصلاح التلقائي بالذكاء الاصطناعي"
+msgid "4. Robots & AI Crawlers"
+msgstr "٤. Robots وزواحف الذكاء الاصطناعي"
 
 #. module: era_seo_suite
 #: model:ir.actions.act_window,name:era_seo_suite.action_seo_redirect_log
@@ -187,24 +193,25 @@ msgid "410 — Gone (No Target)"
 msgstr "410 — محذوف (بدون هدف)"
 
 #. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__ai
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "5. AI Auto-Fix"
+msgstr "٥. الإصلاح التلقائي بالذكاء الاصطناعي"
+
+#. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__geo
 msgid "5. GEO (/llms.txt)"
 msgstr "٥. GEO (/llms.txt)"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "5. GEO — Generative Engine Optimization"
-msgstr "٥. GEO — تحسين محركات الذكاء الاصطناعي"
+msgid "6. GEO — Generative Engine Optimization"
+msgstr "٦. GEO — تحسين محركات الذكاء الاصطناعي"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__gsc
 msgid "6. Google Search Console"
 msgstr "٦. Google Search Console"
-
-#. module: era_seo_suite
-#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "6. Google Search Console (optional)"
-msgstr "٦. Google Search Console (اختياري)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__bulk_ai
@@ -213,8 +220,13 @@ msgstr "٧. التعبئة المجمّعة بالذكاء الاصطناعي"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "7. AI Bulk Fill (optional)"
-msgstr "٧. التعبئة المجمّعة بالذكاء الاصطناعي (اختياري)"
+msgid "7. Google Search Console (optional)"
+msgstr "٧. Google Search Console (اختياري)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "8. AI Bulk Fill (optional)"
+msgstr "٨. التعبئة المجمّعة بالذكاء الاصطناعي (اختياري)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__step__blog
@@ -223,8 +235,13 @@ msgstr "٨. إعداد المدونة"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "8. Blog setup (optional)"
-msgstr "٨. إعداد المدونة (اختياري)"
+msgid "9. Blog setup (optional)"
+msgstr "٩. إعداد المدونة (اختياري)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "<b>Crawlers seeded:</b>"
+msgstr ""
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
@@ -253,7 +270,7 @@ msgstr ""
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
-msgid "<span class=\"badge text-bg-light\" invisible=\"step == 'welcome'\">Welcome</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'welcome'\">Welcome</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org']\">1. Organization</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'org'\">1. Organization</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social']\">2. Social</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'social'\">2. Social</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema']\">3. Schema</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'schema'\">3. Schema</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'ai']\">4. AI</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'ai'\">4. AI</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo']\">5. GEO</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'geo'\">5. GEO</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc']\">6. GSC</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'gsc'\">6. GSC</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai']\">7. AI Bulk Fill</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'bulk_ai'\">7. AI Bulk Fill</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']\">8. Blog</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'blog'\">8. Blog</span>\n\n            <span class=\"badge text-bg-success\" invisible=\"step != 'done'\">Done</span>"
+msgid "<span class=\"badge text-bg-light\" invisible=\"step == 'welcome'\">Welcome</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'welcome'\">Welcome</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org']\">1. Organization</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'org'\">1. Organization</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social']\">2. Social</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'social'\">2. Social</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema']\">3. Schema</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'schema'\">3. Schema</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots']\">4. Robots</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'robots'\">4. Robots</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai']\">5. AI</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'ai'\">5. AI</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo']\">6. GEO</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'geo'\">6. GEO</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc']\">7. GSC</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'gsc'\">7. GSC</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai']\">8. AI Bulk Fill</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'bulk_ai'\">8. AI Bulk Fill</span>\n\n            <span class=\"badge text-bg-light\" invisible=\"step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']\">9. Blog</span>\n            <span class=\"badge text-bg-primary\" invisible=\"step != 'blog'\">9. Blog</span>\n\n            <span class=\"badge text-bg-success\" invisible=\"step != 'done'\">Done</span>"
 msgstr ""
 
 #. module: era_seo_suite
@@ -839,6 +856,11 @@ msgid "All websites"
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Allow all AI bots"
+msgstr "اسمح بكل زواحف AI"
+
+#. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_blog_post__seo_robots_archive
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_blog_author__seo_robots_archive
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_blog_category__seo_robots_archive
@@ -1180,6 +1202,26 @@ msgstr "السيرة"
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_content_block__block_type
 msgid "Block Type"
 msgstr "نوع الكتلة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Block every crawler whose purpose is search/answer (or search+training)? — usually NOT what you want; SEO suffers."
+msgstr "حجب كل زاحف غرضه البحث/الإجابة (أو search+training)؟ — عادةً ليست الرغبة الفعلية؛ يتضرر الـ SEO."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Block every crawler whose purpose is training (or search+training)?"
+msgstr "حجب كل زاحف غرضه التدريب (أو search+training)؟"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Block search/answer bots"
+msgstr "احجب زواحف البحث/الإجابة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Block training-only bots"
+msgstr "احجب زواحف التدريب فقط"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_geo_ai_crawler_search
@@ -1641,6 +1683,12 @@ msgstr "صورة الغلاف"
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_blog_series__cover_image_url
 msgid "Cover Image URL"
 msgstr ""
+
+#. module: era_seo_suite
+#. odoo-python
+#: code:addons/era_seo_suite/wizards/seo_suite_onboarding_wizard.py:0
+msgid "Crawler model not installed yet."
+msgstr "موديل الزواحف غير مُنصَّب بعد."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
@@ -3357,6 +3405,11 @@ msgid "LinkedIn URL"
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Live robots.txt preview"
+msgstr "معاينة robots.txt المباشرة"
+
+#. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_schema_template__category__local
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_schema_template_search
 msgid "Local"
@@ -3391,6 +3444,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Manage every SEO surface from here. Buttons open the existing\n                lists; closing them returns you to this hub."
 msgstr ""
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Manage individually"
+msgstr "إدارة فردية"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_redirect__created_from__manual
@@ -4727,6 +4785,31 @@ msgid "Reusable, schema-aware blocks for the website builder snippets."
 msgstr ""
 
 #. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_allowed
+msgid "Robots Count Allowed"
+msgstr ""
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_blocked
+msgid "Robots Count Blocked"
+msgstr ""
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_search_allowed
+msgid "Robots Count Search Allowed"
+msgstr ""
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_total
+msgid "Robots Count Total"
+msgstr ""
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_count_training_allowed
+msgid "Robots Count Training Allowed"
+msgstr ""
+
+#. module: era_seo_suite
 #: model:ir.model,name:era_seo_suite.model_era_seo_robots_rule
 msgid "Robots.txt Rule"
 msgstr ""
@@ -5668,7 +5751,7 @@ msgstr ""
 
 #. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_redirect__target_url
-msgid "The destination path or full URL. May contain backreferences (\\\\\\\\1, \\\\\\\\2, ...) when \"Is Regex\" is set. Required for all redirect types except 410 (Gone)."
+msgid "The destination path or full URL. May contain backreferences (\\\\1, \\\\2, ...) when \"Is Regex\" is set. Required for all redirect types except 410 (Gone)."
 msgstr ""
 
 #. module: era_seo_suite
@@ -5818,8 +5901,13 @@ msgid "Total rows parsed: %d"
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Training-only bots currently allowed:"
+msgstr "زواحف التدريب فقط المسموحة حالياً:"
+
+#. module: era_seo_suite
 #: model:ir.model.fields,help:era_seo_suite.field_era_seo_redirect__is_regex
-msgid "Treat Source Path as a Python regex. Backreferences in Target (e.g. \\\\\\\\1) are substituted from regex capture groups."
+msgid "Treat Source Path as a Python regex. Backreferences in Target (e.g. \\\\1) are substituted from regex capture groups."
 msgstr ""
 
 #. module: era_seo_suite
@@ -6256,6 +6344,11 @@ msgid "YouTube URL"
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Your <code>robots.txt</code> is served automatically and already\n            allows search engines. The suite adds an AI-crawler block —\n            review and adjust who's allowed to read your site."
+msgstr "يتم تقديم <code>robots.txt</code> تلقائياً ويسمح أصلاً لمحركات البحث. تضيف الحزمة قسماً لزواحف الذكاء الاصطناعي — راجع واضبط من المسموح له بقراءة موقعك."
+
+#. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.res_config_settings_view_era_seo
 msgid "Your company's Twitter/X account. Must start with @. Used in twitter:site and twitter:creator meta tags. Example: @mycompany"
 msgstr ""
@@ -6287,6 +6380,11 @@ msgid "active"
 msgstr ""
 
 #. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "allowed,"
+msgstr ""
+
+#. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "and create (or pick) a project."
 msgstr ""
@@ -6304,6 +6402,11 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "blank = reuse the AI agent's OpenAI key"
+msgstr ""
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "blocked."
 msgstr ""
 
 #. module: era_seo_suite
@@ -6536,6 +6639,16 @@ msgid "required_fields_json must be a valid JSON array: %s"
 msgstr ""
 
 #. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_url
+msgid "robots.txt URL"
+msgstr "رابط robots.txt"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__robots_preview
+msgid "robots.txt preview (live)"
+msgstr "معاينة robots.txt المباشرة"
+
+#. module: era_seo_suite
 #. odoo-python
 #: code:addons/era_seo_suite/models/seo_schema_template.py:0
 msgid "schema_type field (\"%s\") does not match the @type value inside body (\"%s\"). Update one to match the other."
@@ -6566,6 +6679,11 @@ msgstr ""
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "to create one (or use Odoo's seeded \"Ask AI\" agent)."
+msgstr ""
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "total —"
 msgstr ""
 
 #. module: era_seo_suite
@@ -6601,6 +6719,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_res_config_settings_era_gsc
 msgid "xxxxxxxx.apps.googleusercontent.com"
+msgstr ""
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "· Search / answer bots currently allowed:"
 msgstr ""
 
 #. module: era_seo_suite

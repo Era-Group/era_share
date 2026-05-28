@@ -53,7 +53,7 @@
         <field name="vendor"/>
         <filter name="allowed" string="Allowed" domain="[('allowed','=',True)]"/>
         <filter name="blocked" string="Blocked" domain="[('allowed','=',False)]"/>
-        <group string="Group By">
+        <group>
           <filter name="group_vendor" string="Vendor" context="{'group_by': 'vendor'}"/>
           <filter name="group_purpose" string="Purpose" context="{'group_by': 'purpose'}"/>
         </group>

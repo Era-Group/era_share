@@ -224,3 +224,22 @@ class EraSeoSuiteHub(models.Model):
             'target': 'inline',
             'context': {'module': 'website'},
         }
+
+    def action_run_audit_now(self):
+        """Create a fresh SEO + GEO audit run, execute it, open the result.
+
+        Synchronous; for large sites this may take a few seconds. The run
+        scans every published website.page and stores findings on
+        ``era.seo.audit.run``.
+        """
+        self.ensure_one()
+        run = self.env['era.seo.audit.run'].create({})
+        run._run_audit()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Audit Run'),
+            'res_model': 'era.seo.audit.run',
+            'res_id': run.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

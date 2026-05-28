@@ -209,3 +209,15 @@ msgstr "الإصلاح الآلي بالذكاء"
 #. module: era_seo_suite
 msgid "GEO — /llms.txt"
 msgstr "GEO — /llms.txt"
+
+#. module: era_seo_suite
+msgid "Run Audit Now"
+msgstr "تشغيل التدقيق الآن"
+
+#. module: era_seo_suite
+msgid "Run a fresh SEO + GEO audit now? This scans every published page and may take a few seconds."
+msgstr "تشغيل تدقيق SEO + GEO جديد الآن؟ يفحص كل صفحة منشورة وقد يستغرق ثوانٍ معدودة."
+
+#. module: era_seo_suite
+msgid "Audit Run"
+msgstr "تشغيل تدقيق"

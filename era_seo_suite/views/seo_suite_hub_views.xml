@@ -6,6 +6,10 @@
     <field name="arch" type="xml">
       <form create="0" delete="0" duplicate="0" js_class="form">
         <header>
+          <button name="action_run_audit_now" type="object"
+                  string="Run Audit Now" icon="fa-play-circle"
+                  class="btn-primary"
+                  confirm="Run a fresh SEO + GEO audit now? This scans every published page and may take a few seconds."/>
           <button name="action_refresh" type="object"
                   string="Refresh" icon="fa-refresh" class="btn-secondary"/>
         </header>

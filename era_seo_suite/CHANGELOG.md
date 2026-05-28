@@ -1,5 +1,14 @@
 # Changelog
 
+## [19.0.1.1.0] — 2026-05-28
+
+### Added — Run Audit Now button on the hub header
+
+A primary button next to **Refresh** that creates an `era.seo.audit.run`,
+executes `_run_audit` synchronously, and opens the resulting run form so
+the findings are one click away. Confirm dialog warns the run scans every
+published page and may take a few seconds.
+
 ## [19.0.1.0.0] — 2026-05-28
 
 ### Added — unified hub (top-level app)

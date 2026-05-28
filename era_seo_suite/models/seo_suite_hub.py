@@ -1062,12 +1062,15 @@ class EraSeoSuiteHub(models.Model):
         size = (ICP.get_param('era_seo.image_size', '1792x1024') or '1792x1024').strip()
 
         def _call(call_prompt, call_model, call_size):
+            # `response_format` is rejected by gpt-image-1 and some
+            # account tiers ("Unknown parameter: 'response_format'").
+            # Omit it — the API picks its default (URL for dall-e-*,
+            # b64_json for gpt-image-1) and we accept either below.
             body = {
                 'model': call_model,
                 'prompt': call_prompt[:4000],
                 'n': 1,
                 'size': call_size,
-                'response_format': 'b64_json',
             }
             try:
                 r = _requests.post(
@@ -1076,22 +1079,36 @@ class EraSeoSuiteHub(models.Model):
                         'Authorization': 'Bearer %s' % api_key,
                         'Content-Type': 'application/json',
                     },
-                    json=body, timeout=60,
+                    json=body, timeout=120,
                 )
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('image-gen openai: network error: %s', exc)
                 return None, None
             if r.status_code >= 400:
-                # Surface the OpenAI error body — without it a 400 is
-                # opaque ("content policy"? "invalid size"? "model not
-                # available for your account"?).
                 detail = (r.text or '')[:500].replace('\n', ' ')
                 return None, detail
             try:
-                return _base64.b64decode(r.json()['data'][0]['b64_json']), None
+                item = r.json()['data'][0]
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('image-gen openai: malformed 2xx response: %s', exc)
                 return None, None
+            # Both response shapes from /v1/images/generations.
+            if item.get('b64_json'):
+                try:
+                    return _base64.b64decode(item['b64_json']), None
+                except Exception as exc:  # noqa: BLE001
+                    _logger.warning('image-gen openai: bad b64: %s', exc)
+                    return None, None
+            if item.get('url'):
+                try:
+                    dl = _requests.get(item['url'], timeout=60)
+                    dl.raise_for_status()
+                    return dl.content, None
+                except Exception as exc:  # noqa: BLE001
+                    _logger.warning(
+                        'image-gen openai: image download failed: %s', exc)
+                    return None, None
+            return None, 'no b64_json or url in response'
 
         # First attempt with admin-configured prompt + model + size.
         image_bytes, err_detail = _call(prompt, model, size)

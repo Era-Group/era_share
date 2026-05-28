@@ -199,6 +199,13 @@
                          invisible="not setting_ai_enabled"/>
                 </group>
               </group>
+              <div class="text-muted small mb-3" invisible="not setting_ai_enabled">
+                The agent carries the provider, model, and API key — all configured in the
+                <b>AI</b> app (Odoo Enterprise). Leave the picker empty to fall back to the
+                site's "Ask AI" agent. The SEO house-style rules are sent with every
+                request, so a generic agent works fine. To pick or test the agent, open
+                <i>Website → Configuration → Settings → ERA SEO — AI Auto-Fix</i>.
+              </div>
 
               <group string="GEO — /llms.txt &amp; AI crawlers">
                 <group>
@@ -224,6 +231,20 @@
                   <field name="setting_gsc_pull_window"/>
                 </group>
               </group>
+              <details class="mb-3">
+                <summary class="text-primary small" style="cursor: pointer;">
+                  Show GSC setup guide (one-time)
+                </summary>
+                <ol class="ps-3 mt-2 small text-muted">
+                  <li>Open <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> and create (or pick) a project.</li>
+                  <li>Under <b>APIs &amp; Services → Library</b>, enable <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com" target="_blank">Search Console API</a>.</li>
+                  <li>Configure the OAuth consent screen (Internal or External).</li>
+                  <li>Under <b>Credentials</b>, create an OAuth client ID — <b>Web application</b>.</li>
+                  <li>Add the <b>Authorized Redirect URI</b> shown above to the OAuth client — exact match, including https and no trailing slash.</li>
+                  <li>Paste the Client ID and Client Secret into the fields above and save.</li>
+                  <li>Open <i>ERA SEO Suite → GSC → Accounts → New</i>, then click <b>Connect with Google</b>.</li>
+                </ol>
+              </details>
             </page>
 
             <!-- ============================== GUIDE ============================== -->

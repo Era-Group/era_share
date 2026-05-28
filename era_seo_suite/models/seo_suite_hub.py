@@ -113,60 +113,86 @@ class EraSeoSuiteHub(models.Model):
 
     # --- Organization
     setting_org_name = fields.Char(
-        string='Organization Name', compute='_compute_settings', inverse='_inverse_settings')
+        string='Organization Name', compute='_compute_settings', inverse='_inverse_settings',
+        help='Your organization name. Used in Organization JSON-LD and Twitter site tags.')
     setting_legal_name = fields.Char(
-        string='Legal Name', compute='_compute_settings', inverse='_inverse_settings')
+        string='Legal Name', compute='_compute_settings', inverse='_inverse_settings',
+        help='Legal entity name. Used in Organization JSON-LD when different from the brand.')
     setting_logo_url = fields.Char(
-        string='Logo URL', compute='_compute_settings', inverse='_inverse_settings')
+        string='Logo URL', compute='_compute_settings', inverse='_inverse_settings',
+        help='Absolute URL to the organization logo image. Renders into Organization JSON-LD.')
     setting_og_image_url = fields.Char(
-        string='Default OG Image URL', compute='_compute_settings', inverse='_inverse_settings')
+        string='Default OG Image URL', compute='_compute_settings', inverse='_inverse_settings',
+        help='Absolute URL to the default Open Graph image, used when a page has no per-page OG image.')
     setting_twitter_handle = fields.Char(
-        string='Twitter Handle', compute='_compute_settings', inverse='_inverse_settings')
+        string='Twitter Handle', compute='_compute_settings', inverse='_inverse_settings',
+        help='Must start with @, e.g. @era. Used in twitter:site meta + Organization JSON-LD.')
     setting_google_verify = fields.Char(
-        string='Google Site Verification', compute='_compute_settings', inverse='_inverse_settings')
+        string='Google Site Verification', compute='_compute_settings', inverse='_inverse_settings',
+        help='Value of the "content" attribute from Google Search Console\'s HTML meta verification tag.')
     setting_bing_verify = fields.Char(
-        string='Bing Site Verification', compute='_compute_settings', inverse='_inverse_settings')
+        string='Bing Site Verification', compute='_compute_settings', inverse='_inverse_settings',
+        help='Value of the "content" attribute from Bing Webmaster Tools\' meta verification tag.')
     setting_schema_engine = fields.Boolean(
-        string='Schema Engine Enabled', compute='_compute_settings', inverse='_inverse_settings')
+        string='Schema Engine Enabled', compute='_compute_settings', inverse='_inverse_settings',
+        help='Master switch for the JSON-LD schema engine. When off, the engine emits nothing.')
 
     # --- Social
     setting_social_facebook = fields.Char(
-        string='Facebook', compute='_compute_settings', inverse='_inverse_settings')
+        string='Facebook', compute='_compute_settings', inverse='_inverse_settings',
+        help='Full URL to your Facebook page. Joins sameAs[] in Organization JSON-LD.')
     setting_social_twitter = fields.Char(
-        string='Twitter / X', compute='_compute_settings', inverse='_inverse_settings')
+        string='Twitter / X', compute='_compute_settings', inverse='_inverse_settings',
+        help='Full URL to your Twitter/X profile. Joins sameAs[] in Organization JSON-LD.')
     setting_social_linkedin = fields.Char(
-        string='LinkedIn', compute='_compute_settings', inverse='_inverse_settings')
+        string='LinkedIn', compute='_compute_settings', inverse='_inverse_settings',
+        help='Full URL to your LinkedIn company page. Joins sameAs[] in Organization JSON-LD.')
     setting_social_instagram = fields.Char(
-        string='Instagram', compute='_compute_settings', inverse='_inverse_settings')
+        string='Instagram', compute='_compute_settings', inverse='_inverse_settings',
+        help='Full URL to your Instagram profile. Joins sameAs[] in Organization JSON-LD.')
     setting_social_youtube = fields.Char(
-        string='YouTube', compute='_compute_settings', inverse='_inverse_settings')
+        string='YouTube', compute='_compute_settings', inverse='_inverse_settings',
+        help='Full URL to your YouTube channel. Joins sameAs[] in Organization JSON-LD.')
 
     # --- AI
     setting_ai_enabled = fields.Boolean(
-        string='AI Auto-Fix Enabled', compute='_compute_settings', inverse='_inverse_settings')
+        string='AI Auto-Fix Enabled', compute='_compute_settings', inverse='_inverse_settings',
+        help='Master switch. When off, all AI buttons hide and no AI calls happen.')
     setting_ai_agent_name = fields.Char(
-        string='AI Agent (current)', compute='_compute_ai_agent_name', readonly=True)
+        string='AI Agent (current)', compute='_compute_ai_agent_name', readonly=True,
+        help='The AI agent that answers Suggest/Apply requests. To change it or test it, '
+             'open Website → Configuration → Settings → ERA SEO — AI Auto-Fix.')
 
     # --- GEO
     setting_llms_enabled = fields.Boolean(
-        string='Publish /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
+        string='Publish /llms.txt', compute='_compute_settings', inverse='_inverse_settings',
+        help='Serve a Markdown site map at /llms.txt for AI answer engines (llmstxt.org standard).')
     setting_llms_summary = fields.Char(
-        string='Site Summary (llms.txt)', compute='_compute_settings', inverse='_inverse_settings')
+        string='Site Summary (llms.txt)', compute='_compute_settings', inverse='_inverse_settings',
+        help='One-line description used as the blockquote intro in /llms.txt. Falls back to the '
+             'company name when empty.')
     setting_llms_max_items = fields.Integer(
-        string='Max Items in /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
+        string='Max Items in /llms.txt', compute='_compute_settings', inverse='_inverse_settings',
+        help='How many pages (and blog posts) to include in /llms.txt.')
     setting_llms_include_blog = fields.Boolean(
-        string='Include Blog in /llms.txt', compute='_compute_settings', inverse='_inverse_settings')
+        string='Include Blog in /llms.txt', compute='_compute_settings', inverse='_inverse_settings',
+        help='Include published blog posts in /llms.txt under a "Blog" section.')
 
     # --- GSC
     setting_gsc_client_id = fields.Char(
-        string='GSC OAuth Client ID', compute='_compute_settings', inverse='_inverse_settings')
+        string='GSC OAuth Client ID', compute='_compute_settings', inverse='_inverse_settings',
+        help='OAuth 2.0 Client ID from Google Cloud Console → APIs & Services → Credentials.')
     setting_gsc_client_secret = fields.Char(
-        string='GSC OAuth Client Secret', compute='_compute_settings', inverse='_inverse_settings')
+        string='GSC OAuth Client Secret', compute='_compute_settings', inverse='_inverse_settings',
+        help='OAuth 2.0 Client Secret matching the Client ID above.')
     setting_gsc_pull_window = fields.Integer(
-        string='GSC Pull Window (days)', compute='_compute_settings', inverse='_inverse_settings')
+        string='GSC Pull Window (days)', compute='_compute_settings', inverse='_inverse_settings',
+        help='How many days of search analytics each Pull fetches. GSC data is ~2 days delayed.')
     setting_gsc_redirect_uri = fields.Char(
         string='GSC Authorized Redirect URI',
-        compute='_compute_gsc_redirect_uri', readonly=True)
+        compute='_compute_gsc_redirect_uri', readonly=True,
+        help='Add this exact URL to your OAuth client\'s "Authorized redirect URIs" in Google '
+             'Cloud Console — including https and no trailing slash.')
 
     # =========================================================================
     # Computes

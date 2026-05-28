@@ -1,5 +1,19 @@
 # Changelog
 
+## [19.0.1.3.0] — 2026-05-28
+
+### Added — help texts and inline guides on every Setting
+
+- **Per-field `help`** on every setting — same wording as the original
+  per-module panels — so each field shows a `?` tooltip on hover instead
+  of just a label.
+- **Inline AI note**: when "AI Auto-Fix Enabled" is on, a small note under
+  the section explains where to pick / test the agent (the agent picker
+  lives in the AI app's settings, which the suite doesn't hard-depend on).
+- **GSC setup guide** is back as a collapsed `<details>` directly under
+  the GSC settings — same seven-step walkthrough that used to live in
+  era_gsc's settings panel, now in context next to the fields it explains.
+
 ## [19.0.1.2.0] — 2026-05-28
 
 ### Added — every ICP-backed setting in the hub Settings tab + a menu icon

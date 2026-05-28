@@ -24,7 +24,7 @@ new hub is an additional, faster entry point.
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'depends': [
         'era_seo_manager',
         'era_geo',

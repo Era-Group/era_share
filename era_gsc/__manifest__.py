@@ -40,5 +40,5 @@ record; only refresh tokens persist across restarts.
     ],
     'installable': True,
     'application': False,
-    'auto_install': False,
+    'auto_install': True,
 }

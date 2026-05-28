@@ -56,6 +56,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'wizards/seo_bulk_update_wizard_views.xml',
     'wizards/seo_redirect_import_wizard_views.xml',
     'wizards/seo_schema_preview_wizard_views.xml',
+    'wizards/seo_suite_onboarding_wizard_views.xml',
 
     # === Base layer (era_seo_manager origin) ===
     # Action-defining files first so later files (settings, hub, menus)

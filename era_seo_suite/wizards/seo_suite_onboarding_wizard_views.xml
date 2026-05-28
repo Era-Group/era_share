@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- ============================================================
+       Form view — single form with per-step blocks toggled by
+       `invisible="step != 'X'"`. Keeps everything in one place
+       so we don't have to juggle multiple records / views.
+       ============================================================ -->
+  <record id="view_era_seo_onboarding_wizard_form" model="ir.ui.view">
+    <field name="name">era.seo.onboarding.wizard.form</field>
+    <field name="model">era.seo.onboarding.wizard</field>
+    <field name="arch" type="xml">
+      <form string="ERA SEO Suite — Setup">
+        <field name="step" invisible="1"/>
+        <field name="ai_module_installed" invisible="1"/>
+        <field name="ai_agent_count" invisible="1"/>
+
+        <!-- Progress strip -->
+        <div class="alert alert-light mb-3" role="status">
+          <div class="o_horizontal_separator small text-muted mb-2">Setup progress</div>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-light" invisible="step == 'welcome'">Welcome</span>
+            <span class="badge" t-attf-class="text-bg-#{'primary' if step == 'welcome' else 'light'}" invisible="step != 'welcome'">Welcome</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org']">1. Organization</span>
+            <span class="badge text-bg-primary" invisible="step != 'org'">1. Organization</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social']">2. Social</span>
+            <span class="badge text-bg-primary" invisible="step != 'social'">2. Social</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema']">3. Schema</span>
+            <span class="badge text-bg-primary" invisible="step != 'schema'">3. Schema</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai']">4. AI</span>
+            <span class="badge text-bg-primary" invisible="step != 'ai'">4. AI</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo']">5. GEO</span>
+            <span class="badge text-bg-primary" invisible="step != 'geo'">5. GEO</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'ai', 'geo', 'gsc']">6. GSC</span>
+            <span class="badge text-bg-primary" invisible="step != 'gsc'">6. GSC</span>
+
+            <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
+          </div>
+        </div>
+
+        <!-- ================================================ Welcome -->
+        <group invisible="step != 'welcome'">
+          <div class="o_form_label_empty">
+            <h2 class="mb-2">Welcome to ERA SEO Suite</h2>
+            <p class="text-muted mb-2">
+              This wizard walks you through every setting the suite needs
+              to do its job. About <b>2&#8211;3 minutes</b> total. You can
+              close it any time — the next launch picks up where you left off.
+            </p>
+            <p class="text-muted mb-0">We'll cover, in order:</p>
+            <ol class="text-muted small">
+              <li>Organization identity (logo, OG image, verifies)</li>
+              <li>Social profiles</li>
+              <li>Schema engine</li>
+              <li>AI Auto-Fix (optional, needs the AI app)</li>
+              <li>GEO — /llms.txt for AI engines</li>
+              <li>Google Search Console (optional)</li>
+            </ol>
+          </div>
+        </group>
+
+        <!-- ================================================ Organization -->
+        <group invisible="step != 'org'" string="1. Organization identity">
+          <div class="text-muted small mb-2" colspan="2">
+            Feeds Organization JSON-LD, OG/Twitter meta, and the
+            site-verification meta tags Google and Bing look for.
+          </div>
+          <field name="org_name" placeholder="ERA — Excellence Resources Arabia"/>
+          <field name="org_legal_name" placeholder="Legal entity name (optional)"/>
+          <field name="org_logo_url" placeholder="https://example.com/logo.png" widget="url"/>
+          <field name="org_og_image_url" placeholder="https://example.com/og.png" widget="url"/>
+          <field name="org_twitter_handle" placeholder="@era"/>
+          <field name="org_google_verify" placeholder="Value of content=&quot;…&quot; from Google's HTML meta tag"/>
+          <field name="org_bing_verify" placeholder="Value of content=&quot;…&quot; from Bing's HTML meta tag"/>
+        </group>
+
+        <!-- ================================================ Social -->
+        <group invisible="step != 'social'" string="2. Social profiles">
+          <div class="text-muted small mb-2" colspan="2">
+            Joined into sameAs[] in Organization JSON-LD so search and AI
+            engines link your brand to its social presence. Leave any blank.
+          </div>
+          <field name="social_facebook" widget="url" placeholder="https://facebook.com/…"/>
+          <field name="social_twitter" widget="url" placeholder="https://twitter.com/…"/>
+          <field name="social_linkedin" widget="url" placeholder="https://linkedin.com/company/…"/>
+          <field name="social_instagram" widget="url" placeholder="https://instagram.com/…"/>
+          <field name="social_youtube" widget="url" placeholder="https://youtube.com/@…"/>
+        </group>
+
+        <!-- ================================================ Schema -->
+        <group invisible="step != 'schema'" string="3. Schema engine (JSON-LD)">
+          <div class="text-muted small mb-2" colspan="2">
+            Master switch for the JSON-LD engine that renders structured
+            data into every page. When off, no schema is emitted regardless
+            of per-page settings. <b>Keep it on</b> unless you have a
+            specific reason to disable it.
+          </div>
+          <field name="schema_enabled" widget="boolean_toggle"/>
+        </group>
+
+        <!-- ================================================ AI -->
+        <group invisible="step != 'ai'" string="4. AI Auto-Fix">
+          <div class="text-muted small mb-2" colspan="2">
+            Lets the suite use Odoo's AI app to <b>Suggest</b> and
+            <b>Apply</b> fixes on audit findings, and to <b>Fill SEO</b> on
+            pages and blog posts. The provider, model, and API key live on
+            the AI agent (configured in the AI app), not here.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="ai_module_installed">
+            The <b>AI</b> app isn't installed. Install it from the Apps
+            list, configure a provider with an API key, then re-open this
+            wizard.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not ai_module_installed or ai_agent_count != 0">
+            The AI app is installed but no agent is configured yet.
+            <button name="action_open_ai_config" type="object"
+                    string="Open the AI app" class="btn btn-link p-0"/>
+            to create one (or use Odoo's seeded "Ask AI" agent).
+          </div>
+
+          <field name="ai_enabled" widget="boolean_toggle"
+                 invisible="not ai_module_installed"/>
+          <field name="ai_agent_id"
+                 options="{'no_create': True}"
+                 invisible="not ai_enabled or not ai_module_installed"/>
+          <div class="text-muted small" colspan="2"
+               invisible="not ai_enabled or not ai_module_installed">
+            Leave the agent empty to fall back to the site's default "Ask AI" agent.
+          </div>
+        </group>
+
+        <!-- ================================================ GEO -->
+        <group invisible="step != 'geo'" string="5. GEO — Generative Engine Optimization">
+          <div class="text-muted small mb-2" colspan="2">
+            Serves a Markdown site map at <code>/llms.txt</code> so AI
+            answer engines (ChatGPT, Perplexity, Claude, Google AI
+            Overviews) can discover and cite your content.
+          </div>
+          <field name="llms_enabled" widget="boolean_toggle"/>
+          <field name="llms_summary"
+                 invisible="not llms_enabled"
+                 placeholder="One-line site description (falls back to the company name)"/>
+          <field name="llms_max_items" invisible="not llms_enabled"/>
+          <field name="llms_include_blog" invisible="not llms_enabled" widget="boolean_toggle"/>
+        </group>
+
+        <!-- ================================================ GSC -->
+        <group invisible="step != 'gsc'" string="6. Google Search Console (optional)">
+          <div class="text-muted small mb-2" colspan="2">
+            Connect GSC to pull search analytics directly into Odoo.
+            <b>Optional</b> — skip if you don't have a Google Cloud OAuth
+            client yet. Create one at
+            <i>console.cloud.google.com → APIs &amp; Services →
+            Credentials</i>, add the Authorized Redirect URI below, and
+            paste the Client ID / Secret here.
+          </div>
+          <field name="gsc_redirect_uri" readonly="1"/>
+          <field name="gsc_client_id" placeholder="…apps.googleusercontent.com"/>
+          <field name="gsc_client_secret" password="True"/>
+          <field name="gsc_pull_window"/>
+        </group>
+
+        <!-- ================================================ Done -->
+        <group invisible="step != 'done'">
+          <div class="o_form_label_empty">
+            <h2 class="mb-2 text-success">You're set</h2>
+            <p class="text-muted">
+              Settings are saved. The suite is ready to audit your site
+              and start emitting schema, hreflang, and /llms.txt.
+            </p>
+            <p class="text-muted">
+              Next moves:
+            </p>
+            <ul class="text-muted">
+              <li><b>Run your first SEO audit</b> to see what's missing.</li>
+              <li>Open the <b>ERA SEO Suite hub</b> for the dashboard, KPIs, and quick links.</li>
+              <li>For OAuth setup or AI agent tuning, jump into the relevant section.</li>
+            </ul>
+          </div>
+        </group>
+
+        <!-- ================================================ Footer -->
+        <footer>
+          <button name="action_prev"  string="Back"    type="object" class="btn-secondary"
+                  invisible="step == 'welcome'"/>
+          <button name="action_skip"  string="Skip"    type="object" class="btn-secondary"
+                  invisible="step in ['welcome', 'done']"/>
+          <button name="action_next"  string="Next"    type="object" class="btn-primary"
+                  invisible="step == 'done'"/>
+          <button name="action_run_first_audit" string="Run first audit"
+                  type="object" class="btn-primary" invisible="step != 'done'"/>
+          <button name="action_open_hub" string="Open the hub"
+                  type="object" class="btn-secondary" invisible="step != 'done'"/>
+          <button special="cancel" string="Close" class="btn-secondary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- ============================================================
+       Action + menu — uses a server action so the menu always opens
+       a freshly-prepared wizard (pre-filled from ICP).
+       ============================================================ -->
+  <record id="action_era_seo_onboarding_wizard" model="ir.actions.server">
+    <field name="name">Setup Wizard</field>
+    <field name="model_id" ref="model_era_seo_onboarding_wizard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open()</field>
+  </record>
+
+  <menuitem
+    id="menu_era_seo_onboarding_wizard"
+    name="Setup Wizard"
+    parent="menu_website_seo_root"
+    action="action_era_seo_onboarding_wizard"
+    sequence="1"/>
+
+  <!-- ============================================================
+       Access rules. TransientModels need them just like regular ones;
+       wizard rows are short-lived but still get persisted to the
+       table during the session.
+       ============================================================ -->
+  <record id="access_era_seo_onboarding_wizard" model="ir.model.access">
+    <field name="name">era.seo.onboarding.wizard (manager)</field>
+    <field name="model_id" ref="model_era_seo_onboarding_wizard"/>
+    <field name="group_id" ref="group_era_seo_manager"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
+</odoo>

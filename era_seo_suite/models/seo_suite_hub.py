@@ -111,6 +111,9 @@ class EraSeoSuiteHub(models.Model):
         'setting_gsc_pull_window':  ('era_seo_suite.pull_window_days',      'int', 28),
         # ---------- Auto-publish (era_seo_suite) ----------
         'setting_article_generator_active': ('era_seo.article_generator_active', 'bool', False),
+        'setting_trends_geo':               ('era_seo.trends_geo',               'char', 'US'),
+        'setting_article_prompt_addendum':  ('era_seo.article_prompt_addendum',  'char', ''),
+        'setting_article_lang':             ('era_seo.article_lang',             'char', ''),
     }
 
     # --- Organization
@@ -204,6 +207,24 @@ class EraSeoSuiteHub(models.Model):
         help='Add this exact URL to your OAuth client\'s "Authorized redirect URIs" in Google '
              'Cloud Console — including https and no trailing slash.')
 
+    # --- Recent AI-generated articles (read-only listing for the hub tab)
+    recent_ai_article_ids = fields.Many2many(
+        'blog.post',
+        compute='_compute_recent_ai_articles',
+        string='Recent AI-generated articles')
+
+    def _compute_recent_ai_articles(self):
+        Post = self.env.get('blog.post')
+        if Post is None or 'era_ai_generated_at' not in Post._fields:
+            for rec in self:
+                rec.recent_ai_article_ids = [(5, 0, 0)]
+            return
+        recent = Post.sudo().search(
+            [('era_ai_generated_at', '!=', False)],
+            order='era_ai_generated_at desc', limit=20)
+        for rec in self:
+            rec.recent_ai_article_ids = [(6, 0, recent.ids)]
+
     # --- Auto-publish
     setting_article_generator_active = fields.Boolean(
         string='Auto-publish trend-aware article every 3 days',
@@ -212,6 +233,24 @@ class EraSeoSuiteHub(models.Model):
              'current trend in your domain, writes a full article, and '
              'publishes it under the default blog. A notification email goes '
              'to the SEO Manager group with the post link.')
+    setting_trends_geo = fields.Char(
+        string='Google Trends geo (ISO-3166 alpha-2)',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Country code for the Google Trends daily-trends query the '
+             'auto-publisher uses to seed topic selection (e.g. US, SA, GB, '
+             'EG, AE). Defaults to US.')
+    setting_article_lang = fields.Char(
+        string='Article language code',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Target language for generated articles (e.g. en_US, ar_001). '
+             'When empty, the agent auto-detects from your business_summary.')
+    setting_article_prompt_addendum = fields.Text(
+        string='Custom prompt guidance',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Free-form text appended to every article-generation prompt under '
+             'an "ADMIN GUIDANCE" section. Use it to nudge tone of voice, '
+             'preferred topics, audiences, forbidden subjects, regional '
+             'angles, etc. Leave blank to use the suite\'s defaults.')
 
     # =========================================================================
     # Computes
@@ -516,6 +555,49 @@ class EraSeoSuiteHub(models.Model):
             ICP.set_param('era_seo.bulk_ai_fill_last_id__' + model_name, '0')
         ICP.set_param('era_seo.bulk_ai_fill_active', 'True')
 
+    def action_generate_blog_article_now(self):
+        """One-shot manual trigger for the auto-publish pipeline.
+
+        Bypasses the `era_seo.article_generator_active` gate so the admin can
+        produce an article on demand even when the cron is paused, and
+        returns a notification with the URL of the freshly created post.
+        """
+        self.ensure_one()
+        ICP = self.env['ir.config_parameter'].sudo()
+        # Temporarily satisfy the gate for the duration of this call.
+        prior = ICP.get_param('era_seo.article_generator_active')
+        try:
+            ICP.set_param('era_seo.article_generator_active', 'True')
+            post_id = self.cron_generate_blog_article()
+        finally:
+            ICP.set_param('era_seo.article_generator_active', prior or 'False')
+        if not post_id:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'type': 'warning',
+                    'message': _('Article generation skipped — check the log '
+                                 'for the reason (AI unavailable, no blog '
+                                 'module, or agent error).'),
+                    'sticky': True,
+                },
+            }
+        post = self.env['blog.post'].sudo().browse(post_id)
+        base_url = ICP.get_param('web.base.url', '').rstrip('/')
+        rel = getattr(post, 'website_url', '') or ''
+        full_url = (base_url + rel) if (base_url and rel) else (rel or '#')
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'message': _('Published: %s', post.name or ''),
+                'links': [{'label': _('Open article'), 'url': full_url}],
+                'sticky': True,
+            },
+        }
+
     @api.model
     def stop_bulk_ai_fill(self):
         """Cancel an in-progress bulk run. Cursors are kept where they are so
@@ -616,9 +698,18 @@ class EraSeoSuiteHub(models.Model):
         past_titles = BlogPost.sudo().search(
             [], order='id desc', limit=30).mapped('name')
         existing_categories = Category.sudo().search([], limit=50).mapped('name')
+        # Real trends signal: today's top Google Trends for the configured geo.
+        # Empty when offline / blocked / unparseable — the agent then falls
+        # back to its own "what's relevant now" reasoning.
+        trending_now = self._fetch_google_trends()
+        lang_code = (ICP.get_param('era_seo.article_lang', '') or '').strip() or None
+        prompt_addendum = (ICP.get_param('era_seo.article_prompt_addendum', '') or '').strip() or None
         try:
             article = client.propose_article(
-                business_context, past_titles, existing_categories)
+                business_context, past_titles, existing_categories,
+                lang_code=lang_code,
+                trending_now=trending_now,
+                prompt_addendum=prompt_addendum)
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
             return False
@@ -647,6 +738,14 @@ class EraSeoSuiteHub(models.Model):
             'content': article['content_html'],
             'is_published': True,  # Auto-publish per admin preference.
         }
+        # Provenance fields — surfaced in the hub's Blog Generation tab so
+        # admins can review AI output and the trends it followed.
+        if 'era_ai_generated_at' in BlogPost._fields:
+            post_vals['era_ai_generated_at'] = fields.Datetime.now()
+        if 'era_ai_trend_signal' in BlogPost._fields:
+            post_vals['era_ai_trend_signal'] = article.get('trend_signal') or ''
+        if 'era_ai_confidence' in BlogPost._fields:
+            post_vals['era_ai_confidence'] = float(article.get('confidence') or 0.0)
         # SEO meta — set only when the post model carries the field, since
         # the mixin's field set varies a touch across installations.
         seo_map = [
@@ -770,6 +869,67 @@ class EraSeoSuiteHub(models.Model):
         relevant provider and returns the bytes.
         """
         return None
+
+    # ------------------------------------------------------------------------
+    # Google Trends — pull current daily trends for a geo
+    # ------------------------------------------------------------------------
+
+    # The endpoint Google's own Trends UI calls. Public, no API key,
+    # returns JSON prefixed by `)]}',` (the standard Google JSONP-shield).
+    _GOOGLE_TRENDS_URL = 'https://trends.google.com/trends/api/dailytrends'
+
+    @api.model
+    def _fetch_google_trends(self, geo=None, limit=12):
+        """Return a list of currently-trending search queries for ``geo``.
+
+        :param geo: ISO 3166-1 alpha-2 country code (e.g. 'US', 'SA', 'GB').
+                    When None, reads `era_seo.trends_geo` ICP; falls back to 'US'.
+        :param limit: cap on items returned.
+        :returns: list of strings (may be empty on any failure — caller
+                  should treat empty as "no signal, fall back to the AI's
+                  own picking").
+
+        Safe to call from a cron path: never raises, never logs at ERROR.
+        Network/parse failures degrade silently to an empty list.
+        """
+        import json as _json
+        import requests as _requests
+        if not geo:
+            geo = (self.env['ir.config_parameter'].sudo()
+                   .get_param('era_seo.trends_geo', 'US') or 'US').upper().strip()
+        params = {'hl': 'en-US', 'tz': '0', 'geo': geo, 'ns': '15'}
+        try:
+            resp = _requests.get(
+                self._GOOGLE_TRENDS_URL,
+                params=params,
+                timeout=10,
+                headers={'User-Agent': 'Mozilla/5.0 (era_seo_suite trends fetcher)'},
+            )
+            resp.raise_for_status()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('Google Trends fetch failed (geo=%s): %s', geo, exc)
+            return []
+        text = resp.text or ''
+        # Strip the XSSI guard prefix `)]}',\n` that Google emits.
+        for prefix in (")]}',\n", ")]}',", ")]}'\n"):
+            if text.startswith(prefix):
+                text = text[len(prefix):]
+                break
+        try:
+            data = _json.loads(text)
+        except ValueError:
+            _logger.warning(
+                'Google Trends returned unparseable JSON (geo=%s)', geo)
+            return []
+        queries = []
+        for day in (data.get('default', {}).get('trendingSearchesDays') or []):
+            for item in (day.get('trendingSearches') or []):
+                title = (item.get('title') or {}).get('query')
+                if title:
+                    queries.append(title)
+                if len(queries) >= limit:
+                    return queries
+        return queries
 
     # ------------------------------------------------------------------------
     # Open helpers used by the menu and Refresh button

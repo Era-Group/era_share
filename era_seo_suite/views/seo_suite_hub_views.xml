@@ -151,6 +151,72 @@
               </group>
             </page>
 
+            <!-- ============================ BLOG GENERATION =================== -->
+            <page string="Blog Gen" name="blog_gen">
+              <div class="alert alert-light mb-3" role="status">
+                Trend-aware auto-publisher. Runs every 3 days when enabled —
+                pulls today's Google Trends for the configured geo, asks the
+                AI to write a full article on the most relevant one, publishes
+                it, and emails the SEO Manager group.
+              </div>
+
+              <group>
+                <group string="Auto-publish settings">
+                  <field name="setting_article_generator_active"
+                         widget="boolean_toggle"/>
+                  <field name="setting_trends_geo"
+                         placeholder="US"
+                         invisible="not setting_article_generator_active"/>
+                  <field name="setting_article_lang"
+                         placeholder="en_US / ar_001 (blank = auto-detect)"
+                         invisible="not setting_article_generator_active"/>
+                </group>
+                <group string="Status">
+                  <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>
+                  <field name="setting_ai_agent_id" readonly="1"
+                         options="{'no_create': True}"/>
+                </group>
+              </group>
+
+              <div class="alert alert-warning" role="status"
+                   invisible="setting_ai_enabled">
+                AI Auto-Fix is currently off. Turn it on in the Settings tab
+                (or via the Setup Wizard) before enabling auto-publish — the
+                cron needs a configured AI agent to write articles.
+              </div>
+
+              <group string="Custom prompt guidance"
+                     invisible="not setting_article_generator_active">
+                <field name="setting_article_prompt_addendum"
+                       nolabel="1"
+                       placeholder="Free-form admin guidance — appended to every prompt under an &quot;ADMIN GUIDANCE&quot; section. Use it to nudge tone, audiences, regional angles, brands to mention/avoid, etc. Leave blank for defaults."/>
+              </group>
+
+              <div class="mt-3">
+                <button name="action_generate_blog_article_now"
+                        type="object"
+                        string="Generate article now"
+                        class="btn btn-primary"
+                        icon="fa-magic"
+                        invisible="not setting_ai_enabled"
+                        confirm="Generate and publish a new article now? This uses one AI call and ignores the auto-publish toggle for this run."/>
+              </div>
+
+              <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">
+                Recently generated
+              </div>
+              <field name="recent_ai_article_ids" nolabel="1" mode="list" readonly="1">
+                <list string="AI-generated articles" create="0" delete="0">
+                  <field name="era_ai_generated_at" string="Generated"/>
+                  <field name="name" string="Title"/>
+                  <field name="era_ai_trend_signal" string="Trend"/>
+                  <field name="era_ai_confidence" string="Confidence" widget="float" digits="[3,2]"/>
+                  <field name="is_published" string="Published" widget="boolean_toggle"/>
+                  <field name="website_url" widget="url" string="URL" optional="show"/>
+                </list>
+              </field>
+            </page>
+
             <!-- ============================ SETTINGS ============================ -->
             <page string="Settings" name="settings">
               <div class="alert alert-light mb-3" role="status">

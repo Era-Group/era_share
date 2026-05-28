@@ -17,7 +17,7 @@ Design notes:
 import logging
 import re
 
-from odoo import models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -30,6 +30,18 @@ _MIN_CONTENT_WORDS = 50
 
 class BlogPost(models.Model):
     _inherit = 'blog.post'
+
+    era_ai_generated_at = fields.Datetime(
+        string='AI Generated At', readonly=True, index=True,
+        help='Set automatically when the auto-publish cron creates this post.')
+    era_ai_trend_signal = fields.Char(
+        string='Trend Signal', readonly=True,
+        help='The trend (often from Google Trends) the AI cited as the '
+             'reason for writing this article.')
+    era_ai_confidence = fields.Float(
+        string='AI Confidence', readonly=True, digits=(3, 2),
+        help='Self-reported confidence (0.0-1.0) when the agent proposed '
+             'this article.')
 
     def _ai_fill_fields(self):
         """Add the blog-specific SEO/content fields to the AI fill set.

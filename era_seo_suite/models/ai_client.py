@@ -607,7 +607,8 @@ class AIClient:
             'confidence': float(parsed.get('confidence') or 0.0),
         }
 
-    def propose_article(self, business_context, past_titles, existing_categories, lang_code=None):
+    def propose_article(self, business_context, past_titles, existing_categories,
+                        lang_code=None, trending_now=None, prompt_addendum=None):
         """Ask the AI agent to propose a fresh, trend-aware blog article for
         the site.
 
@@ -619,6 +620,12 @@ class AIClient:
                                     reuse over proliferation.
         :param lang_code: language to write the article in (e.g. 'ar_001').
                           When None, the agent picks based on the site context.
+        :param trending_now: iterable of currently-trending search queries
+                             (e.g. from Google Trends). The agent prefers one
+                             of them when relevant.
+        :param prompt_addendum: free-form admin guidance appended to the
+                                prompt under an "ADMIN GUIDANCE" section.
+                                None / empty = use defaults.
         :returns: dict ``{'title', 'subtitle', 'content_html', 'seo_title',
                           'seo_description', 'seo_keywords', 'category',
                           'image_prompt', 'trend_signal', 'reason',
@@ -630,7 +637,8 @@ class AIClient:
             raise AIUnavailable(reason)
         agent = self._resolve_agent()
         prompt = self._build_article_prompt(
-            business_context, past_titles, existing_categories, lang_code)
+            business_context, past_titles, existing_categories,
+            lang_code, trending_now, prompt_addendum)
         response = agent.get_direct_response(
             prompt=prompt, context_message=ARTICLE_CONTEXT)
         raw = response[0] if response else ''
@@ -653,19 +661,34 @@ class AIClient:
         }
 
     @classmethod
-    def _build_article_prompt(cls, business_context, past_titles, existing_categories, lang_code=None):
+    def _build_article_prompt(cls, business_context, past_titles, existing_categories,
+                              lang_code=None, trending_now=None, prompt_addendum=None):
+        trends_block = (
+            '  trending_now (Google Trends, daily, for the configured geo): {t}\n'
+            .format(t=json.dumps(list(trending_now)[:15], ensure_ascii=False))
+            if trending_now else ''
+        )
+        addendum_block = (
+            'ADMIN GUIDANCE (highest-priority, overrides anything else when in conflict):\n'
+            '{a}\n\n'.format(a=str(prompt_addendum).strip())
+            if prompt_addendum else ''
+        )
         return (
+            '{addendum}'
             'INPUT:\n'
             '  business_name: "{name}"\n'
             '  business_summary: "{summary}"\n'
             '  target_language: {lang}\n'
             '  recent_post_titles: {past}\n'
             '  existing_categories: {cats}\n'
+            '{trends}'
             'TASK:\n'
-            '  1. Identify a CURRENT or EMERGING trend topic that is genuinely '
-            'relevant to this business and audience. Be specific (a concrete '
-            'tool, behaviour, event, or shift), not generic ("AI is changing '
-            'everything"). Surface the signal in `trend_signal`.\n'
+            '  1. If trending_now has an item genuinely relevant to this '
+            'business and audience, pick that as your trend signal. Otherwise '
+            'identify another current or emerging trend in the domain. Be '
+            'specific (a concrete tool, behaviour, event, or shift), not '
+            'generic ("AI is changing everything"). Surface the chosen signal '
+            'in `trend_signal`.\n'
             '  2. Write a complete article on that topic that the business '
             'could publish today. Substantive — 400-700 words of HTML.\n'
             '  3. Fill SEO meta and an image_prompt that an image-generation '
@@ -682,11 +705,13 @@ class AIClient:
             '"trend_signal": "<one sentence on the trend you picked and why now>", '
             '"reason": "<one sentence on why this fits the business>", '
             '"confidence": <0.0-1.0>}}'.format(
+                addendum=addendum_block,
                 name=str(business_context.get('org_name') or '').replace('"', "'"),
                 summary=str(business_context.get('summary') or '').replace('"', "'")[:600],
                 lang=lang_code or 'auto-detect from business_summary',
                 past=json.dumps(list(past_titles)[:30], ensure_ascii=False),
                 cats=json.dumps(list(existing_categories)[:30], ensure_ascii=False),
+                trends=trends_block,
             )
         )
 

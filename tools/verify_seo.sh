@@ -17,9 +17,9 @@
 #
 set -uo pipefail
 
-MODULES="era_seo_manager,era_seo_blog,era_seo_ai,era_seo_blog_ai,era_geo,era_geo_ai"
+MODULES="era_seo_suite"
 # `/module` selects every test in that module regardless of its @tagged value.
-TEST_TAGS="/era_seo_manager,/era_seo_blog,/era_seo_ai,/era_seo_blog_ai,/era_geo,/era_geo_ai"
+TEST_TAGS="/era_seo_suite"
 ODOO_BIN="${ODOO_BIN:-odoo-bin}"
 ODOO_CONF="${ODOO_CONF:-}"
 # HttpCase tests reach into odoo.service.server.server.httpd, so we can't

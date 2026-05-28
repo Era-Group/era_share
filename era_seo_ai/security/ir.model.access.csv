@@ -1,3 +1,0 @@
-id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-access_era_seo_ai_fix_log_manager,era.seo.ai.fix.log (manager),model_era_seo_ai_fix_log,era_seo_manager.group_era_seo_manager,1,1,1,1
-access_era_seo_ai_fix_log_user,era.seo.ai.fix.log (user),model_era_seo_ai_fix_log,era_seo_manager.group_era_seo_user,1,0,0,0

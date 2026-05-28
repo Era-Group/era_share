@@ -1,5 +1,5 @@
 {
-    'name': 'ERA SEO Suite — Unified',
+    'name': 'ERA SEO Suite',
     'summary': 'Unified SEO + AI + GEO + GSC + Blog suite — one module, one app',
     'description': """
 ERA SEO Suite — Unified
@@ -15,7 +15,7 @@ GEO (/llms.txt + AI crawlers + GEO audit), GSC (OAuth + analytics pull),
 blog enhancements (series, TOC, related, feeds), and the unified hub
 (Dashboard / SEO / GEO / GSC / Settings / Guide).
     """,
-    'author': 'ERA — Excellence Resources Arabia',
+    'author': 'Era Group',
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',

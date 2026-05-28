@@ -456,6 +456,13 @@ class EraSeoAuditFinding(models.Model):
             raise UserError(_('Could not append content to the page: %s', exc))
 
     def _check_manager(self):
+        # System-triggered runs (the weekly audit cron, the bulk-fill
+        # cron, etc.) set `_era_ai_system=True` to bypass the per-user
+        # gate. The admin opts into the unattended run by activating
+        # those crons, so the cron user — usually the technical user,
+        # not a SEO Manager — is allowed to act.
+        if self.env.context.get('_era_ai_system'):
+            return
         if not self.env.user.has_group('era_seo_suite.group_era_seo_manager'):
             raise AccessError(
                 _('AI auto-fix actions require the SEO Manager group.')

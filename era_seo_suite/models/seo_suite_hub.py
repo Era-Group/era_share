@@ -540,7 +540,12 @@ class EraSeoSuiteHub(models.Model):
 
             for rec in records:
                 try:
-                    rec.action_ai_fill_seo()
+                    # `_era_ai_system=True` bypasses the per-user SEO Manager
+                    # group check in `_ai_check_manager`. The admin opted into
+                    # the unattended bulk run by flipping the ICP flag, so the
+                    # cron user (often the technical user, not a SEO Manager)
+                    # is allowed to run the fill.
+                    rec.with_context(_era_ai_system=True).action_ai_fill_seo()
                 except Exception:  # noqa: BLE001
                     _logger.exception(
                         'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
@@ -695,7 +700,7 @@ class EraSeoSuiteHub(models.Model):
                 len(run.finding_ids))
             return
         try:
-            findings.action_ai_suggest_and_apply()
+            findings.with_context(_era_ai_system=True).action_ai_suggest_and_apply()
         except Exception:  # noqa: BLE001
             _logger.exception(
                 'weekly_audit_and_fix: AI suggest+apply failed on %d findings',
@@ -1038,6 +1043,19 @@ class EraSeoSuiteHub(models.Model):
                 headers={'User-Agent': 'Mozilla/5.0 (era_seo_suite trends fetcher)'},
             )
             resp.raise_for_status()
+        except _requests.HTTPError as exc:
+            # 404 here means "no daily-trends list for this country" — common
+            # for smaller geos and not actionable. Drop to INFO so it doesn't
+            # spam the log; the agent falls back to its own trend reasoning.
+            status = getattr(getattr(exc, 'response', None), 'status_code', None)
+            if status == 404:
+                _logger.info(
+                    'Google Trends has no daily list for geo=%s — agent will '
+                    'use its own trend reasoning instead', geo)
+            else:
+                _logger.warning(
+                    'Google Trends fetch failed (geo=%s): %s', geo, exc)
+            return []
         except Exception as exc:  # noqa: BLE001
             _logger.warning('Google Trends fetch failed (geo=%s): %s', geo, exc)
             return []

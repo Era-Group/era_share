@@ -130,7 +130,7 @@
               <!-- Quick links — shortcuts to the surfaces the admin reaches
                    most often, so the dashboard is the only screen they need
                    open during day-to-day SEO work. -->
-              <div class="d-flex flex-wrap gap-2 mb-4">
+              <div class="d-flex flex-wrap gap-2 mb-3">
                 <button name="%(era_seo_suite.action_era_seo_pages)d"
                         type="action"
                         string="Pages (SEO + Schemas)"
@@ -157,47 +157,47 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 Site health
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-md-3 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-primary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-file-text-o"/> Published pages
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_published_pages" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-info">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-code"/> Schema instances
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_schema_instances" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-secondary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-random"/> Active redirects
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_active_redirects" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-secondary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-clock-o"/> Last audit
                       </div>
                       <div class="fs-6 fw-bold text-truncate">
@@ -212,50 +212,50 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 Audit findings
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-md-3 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-dark">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-flag"/> Open findings
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_audit_open_findings" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-danger">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-danger small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-danger small">
                         <i class="fa fa-exclamation-triangle"/> Critical
                       </div>
-                      <div class="fs-2 fw-bold text-danger">
+                      <div class="fs-5 fw-bold lh-1 text-danger">
                         <field name="kpi_audit_critical" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-warning">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-warning small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-warning small">
                         <i class="fa fa-exclamation-circle"/> Warning
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_audit_warning" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-info">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-info small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-info small">
                         <i class="fa fa-info-circle"/> Info
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_audit_info" readonly="1" nolabel="1"/>
                       </div>
                     </div>
@@ -267,38 +267,38 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 Progress
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-md-3 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-success">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-success small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-success small">
                         <i class="fa fa-check-circle"/> Resolved (total)
                       </div>
-                      <div class="fs-2 fw-bold text-success">
+                      <div class="fs-5 fw-bold lh-1 text-success">
                         <field name="kpi_findings_resolved_total" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-success">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-line-chart"/> Resolved (last 7 days)
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_findings_resolved_7d" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-primary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-newspaper-o"/> Blog posts
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_blog_posts_total" readonly="1" nolabel="1"/>
                       </div>
                       <div class="small text-muted mt-1">
@@ -308,13 +308,13 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-primary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-calendar"/> Posts (last 30 days)
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_blog_posts_30d" readonly="1" nolabel="1"/>
                       </div>
                     </div>
@@ -327,10 +327,10 @@
                    invisible="not kpi_published_pages">
                 SEO coverage (% of published pages)
               </div>
-              <div class="row g-3 mb-4" invisible="not kpi_published_pages">
+              <div class="row g-2 mb-2" invisible="not kpi_published_pages">
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body py-2 px-3">
                       <div class="d-flex justify-content-between align-items-baseline mb-1">
                         <span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span>
                         <span class="fw-bold">
@@ -345,7 +345,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body py-2 px-3">
                       <div class="d-flex justify-content-between align-items-baseline mb-1">
                         <span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span>
                         <span class="fw-bold">
@@ -360,7 +360,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body py-2 px-3">
                       <div class="d-flex justify-content-between align-items-baseline mb-1">
                         <span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span>
                         <span class="fw-bold">
@@ -375,7 +375,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body py-2 px-3">
                       <div class="d-flex justify-content-between align-items-baseline mb-1">
                         <span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span>
                         <span class="fw-bold">
@@ -394,38 +394,38 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 AI workflow
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-md-4 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-success">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-success small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-success small">
                         <i class="fa fa-magic"/> AI fixes applied
                       </div>
-                      <div class="fs-2 fw-bold text-success">
+                      <div class="fs-5 fw-bold lh-1 text-success">
                         <field name="kpi_ai_findings_applied" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-info">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-info small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-info small">
                         <i class="fa fa-clock-o"/> Awaiting review
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-danger">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-danger small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-danger small">
                         <i class="fa fa-times-circle"/> AI fixes failed
                       </div>
-                      <div class="fs-2 fw-bold text-danger">
+                      <div class="fs-5 fw-bold lh-1 text-danger">
                         <field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/>
                       </div>
                     </div>
@@ -437,14 +437,14 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 GEO
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-md-4 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-file-text-o"/> /llms.txt published
                       </div>
-                      <div class="fs-3 fw-bold">
+                      <div class="fs-6 fw-bold lh-1">
                         <span invisible="not kpi_geo_llms_enabled" class="text-success">
                           <i class="fa fa-check-circle"/> Yes
                         </span>
@@ -455,37 +455,37 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-android"/> AI crawlers
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_geo_crawlers_total" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4 col-sm-6">
+                <div class="col-md-3 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-warning"
                        invisible="not kpi_geo_crawlers_blocked">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-warning small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-warning small">
                         <i class="fa fa-ban"/> AI crawlers blocked
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_geo_crawlers_blocked" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                   <div class="card h-100"
                        invisible="kpi_geo_crawlers_blocked">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-ban"/> AI crawlers blocked
                       </div>
-                      <div class="fs-2 fw-bold text-muted">0</div>
+                      <div class="fs-5 fw-bold lh-1 text-muted">0</div>
                     </div>
                   </div>
                 </div>
@@ -495,50 +495,50 @@
               <div class="o_horizontal_separator mb-2 text-uppercase fw-bolder small">
                 Google Search Console
               </div>
-              <div class="row g-3 mb-2">
-                <div class="col-md-3 col-sm-6">
+              <div class="row g-2 mb-2">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-google"/> Accounts connected
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-globe"/> Sites
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_gsc_sites" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-primary">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-mouse-pointer"/> Clicks (28d)
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-info">
-                    <div class="card-body">
-                      <div class="d-flex align-items-center gap-2 mb-1 text-muted small">
+                    <div class="card-body py-2 px-3">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
                         <i class="fa fa-eye"/> Impressions (28d)
                       </div>
-                      <div class="fs-2 fw-bold">
+                      <div class="fs-5 fw-bold lh-1">
                         <field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/>
                       </div>
                     </div>

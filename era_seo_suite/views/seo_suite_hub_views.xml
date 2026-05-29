@@ -300,20 +300,12 @@
                         icon="fa-magic"
                         invisible="not setting_ai_enabled or is_article_pending"
                         confirm="Generate and publish a new article now? Runs in the background; the tab auto-refreshes every 3 seconds while it runs."/>
-                <div class="alert alert-info mb-0 py-1 px-3 d-flex align-items-center gap-2"
+                <div class="alert alert-info mb-0 py-1 px-3"
                      role="status"
                      invisible="not is_article_pending">
-                  <i class="fa fa-spinner fa-spin"/>
-                  <span>
-                    Generating in the background — the table will refresh
-                    on its own when the article is ready.
-                  </span>
-                  <button name="action_cancel_pending_article"
-                          type="object"
-                          string="Stop"
-                          icon="fa-stop-circle"
-                          class="btn btn-sm btn-outline-danger ms-2"
-                          confirm="Stop the current generation? Any in-flight AI call will continue server-side until it finishes (or is killed by Odoo's CPU limit); only the UI spinner is cleared so you can start a fresh run."/>
+                  <i class="fa fa-spinner fa-spin me-2"/>
+                  Generating in the background — the table will refresh
+                  on its own when the article is ready.
                 </div>
               </div>
 

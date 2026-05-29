@@ -722,38 +722,6 @@ class EraSeoSuiteHub(models.Model):
             ICP.set_param('era_seo.bulk_ai_fill_last_id__' + model_name, '0')
         ICP.set_param('era_seo.bulk_ai_fill_active', 'True')
 
-    def action_cancel_pending_article(self):
-        """Force-clear the article_pending flag and its timestamp.
-
-        Backs the "Stop" button in the Blog Gen tab. When a generation
-        run gets stuck for any reason — Odoo killed mid-generation, the
-        watchdog restarted before the cron's `finally` ran, the cron
-        trigger never picked up, etc. — the user can flip the spinner
-        off immediately instead of waiting the 10-minute TTL.
-
-        The cron's _run_article_gen does NOT check this flag mid-run, so
-        in the rare case where a generation IS actually in flight when
-        the user clicks Stop, the article still gets published; only the
-        UI state is reset. The user can then click Generate Now again if
-        the in-flight run produces nothing.
-        """
-        self.ensure_one()
-        ICP = self.env['ir.config_parameter'].sudo()
-        was_pending = ICP.get_param('era_seo.article_pending') in _TRUE
-        ICP.set_param('era_seo.article_pending', 'False')
-        ICP.set_param('era_seo.article_pending_started_at', '')
-        ICP.set_param('era_seo.article_generator_manual', 'False')
-        self.invalidate_recordset(['is_article_pending'])
-        if was_pending:
-            _logger.info(
-                'article_pending cleared manually by user %s', self.env.user.login)
-        # soft_reload so the form re-reads `is_article_pending` immediately
-        # and the spinner banner disappears, exposing the Generate Now
-        # button again. A display_notification alone wouldn't trigger
-        # the re-evaluation of the `invisible="not is_article_pending"`
-        # directive until the widget's next poll tick.
-        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
-
     def action_generate_blog_article_now(self):
         """One-shot manual trigger for the auto-publish pipeline.
 

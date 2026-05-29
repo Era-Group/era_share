@@ -6915,20 +6915,3 @@ msgstr "إقناعي يركّز على الفائدة"
 #: code:addons/era_seo_suite/wizards/seo_suite_onboarding_wizard.py:0
 msgid "Fill in at least the Business Name to see the generated SEO Fixer prompt."
 msgstr "أكمل اسم النشاط على الأقل لعرض التعليمات المُولَّدة لوكيل SEO Fixer."
-
-# === Blog gen — Stop button (added 19.0.3.x) ===
-
-#. module: era_seo_suite
-#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
-msgid "Stop"
-msgstr "إيقاف"
-
-#. module: era_seo_suite
-#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
-msgid "Stop the current generation? Any in-flight AI call will continue server-side until it finishes (or is killed by Odoo's CPU limit); only the UI spinner is cleared so you can start a fresh run."
-msgstr "إيقاف عملية التوليد الحالية؟ أي طلب جارٍ للذكاء الاصطناعي سيكتمل على الخادم حتى ينتهي (أو يُنهَى بسبب حد المعالج في Odoo)؛ يُمسح مؤشر الانتظار فقط لتتمكن من بدء عملية جديدة."
-
-#. module: era_seo_suite
-#: code:addons/era_seo_suite/models/seo_suite_hub.py:0
-msgid "Generation cancelled. You can click Generate article now to start a fresh run."
-msgstr "تم إلغاء التوليد. يمكنك الضغط على «توليد مقالة الآن» لبدء عملية جديدة."

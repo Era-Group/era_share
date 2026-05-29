@@ -17,12 +17,18 @@ class EraSeoAuditWizard(models.TransientModel):
     )
 
     def action_run(self):
+        """Queue the audit in the background (was synchronous; large
+        sites hit Odoo's HTTP timeout). Creates a draft run, flips the
+        era_seo.audit_pending ICP, fires the cron, lands the user on
+        the run form. The form's poll widget reloads when the cron
+        clears the flag.
+        """
         self.ensure_one()
         Run = self.env['era.seo.audit.run']
         run = Run.create({
             'website_id': self.website_id.id if self.website_id else False,
         })
-        run._run_audit()
+        run._queue_audit_run()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Audit Findings'),

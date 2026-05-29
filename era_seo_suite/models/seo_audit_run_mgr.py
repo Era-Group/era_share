@@ -17,6 +17,8 @@ from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
+_TRUE = ('True', '1', 'true', 'yes', 'on')
+
 # Thread-local storage for the current run's seen-finding key set.
 # Odoo ORM recordsets reject arbitrary attribute assignment, so we carry
 # this mutable state here instead of on ``self``.
@@ -73,6 +75,24 @@ class EraSeoAuditRun(models.Model):
     pages_scanned = fields.Integer(readonly=True)
     error_message = fields.Text(readonly=True)
 
+    # True when this specific run is the one currently queued / executing
+    # in the background cron. Drives the form spinner and hides the
+    # Run/Re-run button while the audit is in flight. Reads from ICP so
+    # the OWL poll widget sees a fresh value on every tick.
+    is_pending = fields.Boolean(
+        compute='_compute_is_pending', string='Audit pending')
+
+    def _compute_is_pending(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        active = ICP.get_param('era_seo.audit_pending') in _TRUE
+        try:
+            pending_run_id = int(
+                ICP.get_param('era_seo.audit_pending_run_id', '0') or 0)
+        except (TypeError, ValueError):
+            pending_run_id = 0
+        for rec in self:
+            rec.is_pending = active and rec.id == pending_run_id
+
     finding_ids = fields.One2many(
         'era.seo.audit.finding',
         'run_id',
@@ -118,14 +138,147 @@ class EraSeoAuditRun(models.Model):
     # ------------------------------------------------------------------------
 
     def action_run(self):
-        """Run the audit synchronously. Best for manual button clicks."""
+        """Queue this run to execute in the background and return immediately.
+
+        The audit can take 30s-2min on a large site, well past Odoo's
+        HTTP request timeout. We flip a pending flag, fire a one-shot
+        cron via `_trigger()`, and let the form's polling widget land
+        the user on the completed run as soon as the cron clears the
+        flag.
+
+        The legacy synchronous path is still callable via
+        ``_run_audit()`` directly (the weekly cron uses it).
+        """
         for rec in self:
-            rec._run_audit()
+            rec._queue_audit_run()
+        # Return a soft_reload so the form immediately re-renders with
+        # the new `is_audit_pending=True` state — the Run button hides,
+        # the spinner banner appears, the poll widget starts ticking.
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
+
+    def _queue_audit_run(self):
+        """Flip the ICP audit-pending flag, stamp the run id, fire the cron.
+
+        Shared by the hub button, the run form's Run/Re-run, and the
+        wizard. The audit-pending state ICPs:
+
+          - era_seo.audit_pending              bool, gate the poll widget
+          - era_seo.audit_pending_started_at   timestamp, TTL safety net
+          - era_seo.audit_pending_run_id       id, what the cron will scan
+          - era_seo.audit_pending_user_id      id, sudo'd-as for the audit
+        """
+        self.ensure_one()
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('era_seo.audit_pending', 'True')
+        ICP.set_param(
+            'era_seo.audit_pending_started_at',
+            fields.Datetime.to_string(fields.Datetime.now()),
+        )
+        ICP.set_param('era_seo.audit_pending_run_id', str(self.id))
+        ICP.set_param('era_seo.audit_pending_user_id', str(self.env.user.id))
+        cron = self.env.ref(
+            'era_seo_suite.cron_run_audit_async', raise_if_not_found=False)
+        if cron:
+            try:
+                cron.sudo()._trigger()
+            except Exception:  # noqa: BLE001
+                _logger.exception('queue_audit_run: cron._trigger failed')
+        # Hint the form to re-fetch is_audit_pending right away.
+        self.env['era.seo.suite.hub'].sudo().invalidate_model(['is_audit_pending'])
+
+    @api.model
+    def cron_run_audit_async(self):
+        """Cron entry — execute whichever run is queued in
+        ``era_seo.audit_pending_run_id``, then clear the flag.
+
+        Wraps `_run_audit()` so the pending flag is always cleared on
+        the way out — success, failure, AI provider crash, anything.
+        The poll widget detects pending=False and reloads the form.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        if ICP.get_param('era_seo.audit_pending') not in _TRUE:
+            return False
+        try:
+            run_id = int(ICP.get_param('era_seo.audit_pending_run_id', '0') or 0)
+        except (TypeError, ValueError):
+            run_id = 0
+        if not run_id:
+            self._clear_audit_pending()
+            return False
+        run = self.sudo().browse(run_id)
+        if not run.exists():
+            self._clear_audit_pending()
+            return False
+        try:
+            try:
+                user_id = int(ICP.get_param('era_seo.audit_pending_user_id', '0') or 0)
+            except (TypeError, ValueError):
+                user_id = 0
+            ctx_run = run.with_user(user_id) if user_id else run.sudo()
+            ctx_run._run_audit()
+        finally:
+            self._clear_audit_pending()
         return True
 
     @api.model
+    def _clear_audit_pending(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('era_seo.audit_pending', 'False')
+        ICP.set_param('era_seo.audit_pending_started_at', '')
+        ICP.set_param('era_seo.audit_pending_run_id', '')
+        ICP.set_param('era_seo.audit_pending_user_id', '')
+
+    # ------------------------------------------------------------------
+    # Polling RPC + TTL safety-net for the OWL spinner widget.
+    # Same shape as era.seo.suite.hub.get_article_pending_state — reads
+    # ICP directly to sidestep field-read caching, includes a savepoint
+    # so a concurrent cron-clear doesn't poison the request.
+    # ------------------------------------------------------------------
+
+    # Most audits take 15-60s on small/medium sites; 5 minutes is plenty
+    # of headroom even for slow filesystem queries on large sites.
+    _AUDIT_PENDING_TTL_SECONDS = 5 * 60
+
+    @api.model
+    def get_audit_pending_state(self):
+        """Lightweight RPC for the OWL polling widget."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        pending = ICP.get_param('era_seo.audit_pending') in _TRUE
+        if pending:
+            stamp_raw = ICP.get_param('era_seo.audit_pending_started_at') or ''
+            stamp = fields.Datetime.from_string(stamp_raw) if stamp_raw else None
+            if stamp is None:
+                try:
+                    with self.env.cr.savepoint():
+                        ICP.set_param(
+                            'era_seo.audit_pending_started_at',
+                            fields.Datetime.to_string(fields.Datetime.now()),
+                        )
+                except Exception:  # noqa: BLE001
+                    pass
+            else:
+                age = (fields.Datetime.now() - stamp).total_seconds()
+                if age > self._AUDIT_PENDING_TTL_SECONDS:
+                    _logger.warning(
+                        'audit_pending stuck True for %ds (> %ds TTL); '
+                        'clearing — the cron either never ran or died '
+                        'mid-audit. Re-run from the audit list.',
+                        int(age), self._AUDIT_PENDING_TTL_SECONDS)
+                    try:
+                        with self.env.cr.savepoint():
+                            self._clear_audit_pending()
+                    except Exception:  # noqa: BLE001
+                        pass
+                    pending = False
+        return {'pending': pending}
+
+    @api.model
     def run_scheduled_audit(self, website_id=None):
-        """Cron entry: create a fresh run and execute it. Returns the run."""
+        """Cron entry: create a fresh run and execute it. Returns the run.
+
+        Used by the weekly cron, which already runs in the background,
+        so we keep this path synchronous (the cron worker IS the background).
+        """
         vals = {'state': 'draft'}
         if website_id:
             vals['website_id'] = website_id

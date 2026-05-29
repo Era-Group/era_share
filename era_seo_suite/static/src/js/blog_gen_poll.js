@@ -1,11 +1,13 @@
 /** @odoo-module **/
 
 /**
- * Field widget that polls the hub's blog-gen pending flag every 3
- * seconds via a dedicated RPC. When the server reports `pending = false`
- * the polling stops and the form is hard-reloaded via the action
- * service's `soft_reload` so the spinner banner and the Generate button
- * pick up the new state.
+ * Field widget that polls a server-side "pending" RPC every 3 seconds
+ * and triggers a `soft_reload` of the current view as soon as the
+ * server reports the flag has flipped. Used by both the blog-gen
+ * spinner (era.seo.suite.hub.get_article_pending_state) and the audit
+ * runner (era.seo.audit.run.get_audit_pending_state) — the widget
+ * takes the model + method names from field options so one component
+ * services every pending-flag spinner on the form.
  *
  * History:
  *
@@ -15,23 +17,33 @@
  *   v2 switched to `this.orm.read(model, [resId], [name])` — same caching
  *   pipeline downstream, same stale-value problem.
  *
- *   v3 added a dedicated server method `get_article_pending_state()` that
- *   reads ICP directly, bypassing the field-read cache. Polled that, but
- *   kept reloading via `record.load()` — and `record.load()` still
- *   returned cached field values in some browser sessions. Spinner stayed.
+ *   v3 added a dedicated server method that reads ICP directly,
+ *   bypassing the field-read cache. Polled that, but kept reloading via
+ *   `record.load()` — and `record.load()` still returned cached field
+ *   values in some browser sessions. Spinner stayed.
  *
- *   v4 (this revision) keeps the dedicated RPC for *polling* (cheap, no
- *   field-cache round trip) but uses the action service's `soft_reload`
- *   client action for the *reload* — same mechanism the server-side
- *   actions use after Generate Now / TTL clear. soft_reload re-renders
- *   the current view from scratch, which is the only thing we've found
- *   that reliably re-evaluates `invisible="not is_article_pending"`.
+ *   v4 keeps the dedicated RPC for *polling* (cheap, no field-cache
+ *   round trip) but uses the action service's `soft_reload` client
+ *   action for the *reload* — same mechanism the server-side actions
+ *   use after Generate Now / TTL clear. soft_reload re-renders the
+ *   current view from scratch, which is the only thing we've found
+ *   that reliably re-evaluates `invisible="not is_..._pending"`.
  *
- * Wired in the era.seo.suite.hub form view as:
+ *   v5 (this revision) drops the hardcoded "hub + get_article_pending_state"
+ *   pair and accepts the RPC pair via field options so the same widget
+ *   can drive the audit-run spinner too.
+ *
+ * Wired with options:
  *
  *     <field name="is_article_pending"
  *            widget="era_auto_refresh_when_true"
+ *            options="{'model': 'era.seo.suite.hub',
+ *                      'method': 'get_article_pending_state'}"
  *            invisible="1"/>
+ *
+ * Defaults (back-compat with the blog-gen field that pre-dates options):
+ *     model  = "era.seo.suite.hub"
+ *     method = "get_article_pending_state"
  */
 
 import { registry } from "@web/core/registry";
@@ -40,6 +52,8 @@ import { useService } from "@web/core/utils/hooks";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 const POLL_MS = 3000;
+const DEFAULT_MODEL = "era.seo.suite.hub";
+const DEFAULT_METHOD = "get_article_pending_state";
 
 class EraAutoRefreshWhenTrue extends Component {
     static template = xml`<span class="d-none"/>`;
@@ -54,14 +68,21 @@ class EraAutoRefreshWhenTrue extends Component {
         // so we need a way to remember "I just reloaded — don't reload
         // again on the same flip" across remounts. We stash the last
         // observed pending value on a window-level key so the next mount
-        // can skip a no-op reload loop. Keyed by record id so multiple
-        // hub tabs don't trip over each other.
+        // can skip a no-op reload loop. Keyed by record id + field name
+        // so multiple pending-flag widgets on the same form (or multiple
+        // tabs) don't trip over each other.
         this._lastSeenKey = null;
+        this._rpcModel = DEFAULT_MODEL;
+        this._rpcMethod = DEFAULT_METHOD;
 
         onMounted(() => {
+            const opts = this.props.options || {};
+            this._rpcModel = opts.model || DEFAULT_MODEL;
+            this._rpcMethod = opts.method || DEFAULT_METHOD;
             const resId = this.props.record?.resId;
             const model = this.props.record?.resModel;
-            this._lastSeenKey = `__era_blog_gen_last_seen__${model}__${resId}`;
+            this._lastSeenKey =
+                `__era_pending_last_seen__${model}__${resId}__${this.props.name}`;
             this._start();
         });
         onWillUnmount(() => this._stop());
@@ -89,8 +110,8 @@ class EraAutoRefreshWhenTrue extends Component {
             // Dedicated server method that bypasses Odoo's field-read
             // cache by reading ICP directly. Returns {pending: bool}.
             const state = await this.orm.call(
-                "era.seo.suite.hub",
-                "get_article_pending_state",
+                this._rpcModel,
+                this._rpcMethod,
                 [],
             );
             const serverPending = Boolean(state?.pending);
@@ -121,7 +142,7 @@ class EraAutoRefreshWhenTrue extends Component {
             }
 
             // Once server and form both agree on `not pending`, we can
-            // stop polling entirely until the user re-clicks Generate.
+            // stop polling entirely until the user re-clicks the trigger.
             if (!serverPending && !recordPending) {
                 this._stop();
             }
@@ -136,4 +157,5 @@ class EraAutoRefreshWhenTrue extends Component {
 registry.category("fields").add("era_auto_refresh_when_true", {
     component: EraAutoRefreshWhenTrue,
     supportedTypes: ["boolean"],
+    extractProps: ({ options }) => ({ options }),
 });

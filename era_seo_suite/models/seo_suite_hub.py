@@ -237,6 +237,19 @@ class EraSeoSuiteHub(models.Model):
         for rec in self:
             rec.is_article_pending = pending
 
+    # True while a background audit scan is in flight. The hub Dashboard
+    # tab + the audit-run form poll this; the OWL widget triggers a
+    # soft_reload as soon as the cron clears it, so the just-finished
+    # run lands in the list / the form refreshes with the final counts.
+    is_audit_pending = fields.Boolean(
+        compute='_compute_is_audit_pending', string='Audit pending')
+
+    def _compute_is_audit_pending(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        pending = ICP.get_param('era_seo.audit_pending') in _TRUE
+        for rec in self:
+            rec.is_audit_pending = pending
+
     # Maximum age of a "pending" flag before the RPC treats it as stale
     # and clears it. A healthy generation takes 30-60s; anything past 90s
     # is almost certainly a stuck flag (Odoo restarted mid-run, cron
@@ -1764,15 +1777,18 @@ class EraSeoSuiteHub(models.Model):
         }
 
     def action_run_audit_now(self):
-        """Create a fresh SEO + GEO audit run, execute it, open the result.
+        """Queue a fresh SEO audit in the background and open the empty
+        run so the user can watch it finish.
 
-        Synchronous; for large sites this may take a few seconds. The run
-        scans every published website.page and stores findings on
-        ``era.seo.audit.run``.
+        Was synchronous, but large sites blew past Odoo's HTTP timeout.
+        Now: create a draft run, flip the era_seo.audit_pending ICP,
+        fire the audit cron via _trigger(), and land the user on the
+        run form. The form's polling widget reloads when the cron
+        clears the flag.
         """
         self.ensure_one()
         run = self.env['era.seo.audit.run'].create({})
-        run._run_audit()
+        run._queue_audit_run()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Audit Run'),

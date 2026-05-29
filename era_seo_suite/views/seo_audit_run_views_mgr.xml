@@ -36,14 +36,30 @@
         <header>
           <button name="action_run" type="object" string="Run / Re-run"
                   class="oe_highlight"
-                  invisible="state == 'running'"/>
+                  invisible="state == 'running' or is_pending"/>
           <field name="state" widget="statusbar"
                  statusbar_visible="draft,running,done"/>
         </header>
         <sheet>
+          <!-- Polling widget: while is_pending is True, the form
+               auto-reloads every 3s and the spinner banner below
+               stays visible. Cleared by the cron's finally. -->
+          <field name="is_pending"
+                 widget="era_auto_refresh_when_true"
+                 options="{'model': 'era.seo.audit.run', 'method': 'get_audit_pending_state'}"
+                 invisible="1"/>
           <div class="oe_title">
             <label for="name"/>
             <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <div class="alert alert-info py-2 d-flex align-items-center gap-2"
+               role="status"
+               invisible="not is_pending">
+            <i class="fa fa-spinner fa-spin"/>
+            <span>
+              Scanning your site in the background — this page refreshes
+              on its own when the audit finishes.
+            </span>
           </div>
           <div class="alert alert-danger" role="alert"
                invisible="state != 'failed'">

@@ -6994,3 +6994,25 @@ msgstr "لا توجد تشغيلات تدقيق أقدم من %d يوم لتنظ
 #: code:addons/era_seo_suite/models/seo_audit_run_mgr.py:0
 msgid "Deleted %d audit run(s) older than %d days. The defects they found remain in Findings."
 msgstr "تم حذف %d تشغيل(ات) تدقيق أقدم من %d يوم. الأخطاء التي اكتُشفت فيها تبقى في الاكتشافات."
+
+# === Background audit (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_form
+msgid "Scanning your site in the background — this page refreshes\n              on its own when the audit finishes."
+msgstr "يجري فحص الموقع في الخلفية — تتحدّث هذه الصفحة تلقائياً عند انتهاء التدقيق."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Audit running…"
+msgstr "التدقيق قيد التشغيل…"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Queue a fresh SEO + GEO audit? It runs in the background; the audit form page refreshes on its own when scanning completes."
+msgstr "هل تريد جدولة تدقيق SEO + GEO جديد؟ يعمل في الخلفية، وتتحدّث صفحة التدقيق تلقائياً عند انتهاء الفحص."
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_audit_run__is_pending
+msgid "Audit pending"
+msgstr "التدقيق قيد الانتظار"

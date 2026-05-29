@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: on-demand audit runner.
+
+      Manual audit clicks (hub button, audit-run form's Run / Re-run,
+      and the audit wizard) used to call `_run_audit()` synchronously
+      inside the HTTP request, which blew past Odoo's response timeout
+      on larger sites and timed the user out before the scan finished.
+
+      Now those buttons just create a draft `era.seo.audit.run` row,
+      flip the `era_seo.audit_pending` ICP, and `cron._trigger()` this
+      entry. The cron picks up the run id from
+      `era_seo.audit_pending_run_id` and executes it in the cron worker
+      (Odoo's existing background context, no HTTP timeout).
+
+      A polling OWL widget on the audit-run form reads
+      `era.seo.audit.run.get_audit_pending_state()` every 3s and
+      reloads the page when the cron clears the flag, so the user lands
+      on the completed run automatically.
+
+      Long interval + active=True so the row exists and `_trigger()`
+      can find it. The cron is a no-op when no audit is queued.
+    -->
+    <record id="cron_run_audit_async" model="ir.cron">
+      <field name="name">ERA SEO: On-demand audit (background)</field>
+      <field name="model_id" ref="model_era_seo_audit_run"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_run_audit_async()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active" eval="True"/>
+      <field name="priority">5</field>
+    </record>
+
+  </data>
+</odoo>

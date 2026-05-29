@@ -234,6 +234,22 @@ class EraSeoSuiteHub(models.Model):
         for rec in self:
             rec.is_article_pending = pending
 
+    @api.model
+    def get_article_pending_state(self):
+        """Lightweight RPC for the OWL polling widget.
+
+        Returns a plain dict the JS can read on each tick. Reads the ICP
+        directly so we sidestep any caching layer Odoo applies to
+        computed-field reads — the widget was occasionally seeing stale
+        True values for many seconds after the cron had cleared the flag,
+        and the spinner-banner stayed up "forever" until the user
+        refreshed the tab manually.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        return {
+            'pending': ICP.get_param('era_seo.article_pending') in _TRUE,
+        }
+
     def _compute_recent_ai_articles(self):
         Post = self.env.get('blog.post')
         if Post is None or 'era_ai_generated_at' not in Post._fields:

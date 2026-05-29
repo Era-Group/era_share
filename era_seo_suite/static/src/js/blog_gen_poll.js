@@ -1,23 +1,42 @@
 /** @odoo-module **/
 
 /**
- * Field widget that polls `is_article_pending` directly via the ORM
- * service every 3 seconds. When the server-side flag flips to false the
- * polling stops and the form record is reloaded so the "Recently
- * generated" list, the spinner banner, and the Generate Now button
- * pick up the new state.
+ * Field widget that polls the hub's blog-gen pending flag every 3
+ * seconds via a dedicated RPC. When the server reports `pending = false`
+ * the polling stops and the form record is reloaded so the spinner
+ * banner, the Generate button, and the "Recently generated" list pick
+ * up the new state.
  *
- * Why a direct ORM read instead of `record.load()`: in Odoo 19 the
- * relational model caches the record's fields per request — calling
- * `record.load()` in a tight loop didn't reliably re-fetch on every
- * tick, so the spinner stayed up after the cron had already cleared
- * the flag. A direct `orm.read(...)` always hits the server.
+ * History — why this isn't a `record.load()` loop, and why it doesn't
+ * read the `is_article_pending` field directly:
  *
- * Wired in the era.seo.suite.hub form view as
+ *   v1 used `record.load()` — Odoo 19's relational-model cache returned
+ *   the same field values for a long time, the spinner stayed up.
+ *
+ *   v2 switched to `this.orm.read(model, [resId], ['is_article_pending'])`
+ *   — same caching pipeline downstream, same stale-value problem in the
+ *   field. We saw the server-side ICP say False while polling kept
+ *   returning True for many seconds. The user would have to reload the
+ *   tab manually for the spinner to clear.
+ *
+ *   v3 (this revision) calls a dedicated server method
+ *   `era.seo.suite.hub.get_article_pending_state()` that reads ICP
+ *   directly and returns a plain dict. No computed-field round trip,
+ *   no caching. When pending flips, we call `record.load()` AND, as a
+ *   belt-and-braces measure, dispatch an Odoo action-service reload
+ *   so the spinner-banner's `invisible="not is_article_pending"`
+ *   directive re-evaluates against the freshly loaded record.
+ *
+ * Wired in the era.seo.suite.hub form view as:
  *
  *     <field name="is_article_pending"
  *            widget="era_auto_refresh_when_true"
  *            invisible="1"/>
+ *
+ * The `<field>` itself is invisible — the widget exists only to mount a
+ * polling lifecycle on the form. The flag's UI consumers (the spinner
+ * banner, the Generate Now button) use plain `invisible=` expressions
+ * against the same field, refreshed by `record.load()` on flip.
  */
 
 import { registry } from "@web/core/registry";
@@ -36,19 +55,24 @@ class EraAutoRefreshWhenTrue extends Component {
         this._timer = null;
         this._ticking = false;
 
-        onMounted(() => this._maybeStart());
+        onMounted(() => this._start());
         onWillUnmount(() => this._stop());
     }
 
-    /** Server-side value as of the last loaded record. */
-    _initialValue() {
-        return Boolean(this.props.record?.data?.[this.props.name]);
-    }
-
-    _maybeStart() {
+    /**
+     * Always start polling on mount, regardless of the field's value
+     * at render time. The previous version only started when the initial
+     * value was True; if the form rendered just before the cron flipped
+     * the flag, the spinner banner could stay visible without any poll
+     * loop running to clear it. Polling unconditionally costs one cheap
+     * RPC every 3 seconds — worth it for reliability.
+     */
+    _start() {
         if (this._timer) return;
-        if (!this._initialValue()) return;
         this._timer = window.setInterval(() => this._tick(), POLL_MS);
+        // Fire one tick immediately so a stale-rendered True is corrected
+        // within a few hundred ms instead of waiting the full interval.
+        this._tick();
     }
 
     _stop() {
@@ -59,29 +83,43 @@ class EraAutoRefreshWhenTrue extends Component {
     }
 
     async _tick() {
-        // Don't overlap ticks if a previous read is still in flight.
         if (this._ticking) return;
         this._ticking = true;
         try {
-            const resId = this.props.record?.resId;
-            const model = this.props.record?.resModel;
-            const name = this.props.name;
-            if (!resId || !model) return;
-            const rows = await this.orm.read(model, [resId], [name]);
-            const pending = Boolean(rows?.[0]?.[name]);
-            if (!pending) {
-                this._stop();
-                // Reload the form record so the table + buttons reflect
-                // the post the cron just created.
+            // Dedicated server method that bypasses Odoo's field-read
+            // cache by reading ICP directly. Returns {pending: bool}.
+            const state = await this.orm.call(
+                "era.seo.suite.hub",
+                "get_article_pending_state",
+                [],
+            );
+            const pending = Boolean(state?.pending);
+            const recordPending = Boolean(
+                this.props.record?.data?.[this.props.name],
+            );
+
+            // Two flip conditions:
+            //   (a) server says not pending, but the form thinks it is
+            //       → cron finished, reload to clear the spinner.
+            //   (b) server says pending, but form thinks it isn't
+            //       → an external start happened while this tab was
+            //       open, reload to show the spinner.
+            if (pending !== recordPending) {
                 try {
                     await this.props.record.load();
                 } catch (_) {
-                    // Reload errors are non-fatal — the next user click
-                    // will re-fetch anyway.
+                    /* non-fatal */
                 }
             }
+
+            // Once pending settles to false, we don't need to keep
+            // polling forever. Stop when both server and form agree
+            // on false.
+            if (!pending && !recordPending) {
+                this._stop();
+            }
         } catch (_) {
-            // Transient ORM error — keep polling on the next tick.
+            // Transient RPC error — keep polling next tick.
         } finally {
             this._ticking = false;
         }

@@ -7165,3 +7165,90 @@ msgstr "تصنيف تلقائي لمقالات المدونة (AI)"
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "The same cron that runs AI Bulk Fill also processes blog\n                  posts in batches of 10 every 2 minutes. If you haven't\n                  started the bulk fill yet, turning this on doesn't start\n                  it on its own — click <b>Start AI Bulk Fill</b> above."
 msgstr "نفس المهمة المجدولة التي تشغّل التعبئة الجماعية تعالج أيضاً مقالات المدونة بدفعات من 10 كل دقيقتين. إذا لم تبدأ التعبئة الجماعية بعد، فتفعيل هذا الخيار لا يبدأها تلقائياً — اضغط <b>بدء التعبئة الجماعية</b> أعلاه."
+
+# === Dashboard KPIs (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_warning
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_info
+msgid "Info"
+msgstr "معلومات"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_findings_resolved_total
+msgid "Resolved findings (total)"
+msgstr "اكتشافات تم حلّها (الإجمالي)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_findings_resolved_7d
+msgid "Resolved last 7 days"
+msgstr "تم حلّها في آخر 7 أيام"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Progress"
+msgstr "التقدّم"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "SEO coverage (% of published pages)"
+msgstr "تغطية الـSEO (% من الصفحات المنشورة)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_coverage_title_pct
+msgid "Pages with SEO title (%)"
+msgstr "الصفحات التي تحتوي على عنوان SEO (%)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_coverage_meta_pct
+msgid "Pages with meta description (%)"
+msgstr "الصفحات التي تحتوي على وصف Meta (%)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_coverage_og_image_pct
+msgid "Pages with OG image (%)"
+msgstr "الصفحات التي تحتوي على صورة OG (%)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_coverage_schema_pct
+msgid "Pages with a schema instance (%)"
+msgstr "الصفحات التي تحتوي على Schema (%)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI workflow"
+msgstr "سير عمل الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_ai_findings_applied
+msgid "AI fixes applied"
+msgstr "إصلاحات الذكاء الاصطناعي المطبَّقة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_ai_findings_suggested
+msgid "AI fixes awaiting review"
+msgstr "إصلاحات بانتظار المراجعة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_ai_findings_failed
+msgid "AI fixes failed"
+msgstr "إصلاحات الذكاء الاصطناعي الفاشلة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_blog_posts_total
+msgid "Blog posts"
+msgstr "مقالات المدونة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_blog_posts_ai_generated
+msgid "AI-generated blog posts"
+msgstr "مقالات مدوّنة مُولَّدة بالذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_blog_posts_30d
+msgid "Blog posts (last 30 days)"
+msgstr "مقالات المدونة (آخر 30 يوم)"

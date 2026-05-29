@@ -121,6 +121,39 @@
                   <field name="kpi_audit_last_date"/>
                   <field name="kpi_audit_open_findings"/>
                   <field name="kpi_audit_critical"/>
+                  <field name="kpi_audit_warning"/>
+                  <field name="kpi_audit_info"/>
+                </group>
+              </group>
+              <group string="Progress" name="dash_progress">
+                <group>
+                  <field name="kpi_findings_resolved_total"/>
+                  <field name="kpi_findings_resolved_7d"/>
+                </group>
+                <group>
+                  <field name="kpi_blog_posts_total"/>
+                  <field name="kpi_blog_posts_ai_generated"/>
+                  <field name="kpi_blog_posts_30d"/>
+                </group>
+              </group>
+              <group string="SEO coverage (% of published pages)" name="dash_coverage"
+                     invisible="not kpi_published_pages">
+                <group>
+                  <field name="kpi_coverage_title_pct"/>
+                  <field name="kpi_coverage_meta_pct"/>
+                </group>
+                <group>
+                  <field name="kpi_coverage_og_image_pct"/>
+                  <field name="kpi_coverage_schema_pct"/>
+                </group>
+              </group>
+              <group string="AI workflow" name="dash_ai">
+                <group>
+                  <field name="kpi_ai_findings_applied"/>
+                  <field name="kpi_ai_findings_suggested"/>
+                </group>
+                <group>
+                  <field name="kpi_ai_findings_failed"/>
                 </group>
               </group>
               <group string="GEO" name="dash_geo">

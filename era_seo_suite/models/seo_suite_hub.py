@@ -56,6 +56,42 @@ class EraSeoSuiteHub(models.Model):
         string='Open Findings', compute='_compute_kpis')
     kpi_audit_critical = fields.Integer(
         string='Critical', compute='_compute_kpis')
+    kpi_audit_warning = fields.Integer(
+        string='Warning', compute='_compute_kpis')
+    kpi_audit_info = fields.Integer(
+        string='Info', compute='_compute_kpis')
+    kpi_findings_resolved_total = fields.Integer(
+        string='Resolved findings (total)', compute='_compute_kpis')
+    kpi_findings_resolved_7d = fields.Integer(
+        string='Resolved last 7 days', compute='_compute_kpis')
+
+    # Coverage — what fraction of published pages have the basics done.
+    # Strings deliberately percentage-shaped (Integer 0-100) so the form
+    # widget can render them as plain numbers without a custom widget.
+    kpi_coverage_title_pct = fields.Integer(
+        string='Pages with SEO title (%)', compute='_compute_kpis')
+    kpi_coverage_meta_pct = fields.Integer(
+        string='Pages with meta description (%)', compute='_compute_kpis')
+    kpi_coverage_og_image_pct = fields.Integer(
+        string='Pages with OG image (%)', compute='_compute_kpis')
+    kpi_coverage_schema_pct = fields.Integer(
+        string='Pages with a schema instance (%)', compute='_compute_kpis')
+
+    # AI workflow signals — what the AI agent is doing for you.
+    kpi_ai_findings_applied = fields.Integer(
+        string='AI fixes applied', compute='_compute_kpis')
+    kpi_ai_findings_suggested = fields.Integer(
+        string='AI fixes awaiting review', compute='_compute_kpis')
+    kpi_ai_findings_failed = fields.Integer(
+        string='AI fixes failed', compute='_compute_kpis')
+
+    # Content — what's been written / generated.
+    kpi_blog_posts_total = fields.Integer(
+        string='Blog posts', compute='_compute_kpis')
+    kpi_blog_posts_ai_generated = fields.Integer(
+        string='AI-generated blog posts', compute='_compute_kpis')
+    kpi_blog_posts_30d = fields.Integer(
+        string='Blog posts (last 30 days)', compute='_compute_kpis')
 
     # GEO
     kpi_geo_crawlers_total = fields.Integer(
@@ -513,13 +549,49 @@ class EraSeoSuiteHub(models.Model):
         GscAccount = self.env.get('era.gsc.account')
         GscSite = self.env.get('era.gsc.site')
         GscQuery = self.env.get('era.gsc.query')
+        BlogPost = self.env.get('blog.post')
 
-        from datetime import date, timedelta
-        d28 = date.today() - timedelta(days=28)
+        from datetime import date, datetime, timedelta
+        today = date.today()
+        d7 = today - timedelta(days=7)
+        d28 = today - timedelta(days=28)
+        d30 = today - timedelta(days=30)
+        # `datetime` for fields that store timestamps, not dates.
+        d7_dt = datetime.combine(d7, datetime.min.time())
+        d30_dt = datetime.combine(d30, datetime.min.time())
+
+        # Coverage figures are per-published-page. Pre-search the set once
+        # so the four percentages share one query rather than four.
+        published_pages = Page.search([('website_published', '=', True)])
+        n_published = len(published_pages)
+        # Helper — returns int(percent) safely when n_published == 0.
+        def _pct(numerator):
+            if not n_published:
+                return 0
+            return int(round(100 * numerator / n_published))
+
+        # Coverage. seo_title / seo_description are translatable JSONB
+        # so an empty dict / missing key reads as falsy via the ORM. The
+        # `bool(x)` filter is enough here.
+        with_title = sum(1 for p in published_pages if p.seo_title) \
+            if n_published else 0
+        with_meta = sum(1 for p in published_pages if p.seo_description) \
+            if n_published else 0
+        with_og = sum(1 for p in published_pages if p.seo_og_image_url) \
+            if n_published else 0
+        if n_published and Instance is not None:
+            # Schema instances are linked back to a page via res_model+res_id.
+            inst_page_ids = set(Instance.sudo().search([
+                ('active', '=', True),
+                ('res_model', '=', 'website.page'),
+            ]).mapped('res_id'))
+            with_schema = sum(1 for p in published_pages
+                              if p.id in inst_page_ids)
+        else:
+            with_schema = 0
 
         for rec in self:
-            rec.kpi_published_pages = Page.search_count(
-                [('website_published', '=', True)])
+            rec.kpi_published_pages = n_published
             rec.kpi_active_redirects = Redirect.sudo().search_count(
                 [('is_active', '=', True)]) if Redirect is not None else 0
             rec.kpi_schema_instances = Instance.sudo().search_count(
@@ -529,11 +601,65 @@ class EraSeoSuiteHub(models.Model):
                 [('state', '=', 'done')], order='date_finished desc', limit=1
             ) if Run is not None else False
             rec.kpi_audit_last_date = last_run.date_finished if last_run else False
-            rec.kpi_audit_open_findings = Finding.sudo().search_count(
-                [('is_resolved', '=', False)]) if Finding is not None else 0
-            rec.kpi_audit_critical = Finding.sudo().search_count(
-                [('is_resolved', '=', False),
-                 ('severity', '=', 'critical')]) if Finding is not None else 0
+            if Finding is not None:
+                F = Finding.sudo()
+                rec.kpi_audit_open_findings = F.search_count(
+                    [('is_resolved', '=', False)])
+                rec.kpi_audit_critical = F.search_count(
+                    [('is_resolved', '=', False), ('severity', '=', 'critical')])
+                rec.kpi_audit_warning = F.search_count(
+                    [('is_resolved', '=', False), ('severity', '=', 'warning')])
+                rec.kpi_audit_info = F.search_count(
+                    [('is_resolved', '=', False), ('severity', '=', 'info')])
+                rec.kpi_findings_resolved_total = F.search_count(
+                    [('is_resolved', '=', True)])
+                rec.kpi_findings_resolved_7d = F.search_count(
+                    [('is_resolved', '=', True),
+                     ('resolved_date', '>=', d7_dt)])
+                # AI workflow signals — count each ai_status bucket among
+                # findings that aren't already resolved (applied counts the
+                # cumulative wins regardless of resolution status).
+                rec.kpi_ai_findings_applied = F.search_count(
+                    [('ai_status', '=', 'applied')])
+                rec.kpi_ai_findings_suggested = F.search_count(
+                    [('ai_status', '=', 'suggested'),
+                     ('is_resolved', '=', False)])
+                rec.kpi_ai_findings_failed = F.search_count(
+                    [('ai_status', '=', 'failed'),
+                     ('is_resolved', '=', False)])
+            else:
+                rec.kpi_audit_open_findings = 0
+                rec.kpi_audit_critical = 0
+                rec.kpi_audit_warning = 0
+                rec.kpi_audit_info = 0
+                rec.kpi_findings_resolved_total = 0
+                rec.kpi_findings_resolved_7d = 0
+                rec.kpi_ai_findings_applied = 0
+                rec.kpi_ai_findings_suggested = 0
+                rec.kpi_ai_findings_failed = 0
+
+            rec.kpi_coverage_title_pct = _pct(with_title)
+            rec.kpi_coverage_meta_pct = _pct(with_meta)
+            rec.kpi_coverage_og_image_pct = _pct(with_og)
+            rec.kpi_coverage_schema_pct = _pct(with_schema)
+
+            if BlogPost is not None:
+                BP = BlogPost.sudo()
+                rec.kpi_blog_posts_total = BP.search_count([])
+                # The blog autoposter stamps era_ai_generated_at on every
+                # AI-created post. Module load order is permissive — if
+                # the field isn't there we treat the count as 0.
+                if 'era_ai_generated_at' in BP._fields:
+                    rec.kpi_blog_posts_ai_generated = BP.search_count(
+                        [('era_ai_generated_at', '!=', False)])
+                else:
+                    rec.kpi_blog_posts_ai_generated = 0
+                rec.kpi_blog_posts_30d = BP.search_count(
+                    [('create_date', '>=', d30_dt)])
+            else:
+                rec.kpi_blog_posts_total = 0
+                rec.kpi_blog_posts_ai_generated = 0
+                rec.kpi_blog_posts_30d = 0
 
             rec.kpi_geo_crawlers_total = Crawler.sudo().search_count(
                 []) if Crawler is not None else 0

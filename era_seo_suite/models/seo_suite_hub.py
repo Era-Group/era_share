@@ -123,6 +123,11 @@ class EraSeoSuiteHub(models.Model):
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
         'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
+        # Quality tier for OpenAI's gpt-image-1. 'low' is the cheap "mini"
+        # tier (~$0.005/image), 'medium' is the default tier (~$0.04),
+        # 'high' is the premium tier (~$0.17). Ignored by dall-e-* models
+        # and by other providers.
+        'setting_image_quality':            ('era_seo.image_quality',            'char', 'low'),
         # Optional OpenRouter key. Lets admins point Image generation at an
         # OpenRouter image-capable model (e.g. Google's nano-banana) instead
         # of OpenAI direct. Kept entirely optional — the default path stays
@@ -400,6 +405,16 @@ class EraSeoSuiteHub(models.Model):
         compute='_compute_settings', inverse='_inverse_settings',
         help='Provider-native size string (DALL-E: 1024x1024, 1792x1024, '
              '1024x1792). Ignored by some OpenRouter models.')
+    setting_image_quality = fields.Selection(
+        [('low',    'Low (~$0.005/img, "mini" tier)'),
+         ('medium', 'Medium (~$0.04/img, default)'),
+         ('high',   'High (~$0.17/img)'),
+         ('auto',   'Auto (provider decides)')],
+        string='Image quality',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Quality tier for OpenAI\'s gpt-image-1. "Low" is the cheap '
+             '"mini" tier (~$0.005/image, 8x cheaper than medium). '
+             'Ignored by dall-e-* models and by OpenRouter.')
 
     # --- Audit-run retention
     setting_run_retention_days = fields.Integer(
@@ -1427,6 +1442,12 @@ class EraSeoSuiteHub(models.Model):
         for ch in ('×', '✕', '✖', 'ｘ', 'Ｘ'):
             size = size.replace(ch, 'x')
         size = size.replace('X', 'x')
+        # Quality tier — only gpt-image-1 honours this; dall-e-* models
+        # reject it as an unknown parameter. We send it only when the
+        # active (or fallback-chain) model is gpt-image-1 family.
+        quality = (ICP.get_param('era_seo.image_quality', 'low') or 'low').strip().lower()
+        if quality not in ('low', 'medium', 'high', 'auto'):
+            quality = 'low'
 
         def _call(call_prompt, call_model, call_size):
             # `response_format` is rejected by gpt-image-1 and some
@@ -1439,6 +1460,9 @@ class EraSeoSuiteHub(models.Model):
                 'n': 1,
                 'size': call_size,
             }
+            # quality is gpt-image-1-only; dall-e-* would 400.
+            if call_model.startswith('gpt-image'):
+                body['quality'] = quality
             try:
                 r = _requests.post(
                     'https://api.openai.com/v1/images/generations',

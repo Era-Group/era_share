@@ -7017,6 +7017,33 @@ msgstr "هل تريد جدولة تدقيق SEO + GEO جديد؟ يعمل في �
 msgid "Audit pending"
 msgstr "التدقيق قيد الانتظار"
 
+# === Image quality tier (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_quality
+msgid "Image quality"
+msgstr "جودة الصورة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_quality__low
+msgid "Low (~$0.005/img, \"mini\" tier)"
+msgstr "منخفضة (~$0.005 للصورة، فئة «الميني»)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_quality__medium
+msgid "Medium (~$0.04/img, default)"
+msgstr "متوسطة (~$0.04 للصورة، الافتراضي)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_quality__high
+msgid "High (~$0.17/img)"
+msgstr "عالية (~$0.17 للصورة)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_quality__auto
+msgid "Auto (provider decides)"
+msgstr "تلقائية (يقرّر المزوّد)"
+
 # === Optional OpenRouter image provider (added 19.0.3.x) ===
 
 #. module: era_seo_suite

@@ -182,6 +182,19 @@ class EraSeoMixin(models.AbstractModel):
                         rec, overwrite=overwrite, lang=lang, field_specs=field_specs)
                 except AIUnavailable as exc:
                     raise UserError(str(exc)) from exc
+                except UserError as exc:
+                    # The AI app wraps every transient provider error
+                    # (ReadTimeout, ConnectionError, quota, rate-limit)
+                    # as UserError. A traceback here doesn't add anything
+                    # the message itself ("ReadTimeout ... 30s") doesn't
+                    # already say — and the bulk-fill cron hits this once
+                    # per page per language, so a stack trace per row
+                    # buries the log. One WARNING per failure is enough.
+                    _logger.warning(
+                        'AI fill_seo: provider error on %s#%s [%s] — %s',
+                        rec._name, rec.id, lang.code, exc)
+                    errors.append(_('%s#%s [%s]: %s', rec._name, rec.id, lang.code, exc))
+                    continue
                 except Exception as exc:  # noqa: BLE001
                     _logger.exception(
                         'AI fill_seo failed for %s#%s [%s]', rec._name, rec.id, lang.code)

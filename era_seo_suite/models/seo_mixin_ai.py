@@ -173,54 +173,56 @@ class EraSeoMixin(models.AbstractModel):
             field_names = [s['name'] for s in field_specs]
             written_fields = set()
             langs_done = []
-            last_proposal = None
-            raw_by_lang = {}
+            proposal = None
 
-            for lang in languages:
-                try:
-                    proposal = client.fill_seo(
-                        rec, overwrite=overwrite, lang=lang, field_specs=field_specs)
-                except AIUnavailable as exc:
-                    raise UserError(str(exc)) from exc
-                except UserError as exc:
-                    # The AI app wraps every transient provider error
-                    # (ReadTimeout, ConnectionError, quota, rate-limit)
-                    # as UserError. A traceback here doesn't add anything
-                    # the message itself ("ReadTimeout ... 30s") doesn't
-                    # already say — and the bulk-fill cron hits this once
-                    # per page per language, so a stack trace per row
-                    # buries the log. One WARNING per failure is enough.
-                    _logger.warning(
-                        'AI fill_seo: provider error on %s#%s [%s] — %s',
-                        rec._name, rec.id, lang.code, exc)
-                    errors.append(_('%s#%s [%s]: %s', rec._name, rec.id, lang.code, exc))
-                    continue
-                except Exception as exc:  # noqa: BLE001
-                    _logger.exception(
-                        'AI fill_seo failed for %s#%s [%s]', rec._name, rec.id, lang.code)
-                    errors.append(_('%s#%s [%s]: %s', rec._name, rec.id, lang.code, exc))
-                    continue
+            # ONE consolidated AI call covering every installed language.
+            # Cuts cost from N-calls-per-record to 1 (or 2 worst-case with
+            # the wrong-script retry).
+            try:
+                proposal = client.fill_seo_multilang(
+                    rec, langs=languages, overwrite=overwrite,
+                    field_specs=field_specs)
+            except AIUnavailable as exc:
+                raise UserError(str(exc)) from exc
+            except UserError as exc:
+                # The AI app wraps every transient provider error
+                # (ReadTimeout, ConnectionError, quota, rate-limit)
+                # as UserError. One WARNING per record is enough.
+                _logger.warning(
+                    'AI fill_seo: provider error on %s#%s — %s',
+                    rec._name, rec.id, exc)
+                errors.append(_('%s#%s: %s', rec._name, rec.id, exc))
+                proposal = None
+            except Exception as exc:  # noqa: BLE001
+                _logger.exception(
+                    'AI fill_seo failed for %s#%s', rec._name, rec.id)
+                errors.append(_('%s#%s: %s', rec._name, rec.id, exc))
+                proposal = None
 
-                last_proposal = proposal
-                raw_by_lang[lang.code] = proposal['raw_json']
-                proposed = proposal['fields']
-                lang_rec = rec.with_context(lang=lang.code)
-                vals = {}
-                for fname in field_names:
-                    new_val = proposed.get(fname)
-                    if not new_val:
+            if proposal:
+                by_lang = proposal['by_lang']
+                for lang in languages:
+                    proposed = by_lang.get(lang.code) or {}
+                    if not proposed:
                         continue
-                    # "Fill missing" must look at THIS language's own stored
-                    # translation — not lang_rec[fname], which falls back to the
-                    # source-language value and would make every non-default
-                    # language look already-filled (so Arabic kept showing the
-                    # English text). Rewrite overwrites unconditionally.
-                    if overwrite or rec._ai_lang_needs_fill(fname, lang.code):
-                        vals[fname] = new_val
-                if vals:
-                    lang_rec.write(vals)
-                    written_fields |= set(vals.keys())
-                    langs_done.append(lang.code)
+                    lang_rec = rec.with_context(lang=lang.code)
+                    vals = {}
+                    for fname in field_names:
+                        new_val = proposed.get(fname)
+                        if not new_val:
+                            continue
+                        # "Fill missing" must look at THIS language's own stored
+                        # translation — not lang_rec[fname], which falls back to
+                        # the source-language value and would make every non-
+                        # default language look already-filled (so Arabic kept
+                        # showing the English text). Rewrite overwrites
+                        # unconditionally.
+                        if overwrite or rec._ai_lang_needs_fill(fname, lang.code):
+                            vals[fname] = new_val
+                    if vals:
+                        lang_rec.write(vals)
+                        written_fields |= set(vals.keys())
+                        langs_done.append(lang.code)
 
             if written_fields:
                 filled_records += 1
@@ -233,15 +235,17 @@ class EraSeoMixin(models.AbstractModel):
                 'target_model': rec._name,
                 'target_id': rec.id,
                 'target_url': getattr(rec, 'url', False) or rec._get_seo_path(),
-                'model': last_proposal['model'] if last_proposal else False,
+                'model': proposal['model'] if proposal else False,
                 'field_written': (
                     '{} ({})'.format(', '.join(sorted(written_fields)),
                                      ', '.join(langs_done))
                     if written_fields else '(nothing to fill)'
                 ),
-                'proposed_value': json.dumps(raw_by_lang, ensure_ascii=False, indent=2),
-                'explanation': last_proposal.get('explanation', '') if last_proposal else '',
-                'confidence': last_proposal.get('confidence', 0.0) if last_proposal else 0.0,
+                'proposed_value': (
+                    proposal['raw_json'] if proposal else ''
+                ),
+                'explanation': proposal.get('explanation', '') if proposal else '',
+                'confidence': proposal.get('confidence', 0.0) if proposal else 0.0,
                 'applied': bool(written_fields),
                 'applied_date': fields.Datetime.now() if written_fields else False,
                 'applied_user_id': self.env.user.id if written_fields else False,

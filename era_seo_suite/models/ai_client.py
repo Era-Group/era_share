@@ -323,9 +323,16 @@ class AIClient:
         """Single-field fix: seo_title / seo_description (per language) or slug.
 
         Translatable fields (seo_title, seo_description) are generated in
-        EACH installed website language and returned as a ``translations``
-        dict keyed by lang code. The non-translatable slug (``url``) is
-        generated once.
+        EVERY installed website language **in a single AI call** — the
+        model returns one JSON object with per-language values plus a
+        single explanation/confidence. The non-translatable slug (``url``)
+        is generated once.
+
+        Per-language script validation is still applied to the returned
+        values: any language whose value is in the wrong script triggers
+        ONE retry (one consolidated retry call covering only the failed
+        languages, not one retry per language). This caps the worst-case
+        call count at 2 per finding instead of 2N.
         """
         field, mechanical = self._field_and_mechanical_fix(finding, target_record)
         if mechanical is not None:
@@ -347,7 +354,9 @@ class AIClient:
                 model=agent.llm_model or _('AI agent'),
             )
 
-        # Translatable text field — one call per installed language.
+        # Translatable text field — ONE call covering every installed
+        # language at once. See `_call_finding_multilang` for the
+        # consolidated-prompt + per-language retry shape.
         languages, default_lang = self._record_languages(target_record)
         # If the finding is scoped to one language (per-language audit), fix
         # only that language so we don't overwrite good translations.
@@ -355,15 +364,9 @@ class AIClient:
         if finding_lang:
             languages = finding_lang
             default_lang = finding_lang
-        translations = {}
-        confidences = []
-        explanation = ''
-        for lang in languages:
-            parsed = self._call_finding(agent, finding, target_record, field, lang=lang)
-            translations[lang.code] = parsed['proposed_value']
-            confidences.append(float(parsed.get('confidence', 0.0)))
-            if lang == default_lang or not explanation:
-                explanation = parsed.get('explanation', '')
+        translations, explanation, confidence = \
+            self._call_finding_multilang(
+                agent, finding, target_record, field, languages, default_lang)
 
         default_code = (default_lang.code if default_lang
                         else (languages[:1].code if languages else self.env.lang))
@@ -371,7 +374,7 @@ class AIClient:
         return self._result(
             'field', field=field, translations=translations,
             proposed_value=primary, explanation=explanation,
-            confidence=min(confidences) if confidences else 0.0,
+            confidence=confidence,
             model=agent.llm_model or _('AI agent'),
         )
 
@@ -548,6 +551,172 @@ class AIClient:
                 parsed = retry_parsed
         return parsed
 
+    def _call_finding_multilang(self, agent, finding, target_record,
+                                field, languages, default_lang):
+        """ONE agent call returning per-language values for a translatable field.
+
+        Sends a prompt that lists every target language and asks for one
+        JSON object: ``{"by_lang": {"en_US": "...", "ar_001": "..."},
+        "explanation": "...", "confidence": 0.0-1.0}``. Cuts AI calls from
+        N (one per language) to 1 for a typical title/description fix.
+
+        After the initial call, per-language script validation runs the
+        same Unicode-block heuristic as `_call_finding`. If any languages
+        come back in the wrong script, ONE consolidated retry call covers
+        all of them at once with a hardened context message. The retry
+        only replaces individual values whose script now matches; languages
+        that pass the first time are kept regardless.
+
+        Returns (translations_dict, explanation_str, confidence_float).
+        Confidence is the min across languages — the user reviewing the
+        proposal should see the weakest signal.
+        """
+        prompt = self._build_prompt_multilang(
+            finding, target_record, field, languages, default_lang)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=SEO_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_json(raw)
+        translations = self._extract_multilang_translations(parsed, languages)
+        if not translations:
+            raise ValueError(
+                _('AI response missing per-language values for %s.', field))
+
+        explanation = parsed.get('explanation', '') or ''
+        try:
+            confidence = float(parsed.get('confidence', 0.0))
+        except (TypeError, ValueError):
+            confidence = 0.0
+
+        # Per-language script validation. Collect any languages whose
+        # returned value doesn't match its requested script — those are
+        # candidates for the consolidated retry.
+        bad_langs = [
+            lang for lang in languages
+            if not self._looks_like_language(
+                translations.get(lang.code, ''), lang.code)
+        ]
+        if bad_langs:
+            bad_names = ', '.join(l.code for l in bad_langs)
+            _logger.warning(
+                'AI suggest_fix multi-lang: response for %s had wrong-script '
+                'values for [%s] — issuing ONE consolidated retry covering '
+                'those languages.', field, bad_names)
+            stricter_ctx = SEO_CONTEXT + (
+                '\n\nCRITICAL OVERRIDE: the previous response had values in '
+                'the wrong language for: {names}. Rewrite the WHOLE JSON; '
+                'every language entry must be in its own script. Do not '
+                'echo the page content language for these slots.'.format(
+                    names=bad_names)
+            )
+            retry_response = agent.get_direct_response(
+                prompt=prompt, context_message=stricter_ctx)
+            retry_raw = retry_response[0] if retry_response else ''
+            try:
+                retry_parsed = self._parse_json(retry_raw)
+                retry_translations = self._extract_multilang_translations(
+                    retry_parsed, languages)
+            except (ValueError, json.JSONDecodeError):
+                retry_translations = {}
+            # Only swap in the retry values for languages that NOW pass
+            # the script check — keep the first-call value for any that
+            # still don't (better than nothing for the admin to review).
+            for lang in bad_langs:
+                retry_val = retry_translations.get(lang.code)
+                if retry_val and self._looks_like_language(retry_val, lang.code):
+                    translations[lang.code] = retry_val
+
+        return translations, explanation, confidence
+
+    @classmethod
+    def _build_prompt_multilang(cls, finding, target, field, languages, default_lang):
+        """Build the consolidated multi-language prompt for `_fix_field`.
+
+        Reuses _lang_header / _lang_footer for "language-first" framing,
+        but lists EVERY language in the body so the model produces one
+        JSON with all translations. The page excerpt is shared — the same
+        H1 + body drives every language, just translated differently.
+        """
+        excerpt, h1, detected = cls._extract_page_signal(target)
+        current = (target.url or '') if field == 'url' \
+            else (getattr(target, field, None) or '')
+        # The default language gets the "primary" label so the model
+        # anchors its explanation on that one; the others are translations.
+        lang_lines = []
+        for lang in languages:
+            tag = ' (primary)' if (default_lang and lang == default_lang) else ''
+            lang_lines.append('    - "{code}"{tag} — write in {name}'.format(
+                code=lang.code, tag=tag, name=(lang.name or lang.code)))
+        lang_list = '\n'.join(lang_lines)
+        by_lang_shape = ', '.join(
+            '"{}": "<value>"'.format(lang.code) for lang in languages)
+
+        # Lead with a header (same trick as `_build_prompt`) so the model
+        # commits to multi-language output BEFORE reading the (probably
+        # English) page excerpt.
+        header = (
+            '### LANGUAGE-FIRST ###\n'
+            'You will produce one value per language listed below. EACH '
+            'value MUST be in its OWN language script. Do not echo the '
+            'page content\'s language for languages that differ from it.\n\n'
+        )
+
+        return (
+            '{header}'
+            'INPUT:\n'
+            '  defect: {code}\n'
+            '  url: {url}\n'
+            '  current_value: {current}\n'
+            '  page_h1: "{h1}"\n'
+            '  page_excerpt: "{excerpt}"\n'
+            '  target_languages:\n'
+            '{lang_list}\n'
+            'FINAL CHECK before you answer:\n'
+            '  - Is each by_lang value written in its own language script?\n'
+            '  - Do NOT translate the JSON keys; only the values.\n\n'
+            'OUTPUT (one JSON object, no markdown):\n'
+            '  {{"by_lang": {{{by_lang_shape}}}, '
+            '"explanation": "<one sentence>", '
+            '"confidence": <0.0-1.0>}}'.format(
+                header=header,
+                code=finding.check_code,
+                url=finding.url or '/',
+                current=json.dumps(current) if current else 'null',
+                h1=h1.replace('"', "'"),
+                excerpt=excerpt.replace('"', "'"),
+                lang_list=lang_list,
+                by_lang_shape=by_lang_shape,
+            )
+        )
+
+    @staticmethod
+    def _extract_multilang_translations(parsed, languages):
+        """Pull per-language values from a multi-lang AI response.
+
+        Accepts a few response shapes — the strict contract is
+        ``{"by_lang": {code: value, ...}}`` but cheap models sometimes
+        flatten to ``{code: value, ...}`` at top level. Handle both,
+        return an empty dict when neither shape matches so the caller
+        can raise a clean error.
+        """
+        if not isinstance(parsed, dict):
+            return {}
+        by_lang = parsed.get('by_lang')
+        out = {}
+        if isinstance(by_lang, dict):
+            for lang in languages:
+                val = by_lang.get(lang.code)
+                if val and isinstance(val, str) and val.strip():
+                    out[lang.code] = val.strip()
+        if out:
+            return out
+        # Tolerant fallback: maybe the model put values at top level.
+        for lang in languages:
+            val = parsed.get(lang.code)
+            if val and isinstance(val, str) and val.strip():
+                out[lang.code] = val.strip()
+        return out
+
     # Fallback field specs if a caller doesn't pass any (keeps the client
     # usable on its own). The mixin is the real source of truth.
     _FALLBACK_FILL_SPECS = [
@@ -631,6 +800,200 @@ class AIClient:
             'raw_json': raw,
             'lang': lang.code if lang else (self.env.lang or 'en_US'),
         }
+
+    def fill_seo_multilang(self, record, langs, overwrite=False, field_specs=None):
+        """Multi-language variant of `fill_seo` — ONE AI call per record
+        instead of one per language.
+
+        :param record: a record carrying era.seo.mixin
+        :param langs: iterable of res.lang records to generate in. Must be
+                      non-empty; pass a single-item recordset if you only
+                      want one language and want this consolidated path
+                      anyway.
+        :param overwrite: prompt hint for the model ("rewrite all" vs.
+                          "fill missing").
+        :param field_specs: list of ``{'name', 'rule'}`` describing the
+                            fields to produce, same shape as fill_seo.
+
+        :returns: dict with shape::
+
+            {
+                'by_lang': {lang_code: {field_name: value, ...}, ...},
+                'explanation': '<one sentence>',
+                'confidence': <float 0-1>,  # min across langs
+                'model': '<llm_model>',
+                'raw_json': '<raw response>',
+            }
+
+        Per-language script validation + ONE consolidated retry covering
+        only the languages whose response was in the wrong script. Cuts
+        AI calls from N → 1 (or 2 worst case) for a typical 2-language fill.
+
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+        langs = list(langs)
+        if not langs:
+            raise ValueError(_('fill_seo_multilang requires at least one language.'))
+
+        specs = field_specs or self._FALLBACK_FILL_SPECS
+        names = [s['name'] for s in specs]
+        agent = self._resolve_agent()
+        prompt = self._build_fill_prompt_multilang(
+            record, overwrite=overwrite, langs=langs, field_specs=specs)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=FILL_CONTEXT)
+        raw = response[0] if response else ''
+        parsed = self._parse_json(raw)
+        by_lang = self._extract_multilang_fields(parsed, langs, names)
+        if not by_lang:
+            raise ValueError(
+                _('AI multi-language fill response was missing per-language fields.'))
+
+        # Per-language script validation. Build a sample from each
+        # language's concatenated field values; flag mismatched languages.
+        bad_langs = []
+        for lang in langs:
+            entry = by_lang.get(lang.code) or {}
+            sample = ' '.join(
+                str(entry.get(n) or '') for n in names if entry.get(n)
+            ).strip()
+            if sample and not self._looks_like_language(sample, lang.code):
+                bad_langs.append(lang)
+
+        if bad_langs:
+            bad_codes = ', '.join(l.code for l in bad_langs)
+            _logger.warning(
+                'AI fill_seo multi-lang: response for %s had wrong-script '
+                'values for [%s] — one consolidated retry.', record._name, bad_codes)
+            stricter_ctx = FILL_CONTEXT + (
+                '\n\nCRITICAL OVERRIDE: the previous response had wrong-language '
+                'values for: {names}. Rewrite the WHOLE JSON; every language '
+                'entry must be in its own script.'.format(names=bad_codes)
+            )
+            retry_response = agent.get_direct_response(
+                prompt=prompt, context_message=stricter_ctx)
+            retry_raw = retry_response[0] if retry_response else ''
+            try:
+                retry_parsed = self._parse_json(retry_raw)
+                retry_by_lang = self._extract_multilang_fields(
+                    retry_parsed, langs, names)
+            except (ValueError, json.JSONDecodeError):
+                retry_by_lang = {}
+            for lang in bad_langs:
+                entry = retry_by_lang.get(lang.code) or {}
+                retry_sample = ' '.join(
+                    str(entry.get(n) or '') for n in names if entry.get(n)
+                ).strip()
+                if retry_sample and self._looks_like_language(retry_sample, lang.code):
+                    by_lang[lang.code] = entry
+
+        try:
+            confidence = float(parsed.get('confidence', 0.0))
+        except (TypeError, ValueError):
+            confidence = 0.0
+
+        return {
+            'by_lang': by_lang,
+            'explanation': parsed.get('explanation', '') or '',
+            'confidence': confidence,
+            'model': agent.llm_model or _('AI agent'),
+            'raw_json': raw,
+        }
+
+    @classmethod
+    def _build_fill_prompt_multilang(cls, record, overwrite, langs, field_specs):
+        """Build the consolidated multi-language fill prompt.
+
+        Same shape as `_build_fill_prompt` but lists every language in
+        the body and asks the model to return per-language field values
+        nested under a ``by_lang`` key.
+        """
+        excerpt, h1, detected = cls._extract_page_signal(record)
+        url = getattr(record, 'url', None) or record._get_seo_path() or '/'
+        current_lines, produce_lines = [], []
+        for spec in field_specs:
+            name = spec['name']
+            cur = getattr(record, name, None) or ''
+            current_lines.append('  current_{n}: {v}'.format(
+                n=name, v=json.dumps(cur) if cur else 'null'))
+            produce_lines.append('  - {n}: {rule}'.format(
+                n=name, rule=spec.get('rule', '')))
+        lang_lines = ['    - "{code}" — write in {name}'.format(
+            code=lang.code, name=(lang.name or lang.code)) for lang in langs]
+        per_lang_shape = ', '.join(
+            '"{}": "<value>"'.format(s['name']) for s in field_specs)
+        by_lang_shape = ', '.join(
+            '"{}": {{{shape}}}'.format(lang.code, shape=per_lang_shape)
+            for lang in langs)
+        header = (
+            '### LANGUAGE-FIRST ###\n'
+            'You will produce field values for EACH language listed below. '
+            'EACH value MUST be in its OWN language script. Do not echo the '
+            'page content language for languages that differ from it.\n\n'
+        )
+        return (
+            '{header}'
+            'INPUT:\n'
+            '  mode: {mode}\n'
+            '  url: {url}\n'
+            '  page_h1: "{h1}"\n'
+            '{current}\n'
+            '  page_excerpt: "{excerpt}"\n'
+            '  target_languages:\n'
+            '{lang_list}\n'
+            'FIELDS TO PRODUCE per language:\n'
+            '{produce}\n'
+            'FINAL CHECK before you answer:\n'
+            '  - Is each field value written in its own language script?\n'
+            '  - Do NOT translate the JSON keys; only the values.\n\n'
+            'OUTPUT (one JSON object, no markdown):\n'
+            '  {{"by_lang": {{{by_lang_shape}}}, '
+            '"explanation": "<one sentence>", '
+            '"confidence": <0.0-1.0>}}'.format(
+                header=header,
+                mode='rewrite all' if overwrite else 'fill missing',
+                url=url,
+                h1=h1.replace('"', "'"),
+                current='\n'.join(current_lines),
+                excerpt=excerpt.replace('"', "'"),
+                lang_list='\n'.join(lang_lines),
+                produce='\n'.join(produce_lines),
+                by_lang_shape=by_lang_shape,
+            )
+        )
+
+    @staticmethod
+    def _extract_multilang_fields(parsed, langs, field_names):
+        """Pull per-language field dicts from a multi-lang fill response.
+
+        Strict contract: ``{"by_lang": {lang_code: {field: value, ...}}}``.
+        Tolerant fallback: flat top-level ``{lang_code: {field: ...}}``.
+        Returns {} if neither shape yields any populated language.
+        """
+        if not isinstance(parsed, dict):
+            return {}
+        sources = []
+        if isinstance(parsed.get('by_lang'), dict):
+            sources.append(parsed['by_lang'])
+        sources.append(parsed)
+        out = {}
+        for src in sources:
+            for lang in langs:
+                entry = src.get(lang.code)
+                if isinstance(entry, dict):
+                    cleaned = {}
+                    for fname in field_names:
+                        v = entry.get(fname)
+                        if v and isinstance(v, str) and v.strip():
+                            cleaned[fname] = v.strip()
+                    if cleaned and lang.code not in out:
+                        out[lang.code] = cleaned
+            if out:
+                break
+        return out
 
     def pick_schema(self, record, templates):
         """Ask the AI to choose the most appropriate JSON-LD schema template

@@ -277,13 +277,20 @@ class EraSeoMixin(models.AbstractModel):
         return active, active[:1]
 
     def _ai_lang_needs_fill(self, fname, lang_code):
-        """True when ``fname`` has no value of its OWN in ``lang_code``.
+        """True when ``fname`` has no value of its OWN in ``lang_code``,
+        OR when the stored value is clearly in the wrong language script.
 
         For translatable fields, ``rec.with_context(lang=X)[fname]`` returns
         the source-language value as a fallback when X has no translation, so
         it can't tell "translated" from "falling back". We read the raw stored
-        translations instead, so "fill missing" actually fills each language
-        that lacks its own translation (e.g. Arabic showing the English text).
+        translations instead.
+
+        Wrong-script detection: a stored value in a clearly mismatched script
+        (e.g. Arabic placeholder text sitting in the en_US slot because the
+        website builder seeded it during Arabic-mode setup) is treated as
+        "needs fill" — the AI's fresh per-language proposal replaces it. We
+        reuse `AIClient._looks_like_language` so the rule matches the
+        post-validation we already apply on the AI's response.
         """
         self.ensure_one()
         field = self._fields.get(fname)
@@ -299,7 +306,15 @@ class EraSeoMixin(models.AbstractModel):
         if not stored:
             return True
         value = stored.get(lang_code)
-        return not (value and str(value).strip())
+        if not (value and str(value).strip()):
+            return True
+        # Stored value exists. Treat a wrong-script stored value as "missing"
+        # so we don't leave a builder placeholder (or a previous wrong-language
+        # write) frozen in this slot.
+        from .ai_client import AIClient
+        if not AIClient._looks_like_language(str(value), lang_code):
+            return True
+        return False
 
     # ------------------------------------------------------------------
     # Helpers

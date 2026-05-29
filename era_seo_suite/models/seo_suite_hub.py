@@ -235,10 +235,13 @@ class EraSeoSuiteHub(models.Model):
             rec.is_article_pending = pending
 
     # Maximum age of a "pending" flag before the RPC treats it as stale
-    # and clears it. The cron only takes 30-60s on a healthy run; 10 min
-    # is generous enough to ride out an Odoo restart mid-generation
-    # without the user being stuck on a spinner forever.
-    _ARTICLE_PENDING_TTL_SECONDS = 10 * 60
+    # and clears it. A healthy generation takes 30-60s; anything past 90s
+    # is almost certainly a stuck flag (Odoo restarted mid-run, cron
+    # trigger never picked up, AI call hanging, etc.) rather than real
+    # in-flight work. We'd rather show a stale spinner for 60s than for
+    # 10 minutes — if the cron IS still working when we clear, it'll
+    # republish its `True` on the next set_param.
+    _ARTICLE_PENDING_TTL_SECONDS = 90
 
     @api.model
     def get_article_pending_state(self):

@@ -976,8 +976,16 @@ class AIClient:
         try:
             parsed = json.loads(text)
         except (json.JSONDecodeError, TypeError) as exc:
+            # No _() wrapper here: this helper is a @staticmethod called
+            # from many paths including crons, where the call frame has no
+            # env/uid for Odoo's translation system to walk to. Wrapping
+            # forces _get_lang() to log a "no translation language detected"
+            # WARNING with a multi-line stack trace per refused JSON. The
+            # message reaches users (if at all) via the cron's WARNING line
+            # and not via UI, so plain English is fine.
             raise ValueError(
-                _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
+                'AI returned output that is not valid JSON: %s'
+                % (raw or '')[:200]
             ) from exc
         # NOTE: the legacy suggest_fix contract requires `proposed_value`,
         # but every other caller uses a different JSON shape (propose_article:

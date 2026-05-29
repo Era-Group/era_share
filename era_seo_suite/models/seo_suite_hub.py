@@ -11,6 +11,7 @@ leaving the screen.
 import logging
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 from ..utils import slugify
 
@@ -800,6 +801,16 @@ class EraSeoSuiteHub(models.Model):
                 prompt_addendum=prompt_addendum)
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
+            return False
+        except UserError as exc:
+            # Provider-config failure (no API key, quota exceeded, …). The
+            # ai_client._resolve_agent path already WARNs naming the stale
+            # ICP id; here we just need to record that this run was a no-op
+            # without dumping a 30-line traceback that says nothing the
+            # earlier warning didn't already say.
+            _logger.warning(
+                'cron_generate_blog_article: provider unavailable — %s '
+                '(check Settings → ERA SEO → AI Auto-Fix)', exc)
             return False
         except Exception:  # noqa: BLE001
             _logger.exception('cron_generate_blog_article: AI call failed')

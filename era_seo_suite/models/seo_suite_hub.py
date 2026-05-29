@@ -1373,9 +1373,11 @@ class EraSeoSuiteHub(models.Model):
         """Replicate Flux Schnell — predictions API.
 
         Default model: ``black-forest-labs/flux-schnell`` (~$0.003/image).
-        Replicate's API is async by default — we set ``Prefer: wait`` so
-        the response blocks until the image is ready (up to 60s default;
-        we extend via ``Prefer: wait=240``). Returns raw bytes from the
+        Replicate's API is async by default — we set ``Prefer: wait=60``
+        so the response blocks until the image is ready (60s is the
+        maximum value the API accepts; an HTTP 422 is raised for any
+        higher value). 60s comfortably covers Flux Schnell's typical
+        ~3s latency even with cold starts. Returns raw bytes from the
         first output URL.
 
         Reads the API token from ``era_seo.image_replicate_key``.
@@ -1420,10 +1422,11 @@ class EraSeoSuiteHub(models.Model):
                 headers={
                     'Authorization': 'Bearer %s' % api_key,
                     'Content-Type': 'application/json',
-                    # Block on the response instead of polling. 240s is
-                    # well above Flux Schnell's typical ~3s latency but
-                    # leaves room for cold starts.
-                    'Prefer': 'wait=240',
+                    # Block on the response instead of polling. The
+                    # Replicate API caps `wait` at 60s (HTTP 422 above);
+                    # 60s is plenty for Flux Schnell's ~3s typical
+                    # latency plus cold-start overhead.
+                    'Prefer': 'wait=60',
                 },
                 json=body, timeout=600,
             )

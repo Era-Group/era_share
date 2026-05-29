@@ -133,6 +133,10 @@ class EraSeoSuiteHub(models.Model):
         # of OpenAI direct. Kept entirely optional — the default path stays
         # OpenAI + gpt-image-1.
         'setting_image_openrouter_key':     ('era_seo.image_openrouter_key',     'char', ''),
+        # Blog taxonomy auto-classification — the bulk-fill cron reads this
+        # and, when set, asks the AI to assign a category (and optionally
+        # a series) to every blog.post in its sweep.
+        'setting_blog_taxonomy_active':     ('era_seo.blog_taxonomy_active',     'bool', False),
         # ---------- Audit-run retention ----------
         'setting_run_retention_days':       ('era_seo.run_retention_days',       'int',  90),
         'setting_run_retention_active':     ('era_seo.run_retention_active',     'bool', True),
@@ -259,6 +263,34 @@ class EraSeoSuiteHub(models.Model):
         pending = ICP.get_param('era_seo.audit_pending') in _TRUE
         for rec in self:
             rec.is_audit_pending = pending
+
+    # AI Bulk Fill state — surfaced on the Settings tab so admins can see
+    # at a glance whether the cron is sweeping and how much is left.
+    # Lifted from the onboarding wizard's step 9 (era.seo.onboarding.wizard).
+    bulk_ai_already_running = fields.Boolean(
+        compute='_compute_bulk_ai_state', string='Bulk fill running')
+    bulk_ai_pending_count = fields.Integer(
+        compute='_compute_bulk_ai_state',
+        string='Pages / posts pending fill')
+
+    def _compute_bulk_ai_state(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        running = ICP.get_param('era_seo.bulk_ai_fill_active') in _TRUE
+        count = 0
+        for model_name in self._BULK_AI_MODELS:
+            Model = self.env.get(model_name)
+            if Model is None:
+                continue
+            try:
+                count += Model.sudo().search_count([
+                    '|', ('seo_title', '=', False), ('seo_title', '=', ''),
+                ])
+            except Exception:  # noqa: BLE001
+                # Model may exist without seo_title (extension not yet applied).
+                continue
+        for rec in self:
+            rec.bulk_ai_already_running = running
+            rec.bulk_ai_pending_count = count
 
     # Maximum age of a "pending" flag before the RPC treats it as stale
     # and clears it. A healthy generation takes 30-60s; anything past 90s
@@ -415,6 +447,42 @@ class EraSeoSuiteHub(models.Model):
         help='Quality tier for OpenAI\'s gpt-image-1. "Low" is the cheap '
              '"mini" tier (~$0.005/image, 8x cheaper than medium). '
              'Ignored by dall-e-* models and by OpenRouter.')
+
+    # --- Blog taxonomy auto-classification
+    setting_blog_taxonomy_active = fields.Boolean(
+        string='Auto-classify blog posts (AI)',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='When on, the AI Bulk Fill cron also asks the AI to assign '
+             'a category (and series, when the post is clearly part of '
+             'a multi-part arc) to every blog.post it processes. Existing '
+             'categories and series are reused before new ones are '
+             'created.')
+    blog_post_count = fields.Integer(
+        compute='_compute_blog_counts', string='Blog posts')
+    blog_uncategorized_count = fields.Integer(
+        compute='_compute_blog_counts',
+        string='Posts without category')
+    blog_category_count = fields.Integer(
+        compute='_compute_blog_counts', string='Categories')
+    blog_series_count = fields.Integer(
+        compute='_compute_blog_counts', string='Series')
+
+    def _compute_blog_counts(self):
+        BlogPost = self.env.get('blog.post')
+        Category = self.env.get('era.blog.category')
+        Series = self.env.get('era.blog.series')
+        n_posts = (BlogPost.sudo().search_count([]) if BlogPost is not None else 0)
+        n_uncategorized = (
+            BlogPost.sudo().search_count([('era_category_id', '=', False)])
+            if BlogPost is not None else 0
+        )
+        n_cats = Category.sudo().search_count([]) if Category is not None else 0
+        n_series = Series.sudo().search_count([]) if Series is not None else 0
+        for rec in self:
+            rec.blog_post_count = n_posts
+            rec.blog_uncategorized_count = n_uncategorized
+            rec.blog_category_count = n_cats
+            rec.blog_series_count = n_series
 
     # --- Audit-run retention
     setting_run_retention_days = fields.Integer(
@@ -845,6 +913,22 @@ class EraSeoSuiteHub(models.Model):
         fresh start should use start_bulk_ai_fill which resets them)."""
         self.env['ir.config_parameter'].sudo().set_param(
             'era_seo.bulk_ai_fill_active', 'False')
+
+    def action_start_bulk_ai_fill(self):
+        """Hub-button wrapper: start the bulk-fill cron sweep and refresh
+        the form so the running-state alert + button visibility update.
+        """
+        self.ensure_one()
+        self.sudo().start_bulk_ai_fill()
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
+
+    def action_stop_bulk_ai_fill(self):
+        """Hub-button wrapper: pause the bulk-fill cron sweep. Cursors are
+        kept where they are so a later restart resumes mid-queue.
+        """
+        self.ensure_one()
+        self.sudo().stop_bulk_ai_fill()
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
     # ------------------------------------------------------------------------
     # Weekly audit + auto AI-fix

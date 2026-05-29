@@ -462,6 +462,90 @@
                 </ol>
               </details>
 
+              <!-- ============================== AI BULK FILL ============================== -->
+              <group string="AI Bulk Fill">
+                <field name="bulk_ai_already_running" invisible="1"/>
+                <field name="bulk_ai_pending_count" invisible="1"/>
+                <div class="text-muted small mb-2" colspan="2">
+                  Have the AI agent walk every <b>page</b> and <b>blog post</b>
+                  on your site and fill the empty SEO fields (title,
+                  description, OG/Twitter, keywords) for each one. Runs in
+                  the background — 10 records every 2 minutes — so closing
+                  this page is safe; the cron keeps going until the queue is
+                  empty, then stops itself.
+                </div>
+                <div class="alert alert-info" role="status" colspan="2"
+                     invisible="not bulk_ai_pending_count">
+                  <b><field name="bulk_ai_pending_count" readonly="1" nolabel="1"/></b>
+                  record(s) currently have an empty <i>SEO title</i> and would
+                  be processed.
+                </div>
+                <div class="alert alert-success" role="status" colspan="2"
+                     invisible="bulk_ai_pending_count or bulk_ai_already_running">
+                  Nothing to do — every page and post already has an SEO title.
+                </div>
+                <div class="alert alert-warning" role="status" colspan="2"
+                     invisible="not bulk_ai_already_running">
+                  A bulk-fill run is <b>already in progress</b>. Click
+                  <b>Pause</b> to stop the cron sweep; the cursor is kept
+                  so a later restart resumes mid-queue.
+                </div>
+                <div class="d-flex gap-2 mb-2" colspan="2">
+                  <button name="action_start_bulk_ai_fill" type="object"
+                          string="Start AI Bulk Fill"
+                          icon="fa-play"
+                          class="btn btn-primary"
+                          invisible="bulk_ai_already_running or not bulk_ai_pending_count"
+                          confirm="Start the AI Bulk Fill cron now? Runs in the background — 10 records every 2 minutes — until the queue is empty."/>
+                  <button name="action_stop_bulk_ai_fill" type="object"
+                          string="Pause"
+                          icon="fa-pause"
+                          class="btn btn-warning"
+                          invisible="not bulk_ai_already_running"/>
+                </div>
+                <div class="text-muted small mb-3" colspan="2">
+                  Tip: budget-wise, the agent does 1 call per record per
+                  active language. Watch your provider dashboard if you
+                  have hundreds of pages.
+                </div>
+              </group>
+
+              <!-- ============================== BLOG SETUP ============================== -->
+              <group string="Blog Setup"
+                     invisible="not blog_post_count and not blog_category_count">
+                <field name="blog_post_count" invisible="1"/>
+                <field name="blog_uncategorized_count" invisible="1"/>
+                <field name="blog_category_count" invisible="1"/>
+                <field name="blog_series_count" invisible="1"/>
+                <div class="text-muted small mb-2" colspan="2">
+                  Lets the AI cron classify your existing blog posts into
+                  categories (and series, when the post is clearly part of
+                  a multi-part arc) at the same time it fills the SEO
+                  fields. Existing taxonomy is preferred over creating new
+                  rows.
+                </div>
+                <div class="alert alert-info" role="status" colspan="2"
+                     invisible="not blog_post_count">
+                  You have
+                  <b><field name="blog_post_count" readonly="1" nolabel="1"/></b>
+                  blog post(s),
+                  <b><field name="blog_category_count" readonly="1" nolabel="1"/></b>
+                  categor(ies),
+                  <b><field name="blog_series_count" readonly="1" nolabel="1"/></b>
+                  series.
+                  <b><field name="blog_uncategorized_count" readonly="1" nolabel="1"/></b>
+                  post(s) still have no category.
+                </div>
+                <field name="setting_blog_taxonomy_active" widget="boolean_toggle"/>
+                <div class="text-muted small mt-2" colspan="2"
+                     invisible="not setting_blog_taxonomy_active">
+                  The same cron that runs AI Bulk Fill also processes blog
+                  posts in batches of 10 every 2 minutes. If you haven't
+                  started the bulk fill yet, turning this on doesn't start
+                  it on its own — click <b>Start AI Bulk Fill</b> above.
+                </div>
+              </group>
+
               <group string="Audit-run history">
                 <group>
                   <field name="setting_run_retention_days"/>

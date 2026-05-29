@@ -7073,3 +7073,95 @@ msgstr "فتح في الموقع"
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_finding_form
 msgid "View on Site"
 msgstr "فتح في الموقع"
+
+# === AI Bulk Fill + Blog Setup in Settings (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI Bulk Fill"
+msgstr "تعبئة جماعية بالذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Have the AI agent walk every <b>page</b> and <b>blog post</b>\n                  on your site and fill the empty SEO fields (title,\n                  description, OG/Twitter, keywords) for each one. Runs in\n                  the background — 10 records every 2 minutes — so closing\n                  this page is safe; the cron keeps going until the queue is\n                  empty, then stops itself."
+msgstr "اجعل وكيل الذكاء الاصطناعي يمر على كل <b>صفحة</b> و<b>مقال مدونة</b> في موقعك ويملأ حقول الـSEO الفارغة (العنوان، الوصف، OG/Twitter، الكلمات المفتاحية). يعمل في الخلفية — 10 سجلات كل دقيقتين — فإغلاق هذه الصفحة آمن؛ تستمر المهمة المجدولة حتى تفرغ القائمة ثم تتوقف تلقائياً."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "record(s) currently have an empty <i>SEO title</i> and would\n                  be processed."
+msgstr "سجل/سجلات تحتوي حالياً على <i>عنوان SEO</i> فارغ وستتم معالجتها."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Nothing to do — every page and post already has an SEO title."
+msgstr "لا شيء للقيام به — كل صفحة ومقال يحتوي بالفعل على عنوان SEO."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "A bulk-fill run is <b>already in progress</b>. Click\n                  <b>Pause</b> to stop the cron sweep; the cursor is kept\n                  so a later restart resumes mid-queue."
+msgstr "تشغيل التعبئة الجماعية <b>قيد التنفيذ بالفعل</b>. اضغط <b>إيقاف مؤقت</b> لإيقاف المسح؛ يتم الاحتفاظ بالموضع لتستأنف لاحقاً من نفس المكان."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Start AI Bulk Fill"
+msgstr "بدء التعبئة الجماعية"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Start the AI Bulk Fill cron now? Runs in the background — 10 records every 2 minutes — until the queue is empty."
+msgstr "بدء مهمة التعبئة الجماعية الآن؟ تعمل في الخلفية — 10 سجلات كل دقيقتين — حتى تفرغ القائمة."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Pause"
+msgstr "إيقاف مؤقت"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Tip: budget-wise, the agent does 1 call per record per\n                  active language. Watch your provider dashboard if you\n                  have hundreds of pages."
+msgstr "نصيحة على الميزانية: يقوم الوكيل بطلب واحد لكل سجل لكل لغة مفعّلة. راقب لوحة مزوّدك إذا كان لديك مئات الصفحات."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Blog Setup"
+msgstr "إعداد المدونة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Lets the AI cron classify your existing blog posts into\n                  categories (and series, when the post is clearly part of\n                  a multi-part arc) at the same time it fills the SEO\n                  fields. Existing taxonomy is preferred over creating new\n                  rows."
+msgstr "يتيح للمهمة المجدولة تصنيف مقالات مدونتك في فئات (وسلاسل عند تعدّد الأجزاء) أثناء تعبئة حقول الـSEO. تُفضَّل الفئات والسلاسل الموجودة على إنشاء جديدة."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "You have\n                  <b>"
+msgstr "لديك\n                  <b>"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "</b>\n                  blog post(s),\n                  <b>"
+msgstr "</b>\n                  مقال(ات) مدونة،\n                  <b>"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "</b>\n                  categor(ies),\n                  <b>"
+msgstr "</b>\n                  فئة/فئات،\n                  <b>"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "</b>\n                  series.\n                  <b>"
+msgstr "</b>\n                  سلسلة/سلاسل.\n                  <b>"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "</b>\n                  post(s) still have no category."
+msgstr "</b>\n                  مقال(ات) بلا فئة بعد."
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_blog_taxonomy_active
+msgid "Auto-classify blog posts (AI)"
+msgstr "تصنيف تلقائي لمقالات المدونة (AI)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "The same cron that runs AI Bulk Fill also processes blog\n                  posts in batches of 10 every 2 minutes. If you haven't\n                  started the bulk fill yet, turning this on doesn't start\n                  it on its own — click <b>Start AI Bulk Fill</b> above."
+msgstr "نفس المهمة المجدولة التي تشغّل التعبئة الجماعية تعالج أيضاً مقالات المدونة بدفعات من 10 كل دقيقتين. إذا لم تبدأ التعبئة الجماعية بعد، فتفعيل هذا الخيار لا يبدأها تلقائياً — اضغط <b>بدء التعبئة الجماعية</b> أعلاه."

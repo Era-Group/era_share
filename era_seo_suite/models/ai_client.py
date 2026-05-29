@@ -1192,6 +1192,27 @@ class AIClient:
         )
 
     @staticmethod
+    def _lang_prefix(lang_code):
+        """Return the ISO 639-1 two-letter prefix of a locale code.
+
+        Odoo stores language codes as locale strings: ``ar_001`` (world
+        Arabic), ``ar_SA`` (Saudi), ``ar_EG`` (Egyptian), ``en_US``,
+        ``en_GB``, ``fr_FR``, ``fr_CA``, ``zh_CN``, ``zh_TW`` and so on.
+
+        Every language-matching check in this module should compare the
+        2-letter prefix instead of the full locale — a literal compare to
+        ``'ar_001'`` would silently miss every other Arabic locale, and
+        nothing in our flow cares about regional variants. Centralising
+        the slice here makes the convention enforceable and obvious.
+
+        Returns the lowercased two-character prefix, or ``''`` when the
+        input is empty / shorter than two characters.
+        """
+        if not lang_code:
+            return ''
+        return lang_code[:2].lower()
+
+    @staticmethod
     def _looks_like_language(text, lang_code):
         """Cheap heuristic: does ``text`` look like it's in ``lang_code``?
 
@@ -1205,6 +1226,10 @@ class AIClient:
         Latin scripts. Everything else (Cyrillic, CJK, …) is allowed through
         without judgement; the worst case is a missed retry, not a false
         rejection.
+
+        Locale handling: comparisons go through ``_lang_prefix`` so any
+        Arabic locale (ar, ar_001, ar_SA, ar_EG, ar-EG, AR_001, …) hits
+        the Arabic branch, not just the one Odoo happens to ship by default.
         """
         if not text or not lang_code:
             return True
@@ -1221,8 +1246,8 @@ class AIClient:
         if total < 5:
             # Too few letters to judge (e.g. just a slug). Pass.
             return True
-        code = (lang_code or '').lower()
-        if code.startswith('ar'):
+        prefix = AIClient._lang_prefix(lang_code)
+        if prefix == 'ar':
             # Arabic should dominate.
             return arabic >= max(latin, 1) * 2
         # Default: anything not Arabic-tagged should NOT be majority Arabic.

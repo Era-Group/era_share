@@ -212,6 +212,11 @@ class AIUnavailable(Exception):
     """Raised when the AI app isn't installed, not enabled, or no agent is set."""
 
 
+# Process-wide cache of agent-id values we've already warned about. Resets at
+# every worker restart, which is when an admin would re-check the log anyway.
+_STALE_AGENT_WARNED = set()
+
+
 class AIClient:
     """Stateless per-request wrapper around ``ai.agent``."""
 
@@ -235,7 +240,17 @@ class AIClient:
         return True, ''
 
     def _resolve_agent(self):
-        """Return the configured ai.agent record, or the Ask-AI fallback, or empty."""
+        """Return the configured ai.agent record, or the Ask-AI fallback, or empty.
+
+        If the configured ICP points at a deleted agent we log a warning before
+        falling back — otherwise the substitution is silent and Settings keeps
+        showing the picked agent while a different one is doing the work
+        (possibly on a different provider with no API key — exactly the failure
+        mode that produced the suggest_fix log storm).
+
+        Stale-ICP warnings are deduplicated process-wide via
+        ``_STALE_AGENT_WARNED`` so a sweep over N findings emits one line, not N.
+        """
         Agent = self.env['ai.agent'].sudo()
         agent_id = _icp(self.env, 'era_seo.ai_agent_id')
         if agent_id:
@@ -243,8 +258,19 @@ class AIClient:
                 agent = Agent.browse(int(agent_id))
                 if agent.exists():
                     return agent
+                if agent_id not in _STALE_AGENT_WARNED:
+                    _STALE_AGENT_WARNED.add(agent_id)
+                    _logger.warning(
+                        'era_seo.ai_agent_id ICP points at ai.agent #%s which '
+                        'no longer exists; falling back to the site Ask-AI '
+                        'agent. Re-pick an agent in Settings → ERA SEO → AI '
+                        'Auto-Fix.', agent_id)
             except (ValueError, TypeError):
-                pass
+                if agent_id not in _STALE_AGENT_WARNED:
+                    _STALE_AGENT_WARNED.add(agent_id)
+                    _logger.warning(
+                        'era_seo.ai_agent_id ICP is not a valid integer (%r); '
+                        'falling back to the site Ask-AI agent.', agent_id)
         # Fallback: the site's "Ask AI" agent if one exists.
         fallback = Agent._get_potential_ask_ai_agent()
         return fallback or Agent.browse()

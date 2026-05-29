@@ -124,6 +124,12 @@ class EraSeoAuditFinding(models.Model):
             raise UserError(reason)
 
         errors = []
+        # When the underlying AI provider is misconfigured (no API key,
+        # rate limit, unreachable) the FIRST call fails with a UserError
+        # and every following call in the loop will fail identically. We
+        # detect that case and short-circuit the rest of the batch with
+        # one summary log line instead of emitting N identical stacktraces.
+        provider_error = None
         for rec in self:
             if rec.check_code not in AI_FIXABLE_CODES:
                 rec.write({'ai_status': 'not_supported'})
@@ -132,10 +138,36 @@ class EraSeoAuditFinding(models.Model):
             if not target:
                 errors.append(_('Finding %s: target record vanished.', rec.id))
                 continue
+            if provider_error is not None:
+                # Already saw a provider-config failure this batch. Mark
+                # the remaining findings as failed without re-calling the
+                # provider — the next sweep will retry after the admin
+                # fixes the configuration.
+                rec.write({'ai_status': 'failed'})
+                continue
             try:
                 proposal = client.suggest_fix(rec, target)
             except AIUnavailable as exc:
                 errors.append(str(exc))
+                continue
+            except UserError as exc:
+                # Typically a provider-config issue: "No API key set for
+                # provider 'X'", "Quota exceeded", etc. One WARNING per
+                # batch (not per finding) and one stored log row.
+                provider_error = str(exc)
+                _logger.warning(
+                    'AI suggest_fix: provider unavailable (%s) — '
+                    'skipping remaining findings this batch', provider_error)
+                log = Log.create({
+                    'finding_id': rec.id,
+                    'check_code': rec.check_code,
+                    'target_model': rec.res_model,
+                    'target_id': rec.res_id,
+                    'target_url': rec.url,
+                    'error_message': provider_error,
+                })
+                rec.write({'ai_status': 'failed', 'ai_last_log_id': log.id})
+                errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
             except Exception as exc:  # noqa: BLE001
                 _logger.exception('AI suggest_fix failed for finding %d', rec.id)

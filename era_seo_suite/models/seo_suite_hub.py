@@ -1316,10 +1316,13 @@ class EraSeoSuiteHub(models.Model):
                 'role': 'user',
                 'content': (prompt or '')[:4000],
             }],
-            # Some OpenRouter image-capable models honor this signal to
-            # produce a single image; harmless on those that ignore it.
-            'modalities': ['image', 'text'],
         }
+        # `modalities` is a Gemini-specific hint. Other image models on
+        # OpenRouter (Flux, xAI Grok Imagine, etc.) reject it with
+        # HTTP 404 "No endpoints found that support the requested output
+        # modalities: image, text". Only send it for models that need it.
+        if 'gemini' in model.lower() and 'image' in model.lower():
+            body['modalities'] = ['image', 'text']
         try:
             r = _requests.post(
                 'https://openrouter.ai/api/v1/chat/completions',

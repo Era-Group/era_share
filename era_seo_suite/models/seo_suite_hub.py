@@ -249,11 +249,18 @@ class EraSeoSuiteHub(models.Model):
 
         Self-healing: if pending has been True for more than
         ``_ARTICLE_PENDING_TTL_SECONDS`` without the cron clearing it
-        (which happens when Odoo gets killed mid-generation, or the
-        watchdog restarts mid-flight, or the cron is queued but never
-        executed), we clear the flag here so the spinner doesn't get
-        stuck forever in the UI. The user can re-click Generate Now
-        afterwards.
+        (Odoo killed mid-generation, watchdog restart mid-flight, etc.)
+        we clear the flag here so the spinner doesn't get stuck forever.
+
+        Concurrency: many browser tabs may poll this RPC simultaneously
+        while the cron is also writing the same ICP row. Postgres uses
+        SERIALIZABLE-ish semantics on these rows, so naive `set_param`
+        races throw `SerializationFailure` and roll back the WHOLE
+        transaction — which, when the loser happens to be the cron, kills
+        an otherwise-successful article generation. We wrap the only two
+        writes here in their own savepoints so a concurrent update is
+        absorbed silently. The other writer wins; we report whatever the
+        winner left behind.
         """
         ICP = self.env['ir.config_parameter'].sudo()
         pending = ICP.get_param('era_seo.article_pending') in _TRUE
@@ -262,11 +269,16 @@ class EraSeoSuiteHub(models.Model):
             stamp = fields.Datetime.from_string(stamp_raw) if stamp_raw else None
             if stamp is None:
                 # Legacy/unstamped pending — backfill so future ticks have
-                # a clock, and report still-pending for now.
-                ICP.set_param(
-                    'era_seo.article_pending_started_at',
-                    fields.Datetime.to_string(fields.Datetime.now()),
-                )
+                # a clock, and report still-pending for now. Savepoint so a
+                # race with the cron's flush doesn't poison the request.
+                try:
+                    with self.env.cr.savepoint():
+                        ICP.set_param(
+                            'era_seo.article_pending_started_at',
+                            fields.Datetime.to_string(fields.Datetime.now()),
+                        )
+                except Exception:  # noqa: BLE001
+                    pass
             else:
                 age = (fields.Datetime.now() - stamp).total_seconds()
                 if age > self._ARTICLE_PENDING_TTL_SECONDS:
@@ -275,8 +287,15 @@ class EraSeoSuiteHub(models.Model):
                         'clearing — the cron either never ran or died '
                         'mid-generation. The user can re-click Generate Now.',
                         int(age), self._ARTICLE_PENDING_TTL_SECONDS)
-                    ICP.set_param('era_seo.article_pending', 'False')
-                    ICP.set_param('era_seo.article_pending_started_at', '')
+                    try:
+                        with self.env.cr.savepoint():
+                            ICP.set_param('era_seo.article_pending', 'False')
+                            ICP.set_param(
+                                'era_seo.article_pending_started_at', '')
+                    except Exception:  # noqa: BLE001
+                        # A concurrent writer (the cron's `finally` clause)
+                        # already cleared the flag — same end state.
+                        pass
                     pending = False
         return {'pending': pending}
 
@@ -549,6 +568,13 @@ class EraSeoSuiteHub(models.Model):
 
     _BULK_AI_MODELS = ('website.page', 'blog.post')
 
+    # Hard wallclock budget for one bulk-fill tick. Odoo's default
+    # `limit_time_cpu` is 600s; we leave ~60s headroom so a cleanly-
+    # committed tick has time to write its cursors. The cron fires every
+    # 2 minutes anyway, so anything we don't finish this tick gets picked
+    # up on the next one.
+    _BULK_AI_TICK_BUDGET_S = 540
+
     @api.model
     def cron_bulk_ai_fill(self):
         """Cron entry point — process one batch of pending records.
@@ -556,7 +582,16 @@ class EraSeoSuiteHub(models.Model):
         Cron stays scheduled but is a no-op until
         ``era_seo.bulk_ai_fill_active`` is True. The cron record itself can
         be active=True permanently; the gate is the ICP flag.
+
+        Each tick is bounded by ``_BULK_AI_TICK_BUDGET_S``: when the
+        running time exceeds it we bail out of the inner loop, commit the
+        per-record cursors written so far, and let the next cron tick
+        pick up where we left off. This prevents one slow AI provider
+        (or one big page) from running the whole tick into Odoo's
+        ``limit_time_cpu`` deadline and rolling back the entire batch.
         """
+        import time as _time
+        deadline = _time.monotonic() + self._BULK_AI_TICK_BUDGET_S
         ICP = self.env['ir.config_parameter'].sudo()
         if _icp_get(self.env, 'era_seo.bulk_ai_fill_active') not in _TRUE:
             return
@@ -600,6 +635,12 @@ class EraSeoSuiteHub(models.Model):
                 continue
 
             for rec in records:
+                if _time.monotonic() > deadline:
+                    _logger.info(
+                        'bulk_ai_fill: tick budget exhausted (%ds) — '
+                        'stopping early; the next tick will resume from id %s',
+                        self._BULK_AI_TICK_BUDGET_S, last_id)
+                    break
                 try:
                     # `_era_ai_system=True` bypasses the per-user SEO Manager
                     # group check in `_ai_check_manager`. The admin opted into
@@ -623,7 +664,15 @@ class EraSeoSuiteHub(models.Model):
                 # Advance the cursor whether or not this record succeeded,
                 # so one persistently-broken record can't stall the queue.
                 ICP.set_param(key_last, str(rec.id))
+                last_id = rec.id
                 total_processed += 1
+            else:
+                # for-else: we didn't break out, so we may have more work.
+                # Fall through to the next model.
+                continue
+            # We broke out of the per-record loop due to the deadline —
+            # don't continue into other models this tick.
+            break
 
         # If nothing was processed across any model, the queue is drained.
         # Flip the flag off so we don't keep waking the cron for no work.

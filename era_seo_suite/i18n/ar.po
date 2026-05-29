@@ -6942,3 +6942,55 @@ msgstr "لا توجد اكتشافات فاشلة في هذا التشغيل."
 #: code:addons/era_seo_suite/models/seo_audit_finding_ai.py:0
 msgid "Reset %d failed finding(s) — they will be picked up on the next Suggest Fixes run."
 msgstr "تمت إعادة %d اكتشاف(ات) فاشلة — ستُلتقَط في تشغيل «اقتراح الإصلاحات» التالي."
+
+# === Audit-run retention (added 19.0.3.0.3) ===
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_search
+msgid "Last 30 days"
+msgstr "آخر 30 يوم"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Audit-run history"
+msgstr "تاريخ تشغيلات التدقيق"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_run_retention_days
+msgid "Run retention (days)"
+msgstr "مدة الاحتفاظ بالتشغيلات (أيام)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_run_retention_active
+msgid "Auto-cleanup audit runs"
+msgstr "تنظيف تشغيلات التدقيق تلقائياً"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Cleanup old runs now"
+msgstr "تنظيف التشغيلات القديمة الآن"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Delete every audit-run row older than the configured retention. The findings they discovered (with their AI suggestions and resolution status) are kept. Continue?"
+msgstr "حذف كل صفوف تشغيلات التدقيق الأقدم من مدة الاحتفاظ المُعدَّة. الاكتشافات التي اكتُشفت فيها (مع اقتراحات الذكاء الاصطناعي وحالة الحل) تبقى. هل تريد المتابعة؟"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Each scan creates a fresh row in <b>SEO Audits</b>. The\n                defects themselves persist as Findings across all runs —\n                deleting old runs only removes the per-run summary, never\n                the findings. Default retention: 90 days. Set to 0 to keep\n                everything."
+msgstr "كل عملية فحص تُنشئ صفاً جديداً في <b>تدقيقات SEO</b>. الأخطاء\n                نفسها تبقى مخزَّنة كاكتشافات عبر كل التشغيلات — حذف\n                التشغيلات القديمة يُزيل ملخص كل تشغيل فقط، لا الاكتشافات\n                نفسها. الافتراضي: 90 يوماً. اضبط على 0 للاحتفاظ بالكل."
+
+#. module: era_seo_suite
+#: code:addons/era_seo_suite/models/seo_audit_run_mgr.py:0
+msgid "Run retention is disabled (days = 0)."
+msgstr "تم تعطيل الاحتفاظ بالتشغيلات (الأيام = 0)."
+
+#. module: era_seo_suite
+#: code:addons/era_seo_suite/models/seo_audit_run_mgr.py:0
+msgid "No audit runs older than %d days to clean up."
+msgstr "لا توجد تشغيلات تدقيق أقدم من %d يوم لتنظيفها."
+
+#. module: era_seo_suite
+#: code:addons/era_seo_suite/models/seo_audit_run_mgr.py:0
+msgid "Deleted %d audit run(s) older than %d days. The defects they found remain in Findings."
+msgstr "تم حذف %d تشغيل(ات) تدقيق أقدم من %d يوم. الأخطاء التي اكتُشفت فيها تبقى في الاكتشافات."

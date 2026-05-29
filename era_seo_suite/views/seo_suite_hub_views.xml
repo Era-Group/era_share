@@ -438,6 +438,27 @@
                   <li>Open <i>ERA SEO Suite → GSC → Accounts → New</i>, then click <b>Connect with Google</b>.</li>
                 </ol>
               </details>
+
+              <group string="Audit-run history">
+                <group>
+                  <field name="setting_run_retention_days"/>
+                  <field name="setting_run_retention_active" widget="boolean_toggle"/>
+                </group>
+                <group>
+                  <button name="action_cleanup_old_runs_now" type="object"
+                          string="Cleanup old runs now"
+                          icon="fa-trash"
+                          class="btn btn-secondary"
+                          confirm="Delete every audit-run row older than the configured retention. The findings they discovered (with their AI suggestions and resolution status) are kept. Continue?"/>
+                </group>
+              </group>
+              <div class="text-muted small mb-3">
+                Each scan creates a fresh row in <b>SEO Audits</b>. The
+                defects themselves persist as Findings across all runs —
+                deleting old runs only removes the per-run summary, never
+                the findings. Default retention: 90 days. Set to 0 to keep
+                everything.
+              </div>
             </page>
 
             <!-- ============================== GUIDE ============================== -->

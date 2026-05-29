@@ -98,6 +98,14 @@
       <search string="Audit Runs">
         <field name="name"/>
         <field name="website_id"/>
+        <!--
+          Default: hide runs older than 30 days so the list stays readable.
+          The cron runs weekly + every manual click adds a row, so without
+          a default the list piles up. Older history is one click away
+          via "Remove Filter."
+        -->
+        <filter name="last_30d" string="Last 30 days"
+                domain="[('date_started', '&gt;=', (context_today() - relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
         <filter name="done" string="Completed" domain="[('state', '=', 'done')]"/>
         <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
         <filter name="has_critical" string="Has Critical Issues"
@@ -117,6 +125,7 @@
     <field name="res_model">era.seo.audit.run</field>
     <field name="view_mode">list,form</field>
     <field name="search_view_id" ref="view_seo_audit_run_search"/>
+    <field name="context">{'search_default_last_30d': 1}</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">
         Run your first SEO audit.

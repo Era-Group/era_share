@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: daily prune of old audit-run rows.
+
+      Each scan (weekly cron + every manual click) appends one row to
+      era.seo.audit.run. After ~90 days the per-run summary stops being
+      useful (dashboard only reads the latest one, no trend view exists)
+      and just clutters the list.
+
+      Deleting an old run keeps the findings — they have
+      ondelete='set null' on run_id, so their AI work / resolution
+      status / explanation all survive. The defect history is preserved,
+      only the scan-session record is dropped.
+
+      Gated by era_seo.run_retention_active ICP (default True). Retention
+      window comes from era_seo.run_retention_days (default 90). Both
+      are wired into the hub's Settings tab so admins can tune without
+      editing the cron record.
+    -->
+    <record id="cron_audit_run_cleanup" model="ir.cron">
+      <field name="name">ERA SEO: Audit-run cleanup (retention)</field>
+      <field name="model_id" ref="model_era_seo_audit_run"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_cleanup_old_runs()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active" eval="True"/>
+      <field name="priority">8</field>
+    </record>
+
+  </data>
+</odoo>

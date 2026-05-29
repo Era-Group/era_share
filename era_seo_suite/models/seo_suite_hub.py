@@ -123,6 +123,9 @@ class EraSeoSuiteHub(models.Model):
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
         'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
+        # ---------- Audit-run retention ----------
+        'setting_run_retention_days':       ('era_seo.run_retention_days',       'int',  90),
+        'setting_run_retention_active':     ('era_seo.run_retention_active',     'bool', True),
     }
 
     # --- Organization
@@ -368,6 +371,21 @@ class EraSeoSuiteHub(models.Model):
         string='Image size',
         compute='_compute_settings', inverse='_inverse_settings',
         help='Provider-native size string (DALL-E: 1024x1024, 1792x1024, 1024x1792).')
+
+    # --- Audit-run retention
+    setting_run_retention_days = fields.Integer(
+        string='Run retention (days)',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='Audit-run rows older than this are deleted by the daily '
+             'cleanup cron (and by the "Cleanup now" button). The findings '
+             'they discovered are NOT deleted — they keep their AI '
+             'suggestions and resolution status. Set to 0 to disable.')
+    setting_run_retention_active = fields.Boolean(
+        string='Auto-cleanup audit runs',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='When on, a daily cron prunes audit runs older than '
+             '"Run retention (days)". Turn off if you want to manage '
+             'cleanup manually via the button.')
 
     # =========================================================================
     # Computes
@@ -726,6 +744,16 @@ class EraSeoSuiteHub(models.Model):
         for model_name in self._BULK_AI_MODELS:
             ICP.set_param('era_seo.bulk_ai_fill_last_id__' + model_name, '0')
         ICP.set_param('era_seo.bulk_ai_fill_active', 'True')
+
+    def action_cleanup_old_runs_now(self):
+        """Hub-side wrapper for the Settings tab button.
+
+        Just delegates to era.seo.audit.run.action_cleanup_old_runs() so the
+        retention logic lives in one place. The model method already returns
+        an `ir.actions.client` notification with the count.
+        """
+        self.ensure_one()
+        return self.env['era.seo.audit.run'].sudo().action_cleanup_old_runs()
 
     def action_generate_blog_article_now(self):
         """One-shot manual trigger for the auto-publish pipeline.

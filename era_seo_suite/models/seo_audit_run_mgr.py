@@ -133,6 +133,90 @@ class EraSeoAuditRun(models.Model):
         run._run_audit()
         return run
 
+    # ------------------------------------------------------------------
+    # Retention / cleanup
+    # ------------------------------------------------------------------
+    #
+    # Each scan creates a fresh era.seo.audit.run row. The findings, NOT
+    # the run, are the long-lived data — findings are upserted by
+    # (check_code, res_model, res_id, lang_id) so deleting an old run
+    # never deletes the defects it discovered (they have
+    # `ondelete='set null'` on run_id and stay queryable). The run row
+    # itself is just a "scan session" record carrying:
+    #   - when the scan happened (date_started/date_finished)
+    #   - which website was scoped
+    #   - the per-run counts (denormalised for the list view)
+    #
+    # After ~90 days the per-run counts stop being useful (the dashboard
+    # only cares about the latest run, and there's no trend/history view).
+    # Keeping unbounded run history is just visual noise in the list.
+
+    _DEFAULT_RUN_RETENTION_DAYS = 90
+
+    @api.model
+    def action_cleanup_old_runs(self):
+        """Delete runs older than ``era_seo.run_retention_days`` ICP days.
+
+        Findings whose ``run_id`` pointed at a deleted run keep their AI
+        state (status/proposals/explanations) — ``run_id`` has
+        ``ondelete='set null'`` on era.seo.audit.finding so they orphan
+        cleanly. Their "Last detected in" column reads empty after that,
+        which is the honest answer.
+
+        Returns a notification action with the count for the manual button.
+        Cron callers ignore the return value.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        try:
+            days = int(ICP.get_param(
+                'era_seo.run_retention_days',
+                str(self._DEFAULT_RUN_RETENTION_DAYS)))
+        except (TypeError, ValueError):
+            days = self._DEFAULT_RUN_RETENTION_DAYS
+        if days <= 0:
+            return self._cleanup_notify(
+                'info', _('Run retention is disabled (days = 0).'))
+
+        from datetime import timedelta
+        cutoff = fields.Datetime.now() - timedelta(days=days)
+        old_runs = self.sudo().search([('date_started', '<', cutoff)])
+        count = len(old_runs)
+        if not count:
+            return self._cleanup_notify(
+                'info',
+                _('No audit runs older than %d days to clean up.', days))
+        old_runs.unlink()
+        _logger.info(
+            'audit-run cleanup: deleted %d run(s) older than %d days', count, days)
+        return self._cleanup_notify(
+            'success',
+            _('Deleted %d audit run(s) older than %d days. '
+              'The defects they found remain in Findings.', count, days))
+
+    @api.model
+    def cron_cleanup_old_runs(self):
+        """Daily cron entry. Gated by ``era_seo.run_retention_active`` ICP
+        so admins can pause it without disabling the cron record.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        active = ICP.get_param('era_seo.run_retention_active', 'True')
+        if active not in ('True', '1', 'true', 'yes', 'on'):
+            return
+        self.action_cleanup_old_runs()
+
+    @staticmethod
+    def _cleanup_notify(kind, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': kind,
+                'message': message,
+                'sticky': False,
+                'next': {'type': 'ir.actions.act_window_close'},
+            },
+        }
+
     def _run_audit(self):
         """Execute every ``_check_*`` method on this model against ``self``.
 

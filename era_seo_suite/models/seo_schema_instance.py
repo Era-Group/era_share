@@ -87,8 +87,13 @@ class EraSeoSchemaInstance(models.Model):
             try:
                 rec.rendered_json = rec.get_rendered_json_ld()
             except Exception as exc:  # noqa: BLE001
+                # %s for rec.id, not %d: in @api.depends computes, rec.id
+                # can be a NewId for in-memory unsaved records (e.g. the
+                # form view rendering a Schema instance before save), and
+                # NewId doesn't satisfy %d's int requirement → TypeError
+                # inside the logging call would mask the real exception.
                 _logger.warning(
-                    'era.seo.schema.instance[%d]: render failed: %s', rec.id, exc
+                    'era.seo.schema.instance[%s]: render failed: %s', rec.id, exc
                 )
                 rec.rendered_json = ''
 
@@ -201,7 +206,7 @@ class EraSeoSchemaInstance(models.Model):
                 instance_data = json.loads(self.data_json)
             except (json.JSONDecodeError, ValueError):
                 _logger.warning(
-                    'era.seo.schema.instance[%d]: invalid data_json, ignoring', self.id
+                    'era.seo.schema.instance[%s]: invalid data_json, ignoring', self.id
                 )
 
         ctx = build_context(self.env, record=page_record)

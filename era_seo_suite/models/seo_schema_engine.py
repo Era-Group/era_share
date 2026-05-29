@@ -99,13 +99,24 @@ def build_context(env, record=None):
         'record': record,
     }
 
-    # Inject request-level values when inside an HTTP request.
+    # Inject request-level values when inside an HTTP request. Odoo 19's
+    # Request object exposes the active language via env.lang / context,
+    # not as a top-level `request.lang` attribute (that was removed/
+    # renamed in newer versions). Probe a few candidates in order so we
+    # work across minor versions, fall back to env.lang.
     try:
         from odoo.http import request  # noqa: PLC0415
         if request:
             ctx['request'] = request
-            ctx['lang'] = request.lang
-    except (ImportError, RuntimeError):
+            lang = (
+                getattr(request, 'lang', None)
+                or (getattr(request, 'env', None) and request.env.lang)
+                or (getattr(request, 'context', None)
+                    and request.context.get('lang'))
+                or env.lang
+            )
+            ctx['lang'] = lang
+    except (ImportError, RuntimeError, AttributeError):
         pass
 
     return ctx

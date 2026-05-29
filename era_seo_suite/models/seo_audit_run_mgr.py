@@ -394,15 +394,43 @@ class EraSeoAuditRun(models.Model):
         try:
             pages = self._scope_pages()
             self.write({'pages_scanned': len(pages)})
+            from psycopg2 import errors as _pg_errors
             for check_method in self._get_check_methods():
-                try:
-                    with self.env.cr.savepoint():
-                        check_method(pages)
-                except Exception as exc:  # noqa: BLE001
-                    _logger.warning(
-                        'audit.run %d: check %s failed: %s',
-                        self.id, check_method.__name__, exc,
-                    )
+                # Per-check retry loop for SerializationFailure: postgres
+                # rejects one of any two concurrent transactions touching
+                # the same rows, and an audit running alongside an AI
+                # fill_seo (or another worker writing translations) loses
+                # these races regularly. Catching the error in a per-check
+                # savepoint and moving on used to mean the check was
+                # silently abandoned — the run looked "complete" with
+                # missing findings. Retry up to 3 times with short backoff
+                # before giving up.
+                attempt = 0
+                while True:
+                    attempt += 1
+                    try:
+                        with self.env.cr.savepoint():
+                            check_method(pages)
+                        break
+                    except _pg_errors.SerializationFailure as exc:
+                        if attempt < 3:
+                            import time as _time
+                            _time.sleep(0.2 * attempt)
+                            continue
+                        _logger.warning(
+                            'audit.run %d: check %s abandoned after %d '
+                            'serialization retries — concurrent writes on '
+                            'the same rows prevented this check from '
+                            'completing. The next audit run will pick it up.',
+                            self.id, check_method.__name__, attempt,
+                        )
+                        break
+                    except Exception as exc:  # noqa: BLE001
+                        _logger.warning(
+                            'audit.run %d: check %s failed: %s',
+                            self.id, check_method.__name__, exc,
+                        )
+                        break
             self._auto_resolve_fixed(pages)
             self.write({
                 'state': 'done',

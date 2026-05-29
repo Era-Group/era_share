@@ -260,13 +260,27 @@
                 <group string="Image generation"
                        invisible="not setting_article_generator_active">
                   <field name="setting_image_provider"/>
+                  <field name="setting_image_together_key" password="True"
+                         invisible="setting_image_provider == 'none'"
+                         placeholder="Together.ai API key (free tier available)"/>
+                  <field name="setting_image_replicate_key" password="True"
+                         invisible="setting_image_provider == 'none'"
+                         placeholder="Replicate API token (fallback ~$0.003/img)"/>
                   <field name="setting_image_api_key" password="True"
                          invisible="setting_image_provider == 'none'"
-                         placeholder="blank = reuse the AI agent's OpenAI key"/>
+                         placeholder="OpenAI key (blank = reuse the AI agent's key)"/>
                   <field name="setting_image_model"
-                         invisible="setting_image_provider == 'none'"/>
+                         invisible="setting_image_provider == 'none'"
+                         placeholder="provider-specific identifier (see help)"/>
                   <field name="setting_image_size"
                          invisible="setting_image_provider == 'none'"/>
+                  <div class="text-muted small" colspan="2"
+                       invisible="setting_image_provider != 'together'">
+                    Together first, then Replicate, then OpenAI — whichever has
+                    a key wins. Free tier Flux Schnell on Together is the
+                    cheapest combo; ~13× cheaper than OpenAI when it falls
+                    through to Replicate.
+                  </div>
                 </group>
                 <group string="Status">
                   <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>

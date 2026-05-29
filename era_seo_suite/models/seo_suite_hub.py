@@ -123,6 +123,13 @@ class EraSeoSuiteHub(models.Model):
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
         'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
+        # Cheap-provider keys for Together (primary) + Replicate (fallback).
+        # When provider == 'together', we try Together first, then fall back
+        # to Replicate if the Replicate key is also set, then OpenAI if its
+        # key is configured. The dispatcher walks this chain so a single
+        # transient failure on the cheap path doesn't block an article.
+        'setting_image_together_key':       ('era_seo.image_together_key',       'char', ''),
+        'setting_image_replicate_key':      ('era_seo.image_replicate_key',      'char', ''),
         # ---------- Audit-run retention ----------
         'setting_run_retention_days':       ('era_seo.run_retention_days',       'int',  90),
         'setting_run_retention_active':     ('era_seo.run_retention_active',     'bool', True),
@@ -364,26 +371,48 @@ class EraSeoSuiteHub(models.Model):
              'NEXT scheduled tick.')
     # --- Image generation
     setting_image_provider = fields.Selection(
-        [('none', 'None (skip image)'),
-         ('openai', 'OpenAI (DALL-E)')],
+        [('none',      'None (skip image)'),
+         ('together',  'Together.ai — Flux Schnell (cheap / free tier)'),
+         ('replicate', 'Replicate — Flux Schnell ($0.003/image)'),
+         ('openai',    'OpenAI (DALL-E / gpt-image-1)')],
         string='Image provider',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Service used to generate the article hero image. "None" '
-             'leaves the post without a cover.')
+        help='Primary service used to generate the article hero image. '
+             'When set to "Together.ai", we also fall back to Replicate '
+             'and then to OpenAI if their API keys are configured below — '
+             'a transient failure on the primary never blocks an article.')
     setting_image_api_key = fields.Char(
-        string='Image API key',
+        string='OpenAI image key',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='API key for the image provider. For OpenAI, leave blank to '
-             'reuse the key configured on the active AI agent (when it '
-             'happens to be an OpenAI agent).')
+        help='OpenAI API key for image generation. Leave blank to reuse '
+             'the key configured on the active AI agent (when it happens '
+             'to be an OpenAI agent).')
+    setting_image_together_key = fields.Char(
+        string='Together.ai key',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='API key for Together.ai. The Flux Schnell model has a '
+             'free tier; usage past it is ~$0.003/image. Get a key at '
+             'https://api.together.xyz.')
+    setting_image_replicate_key = fields.Char(
+        string='Replicate key',
+        compute='_compute_settings', inverse='_inverse_settings',
+        help='API token for Replicate, used as the fallback when Together '
+             'fails. Flux Schnell on Replicate is ~$0.003/image. Get a '
+             'token at https://replicate.com/account/api-tokens.')
     setting_image_model = fields.Char(
         string='Image model',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Model identifier, e.g. dall-e-3, dall-e-2, gpt-image-1.')
+        help='Model identifier — provider-specific. OpenAI: gpt-image-1 '
+             '/ dall-e-3 / dall-e-2. Together: '
+             'black-forest-labs/FLUX.1-schnell-Free or '
+             'black-forest-labs/FLUX.1-schnell. Replicate: '
+             'black-forest-labs/flux-schnell.')
     setting_image_size = fields.Char(
         string='Image size',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Provider-native size string (DALL-E: 1024x1024, 1792x1024, 1024x1792).')
+        help='Provider-native size string (e.g. 1024x1024, 1792x1024). '
+             'Together / Replicate Flux accept width x height pairs in '
+             'multiples of 64.')
 
     # --- Audit-run retention
     setting_run_retention_days = fields.Integer(
@@ -1190,16 +1219,257 @@ class EraSeoSuiteHub(models.Model):
         None to skip.
 
         Dispatches on the `era_seo.image_provider` ICP setting:
-          - 'none'   (default) → returns None
-          - 'openai' → calls OpenAI's image-generation API
-        Override this method in a custom addon for additional providers
-        (Replicate / Stable Diffusion / etc.); return raw bytes or None.
+          - 'none'      → returns None
+          - 'together'  → Together.ai (Flux Schnell, ~$0.003 or free)
+          - 'replicate' → Replicate (Flux Schnell, ~$0.003)
+          - 'openai'    → OpenAI DALL-E / gpt-image-1 (~$0.04)
+
+        Fallback chain: when the chosen primary provider fails (network,
+        quota, model rejection), we walk the chain
+        ``[primary, together, replicate, openai]`` skipping providers
+        with no API key configured. This way a transient outage on the
+        cheap path doesn't lose an article, and admins can configure
+        Together + Replicate keys to get ~13x cost savings vs the
+        OpenAI path while keeping OpenAI as a last-resort failover.
         """
         ICP = self.env['ir.config_parameter'].sudo()
-        provider = (ICP.get_param('era_seo.image_provider', 'none') or 'none').strip().lower()
-        if provider == 'openai':
-            return self._generate_image_openai(prompt)
+        provider = (
+            ICP.get_param('era_seo.image_provider', 'none') or 'none'
+        ).strip().lower()
+        if provider == 'none':
+            return None
+        # Walk the fallback chain. Skip the primary if it's 'none' or
+        # already first; skip any provider with no key configured.
+        chain = [provider]
+        for fb in ('together', 'replicate', 'openai'):
+            if fb not in chain:
+                chain.append(fb)
+        handlers = {
+            'together':  self._generate_image_together,
+            'replicate': self._generate_image_replicate,
+            'openai':    self._generate_image_openai,
+        }
+        for name in chain:
+            handler = handlers.get(name)
+            if not handler:
+                continue
+            try:
+                image_bytes = handler(prompt)
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    'image-gen %s: handler raised; trying next provider', name)
+                image_bytes = None
+            if image_bytes:
+                if name != provider:
+                    _logger.info(
+                        'image-gen: primary "%s" failed; used "%s" fallback',
+                        provider, name)
+                return image_bytes
+        _logger.warning(
+            'image-gen: every provider in chain (%s) failed or had no key',
+            ', '.join(chain))
         return None
+
+    def _generate_image_together(self, prompt):
+        """Together.ai images endpoint — OpenAI-compatible JSON shape.
+
+        Default model: ``black-forest-labs/FLUX.1-schnell-Free`` (free
+        tier; rate-limited). Falls back to the paid Flux Schnell SKU
+        (~$0.003/image) when ``era_seo.image_model`` is set to the
+        paid name.
+
+        Reads the API key from ``era_seo.image_together_key``. Returns
+        None and logs WARNING on any failure (no key, network, non-2xx,
+        malformed response) so the caller can try the next provider in
+        the chain.
+        """
+        import requests as _requests
+        import base64 as _base64
+        ICP = self.env['ir.config_parameter'].sudo()
+        api_key = (ICP.get_param('era_seo.image_together_key', '') or '').strip()
+        if not api_key:
+            _logger.info(
+                'image-gen together: no API key configured (Blog Gen tab '
+                '→ Together.ai key); skipping')
+            return None
+        # Default to the free-tier SKU. Admins can switch to the paid
+        # Flux Schnell or another model via Settings → Image model.
+        # We only use a Together-specific default when the global model
+        # field looks like an OpenAI identifier (gpt-* or dall-e-*) so
+        # cross-provider switches don't accidentally send 'dall-e-3' to
+        # Together (which would 404).
+        configured = (ICP.get_param('era_seo.image_model', '') or '').strip()
+        is_openai_id = configured.lower().startswith(('gpt-', 'dall-e'))
+        model = configured if (configured and not is_openai_id) \
+            else 'black-forest-labs/FLUX.1-schnell-Free'
+        size = self._normalise_image_size(
+            ICP.get_param('era_seo.image_size', '1024x1024'))
+        try:
+            width, height = (int(p) for p in size.lower().split('x', 1))
+        except (TypeError, ValueError):
+            width, height = 1024, 1024
+        body = {
+            'model': model,
+            'prompt': (prompt or '')[:4000],
+            'width': width,
+            'height': height,
+            'steps': 4,        # Flux Schnell is tuned for 4-step inference.
+            'n': 1,
+            'response_format': 'b64_json',
+        }
+        try:
+            r = _requests.post(
+                'https://api.together.xyz/v1/images/generations',
+                headers={
+                    'Authorization': 'Bearer %s' % api_key,
+                    'Content-Type': 'application/json',
+                },
+                json=body, timeout=600,
+            )
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen together: network error: %s', exc)
+            return None
+        if r.status_code >= 400:
+            _logger.warning(
+                'image-gen together: HTTP %s — %s', r.status_code,
+                (r.text or '')[:300].replace('\n', ' '))
+            return None
+        try:
+            item = r.json()['data'][0]
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen together: malformed 2xx: %s', exc)
+            return None
+        # Together returns either b64_json or a URL depending on the model.
+        if item.get('b64_json'):
+            try:
+                return _base64.b64decode(item['b64_json'])
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('image-gen together: bad b64: %s', exc)
+                return None
+        if item.get('url'):
+            try:
+                dl = _requests.get(item['url'], timeout=600)
+                dl.raise_for_status()
+                return dl.content
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('image-gen together: download failed: %s', exc)
+                return None
+        _logger.warning(
+            'image-gen together: response missing b64_json/url: %s',
+            str(item)[:300])
+        return None
+
+    def _generate_image_replicate(self, prompt):
+        """Replicate Flux Schnell — predictions API.
+
+        Default model: ``black-forest-labs/flux-schnell`` (~$0.003/image).
+        Replicate's API is async by default — we set ``Prefer: wait`` so
+        the response blocks until the image is ready (up to 60s default;
+        we extend via ``Prefer: wait=240``). Returns raw bytes from the
+        first output URL.
+
+        Reads the API token from ``era_seo.image_replicate_key``.
+        """
+        import requests as _requests
+        ICP = self.env['ir.config_parameter'].sudo()
+        api_key = (ICP.get_param('era_seo.image_replicate_key', '') or '').strip()
+        if not api_key:
+            _logger.info(
+                'image-gen replicate: no API key configured (Blog Gen tab '
+                '→ Replicate key); skipping')
+            return None
+        configured = (ICP.get_param('era_seo.image_model', '') or '').strip()
+        # Same cross-provider safety as Together: ignore OpenAI-shaped
+        # identifiers and use the Flux Schnell default.
+        is_openai_id = configured.lower().startswith(('gpt-', 'dall-e'))
+        is_together_id = configured.lower().startswith('black-forest-labs/flux.1')
+        model = configured if (configured and not is_openai_id
+                               and not is_together_id) \
+            else 'black-forest-labs/flux-schnell'
+        size = self._normalise_image_size(
+            ICP.get_param('era_seo.image_size', '1024x1024'))
+        try:
+            width, height = (int(p) for p in size.lower().split('x', 1))
+        except (TypeError, ValueError):
+            width, height = 1024, 1024
+        # Replicate Flux Schnell expects aspect_ratio rather than raw
+        # dimensions. Round to the closest supported ratio.
+        aspect = self._closest_replicate_aspect(width, height)
+        body = {
+            'input': {
+                'prompt': (prompt or '')[:4000],
+                'aspect_ratio': aspect,
+                'output_format': 'png',
+                'num_outputs': 1,
+            }
+        }
+        url = 'https://api.replicate.com/v1/models/%s/predictions' % model
+        try:
+            r = _requests.post(
+                url,
+                headers={
+                    'Authorization': 'Bearer %s' % api_key,
+                    'Content-Type': 'application/json',
+                    # Block on the response instead of polling. 240s is
+                    # well above Flux Schnell's typical ~3s latency but
+                    # leaves room for cold starts.
+                    'Prefer': 'wait=240',
+                },
+                json=body, timeout=600,
+            )
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen replicate: network error: %s', exc)
+            return None
+        if r.status_code >= 400:
+            _logger.warning(
+                'image-gen replicate: HTTP %s — %s', r.status_code,
+                (r.text or '')[:300].replace('\n', ' '))
+            return None
+        try:
+            payload = r.json()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen replicate: malformed 2xx: %s', exc)
+            return None
+        # output is either a list of URLs or a single URL depending on
+        # the model.
+        output = payload.get('output')
+        if not output:
+            _logger.warning(
+                'image-gen replicate: response had no output (status=%s)',
+                payload.get('status'))
+            return None
+        image_url = output[0] if isinstance(output, list) else output
+        try:
+            dl = _requests.get(image_url, timeout=600)
+            dl.raise_for_status()
+            return dl.content
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen replicate: download failed: %s', exc)
+            return None
+
+    @staticmethod
+    def _normalise_image_size(raw):
+        size = (raw or '1024x1024').strip()
+        for ch in ('×', '✕', '✖', 'ｘ', 'Ｘ'):
+            size = size.replace(ch, 'x')
+        return size.replace('X', 'x')
+
+    @staticmethod
+    def _closest_replicate_aspect(width, height):
+        """Pick the Flux-supported aspect ratio nearest to width:height."""
+        ratios = {
+            '1:1':   1.0,
+            '4:3':   4 / 3,
+            '3:4':   3 / 4,
+            '16:9':  16 / 9,
+            '9:16':  9 / 16,
+            '3:2':   3 / 2,
+            '2:3':   2 / 3,
+        }
+        if not width or not height:
+            return '1:1'
+        target = width / height
+        return min(ratios, key=lambda k: abs(ratios[k] - target))
 
     def _generate_image_openai(self, prompt):
         """Call OpenAI's images endpoint and return the raw PNG bytes.
@@ -1221,15 +1491,16 @@ class EraSeoSuiteHub(models.Model):
                 'image-gen openai: no API key configured (Blog Gen tab '
                 '→ Image API key); skipping')
             return None
-        model = (ICP.get_param('era_seo.image_model', 'gpt-image-1') or 'gpt-image-1').strip()
-        # Normalize the size string. Admins copy/paste from docs and end up
-        # with the Unicode multiplication sign U+00D7 ('×') instead of the
-        # ASCII 'x' OpenAI requires. Also fix the fullwidth variants for
-        # completeness, then lowercase.
-        size = (ICP.get_param('era_seo.image_size', '1024x1024') or '1024x1024').strip()
-        for ch in ('×', '✕', '✖', 'ｘ', 'Ｘ'):
-            size = size.replace(ch, 'x')
-        size = size.replace('X', 'x')
+        configured = (ICP.get_param('era_seo.image_model', '') or '').strip()
+        # Cross-provider safety: if the global model field is a
+        # Together/Replicate identifier, fall back to gpt-image-1 here
+        # instead of sending it verbatim to OpenAI's endpoint.
+        looks_foreign = configured.startswith('black-forest-labs/') \
+            or '/' in configured
+        model = (configured if (configured and not looks_foreign)
+                 else 'gpt-image-1')
+        size = self._normalise_image_size(
+            ICP.get_param('era_seo.image_size', '1024x1024'))
 
         def _call(call_prompt, call_model, call_size):
             # `response_format` is rejected by gpt-image-1 and some

@@ -747,23 +747,21 @@ class EraSeoSuiteHub(models.Model):
         if was_pending:
             _logger.info(
                 'article_pending cleared manually by user %s', self.env.user.login)
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'info',
-                'message': _('Generation cancelled. You can click Generate '
-                             'article now to start a fresh run.'),
-                'sticky': False,
-            },
-        }
+        # soft_reload so the form re-reads `is_article_pending` immediately
+        # and the spinner banner disappears, exposing the Generate Now
+        # button again. A display_notification alone wouldn't trigger
+        # the re-evaluation of the `invisible="not is_article_pending"`
+        # directive until the widget's next poll tick.
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
     def action_generate_blog_article_now(self):
         """One-shot manual trigger for the auto-publish pipeline.
 
         Fire-and-forget: flips the pending flag, schedules the cron to run
-        immediately, and returns. The Blog Gen tab polls `is_article_pending`
-        every 3 seconds and reloads when the cron clears it.
+        immediately, and returns a soft_reload so the form re-reads
+        is_article_pending immediately. Without the reload, the Generate
+        button stayed visible until the polling widget's next tick (up to
+        3 seconds), letting users spam-click.
         """
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
@@ -789,17 +787,11 @@ class EraSeoSuiteHub(models.Model):
             except Exception:  # noqa: BLE001
                 _logger.exception('Generate Now: cron _trigger failed')
         self.invalidate_recordset(['is_article_pending'])
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'info',
-                'message': _('Generating article in the background. The tab '
-                             'refreshes every few seconds — the new article '
-                             'will appear in the table when it\'s ready.'),
-                'sticky': False,
-            },
-        }
+        # soft_reload re-reads the current record's fields without losing
+        # the open tab / scroll position. That flips `is_article_pending`
+        # from False to True in the rendered form, which immediately
+        # hides the Generate Now button and shows the spinner banner.
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
     @api.model
     def stop_bulk_ai_fill(self):

@@ -25,6 +25,7 @@ _TRUE = ('True', '1', 'true', 'yes', 'on')
 _STEPS = [
     'welcome',
     'org',
+    'business',   # Business profile — drives the per-site SEO agent prompt.
     'social',
     'schema',
     'robots',
@@ -48,6 +49,15 @@ _ICP_MAP = [
     ('org_twitter_handle', 'era_seo.twitter_handle',           'char', ''),
     ('org_google_verify',  'era_seo.google_site_verification', 'char', ''),
     ('org_bing_verify',    'era_seo.bing_site_verification',   'char', ''),
+    # Business profile — feeds the SEO agent's system_prompt builder.
+    ('biz_name_en',        'era_seo.business_name_en',         'char', ''),
+    ('biz_name_ar',        'era_seo.business_name_ar',         'char', ''),
+    ('biz_sector',         'era_seo.business_sector',          'char', 'other'),
+    ('biz_audience',       'era_seo.business_audience',        'char', ''),
+    ('biz_region',         'era_seo.business_region',          'char', ''),
+    ('biz_voice',          'era_seo.business_voice',           'char', 'friendly'),
+    ('biz_keywords',       'era_seo.business_keywords',        'char', ''),
+    ('biz_avoid',          'era_seo.business_avoid',           'char', ''),
     # Social
     ('social_facebook',    'era_seo.social_facebook',          'char', ''),
     ('social_twitter',     'era_seo.social_twitter',           'char', ''),
@@ -75,6 +85,10 @@ _STEP_FIELDS = {
         'org_name', 'org_legal_name', 'org_logo_url', 'org_og_image_url',
         'org_twitter_handle', 'org_google_verify', 'org_bing_verify',
     ],
+    'business': [
+        'biz_name_en', 'biz_name_ar', 'biz_sector', 'biz_audience',
+        'biz_region', 'biz_voice', 'biz_keywords', 'biz_avoid',
+    ],
     'social': [
         'social_facebook', 'social_twitter', 'social_linkedin',
         'social_instagram', 'social_youtube',
@@ -92,17 +106,18 @@ class EraSeoOnboardingWizard(models.TransientModel):
 
     step = fields.Selection(
         [
-            ('welcome', 'Welcome'),
-            ('org',     '1. Organization'),
-            ('social',  '2. Social profiles'),
-            ('schema',  '3. Schema engine'),
-            ('robots',  '4. Robots & AI Crawlers'),
-            ('ai',      '5. AI Auto-Fix'),
-            ('geo',     '5. GEO (/llms.txt)'),
-            ('gsc',     '6. Google Search Console'),
-            ('bulk_ai', '7. AI Bulk Fill'),
-            ('blog',    '8. Blog setup'),
-            ('done',    'Done'),
+            ('welcome',  'Welcome'),
+            ('org',      '1. Organization'),
+            ('business', '2. Business profile'),
+            ('social',   '3. Social profiles'),
+            ('schema',   '4. Schema engine'),
+            ('robots',   '5. Robots & AI Crawlers'),
+            ('ai',       '6. AI Auto-Fix'),
+            ('geo',      '7. GEO (/llms.txt)'),
+            ('gsc',      '8. Google Search Console'),
+            ('bulk_ai',  '9. AI Bulk Fill'),
+            ('blog',     '10. Blog setup'),
+            ('done',     'Done'),
         ],
         default='welcome', required=True,
     )
@@ -122,6 +137,71 @@ class EraSeoOnboardingWizard(models.TransientModel):
                                     help='content="…" from Google Search Console\'s HTML meta tag.')
     org_bing_verify = fields.Char(string='Bing Site Verification',
                                   help='content="…" from Bing Webmaster Tools\' meta tag.')
+
+    # ---- Business profile --------------------------------------------------
+    # Feeds era.seo.suite.hub._build_seo_agent_prompt(). Re-saving the step
+    # rewrites the agent's system_prompt — so a fresh install gets a generic
+    # SEO Fixer, and the wizard turns it into a brand-aware one.
+    biz_name_en = fields.Char(
+        string='Business Name (English)',
+        help='How the brand is written in English copy. Used as the brand '
+             'suffix candidate in seo_title proposals.')
+    biz_name_ar = fields.Char(
+        string='Business Name (Arabic)',
+        help='How the brand is written in Arabic copy. Used as the brand '
+             'suffix on Arabic pages.')
+    biz_sector = fields.Selection(
+        [
+            ('services',    'Professional services / consulting'),
+            ('ecommerce',   'E-commerce / online store'),
+            ('hospitality', 'Hospitality / restaurants / hotels'),
+            ('healthcare',  'Healthcare / clinics'),
+            ('realestate',  'Real estate / property'),
+            ('education',   'Education / training'),
+            ('industrial',  'Industrial / manufacturing / B2B'),
+            ('tech',        'Software / SaaS / technology'),
+            ('other',       'Other / general'),
+        ],
+        default='other',
+        string='Industry',
+        help='Picks the right worked examples and tone reference for the '
+             'SEO agent. Pick "Other" if nothing fits — the agent still '
+             'gets a generic but on-brand prompt.')
+    biz_audience = fields.Char(
+        string='Primary Audience',
+        help='One short line, e.g. "Saudi SMEs", "luxury travellers in the '
+             'Gulf", "freshman computer science students". Inlined into the '
+             'agent prompt as "targeting <audience>".')
+    biz_region = fields.Char(
+        string='Primary Market / Region',
+        help='Country, city or region your pages mainly target — e.g. '
+             '"Saudi Arabia (KSA)", "Riyadh", "GCC". The agent surfaces '
+             'local keywords on pages that fit this market.')
+    biz_voice = fields.Selection(
+        [
+            ('formal',     'Formal & authoritative'),
+            ('friendly',   'Friendly & conversational'),
+            ('technical',  'Technical & precise'),
+            ('persuasive', 'Persuasive & benefit-led'),
+        ],
+        default='friendly',
+        string='Brand Voice',
+        help='Tells the agent which tone to mimic in proposed titles and '
+             'meta descriptions.')
+    biz_keywords = fields.Char(
+        string='Brand Keywords (comma-separated)',
+        help='3-8 keywords your customers actually search for. The agent '
+             'weaves them in only when they fit a page — never forced.')
+    biz_avoid = fields.Char(
+        string='Words to Avoid (comma-separated)',
+        help='Words, claims or product names the agent must never use — '
+             'e.g. "best", "cheapest", competitor names, off-strategy '
+             'product lines.')
+    biz_prompt_preview = fields.Text(
+        string='Generated System Prompt (preview)',
+        compute='_compute_biz_prompt_preview', readonly=True,
+        help='Live preview of the system prompt that will be saved to the '
+             'SEO Fixer agent when you click Next.')
 
     # ---- Social ------------------------------------------------------------
     social_facebook = fields.Char(string='Facebook')
@@ -256,6 +336,35 @@ class EraSeoOnboardingWizard(models.TransientModel):
                 and (rec.gsc_client_secret or '').strip()
             )
 
+    @api.depends('biz_name_en', 'biz_name_ar', 'biz_sector', 'biz_audience',
+                 'biz_region', 'biz_voice', 'biz_keywords', 'biz_avoid')
+    def _compute_biz_prompt_preview(self):
+        """Render the prompt from the wizard's draft fields, without writing
+        anything to ICP. Hub's builder accepts an explicit profile dict
+        precisely so previews stay side-effect-free.
+        """
+        Hub = self.env.get('era.seo.suite.hub')
+        if Hub is None:
+            for rec in self:
+                rec.biz_prompt_preview = ''
+            return
+        for rec in self:
+            profile = {
+                'name_en':  rec.biz_name_en or '',
+                'name_ar':  rec.biz_name_ar or '',
+                'sector':   rec.biz_sector or 'other',
+                'audience': rec.biz_audience or '',
+                'region':   rec.biz_region or '',
+                'voice':    rec.biz_voice or 'friendly',
+                'keywords': rec.biz_keywords or '',
+                'avoid':    rec.biz_avoid or '',
+            }
+            preview = Hub.sudo()._build_seo_agent_prompt(profile=profile)
+            rec.biz_prompt_preview = (
+                preview or
+                _('Fill in at least the Business Name to see the '
+                  'generated SEO Fixer prompt.'))
+
     def _compute_robots_state(self):
         Crawler = self.env.get('era.geo.ai.crawler')
         ICP = self.env['ir.config_parameter'].sudo()
@@ -386,6 +495,13 @@ class EraSeoOnboardingWizard(models.TransientModel):
             if self.bulk_ai_opt_in:
                 self.env['era.seo.suite.hub'].sudo().start_bulk_ai_fill()
             return
+        # Business profile step: persist via the generic _ICP_MAP path
+        # below, then rebuild the SEO agent's system_prompt so it picks
+        # up the new profile immediately — no Odoo restart needed.
+        if self.step == 'business':
+            self._persist_step_via_icp_map()
+            self.env['era.seo.suite.hub'].sudo().rebuild_seo_agent_prompt()
+            return
         # Blog setup step flips a separate flag the same cron reads when
         # processing blog.post records — categories + series are assigned
         # alongside the SEO fill in the same tick.
@@ -400,11 +516,20 @@ class EraSeoOnboardingWizard(models.TransientModel):
                     ICP.get_param('era_seo.bulk_ai_fill_active') not in _TRUE:
                 self.env['era.seo.suite.hub'].sudo().start_bulk_ai_fill()
             return
+        self._persist_step_via_icp_map()
+
+    def _persist_step_via_icp_map(self):
+        """Write the current step's _STEP_FIELDS entries to ir.config_parameter,
+        using each field's _ICP_MAP kind (bool / int / char) for serialisation.
+
+        Pulled out so the Business step can call it explicitly and *then*
+        rebuild the SEO agent prompt — the generic path does the persist,
+        the rebuild happens after.
+        """
         names = _STEP_FIELDS.get(self.step, [])
         if not names:
             return
         ICP = self.env['ir.config_parameter'].sudo()
-        # Build a quick lookup for the _ICP_MAP entries we care about.
         icp_lookup = {f: (k, t) for f, k, t, _d in _ICP_MAP}
         for fname in names:
             if fname == 'ai_agent_id':

@@ -25,29 +25,32 @@
             <span class="badge text-bg-light" invisible="step in ['welcome', 'org']">1. Organization</span>
             <span class="badge text-bg-primary" invisible="step != 'org'">1. Organization</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social']">2. Social</span>
-            <span class="badge text-bg-primary" invisible="step != 'social'">2. Social</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business']">2. Business</span>
+            <span class="badge text-bg-primary" invisible="step != 'business'">2. Business</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema']">3. Schema</span>
-            <span class="badge text-bg-primary" invisible="step != 'schema'">3. Schema</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social']">3. Social</span>
+            <span class="badge text-bg-primary" invisible="step != 'social'">3. Social</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots']">4. Robots</span>
-            <span class="badge text-bg-primary" invisible="step != 'robots'">4. Robots</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema']">4. Schema</span>
+            <span class="badge text-bg-primary" invisible="step != 'schema'">4. Schema</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai']">5. AI</span>
-            <span class="badge text-bg-primary" invisible="step != 'ai'">5. AI</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots']">5. Robots</span>
+            <span class="badge text-bg-primary" invisible="step != 'robots'">5. Robots</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo']">6. GEO</span>
-            <span class="badge text-bg-primary" invisible="step != 'geo'">6. GEO</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai']">6. AI</span>
+            <span class="badge text-bg-primary" invisible="step != 'ai'">6. AI</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc']">7. GSC</span>
-            <span class="badge text-bg-primary" invisible="step != 'gsc'">7. GSC</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo']">7. GEO</span>
+            <span class="badge text-bg-primary" invisible="step != 'geo'">7. GEO</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai']">8. AI Bulk Fill</span>
-            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">8. AI Bulk Fill</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc']">8. GSC</span>
+            <span class="badge text-bg-primary" invisible="step != 'gsc'">8. GSC</span>
 
-            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">9. Blog</span>
-            <span class="badge text-bg-primary" invisible="step != 'blog'">9. Blog</span>
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai']">9. AI Bulk Fill</span>
+            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">9. AI Bulk Fill</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">10. Blog</span>
+            <span class="badge text-bg-primary" invisible="step != 'blog'">10. Blog</span>
 
             <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
           </div>
@@ -65,6 +68,7 @@
             <p class="text-muted mb-0">We'll cover, in order:</p>
             <ol class="text-muted small">
               <li>Organization identity (logo, OG image, verifies)</li>
+              <li>Business profile (industry, voice, keywords — tailors the SEO AI agent)</li>
               <li>Social profiles</li>
               <li>Schema engine</li>
               <li>Robots &amp; AI crawlers (robots.txt preview + bulk toggles)</li>
@@ -83,17 +87,44 @@
             Feeds Organization JSON-LD, OG/Twitter meta, and the
             site-verification meta tags Google and Bing look for.
           </div>
-          <field name="org_name" placeholder="ERA — Excellence Resources Arabia"/>
+          <field name="org_name" placeholder="Your brand or trading name"/>
           <field name="org_legal_name" placeholder="Legal entity name (optional)"/>
           <field name="org_logo_url" placeholder="https://example.com/logo.png" widget="url"/>
           <field name="org_og_image_url" placeholder="https://example.com/og.png" widget="url"/>
-          <field name="org_twitter_handle" placeholder="@era"/>
+          <field name="org_twitter_handle" placeholder="@yourbrand"/>
           <field name="org_google_verify" placeholder="Value of content=&quot;…&quot; from Google's HTML meta tag"/>
           <field name="org_bing_verify" placeholder="Value of content=&quot;…&quot; from Bing's HTML meta tag"/>
         </group>
 
+        <!-- ================================================ Business profile -->
+        <group invisible="step != 'business'" string="2. Business profile">
+          <div class="text-muted small mb-2" colspan="2">
+            Tells the SEO AI agent <b>who you are and how to write for you</b>.
+            The agent's system prompt is rebuilt on Save — every AI title,
+            meta description and slug it proposes from then on uses your
+            brand name, sector tone, and keyword list. You can re-open this
+            wizard any time to refine.
+          </div>
+          <group>
+            <field name="biz_name_en" placeholder="Acme Cloud Accounting"/>
+            <field name="biz_name_ar" placeholder="أكمي للمحاسبة السحابية"/>
+            <field name="biz_sector"/>
+            <field name="biz_voice"/>
+          </group>
+          <group>
+            <field name="biz_audience" placeholder="Saudi SMEs"/>
+            <field name="biz_region" placeholder="Saudi Arabia (KSA)"/>
+            <field name="biz_keywords" placeholder="cloud accounting, VAT, ZATCA, e-invoicing"/>
+            <field name="biz_avoid" placeholder="best, cheapest, competitor names"/>
+          </group>
+          <separator string="Live preview of the SEO Fixer's tailored prompt" colspan="2"/>
+          <field name="biz_prompt_preview" nolabel="1" colspan="2"
+                 widget="text"
+                 style="font-family:monospace;font-size:0.85em;white-space:pre-wrap;min-height:240px;"/>
+        </group>
+
         <!-- ================================================ Social -->
-        <group invisible="step != 'social'" string="2. Social profiles">
+        <group invisible="step != 'social'" string="3. Social profiles">
           <div class="text-muted small mb-2" colspan="2">
             Joined into sameAs[] in Organization JSON-LD so search and AI
             engines link your brand to its social presence. Leave any blank.
@@ -106,7 +137,7 @@
         </group>
 
         <!-- ================================================ Schema -->
-        <group invisible="step != 'schema'" string="3. Schema engine (JSON-LD)">
+        <group invisible="step != 'schema'" string="4. Schema engine (JSON-LD)">
           <div class="text-muted small mb-2" colspan="2">
             Master switch for the JSON-LD engine that renders structured
             data into every page. When off, no schema is emitted regardless
@@ -117,7 +148,7 @@
         </group>
 
         <!-- ================================================ Robots -->
-        <group invisible="step != 'robots'" string="4. Robots &amp; AI Crawlers">
+        <group invisible="step != 'robots'" string="5. Robots &amp; AI Crawlers">
           <field name="robots_url" readonly="1"/>
           <field name="robots_count_total" invisible="1"/>
           <field name="robots_count_allowed" invisible="1"/>
@@ -173,7 +204,7 @@
         </group>
 
         <!-- ================================================ AI -->
-        <group invisible="step != 'ai'" string="5. AI Auto-Fix">
+        <group invisible="step != 'ai'" string="6. AI Auto-Fix">
           <div class="text-muted small mb-2" colspan="2">
             Lets the suite use Odoo's AI app to <b>Suggest</b> and
             <b>Apply</b> fixes on audit findings, and to <b>Fill SEO</b> on
@@ -208,7 +239,7 @@
         </group>
 
         <!-- ================================================ GEO -->
-        <group invisible="step != 'geo'" string="6. GEO — Generative Engine Optimization">
+        <group invisible="step != 'geo'" string="7. GEO — Generative Engine Optimization">
           <div class="text-muted small mb-2" colspan="2">
             Serves a Markdown site map at <code>/llms.txt</code> so AI
             answer engines (ChatGPT, Perplexity, Claude, Google AI
@@ -223,7 +254,7 @@
         </group>
 
         <!-- ================================================ GSC -->
-        <group invisible="step != 'gsc'" string="7. Google Search Console (optional)">
+        <group invisible="step != 'gsc'" string="8. Google Search Console (optional)">
           <field name="gsc_connected_count" invisible="1"/>
           <field name="gsc_can_connect" invisible="1"/>
 
@@ -271,7 +302,7 @@
         </group>
 
         <!-- ================================================ AI Bulk Fill -->
-        <group invisible="step != 'bulk_ai'" string="8. AI Bulk Fill (optional)">
+        <group invisible="step != 'bulk_ai'" string="9. AI Bulk Fill (optional)">
           <field name="bulk_ai_already_running" invisible="1"/>
           <field name="bulk_ai_pending_count" invisible="1"/>
 
@@ -314,7 +345,7 @@
         </group>
 
         <!-- ================================================ Blog setup -->
-        <group invisible="step != 'blog'" string="9. Blog setup (optional)">
+        <group invisible="step != 'blog'" string="10. Blog setup (optional)">
           <field name="blog_post_count" invisible="1"/>
           <field name="blog_uncategorized_count" invisible="1"/>
           <field name="blog_category_count" invisible="1"/>

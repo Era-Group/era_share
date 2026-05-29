@@ -6771,3 +6771,147 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
 msgid "…apps.googleusercontent.com"
 msgstr ""
+
+# === Onboarding wizard — Business Profile step (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "2. Business"
+msgstr "٢. النشاط التجاري"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "2. Business profile"
+msgstr "٢. ملف النشاط التجاري"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Business profile (industry, voice, keywords — tailors the SEO AI agent)"
+msgstr "ملف النشاط التجاري (المجال، النبرة، الكلمات المفتاحية — يخصّص وكيل SEO الذكي)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Tells the SEO AI agent <b>who you are and how to write for you</b>.\n            The agent's system prompt is rebuilt on Save — every AI title,\n            meta description and slug it proposes from then on uses your\n            brand name, sector tone, and keyword list. You can re-open this\n            wizard any time to refine."
+msgstr "يخبر وكيل SEO الذكي <b>من أنتم وكيف يكتب نيابةً عنكم</b>.\n            تتم إعادة بناء التعليمات الأساسية للوكيل عند الحفظ — كل عنوان أو\n            وصف ميتا أو رابط مختصر يقترحه بعد ذلك سيستخدم اسم علامتكم،\n            ونبرة قطاعكم، وقائمة كلماتكم المفتاحية. يمكنكم إعادة فتح\n            المعالج في أي وقت للتحسين."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+msgid "Live preview of the SEO Fixer's tailored prompt"
+msgstr "معاينة حيّة للتعليمات المخصّصة لوكيل SEO Fixer"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_name_en
+msgid "Business Name (English)"
+msgstr "اسم النشاط (إنجليزي)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_name_ar
+msgid "Business Name (Arabic)"
+msgstr "اسم النشاط (عربي)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_sector
+msgid "Industry"
+msgstr "المجال / القطاع"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_audience
+msgid "Primary Audience"
+msgstr "الجمهور المستهدف الرئيسي"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_region
+msgid "Primary Market / Region"
+msgstr "السوق / المنطقة الرئيسية"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_voice
+msgid "Brand Voice"
+msgstr "نبرة العلامة التجارية"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_keywords
+msgid "Brand Keywords (comma-separated)"
+msgstr "كلمات العلامة المفتاحية (مفصولة بفواصل)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_avoid
+msgid "Words to Avoid (comma-separated)"
+msgstr "كلمات يجب تجنّبها (مفصولة بفواصل)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__biz_prompt_preview
+msgid "Generated System Prompt (preview)"
+msgstr "التعليمات الأساسية المُولَّدة (معاينة)"
+
+# --- Industry selection options ---
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__services
+msgid "Professional services / consulting"
+msgstr "خدمات احترافية / استشارات"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__ecommerce
+msgid "E-commerce / online store"
+msgstr "تجارة إلكترونية / متجر إلكتروني"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__hospitality
+msgid "Hospitality / restaurants / hotels"
+msgstr "الضيافة / المطاعم / الفنادق"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__healthcare
+msgid "Healthcare / clinics"
+msgstr "الرعاية الصحية / العيادات"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__realestate
+msgid "Real estate / property"
+msgstr "العقارات"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__education
+msgid "Education / training"
+msgstr "التعليم / التدريب"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__industrial
+msgid "Industrial / manufacturing / B2B"
+msgstr "صناعي / تصنيع / B2B"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__tech
+msgid "Software / SaaS / technology"
+msgstr "برمجيات / SaaS / تقنية"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_sector__other
+msgid "Other / general"
+msgstr "أخرى / عامة"
+
+# --- Brand voice options ---
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_voice__formal
+msgid "Formal & authoritative"
+msgstr "رسمي وموثوق"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_voice__friendly
+msgid "Friendly & conversational"
+msgstr "ودّي ومحادث"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_voice__technical
+msgid "Technical & precise"
+msgstr "تقني ودقيق"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_onboarding_wizard__biz_voice__persuasive
+msgid "Persuasive & benefit-led"
+msgstr "إقناعي يركّز على الفائدة"
+
+#. module: era_seo_suite
+#: code:addons/era_seo_suite/wizards/seo_suite_onboarding_wizard.py:0
+msgid "Fill in at least the Business Name to see the generated SEO Fixer prompt."
+msgstr "أكمل اسم النشاط على الأقل لعرض التعليمات المُولَّدة لوكيل SEO Fixer."

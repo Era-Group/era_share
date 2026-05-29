@@ -1175,6 +1175,303 @@ class EraSeoSuiteHub(models.Model):
                 last_detail)
         return None
 
+    # ------------------------------------------------------------------------
+    # SEO agent — per-site system prompt builder
+    # ------------------------------------------------------------------------
+
+    # The onboarding wizard's "Business Profile" step collects these values
+    # and stores them under these ICP keys. Re-launching the wizard pre-fills
+    # from the same keys, so the round-trip is symmetric.
+    _BIZ_PROFILE_KEYS = {
+        'name_en':       'era_seo.business_name_en',
+        'name_ar':       'era_seo.business_name_ar',
+        'sector':        'era_seo.business_sector',
+        'audience':      'era_seo.business_audience',
+        'region':        'era_seo.business_region',
+        'voice':         'era_seo.business_voice',
+        'keywords':      'era_seo.business_keywords',
+        'avoid':         'era_seo.business_avoid',
+    }
+
+    # Sector library — drives sector-specific examples in the generated
+    # prompt. The key is what the wizard's selection stores; the labels
+    # are what the dropdown shows; the seed keywords + examples are what
+    # gets inlined into the system_prompt when this sector is picked.
+    _SECTOR_LIBRARY = {
+        'services': {
+            'label': 'Professional services / consulting',
+            'examples': [
+                ('missing_seo_title', 'Tax Consulting for Saudi SMEs — Riyadh',
+                 'Names the service, audience and city; 42 chars.'),
+                ('slug_contains_stopwords',
+                 '/the-best-vat-services-in-saudi-arabia → /vat-services-saudi',
+                 'Dropped the unprovable "best" and stop-words.'),
+            ],
+        },
+        'ecommerce': {
+            'label': 'E-commerce / online store',
+            'examples': [
+                ('missing_seo_title', 'Handmade Leather Bags — Free KSA Shipping',
+                 'Product category + a concrete shipping promise.'),
+                ('missing_meta_description',
+                 'Shop our handmade leather collection — free shipping across '
+                 'Saudi Arabia and 30-day returns on every order.',
+                 'Verb, deliverable, trust signal, all under 160 chars.'),
+            ],
+        },
+        'hospitality': {
+            'label': 'Hospitality / restaurants / hotels',
+            'examples': [
+                ('missing_seo_title', 'Boutique Hotel in Old Jeddah — AlBalad Suites',
+                 'Location and category up front, brand name last.'),
+            ],
+        },
+        'healthcare': {
+            'label': 'Healthcare / clinics',
+            'examples': [
+                ('missing_seo_title', 'Dental Implants Riyadh — Smile Clinic',
+                 'Treatment, city, brand; 38 chars.'),
+            ],
+        },
+        'realestate': {
+            'label': 'Real estate / property',
+            'examples': [
+                ('missing_seo_title', 'Apartments for Sale in Al Olaya, Riyadh',
+                 'Listing category + neighborhood + city.'),
+            ],
+        },
+        'education': {
+            'label': 'Education / training',
+            'examples': [
+                ('missing_seo_title', 'Online Arabic Courses — Live Classes from $19',
+                 'Format, language, and an entry-level price hook.'),
+            ],
+        },
+        'industrial': {
+            'label': 'Industrial / manufacturing / B2B',
+            'examples': [
+                ('missing_seo_title', 'Industrial HVAC Supplier — Jubail Industrial City',
+                 'Product class and the geographic specialty.'),
+            ],
+        },
+        'tech': {
+            'label': 'Software / SaaS / technology',
+            'examples': [
+                ('missing_seo_title', 'Cloud Accounting for Saudi SMEs | ZATCA-Ready',
+                 'Primary keyword first, audience and compliance hook.'),
+            ],
+        },
+        'other': {
+            'label': 'Other / general',
+            'examples': [],
+        },
+    }
+
+    _VOICE_LIBRARY = {
+        'formal': 'formal and authoritative — third person, no slang, no exclamation marks',
+        'friendly': 'warm and conversational — second person ("you"), plain words, no jargon',
+        'technical': 'precise and technical — exact terminology, numeric specifics, no marketing fluff',
+        'persuasive': 'persuasive and benefit-led — verbs first, name the customer outcome, soft CTA',
+    }
+
+    @api.model
+    def _build_seo_agent_prompt(self, profile=None):
+        """Compose a per-site system prompt for the ERA SEO Fixer agent.
+
+        :param profile: optional dict with the same keys as ``_BIZ_PROFILE_KEYS``
+                        (``name_en``, ``name_ar``, ``sector``, ``audience``,
+                        ``region``, ``voice``, ``keywords``, ``avoid``). When
+                        omitted, values are read from ``ir.config_parameter``.
+                        Passing an explicit profile lets the wizard render a
+                        live preview without writing draft values to ICP.
+
+        Returns the ready-to-write prompt text, or ``None`` when the profile
+        is empty — in which case the caller should leave the agent's existing
+        prompt alone (so the generic seed from ai_agent_data.xml keeps working).
+        """
+        if profile is None:
+            ICP = self.env['ir.config_parameter'].sudo()
+            profile = {k: (ICP.get_param(v) or '').strip()
+                       for k, v in self._BIZ_PROFILE_KEYS.items()}
+        else:
+            # Normalise — caller might pass missing keys or non-strings.
+            profile = {k: (profile.get(k) or '').strip()
+                       for k in self._BIZ_PROFILE_KEYS}
+        if not (profile['name_en'] or profile['name_ar']):
+            return None
+
+        sector = self._SECTOR_LIBRARY.get(profile['sector']) \
+            or self._SECTOR_LIBRARY['other']
+        voice = self._VOICE_LIBRARY.get(profile['voice'], self._VOICE_LIBRARY['friendly'])
+
+        brand_en = profile['name_en'] or profile['name_ar']
+        brand_ar = profile['name_ar'] or profile['name_en']
+        brand_clause = (
+            '"%s" (Arabic: "%s")' % (brand_en, brand_ar)
+            if profile['name_ar'] and profile['name_en']
+               and profile['name_ar'] != profile['name_en']
+            else '"%s"' % brand_en
+        )
+
+        keywords = [k.strip() for k in profile['keywords'].split(',') if k.strip()]
+        avoid = [k.strip() for k in profile['avoid'].split(',') if k.strip()]
+
+        lines = [
+            '# SEO Fixer for %s' % brand_en,
+            '',
+            'You are an SEO copywriter for %s, a %s%s. You fix one SEO defect '
+            'on one web page at a time. The host application sends you the '
+            'page\'s content and the specific defect; you reply with a single '
+            'JSON object and nothing else.' % (
+                brand_clause,
+                sector['label'].lower(),
+                (' targeting %s' % profile['audience']) if profile['audience'] else '',
+            ),
+            '',
+            '## Brand voice',
+            '',
+            'Write in a tone that is %s.' % voice,
+            '',
+            '## Output contract (non-negotiable)',
+            '',
+            'Return exactly ONE JSON object, no markdown fences, no prose '
+            'before or after:',
+            '',
+            '  {"proposed_value": "<string>", "explanation": "<one sentence>", '
+            '"confidence": <number 0.0-1.0>}',
+            '',
+            'The host parses your reply with json.loads(). Any extra text breaks it.',
+            '',
+            '## Field rules',
+            '',
+            '### seo_title',
+            '- 50-60 characters is the sweet spot. Hard cap at 60.',
+            '- Lead with the primary keyword. Brand (%s%s) last, only if it fits.'
+            % (
+                '"%s"' % brand_en,
+                ' / "%s"' % brand_ar if brand_ar and brand_ar != brand_en else '',
+            ),
+            '- Never ALL CAPS. Never keyword-stuff.',
+            '',
+            '### seo_description',
+            '- 140-160 characters. Hard cap at 160. One complete sentence '
+            'ending in a period.',
+            '- Repeat the primary keyword once, near the start. Add a soft '
+            'call to action.',
+            '',
+            '### URL slug',
+            '- Lowercase only. Hyphens between words — no underscores, '
+            'spaces, or special characters.',
+            '- Drop stop-words (the, a, an, in, on, of, for, and; ال، في، '
+            'من، إلى، على).',
+            '- 3-5 meaningful words. Hard cap 75 characters. No leading or '
+            'trailing hyphen.',
+            '',
+            '## Language',
+            '',
+            'Match the page\'s language. Arabic content gets Arabic copy; '
+            'English content gets English copy. Mixed content — match the '
+            'title\'s language and say so in your explanation.',
+            '',
+        ]
+
+        if profile['region']:
+            lines += [
+                '## Market signals',
+                '',
+                'Pages clearly targeted at %s should surface high-value '
+                'local keywords where they fit naturally. Don\'t force them '
+                'onto pages that aren\'t about the local market.'
+                % profile['region'],
+                '',
+            ]
+
+        if keywords:
+            lines += [
+                '## Brand keywords to weave in (only when relevant)',
+                '',
+            ] + ['- %s' % k for k in keywords] + ['']
+
+        if avoid:
+            lines += [
+                '## Words and claims to AVOID',
+                '',
+            ] + ['- %s' % k for k in avoid] + ['']
+
+        lines += [
+            '## Confidence scoring',
+            '',
+            '- 0.9-1.0: the page content makes the right answer obvious; '
+            'one clear keyword.',
+            '- 0.7-0.89: good signal, but you had to interpret intent or '
+            'pick a keyword.',
+            '- 0.4-0.69: thin or generic page; a reasonable guess the admin '
+            'should review.',
+            '- below 0.4: almost no signal; propose something safe and flag it.',
+            '',
+            '## Hard limits',
+            '',
+            '- Never invent facts about %s, products, prices, or features '
+            'not in the page content.' % brand_en,
+            '- Never exceed the character caps — truncate wording rather '
+            'than overflow.',
+            '- Never put URLs, phone numbers, or emails in titles or '
+            'descriptions.',
+            '- Never output a comma-separated keyword list.',
+            '- Use the page H1 as INPUT, not as the verbatim output.',
+            '',
+        ]
+
+        if sector['examples']:
+            lines += ['## Worked examples (for this industry)', '']
+            for defect, proposal, why in sector['examples']:
+                lines += [
+                    'DEFECT: %s' % defect,
+                    'OUTPUT: %s' % proposal,
+                    'WHY: %s' % why,
+                    '',
+                ]
+
+        lines += [
+            '# Final reminder',
+            '',
+            'Return JSON only. No markdown. No preamble. The host parses '
+            'with json.loads().',
+        ]
+        return '\n'.join(lines)
+
+    @api.model
+    def rebuild_seo_agent_prompt(self):
+        """Build the tailored prompt and write it to the configured SEO agent.
+
+        Called by the onboarding wizard's Business Profile step. Safe to
+        call from anywhere — no-op when the profile is empty or the agent
+        is missing.
+        """
+        prompt = self._build_seo_agent_prompt()
+        if not prompt:
+            return False
+        Agent = self.env.get('ai.agent')
+        if Agent is None:
+            return False
+        # Prefer the agent the suite ships with; fall back to whichever
+        # agent the user has selected.
+        agent = self.env.ref('era_seo_suite.agent_seo',
+                             raise_if_not_found=False)
+        if not agent or not agent.exists():
+            ICP = self.env['ir.config_parameter'].sudo()
+            agent_id = ICP.get_param('era_seo.ai_agent_id')
+            try:
+                agent = Agent.sudo().browse(int(agent_id)) if agent_id else False
+            except (TypeError, ValueError):
+                agent = False
+        if not agent or not agent.exists():
+            return False
+        agent.sudo().write({'system_prompt': prompt})
+        _logger.info('SEO agent prompt rebuilt for agent #%s (%d chars)',
+                     agent.id, len(prompt))
+        return True
+
     def _reuse_ai_agent_openai_key(self):
         """Best-effort: locate an OpenAI API key already configured for the
         AI app, so admins don't have to paste the same key twice. Returns

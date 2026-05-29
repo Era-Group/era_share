@@ -896,23 +896,63 @@ class EraSeoSuiteHub(models.Model):
     def cron_generate_blog_article(self):
         """Wrapper that keeps the pending flag consistent across success,
         failure and re-entrancy. The actual work lives in `_run_article_gen`.
+
+        The flag set/clear writes are funnelled through a **separate
+        cursor** that commits immediately, so a concurrent writer on
+        the same ICP rows (e.g. a user clicking Generate again, or the
+        TTL clear path firing) can't roll back the cron's main
+        transaction. Without this isolation, postgres's SerializationFailure
+        on the flag row aborts the whole cron — including any blog post
+        the AI just generated. We saw that exact failure in prod
+        (commit message references it). The cron's main transaction
+        only commits the actual blog work; the flag is metadata that
+        moves on its own.
         """
-        ICP = self.env['ir.config_parameter'].sudo()
-        # Mark pending + stamp the clock so the UI's TTL safety-net can
-        # detect a run that dies without ever reaching the finally clause.
-        ICP.set_param('era_seo.article_pending', 'True')
-        ICP.set_param(
-            'era_seo.article_pending_started_at',
-            fields.Datetime.to_string(fields.Datetime.now()),
-        )
+        self._set_article_pending(True)
         try:
             return self._run_article_gen()
         finally:
-            # Always clear the pending flag — even when the run was a no-op
-            # because the gate was off or the AI was unavailable. The UI's
-            # spinner stops on the next poll tick.
-            ICP.set_param('era_seo.article_pending', 'False')
-            ICP.set_param('era_seo.article_pending_started_at', '')
+            # Always clear — even on no-op runs (gate off, AI unavailable).
+            # The UI's spinner stops on the next poll tick.
+            self._set_article_pending(False)
+
+    @api.model
+    def _set_article_pending(self, pending):
+        """Write the article-pending flag via a short-lived cursor that
+        commits immediately. Insulates the cron's main transaction from
+        SerializationFailure on the shared ICP row.
+
+        On any error we swallow silently and fall back to a same-cursor
+        write — losing isolation is better than losing the cron's work.
+        """
+        from odoo import sql_db
+        try:
+            with sql_db.db_connect(self.env.cr.dbname).cursor() as side_cr:
+                ICP = self.env(cr=side_cr)['ir.config_parameter'].sudo()
+                ICP.set_param(
+                    'era_seo.article_pending', 'True' if pending else 'False')
+                if pending:
+                    ICP.set_param(
+                        'era_seo.article_pending_started_at',
+                        fields.Datetime.to_string(fields.Datetime.now()),
+                    )
+                else:
+                    ICP.set_param('era_seo.article_pending_started_at', '')
+                side_cr.commit()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                '_set_article_pending(%s): side-cursor write failed (%s); '
+                'falling back to in-transaction write', pending, exc)
+            ICP = self.env['ir.config_parameter'].sudo()
+            ICP.set_param(
+                'era_seo.article_pending', 'True' if pending else 'False')
+            if pending:
+                ICP.set_param(
+                    'era_seo.article_pending_started_at',
+                    fields.Datetime.to_string(fields.Datetime.now()),
+                )
+            else:
+                ICP.set_param('era_seo.article_pending_started_at', '')
 
     @api.model
     def _run_article_gen(self):

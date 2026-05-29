@@ -511,16 +511,41 @@ class AIClient:
         }
 
     def _call_finding(self, agent, finding, target_record, field, lang):
-        """One agent round-trip for a finding fix in one language (or none)."""
+        """One agent round-trip for a finding fix in one language (or none).
+
+        When a target language is given and the model's first response is in
+        the wrong language script (e.g. English when we asked for Arabic),
+        we retry ONCE with a hardened system_prompt that screams the target
+        language. The retry is suppressed for slugs (lang is None) and for
+        languages we can't script-detect cheaply.
+        """
         ctx_record = target_record.with_context(lang=lang.code) if lang else target_record
         prompt = self._build_prompt(finding, ctx_record, field, lang=lang)
         response = agent.get_direct_response(prompt=prompt, context_message=SEO_CONTEXT)
         raw = response[0] if response else ''
         parsed = self._parse_json(raw)
-        # The suggest_fix contract requires proposed_value — assert it here,
-        # not in _parse_json, since other callers use different JSON shapes.
         if 'proposed_value' not in parsed:
             raise ValueError(_('AI response missing "proposed_value".'))
+        if lang is not None and not self._looks_like_language(
+                parsed.get('proposed_value', ''), lang.code):
+            _logger.warning(
+                'AI suggest_fix: response for %s [%s] looks like the wrong '
+                'language — retrying with a hardened prompt. First reply: %r',
+                field, lang.code, parsed.get('proposed_value', '')[:80])
+            stricter_ctx = SEO_CONTEXT + (
+                '\n\nCRITICAL OVERRIDE: respond in {name} ({code}) only. '
+                'The previous response was rejected for being in the wrong '
+                'language. Write every value in {name}; do not echo the '
+                'page content\'s language.'.format(
+                    name=lang.name or lang.code, code=lang.code)
+            )
+            response = agent.get_direct_response(
+                prompt=prompt, context_message=stricter_ctx)
+            retry_raw = response[0] if response else ''
+            retry_parsed = self._parse_json(retry_raw)
+            if 'proposed_value' in retry_parsed and self._looks_like_language(
+                    retry_parsed.get('proposed_value', ''), lang.code):
+                parsed = retry_parsed
         return parsed
 
     # Fallback field specs if a caller doesn't pass any (keeps the client
@@ -561,6 +586,42 @@ class AIClient:
         response = agent.get_direct_response(prompt=prompt, context_message=FILL_CONTEXT)
         raw = response[0] if response else ''
         parsed = self._parse_fill_json(raw, names)
+
+        # Language-script validation + one retry, same shape as _call_finding.
+        # Concatenate the produced field values so we judge on the actual
+        # text the user will see, not just one field.
+        if lang is not None:
+            sample = ' '.join(
+                str(parsed.get(name) or '') for name in names if parsed.get(name)
+            ).strip()
+            if sample and not self._looks_like_language(sample, lang.code):
+                _logger.warning(
+                    'AI fill_seo: response for %s [%s] looks like the wrong '
+                    'language — retrying with a hardened prompt. First reply: %r',
+                    record._name, lang.code, sample[:80])
+                stricter_ctx = FILL_CONTEXT + (
+                    '\n\nCRITICAL OVERRIDE: respond in {name} ({code}) only. '
+                    'The previous response was rejected for being in the wrong '
+                    'language. Write every value in {name}; do not echo the '
+                    'page content\'s language.'.format(
+                        name=lang.name or lang.code, code=lang.code)
+                )
+                response = agent.get_direct_response(
+                    prompt=prompt, context_message=stricter_ctx)
+                retry_raw = response[0] if response else ''
+                try:
+                    retry_parsed = self._parse_fill_json(retry_raw, names)
+                except ValueError:
+                    retry_parsed = None
+                if retry_parsed:
+                    retry_sample = ' '.join(
+                        str(retry_parsed.get(n) or '') for n in names
+                        if retry_parsed.get(n)
+                    ).strip()
+                    if retry_sample and self._looks_like_language(
+                            retry_sample, lang.code):
+                        parsed = retry_parsed
+                        raw = retry_raw
 
         return {
             'fields': {name: (parsed.get(name) or '') for name in names},
@@ -998,7 +1059,17 @@ class AIClient:
     def _build_prompt(cls, finding, target, field, lang=None):
         excerpt, h1, detected = cls._extract_page_signal(target)
         current = (target.url or '') if field == 'url' else (getattr(target, field, None) or '')
+        # We surface the target language THREE times — at the top of the
+        # prompt (where the model anchors its plan), inline in the INPUT
+        # block, and again at the very end right before OUTPUT. Models
+        # given a long English excerpt routinely echo English even when
+        # the per-language fill is for Arabic; the triple-anchor mostly
+        # stops that. The empty-string for non-translatable fields means
+        # this is a no-op for slugs.
+        lang_header = cls._lang_header(lang)
+        lang_footer = cls._lang_footer(lang)
         return (
+            '{lang_header}'
             'INPUT:\n'
             '  defect: {code}\n'
             '  url: {url}\n'
@@ -1006,13 +1077,16 @@ class AIClient:
             '  page_h1: "{h1}"\n'
             '  page_excerpt: "{excerpt}"\n'
             '{lang_line}'
+            '{lang_footer}'
             'OUTPUT:'.format(
                 code=finding.check_code,
                 url=finding.url or '/',
                 current=json.dumps(current) if current else 'null',
                 h1=h1.replace('"', "'"),
                 excerpt=excerpt.replace('"', "'"),
+                lang_header=lang_header,
                 lang_line=cls._lang_line(lang, detected),
+                lang_footer=lang_footer,
             )
         )
 
@@ -1036,6 +1110,7 @@ class AIClient:
                           '"confidence": <0.0-1.0>']) + '}'
 
         return (
+            '{lang_header}'
             'INPUT:\n'
             '  mode: {mode}\n'
             '  url: {url}\n'
@@ -1043,6 +1118,7 @@ class AIClient:
             '{current}\n'
             '  page_excerpt: "{excerpt}"\n'
             '{lang_line}'
+            '{lang_footer}'
             'FIELDS TO PRODUCE (return each as a JSON key with the same name):\n'
             '{produce}\n'
             'OUTPUT (one JSON object, exactly these keys):\n'
@@ -1052,7 +1128,9 @@ class AIClient:
                 h1=h1.replace('"', "'"),
                 current='\n'.join(current_lines),
                 excerpt=excerpt.replace('"', "'"),
+                lang_header=cls._lang_header(lang),
                 lang_line=cls._lang_line(lang, detected),
+                lang_footer=cls._lang_footer(lang),
                 produce='\n'.join(produce_lines),
                 shape=shape,
             )
@@ -1060,7 +1138,7 @@ class AIClient:
 
     @staticmethod
     def _lang_line(lang, detected):
-        """Emit a hard target-language instruction.
+        """Emit the inline target-language instruction in the INPUT block.
 
         When ``lang`` is given (multi-language generation), the output MUST be
         in that language regardless of the page content's language — we are
@@ -1078,6 +1156,77 @@ class AIClient:
                 )
             )
         return '  language_hint: {}\n'.format(detected)
+
+    @staticmethod
+    def _lang_header(lang):
+        """Prepend a banner line to the prompt so the model anchors its plan
+        on the target language before it reads the (often English) excerpt.
+        Returns '' when no per-language instruction is needed.
+        """
+        if lang is None:
+            return ''
+        name = lang.name or lang.code
+        return (
+            '### LANGUAGE-FIRST ###\n'
+            'You MUST respond in {name} ({code}) only. The page content '
+            'below may be in a DIFFERENT language; translate or compose '
+            'in {name} regardless. Outputs in any other language will be '
+            'rejected.\n\n'.format(name=name, code=lang.code)
+        )
+
+    @staticmethod
+    def _lang_footer(lang):
+        """Trail the prompt with one final reminder, right before OUTPUT.
+
+        Three anchors total (header, inline, footer) — empirically necessary
+        for cheap models that otherwise echo whatever language they read.
+        """
+        if lang is None:
+            return ''
+        name = lang.name or lang.code
+        return (
+            'FINAL CHECK before you answer:\n'
+            '  - Is every output value written in {name}? If not, REWRITE in {name}.\n'
+            '  - Do NOT translate the JSON keys — only the values.\n\n'.format(
+                name=name)
+        )
+
+    @staticmethod
+    def _looks_like_language(text, lang_code):
+        """Cheap heuristic: does ``text`` look like it's in ``lang_code``?
+
+        Used as a post-validation gate after a per-language AI call. We don't
+        try to be linguistically rigorous — just count which Unicode script
+        dominates and reject when the dominant script clearly doesn't match
+        the requested language. Returns False only when we're confident the
+        response is in the wrong language.
+
+        Currently distinguishes Arabic (U+0600-U+06FF + U+0750-U+077F) from
+        Latin scripts. Everything else (Cyrillic, CJK, …) is allowed through
+        without judgement; the worst case is a missed retry, not a false
+        rejection.
+        """
+        if not text or not lang_code:
+            return True
+        # Tally Arabic vs Latin letters; ignore digits/punct/whitespace.
+        arabic = 0
+        latin = 0
+        for ch in text:
+            cp = ord(ch)
+            if 0x0600 <= cp <= 0x06FF or 0x0750 <= cp <= 0x077F:
+                arabic += 1
+            elif ('a' <= ch <= 'z') or ('A' <= ch <= 'Z'):
+                latin += 1
+        total = arabic + latin
+        if total < 5:
+            # Too few letters to judge (e.g. just a slug). Pass.
+            return True
+        code = (lang_code or '').lower()
+        if code.startswith('ar'):
+            # Arabic should dominate.
+            return arabic >= max(latin, 1) * 2
+        # Default: anything not Arabic-tagged should NOT be majority Arabic.
+        return arabic <= total * 0.3
 
     @staticmethod
     def _extract_page_signal(record):

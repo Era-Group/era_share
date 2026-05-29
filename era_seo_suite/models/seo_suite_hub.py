@@ -234,21 +234,51 @@ class EraSeoSuiteHub(models.Model):
         for rec in self:
             rec.is_article_pending = pending
 
+    # Maximum age of a "pending" flag before the RPC treats it as stale
+    # and clears it. The cron only takes 30-60s on a healthy run; 10 min
+    # is generous enough to ride out an Odoo restart mid-generation
+    # without the user being stuck on a spinner forever.
+    _ARTICLE_PENDING_TTL_SECONDS = 10 * 60
+
     @api.model
     def get_article_pending_state(self):
         """Lightweight RPC for the OWL polling widget.
 
-        Returns a plain dict the JS can read on each tick. Reads the ICP
-        directly so we sidestep any caching layer Odoo applies to
-        computed-field reads — the widget was occasionally seeing stale
-        True values for many seconds after the cron had cleared the flag,
-        and the spinner-banner stayed up "forever" until the user
-        refreshed the tab manually.
+        Returns a plain dict the JS can read on each tick. Reads ICP
+        directly to sidestep field-read caching.
+
+        Self-healing: if pending has been True for more than
+        ``_ARTICLE_PENDING_TTL_SECONDS`` without the cron clearing it
+        (which happens when Odoo gets killed mid-generation, or the
+        watchdog restarts mid-flight, or the cron is queued but never
+        executed), we clear the flag here so the spinner doesn't get
+        stuck forever in the UI. The user can re-click Generate Now
+        afterwards.
         """
         ICP = self.env['ir.config_parameter'].sudo()
-        return {
-            'pending': ICP.get_param('era_seo.article_pending') in _TRUE,
-        }
+        pending = ICP.get_param('era_seo.article_pending') in _TRUE
+        if pending:
+            stamp_raw = ICP.get_param('era_seo.article_pending_started_at') or ''
+            stamp = fields.Datetime.from_string(stamp_raw) if stamp_raw else None
+            if stamp is None:
+                # Legacy/unstamped pending — backfill so future ticks have
+                # a clock, and report still-pending for now.
+                ICP.set_param(
+                    'era_seo.article_pending_started_at',
+                    fields.Datetime.to_string(fields.Datetime.now()),
+                )
+            else:
+                age = (fields.Datetime.now() - stamp).total_seconds()
+                if age > self._ARTICLE_PENDING_TTL_SECONDS:
+                    _logger.warning(
+                        'article_pending stuck True for %ds (> %ds TTL); '
+                        'clearing — the cron either never ran or died '
+                        'mid-generation. The user can re-click Generate Now.',
+                        int(age), self._ARTICLE_PENDING_TTL_SECONDS)
+                    ICP.set_param('era_seo.article_pending', 'False')
+                    ICP.set_param('era_seo.article_pending_started_at', '')
+                    pending = False
+        return {'pending': pending}
 
     def _compute_recent_ai_articles(self):
         Post = self.env.get('blog.post')
@@ -654,7 +684,14 @@ class EraSeoSuiteHub(models.Model):
         ICP = self.env['ir.config_parameter'].sudo()
         # Flag + manual override of the gate, both consumed by the cron at
         # the start of its run. `_manual` is cleared inside the cron.
+        # The timestamp drives get_article_pending_state()'s TTL — if the
+        # cron never runs (e.g. Odoo restarted mid-trigger by the watchdog),
+        # the spinner clears itself after _ARTICLE_PENDING_TTL_SECONDS.
         ICP.set_param('era_seo.article_pending', 'True')
+        ICP.set_param(
+            'era_seo.article_pending_started_at',
+            fields.Datetime.to_string(fields.Datetime.now()),
+        )
         ICP.set_param('era_seo.article_generator_manual', 'True')
         # Schedule the cron to run as soon as possible. `_trigger` is the
         # Odoo 17+ API for "fire this cron now".
@@ -740,8 +777,13 @@ class EraSeoSuiteHub(models.Model):
         failure and re-entrancy. The actual work lives in `_run_article_gen`.
         """
         ICP = self.env['ir.config_parameter'].sudo()
-        # Mark pending so the Blog Gen tab's poll loop spins.
+        # Mark pending + stamp the clock so the UI's TTL safety-net can
+        # detect a run that dies without ever reaching the finally clause.
         ICP.set_param('era_seo.article_pending', 'True')
+        ICP.set_param(
+            'era_seo.article_pending_started_at',
+            fields.Datetime.to_string(fields.Datetime.now()),
+        )
         try:
             return self._run_article_gen()
         finally:
@@ -749,6 +791,7 @@ class EraSeoSuiteHub(models.Model):
             # because the gate was off or the AI was unavailable. The UI's
             # spinner stops on the next poll tick.
             ICP.set_param('era_seo.article_pending', 'False')
+            ICP.set_param('era_seo.article_pending_started_at', '')
 
     @api.model
     def _run_article_gen(self):

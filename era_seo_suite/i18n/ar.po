@@ -7017,39 +7017,19 @@ msgstr "هل تريد جدولة تدقيق SEO + GEO جديد؟ يعمل في �
 msgid "Audit pending"
 msgstr "التدقيق قيد الانتظار"
 
-# === Cheap image providers (added 19.0.3.x) ===
+# === Optional OpenRouter image provider (added 19.0.3.x) ===
 
 #. module: era_seo_suite
-#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__together
-msgid "Together.ai — Flux 2 (~$0.015/image)"
-msgstr "Together.ai — فلوكس 2 (~$0.015 لكل صورة)"
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__openrouter
+msgid "OpenRouter (any image-capable model)"
+msgstr "OpenRouter (أي نموذج يدعم توليد الصور)"
 
 #. module: era_seo_suite
-#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__replicate
-msgid "Replicate — Flux Schnell (~$0.003/image)"
-msgstr "Replicate — فلوكس شنل (~$0.003 لكل صورة)"
-
-#. module: era_seo_suite
-#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__openai
-msgid "OpenAI — gpt-image-1 / DALL-E (~$0.04/image)"
-msgstr "OpenAI — gpt-image-1 / DALL-E (~$0.04 لكل صورة)"
-
-#. module: era_seo_suite
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_together_key
-msgid "Together.ai key"
-msgstr "مفتاح Together.ai"
-
-#. module: era_seo_suite
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_replicate_key
-msgid "Replicate key"
-msgstr "مفتاح Replicate"
-
-#. module: era_seo_suite
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_api_key
-msgid "OpenAI image key"
-msgstr "مفتاح OpenAI للصور"
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_openrouter_key
+msgid "OpenRouter key"
+msgstr "مفتاح OpenRouter"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
-msgid "Whichever provider you pick, the dispatcher also tries\n                    the others (cost-ordered: Replicate → Together → OpenAI)\n                    if their keys are filled in. Replicate Flux Schnell is\n                    the cheapest at ~$0.003/image; Together FLUX.2-dev is\n                    ~$0.015; OpenAI is ~$0.04. Configure at least the\n                    Replicate key for the ~13× savings vs OpenAI."
-msgstr "أيًّا كان المزوّد الذي تختاره، يجرّب النظام البقية تلقائياً (بترتيب التكلفة: Replicate ← Together ← OpenAI) إذا كانت مفاتيحها معبّأة. Replicate Flux Schnell هو الأرخص بحوالي $0.003 لكل صورة؛ Together FLUX.2-dev بحوالي $0.015؛ OpenAI بحوالي $0.04. عبّئ مفتاح Replicate على الأقل لتوفير ~13× مقارنة بـ OpenAI."
+msgid "OpenAI is the default and works out of the box.\n                    Switch to OpenRouter only if you have an OpenRouter\n                    key and want to use a different image-capable model\n                    (e.g. Google's Nano Banana)."
+msgstr "OpenAI هو الافتراضي ويعمل مباشرةً. حوّل إلى OpenRouter فقط إذا كان لديك مفتاح OpenRouter وتريد استخدام نموذج توليد صور مختلف (مثل Google Nano Banana)."

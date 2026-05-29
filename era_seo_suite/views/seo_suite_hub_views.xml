@@ -260,28 +260,23 @@
                 <group string="Image generation"
                        invisible="not setting_article_generator_active">
                   <field name="setting_image_provider"/>
-                  <field name="setting_image_together_key" password="True"
-                         invisible="setting_image_provider == 'none'"
-                         placeholder="Together.ai API key (free tier available)"/>
-                  <field name="setting_image_replicate_key" password="True"
-                         invisible="setting_image_provider == 'none'"
-                         placeholder="Replicate API token (fallback ~$0.003/img)"/>
                   <field name="setting_image_api_key" password="True"
-                         invisible="setting_image_provider == 'none'"
-                         placeholder="OpenAI key (blank = reuse the AI agent's key)"/>
+                         invisible="setting_image_provider != 'openai'"
+                         placeholder="blank = reuse the AI agent's OpenAI key"/>
+                  <field name="setting_image_openrouter_key" password="True"
+                         invisible="setting_image_provider != 'openrouter'"
+                         placeholder="OpenRouter API key (openrouter.ai/keys)"/>
                   <field name="setting_image_model"
                          invisible="setting_image_provider == 'none'"
-                         placeholder="provider-specific identifier (see help)"/>
+                         placeholder="gpt-image-1 / google/gemini-2.5-flash-image-preview"/>
                   <field name="setting_image_size"
                          invisible="setting_image_provider == 'none'"/>
                   <div class="text-muted small" colspan="2"
                        invisible="setting_image_provider == 'none'">
-                    Whichever provider you pick, the dispatcher also tries
-                    the others (cost-ordered: Replicate → Together → OpenAI)
-                    if their keys are filled in. Replicate Flux Schnell is
-                    the cheapest at ~$0.003/image; Together FLUX.2-dev is
-                    ~$0.015; OpenAI is ~$0.04. Configure at least the
-                    Replicate key for the ~13× savings vs OpenAI.
+                    OpenAI is the default and works out of the box.
+                    Switch to OpenRouter only if you have an OpenRouter
+                    key and want to use a different image-capable model
+                    (e.g. Google's Nano Banana).
                   </div>
                 </group>
                 <group string="Status">

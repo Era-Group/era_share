@@ -1386,19 +1386,35 @@ class AIClient:
 
     @staticmethod
     def _parse_json(raw):
-        """Parse a JSON object from the model output, tolerating code fences."""
+        """Parse a JSON object from the model output, tolerating code fences
+        and trailing prose / multiple objects.
+
+        Cheap models routinely emit one valid JSON object followed by a
+        prose explanation, a second object, or a stray trailing comma —
+        plain ``json.loads`` chokes with ``Extra data``. We use
+        ``json.JSONDecoder().raw_decode()`` to read ONE complete object
+        from the start of the string and silently drop whatever follows.
+        """
         text = (raw or '').strip()
         # Strip ```json ... ``` fences if the model added them despite instructions.
         fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
         if fence:
             text = fence.group(1).strip()
-        # If there is leading/trailing prose, grab the first {...} block.
+        # Skip leading prose: jump to the first '{' if any.
         if not text.startswith('{'):
-            brace = re.search(r'\{.*\}', text, re.DOTALL)
-            if brace:
-                text = brace.group(0)
+            idx = text.find('{')
+            if idx >= 0:
+                text = text[idx:]
+        if not text:
+            raise ValueError(
+                'AI returned empty output where JSON was expected.')
         try:
-            parsed = json.loads(text)
+            # raw_decode reads ONE object then returns (parsed, end_index).
+            # Anything past end_index — prose, a second object, trailing
+            # commas — is silently dropped. This is the only way to
+            # tolerate the surprisingly-common "JSON + then a paragraph"
+            # response shape from cheaper models.
+            parsed, _end = json.JSONDecoder().raw_decode(text)
         except (json.JSONDecodeError, TypeError) as exc:
             # No _() wrapper here: this helper is a @staticmethod called
             # from many paths including crons, where the call frame has no

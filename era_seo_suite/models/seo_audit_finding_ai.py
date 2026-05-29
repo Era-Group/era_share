@@ -286,6 +286,44 @@ class EraSeoAuditFinding(models.Model):
         )
         return to_apply.action_ai_apply()
 
+    def action_ai_retry_failed(self):
+        """Reset every failed finding back to `none` so the AI workflow can
+        pick them up again.
+
+        Background: when the AI provider is temporarily down or
+        misconfigured (no key, ReadTimeout, quota), the per-finding
+        handler in action_ai_suggest catches the UserError, marks the
+        finding `ai_status = 'failed'`, and moves on. The weekly cron's
+        bulk path then filters for ai_status == 'none' and never retries
+        the failed ones — so once you've fixed the provider config,
+        you'd be stuck having to delete + re-run an audit to retry.
+
+        This action just flips status `failed` → `none` on the selected
+        records, clearing the stored explanation / proposed_value too
+        so the next Suggest pass starts from a clean slate. Honors the
+        SEO Manager group check.
+        """
+        self._check_manager()
+        failed = self.filtered(lambda f: f.ai_status == 'failed')
+        if not failed:
+            return self._notify('info', _('No failed findings in the selection.'))
+        failed.write({
+            'ai_status': 'none',
+            'ai_proposed_value': False,
+            'ai_proposed_translations': False,
+            'ai_proposed_field': False,
+            'ai_fix_type': False,
+            'ai_fix_payload': False,
+            'ai_explanation': False,
+            'ai_confidence': 0.0,
+            'ai_model_used': False,
+        })
+        return self._notify(
+            'success',
+            _('Reset %d failed finding(s) — they will be picked up on the '
+              'next Suggest Fixes run.', len(failed)),
+        )
+
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------

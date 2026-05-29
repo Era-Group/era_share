@@ -16,6 +16,7 @@
       <!-- Header buttons -->
       <xpath expr="//header" position="inside">
         <field name="ai_fixable_count" invisible="1"/>
+        <field name="ai_failed_count" invisible="1"/>
         <!-- Always shown after a run; the actions return a clean "no
              AI-fixable findings" notification when there's nothing to do,
              so the buttons stay discoverable. -->
@@ -26,6 +27,13 @@
                 string="Auto-Fix (≥0.8)" class="btn-primary"
                 invisible="state not in ('done', 'failed')"
                 confirm="Generate AI suggestions for every AI-fixable finding and automatically apply the high-confidence ones. Continue?"/>
+        <!-- Only visible when there's actually something to retry. -->
+        <button name="action_ai_retry_failed_findings" type="object"
+                string="Retry Failed"
+                class="btn-warning"
+                icon="fa-refresh"
+                invisible="state not in ('done', 'failed') or ai_failed_count == 0"
+                help="Reset every finding currently marked 'failed' back to 'none' so the next Suggest Fixes pass picks them up again. Use this after fixing the AI provider configuration."/>
       </xpath>
 
       <!-- Inline buttons + status on the embedded findings list -->

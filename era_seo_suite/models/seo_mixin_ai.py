@@ -193,6 +193,18 @@ class EraSeoMixin(models.AbstractModel):
                     rec._name, rec.id, exc)
                 errors.append(_('%s#%s: %s', rec._name, rec.id, exc))
                 proposal = None
+            except ValueError as exc:
+                # JSON parse failure or missing required field. The
+                # model returned malformed output — common with cheaper
+                # OpenRouter models on long multi-language prompts. The
+                # message already includes a snippet; one WARNING is
+                # enough, no stack trace.
+                _logger.warning(
+                    'AI fill_seo: bad JSON on %s#%s — %s',
+                    rec._name, rec.id,
+                    str(exc)[:200])
+                errors.append(_('%s#%s: %s', rec._name, rec.id, exc))
+                proposal = None
             except Exception as exc:  # noqa: BLE001
                 _logger.exception(
                     'AI fill_seo failed for %s#%s', rec._name, rec.id)

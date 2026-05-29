@@ -576,7 +576,24 @@ class AIClient:
         response = agent.get_direct_response(
             prompt=prompt, context_message=SEO_CONTEXT)
         raw = response[0] if response else ''
-        parsed = self._parse_json(raw)
+        try:
+            parsed = self._parse_json(raw)
+        except ValueError as exc:
+            _logger.warning(
+                'AI suggest_fix multi-lang: malformed JSON on first attempt '
+                'for %s — retrying with hardened JSON discipline. err=%s',
+                field, str(exc)[:120])
+            stricter_ctx = SEO_CONTEXT + (
+                '\n\nCRITICAL JSON DISCIPLINE: the previous response was '
+                'rejected for being invalid JSON. Output ONE JSON object, '
+                'nothing else — no prose, no markdown fence, no trailing '
+                'text. Escape every embedded quote and backslash in '
+                'values. Validate the JSON parses before sending.'
+            )
+            response = agent.get_direct_response(
+                prompt=prompt, context_message=stricter_ctx)
+            raw = response[0] if response else ''
+            parsed = self._parse_json(raw)
         translations = self._extract_multilang_translations(parsed, languages)
         if not translations:
             raise ValueError(
@@ -846,7 +863,30 @@ class AIClient:
         response = agent.get_direct_response(
             prompt=prompt, context_message=FILL_CONTEXT)
         raw = response[0] if response else ''
-        parsed = self._parse_json(raw)
+        try:
+            parsed = self._parse_json(raw)
+        except ValueError as exc:
+            # Cheap models on long multi-language prompts frequently
+            # produce malformed JSON (unescaped quotes inside values,
+            # trailing commas, ...). One retry with a JSON-discipline
+            # banner usually fixes it. If THAT also fails, the
+            # ValueError propagates to the caller (the mixin demotes it
+            # to a clean WARNING).
+            _logger.warning(
+                'AI fill_seo multi-lang: malformed JSON on first attempt '
+                'for %s — retrying with hardened JSON discipline. err=%s',
+                record._name, str(exc)[:120])
+            stricter_ctx = FILL_CONTEXT + (
+                '\n\nCRITICAL JSON DISCIPLINE: the previous response was '
+                'rejected for being invalid JSON. Output ONE JSON object, '
+                'nothing else — no prose, no markdown fence, no trailing '
+                'text. Escape every embedded quote and backslash in '
+                'values. Validate the JSON parses before sending.'
+            )
+            response = agent.get_direct_response(
+                prompt=prompt, context_message=stricter_ctx)
+            raw = response[0] if response else ''
+            parsed = self._parse_json(raw)
         by_lang = self._extract_multilang_fields(parsed, langs, names)
         if not by_lang:
             raise ValueError(

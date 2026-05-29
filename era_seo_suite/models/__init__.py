@@ -15,6 +15,10 @@ from . import (
     res_config_settings_gsc,
     ai_client,
     ai_fix_log,
+    # Monkey-patches the EE AI app's hard-coded 30s timeout. Loaded after
+    # ai_client so any failure during the patch doesn't take ai_client
+    # down with it.
+    ai_llm_timeout_patch,
     blog_author,
     blog_category,
     blog_faq,

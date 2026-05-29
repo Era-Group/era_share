@@ -11,7 +11,7 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-from ..utils import slugify
+from ..utils import slugify, unique_slug
 
 _logger = logging.getLogger(__name__)
 
@@ -55,6 +55,17 @@ class EraBlogSeries(models.Model):
         'UNIQUE(slug)',
         'Series slug must be unique.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # Guarantee a non-empty, unique slug regardless of caller (cron, UI,
+        # import). slugify() may return '' for non-Latin names, and onchange
+        # only fires in the UI — so we resolve the slug here to avoid hitting
+        # the UNIQUE(slug) constraint.
+        for vals in vals_list:
+            base = (vals.get('slug') or '').strip() or vals.get('name')
+            vals['slug'] = unique_slug(self.sudo(), base)
+        return super().create(vals_list)
 
     @api.depends('post_ids')
     def _compute_post_count(self):

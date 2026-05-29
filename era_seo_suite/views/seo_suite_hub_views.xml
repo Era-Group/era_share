@@ -275,11 +275,13 @@
                   <field name="setting_image_size"
                          invisible="setting_image_provider == 'none'"/>
                   <div class="text-muted small" colspan="2"
-                       invisible="setting_image_provider != 'together'">
-                    Together first, then Replicate, then OpenAI — whichever has
-                    a key wins. Free tier Flux Schnell on Together is the
-                    cheapest combo; ~13× cheaper than OpenAI when it falls
-                    through to Replicate.
+                       invisible="setting_image_provider == 'none'">
+                    Whichever provider you pick, the dispatcher also tries
+                    the others (cost-ordered: Replicate → Together → OpenAI)
+                    if their keys are filled in. Replicate Flux Schnell is
+                    the cheapest at ~$0.003/image; Together FLUX.2-dev is
+                    ~$0.015; OpenAI is ~$0.04. Configure at least the
+                    Replicate key for the ~13× savings vs OpenAI.
                   </div>
                 </group>
                 <group string="Status">

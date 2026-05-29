@@ -372,15 +372,16 @@ class EraSeoSuiteHub(models.Model):
     # --- Image generation
     setting_image_provider = fields.Selection(
         [('none',      'None (skip image)'),
-         ('together',  'Together.ai — Flux Schnell (cheap / free tier)'),
-         ('replicate', 'Replicate — Flux Schnell ($0.003/image)'),
-         ('openai',    'OpenAI (DALL-E / gpt-image-1)')],
+         ('replicate', 'Replicate — Flux Schnell (~$0.003/image)'),
+         ('together',  'Together.ai — Flux 2 (~$0.015/image)'),
+         ('openai',    'OpenAI — gpt-image-1 / DALL-E (~$0.04/image)')],
         string='Image provider',
         compute='_compute_settings', inverse='_inverse_settings',
         help='Primary service used to generate the article hero image. '
-             'When set to "Together.ai", we also fall back to Replicate '
-             'and then to OpenAI if their API keys are configured below — '
-             'a transient failure on the primary never blocks an article.')
+             'Whichever you pick, the dispatcher also falls back to the '
+             'other providers (in cost order: Replicate → Together → '
+             'OpenAI) if their API keys are configured below, so a '
+             'transient failure on the primary never blocks an article.')
     setting_image_api_key = fields.Char(
         string='OpenAI image key',
         compute='_compute_settings', inverse='_inverse_settings',
@@ -1220,17 +1221,22 @@ class EraSeoSuiteHub(models.Model):
 
         Dispatches on the `era_seo.image_provider` ICP setting:
           - 'none'      → returns None
-          - 'together'  → Together.ai (Flux Schnell, ~$0.003 or free)
-          - 'replicate' → Replicate (Flux Schnell, ~$0.003)
-          - 'openai'    → OpenAI DALL-E / gpt-image-1 (~$0.04)
+          - 'replicate' → Replicate Flux Schnell (~$0.003/image — cheapest)
+          - 'together'  → Together.ai Flux 2 (~$0.015/image)
+          - 'openai'    → OpenAI gpt-image-1 / DALL-E (~$0.04/image)
 
         Fallback chain: when the chosen primary provider fails (network,
-        quota, model rejection), we walk the chain
-        ``[primary, together, replicate, openai]`` skipping providers
-        with no API key configured. This way a transient outage on the
-        cheap path doesn't lose an article, and admins can configure
-        Together + Replicate keys to get ~13x cost savings vs the
-        OpenAI path while keeping OpenAI as a last-resort failover.
+        quota, model rejection), we walk the cost-ordered chain
+        ``[primary, replicate, together, openai]`` skipping providers
+        with no API key configured. So an admin who fills in all three
+        keys gets ~13× cost savings vs OpenAI most of the time, and
+        OpenAI sits as the last-resort failover.
+
+        (Earlier revisions of this docstring claimed Together had a
+        free tier and $0.003/image — both turned out to be wrong: the
+        free SKU was retired and Together's cheapest current image
+        model is FLUX.2-dev at ~$0.0154. Replicate is the real
+        rock-bottom option.)
         """
         ICP = self.env['ir.config_parameter'].sudo()
         provider = (
@@ -1240,8 +1246,9 @@ class EraSeoSuiteHub(models.Model):
             return None
         # Walk the fallback chain. Skip the primary if it's 'none' or
         # already first; skip any provider with no key configured.
+        # Cost-ordered: cheapest fallback first.
         chain = [provider]
-        for fb in ('together', 'replicate', 'openai'):
+        for fb in ('replicate', 'together', 'openai'):
             if fb not in chain:
                 chain.append(fb)
         handlers = {
@@ -1292,16 +1299,19 @@ class EraSeoSuiteHub(models.Model):
                 'image-gen together: no API key configured (Blog Gen tab '
                 '→ Together.ai key); skipping')
             return None
-        # Default to the free-tier SKU. Admins can switch to the paid
-        # Flux Schnell or another model via Settings → Image model.
-        # We only use a Together-specific default when the global model
-        # field looks like an OpenAI identifier (gpt-* or dall-e-*) so
-        # cross-provider switches don't accidentally send 'dall-e-3' to
-        # Together (which would 404).
+        # Default to FLUX.2-dev — Together's cheapest current image SKU
+        # (~$0.0154/image at the time of writing) since the older
+        # FLUX.1-schnell-Free free tier was retired. Admins can override
+        # via Settings → Image model with any of FLUX.2-dev / FLUX.2-pro
+        # / FLUX.2-flex / FLUX.2-max / FLUX.1.1-pro etc. We only use the
+        # Together default when the global model field looks like an
+        # OpenAI identifier (gpt-* or dall-e-*) so a cross-provider
+        # switch doesn't accidentally forward 'dall-e-3' to Together
+        # (which would 404).
         configured = (ICP.get_param('era_seo.image_model', '') or '').strip()
         is_openai_id = configured.lower().startswith(('gpt-', 'dall-e'))
         model = configured if (configured and not is_openai_id) \
-            else 'black-forest-labs/FLUX.1-schnell-Free'
+            else 'black-forest-labs/FLUX.2-dev'
         size = self._normalise_image_size(
             ICP.get_param('era_seo.image_size', '1024x1024'))
         try:

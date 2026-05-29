@@ -7021,13 +7021,18 @@ msgstr "التدقيق قيد الانتظار"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__together
-msgid "Together.ai — Flux Schnell (cheap / free tier)"
-msgstr "Together.ai — فلوكس شنل (مجاني/رخيص)"
+msgid "Together.ai — Flux 2 (~$0.015/image)"
+msgstr "Together.ai — فلوكس 2 (~$0.015 لكل صورة)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__replicate
-msgid "Replicate — Flux Schnell ($0.003/image)"
-msgstr "Replicate — فلوكس شنل ($0.003 لكل صورة)"
+msgid "Replicate — Flux Schnell (~$0.003/image)"
+msgstr "Replicate — فلوكس شنل (~$0.003 لكل صورة)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_suite_hub__setting_image_provider__openai
+msgid "OpenAI — gpt-image-1 / DALL-E (~$0.04/image)"
+msgstr "OpenAI — gpt-image-1 / DALL-E (~$0.04 لكل صورة)"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_image_together_key
@@ -7046,5 +7051,5 @@ msgstr "مفتاح OpenAI للصور"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
-msgid "Together first, then Replicate, then OpenAI — whichever has\n                    a key wins. Free tier Flux Schnell on Together is the\n                    cheapest combo; ~13× cheaper than OpenAI when it falls\n                    through to Replicate."
-msgstr "يجرّب Together أولاً ثم Replicate ثم OpenAI — يفوز أول مزوّد بمفتاح. الطبقة المجانية لـ Flux Schnell على Together هي الخيار الأرخص؛ ~13× أرخص من OpenAI حتى عند الرجوع إلى Replicate."
+msgid "Whichever provider you pick, the dispatcher also tries\n                    the others (cost-ordered: Replicate → Together → OpenAI)\n                    if their keys are filled in. Replicate Flux Schnell is\n                    the cheapest at ~$0.003/image; Together FLUX.2-dev is\n                    ~$0.015; OpenAI is ~$0.04. Configure at least the\n                    Replicate key for the ~13× savings vs OpenAI."
+msgstr "أيًّا كان المزوّد الذي تختاره، يجرّب النظام البقية تلقائياً (بترتيب التكلفة: Replicate ← Together ← OpenAI) إذا كانت مفاتيحها معبّأة. Replicate Flux Schnell هو الأرخص بحوالي $0.003 لكل صورة؛ Together FLUX.2-dev بحوالي $0.015؛ OpenAI بحوالي $0.04. عبّئ مفتاح Replicate على الأقل لتوفير ~13× مقارنة بـ OpenAI."

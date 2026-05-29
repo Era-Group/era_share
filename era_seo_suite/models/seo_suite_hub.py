@@ -571,12 +571,14 @@ class EraSeoSuiteHub(models.Model):
 
     _BULK_AI_MODELS = ('website.page', 'blog.post')
 
-    # Hard wallclock budget for one bulk-fill tick. Odoo's default
-    # `limit_time_cpu` is 600s; we leave ~60s headroom so a cleanly-
-    # committed tick has time to write its cursors. The cron fires every
-    # 2 minutes anyway, so anything we don't finish this tick gets picked
-    # up on the next one.
-    _BULK_AI_TICK_BUDGET_S = 540
+    # Hard wallclock budget for one bulk-fill tick. The cron is killed by
+    # Odoo at `limit_time_cpu` (600s) — we leave generous headroom so we
+    # never *start* a record we can't possibly *finish*. One record is
+    # up to 2 langs × ~120s OpenAI timeout = 240s in the worst case; we
+    # set the budget to 600 - 240 = 360s so we never enter a new record
+    # past that mark. Whatever's left gets picked up by the next cron
+    # tick 2 minutes later.
+    _BULK_AI_TICK_BUDGET_S = 360
 
     @api.model
     def cron_bulk_ai_fill(self):

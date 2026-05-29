@@ -7060,3 +7060,16 @@ msgstr "مفتاح OpenRouter"
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "OpenAI is the default and works out of the box.\n                    Switch to OpenRouter only if you have an OpenRouter\n                    key and want to use a different image-capable model\n                    (e.g. Google's Nano Banana)."
 msgstr "OpenAI هو الافتراضي ويعمل مباشرةً. حوّل إلى OpenRouter فقط إذا كان لديك مفتاح OpenRouter وتريد استخدام نموذج توليد صور مختلف (مثل Google Nano Banana)."
+
+# === View on site button (added 19.0.3.x) ===
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_finding_list
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_form
+msgid "View on site"
+msgstr "فتح في الموقع"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_finding_form
+msgid "View on Site"
+msgstr "فتح في الموقع"

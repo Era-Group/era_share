@@ -118,3 +118,35 @@ class EraSeoAuditFinding(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    def action_open_public_url(self):
+        """Open the public-facing page for this finding in a new tab.
+
+        Resolves the absolute URL by prefixing the finding's stored path
+        with ``web.base.url`` (Odoo's canonical site URL). The finding's
+        URL field stores the path the audit walked (e.g. ``/blog/foo``,
+        ``/contactus``); we don't have a per-record website-aware URL
+        builder here, so the base URL fallback works for single-website
+        installs and is the right approximation for multi-website ones
+        too — admins can re-pick the website later if needed.
+
+        Returns an ``ir.actions.act_url`` with ``target='new'`` so the
+        backend stays open in the original tab.
+        """
+        self.ensure_one()
+        path = (self.url or '').strip()
+        if not path:
+            return False
+        if path.startswith(('http://', 'https://')):
+            full_url = path
+        else:
+            base = (self.env['ir.config_parameter'].sudo()
+                    .get_param('web.base.url', '') or '').rstrip('/')
+            if not path.startswith('/'):
+                path = '/' + path
+            full_url = base + path if base else path
+        return {
+            'type': 'ir.actions.act_url',
+            'url': full_url,
+            'target': 'new',
+        }

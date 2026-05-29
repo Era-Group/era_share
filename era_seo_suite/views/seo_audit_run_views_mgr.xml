@@ -98,6 +98,9 @@
                   <button name="action_open_target" type="object"
                           string="Open" icon="fa-arrow-right"
                           invisible="not res_id"/>
+                  <button name="action_open_public_url" type="object"
+                          string="View on site" icon="fa-external-link"
+                          invisible="not url"/>
                 </list>
               </field>
             </page>
@@ -178,6 +181,9 @@
         <button name="action_open_target" type="object"
                 string="Open" icon="fa-arrow-right"
                 invisible="not res_id"/>
+        <button name="action_open_public_url" type="object"
+                string="View on site" icon="fa-external-link"
+                invisible="not url"/>
       </list>
     </field>
   </record>
@@ -197,6 +203,9 @@
           <button name="action_open_target" type="object"
                   string="Open Target"
                   invisible="not res_id"/>
+          <button name="action_open_public_url" type="object"
+                  string="View on Site" icon="fa-external-link"
+                  invisible="not url"/>
         </header>
         <sheet>
           <div class="oe_title">

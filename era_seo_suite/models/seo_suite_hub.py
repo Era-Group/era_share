@@ -1171,10 +1171,18 @@ class EraSeoSuiteHub(models.Model):
     # thin_content appends AI-written text to the page, and title/slug rewrites
     # change user-visible copy, so neither should fire unattended.
     _UNATTENDED_FIX_CODES = {'missing_og_image', 'missing_schema'}
-    # Max findings auto-fixed per tick. Schema fixes are AI calls; a large
-    # backlog processed in one tick could run past limit_time_real_cron and
-    # get the worker killed. The remainder is picked up on the next daily run.
+    # Max findings SELECTED per tick. Schema fixes are AI calls; a large
+    # backlog processed in one tick could run past limit_time_real and get the
+    # worker killed. The remainder is picked up on the next tick.
     _UNATTENDED_FIX_BATCH = 25
+    # Within a tick, suggest+apply this many findings at a time so the wall-
+    # clock budget below is checked between small chunks rather than only once.
+    _UNATTENDED_FIX_CHUNK = 5
+    # Per-tick wall-clock budget (seconds). We stop entering NEW chunks once
+    # this is spent — the in-flight chunk still finishes — so a slow/retry-heavy
+    # AI provider can't push one tick past limit_time_real (1200s). Budget +
+    # one chunk's worst case stays comfortably under that ceiling.
+    _UNATTENDED_FIX_TICK_BUDGET_S = 600
 
     @api.model
     def cron_weekly_audit_and_fix(self):
@@ -1226,17 +1234,41 @@ class EraSeoSuiteHub(models.Model):
         self._apply_safe_fixes(findings, 'daily_ai_fix')
 
     def _apply_safe_fixes(self, findings, tag):
-        """Shared suggest+apply step for the weekly/daily auto-fix crons."""
+        """Shared suggest+apply step for the auto-fix crons.
+
+        Processes findings in small chunks under a per-tick wall-clock budget
+        so a slow/retry-heavy AI provider can't run one cron tick past
+        limit_time_real and get the worker killed: we stop entering NEW chunks
+        once the budget is spent (the in-flight chunk finishes) and the
+        remainder is picked up on the next tick. Chunking also isolates a
+        failing finding to its chunk instead of aborting the whole batch.
+        """
         if not findings:
             _logger.info('%s: no untouched safe-fixable findings (%s)',
                          tag, ', '.join(sorted(self._UNATTENDED_FIX_CODES)))
             return
-        try:
-            findings.with_context(_era_ai_system=True).action_ai_suggest_and_apply()
-            _logger.info('%s: auto-fixed %d finding(s) this tick', tag, len(findings))
-        except Exception:  # noqa: BLE001
-            _logger.exception('%s: AI suggest+apply failed on %d findings',
-                              tag, len(findings))
+        import time as _time
+        deadline = _time.monotonic() + self._UNATTENDED_FIX_TICK_BUDGET_S
+        done = 0
+        total = len(findings)
+        for i in range(0, total, self._UNATTENDED_FIX_CHUNK):
+            if _time.monotonic() > deadline:
+                _logger.info(
+                    '%s: tick budget (%ds) reached — processed %d/%d, '
+                    'remainder next tick', tag,
+                    self._UNATTENDED_FIX_TICK_BUDGET_S, done, total)
+                break
+            chunk = findings[i:i + self._UNATTENDED_FIX_CHUNK]
+            try:
+                chunk.with_context(
+                    _era_ai_system=True).action_ai_suggest_and_apply()
+                done += len(chunk)
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    '%s: AI suggest+apply failed on a chunk of %d',
+                    tag, len(chunk))
+        if done:
+            _logger.info('%s: auto-fixed %d finding(s) this tick', tag, done)
 
     # ------------------------------------------------------------------------
     # Auto-publish: trend-aware blog article every N days

@@ -7,8 +7,19 @@ whole run without opening each finding:
   - Auto-Fix (>=0.8)     -> action_ai_fix_findings (suggest + apply confident)
 
 Both operate only on the run's AI-fixable, unresolved findings.
+
+Auto-Fix runs in the BACKGROUND: a run with many findings makes one slow AI
+call per finding and would run the request past the worker's limit_time_real
+(1200s), killing it. The button just flips an ICP flag and fires
+era.seo.suite.hub.cron_bulk_ai_fix, which drains the queue out of the request.
 """
+import logging
+
 from odoo import _, api, fields, models
+
+_logger = logging.getLogger(__name__)
+
+_TRUE = ('True', '1', 'true', 'yes', 'on')
 
 
 class EraSeoAuditRun(models.Model):
@@ -53,12 +64,46 @@ class EraSeoAuditRun(models.Model):
         return targets.action_ai_suggest()
 
     def action_ai_fix_findings(self):
-        """Suggest + auto-apply (confidence >= 0.8) across the run's findings."""
+        """Queue a BACKGROUND suggest + auto-apply (>=0.8) sweep for this run.
+
+        Does not do the AI work in-request — see the module docstring. Flips
+        `era_seo.bulk_fix_active`, records this run, and fires the drain cron.
+        Re-entrancy: if a sweep is already active we reject the click rather
+        than enqueue a second one (the cron framework also can't run two ticks
+        of the same cron at once).
+        """
         self.ensure_one()
-        targets = self._ai_fixable_findings()
+        ICP = self.env['ir.config_parameter'].sudo()
+        if (ICP.get_param('era_seo.bulk_fix_active') or '') in _TRUE:
+            return self._ai_run_notify(
+                'warning',
+                _('An AI auto-fix sweep is already running — let it finish '
+                  'before starting another.'))
+        # Only the untouched findings are queued; the cron processes
+        # ai_status == 'none'. Failed ones are re-queued via "Retry Failed".
+        targets = self._ai_fixable_findings().filtered(
+            lambda f: f.ai_status == 'none')
         if not targets:
-            return self._ai_run_notify('info', _('No AI-fixable findings in this run.'))
-        return targets.action_ai_suggest_and_apply()
+            return self._ai_run_notify(
+                'info',
+                _('No new AI-fixable findings to process in this run. '
+                  '(Use "Retry Failed" to re-queue failed ones.)'))
+        ICP.set_param('era_seo.bulk_fix_run_id', str(self.id))
+        ICP.set_param('era_seo.bulk_fix_last_id', '0')
+        ICP.set_param('era_seo.bulk_fix_active', 'True')
+        cron = self.env.ref(
+            'era_seo_suite.cron_bulk_ai_fix', raise_if_not_found=False)
+        if cron:
+            try:
+                cron.sudo()._trigger()
+            except Exception:  # noqa: BLE001
+                _logger.exception(
+                    'action_ai_fix_findings: cron _trigger failed')
+        return self._ai_run_notify(
+            'success',
+            _('AI auto-fix started in the background for %d finding(s). '
+              'They update as each is fixed — you can keep working.',
+              len(targets)))
 
     def action_ai_retry_failed_findings(self):
         """Reset every `failed` finding in this run back to `none`.

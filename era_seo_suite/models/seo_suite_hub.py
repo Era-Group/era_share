@@ -1370,6 +1370,136 @@ class EraSeoSuiteHub(models.Model):
         return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
     # ------------------------------------------------------------------------
+    # Background bulk Auto-Fix — run-level "Auto-Fix (AI)" button
+    # ------------------------------------------------------------------------
+    #
+    # The run button used to suggest+apply EVERY finding synchronously inside
+    # the HTTP request. A run with more than ~10 findings makes that many slow
+    # AI calls back-to-back and runs past the worker's limit_time_real (1200s),
+    # so the worker is killed mid-batch. The button now only flips
+    # `era_seo.bulk_fix_active` (+ records the run id) and fires this cron,
+    # which drains the queue OUT of the request in budgeted chunks. Each fix is
+    # committed as it lands (action_ai_suggest / action_ai_apply commit per
+    # record), so a killed tick never loses work and the next tick resumes.
+    #
+    # State (ir.config_parameter, no schema change):
+    #   era_seo.bulk_fix_active   bool  — cron gate + re-entrancy guard
+    #   era_seo.bulk_fix_run_id   int   — run whose findings to drain (0 = all)
+    #   era_seo.bulk_fix_last_id  int   — high-water finding id within the sweep
+
+    # Suggest+apply this many findings per chunk; the wall-clock budget is
+    # checked between chunks so a slow/retry-heavy provider can't run one tick
+    # past limit_time_real. Budget + one chunk's worst case stays under 1200s.
+    _BULK_FIX_CHUNK = 5
+    _BULK_FIX_TICK_BUDGET_S = 600
+
+    @api.model
+    def cron_bulk_ai_fix(self):
+        """Drain the run-level Auto-Fix queue in the background.
+
+        No-op until `era_seo.bulk_fix_active` is True. Re-entrancy is covered
+        twice over: the flag stops a second sweep being enqueued while one is
+        active (see era.seo.audit.run.action_ai_fix_findings), and Odoo
+        serialises a given cron (SELECT ... FOR UPDATE NOWAIT) so two ticks of
+        this cron can never overlap. A high-water finding id guarantees the
+        loop always advances — even past a finding whose target vanished (which
+        action_ai_suggest skips without setting a status) — so it terminates.
+        """
+        import time as _time
+        if _icp_get(self.env, 'era_seo.bulk_fix_active') not in _TRUE:
+            return
+        # Confirm the provider is reachable ONCE per tick. If it's down, keep
+        # the flag on and bail — the next tick retries when it's back — rather
+        # than burning the whole queue into 'failed'.
+        from .ai_client import AIClient
+        from .seo_audit_finding_ai import AI_FIXABLE_CODES
+        ok, reason = AIClient(self.env).is_available()
+        if not ok:
+            _logger.warning(
+                'bulk_ai_fix: AI provider unavailable (%s) — pausing this '
+                'tick, flag kept on for retry', reason)
+            return
+
+        deadline = _time.monotonic() + self._BULK_FIX_TICK_BUDGET_S
+        ICP = self.env['ir.config_parameter'].sudo()
+        Finding = self.env['era.seo.audit.finding'].sudo()
+        try:
+            run_id = int(ICP.get_param('era_seo.bulk_fix_run_id', '0') or '0')
+        except (TypeError, ValueError):
+            run_id = 0
+        try:
+            last_id = int(ICP.get_param('era_seo.bulk_fix_last_id', '0') or '0')
+        except (TypeError, ValueError):
+            last_id = 0
+
+        # Only untouched ('none') AI-fixable findings — a processed finding
+        # leaves 'none', and the high-water id below skips anything we've
+        # already handled this sweep (incl. status-less vanished targets).
+        static_domain = [
+            ('is_resolved', '=', False),
+            ('ai_status', '=', 'none'),
+            ('check_code', 'in', list(AI_FIXABLE_CODES)),
+        ]
+        if run_id:
+            static_domain.append(('run_id', '=', run_id))
+
+        done = 0
+        drained = False
+        while True:
+            if _time.monotonic() > deadline:
+                break
+            chunk = Finding.search(
+                [('id', '>', last_id)] + static_domain,
+                limit=self._BULK_FIX_CHUNK, order='id')
+            if not chunk:
+                drained = True
+                break
+            try:
+                # System context bypasses the per-user SEO-Manager gate (the
+                # admin opted in by clicking Auto-Fix); the method commits each
+                # finding as it's suggested+applied.
+                chunk.with_context(
+                    _era_ai_system=True).action_ai_suggest_and_apply()
+            except Exception:  # noqa: BLE001
+                # Clear any aborted-transaction state; the per-record commits
+                # already persisted the good work, so we only lose the (failed)
+                # tail of this chunk.
+                self.env.cr.rollback()
+                _logger.exception(
+                    'bulk_ai_fix: chunk failed (ids %s)', chunk.ids)
+            # Advance the high-water past the whole chunk on a side cursor
+            # (same shared-row 40001 hazard as bulk_ai_fill), whether or not
+            # each record succeeded, so one bad record can't stall the queue.
+            last_id = max(chunk.ids)
+            self._era_commit_icp({'era_seo.bulk_fix_last_id': str(last_id)})
+            done += len(chunk)
+
+        if drained:
+            self._era_commit_icp({'era_seo.bulk_fix_active': 'False'})
+            _logger.info(
+                'bulk_ai_fix: queue drained (%d finding(s) this tick)', done)
+        else:
+            _logger.info(
+                'bulk_ai_fix: tick budget (%ds) reached — %d done, resuming',
+                self._BULK_FIX_TICK_BUDGET_S, done)
+            # Chain immediately instead of waiting for the 2-minute schedule so
+            # a big backlog drains promptly. The NOWAIT lock still prevents
+            # overlap with the currently-finishing tick.
+            cron = self.env.ref(
+                'era_seo_suite.cron_bulk_ai_fix', raise_if_not_found=False)
+            if cron:
+                try:
+                    cron.sudo()._trigger()
+                except Exception:  # noqa: BLE001
+                    _logger.exception('bulk_ai_fix: self-trigger failed')
+
+    @api.model
+    def stop_bulk_ai_fix(self):
+        """Cancel an in-progress background Auto-Fix sweep (flag off; the
+        high-water is left where it is)."""
+        self._era_commit_icp({'era_seo.bulk_fix_active': 'False'})
+
+    # ------------------------------------------------------------------------
     # Weekly audit + auto AI-fix
     # ------------------------------------------------------------------------
 

@@ -39,6 +39,7 @@ Per SPEC §9.2 / §9.4.
 import difflib
 import logging
 import time
+from urllib.parse import unquote
 
 import werkzeug
 
@@ -165,6 +166,13 @@ class IrHttp(models.AbstractModel):
             return None
         Redirect = request.env['era.seo.redirect'].sudo()
         path = Redirect._normalize_path(raw)
+        # Decode percent-encoding so non-ASCII paths (e.g. Arabic slugs like
+        # /التحول-الرقمي-…) match redirect rules, the smart-404 catalogue and
+        # the 404 log — all of which store URLs as Unicode. Depending on the
+        # WSGI/proxy layer the path can arrive percent-encoded (%D8%A7…), which
+        # scored ~0.05 against the Unicode catalogue instead of ~0.96 and so
+        # never redirected. unquote is a no-op on an already-decoded path.
+        path = unquote(path)
         return cls._era_strip_lang_prefix(path)
 
     @classmethod
@@ -454,6 +462,10 @@ class IrHttp(models.AbstractModel):
                             _parse(child, depth + 1)
                         continue
                     if p.startswith('/') and not cls._era_is_asset_like(p):
+                        # Decode percent-encoded <loc> paths (some Odoo sitemap
+                        # generators escape non-ASCII) so candidates compare in
+                        # the same Unicode space as the decoded request path.
+                        p = unquote(p)
                         out.append(
                             (p, p.rstrip('/').rsplit('/', 1)[-1].lower()))
 

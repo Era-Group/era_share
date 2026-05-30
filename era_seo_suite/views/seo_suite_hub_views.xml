@@ -1090,6 +1090,22 @@
                 SEO Manager group with the link.
               </div>
 
+              <group string="Smart 404 — did-you-mean redirects">
+                <group>
+                  <field name="setting_smart_404_enabled" widget="boolean_toggle"/>
+                  <field name="setting_smart_404_home_fallback"
+                         widget="boolean_toggle"
+                         invisible="not setting_smart_404_enabled"/>
+                </group>
+              </group>
+              <div class="text-muted small mb-3" invisible="not setting_smart_404_enabled">
+                On a "page not found", the visitor is sent to the closest matching
+                existing URL (fuzzy match against the sitemap). When no close match
+                is found, the 404 is logged and — if <b>Send unmatched 404s home</b>
+                is on — the visitor goes to the home page; turn that off to keep a
+                real 404 for unmatched pages.
+              </div>
+
               <group string="GEO — /llms.txt &amp; AI crawlers">
                 <group>
                   <field name="setting_llms_enabled" widget="boolean_toggle"/>

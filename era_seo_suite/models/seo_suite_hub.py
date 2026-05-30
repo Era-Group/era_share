@@ -166,6 +166,9 @@ class EraSeoSuiteHub(models.Model):
         'setting_social_youtube':   ('era_seo.social_youtube',        'char', ''),
         # ---------- AI Auto-Fix (era_seo_ai) ----------
         'setting_ai_enabled':       ('era_seo.ai_enabled',            'bool', False),
+        # ---------- Smart 404 (did-you-mean redirect) ----------
+        'setting_smart_404_enabled':       ('era_seo.smart_404_enabled',       'bool', True),
+        'setting_smart_404_home_fallback': ('era_seo.smart_404_home_fallback', 'bool', True),
         # ---------- GEO (era_geo) ----------
         'setting_llms_enabled':     ('era_seo_suite.llms_enabled',          'bool', True),
         'setting_llms_summary':     ('era_seo_suite.site_summary',          'char', ''),
@@ -264,6 +267,17 @@ class EraSeoSuiteHub(models.Model):
         help='Which AI agent answers Suggest/Apply requests. The agent carries the '
              'provider, model, and API key (configured in the AI app). Leave empty '
              'to fall back to the site\'s "Ask AI" agent.')
+
+    # --- Smart 404 (did-you-mean redirect)
+    setting_smart_404_enabled = fields.Boolean(
+        string='Smart 404 redirects', compute='_compute_settings', inverse='_inverse_settings',
+        help='On a "page not found", redirect to the closest matching existing URL '
+             '(fuzzy match against the sitemap) instead of showing a 404.')
+    setting_smart_404_home_fallback = fields.Boolean(
+        string='Send unmatched 404s home', compute='_compute_settings', inverse='_inverse_settings',
+        help='When no close match is found, log the 404 and redirect the visitor to '
+             'the home page. Turn OFF to keep a real 404 for unmatched pages '
+             '(recommended if SEO soft-404 signals are a concern).')
 
     # --- GEO
     setting_llms_enabled = fields.Boolean(

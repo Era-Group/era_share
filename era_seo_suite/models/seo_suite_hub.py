@@ -152,18 +152,8 @@ class EraSeoSuiteHub(models.Model):
         string='Search trend', sanitize=False, compute='_compute_analytics')
     analytics_summary_html = fields.Html(
         string='Analytics summary', sanitize=False, compute='_compute_analytics')
-    analytics_top_keywords_html = fields.Html(
-        string='Top keywords', sanitize=False, compute='_compute_analytics')
-    analytics_opportunities_html = fields.Html(
-        string='Striking-distance keywords', sanitize=False,
-        compute='_compute_analytics')
-    analytics_low_ctr_html = fields.Html(
-        string='Low-CTR keywords', sanitize=False, compute='_compute_analytics')
-    analytics_rising_html = fields.Html(
-        string='Rising & new keywords', sanitize=False,
-        compute='_compute_analytics')
-    analytics_questions_html = fields.Html(
-        string='Question keywords (content ideas)', sanitize=False,
+    analytics_keywords_html = fields.Html(
+        string='Keyword opportunities', sanitize=False,
         compute='_compute_analytics')
 
     # =========================================================================
@@ -873,9 +863,7 @@ class EraSeoSuiteHub(models.Model):
 
     _ANALYTICS_FIELDS = (
         'analytics_trend_html', 'analytics_summary_html',
-        'analytics_top_keywords_html', 'analytics_opportunities_html',
-        'analytics_low_ctr_html', 'analytics_rising_html',
-        'analytics_questions_html')
+        'analytics_keywords_html')
 
     def _compute_analytics(self):
         """Guarded entry point — a data/render edge case must never break the
@@ -910,31 +898,6 @@ class EraSeoSuiteHub(models.Model):
         # ---- small render helpers -------------------------------------
         def _ctr(clicks, impr):
             return (100.0 * clicks / impr) if impr else 0.0
-
-        def _kw_table(rows, extra_header='', extra_cell=None, pos_col=True):
-            """rows: list of (query, clicks, impr, pos). extra_cell(row)->html."""
-            if not rows:
-                return Markup(empty)
-            head = ('<tr class="small text-muted"><th>Keyword</th>'
-                    '<th class="text-end">Clicks</th><th class="text-end">Impr.</th>'
-                    '<th class="text-end">CTR</th>')
-            head += ('<th class="text-end">Pos.</th>' if pos_col else '')
-            head += (extra_header or '') + '</tr>'
-            body = ''
-            for r in rows:
-                q, clicks, impr, pos = r[0], r[1], r[2], r[3]
-                body += (
-                    '<tr><td class="text-truncate" style="max-width:340px">%s</td>'
-                    '<td class="text-end fw-bold">%d</td>'
-                    '<td class="text-end">%d</td>'
-                    '<td class="text-end">%.1f%%</td>'
-                    % (escape(q or '—'), clicks or 0, impr or 0, _ctr(clicks, impr)))
-                if pos_col:
-                    body += '<td class="text-end">%.1f</td>' % (pos or 0.0)
-                body += (extra_cell(r) if extra_cell else '') + '</tr>'
-            return Markup(
-                '<table class="table table-sm table-hover mb-0"><thead>'
-                + head + '</thead><tbody>' + body + '</tbody></table>')
 
         def _trend_chart(per_day):
             """per_day: ordered list of (date, clicks, impr). CSS bar chart:
@@ -971,9 +934,7 @@ class EraSeoSuiteHub(models.Model):
         # ---- no data / no model short-circuit -------------------------
         blanks = dict.fromkeys((
             'analytics_trend_html', 'analytics_summary_html',
-            'analytics_top_keywords_html', 'analytics_opportunities_html',
-            'analytics_low_ctr_html', 'analytics_rising_html',
-            'analytics_questions_html'), Markup(empty))
+            'analytics_keywords_html'), Markup(empty))
         if Q is None:
             for rec in self:
                 for f, v in blanks.items():
@@ -1010,74 +971,73 @@ class EraSeoSuiteHub(models.Model):
             '%.1f%%</div></div></div></div></div>'
             % (len(agg), tot_clicks, tot_impr, _ctr(tot_clicks, tot_impr)))
 
-        # ---- 2. top keywords (by clicks) ------------------------------
-        top = sorted(agg, key=lambda r: r[1] or 0, reverse=True)[:15]
-        top_html = _kw_table(top)
-
-        # ---- 3. striking distance: avg position 5-20, by impressions --
-        strike = [r for r in agg if 4.5 <= (r[3] or 0) <= 20.0][:15]
-        strike_html = _kw_table(
-            strike, extra_header='<th class="text-end">Action</th>',
-            extra_cell=lambda r: '<td class="text-end small text-success">push to p.1</td>')
-
-        # ---- 4. low CTR, high impressions -----------------------------
-        low = [r for r in agg if (r[2] or 0) >= 30 and _ctr(r[1], r[2]) < 2.0]
-        low = sorted(low, key=lambda r: r[2] or 0, reverse=True)[:15]
-        low_html = _kw_table(
-            low, extra_header='<th class="text-end">Action</th>',
-            extra_cell=lambda r: '<td class="text-end small text-primary">improve title/meta</td>')
-
-        # ---- 5. rising & new (last 14d vs prior 14d, by impressions) --
+        # ---- combined keyword-opportunity table -----------------------
+        # One scannable worklist instead of five separate tables: reuse the
+        # 28d aggregate, tag each keyword with every opportunity bucket it
+        # falls into (top / striking distance / low-CTR / rising / new /
+        # question), and list the tagged keywords highest-volume first.
         recent = {g[0]: (g[1] or 0) for g in Q._read_group(
             [('date', '>=', d14)], ['query'], ['impressions:sum'])}
         prior = {g[0]: (g[1] or 0) for g in Q._read_group(
             [('date', '>=', d28), ('date', '<', d14)], ['query'],
             ['impressions:sum'])}
-        rising = []
-        for q, imp in recent.items():
-            p = prior.get(q, 0)
-            if imp >= 5 and (p == 0 or imp >= 1.5 * p):
-                rising.append((q, imp, p, imp - p, p == 0))
-        rising.sort(key=lambda x: x[3], reverse=True)
-        rising = rising[:15]
-        if rising:
-            rows = ''
-            for q, imp, p, growth, is_new in rising:
-                badge = ('<span class="badge bg-success">new</span>' if is_new
-                         else '<span class="badge bg-info">+%d%%</span>'
-                         % round(100 * growth / p) if p else '')
-                rows += ('<tr><td class="text-truncate" style="max-width:340px">%s</td>'
-                         '<td class="text-end fw-bold">%d</td>'
-                         '<td class="text-end text-muted">%d</td>'
-                         '<td class="text-end">%s</td></tr>'
-                         % (escape(q or '—'), imp, p, badge))
-            rising_html = Markup(
+        top_keys = {r[0] for r in sorted(
+            agg, key=lambda r: r[1] or 0, reverse=True)[:15]}
+
+        def _kw_tags(r):
+            q, clicks, impr, pos = r[0], r[1] or 0, r[2] or 0, r[3] or 0.0
+            ql = (q or '').strip().lower()
+            tags = []
+            if q in top_keys:
+                tags.append('<span class="badge bg-dark">top</span>')
+            if 4.5 <= pos <= 20.0:
+                tags.append('<span class="badge bg-success">striking distance</span>')
+            if impr >= 30 and _ctr(clicks, impr) < 2.0:
+                tags.append('<span class="badge bg-primary">low CTR</span>')
+            rc, pr = recent.get(q, 0), prior.get(q, 0)
+            if rc >= 5 and pr == 0:
+                tags.append('<span class="badge bg-warning text-dark">new</span>')
+            elif rc >= 5 and rc >= 1.5 * pr:
+                tags.append('<span class="badge bg-info">rising +%d%%</span>'
+                            % round(100 * (rc - pr) / pr))
+            if ('?' in ql) or ql.startswith(self._QUESTION_PREFIXES):
+                tags.append('<span class="badge bg-secondary">question</span>')
+            return tags
+
+        tagged = []
+        for r in agg:
+            ts = _kw_tags(r)
+            if ts:
+                tagged.append((r, ts))
+        tagged.sort(key=lambda x: x[0][2] or 0, reverse=True)  # by impressions
+        tagged = tagged[:60]
+        if tagged:
+            body = ''
+            for r, ts in tagged:
+                q, clicks, impr, pos = r[0], r[1] or 0, r[2] or 0, r[3] or 0.0
+                body += (
+                    '<tr><td class="text-truncate" style="max-width:320px">%s</td>'
+                    '<td class="text-end fw-bold">%d</td>'
+                    '<td class="text-end">%d</td>'
+                    '<td class="text-end">%.1f%%</td>'
+                    '<td class="text-end">%.1f</td>'
+                    '<td class="text-nowrap">%s</td></tr>'
+                    % (escape(q or '—'), clicks, impr, _ctr(clicks, impr),
+                       pos, ' '.join(ts)))
+            keywords_html = Markup(
                 '<table class="table table-sm table-hover mb-0"><thead>'
                 '<tr class="small text-muted"><th>Keyword</th>'
-                '<th class="text-end">Impr. (14d)</th>'
-                '<th class="text-end">Prior 14d</th><th class="text-end">Trend</th>'
-                '</tr></thead><tbody>' + rows + '</tbody></table>')
+                '<th class="text-end">Clicks</th><th class="text-end">Impr.</th>'
+                '<th class="text-end">CTR</th><th class="text-end">Pos.</th>'
+                '<th>Opportunity</th></tr></thead><tbody>'
+                + body + '</tbody></table>')
         else:
-            rising_html = Markup(empty)
-
-        # ---- 6. question keywords (content ideas) ---------------------
-        questions = []
-        for r in agg:
-            ql = (r[0] or '').strip().lower()
-            if ('?' in ql) or ql.startswith(self._QUESTION_PREFIXES):
-                questions.append(r)
-            if len(questions) >= 15:
-                break
-        questions_html = _kw_table(questions)
+            keywords_html = Markup(empty)
 
         vals = {
             'analytics_trend_html': trend_html,
             'analytics_summary_html': summary_html,
-            'analytics_top_keywords_html': top_html,
-            'analytics_opportunities_html': strike_html,
-            'analytics_low_ctr_html': low_html,
-            'analytics_rising_html': rising_html,
-            'analytics_questions_html': questions_html,
+            'analytics_keywords_html': keywords_html,
         }
         for rec in self:
             for f, v in vals.items():

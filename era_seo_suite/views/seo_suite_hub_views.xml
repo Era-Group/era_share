@@ -857,42 +857,19 @@
               <field name="analytics_trend_html" nolabel="1" readonly="1" widget="html"/>
 
               <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
-                <i class="fa fa-search me-1"/> Top search queries (28 days)
+                <i class="fa fa-key me-1"/> Keyword opportunities (28 days)
               </div>
-              <field name="kpi_gsc_top_queries_html" nolabel="1" readonly="1" widget="html"/>
-
-              <div class="row g-3 mt-1">
-                <div class="col-lg-6">
-                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
-                    <i class="fa fa-trophy text-warning me-1"/> Top keywords
-                  </div>
-                  <field name="analytics_top_keywords_html" nolabel="1" readonly="1" widget="html"/>
-                </div>
-                <div class="col-lg-6">
-                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
-                    <i class="fa fa-rocket text-success me-1"/> Striking distance (pos 5–20) — push to page 1
-                  </div>
-                  <field name="analytics_opportunities_html" nolabel="1" readonly="1" widget="html"/>
-                </div>
-                <div class="col-lg-6">
-                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
-                    <i class="fa fa-arrow-up text-info me-1"/> Rising &amp; new keywords
-                  </div>
-                  <field name="analytics_rising_html" nolabel="1" readonly="1" widget="html"/>
-                </div>
-                <div class="col-lg-6">
-                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
-                    <i class="fa fa-percent text-primary me-1"/> High impressions, low CTR — improve titles/meta
-                  </div>
-                  <field name="analytics_low_ctr_html" nolabel="1" readonly="1" widget="html"/>
-                </div>
-                <div class="col-12">
-                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
-                    <i class="fa fa-lightbulb-o text-warning me-1"/> Question keywords — content &amp; FAQ ideas
-                  </div>
-                  <field name="analytics_questions_html" nolabel="1" readonly="1" widget="html"/>
-                </div>
+              <div class="text-muted small mb-2">
+                Every tracked keyword, tagged with the actions worth taking —
+                highest-volume first. Legend:
+                <span class="badge bg-dark">top</span> best performers ·
+                <span class="badge bg-success">striking distance</span> pos 5–20, push to page 1 ·
+                <span class="badge bg-primary">low CTR</span> rewrite title/meta ·
+                <span class="badge bg-info">rising</span> /
+                <span class="badge bg-warning text-dark">new</span> growing searches ·
+                <span class="badge bg-secondary">question</span> content/FAQ idea.
               </div>
+              <field name="analytics_keywords_html" nolabel="1" readonly="1" widget="html"/>
             </page>
 
             <!-- ============================== SEO =============================== -->

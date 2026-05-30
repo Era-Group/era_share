@@ -904,17 +904,24 @@ class EraSeoSuiteHub(models.Model):
             for d, clk, imp in per_day:
                 ih = round(100.0 * (imp or 0) / max_impr)
                 ch = round(100.0 * (clk or 0) / max_impr)
+                # Two bars anchored to the bottom of a full-height wrapper, so
+                # each height:%% resolves against the 140px track (a bar nested
+                # inside the impression bar would collapse / mis-scale). Clicks
+                # (solid) overlay impressions (light); clicks <= impressions so
+                # the solid bar always sits in front.
                 bars += (
-                    '<div style="flex:1 1 0; display:flex; align-items:flex-end; '
-                    'justify-content:center; position:relative; min-width:4px" '
+                    '<div style="flex:1 1 0; position:relative; height:100%%; '
+                    'min-width:3px" '
                     'title="%s — %d clicks, %d impressions (CTR %.1f%%)">'
-                    '<div style="width:70%%; height:%d%%; background:#cfe2ff; '
-                    'border-radius:2px 2px 0 0; position:relative">'
-                    '<div style="position:absolute; bottom:0; left:0; right:0; '
-                    'height:%d%%; background:#0d6efd; border-radius:2px 2px 0 0">'
-                    '</div></div></div>'
+                    '<div style="position:absolute; bottom:0; left:12%%; '
+                    'right:12%%; height:%d%%; background:#cfe2ff; '
+                    'border-radius:2px 2px 0 0"></div>'
+                    '<div style="position:absolute; bottom:0; left:12%%; '
+                    'right:12%%; height:%d%%; background:#0d6efd; '
+                    'border-radius:2px 2px 0 0"></div></div>'
                     % (d, clk or 0, imp or 0, _ctr(clk, imp),
-                       max(ih, 1) if imp else 0, ch))
+                       max(ih, 1) if imp else 0,
+                       max(ch, 1) if clk else 0))
             return Markup(
                 '<div class="d-flex align-items-end gap-1 px-1" '
                 'style="height:140px; border-bottom:1px solid #dee2e6">'

@@ -41,6 +41,27 @@ class EraGscKeyword(models.Model):
         # of the statement is static, so an f-string is safe and avoids the
         # %%-escaping the params API would force on the LIKE '%?%' below.
         tools.drop_view_if_exists(self.env.cr, self._table)
+        # Safety net for a fresh install: Odoo interleaves _auto_init()/init()
+        # per model, so if this view is ever initialised before era.gsc.query's
+        # table exists the CREATE VIEW would abort the whole install. We import
+        # gsc_keyword after gsc_query so that's the normal path, but guard anyway
+        # — fall back to a typed empty view that the next upgrade rebuilds.
+        self.env.cr.execute(
+            "SELECT 1 FROM information_schema.tables "
+            "WHERE table_name = 'era_gsc_query'")
+        if not self.env.cr.fetchone():
+            self.env.cr.execute(f"""
+                CREATE VIEW {self._table} AS SELECT
+                    0 AS id, NULL::integer AS site_id, NULL::varchar AS query,
+                    0 AS clicks, 0 AS impressions,
+                    0.0::double precision AS ctr,
+                    0.0::double precision AS position,
+                    0 AS impr_recent, 0 AS impr_prior,
+                    false AS is_top, false AS is_striking, false AS is_low_ctr,
+                    false AS is_rising, false AS is_new, false AS is_question
+                WHERE false
+            """)
+            return
         self.env.cr.execute(f"""
             CREATE OR REPLACE VIEW {self._table} AS (
                 SELECT

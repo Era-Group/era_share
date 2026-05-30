@@ -28,9 +28,12 @@ from . import (
     geo_ai_crawler,
     gsc_account,
     gsc_client,
-    gsc_keyword,
     gsc_query,
     gsc_site,
+    # gsc_keyword is a SQL view over era_gsc_query — import it AFTER gsc_query
+    # so the base table is created (model._auto_init) before our view's init()
+    # runs in the same install pass (Odoo interleaves _auto_init/init per model).
+    gsc_keyword,
     ir_http,
     ir_ui_view,
     res_partner,

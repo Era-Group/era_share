@@ -17,9 +17,19 @@ def migrate(cr, version):
     row = cr.fetchone()
     if not row:
         return
+    cron_id = row[0]
     cr.execute(
         "UPDATE ir_cron SET interval_number=1, interval_type='hours', "
         "nextcall=(now() AT TIME ZONE 'UTC') + interval '5 minutes' "
         "WHERE id=%s",
-        (row[0],),
+        (cron_id,),
+    )
+    # The cron's display name lives on the linked server action (noupdate=1,
+    # so the data XML rename doesn't reach the existing record). Refresh it.
+    cr.execute(
+        "UPDATE ir_act_server SET name = jsonb_set("
+        "COALESCE(name, '{}'::jsonb), '{en_US}', "
+        "'\"ERA SEO: Hourly AI auto-fix\"') "
+        "WHERE id = (SELECT ir_actions_server_id FROM ir_cron WHERE id=%s)",
+        (cron_id,),
     )

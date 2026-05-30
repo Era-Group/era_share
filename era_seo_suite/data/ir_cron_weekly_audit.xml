@@ -3,27 +3,43 @@
   <data noupdate="1">
 
     <!--
-      ERA SEO: Daily audit + AI auto-fix.
+      ERA SEO: Weekly audit + AI auto-fix.
 
-      Daily, runs a fresh audit then auto-applies the SAFE fixes (OG image,
-      JSON-LD schema — see _UNATTENDED_FIX_CODES) for untouched findings, in
-      batches per tick. Other ai_supported findings (thin_content, titles)
-      stay manual. Pause without disabling the cron by flipping
-      `era_seo.weekly_audit_active` to False.
-
-      NOTE: this record is noupdate="1", so changing the interval here only
-      affects FRESH installs. The live record's interval is also updated via
-      the post-init hook / migration so existing instances flip to daily.
+      WEEKLY full audit (the heavy re-scan of every page, incl. a rendered-HTML
+      fetch), then auto-applies the SAFE fixes (_UNATTENDED_FIX_CODES: OG image,
+      JSON-LD schema) for anything newly found. The day-to-day clearing of the
+      safe-fix backlog runs separately in the DAILY cron below, so the heavy
+      audit does NOT run daily. Pause both without disabling the crons by
+      flipping `era_seo.weekly_audit_active` to False.
     -->
     <record id="cron_weekly_audit_and_fix" model="ir.cron">
-      <field name="name">ERA SEO: Daily audit + AI auto-fix</field>
+      <field name="name">ERA SEO: Weekly audit + AI auto-fix</field>
       <field name="model_id" ref="model_era_seo_suite_hub"/>
       <field name="state">code</field>
       <field name="code">model.cron_weekly_audit_and_fix()</field>
       <field name="interval_number">1</field>
-      <field name="interval_type">days</field>
+      <field name="interval_type">weeks</field>
       <field name="active" eval="True"/>
       <field name="priority">6</field>
+    </record>
+
+    <!--
+      ERA SEO: Daily AI auto-fix (no audit).
+
+      DAILY, applies the SAFE auto-fixes to the backlog of open, untouched
+      findings (OG image / JSON-LD schema) WITHOUT running a fresh audit.
+      Batched per tick. This is what clears the warning backlog day to day;
+      the full re-scan stays weekly. Same `era_seo.weekly_audit_active` gate.
+    -->
+    <record id="cron_daily_ai_fix" model="ir.cron">
+      <field name="name">ERA SEO: Daily AI auto-fix</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_daily_ai_fix()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active" eval="True"/>
+      <field name="priority">7</field>
     </record>
 
   </data>

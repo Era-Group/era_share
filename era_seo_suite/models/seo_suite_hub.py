@@ -1178,18 +1178,16 @@ class EraSeoSuiteHub(models.Model):
 
     @api.model
     def cron_weekly_audit_and_fix(self):
-        """Run a fresh SEO audit and auto-apply the SAFE, AI-supported fixes.
+        """WEEKLY: run a fresh SEO audit (the heavy full re-scan) and auto-apply
+        the SAFE fixes for anything it newly finds.
 
-        Driven by a daily ir.cron entry. Only the no-visible-change fixes in
-        ``_UNATTENDED_FIX_CODES`` (OG image, JSON-LD schema) are auto-applied,
-        in batches of ``_UNATTENDED_FIX_BATCH`` per run. The fix step uses
-        ``action_ai_suggest_and_apply`` (applies only above the agent's
-        confidence threshold). Other ai_supported findings (thin_content,
-        titles, slugs) are left for manual review via the finding form.
+        The full audit stays WEEKLY by design — it re-scans every page (now
+        including a rendered-HTML fetch). The lighter day-to-day clearing of
+        the safe-fix backlog runs separately in ``cron_daily_ai_fix`` so the
+        audit doesn't run daily. Only ``_UNATTENDED_FIX_CODES`` (OG image,
+        JSON-LD schema) are auto-applied, batched by ``_UNATTENDED_FIX_BATCH``.
 
-        Gated by `era_seo.weekly_audit_active` (default True): users can
-        flip it off without disabling the cron entry. (Method name kept for
-        the existing ir.cron `code` reference.)
+        Gated by `era_seo.weekly_audit_active` (default True).
         """
         if _icp_get(self.env, 'era_seo.weekly_audit_active', 'True') not in _TRUE:
             return
@@ -1197,30 +1195,48 @@ class EraSeoSuiteHub(models.Model):
         try:
             run = Run.run_scheduled_audit()
         except Exception:  # noqa: BLE001
-            _logger.exception('daily_audit_and_fix: audit failed')
+            _logger.exception('weekly_audit_and_fix: audit failed')
             return
         if not run:
             return
-        # Suggest+apply only on untouched findings in the safe auto-fix set,
-        # bounded to one batch per tick.
         findings = run.finding_ids.filtered(
             lambda f: f.ai_status == 'none'
             and f.check_code in self._UNATTENDED_FIX_CODES
         )[:self._UNATTENDED_FIX_BATCH]
+        self._apply_safe_fixes(findings, 'weekly_audit_and_fix')
+
+    @api.model
+    def cron_daily_ai_fix(self):
+        """DAILY: apply the SAFE auto-fixes (OG image, JSON-LD schema) to the
+        backlog of open, untouched findings WITHOUT running a fresh audit.
+
+        This is the day-to-day backlog clearer. The full re-scan stays on the
+        weekly ``cron_weekly_audit_and_fix``; here we only suggest+apply on
+        existing open findings, batched by ``_UNATTENDED_FIX_BATCH`` so a
+        backlog of schema (AI) fixes can't run one tick past
+        limit_time_real_cron. Same `era_seo.weekly_audit_active` gate.
+        """
+        if _icp_get(self.env, 'era_seo.weekly_audit_active', 'True') not in _TRUE:
+            return
+        findings = self.env['era.seo.audit.finding'].sudo().search([
+            ('is_resolved', '=', False),
+            ('ai_status', '=', 'none'),
+            ('check_code', 'in', list(self._UNATTENDED_FIX_CODES)),
+        ], limit=self._UNATTENDED_FIX_BATCH)
+        self._apply_safe_fixes(findings, 'daily_ai_fix')
+
+    def _apply_safe_fixes(self, findings, tag):
+        """Shared suggest+apply step for the weekly/daily auto-fix crons."""
         if not findings:
-            _logger.info(
-                'daily_audit_and_fix: %s findings; none untouched in the '
-                'unattended set (%s)', len(run.finding_ids),
-                ', '.join(sorted(self._UNATTENDED_FIX_CODES)))
+            _logger.info('%s: no untouched safe-fixable findings (%s)',
+                         tag, ', '.join(sorted(self._UNATTENDED_FIX_CODES)))
             return
         try:
             findings.with_context(_era_ai_system=True).action_ai_suggest_and_apply()
-            _logger.info('daily_audit_and_fix: auto-fixed %d finding(s) this tick',
-                         len(findings))
+            _logger.info('%s: auto-fixed %d finding(s) this tick', tag, len(findings))
         except Exception:  # noqa: BLE001
-            _logger.exception(
-                'daily_audit_and_fix: AI suggest+apply failed on %d findings',
-                len(findings))
+            _logger.exception('%s: AI suggest+apply failed on %d findings',
+                              tag, len(findings))
 
     # ------------------------------------------------------------------------
     # Auto-publish: trend-aware blog article every N days

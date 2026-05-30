@@ -147,6 +147,25 @@ class EraSeoSuiteHub(models.Model):
         string='Top GSC Queries (28d)', sanitize=False,
         compute='_compute_gsc_top_queries_html')
 
+    # --- Analytics & Keywords tab (all rendered from era.gsc.query) ---
+    analytics_trend_html = fields.Html(
+        string='Search trend', sanitize=False, compute='_compute_analytics')
+    analytics_summary_html = fields.Html(
+        string='Analytics summary', sanitize=False, compute='_compute_analytics')
+    analytics_top_keywords_html = fields.Html(
+        string='Top keywords', sanitize=False, compute='_compute_analytics')
+    analytics_opportunities_html = fields.Html(
+        string='Striking-distance keywords', sanitize=False,
+        compute='_compute_analytics')
+    analytics_low_ctr_html = fields.Html(
+        string='Low-CTR keywords', sanitize=False, compute='_compute_analytics')
+    analytics_rising_html = fields.Html(
+        string='Rising & new keywords', sanitize=False,
+        compute='_compute_analytics')
+    analytics_questions_html = fields.Html(
+        string='Question keywords (content ideas)', sanitize=False,
+        compute='_compute_analytics')
+
     # =========================================================================
     # Settings — every ICP-backed key the suite owns, in ONE declarative map.
     # The shared _compute_settings / _inverse_settings round-trip them through
@@ -839,6 +858,230 @@ class EraSeoSuiteHub(models.Model):
             )
         for rec in self:
             rec.kpi_gsc_top_queries_html = Markup(html)
+
+    # ------------------------------------------------------------------------
+    # Analytics & Keywords tab — best-practice SEO insights from GSC
+    # ------------------------------------------------------------------------
+
+    # English + Arabic question prefixes -> "content idea" keywords.
+    _QUESTION_PREFIXES = (
+        'how', 'what', 'why', 'who', 'where', 'when', 'which', 'can', 'does',
+        'do ', 'is ', 'are ', 'should', 'best ', 'top ',
+        'كيف', 'ما', 'ماذا', 'لماذا', 'من', 'اين', 'أين', 'متى', 'هل', 'كم',
+        'افضل', 'أفضل',
+    )
+
+    _ANALYTICS_FIELDS = (
+        'analytics_trend_html', 'analytics_summary_html',
+        'analytics_top_keywords_html', 'analytics_opportunities_html',
+        'analytics_low_ctr_html', 'analytics_rising_html',
+        'analytics_questions_html')
+
+    def _compute_analytics(self):
+        """Guarded entry point — a data/render edge case must never break the
+        always-loaded hub form, so any failure degrades to a notice."""
+        try:
+            self._compute_analytics_impl()
+        except Exception:  # noqa: BLE001
+            _logger.exception('analytics compute failed')
+            from markupsafe import Markup
+            note = Markup('<div class="text-muted small p-2">Analytics '
+                          'temporarily unavailable.</div>')
+            for rec in self:
+                for f in self._ANALYTICS_FIELDS:
+                    rec[f] = note
+
+    def _compute_analytics_impl(self):
+        """Render every Analytics-tab block from the last ~30 days of
+        era.gsc.query. One DB pass per block via _read_group; pure-Python
+        post-filtering for the opportunity buckets (no fragile HAVING)."""
+        from markupsafe import Markup, escape
+        from datetime import date, timedelta
+
+        Q = self.env.get('era.gsc.query')
+        today = date.today()
+        d28 = today - timedelta(days=28)
+        d30 = today - timedelta(days=30)
+        d14 = today - timedelta(days=14)
+        empty = ('<div class="text-muted small p-2">No Search Console data yet — '
+                 'connect a Google account, pull, then <b>Backfill 3 Months</b> '
+                 '(GSC tab) to populate these insights.</div>')
+
+        # ---- small render helpers -------------------------------------
+        def _ctr(clicks, impr):
+            return (100.0 * clicks / impr) if impr else 0.0
+
+        def _kw_table(rows, extra_header='', extra_cell=None, pos_col=True):
+            """rows: list of (query, clicks, impr, pos). extra_cell(row)->html."""
+            if not rows:
+                return Markup(empty)
+            head = ('<tr class="small text-muted"><th>Keyword</th>'
+                    '<th class="text-end">Clicks</th><th class="text-end">Impr.</th>'
+                    '<th class="text-end">CTR</th>')
+            head += ('<th class="text-end">Pos.</th>' if pos_col else '')
+            head += (extra_header or '') + '</tr>'
+            body = ''
+            for r in rows:
+                q, clicks, impr, pos = r[0], r[1], r[2], r[3]
+                body += (
+                    '<tr><td class="text-truncate" style="max-width:340px">%s</td>'
+                    '<td class="text-end fw-bold">%d</td>'
+                    '<td class="text-end">%d</td>'
+                    '<td class="text-end">%.1f%%</td>'
+                    % (escape(q or '—'), clicks or 0, impr or 0, _ctr(clicks, impr)))
+                if pos_col:
+                    body += '<td class="text-end">%.1f</td>' % (pos or 0.0)
+                body += (extra_cell(r) if extra_cell else '') + '</tr>'
+            return Markup(
+                '<table class="table table-sm table-hover mb-0"><thead>'
+                + head + '</thead><tbody>' + body + '</tbody></table>')
+
+        def _trend_chart(per_day):
+            """per_day: ordered list of (date, clicks, impr). CSS bar chart:
+            light impression bars with solid click bars in front."""
+            if not per_day:
+                return Markup(empty)
+            max_impr = max((p[2] or 0) for p in per_day) or 1
+            bars = ''
+            for d, clk, imp in per_day:
+                ih = round(100.0 * (imp or 0) / max_impr)
+                ch = round(100.0 * (clk or 0) / max_impr)
+                bars += (
+                    '<div style="flex:1 1 0; display:flex; align-items:flex-end; '
+                    'justify-content:center; position:relative; min-width:4px" '
+                    'title="%s — %d clicks, %d impressions (CTR %.1f%%)">'
+                    '<div style="width:70%%; height:%d%%; background:#cfe2ff; '
+                    'border-radius:2px 2px 0 0; position:relative">'
+                    '<div style="position:absolute; bottom:0; left:0; right:0; '
+                    'height:%d%%; background:#0d6efd; border-radius:2px 2px 0 0">'
+                    '</div></div></div>'
+                    % (d, clk or 0, imp or 0, _ctr(clk, imp),
+                       max(ih, 1) if imp else 0, ch))
+            return Markup(
+                '<div class="d-flex align-items-end gap-1 px-1" '
+                'style="height:140px; border-bottom:1px solid #dee2e6">'
+                + bars + '</div>'
+                '<div class="d-flex justify-content-between small text-muted mt-1 px-1">'
+                '<span>%s</span><span>'
+                '<span style="color:#0d6efd">■</span> clicks &#160; '
+                '<span style="color:#cfe2ff">■</span> impressions</span>'
+                '<span>%s</span></div>'
+                % (per_day[0][0], per_day[-1][0]))
+
+        # ---- no data / no model short-circuit -------------------------
+        blanks = dict.fromkeys((
+            'analytics_trend_html', 'analytics_summary_html',
+            'analytics_top_keywords_html', 'analytics_opportunities_html',
+            'analytics_low_ctr_html', 'analytics_rising_html',
+            'analytics_questions_html'), Markup(empty))
+        if Q is None:
+            for rec in self:
+                for f, v in blanks.items():
+                    rec[f] = v
+            return
+        Q = Q.sudo()
+
+        # ---- 1. trend (clicks/impr per day, 30d) ----------------------
+        per_day = [(g[0].strftime('%m-%d'), g[1] or 0, g[2] or 0)
+                   for g in Q._read_group(
+                       [('date', '>=', d30)], ['date'],
+                       ['clicks:sum', 'impressions:sum'], order='date')]
+        trend_html = _trend_chart(per_day)
+
+        # ---- aggregate per query over 28d (one pass, reused below) ----
+        agg = Q._read_group(
+            [('date', '>=', d28)], ['query'],
+            ['clicks:sum', 'impressions:sum', 'position:avg'],
+            order='impressions:sum desc', limit=2000)
+        # agg rows: (query, clicks, impr, pos)
+        tot_clicks = sum(r[1] or 0 for r in agg)
+        tot_impr = sum(r[2] or 0 for r in agg)
+        summary_html = Markup(
+            '<div class="row g-2 mb-2"><div class="col"><div class="card"><div '
+            'class="card-body py-2 px-3"><div class="text-muted small">Keywords '
+            '(28d)</div><div class="fs-5 fw-bold">%d</div></div></div></div>'
+            '<div class="col"><div class="card"><div class="card-body py-2 px-3">'
+            '<div class="text-muted small">Clicks</div><div class="fs-5 fw-bold">'
+            '%d</div></div></div></div><div class="col"><div class="card"><div '
+            'class="card-body py-2 px-3"><div class="text-muted small">Impressions'
+            '</div><div class="fs-5 fw-bold">%d</div></div></div></div>'
+            '<div class="col"><div class="card"><div class="card-body py-2 px-3">'
+            '<div class="text-muted small">Avg CTR</div><div class="fs-5 fw-bold">'
+            '%.1f%%</div></div></div></div></div>'
+            % (len(agg), tot_clicks, tot_impr, _ctr(tot_clicks, tot_impr)))
+
+        # ---- 2. top keywords (by clicks) ------------------------------
+        top = sorted(agg, key=lambda r: r[1] or 0, reverse=True)[:15]
+        top_html = _kw_table(top)
+
+        # ---- 3. striking distance: avg position 5-20, by impressions --
+        strike = [r for r in agg if 4.5 <= (r[3] or 0) <= 20.0][:15]
+        strike_html = _kw_table(
+            strike, extra_header='<th class="text-end">Action</th>',
+            extra_cell=lambda r: '<td class="text-end small text-success">push to p.1</td>')
+
+        # ---- 4. low CTR, high impressions -----------------------------
+        low = [r for r in agg if (r[2] or 0) >= 30 and _ctr(r[1], r[2]) < 2.0]
+        low = sorted(low, key=lambda r: r[2] or 0, reverse=True)[:15]
+        low_html = _kw_table(
+            low, extra_header='<th class="text-end">Action</th>',
+            extra_cell=lambda r: '<td class="text-end small text-primary">improve title/meta</td>')
+
+        # ---- 5. rising & new (last 14d vs prior 14d, by impressions) --
+        recent = {g[0]: (g[1] or 0) for g in Q._read_group(
+            [('date', '>=', d14)], ['query'], ['impressions:sum'])}
+        prior = {g[0]: (g[1] or 0) for g in Q._read_group(
+            [('date', '>=', d28), ('date', '<', d14)], ['query'],
+            ['impressions:sum'])}
+        rising = []
+        for q, imp in recent.items():
+            p = prior.get(q, 0)
+            if imp >= 5 and (p == 0 or imp >= 1.5 * p):
+                rising.append((q, imp, p, imp - p, p == 0))
+        rising.sort(key=lambda x: x[3], reverse=True)
+        rising = rising[:15]
+        if rising:
+            rows = ''
+            for q, imp, p, growth, is_new in rising:
+                badge = ('<span class="badge bg-success">new</span>' if is_new
+                         else '<span class="badge bg-info">+%d%%</span>'
+                         % round(100 * growth / p) if p else '')
+                rows += ('<tr><td class="text-truncate" style="max-width:340px">%s</td>'
+                         '<td class="text-end fw-bold">%d</td>'
+                         '<td class="text-end text-muted">%d</td>'
+                         '<td class="text-end">%s</td></tr>'
+                         % (escape(q or '—'), imp, p, badge))
+            rising_html = Markup(
+                '<table class="table table-sm table-hover mb-0"><thead>'
+                '<tr class="small text-muted"><th>Keyword</th>'
+                '<th class="text-end">Impr. (14d)</th>'
+                '<th class="text-end">Prior 14d</th><th class="text-end">Trend</th>'
+                '</tr></thead><tbody>' + rows + '</tbody></table>')
+        else:
+            rising_html = Markup(empty)
+
+        # ---- 6. question keywords (content ideas) ---------------------
+        questions = []
+        for r in agg:
+            ql = (r[0] or '').strip().lower()
+            if ('?' in ql) or ql.startswith(self._QUESTION_PREFIXES):
+                questions.append(r)
+            if len(questions) >= 15:
+                break
+        questions_html = _kw_table(questions)
+
+        vals = {
+            'analytics_trend_html': trend_html,
+            'analytics_summary_html': summary_html,
+            'analytics_top_keywords_html': top_html,
+            'analytics_opportunities_html': strike_html,
+            'analytics_low_ctr_html': low_html,
+            'analytics_rising_html': rising_html,
+            'analytics_questions_html': questions_html,
+        }
+        for rec in self:
+            for f, v in vals.items():
+                rec[f] = v
 
     # ------------------------------------------------------------------------
     # Settings round-trip

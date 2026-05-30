@@ -845,6 +845,60 @@
               </div>
             </page>
 
+            <!-- ============================ ANALYTICS =========================== -->
+            <page string="Analytics &amp; Keywords" name="analytics">
+              <field name="analytics_trend_html" invisible="1"/>
+              <div class="alert alert-light mb-2" role="status">
+                Keyword intelligence from Google Search Console (last 28–30 days).
+                Use it to find quick wins — keywords on the edge of page 1, pages
+                with low click-through, and rising or brand-new searches to build
+                content around.
+                <button name="%(era_seo_suite.action_era_gsc_query)d" type="action"
+                        string="Open full query explorer" class="btn btn-sm btn-link"
+                        icon="fa-bar-chart"/>
+              </div>
+
+              <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
+
+              <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
+                Search trend (30 days) — clicks &amp; impressions
+              </div>
+              <field name="analytics_trend_html" nolabel="1" readonly="1" widget="html"/>
+
+              <div class="row g-3 mt-1">
+                <div class="col-lg-6">
+                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
+                    <i class="fa fa-trophy text-warning me-1"/> Top keywords
+                  </div>
+                  <field name="analytics_top_keywords_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+                <div class="col-lg-6">
+                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
+                    <i class="fa fa-rocket text-success me-1"/> Striking distance (pos 5–20) — push to page 1
+                  </div>
+                  <field name="analytics_opportunities_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+                <div class="col-lg-6">
+                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
+                    <i class="fa fa-arrow-up text-info me-1"/> Rising &amp; new keywords
+                  </div>
+                  <field name="analytics_rising_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+                <div class="col-lg-6">
+                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
+                    <i class="fa fa-percent text-primary me-1"/> High impressions, low CTR — improve titles/meta
+                  </div>
+                  <field name="analytics_low_ctr_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+                <div class="col-12">
+                  <div class="o_horizontal_separator mb-1 text-uppercase fw-bolder small">
+                    <i class="fa fa-lightbulb-o text-warning me-1"/> Question keywords — content &amp; FAQ ideas
+                  </div>
+                  <field name="analytics_questions_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+              </div>
+            </page>
+
             <!-- ============================== SEO =============================== -->
             <page string="SEO" name="seo">
               <div class="alert alert-light mb-3" role="status">

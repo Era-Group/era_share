@@ -507,11 +507,20 @@ class EraSeoAuditFinding(models.Model):
     def _append_html(html_text, block, is_xml):
         """Append an HTML block to existing content, preserving XML validity.
 
-        For plain HTML content we concatenate. For the QWeb ``arch`` (XML)
-        the existing arch is parsed exactly (XML parser — no restructuring),
-        while the small AI ``block`` goes through the tolerant HTML parser so
-        ``&nbsp;``, ``<br>`` and unclosed ``<img>`` don't break the append;
-        serializing the whole tree as XML yields valid, self-closed markup.
+        For plain HTML content we concatenate (the block lands at the bottom of
+        the body, above the site footer which is part of the layout, not the
+        content). For the QWeb ``arch`` (XML) the existing arch is parsed
+        exactly (XML parser — no restructuring), while the small AI ``block``
+        goes through the tolerant HTML parser so ``&nbsp;``, ``<br>`` and
+        unclosed ``<img>`` don't break the append; serializing the whole tree
+        as XML yields valid, self-closed markup.
+
+        The block is inserted INTO the page's content container — ``#wrap``
+        (falling back to the last ``oe_structure``) — NOT appended to the arch
+        root. Appending to the root puts the block *after* ``<t t-call=
+        "website.layout">``, which renders it below the entire layout (footer
+        included); inserting into ``#wrap`` lands it at the end of the page
+        body, ABOVE the footer, where editable page content belongs.
         """
         from lxml import etree, html as lxml_html
         if not is_xml:
@@ -519,8 +528,19 @@ class EraSeoAuditFinding(models.Model):
         try:
             root = etree.fromstring((html_text or '').encode('utf-8'))
             frag = lxml_html.fragment_fromstring(block, create_parent='div')
+            # Prefer the #wrap content container; else the last oe_structure
+            # editable zone; else fall back to the arch root (legacy behavior).
+            container = None
+            wraps = root.xpath('//*[@id="wrap"]')
+            if wraps:
+                container = wraps[-1]
+            else:
+                zones = root.xpath(
+                    '//*[contains(concat(" ", normalize-space(@class), " "),'
+                    ' " oe_structure ")]')
+                container = zones[-1] if zones else root
             for child in list(frag):
-                root.append(child)
+                container.append(child)
             return etree.tostring(root, encoding='unicode')
         except Exception as exc:  # noqa: BLE001
             raise UserError(_('Could not append content to the page: %s', exc))

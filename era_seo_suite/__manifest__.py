@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.0.52',
+    'version': '19.0.3.0.53',
     'depends': [
     'base',
     'web',
@@ -28,6 +28,12 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'portal',
     'website_blog',
     'ai',
+    # ai_crm adds a REQUIRED source_id to ai.agent (via utm.source.mixin) and
+    # provisions it in create(). We seed an ai.agent in data/ai_agent_data.xml,
+    # so ai_crm must load BEFORE this module — otherwise the mixin is absent
+    # from the ai.agent MRO at data-load time, source_id stays NULL and the
+    # whole install aborts with NotNullViolation on ai_agent.source_id.
+    'ai_crm',
 ],
     'data': [
     'security/seo_security.xml',

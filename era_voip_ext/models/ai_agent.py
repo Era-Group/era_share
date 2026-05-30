@@ -19,15 +19,13 @@ class AIAgent(models.Model):
         for vals in vals_list:
             if check_model_depreciation:
                 check_model_depreciation(self.env, vals.get("llm_model"))
-            if not vals.get("partner_id"):
-                partner = self.env["res.partner"].create(
-                    {
-                        "name": vals.get("name"),
-                        "active": False,
-                    }
-                )
-                vals["partner_id"] = partner.id
-        ai_agents = models.Model.create(self, vals_list)
+        # Call super() — NOT models.Model.create — so the whole ai.agent MRO
+        # runs: base ai.agent.create provisions the linked res.partner, and when
+        # ai_crm is installed utm.source.mixin.create provisions the REQUIRED
+        # source_id. Bypassing the chain left source_id NULL, which aborted any
+        # install that creates an agent (NotNullViolation on ai_agent.source_id,
+        # e.g. era_seo_suite's seeded SEO agent on a fresh DB that has ai_crm).
+        ai_agents = super().create(vals_list)
         for agent in ai_agents:
             if not agent.image_128:
                 agent.image_128 = base64.b64encode(image_placeholder)

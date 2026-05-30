@@ -174,12 +174,16 @@ exceed the caps. Confidence: 0.9+ obvious, 0.4-0.7 thin page, <0.4 almost no sig
 # language matching, Saudi keywords).
 ARTICLE_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
 instruction. You are proposing AND writing one publishable blog article for a \
-business. Pick a topic that is genuinely current — surface the trend signal in \
-`trend_signal`. Do NOT repeat any title from `recent_post_titles`. Write the \
+business. Optimize for helpful, reliable, people-first content: satisfy a real \
+reader intent first, then make the page easy for search engines to understand. \
+Pick a topic that is current only when it is genuinely relevant to this business \
+and audience; never chase a trend for traffic alone. Surface the chosen signal \
+in `trend_signal`. Do NOT repeat any title from `recent_post_titles`. Write the \
 article in `target_language` (or pick from `business_summary` if it says \
 'auto-detect'). The body must be substantive, factual, and grounded — no \
-hallucinated statistics or fake quotes. Reply with ONE JSON object exactly \
-matching the OUTPUT shape. No markdown fences, no prose around the JSON.
+hallucinated statistics, fake quotes, unverifiable claims, or keyword stuffing. \
+Reply with ONE JSON object exactly matching the OUTPUT shape. No markdown fences, \
+no prose around the JSON.
 """
 
 
@@ -314,6 +318,10 @@ _STALE_AGENT_WARNED = set()
 
 class AIClient:
     """Stateless per-request wrapper around ``ai.agent``."""
+
+    _ARTICLE_MIN_WORDS = 900
+    _ARTICLE_TARGET_WORDS = '1000-1400'
+    _ARTICLE_MAX_LINK_TARGETS = 16
 
     def __init__(self, env):
         self.env = env
@@ -1198,7 +1206,8 @@ class AIClient:
         }
 
     def propose_article(self, business_context, past_titles, existing_categories,
-                        lang_code=None, trending_now=None, prompt_addendum=None):
+                        lang_code=None, trending_now=None, prompt_addendum=None,
+                        related_pages=None, search_opportunities=None):
         """Ask the AI agent to propose a fresh, trend-aware blog article for
         the site.
 
@@ -1216,6 +1225,10 @@ class AIClient:
         :param prompt_addendum: free-form admin guidance appended to the
                                 prompt under an "ADMIN GUIDANCE" section.
                                 None / empty = use defaults.
+        :param related_pages: iterable of ``{'title': str, 'url': str}``
+                              internal targets the article may link to.
+        :param search_opportunities: iterable of Search Console query dicts
+                                     with query/impressions/clicks/position.
         :returns: dict ``{'title', 'subtitle', 'content_html', 'seo_title',
                           'seo_description', 'seo_keywords', 'category',
                           'image_prompt', 'trend_signal', 'reason',
@@ -1228,7 +1241,8 @@ class AIClient:
         agent = self._resolve_agent()
         prompt = self._build_article_prompt(
             business_context, past_titles, existing_categories,
-            lang_code, trending_now, prompt_addendum)
+            lang_code, trending_now, prompt_addendum, related_pages,
+            search_opportunities)
         response = agent.get_direct_response(
             prompt=prompt, context_message=ARTICLE_CONTEXT)
         raw = response[0] if response else ''
@@ -1245,7 +1259,9 @@ class AIClient:
                 (raw or '')[:200])
             neutral_prompt = self._build_article_prompt(
                 business_context, past_titles, existing_categories,
-                lang_code, trending_now=None, prompt_addendum=None)
+                lang_code, trending_now=None, prompt_addendum=None,
+                related_pages=related_pages,
+                search_opportunities=search_opportunities)
             response = agent.get_direct_response(
                 prompt=neutral_prompt, context_message=ARTICLE_CONTEXT)
             raw = response[0] if response else ''
@@ -1253,7 +1269,7 @@ class AIClient:
         for k in ('title', 'content_html'):
             if not (parsed.get(k) or '').strip():
                 raise ValueError(_('AI article proposal is missing %r.', k))
-        # Word-count enforcement: 600 floor.
+        # Word-count enforcement: quality floor.
         # Up to two extension passes — each takes the current best draft
         # and asks the agent to EXTEND it (not rewrite). Extending is
         # easier on the model than "rewrite longer" and avoids losing
@@ -1261,23 +1277,28 @@ class AIClient:
         # we've seen.
         wc = self._count_words(parsed.get('content_html', ''))
         for attempt in range(1, 3):
-            if wc >= 600:
+            if wc >= self._ARTICLE_MIN_WORDS:
                 break
             _logger.info(
-                'propose_article: draft is %d words (< 600); extension '
-                'pass %d/2', wc, attempt)
+                'propose_article: draft is %d words (< %d); extension '
+                'pass %d/2', wc, self._ARTICLE_MIN_WORDS, attempt)
             extend_prompt = (
                 'Below is the current draft article. It is %d words; the '
-                'editorial floor is 600 words (target 700-1000). Return '
+                'editorial floor is %d words (target %s). Return '
                 'the SAME JSON shape, but with `content_html` EXTENDED to '
-                'at least 700 words by ADDING substantive material: '
-                'concrete examples, named tools / vendors / numbers, '
-                'specific Saudi-market context if relevant, a short FAQ '
-                'block, or a step-by-step section. Do not delete or '
-                'paraphrase existing content; preserve title, '
-                'trend_signal, category, image_prompt, and seo meta.\n\n'
+                'meet the floor by ADDING substantive material: search-intent '
+                'coverage, concrete examples, decision criteria, named tools '
+                'only when factual, specific Saudi-market context if relevant, '
+                'an FAQ block, and practical next steps. Do not delete or '
+                'paraphrase existing content; preserve title, trend_signal, '
+                'category, image_prompt, and seo meta.\n\n'
                 'CURRENT DRAFT (as JSON):\n%s'
-            ) % (wc, json.dumps(parsed, ensure_ascii=False))
+            ) % (
+                wc,
+                self._ARTICLE_MIN_WORDS,
+                self._ARTICLE_TARGET_WORDS,
+                json.dumps(parsed, ensure_ascii=False),
+            )
             try:
                 response = agent.get_direct_response(
                     prompt=extend_prompt, context_message=ARTICLE_CONTEXT)
@@ -1290,11 +1311,11 @@ class AIClient:
             if (parsed2.get('content_html') or '').strip() and wc2 > wc:
                 parsed = parsed2
                 wc = wc2
-        if wc < 600:
+        if wc < self._ARTICLE_MIN_WORDS:
             _logger.warning(
-                'propose_article: final draft only %d words (floor is 600) '
+                'propose_article: final draft only %d words (floor is %d) '
                 'after retries; publishing anyway — review and extend '
-                'manually if needed', wc)
+                'manually if needed', wc, self._ARTICLE_MIN_WORDS)
         return {
             'title':           parsed.get('title', '').strip(),
             'subtitle':        parsed.get('subtitle', '').strip(),
@@ -1312,11 +1333,43 @@ class AIClient:
 
     @classmethod
     def _build_article_prompt(cls, business_context, past_titles, existing_categories,
-                              lang_code=None, trending_now=None, prompt_addendum=None):
+                              lang_code=None, trending_now=None, prompt_addendum=None,
+                              related_pages=None, search_opportunities=None):
         trends_block = (
             '  trending_now (Google Trends, daily, for the configured geo): {t}\n'
             .format(t=json.dumps(list(trending_now)[:15], ensure_ascii=False))
             if trending_now else ''
+        )
+        link_targets = []
+        for item in list(related_pages or [])[:cls._ARTICLE_MAX_LINK_TARGETS]:
+            if not isinstance(item, dict):
+                continue
+            title = str((item or {}).get('title') or '').strip()
+            url = str((item or {}).get('url') or '').strip()
+            if title and url:
+                link_targets.append({'title': title[:120], 'url': url[:300]})
+        links_block = (
+            '  internal_link_targets (use only when genuinely relevant): {links}\n'
+            .format(links=json.dumps(link_targets, ensure_ascii=False))
+            if link_targets else ''
+        )
+        opportunity_items = []
+        for item in list(search_opportunities or [])[:12]:
+            if not isinstance(item, dict):
+                continue
+            query = str(item.get('query') or '').strip()
+            if not query:
+                continue
+            opportunity_items.append({
+                'query': query[:120],
+                'impressions_28d': int(item.get('impressions') or 0),
+                'clicks_28d': int(item.get('clicks') or 0),
+                'avg_position': float(item.get('position') or 0.0),
+            })
+        opportunities_block = (
+            '  search_opportunities (GSC, last 28 days): {items}\n'
+            .format(items=json.dumps(opportunity_items, ensure_ascii=False))
+            if opportunity_items else ''
         )
         addendum_block = (
             'ADMIN GUIDANCE (highest-priority, overrides anything else when in conflict):\n'
@@ -1332,25 +1385,53 @@ class AIClient:
             '  recent_post_titles: {past}\n'
             '  existing_categories: {cats}\n'
             '{trends}'
+            '{links}'
+            '{opportunities}'
             'TASK:\n'
             '  1. If trending_now has an item genuinely relevant to this '
             'business and audience, pick that as your trend signal. Otherwise '
+            'use search_opportunities to spot a real audience question or '
             'identify another current or emerging trend in the domain. Be '
             'specific (a concrete tool, behaviour, event, or shift), not '
             'generic ("AI is changing everything"). Surface the chosen signal '
             'in `trend_signal`.\n'
+            '  1a. Define the primary reader intent before writing: what the '
+            'reader came to learn, compare, decide, or do. Answer that intent '
+            'clearly in the first 120 words, then go deeper.\n'
+            '  1b. If search_opportunities are provided, treat them as demand '
+            'signals, not a keyword-stuffing brief. Cover the relevant query '
+            'intent naturally, including likely beginner and advanced wording, '
+            'but only when the topic genuinely fits the business.\n'
             '  2. Write a complete article on that topic that the business '
-            'could publish today. Substantive — AT LEAST 600 words of HTML, '
-            'target 700-1000 words. Count words in the body text only.\n'
+            'could publish today. Substantive — AT LEAST {min_words} words '
+            'of HTML, target {target_words} words. Count words in the body '
+            'text only.\n'
             '  2a. STRUCTURE — `content_html` MUST contain, in order: an intro '
-            'paragraph (3-5 sentences); FIVE to SEVEN named sections each '
-            'headed with <h2> and each containing at least TWO substantive '
-            'paragraphs (no single-sentence sections); a short closing '
-            'paragraph. Use <ul>/<li> where it adds value. This structure '
-            'is what the 600-word floor depends on — skipping sections '
-            'will undershoot.\n'
+            'paragraph (3-5 sentences) that gives the useful answer quickly; '
+            'FIVE to SEVEN named sections each headed with <h2> and each '
+            'containing at least TWO substantive paragraphs (no single-sentence '
+            'sections); at least one practical checklist, comparison, or '
+            'step-by-step section using <ul>/<li>; a 3-5 question FAQ section '
+            'with concise answers; and a short closing paragraph with a natural '
+            'next step. This structure is what the word floor depends on — '
+            'skipping sections will undershoot.\n'
+            '  2b. PEOPLE-FIRST QUALITY — include business-specific insight, '
+            'clear tradeoffs, examples, and caveats. Do not claim firsthand '
+            'experience, prices, dates, laws, rankings, statistics, or product '
+            'capabilities unless they are in the input. If the topic touches '
+            'regulation or compliance, write cautiously and tell readers what '
+            'to verify.\n'
+            '  2c. LINKS — if internal_link_targets are provided, include 2-4 '
+            'natural internal <a href="..."> links to the most relevant targets. '
+            'Use descriptive anchor text. Do not invent URLs, do not force an '
+            'irrelevant link, and never link every section.\n'
             '  3. Fill SEO meta and an image_prompt that an image-generation '
             'model could use as-is.\n'
+            '  3a. SEO META — `seo_title` must be unique, clear, concise, and '
+            'accurately describe this article. `seo_description` must be a '
+            'short, unique, human-readable summary of the article with the '
+            'most relevant point early; no clickbait, keyword lists, or claims '
+            'the article does not support.\n'
             'OUTPUT (one JSON object, exactly these keys):\n'
             '  {{"title": "<=70 chars", "subtitle": "<=140 chars (or empty)", '
             '"excerpt": "1-2 sentence plain-text summary for blog list '
@@ -1372,6 +1453,10 @@ class AIClient:
                 past=json.dumps(list(past_titles)[:30], ensure_ascii=False),
                 cats=json.dumps(list(existing_categories)[:30], ensure_ascii=False),
                 trends=trends_block,
+                links=links_block,
+                opportunities=opportunities_block,
+                min_words=cls._ARTICLE_MIN_WORDS,
+                target_words=cls._ARTICLE_TARGET_WORDS,
             )
         )
 

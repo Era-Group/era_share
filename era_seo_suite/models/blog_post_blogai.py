@@ -66,11 +66,20 @@ class BlogPost(models.Model):
         past_titles = self.env['blog.post'].sudo().search(
             [('id', '!=', self.id)], order='id desc', limit=30).mapped('name')
         existing_categories = Category.search([], limit=50).mapped('name')
+        related_pages = Hub._article_internal_link_targets(
+            exclude_post_ids=self.ids)
+        search_opportunities = Hub._article_search_opportunities()
         article = client.propose_article(
             business_context, past_titles, existing_categories,
-            lang_code=(ICP.get_param('era_seo.article_lang', '') or '').strip() or None,
+            lang_code=(
+                ICP.get_param('era_seo.article_lang', '') or ''
+            ).strip() or None,
             trending_now=Hub._fetch_google_trends(),
-            prompt_addendum=(ICP.get_param('era_seo.article_prompt_addendum', '') or '').strip() or None,
+            prompt_addendum=(
+                ICP.get_param('era_seo.article_prompt_addendum', '') or ''
+            ).strip() or None,
+            related_pages=related_pages,
+            search_opportunities=search_opportunities,
         )
         vals = {
             'name': article['title'],

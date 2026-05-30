@@ -2,6 +2,7 @@ from . import (
     test_geo,
     test_gsc,
     test_ai_workflow,
+    test_article_generation,
     test_audit,
     test_auto_rebuild,
     test_auto_schemas,

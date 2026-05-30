@@ -1378,7 +1378,8 @@ class EraSeoSuiteHub(models.Model):
              from ICP.
           2. Collect the last 30 article titles so the agent doesn't
              accidentally rehash one.
-          3. Ask the AI agent for {title, content_html, seo meta, suggested
+          3. Collect real internal URLs + GSC query opportunities, then ask
+             the AI agent for {title, content_html, seo meta, suggested
              category, image_prompt, trend_signal}.
           4. Find/create the suggested category.
           5. Create a blog.post with content + SEO meta.
@@ -1416,6 +1417,8 @@ class EraSeoSuiteHub(models.Model):
         past_titles = BlogPost.sudo().search(
             [], order='id desc', limit=30).mapped('name')
         existing_categories = Category.sudo().search([], limit=50).mapped('name')
+        related_pages = self._article_internal_link_targets()
+        search_opportunities = self._article_search_opportunities()
         # Real trends signal: today's top Google Trends for the configured geo.
         # Empty when offline / blocked / unparseable — the agent then falls
         # back to its own "what's relevant now" reasoning.
@@ -1427,7 +1430,9 @@ class EraSeoSuiteHub(models.Model):
                 business_context, past_titles, existing_categories,
                 lang_code=lang_code,
                 trending_now=trending_now,
-                prompt_addendum=prompt_addendum)
+                prompt_addendum=prompt_addendum,
+                related_pages=related_pages,
+                search_opportunities=search_opportunities)
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
             return False
@@ -1534,6 +1539,122 @@ class EraSeoSuiteHub(models.Model):
             post.id, article['title'][:80], article['trend_signal'][:80],
             article['confidence'])
         return post.id
+
+    @api.model
+    def _article_internal_link_targets(self, exclude_post_ids=None, limit=16):
+        """Return existing site URLs the article generator may link to.
+
+        The AI prompt is explicitly told to use these only when relevant and
+        never invent URLs. Supplying the list here gives generated articles a
+        chance to connect to real service pages and older posts, which helps
+        readers continue their task and gives crawlers clearer site context.
+        """
+        exclude_post_ids = set(exclude_post_ids or [])
+        targets = []
+
+        def _add(title, url):
+            title = (title or '').strip()
+            url = (url or '').strip()
+            if not title or not url or url == '#':
+                return
+            if not (
+                url.startswith('/') or
+                url.startswith('http://') or
+                url.startswith('https://')
+            ):
+                return
+            if any(t['url'] == url for t in targets):
+                return
+            targets.append({'title': title, 'url': url})
+
+        Page = self.env.get('website.page')
+        if Page is not None:
+            try:
+                published_field = (
+                    'website_published'
+                    if 'website_published' in Page._fields
+                    else 'is_published'
+                )
+                pages = Page.sudo().search(
+                    [(published_field, '=', True), ('url', '!=', False)],
+                    order='write_date desc, id desc',
+                    limit=max(4, limit // 2))
+            except Exception:  # noqa: BLE001
+                pages = Page.sudo().browse()
+            for page in pages:
+                _add(getattr(page, 'seo_title', False) or page.name, page.url)
+
+        BlogPost = self.env.get('blog.post')
+        if BlogPost is not None:
+            domain = [('is_published', '=', True)]
+            if exclude_post_ids:
+                domain.append(('id', 'not in', list(exclude_post_ids)))
+            posts = BlogPost.sudo().search(
+                domain,
+                order='published_date desc, id desc',
+                limit=max(4, limit - len(targets)))
+            for post in posts:
+                _add(
+                    getattr(post, 'seo_title', False) or post.name,
+                    getattr(post, 'website_url', '') or '',
+                )
+
+        return targets[:limit]
+
+    @api.model
+    def _article_search_opportunities(self, limit=12):
+        """Return high-impression Search Console queries from the last 28 days.
+
+        These are used only as prompt context. The article prompt treats them
+        as demand signals, not as instructions to stuff exact-match keywords.
+        """
+        GscQuery = self.env.get('era.gsc.query')
+        if GscQuery is None:
+            return []
+        from datetime import date, timedelta
+        since = date.today() - timedelta(days=28)
+        rows = GscQuery.sudo().search(
+            [('date', '>=', since), ('impressions', '>', 0)],
+            order='impressions desc, clicks asc',
+            limit=250)
+        grouped = {}
+        for row in rows:
+            key = (row.query or '').strip().lower()
+            if not key:
+                continue
+            bucket = grouped.setdefault(key, {
+                'query': row.query.strip(),
+                'clicks': 0,
+                'impressions': 0,
+                'weighted_position': 0.0,
+            })
+            impressions = int(row.impressions or 0)
+            bucket['clicks'] += int(row.clicks or 0)
+            bucket['impressions'] += impressions
+            bucket['weighted_position'] += float(row.position or 0.0) * impressions
+
+        opportunities = []
+        for item in grouped.values():
+            impressions = item['impressions']
+            if not impressions:
+                continue
+            position = item['weighted_position'] / impressions
+            # Favor queries with demand and room to improve.
+            score = (
+                impressions * (1.0 + min(position, 30.0) / 30.0) -
+                item['clicks'] * 20
+            )
+            opportunities.append({
+                'query': item['query'],
+                'clicks': item['clicks'],
+                'impressions': impressions,
+                'position': round(position, 2),
+                '_score': score,
+            })
+        opportunities.sort(key=lambda i: (-i['_score'], -i['impressions']))
+        for item in opportunities:
+            item.pop('_score', None)
+        return opportunities[:limit]
 
     def _attach_article_image(self, post, image_bytes, article):
         """Persist the generated image into every slot the blog + SEO stack

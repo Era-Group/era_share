@@ -8461,3 +8461,73 @@ msgstr "مقالات مدوّنة مُولَّدة بالذكاء الاصطنا
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_blog_posts_30d
 msgid "Blog posts (last 30 days)"
 msgstr "مقالات المدونة (آخر 30 يوم)"
+
+msgid "Smart 404 redirects"
+msgstr "إعادة توجيه 404 الذكية"
+
+msgid "Send unmatched 404s home"
+msgstr "توجيه صفحات 404 غير المطابقة إلى الرئيسية"
+
+msgid "Smart 404 — did-you-mean redirects"
+msgstr "404 الذكية — إعادة توجيه هل تقصد"
+
+msgid "Backfill 3 Months"
+msgstr "تعبئة 3 أشهر بأثر رجعي"
+
+msgid "Queries tracked (28d)"
+msgstr "الاستعلامات المتتبَّعة (28 يوماً)"
+
+msgid "Avg position (28d)"
+msgstr "متوسط الترتيب (28 يوماً)"
+
+msgid "Top GSC Queries (28d)"
+msgstr "أهم استعلامات GSC (28 يوماً)"
+
+msgid "Analyze all queries"
+msgstr "تحليل كل الاستعلامات"
+
+msgid "Top search queries (28 days)"
+msgstr "أهم استعلامات البحث (28 يوماً)"
+
+msgid ""
+"On a \"page not found\", redirect to the closest matching existing URL "
+"(fuzzy match against the sitemap) instead of showing a 404."
+msgstr ""
+"عند \"عدم العثور على الصفحة\"، يُعاد التوجيه إلى أقرب رابط موجود مطابق "
+"(مطابقة تقريبية مع خريطة الموقع) بدلاً من عرض صفحة 404."
+
+msgid ""
+"When no close match is found, log the 404 and redirect the visitor to the "
+"home page. Turn OFF to keep a real 404 for unmatched pages (recommended if "
+"SEO soft-404 signals are a concern)."
+msgstr ""
+"عند عدم وجود مطابقة قريبة، يُسجَّل الخطأ 404 ويُعاد توجيه الزائر إلى الصفحة "
+"الرئيسية. أوقِفه للإبقاء على صفحة 404 حقيقية للصفحات غير المطابقة (يُنصح به "
+"إذا كانت إشارات soft-404 مصدر قلق لتحسين محركات البحث)."
+
+msgid ""
+"Backfill ~90 days of search analytics for this site? It pulls day by day and"
+" may take a minute."
+msgstr ""
+"تعبئة ~90 يوماً من تحليلات البحث لهذا الموقع بأثر رجعي؟ يتم السحب يوماً بيوم"
+" وقد يستغرق دقيقة."
+
+msgid ""
+"Backfill ~90 days for every site on this account? Pulls day by day; may take"
+" a few minutes."
+msgstr ""
+"تعبئة ~90 يوماً بأثر رجعي لكل موقع في هذا الحساب؟ يتم السحب يوماً بيوم وقد "
+"يستغرق بضع دقائق."
+
+msgid ""
+"On a \"page not found\", the visitor is sent to the closest matching "
+"existing URL (fuzzy match against the sitemap). When no close match is "
+"found, the 404 is logged and — if <b>Send unmatched 404s home</b> is on — "
+"the visitor goes to the home page; turn that off to keep a real 404 for "
+"unmatched pages."
+msgstr ""
+"عند \"عدم العثور على الصفحة\"، يُرسَل الزائر إلى أقرب رابط موجود مطابق "
+"(مطابقة تقريبية مع خريطة الموقع). وعند عدم وجود مطابقة قريبة، يُسجَّل الخطأ "
+"404 و— إذا كان <b>توجيه صفحات 404 غير المطابقة إلى الرئيسية</b> مُفعّلاً — "
+"يذهب الزائر إلى الصفحة الرئيسية؛ أوقِف ذلك للإبقاء على صفحة 404 حقيقية "
+"للصفحات غير المطابقة."

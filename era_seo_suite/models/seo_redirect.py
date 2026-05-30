@@ -244,17 +244,25 @@ class EraSeoRedirect(models.Model):
     def _register_hit(self):
         """Increment hit_count and stamp last_hit_date.
 
-        Wrapped in a savepoint so a failure here can never break a redirect
-        response. Called from the ir.http hook on every match.
+        Uses an atomic in-DB ``hit_count = hit_count + 1`` instead of a
+        read-modify-write, so two concurrent hits on the same hot rule can't
+        lose an increment. Still wrapped in a savepoint: under REPEATABLE READ
+        two concurrent UPDATEs of the same row can still raise 40001, and a
+        redirect response must never fail over a counter. Called from the
+        ir.http hook on every match.
         """
         if not self:
             return
         try:
             with self.env.cr.savepoint():
-                self.sudo().write({
-                    'hit_count': self.hit_count + 1,
-                    'last_hit_date': fields.Datetime.now(),
-                })
+                self.env.cr.execute(
+                    "UPDATE era_seo_redirect "
+                    "SET hit_count = COALESCE(hit_count, 0) + 1, "
+                    "    last_hit_date = (now() AT TIME ZONE 'UTC') "
+                    "WHERE id = %s",
+                    (self.id,),
+                )
+                self.invalidate_recordset(['hit_count', 'last_hit_date'])
         except Exception as exc:  # noqa: BLE001
             _logger.warning(
                 'era.seo.redirect[%d]: hit counter update failed: %s',

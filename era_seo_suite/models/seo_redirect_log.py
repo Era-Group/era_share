@@ -71,28 +71,44 @@ class EraSeoRedirectLog(models.Model):
     @api.model
     def _do_upsert(self, path, website, referer, user_agent):
         website_id = website.id if website else False
-        existing = self.sudo().search([
-            ('path', '=', path),
-            ('website_id', '=', website_id),
-        ], limit=1)
         clean_referer = self._sanitize_referer(referer, path)
-        if existing:
-            existing.write({
-                'hit_count': existing.hit_count + 1,
-                'last_seen': fields.Datetime.now(),
-                'last_referer': clean_referer or existing.last_referer,
-                'last_user_agent': user_agent or existing.last_user_agent,
-            })
-        else:
-            self.sudo().create({
-                'path': path,
-                'website_id': website_id,
-                'hit_count': 1,
-                'first_seen': fields.Datetime.now(),
-                'last_seen': fields.Datetime.now(),
-                'last_referer': clean_referer,
-                'last_user_agent': (user_agent or '')[:255] or False,
-            })
+        clean_ua = (user_agent or '')[:255] or False
+        # Common path: the row already exists. Increment atomically in-DB
+        # (`hit_count = hit_count + 1`) so two concurrent 404s on the same path
+        # can't lose an increment via a read-modify-write race — that race was
+        # the source of the `UPDATE era_seo_redirect_log ... 40001` errors. The
+        # COALESCE on website_id mirrors the unique index expression so a NULL
+        # and a 0 website map to the same log row. A new referer/UA only
+        # overwrites when present (keeps the last known value otherwise).
+        self.env.cr.execute(
+            """
+            UPDATE era_seo_redirect_log
+               SET hit_count = hit_count + 1,
+                   last_seen = (now() AT TIME ZONE 'UTC'),
+                   last_referer = COALESCE(%s, last_referer),
+                   last_user_agent = COALESCE(%s, last_user_agent),
+                   write_uid = %s,
+                   write_date = (now() AT TIME ZONE 'UTC')
+             WHERE path = %s AND COALESCE(website_id, 0) = COALESCE(%s, 0)
+            """,
+            (clean_referer or None, clean_ua or None, self.env.uid,
+             path, website_id or None),
+        )
+        if self.env.cr.rowcount:
+            return
+        # No row yet — create via the ORM so the audit columns are populated.
+        # A concurrent creator racing us trips the unique index; that raises,
+        # and the caller's savepoint in `_record_miss` swallows it (one logged
+        # hit lost, never a broken 404 response).
+        self.sudo().create({
+            'path': path,
+            'website_id': website_id,
+            'hit_count': 1,
+            'first_seen': fields.Datetime.now(),
+            'last_seen': fields.Datetime.now(),
+            'last_referer': clean_referer,
+            'last_user_agent': clean_ua,
+        })
 
     @staticmethod
     def _sanitize_referer(referer, current_path):

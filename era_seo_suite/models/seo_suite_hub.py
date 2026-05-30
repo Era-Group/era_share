@@ -85,6 +85,23 @@ class EraSeoSuiteHub(models.Model):
     kpi_ai_findings_failed = fields.Integer(
         string='AI fixes failed', compute='_compute_kpis')
 
+    # AI auto-fill progress — how far the unattended bulk-fill sweep has
+    # gotten through the pages/posts that still need SEO fields. `done` are
+    # records that now have a seo_title; `remaining` are what the cron has
+    # left to process (its own search domain). `active` mirrors the ICP gate.
+    kpi_ai_fill_total = fields.Integer(
+        string='AI auto-fill — records in scope', compute='_compute_kpis')
+    kpi_ai_fill_done = fields.Integer(
+        string='AI auto-fill — filled', compute='_compute_kpis')
+    kpi_ai_fill_remaining = fields.Integer(
+        string='AI auto-fill — remaining', compute='_compute_kpis')
+    kpi_ai_fill_pct = fields.Integer(
+        string='AI auto-fill — % complete', compute='_compute_kpis')
+    kpi_ai_fill_active = fields.Boolean(
+        string='AI auto-fill running', compute='_compute_kpis')
+    kpi_blog_taxonomy_remaining = fields.Integer(
+        string='Blog posts awaiting categorization', compute='_compute_kpis')
+
     # Content — what's been written / generated.
     kpi_blog_posts_total = fields.Integer(
         string='Blog posts', compute='_compute_kpis')
@@ -350,14 +367,14 @@ class EraSeoSuiteHub(models.Model):
         we clear the flag here so the spinner doesn't get stuck forever.
 
         Concurrency: many browser tabs may poll this RPC simultaneously
-        while the cron is also writing the same ICP row. Postgres uses
-        SERIALIZABLE-ish semantics on these rows, so naive `set_param`
-        races throw `SerializationFailure` and roll back the WHOLE
-        transaction — which, when the loser happens to be the cron, kills
-        an otherwise-successful article generation. We wrap the only two
-        writes here in their own savepoints so a concurrent update is
-        absorbed silently. The other writer wins; we report whatever the
-        winner left behind.
+        while the cron is also writing the same ICP row. Odoo cursors run at
+        REPEATABLE READ, so a concurrent UPDATE of the shared row throws
+        `SerializationFailure` (40001) which aborts the WHOLE transaction — and
+        a SAVEPOINT does NOT clear a 40001 (the earlier claim that it did was
+        wrong). We therefore route the two self-heal writes here through
+        `_era_commit_icp`, a short-lived independently-committed cursor that
+        sidesteps the conflict instead of trying to recover from it. The other
+        writer still wins; we report whatever the winner left behind.
         """
         ICP = self.env['ir.config_parameter'].sudo()
         pending = ICP.get_param('era_seo.article_pending') in _TRUE
@@ -366,16 +383,12 @@ class EraSeoSuiteHub(models.Model):
             stamp = fields.Datetime.from_string(stamp_raw) if stamp_raw else None
             if stamp is None:
                 # Legacy/unstamped pending — backfill so future ticks have
-                # a clock, and report still-pending for now. Savepoint so a
-                # race with the cron's flush doesn't poison the request.
-                try:
-                    with self.env.cr.savepoint():
-                        ICP.set_param(
-                            'era_seo.article_pending_started_at',
-                            fields.Datetime.to_string(fields.Datetime.now()),
-                        )
-                except Exception:  # noqa: BLE001
-                    pass
+                # a clock, and report still-pending for now. Side cursor so a
+                # race with the cron's flush can't poison the request.
+                self._era_commit_icp({
+                    'era_seo.article_pending_started_at':
+                        fields.Datetime.to_string(fields.Datetime.now()),
+                })
             else:
                 age = (fields.Datetime.now() - stamp).total_seconds()
                 if age > self._ARTICLE_PENDING_TTL_SECONDS:
@@ -384,15 +397,12 @@ class EraSeoSuiteHub(models.Model):
                         'clearing — the cron either never ran or died '
                         'mid-generation. The user can re-click Generate Now.',
                         int(age), self._ARTICLE_PENDING_TTL_SECONDS)
-                    try:
-                        with self.env.cr.savepoint():
-                            ICP.set_param('era_seo.article_pending', 'False')
-                            ICP.set_param(
-                                'era_seo.article_pending_started_at', '')
-                    except Exception:  # noqa: BLE001
-                        # A concurrent writer (the cron's `finally` clause)
-                        # already cleared the flag — same end state.
-                        pass
+                    # Side cursor: a concurrent writer (the cron's `finally`
+                    # clause) racing us here is fine — same end state.
+                    self._era_commit_icp({
+                        'era_seo.article_pending': 'False',
+                        'era_seo.article_pending_started_at': '',
+                    })
                     pending = False
         return {'pending': pending}
 
@@ -590,6 +600,33 @@ class EraSeoSuiteHub(models.Model):
         else:
             with_schema = 0
 
+        # AI auto-fill progress — mirror the bulk-fill cron's own scope so the
+        # dashboard reads exactly what the unattended sweep will still touch.
+        # Records in `_BULK_AI_MODELS` missing a seo_title ARE the cron queue.
+        needs_fill_domain = ['|', ('seo_title', '=', False),
+                             ('seo_title', '=', '')]
+        ai_fill_total = 0
+        ai_fill_remaining = 0
+        for _model_name in self._BULK_AI_MODELS:
+            _M = self.env.get(_model_name)
+            if _M is None or 'seo_title' not in _M._fields:
+                continue
+            _M = _M.sudo()
+            ai_fill_total += _M.search_count([])
+            ai_fill_remaining += _M.search_count(needs_fill_domain)
+        ai_fill_done = ai_fill_total - ai_fill_remaining
+        ai_fill_pct = (int(round(100 * ai_fill_done / ai_fill_total))
+                       if ai_fill_total else 0)
+        ai_fill_active = _icp_bool(self.env, 'era_seo.bulk_ai_fill_active', False)
+        # Blog posts still awaiting AI taxonomy (the cron skips ones already
+        # categorized). Guard on the field in case the blog isn't installed.
+        _BP = self.env.get('blog.post')
+        if _BP is not None and 'era_category_id' in _BP._fields:
+            blog_taxonomy_remaining = _BP.sudo().search_count(
+                [('era_category_id', '=', False)])
+        else:
+            blog_taxonomy_remaining = 0
+
         for rec in self:
             rec.kpi_published_pages = n_published
             rec.kpi_active_redirects = Redirect.sudo().search_count(
@@ -660,6 +697,13 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_blog_posts_total = 0
                 rec.kpi_blog_posts_ai_generated = 0
                 rec.kpi_blog_posts_30d = 0
+
+            rec.kpi_ai_fill_total = ai_fill_total
+            rec.kpi_ai_fill_done = ai_fill_done
+            rec.kpi_ai_fill_remaining = ai_fill_remaining
+            rec.kpi_ai_fill_pct = ai_fill_pct
+            rec.kpi_ai_fill_active = ai_fill_active
+            rec.kpi_blog_taxonomy_remaining = blog_taxonomy_remaining
 
             rec.kpi_geo_crawlers_total = Crawler.sudo().search_count(
                 []) if Crawler is not None else 0
@@ -827,13 +871,15 @@ class EraSeoSuiteHub(models.Model):
 
     _BULK_AI_MODELS = ('website.page', 'blog.post')
 
-    # Hard wallclock budget for one bulk-fill tick. The cron is killed by
-    # Odoo at `limit_time_cpu` (600s) — we leave generous headroom so we
-    # never *start* a record we can't possibly *finish*. One record is
-    # up to 2 langs × ~120s OpenAI timeout = 240s in the worst case; we
-    # set the budget to 600 - 240 = 360s so we never enter a new record
-    # past that mark. Whatever's left gets picked up by the next cron
-    # tick 2 minutes later.
+    # Hard wallclock budget for one bulk-fill tick. NOTE: the relevant kill
+    # switch is `limit_time_real_cron` (real/wallclock time — deployment sets
+    # it to 1200s; core default resolves to `limit_time_real`), NOT
+    # `limit_time_cpu` (default 60s): AI calls sleep on network I/O, which
+    # burns wallclock but almost no CPU, so the CPU limit never fires on them.
+    # We keep a conservative budget well under the 1200s real-time ceiling so
+    # we never *start* a record we can't *finish*; whatever's left is picked
+    # up by the next tick. (A per-AI-call wallclock cap belongs in the agent
+    # layer and is tracked separately — this budget only bounds the loop.)
     _BULK_AI_TICK_BUDGET_S = 360
 
     @api.model
@@ -908,7 +954,17 @@ class EraSeoSuiteHub(models.Model):
                     # the unattended bulk run by flipping the ICP flag, so the
                     # cron user (often the technical user, not a SEO Manager)
                     # is allowed to run the fill.
-                    rec.with_context(_era_ai_system=True).action_ai_fill_seo()
+                    #
+                    # Each record runs in its OWN savepoint so a DB error on one
+                    # record (e.g. a transient serialization conflict) rolls back
+                    # only that record and can't poison the cursor for the rest
+                    # of the tick. The field writes stay on the main cron cursor
+                    # (committed by the cron framework at end-of-tick) — we do
+                    # NOT call cr.commit() here, since this method runs as a
+                    # framework-managed `state=code` server action that owns the
+                    # transaction boundary.
+                    with self.env.cr.savepoint():
+                        rec.with_context(_era_ai_system=True).action_ai_fill_seo()
                 except Exception:  # noqa: BLE001
                     _logger.exception(
                         'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
@@ -918,13 +974,19 @@ class EraSeoSuiteHub(models.Model):
                 if model_name == 'blog.post' and \
                         _icp_get(self.env, 'era_seo.blog_taxonomy_active') in _TRUE:
                     try:
-                        self._apply_blog_taxonomy(rec)
+                        with self.env.cr.savepoint():
+                            self._apply_blog_taxonomy(rec)
                     except Exception:  # noqa: BLE001
                         _logger.exception(
                             'bulk_ai_fill: taxonomy failed for blog.post#%s', rec.id)
-                # Advance the cursor whether or not this record succeeded,
-                # so one persistently-broken record can't stall the queue.
-                ICP.set_param(key_last, str(rec.id))
+                # Advance the high-water mark on a SEPARATE, immediately-committed
+                # cursor. The old in-transaction `ICP.set_param` UPDATE on the
+                # shared ir_config_parameter row was the 40001 source that used
+                # to abort the entire tick (InFailedSqlTransaction cascade). The
+                # side cursor sidesteps the conflict entirely. We advance whether
+                # or not the record succeeded, so one broken record can't stall
+                # the queue.
+                self._era_commit_icp({key_last: str(rec.id)})
                 last_id = rec.id
                 total_processed += 1
             else:
@@ -938,7 +1000,8 @@ class EraSeoSuiteHub(models.Model):
         # If nothing was processed across any model, the queue is drained.
         # Flip the flag off so we don't keep waking the cron for no work.
         if total_processed == 0:
-            ICP.set_param('era_seo.bulk_ai_fill_active', 'False')
+            # Side cursor again — same shared-row 40001 hazard as the high-water.
+            self._era_commit_icp({'era_seo.bulk_ai_fill_active': 'False'})
             _logger.info('bulk_ai_fill: queue drained, flag cleared')
         else:
             _logger.info('bulk_ai_fill: processed %d record(s) this tick',
@@ -1164,6 +1227,33 @@ class EraSeoSuiteHub(models.Model):
                 )
             else:
                 ICP.set_param('era_seo.article_pending_started_at', '')
+
+    def _era_commit_icp(self, params):
+        """Write one or more ir.config_parameter keys via a short-lived cursor
+        that commits immediately, insulating the caller's (long cron) main
+        transaction from SerializationFailure (40001) on the shared ICP row.
+
+        Odoo cursors run at REPEATABLE READ (odoo/sql_db.py), so a 40001 on a
+        hot row aborts the WHOLE transaction and a SAVEPOINT cannot clear it —
+        only a separate, independently-committed connection sidesteps the
+        conflict. ``params`` is a {key: str_value} mapping. On side-cursor
+        failure we fall back to an in-transaction write (losing isolation is
+        better than losing the write). Generalizes ``_set_article_pending``.
+        """
+        from odoo import sql_db
+        try:
+            with sql_db.db_connect(self.env.cr.dbname).cursor() as side_cr:
+                ICP = self.env(cr=side_cr)['ir.config_parameter'].sudo()
+                for key, value in params.items():
+                    ICP.set_param(key, value)
+                side_cr.commit()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                '_era_commit_icp(%s): side-cursor write failed (%s); '
+                'falling back to in-transaction write', list(params), exc)
+            ICP = self.env['ir.config_parameter'].sudo()
+            for key, value in params.items():
+                ICP.set_param(key, value)
 
     @api.model
     def _run_article_gen(self):

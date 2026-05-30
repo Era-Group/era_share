@@ -28,6 +28,87 @@ from odoo import _
 
 _logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# JSON repair primitives.
+# Cheap models emit JSON with two recurring, non-recoverable defects: a stray
+# chat-template end token appended after the object (</assistant>, <|im_end|>,
+# </s>, ...) and an occasional unquoted string value. json.raw_decode cannot
+# repair either, so we strip control tokens, extract the first brace-balanced
+# object, and run a conservative repair pass before giving up. Every repair is
+# re-validated by a strict decoder, so a bad repair fails closed (raises)
+# rather than returning wrong data.
+# ---------------------------------------------------------------------------
+
+# Allow-list of chat/control end tokens. Deliberately NOT a generic <[^>]+>:
+# we must never strip real HTML (<p>, <strong>) that can legitimately sit
+# inside a JSON string value.
+_CTRL_TOKEN_RE = re.compile(
+    r'</?(?:assistant|user|system|s|im_start|im_end|eot_id|eot|end_of_turn)\b[^>]*>'
+    r'|<\|[^|>]*\|>',
+    re.IGNORECASE,
+)
+
+
+def _strip_ctrl_tokens(text):
+    return _CTRL_TOKEN_RE.sub('', text)
+
+
+def _extract_json_object_span(text):
+    """Return the first brace-balanced ``{...}`` object in ``text``.
+
+    Scans from the first ``{`` honoring string/escape state so a brace inside
+    a quoted value (e.g. an Arabic title) never closes the object early. On
+    unbalanced/truncated input returns the remainder from the first ``{`` so a
+    repair pass can still attempt it. Returns ``text`` unchanged if no ``{``.
+    """
+    start = text.find('{')
+    if start < 0:
+        return text
+    depth = 0
+    in_str = False
+    esc = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == '\\':
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    # Unbalanced / truncated — hand back the remainder for the repair pass.
+    return text[start:]
+
+
+def _repair_json_text(text):
+    """Best-effort repair of common cheap-model JSON defects. Conservative:
+    only transformations that cannot turn one valid value into a different
+    valid one. Output is always re-validated by a strict decoder upstream."""
+    # 1. Trailing comma before a closer: {"a": 1,} / [1, 2,]
+    text = re.sub(r',\s*([}\]])', r'\1', text)
+    # 2. Unquoted string value: `"key": bareword text"` -> `"key": "bareword text"`.
+    #    Anchored to a value that STARTS with a char that cannot begin a JSON
+    #    literal (not a quote/brace/bracket/digit/sign, not lower-case t/f/n
+    #    for true/false/null) and ENDS at a closing quote right before , } ].
+    #    The [^"\n] class forbids spanning an existing quote, so it can never
+    #    swallow the following key.
+    text = re.sub(
+        r'(:\s*)(?![\s"\d\[\{tfn\-])([^"\n]*?")(\s*[,}\]])',
+        r'\1"\2\3',
+        text,
+    )
+    return text
+
+
 # Auto-fixable check codes -> (target field, needs_ai). A False second
 # element means we can fix it mechanically without calling the model.
 # These are the "single field value" fixes; the richer fixes (schema attach,
@@ -1440,21 +1521,29 @@ class AIClient:
         fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
         if fence:
             text = fence.group(1).strip()
-        # Skip leading prose: jump to the first '{' if any.
-        if not text.startswith('{'):
-            idx = text.find('{')
-            if idx >= 0:
-                text = text[idx:]
+        # Strip stray chat-template/control end tokens (</assistant>, <|im_end|>,
+        # </s>, ...) the model appended after the object, then narrow to the
+        # first brace-balanced object (skips leading prose AND honors strings,
+        # so a brace inside an Arabic value can't close the object early).
+        text = _strip_ctrl_tokens(text).strip()
+        text = _extract_json_object_span(text)
         if not text:
             raise ValueError(
                 'AI returned empty output where JSON was expected.')
+        # Layer A — strict, lossless. raw_decode reads ONE object and returns
+        # (parsed, end_index); anything past end_index (prose, a second object)
+        # is silently dropped — the common "JSON + then a paragraph" shape.
         try:
-            # raw_decode reads ONE object then returns (parsed, end_index).
-            # Anything past end_index — prose, a second object, trailing
-            # commas — is silently dropped. This is the only way to
-            # tolerate the surprisingly-common "JSON + then a paragraph"
-            # response shape from cheaper models.
             parsed, _end = json.JSONDecoder().raw_decode(text)
+            return parsed
+        except (json.JSONDecodeError, TypeError):
+            pass
+        # Layer B — tolerant repair (trailing commas, an unquoted string
+        # value), then re-validate with the SAME strict decoder so a bad
+        # repair fails closed rather than returning wrong data.
+        try:
+            parsed, _end = json.JSONDecoder().raw_decode(_repair_json_text(text))
+            return parsed
         except (json.JSONDecodeError, TypeError) as exc:
             # No _() wrapper here: this helper is a @staticmethod called
             # from many paths including crons, where the call frame has no
@@ -1471,8 +1560,8 @@ class AIClient:
         # but every other caller uses a different JSON shape (propose_article:
         # title/content_html; pick_schema: code; pick_blog_taxonomy: category;
         # fill_seo: per-field names). Callers that need `proposed_value`
-        # validate it themselves — see `_field_and_mechanical_fix`.
-        return parsed
+        # validate it themselves — see `_field_and_mechanical_fix`. Each layer
+        # above returns on success, so there is no fall-through return here.
 
     @classmethod
     def _build_prompt(cls, finding, target, field, lang=None):
@@ -1710,23 +1799,15 @@ class AIClient:
     # Schema / image-alt / thin-content prompts, parsers, extractors
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _loads_json(raw):
-        """Parse a JSON object from model output, tolerating fences/prose."""
-        text = (raw or '').strip()
-        fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
-        if fence:
-            text = fence.group(1).strip()
-        if not text.startswith('{'):
-            brace = re.search(r'\{.*\}', text, re.DOTALL)
-            if brace:
-                text = brace.group(0)
-        try:
-            return json.loads(text)
-        except (json.JSONDecodeError, TypeError) as exc:
-            raise ValueError(
-                _('AI returned output that is not valid JSON: %s', (raw or '')[:200])
-            ) from exc
+    @classmethod
+    def _loads_json(cls, raw):
+        """Parse a JSON object from model output. Delegates to the hardened
+        ``_parse_json`` so the schema / image-alt / html / choice / fill family
+        inherits control-token stripping, brace-balanced extraction, and the
+        tolerant repair pass. (Replaces a weaker engine that used plain
+        ``json.loads`` plus a greedy ``\\{.*\\}`` span — which could over-grab
+        to the last ``}`` across a trailing object/prose.)"""
+        return cls._parse_json(raw)
 
     @classmethod
     def _build_schema_prompt(cls, target, templates):

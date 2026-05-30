@@ -6,6 +6,7 @@ import requests
 
 from odoo import _, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import config
 
 from .gsc_client import GscClient
 
@@ -85,7 +86,9 @@ class EraGscSite(models.Model):
         """
         self.ensure_one()
         token = self.account_id._get_valid_access_token()
-        in_test = self.env.registry.in_test_mode()
+        # Commit per day for durable/resumable progress — but never mid-test
+        # (a commit there would break the test transaction's isolation).
+        in_test = bool(config['test_enable'])
         total = 0
         day = start_date
         while day <= end_date:

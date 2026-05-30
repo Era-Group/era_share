@@ -64,6 +64,10 @@ class EraSeoSuiteHub(models.Model):
         string='Resolved findings (total)', compute='_compute_kpis')
     kpi_findings_resolved_7d = fields.Integer(
         string='Resolved last 7 days', compute='_compute_kpis')
+    kpi_health_score = fields.Integer(
+        string='SEO health score', compute='_compute_kpis')
+    kpi_attention_items = fields.Integer(
+        string='Items needing attention', compute='_compute_kpis')
 
     # Coverage — what fraction of published pages have the basics done.
     # Strings deliberately percentage-shaped (Integer 0-100) so the form
@@ -109,6 +113,10 @@ class EraSeoSuiteHub(models.Model):
         string='AI-generated blog posts', compute='_compute_kpis')
     kpi_blog_posts_30d = fields.Integer(
         string='Blog posts (last 30 days)', compute='_compute_kpis')
+    kpi_pages_missing_seo = fields.Integer(
+        string='Published pages missing SEO title', compute='_compute_kpis')
+    kpi_posts_missing_seo = fields.Integer(
+        string='Blog posts missing SEO title', compute='_compute_kpis')
 
     # GEO
     kpi_geo_crawlers_total = fields.Integer(
@@ -127,6 +135,8 @@ class EraSeoSuiteHub(models.Model):
         string='Clicks (28d)', compute='_compute_kpis')
     kpi_gsc_impressions_28d = fields.Integer(
         string='Impressions (28d)', compute='_compute_kpis')
+    kpi_gsc_ctr_28d = fields.Float(
+        string='CTR (28d)', compute='_compute_kpis', digits=(16, 2))
     kpi_gsc_last_pull = fields.Date(
         string='GSC Last Pull', compute='_compute_kpis')
 
@@ -679,6 +689,7 @@ class EraSeoSuiteHub(models.Model):
             rec.kpi_coverage_meta_pct = _pct(with_meta)
             rec.kpi_coverage_og_image_pct = _pct(with_og)
             rec.kpi_coverage_schema_pct = _pct(with_schema)
+            rec.kpi_pages_missing_seo = max(0, n_published - with_title)
 
             if BlogPost is not None:
                 BP = BlogPost.sudo()
@@ -693,10 +704,15 @@ class EraSeoSuiteHub(models.Model):
                     rec.kpi_blog_posts_ai_generated = 0
                 rec.kpi_blog_posts_30d = BP.search_count(
                     [('create_date', '>=', d30_dt)])
+                if 'seo_title' in BP._fields:
+                    rec.kpi_posts_missing_seo = BP.search_count(needs_fill_domain)
+                else:
+                    rec.kpi_posts_missing_seo = 0
             else:
                 rec.kpi_blog_posts_total = 0
                 rec.kpi_blog_posts_ai_generated = 0
                 rec.kpi_blog_posts_30d = 0
+                rec.kpi_posts_missing_seo = 0
 
             rec.kpi_ai_fill_total = ai_fill_total
             rec.kpi_ai_fill_done = ai_fill_done
@@ -724,11 +740,36 @@ class EraSeoSuiteHub(models.Model):
             else:
                 rec.kpi_gsc_clicks_28d = 0
                 rec.kpi_gsc_impressions_28d = 0
+            rec.kpi_gsc_ctr_28d = (
+                round(100 * rec.kpi_gsc_clicks_28d / rec.kpi_gsc_impressions_28d, 2)
+                if rec.kpi_gsc_impressions_28d else 0.0
+            )
             last_site = GscSite.sudo().search(
                 [('last_pull_date', '!=', False)],
                 order='last_pull_date desc', limit=1
             ) if GscSite is not None else False
             rec.kpi_gsc_last_pull = last_site.last_pull_date if last_site else False
+
+            coverage_score = int(round((
+                rec.kpi_coverage_title_pct +
+                rec.kpi_coverage_meta_pct +
+                rec.kpi_coverage_og_image_pct +
+                rec.kpi_coverage_schema_pct
+            ) / 4)) if n_published else 0
+            rec.kpi_attention_items = (
+                rec.kpi_audit_critical +
+                rec.kpi_audit_warning +
+                rec.kpi_ai_findings_failed +
+                rec.kpi_geo_crawlers_blocked
+            )
+            penalty = min(
+                45,
+                rec.kpi_audit_critical * 10 +
+                rec.kpi_audit_warning * 2 +
+                rec.kpi_ai_findings_failed * 3 +
+                rec.kpi_geo_crawlers_blocked
+            )
+            rec.kpi_health_score = max(0, min(100, coverage_score - penalty))
 
     # ------------------------------------------------------------------------
     # Settings round-trip
@@ -2288,6 +2329,51 @@ class EraSeoSuiteHub(models.Model):
         """Force a re-compute of the KPI fields (cheap; they're non-stored)."""
         self.invalidate_recordset()
         return True
+
+    def _era_read_action(self, xmlid):
+        action = self.env.ref(xmlid, raise_if_not_found=False)
+        if not action:
+            raise UserError(_('The requested action is not available.'))
+        return action.read()[0]
+
+    def action_open_priority_findings(self):
+        """Open unresolved critical/warning findings from the dashboard."""
+        self.ensure_one()
+        action = self._era_read_action('era_seo_suite.action_seo_audit_finding')
+        action.update({
+            'name': _('Priority Findings'),
+            'domain': [
+                ('is_resolved', '=', False),
+                ('severity', 'in', ['critical', 'warning']),
+            ],
+        })
+        return action
+
+    def action_open_ai_review_queue(self):
+        """Open AI suggestions that are ready for review."""
+        self.ensure_one()
+        action = self._era_read_action('era_seo_suite.action_seo_audit_finding')
+        action.update({
+            'name': _('AI Review Queue'),
+            'domain': [
+                ('is_resolved', '=', False),
+                ('ai_status', '=', 'suggested'),
+            ],
+        })
+        return action
+
+    def action_open_pages_missing_seo(self):
+        """Open website pages still missing an SEO title."""
+        self.ensure_one()
+        action = self._era_read_action('era_seo_suite.action_era_seo_pages')
+        action.update({
+            'name': _('Pages Missing SEO Title'),
+            'domain': [
+                '&', ('website_published', '=', True),
+                '|', ('seo_title', '=', False), ('seo_title', '=', ''),
+            ],
+        })
+        return action
 
     def action_open_website_settings(self):
         """Jump to the standard Website → Configuration → Settings page."""

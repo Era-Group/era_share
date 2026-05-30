@@ -1,2 +1,228 @@
-// ERA SEO Manager — backend styles.
-// Phase 7 adds meaningful rules.
+// ERA SEO Suite backend dashboard.
+
+.o_era_seo_dashboard {
+  --era-dash-border: #d8dee8;
+  --era-dash-muted: #667085;
+  --era-dash-ink: #1f2937;
+  --era-dash-panel: #ffffff;
+  --era-dash-soft: #f6f8fb;
+  --era-dash-blue: #2563eb;
+  --era-dash-teal: #0f766e;
+  --era-dash-red: #b42318;
+  --era-dash-amber: #b45309;
+
+  margin-top: 0.5rem;
+
+  .o_era_dash_hero {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr;
+    gap: 0.75rem;
+    align-items: stretch;
+    padding: 0.75rem;
+    border: 1px solid var(--era-dash-border);
+    border-radius: 8px;
+    background: var(--era-dash-soft);
+  }
+
+  .o_era_dash_hero_main,
+  .o_era_dash_stat,
+  .o_era_work_tile,
+  .card {
+    border: 1px solid var(--era-dash-border);
+    border-radius: 8px;
+    background: var(--era-dash-panel);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  .o_era_dash_hero_main {
+    padding: 1rem;
+    border-left: 4px solid var(--era-dash-teal);
+  }
+
+  .o_era_dash_eyebrow,
+  .o_era_dash_stat_label,
+  .o_era_work_tile_title {
+    color: var(--era-dash-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .o_era_dash_score {
+    display: flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    margin-top: 0.3rem;
+    color: var(--era-dash-ink);
+    font-size: 2.75rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .o_era_dash_score .o_field_widget {
+    font-weight: inherit;
+  }
+
+  .o_era_dash_score_unit {
+    color: var(--era-dash-muted);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .o_era_dash_score_label {
+    color: var(--era-dash-muted);
+    font-size: 0.86rem;
+  }
+
+  .o_era_dash_badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .o_era_dash_hero_stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .o_era_dash_stat {
+    min-height: 116px;
+    padding: 0.85rem;
+  }
+
+  .o_era_dash_stat strong {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--era-dash-ink);
+    font-size: 1.55rem;
+    line-height: 1.1;
+  }
+
+  .o_era_dash_stat small {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--era-dash-muted);
+  }
+
+  .o_era_dash_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .o_era_dash_actions .btn,
+  .o_era_work_tile .btn {
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .o_era_dash_actions .btn-light {
+    border-color: var(--era-dash-border);
+    color: var(--era-dash-ink);
+    background: #ffffff;
+  }
+
+  .o_era_work_tile {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 86px;
+    padding: 0.85rem;
+  }
+
+  .o_era_work_tile_icon {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border-radius: 8px;
+    color: var(--era-dash-teal);
+    background: #e8f5f3;
+  }
+
+  .o_era_work_tile_value {
+    color: var(--era-dash-ink);
+    font-weight: 600;
+  }
+
+  .o_era_work_tile_danger {
+    border-left: 4px solid var(--era-dash-red);
+  }
+
+  .o_era_work_tile_danger .o_era_work_tile_icon {
+    color: var(--era-dash-red);
+    background: #fee4e2;
+  }
+
+  .o_era_work_tile_info {
+    border-left: 4px solid var(--era-dash-blue);
+  }
+
+  .o_era_work_tile_info .o_era_work_tile_icon {
+    color: var(--era-dash-blue);
+    background: #e0ecff;
+  }
+
+  .o_era_work_tile_warning {
+    border-left: 4px solid var(--era-dash-amber);
+  }
+
+  .o_era_work_tile_warning .o_era_work_tile_icon {
+    color: var(--era-dash-amber);
+    background: #fef3c7;
+  }
+
+  .o_horizontal_separator {
+    margin-top: 1rem !important;
+    color: var(--era-dash-ink);
+  }
+
+  .card {
+    overflow: hidden;
+  }
+
+  .card-body {
+    min-height: 68px;
+  }
+
+  .o_progressbar {
+    min-height: 0.45rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .o_era_seo_dashboard {
+    .o_era_dash_hero {
+      grid-template-columns: 1fr;
+    }
+
+    .o_era_dash_hero_stats {
+      grid-template-columns: repeat(2, minmax(130px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .o_era_seo_dashboard {
+    .o_era_dash_hero_stats {
+      grid-template-columns: 1fr;
+    }
+
+    .o_era_dash_actions .btn {
+      flex: 1 1 100%;
+    }
+
+    .o_era_work_tile {
+      grid-template-columns: auto 1fr;
+    }
+
+    .o_era_work_tile .btn {
+      grid-column: 1 / -1;
+      justify-self: stretch;
+    }
+  }
+}

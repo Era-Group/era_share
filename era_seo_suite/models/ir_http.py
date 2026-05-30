@@ -111,14 +111,23 @@ class IrHttp(models.AbstractModel):
         if cls._era_is_system_path(path):
             return super()._serve_fallback()
 
-        # 1. Admin-managed redirect rule?
+        # 1. Admin-managed redirect rule takes precedence over everything.
         response = cls._era_try_redirect(path)
         if response is not None:
             return response
 
-        # 2. Smart "did you mean": redirect to the closest existing published
-        #    URL when one is similar enough. Skips asset-like paths (missing
-        #    files, not mistyped pages) and obeys the loop hop-counter.
+        # 2. CRITICAL: let Odoo serve the REAL page / attachment first.
+        #    _serve_fallback runs for EVERY unrouted path — including valid
+        #    website.page URLs — so the smart-404 logic must NOT run until the
+        #    page has been given its chance to render. Only a genuine miss
+        #    (super returns None) falls through to the smart handling below.
+        served = super()._serve_fallback()
+        if served is not None:
+            return served
+
+        # 3. Genuine 404 -> "did you mean": redirect to the closest existing
+        #    URL when one is similar enough (skips asset-like paths and obeys
+        #    the loop hop-counter).
         if cls._era_smart_404_enabled() and not cls._era_is_asset_like(path):
             match = cls._era_fuzzy_match(path)
             if match and match.rstrip('/') != path.rstrip('/'):
@@ -127,9 +136,7 @@ class IrHttp(models.AbstractModel):
                     _logger.info('smart-404: %r ~> %r', path, match)
                     return smart
 
-        # 3. Miss: log it. Then, for page-like paths, redirect home (opt-out
-        #    via era_seo.smart_404_home_fallback). Asset-like misses and the
-        #    home path itself fall through to the normal 404.
+        # 4. Still nothing: log it; optionally send page-like misses home.
         cls._era_log_404(path)
         if (cls._era_smart_404_home_fallback()
                 and not cls._era_is_asset_like(path)
@@ -137,7 +144,7 @@ class IrHttp(models.AbstractModel):
             home = cls._era_smart_redirect('/', 302)
             if home is not None:
                 return home
-        return super()._serve_fallback()
+        return served
 
     # ------------------------------------------------------------------
     # Redirect resolution

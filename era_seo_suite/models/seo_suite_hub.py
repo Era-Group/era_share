@@ -984,8 +984,8 @@ class EraSeoSuiteHub(models.Model):
         # ---- 1. trend (clicks/impr per day, 30d) ----------------------
         per_day = [(g[0].strftime('%m-%d'), g[1] or 0, g[2] or 0)
                    for g in Q._read_group(
-                       [('date', '>=', d30)], ['date'],
-                       ['clicks:sum', 'impressions:sum'], order='date')]
+                       [('date', '>=', d30)], ['date:day'],
+                       ['clicks:sum', 'impressions:sum'], order='date:day')]
         trend_html = _trend_chart(per_day)
 
         # ---- aggregate per query over 28d (one pass, reused below) ----

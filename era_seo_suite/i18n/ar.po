@@ -8462,33 +8462,43 @@ msgstr "مقالات مدوّنة مُولَّدة بالذكاء الاصطنا
 msgid "Blog posts (last 30 days)"
 msgstr "مقالات المدونة (آخر 30 يوم)"
 
+#. module: era_seo_suite
 msgid "Smart 404 redirects"
 msgstr "إعادة توجيه 404 الذكية"
 
+#. module: era_seo_suite
 msgid "Send unmatched 404s home"
 msgstr "توجيه صفحات 404 غير المطابقة إلى الرئيسية"
 
+#. module: era_seo_suite
 msgid "Smart 404 — did-you-mean redirects"
 msgstr "404 الذكية — إعادة توجيه هل تقصد"
 
+#. module: era_seo_suite
 msgid "Backfill 3 Months"
 msgstr "تعبئة 3 أشهر بأثر رجعي"
 
+#. module: era_seo_suite
 msgid "Queries tracked (28d)"
 msgstr "الاستعلامات المتتبَّعة (28 يوماً)"
 
+#. module: era_seo_suite
 msgid "Avg position (28d)"
 msgstr "متوسط الترتيب (28 يوماً)"
 
+#. module: era_seo_suite
 msgid "Top GSC Queries (28d)"
 msgstr "أهم استعلامات GSC (28 يوماً)"
 
+#. module: era_seo_suite
 msgid "Analyze all queries"
 msgstr "تحليل كل الاستعلامات"
 
+#. module: era_seo_suite
 msgid "Top search queries (28 days)"
 msgstr "أهم استعلامات البحث (28 يوماً)"
 
+#. module: era_seo_suite
 msgid ""
 "On a \"page not found\", redirect to the closest matching existing URL "
 "(fuzzy match against the sitemap) instead of showing a 404."
@@ -8496,6 +8506,7 @@ msgstr ""
 "عند \"عدم العثور على الصفحة\"، يُعاد التوجيه إلى أقرب رابط موجود مطابق "
 "(مطابقة تقريبية مع خريطة الموقع) بدلاً من عرض صفحة 404."
 
+#. module: era_seo_suite
 msgid ""
 "When no close match is found, log the 404 and redirect the visitor to the "
 "home page. Turn OFF to keep a real 404 for unmatched pages (recommended if "
@@ -8505,6 +8516,7 @@ msgstr ""
 "الرئيسية. أوقِفه للإبقاء على صفحة 404 حقيقية للصفحات غير المطابقة (يُنصح به "
 "إذا كانت إشارات soft-404 مصدر قلق لتحسين محركات البحث)."
 
+#. module: era_seo_suite
 msgid ""
 "Backfill ~90 days of search analytics for this site? It pulls day by day and"
 " may take a minute."
@@ -8512,6 +8524,7 @@ msgstr ""
 "تعبئة ~90 يوماً من تحليلات البحث لهذا الموقع بأثر رجعي؟ يتم السحب يوماً بيوم"
 " وقد يستغرق دقيقة."
 
+#. module: era_seo_suite
 msgid ""
 "Backfill ~90 days for every site on this account? Pulls day by day; may take"
 " a few minutes."
@@ -8519,6 +8532,7 @@ msgstr ""
 "تعبئة ~90 يوماً بأثر رجعي لكل موقع في هذا الحساب؟ يتم السحب يوماً بيوم وقد "
 "يستغرق بضع دقائق."
 
+#. module: era_seo_suite
 msgid ""
 "On a \"page not found\", the visitor is sent to the closest matching "
 "existing URL (fuzzy match against the sitemap). When no close match is "

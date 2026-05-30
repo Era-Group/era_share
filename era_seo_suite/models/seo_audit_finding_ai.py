@@ -424,14 +424,29 @@ class EraSeoAuditFinding(models.Model):
             raise UserError(_('Could not match any image to inject alt text into.'))
         target.sudo().write({field: new_html})
 
+    # Odoo website "Text" snippet shell. The AI block is dropped INSIDE the
+    # container so the inserted content is a proper, editable s_text_block
+    # section (padding + columns) rather than loose markup. Built by string
+    # concat (not str.format) so braces in the AI HTML can't break it.
+    _THIN_CONTENT_SNIPPET_OPEN = (
+        '<section class="s_text_block pt40 pb40 o_colored_level"'
+        ' data-snippet="s_text_block" data-name="Text">'
+        '<div class="container s_allow_columns">'
+    )
+    _THIN_CONTENT_SNIPPET_CLOSE = '</div></section>'
+
     def _ai_apply_thin_content(self, target):
-        """Append the proposed HTML block to the target's content."""
+        """Insert the proposed HTML block into the target's content, wrapped in
+        a website "Text" (s_text_block) snippet and placed inside #wrap (above
+        the footer)."""
         html = self._ai_payload().get('html')
         if not html:
             raise UserError(_('No expansion HTML to apply.'))
+        block = (self._THIN_CONTENT_SNIPPET_OPEN + html
+                 + self._THIN_CONTENT_SNIPPET_CLOSE)
         field = self._ai_content_field(target)
         html_text = target[field] or ''
-        new_html = self._append_html(html_text, html, self._ai_is_xml_field(field))
+        new_html = self._append_html(html_text, block, self._ai_is_xml_field(field))
         target.sudo().write({field: new_html})
 
     # ------------------------------------------------------------------

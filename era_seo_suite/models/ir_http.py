@@ -36,7 +36,9 @@ Coexistence with stock ``website.rewrite``:
 
 Per SPEC §9.2 / §9.4.
 """
+import difflib
 import logging
+import time
 
 import werkzeug
 
@@ -46,6 +48,16 @@ from odoo.http import request
 from .seo_redirect import REDIRECT_HOP_LIMIT
 
 _logger = logging.getLogger(__name__)
+
+# Smart-404 ("did you mean") defaults — overridable via ir.config_parameter:
+#   era_seo.smart_404_enabled        bool   master switch for fuzzy matching
+#   era_seo.smart_404_threshold      float  min similarity (0-1) to redirect
+#   era_seo.smart_404_home_fallback  bool   redirect unmatched page-misses home
+_SMART_404_DEFAULT_THRESHOLD = 0.72
+# Per-worker cache of known published URLs, keyed by website id:
+#   {website_id: (expiry_monotonic, [(url, last_segment_slug), ...])}
+_KNOWN_URLS_CACHE = {}
+_KNOWN_URLS_TTL = 300  # seconds
 
 # Cookie name used to detect redirect loops across browser-followed hops.
 _HOP_COOKIE = 'era_seo_hops'
@@ -99,13 +111,32 @@ class IrHttp(models.AbstractModel):
         if cls._era_is_system_path(path):
             return super()._serve_fallback()
 
-        # 1. Redirect match?
+        # 1. Admin-managed redirect rule?
         response = cls._era_try_redirect(path)
         if response is not None:
             return response
 
-        # 2. Miss: log + 404 fallback.
+        # 2. Smart "did you mean": redirect to the closest existing published
+        #    URL when one is similar enough. Skips asset-like paths (missing
+        #    files, not mistyped pages) and obeys the loop hop-counter.
+        if cls._era_smart_404_enabled() and not cls._era_is_asset_like(path):
+            match = cls._era_fuzzy_match(path)
+            if match and match.rstrip('/') != path.rstrip('/'):
+                smart = cls._era_smart_redirect(match, 302)
+                if smart is not None:
+                    _logger.info('smart-404: %r ~> %r', path, match)
+                    return smart
+
+        # 3. Miss: log it. Then, for page-like paths, redirect home (opt-out
+        #    via era_seo.smart_404_home_fallback). Asset-like misses and the
+        #    home path itself fall through to the normal 404.
         cls._era_log_404(path)
+        if (cls._era_smart_404_home_fallback()
+                and not cls._era_is_asset_like(path)
+                and path.rstrip('/') != ''):
+            home = cls._era_smart_redirect('/', 302)
+            if home is not None:
+                return home
         return super()._serve_fallback()
 
     # ------------------------------------------------------------------
@@ -313,3 +344,129 @@ class IrHttp(models.AbstractModel):
             return max(0, int(raw))
         except (TypeError, ValueError):
             return 0
+
+    # ------------------------------------------------------------------
+    # Smart 404 ("did you mean") — fuzzy match to a known published URL
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _era_is_asset_like(path):
+        """True for paths whose last segment has a file extension (icons,
+        images, .php/.env probes, ...). Those are missing files, not mistyped
+        pages — fuzzy-matching or home-redirecting them makes no sense."""
+        last = (path or '').rstrip('/').rsplit('/', 1)[-1]
+        return '.' in last
+
+    @classmethod
+    def _era_smart_404_enabled(cls):
+        return cls._era_icp_bool('era_seo.smart_404_enabled', True)
+
+    @classmethod
+    def _era_smart_404_home_fallback(cls):
+        return cls._era_icp_bool('era_seo.smart_404_home_fallback', True)
+
+    @staticmethod
+    def _era_icp_bool(key, default):
+        try:
+            val = request.env['ir.config_parameter'].sudo().get_param(key)
+        except Exception:  # noqa: BLE001
+            return default
+        if val is None or val == '':
+            return default
+        return str(val).strip().lower() in ('1', 'true', 'yes', 'on')
+
+    @classmethod
+    def _era_smart_404_threshold(cls):
+        try:
+            raw = request.env['ir.config_parameter'].sudo().get_param(
+                'era_seo.smart_404_threshold')
+            t = float(raw) if raw not in (None, '') else _SMART_404_DEFAULT_THRESHOLD
+        except (TypeError, ValueError):
+            t = _SMART_404_DEFAULT_THRESHOLD
+        # Clamp to a sane band so a bad config can't make EVERY 404 redirect
+        # (too low) or never match (too high).
+        return min(0.95, max(0.5, t))
+
+    @classmethod
+    def _era_known_urls(cls, website_id):
+        """Return a cached list of (url, last_segment_slug) for published pages
+        and blog posts — the 'existing working links' to match against.
+
+        Cached per worker for ``_KNOWN_URLS_TTL`` seconds, keyed by website, so
+        a 404 burst (scanner sweep) doesn't re-query the catalogue each hit.
+        """
+        now = time.monotonic()
+        cached = _KNOWN_URLS_CACHE.get(website_id)
+        if cached and cached[0] > now:
+            return cached[1]
+        urls = []
+        try:
+            env = request.env
+            Page = env['website.page'].sudo()
+            dom = [('is_published', '=', True)]
+            if website_id:
+                dom.append(('website_id', 'in', [website_id, False]))
+            for url in Page.search(dom).mapped('url'):
+                u = (url or '').strip()
+                if u.startswith('/') and not cls._era_is_system_path(u) \
+                        and not cls._era_is_asset_like(u):
+                    urls.append((u, u.rstrip('/').rsplit('/', 1)[-1].lower()))
+            BlogPost = env.get('blog.post')
+            if BlogPost is not None:
+                for post in BlogPost.sudo().search([('is_published', '=', True)]):
+                    try:
+                        u = (post.website_url or '').strip()
+                    except Exception:  # noqa: BLE001
+                        continue
+                    if u.startswith('/') and not cls._era_is_asset_like(u):
+                        urls.append(
+                            (u, u.rstrip('/').rsplit('/', 1)[-1].lower()))
+        except Exception as exc:  # noqa: BLE001
+            _logger.debug('smart-404: known-url build failed (%s)', exc)
+            return []
+        _KNOWN_URLS_CACHE[website_id] = (now + _KNOWN_URLS_TTL, urls)
+        return urls
+
+    @classmethod
+    def _era_fuzzy_match(cls, path):
+        """Return the closest published URL to ``path`` whose similarity clears
+        the threshold, or None. Scores both the whole path and the final slug
+        (the meaningful part) and keeps the better of the two."""
+        want = (path or '').strip('/').lower()
+        if not want:
+            return None
+        want_slug = want.rsplit('/', 1)[-1]
+        website = cls._era_website()
+        candidates = cls._era_known_urls(website.id if website else False)
+        if not candidates:
+            return None
+        threshold = cls._era_smart_404_threshold()
+        sm = difflib.SequenceMatcher()
+        best_url, best_score = None, 0.0
+        for url, slug in candidates:
+            # Score the final slug (the meaningful part) and the whole path;
+            # keep the better. quick_ratio() is a cheap upper bound used to
+            # skip the full ratio() when it can't beat the best so far.
+            sm.set_seqs(want_slug, slug)
+            score = sm.ratio()
+            sm.set_seqs(want, url.strip('/').lower())
+            if sm.quick_ratio() > score:
+                score = max(score, sm.ratio())
+            if score > best_score:
+                best_url, best_score = url, score
+        return best_url if best_score >= threshold else None
+
+    @classmethod
+    def _era_smart_redirect(cls, target, code):
+        """Build a Werkzeug redirect to ``target`` with the loop hop-counter
+        cookie, or None when the hop limit is already reached (let it 404)."""
+        hops = cls._era_hop_count()
+        if hops >= REDIRECT_HOP_LIMIT:
+            return None
+        final = cls._era_forward_query_string(target)
+        response = werkzeug.utils.redirect(final, code=code)
+        response.set_cookie(
+            _HOP_COOKIE, str(hops + 1), max_age=_HOP_COOKIE_MAX_AGE,
+            httponly=True, samesite='Lax',
+        )
+        return response

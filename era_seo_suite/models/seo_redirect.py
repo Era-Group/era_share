@@ -254,6 +254,7 @@ class EraSeoRedirect(models.Model):
         if not self:
             return
         try:
+            self.ensure_one()
             with self.env.cr.savepoint():
                 self.env.cr.execute(
                     "UPDATE era_seo_redirect "

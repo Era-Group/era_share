@@ -32,19 +32,28 @@ _logger = logging.getLogger(__name__)
 # JSON repair primitives.
 # Cheap models emit JSON with two recurring, non-recoverable defects: a stray
 # chat-template end token appended after the object (</assistant>, <|im_end|>,
-# </s>, ...) and an occasional unquoted string value. json.raw_decode cannot
-# repair either, so we strip control tokens, extract the first brace-balanced
-# object, and run a conservative repair pass before giving up. Every repair is
-# re-validated by a strict decoder, so a bad repair fails closed (raises)
-# rather than returning wrong data.
+# </s>, ...) and an occasional unquoted string value. The pipeline is: extract
+# the first brace-balanced object (drops leading prose AND a trailing token) ->
+# strict decode (Layer A, lossless, never touches a valid response) -> only on
+# failure, a conservative repair pass (Layer B: strip control tokens, trailing
+# commas, quote-repair) re-validated by the strict decoder. Because repair runs
+# ONLY after strict decode fails and is re-validated, valid JSON is never
+# mutated and a bad repair fails closed (raises) rather than returning wrong data.
 # ---------------------------------------------------------------------------
 
-# Allow-list of chat/control end tokens. Deliberately NOT a generic <[^>]+>:
-# we must never strip real HTML (<p>, <strong>) that can legitimately sit
-# inside a JSON string value.
+# Allow-list of chat/control end tokens. Two hard rules learned the hard way:
+#   - Match EXACT tags only (`</?name>` with an immediate close), never
+#     `name\b[^>]*>`, so real HTML like <system-status> or a tag with
+#     attributes is left alone.
+#   - Single-letter `s` is DELIBERATELY EXCLUDED: <s>/</s> are HTML5
+#     strikethrough and must survive inside JSON string values (e.g. a struck
+#     old price "Was <s>SAR 500</s> now SAR 350"). The brace-balanced span
+#     extractor already drops a trailing </s>/<|im_end|> EOS token anyway.
+# This stripper is applied ONLY in the Layer-B repair pass (after a strict
+# decode has already failed), so it can never mutate valid JSON.
 _CTRL_TOKEN_RE = re.compile(
-    r'</?(?:assistant|user|system|s|im_start|im_end|eot_id|eot|end_of_turn)\b[^>]*>'
-    r'|<\|[^|>]*\|>',
+    r'</?(?:assistant|user|system|im_start|im_end|eot_id|eot|end_of_turn)>'
+    r'|<\|[^|>]{1,40}\|>',
     re.IGNORECASE,
 )
 
@@ -92,7 +101,12 @@ def _extract_json_object_span(text):
 def _repair_json_text(text):
     """Best-effort repair of common cheap-model JSON defects. Conservative:
     only transformations that cannot turn one valid value into a different
-    valid one. Output is always re-validated by a strict decoder upstream."""
+    valid one. Runs ONLY after strict decode has already failed, and the
+    output is always re-validated by a strict decoder upstream."""
+    # 0. Strip stray chat/control end tokens (</assistant>, <|im_end|>, ...).
+    #    Done HERE — not before the strict decode — so a valid response whose
+    #    values legitimately contain such substrings is never mutated.
+    text = _strip_ctrl_tokens(text)
     # 1. Trailing comma before a closer: {"a": 1,} / [1, 2,]
     text = re.sub(r',\s*([}\]])', r'\1', text)
     # 2. Unquoted string value: `"key": bareword text"` -> `"key": "bareword text"`.
@@ -1521,11 +1535,13 @@ class AIClient:
         fence = re.match(r'^```(?:json)?\s*(.*?)\s*```$', text, re.DOTALL)
         if fence:
             text = fence.group(1).strip()
-        # Strip stray chat-template/control end tokens (</assistant>, <|im_end|>,
-        # </s>, ...) the model appended after the object, then narrow to the
-        # first brace-balanced object (skips leading prose AND honors strings,
-        # so a brace inside an Arabic value can't close the object early).
-        text = _strip_ctrl_tokens(text).strip()
+        # Narrow to the first brace-balanced object: this skips leading prose
+        # AND drops a trailing chat-template token (</assistant>, <|im_end|>,
+        # </s>, ...) since the scan stops at the matching '}'. It honors
+        # strings, so a brace inside an Arabic value can't close early. We do
+        # NOT strip control tokens here — that happens only in Layer B, so a
+        # VALID response whose values legitimately contain <s>/<system>/etc.
+        # is never mutated.
         text = _extract_json_object_span(text)
         if not text:
             raise ValueError(
@@ -1535,27 +1551,29 @@ class AIClient:
         # is silently dropped — the common "JSON + then a paragraph" shape.
         try:
             parsed, _end = json.JSONDecoder().raw_decode(text)
-            return parsed
         except (json.JSONDecodeError, TypeError):
-            pass
-        # Layer B — tolerant repair (trailing commas, an unquoted string
-        # value), then re-validate with the SAME strict decoder so a bad
-        # repair fails closed rather than returning wrong data.
+            parsed = None
+        if isinstance(parsed, dict):
+            return parsed
+        # Layer B — tolerant repair (strip stray control tokens, trailing
+        # commas, an unquoted string value), then re-validate with the SAME
+        # strict decoder so a bad repair fails closed rather than returning
+        # wrong data. A non-object result (e.g. a bare list) is also rejected.
         try:
             parsed, _end = json.JSONDecoder().raw_decode(_repair_json_text(text))
-            return parsed
-        except (json.JSONDecodeError, TypeError) as exc:
-            # No _() wrapper here: this helper is a @staticmethod called
-            # from many paths including crons, where the call frame has no
-            # env/uid for Odoo's translation system to walk to. Wrapping
-            # forces _get_lang() to log a "no translation language detected"
-            # WARNING with a multi-line stack trace per refused JSON. The
-            # message reaches users (if at all) via the cron's WARNING line
-            # and not via UI, so plain English is fine.
-            raise ValueError(
-                'AI returned output that is not valid JSON: %s'
-                % (raw or '')[:200]
-            ) from exc
+            if isinstance(parsed, dict):
+                return parsed
+        except (json.JSONDecodeError, TypeError):
+            pass
+        # All layers failed (or produced a non-object). No _() wrapper here:
+        # this helper is a @staticmethod called from many paths including
+        # crons, where the call frame has no env/uid for Odoo's translation
+        # system to walk to. Wrapping forces _get_lang() to log a "no
+        # translation language detected" WARNING with a multi-line stack trace
+        # per refused JSON. The message reaches users (if at all) via the
+        # cron's WARNING line and not via UI, so plain English is fine.
+        raise ValueError(
+            'AI returned output that is not valid JSON: %s' % (raw or '')[:200])
         # NOTE: the legacy suggest_fix contract requires `proposed_value`,
         # but every other caller uses a different JSON shape (propose_article:
         # title/content_html; pick_schema: code; pick_blog_taxonomy: category;

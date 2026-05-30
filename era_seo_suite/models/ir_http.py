@@ -389,20 +389,82 @@ class IrHttp(models.AbstractModel):
 
     @classmethod
     def _era_known_urls(cls, website_id):
-        """Return a cached list of (url, last_segment_slug) for published pages
-        and blog posts — the 'existing working links' to match against.
+        """Return a cached list of (url, last_segment_slug) — the 'existing
+        working links' to match against.
+
+        Sourced from the SITEMAP (the canonical, already-computed list of every
+        public URL — pages, blog posts, products, ...), which Odoo regenerates
+        and caches as an ir.attachment every 12h. Parsing that one cached file
+        avoids the slow per-request catalogue work (searching every page +
+        computing ``website_url`` for hundreds of blog posts). Falls back to a
+        cheap published-pages query only when no sitemap is cached yet.
 
         Cached per worker for ``_KNOWN_URLS_TTL`` seconds, keyed by website, so
-        a 404 burst (scanner sweep) doesn't re-query the catalogue each hit.
+        a 404 burst (scanner sweep) doesn't re-parse the catalogue each hit.
         """
         now = time.monotonic()
         cached = _KNOWN_URLS_CACHE.get(website_id)
         if cached and cached[0] > now:
             return cached[1]
+        urls = cls._era_urls_from_sitemap(website_id)
+        if not urls:
+            urls = cls._era_urls_from_pages(website_id)
+        _KNOWN_URLS_CACHE[website_id] = (now + _KNOWN_URLS_TTL, urls)
+        return urls
+
+    @classmethod
+    def _era_urls_from_sitemap(cls, website_id):
+        """Parse path candidates from the most recent cached sitemap attachment
+        for the website. Follows a sitemap-index to its child sitemaps. Returns
+        [] on any problem so the caller can fall back."""
+        import re as _re
+        from urllib.parse import urlparse as _urlparse
+        try:
+            Att = request.env['ir.attachment'].sudo()
+            pat = '/sitemap-%s-%%' % (website_id or 1)
+            atts = Att.search(
+                ['|', ('name', '=like', pat),
+                 ('name', '=', '/sitemap-%s.xml' % (website_id or 1))],
+                order='create_date desc', limit=1)
+            if not atts:
+                return []
+            out, seen = [], set()
+
+            def _parse(att, depth=0):
+                if depth > 2 or att.id in seen:
+                    return
+                seen.add(att.id)
+                try:
+                    data = att.raw or b''
+                except Exception:  # noqa: BLE001
+                    return
+                for loc in _re.findall(r'<loc>\s*([^<\s]+)\s*</loc>',
+                                       data.decode('utf-8', 'ignore')):
+                    p = _urlparse(loc).path or loc
+                    if p.endswith('.xml') and 'sitemap' in p:
+                        child = Att.search([('name', '=', p)], limit=1)
+                        if child:
+                            _parse(child, depth + 1)
+                        continue
+                    if p.startswith('/') and not cls._era_is_asset_like(p):
+                        out.append(
+                            (p, p.rstrip('/').rsplit('/', 1)[-1].lower()))
+
+            _parse(atts[0])
+            # De-dup, preserving order.
+            return list(dict.fromkeys(out))
+        except Exception as exc:  # noqa: BLE001
+            _logger.debug('smart-404: sitemap parse failed (%s)', exc)
+            return []
+
+    @classmethod
+    def _era_urls_from_pages(cls, website_id):
+        """Lightweight fallback: published website.page URLs only (cheap — no
+        per-blog-post website_url computation). Used when no cached sitemap
+        exists yet."""
         urls = []
         try:
-            env = request.env
-            Page = env['website.page'].sudo()
+            Page = request.env['website.page'].sudo()
             dom = [('is_published', '=', True)]
             if website_id:
                 dom.append(('website_id', 'in', [website_id, False]))
@@ -411,20 +473,8 @@ class IrHttp(models.AbstractModel):
                 if u.startswith('/') and not cls._era_is_system_path(u) \
                         and not cls._era_is_asset_like(u):
                     urls.append((u, u.rstrip('/').rsplit('/', 1)[-1].lower()))
-            BlogPost = env.get('blog.post')
-            if BlogPost is not None:
-                for post in BlogPost.sudo().search([('is_published', '=', True)]):
-                    try:
-                        u = (post.website_url or '').strip()
-                    except Exception:  # noqa: BLE001
-                        continue
-                    if u.startswith('/') and not cls._era_is_asset_like(u):
-                        urls.append(
-                            (u, u.rstrip('/').rsplit('/', 1)[-1].lower()))
         except Exception as exc:  # noqa: BLE001
-            _logger.debug('smart-404: known-url build failed (%s)', exc)
-            return []
-        _KNOWN_URLS_CACHE[website_id] = (now + _KNOWN_URLS_TTL, urls)
+            _logger.debug('smart-404: pages fallback failed (%s)', exc)
         return urls
 
     @classmethod

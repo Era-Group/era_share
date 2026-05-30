@@ -41,6 +41,11 @@ _SLUG_STOPWORDS = {
 # Content thresholds.
 _THIN_CONTENT_WORDS = 300
 
+# Timeout (seconds) for fetching a page's rendered public HTML during the
+# DOM checks (H1, image alt, thin content). Kept short so an unreachable or
+# slow page degrades to stored-arch parsing rather than stalling the audit.
+_RENDER_FETCH_TIMEOUT_S = 8
+
 # Redirect chain depth.
 _REDIRECT_CHAIN_MAX = 3
 
@@ -390,6 +395,7 @@ class EraSeoAuditRun(models.Model):
         # auto-resolve findings on scanned pages that no longer occur.
         _run_local.seen_finding_keys = set()
         _run_local.audit_languages = None  # recomputed per run
+        _run_local.rendered_cache = {}  # {page_id: rendered #wrap doc or None}
 
         try:
             pages = self._scope_pages()
@@ -735,7 +741,7 @@ class EraSeoAuditRun(models.Model):
 
     def _check_missing_h1(self, pages):
         for p in pages:
-            doc = self._content_doc(p)
+            doc = self._dom_doc(p)
             if doc is None:
                 continue
             if not doc.xpath('//h1'):
@@ -746,7 +752,7 @@ class EraSeoAuditRun(models.Model):
 
     def _check_multiple_h1(self, pages):
         for p in pages:
-            doc = self._content_doc(p)
+            doc = self._dom_doc(p)
             if doc is None:
                 continue
             h1s = doc.xpath('//h1')
@@ -759,7 +765,7 @@ class EraSeoAuditRun(models.Model):
 
     def _check_image_missing_alt(self, pages):
         for p in pages:
-            doc = self._content_doc(p)
+            doc = self._dom_doc(p)
             if doc is None:
                 continue
             imgs = doc.xpath('//img')
@@ -775,7 +781,8 @@ class EraSeoAuditRun(models.Model):
 
     def _check_thin_content(self, pages):
         for p in pages:
-            text = self._content_text(p)
+            doc = self._dom_doc(p)
+            text = '' if doc is None else ' '.join(doc.text_content().split())
             words = len(text.split())
             if 0 < words < _THIN_CONTENT_WORDS:
                 self._add_finding(
@@ -928,16 +935,104 @@ class EraSeoAuditRun(models.Model):
     # Content extraction helpers
     # ------------------------------------------------------------------------
 
+    def _rendered_wrap_doc(self, page):
+        """Fetch the page's rendered public HTML and return the lxml element
+        for its content area (``#wrap``), or None.
+
+        The DOM checks (H1, image alt, thin content) must reflect what a
+        crawler actually sees. Many pages render their ``<h1>`` from a theme /
+        layout snippet that is NOT present in the stored view arch, so parsing
+        the arch alone false-flagged 'missing H1' on fully-built pages. We GET
+        the page's public URL (the site's default language is served at the
+        bare path) and scope to ``#wrap`` so the global header/footer chrome
+        doesn't skew element counts. The result (doc or None) is cached on
+        ``_run_local`` for the run, so each page is fetched at most once across
+        all checks. Any failure (unpublished, timeout, non-200) returns None,
+        and the caller falls back to stored-arch parsing.
+        """
+        cache = getattr(_run_local, 'rendered_cache', None)
+        if cache is None:
+            cache = {}
+            _run_local.rendered_cache = cache
+        if page.id in cache:
+            return cache[page.id]
+        doc = None
+        try:
+            url = page.url or ''
+            published = getattr(page, 'website_published', None)
+            if published is None:
+                published = getattr(page, 'is_published', True)
+            if published and url.startswith('/'):
+                base = (self.env['ir.config_parameter'].sudo()
+                        .get_param('web.base.url') or '').rstrip('/')
+                if base:
+                    import requests
+                    resp = requests.get(
+                        base + url, timeout=_RENDER_FETCH_TIMEOUT_S,
+                        headers={'User-Agent': 'ERA-SEO-Audit/1.0'})
+                    if resp.status_code == 200 and resp.text:
+                        full = lxml_html.fromstring(resp.text)
+                        wraps = full.xpath('//*[@id="wrap"]')
+                        doc = wraps[0] if wraps else full
+        except Exception:  # noqa: BLE001
+            doc = None
+        cache[page.id] = doc
+        return doc
+
+    def _dom_doc(self, page):
+        """DOM source for the content checks: the RENDERED page when reachable
+        (sees theme/layout-rendered H1s), otherwise the stored language-aware
+        arch as a degraded fallback."""
+        doc = self._rendered_wrap_doc(page)
+        if doc is not None:
+            return doc
+        return self._content_doc(page)
+
     @staticmethod
     def _content_doc(page):
-        """Return an lxml fragment for the page's content, or None."""
+        """Return an lxml fragment for the page's content, or None.
+
+        Multilang sites store page content PER LANGUAGE. On an Arabic-primary
+        site the en_US arch is frequently an empty layout shell
+        (``<div id="wrap" class="oe_empty"/>``) while the real content — and
+        its ``<h1>`` — lives in ar_001. Reading ``page.arch`` in the cron's
+        default language (en_US) therefore false-flagged 'missing H1' / 'thin
+        content' on fully-built pages. We pick the RICHEST language version
+        (longest source) across the website's default language and every
+        active language, so the DOM checks see the language the page is
+        actually authored in.
+
+        Caveat: this still parses the STORED page source. An ``<h1>`` injected
+        only by the theme/layout snippet at render time is not visible here —
+        that needs a rendered-HTML check (see _check_missing_h1 callers).
+        """
         # website.page uses arch_db (delegated through view); blog.post has
-        # `content`. Try both.
-        html_text = getattr(page, 'content', None) or getattr(page, 'arch', None)
-        if not html_text:
+        # `content`. Build the candidate language list: website default first,
+        # then all active langs, then the context lang as a last resort.
+        codes = []
+        web = getattr(page, 'website_id', False)
+        if web and web.default_lang_id:
+            codes.append(web.default_lang_id.code)
+        for lang in page.env['res.lang'].sudo().search([]):
+            if lang.code not in codes:
+                codes.append(lang.code)
+        ctx_lang = page.env.context.get('lang')
+        if ctx_lang and ctx_lang not in codes:
+            codes.append(ctx_lang)
+        if not codes:
+            codes = [None]
+
+        best = ''
+        for code in codes:
+            pg = page.with_context(lang=code) if code else page
+            html_text = (getattr(pg, 'content', None)
+                         or getattr(pg, 'arch', None) or '')
+            if len(html_text) > len(best):
+                best = html_text
+        if not best:
             return None
         try:
-            return lxml_html.fragment_fromstring(html_text, create_parent='div')
+            return lxml_html.fragment_fromstring(best, create_parent='div')
         except Exception:  # noqa: BLE001
             return None
 

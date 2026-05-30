@@ -161,13 +161,23 @@ class EraGscAccount(models.Model):
         return True
 
     def action_pull_all(self):
-        """Pull each active site under each account."""
+        """Pull each active site under each account (medium window)."""
         for account in self:
             for site in account.site_ids.filtered('active'):
                 try:
                     site.action_pull_now()
                 except Exception as exc:  # noqa: BLE001
                     _logger.warning('GSC pull failed for %s: %s', site.name, exc)
+        return True
+
+    def action_backfill_all(self):
+        """Backfill the long history (~3 months) for each active site."""
+        for account in self:
+            for site in account.site_ids.filtered('active'):
+                try:
+                    site.action_backfill()
+                except Exception as exc:  # noqa: BLE001
+                    _logger.warning('GSC backfill failed for %s: %s', site.name, exc)
         return True
 
     def action_open_sites(self):

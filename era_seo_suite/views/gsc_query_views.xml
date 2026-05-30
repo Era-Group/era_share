@@ -16,6 +16,31 @@
     </field>
   </record>
 
+  <record id="view_era_gsc_query_pivot" model="ir.ui.view">
+    <field name="name">era.gsc.query.pivot</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <pivot string="GSC Queries">
+        <field name="query" type="row"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+        <field name="position" type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_query_graph" model="ir.ui.view">
+    <field name="name">era.gsc.query.graph</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <graph string="GSC Queries" type="line" sample="1">
+        <field name="date"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+      </graph>
+    </field>
+  </record>
+
   <record id="view_era_gsc_query_search" model="ir.ui.view">
     <field name="name">era.gsc.query.search</field>
     <field name="model">era.gsc.query</field>
@@ -40,7 +65,7 @@
   <record id="action_era_gsc_query" model="ir.actions.act_window">
     <field name="name">GSC Queries</field>
     <field name="res_model">era.gsc.query</field>
-    <field name="view_mode">list</field>
-    <field name="context">{'search_default_last_28': 1}</field>
+    <field name="view_mode">list,graph,pivot</field>
+    <field name="context">{'search_default_last_28': 1, 'search_default_group_query': 1}</field>
   </record>
 </odoo>

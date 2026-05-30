@@ -804,7 +804,42 @@
                   </div>
                 </div>
               </div>
-              <div class="text-muted small mb-3" invisible="not kpi_gsc_last_pull">
+              <!-- GSC Queries analysis -->
+              <div class="row g-1 mb-1">
+                <div class="col-md-2 col-sm-4 col-6">
+                  <div class="card h-100 border-start border-3 border-secondary">
+                    <div class="card-body py-1 px-2">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
+                        <i class="fa fa-search"/> Queries tracked (28d)
+                      </div>
+                      <div class="fs-6 fw-bold lh-1">
+                        <field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6">
+                  <div class="card h-100 border-start border-3 border-secondary">
+                    <div class="card-body py-1 px-2">
+                      <div class="d-flex align-items-center gap-2 mb-0 text-muted small">
+                        <i class="fa fa-sort-numeric-asc"/> Avg position (28d)
+                      </div>
+                      <div class="fs-6 fw-bold lh-1">
+                        <field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-1 mt-2">
+                <span class="fw-bold small text-muted text-uppercase">Top search queries (28 days)</span>
+                <button name="%(era_seo_suite.action_era_gsc_query)d" type="action"
+                        string="Analyze all queries" class="btn btn-sm btn-secondary"
+                        icon="fa-bar-chart"/>
+              </div>
+              <field name="kpi_gsc_top_queries_html" nolabel="1" readonly="1" widget="html"/>
+
+              <div class="text-muted small mb-3 mt-2" invisible="not kpi_gsc_last_pull">
                 Last GSC pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
               </div>
               </div>

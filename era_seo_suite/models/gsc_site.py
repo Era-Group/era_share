@@ -51,78 +51,113 @@ class EraGscSite(models.Model):
 
     # ------------------------------------------------------------------
 
+    # GSC data lags ~2 days and keeps finalizing for ~3, so the freshest
+    # reliable day is today-2; we anchor every window there.
+    _GSC_LAG_DAYS = 2
+
     def action_pull_now(self):
-        """Pull the configured window of days into era.gsc.query."""
+        """Manual button — refresh the configured medium window (default 28d)."""
         days = _icp_int(self.env, 'era_seo_suite.pull_window_days', 28)
-        end = date.today() - timedelta(days=2)  # GSC data is ~2 days delayed
-        start = end - timedelta(days=days - 1)
+        return self._pull_window(days)
+
+    def action_backfill(self):
+        """Manual button — backfill the long history (default 90 days / 3
+        months). GSC retains ~16 months; pulled day-by-day so the per-request
+        row cap can never truncate it."""
+        days = _icp_int(self.env, 'era_seo_suite.gsc_backfill_days', 90)
+        return self._pull_window(days)
+
+    def _pull_window(self, days):
+        end = date.today() - timedelta(days=self._GSC_LAG_DAYS)
+        start = end - timedelta(days=max(1, days) - 1)
         for site in self:
             site._pull(start, end)
         return True
 
     def _pull(self, start_date, end_date):
-        """Fetch (date, query) rows in the window and upsert era.gsc.query."""
+        """Upsert era.gsc.query for every DAY in [start, end].
+
+        Pulled one day at a time (not as a single ranged request): GSC caps a
+        request's row set, so a multi-day query with dimensions ('date','query')
+        silently truncates to the first few days for a busy site. Per-day +
+        pagination guarantees the full history. Progress is committed per day so
+        a long backfill is durable/resumable.
+        """
         self.ensure_one()
         token = self.account_id._get_valid_access_token()
-        try:
-            rows = GscClient.search_analytics(
-                token, self.name,
-                start_date.isoformat(), end_date.isoformat(),
-                dimensions=('date', 'query'),
-                row_limit=5000,
-            )
-        except requests.HTTPError as exc:
-            # 4xx from the Google API is a user-config problem (revoked token,
-            # site not in the property, lacking permission). Surface it but
-            # don't spam the log with a traceback — `gsc_account` already
-            # re-logs at WARNING, and `last_error` captures the detail.
-            self.account_id.sudo().write({'state': 'error',
-                                          'last_error': str(exc)[:1000]})
-            _logger.warning('GSC search_analytics %s: %s', self.name, exc)
-            raise UserError(
-                _('GSC pull failed for %s: %s', self.name, exc)) from exc
-        except Exception as exc:  # noqa: BLE001
-            self.account_id.sudo().write({'state': 'error',
-                                          'last_error': str(exc)[:1000]})
-            _logger.exception('GSC search_analytics failed for %s', self.name)
-            raise UserError(
-                _('GSC pull failed for %s: %s', self.name, exc)) from exc
-
-        Query = self.env['era.gsc.query'].sudo()
-        written = 0
-        for row in rows:
-            keys = row.get('keys') or []
-            if len(keys) < 2:
-                continue
-            try:
-                row_date = fields.Date.from_string(keys[0])
-            except Exception:  # noqa: BLE001
-                continue
-            query = (keys[1] or '').strip()
-            if not query:
-                continue
-            vals = {
-                'site_id': self.id,
-                'date': row_date,
-                'query': query,
-                'clicks': int(row.get('clicks') or 0),
-                'impressions': int(row.get('impressions') or 0),
-                'ctr': float(row.get('ctr') or 0.0),
-                'position': float(row.get('position') or 0.0),
-            }
-            existing = Query.search([
-                ('site_id', '=', self.id),
-                ('date', '=', row_date),
-                ('query', '=', query),
-            ], limit=1)
-            if existing:
-                existing.write(vals)
-            else:
-                Query.create(vals)
-            written += 1
-        self.sudo().write({'last_pull_date': end_date})
+        in_test = self.env.registry.in_test_mode()
+        total = 0
+        day = start_date
+        while day <= end_date:
+            total += self._pull_one_day(day, token)
+            self.sudo().write({'last_pull_date': day})
+            if not in_test:
+                self.env.cr.commit()  # durable per-day progress
+            day += timedelta(days=1)
         _logger.info('GSC: pulled %d rows for %s (%s..%s)',
-                     written, self.name, start_date, end_date)
+                     total, self.name, start_date, end_date)
+        return total
+
+    def _pull_one_day(self, day, token):
+        """Fetch ALL query rows for a single date (paginated) and upsert them.
+        Race-safe against a concurrent cron/manual pull via the UNIQUE
+        (site,date,query) constraint + a per-create savepoint."""
+        self.ensure_one()
+        Query = self.env['era.gsc.query'].sudo()
+        iso = day.isoformat()
+        written = 0
+        start_row = 0
+        page = 25000  # GSC per-request maximum
+        while True:
+            try:
+                rows = GscClient.search_analytics(
+                    token, self.name, iso, iso,
+                    dimensions=('query',), row_limit=page, start_row=start_row)
+            except requests.HTTPError as exc:
+                self.account_id.sudo().write(
+                    {'state': 'error', 'last_error': str(exc)[:1000]})
+                _logger.warning('GSC search_analytics %s %s: %s',
+                                self.name, iso, exc)
+                raise UserError(
+                    _('GSC pull failed for %s: %s', self.name, exc)) from exc
+            if not rows:
+                break
+            # Pre-load existing rows for this day's queries in one query, so we
+            # update in place and only CREATE genuinely new (site,date,query).
+            qs = [((r.get('keys') or [''])[0] or '').strip() for r in rows]
+            qs = [q for q in qs if q]
+            existing = {q.query: q for q in Query.search(
+                [('site_id', '=', self.id), ('date', '=', day),
+                 ('query', 'in', qs)])}
+            for r in rows:
+                keys = r.get('keys') or []
+                q = ((keys[0] if keys else '') or '').strip()
+                if not q:
+                    continue
+                vals = {
+                    'site_id': self.id, 'date': day, 'query': q,
+                    'clicks': int(r.get('clicks') or 0),
+                    'impressions': int(r.get('impressions') or 0),
+                    'ctr': float(r.get('ctr') or 0.0),
+                    'position': float(r.get('position') or 0.0),
+                }
+                rec = existing.get(q)
+                if rec:
+                    rec.write(vals)
+                else:
+                    try:
+                        with self.env.cr.savepoint():
+                            existing[q] = Query.create(vals)
+                    except Exception:  # noqa: BLE001 — concurrent insert won
+                        dup = Query.search(
+                            [('site_id', '=', self.id), ('date', '=', day),
+                             ('query', '=', q)], limit=1)
+                        if dup:
+                            dup.write(vals)
+                written += 1
+            if len(rows) < page:
+                break
+            start_row += page
         return written
 
     # ------------------------------------------------------------------
@@ -130,7 +165,14 @@ class EraGscSite(models.Model):
     # ------------------------------------------------------------------
 
     def cron_pull_all(self):
-        """Daily cron entry — pull all active sites under all connected accounts."""
+        """Daily cron — refresh only the most RECENT days (default 2) for every
+        connected site. GSC finalizes a day's data over ~3 days, so a small
+        rolling window keeps things current cheaply; the long history is filled
+        once via the Backfill button. Configurable: era_seo_suite.gsc_daily_days.
+        """
+        days = _icp_int(self.env, 'era_seo_suite.gsc_daily_days', 2)
+        end = date.today() - timedelta(days=self._GSC_LAG_DAYS)
+        start = end - timedelta(days=max(1, days) - 1)
         sites = self.sudo().search([
             ('active', '=', True),
             ('account_id.state', '=', 'connected'),
@@ -138,7 +180,7 @@ class EraGscSite(models.Model):
         ])
         for site in sites:
             try:
-                site.action_pull_now()
+                site._pull(start, end)
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('GSC cron pull failed for %s: %s',
                                 site.name, exc)

@@ -23,6 +23,9 @@
         <header>
           <button name="action_pull_now" type="object"
                   string="Pull Now" class="btn-primary"/>
+          <button name="action_backfill" type="object"
+                  string="Backfill 3 Months" class="btn-secondary"
+                  confirm="Backfill ~90 days of search analytics for this site? It pulls day by day and may take a minute."/>
         </header>
         <sheet>
           <div class="oe_title">

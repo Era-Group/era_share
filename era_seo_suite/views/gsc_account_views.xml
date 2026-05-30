@@ -36,6 +36,10 @@
           <button name="action_pull_all" type="object"
                   string="Pull All Now" class="btn-secondary"
                   invisible="state != 'connected' or site_count == 0"/>
+          <button name="action_backfill_all" type="object"
+                  string="Backfill 3 Months" class="btn-secondary"
+                  invisible="state != 'connected' or site_count == 0"
+                  confirm="Backfill ~90 days for every site on this account? Pulls day by day; may take a few minutes."/>
           <field name="state" widget="statusbar"
                  statusbar_visible="draft,connected"/>
         </header>

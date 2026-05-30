@@ -81,13 +81,17 @@ class GscClient:
 
     @staticmethod
     def search_analytics(access_token, site_url, start_date, end_date,
-                         dimensions=('query',), row_limit=1000):
+                         dimensions=('query',), row_limit=1000, start_row=0):
         """Pull search-analytics rows for one site between two dates.
 
         :param start_date: 'YYYY-MM-DD'
         :param end_date:   'YYYY-MM-DD'
         :param dimensions: tuple of dimension keys to group by (e.g.
                            ('query',), ('page',), ('date', 'query'))
+        :param row_limit:  max rows to return (GSC caps a single request at
+                           25000). The TOTAL result set can be larger — page
+                           through it with ``start_row``.
+        :param start_row:  zero-based offset for pagination (GSC ``startRow``).
         :returns: list of row dicts: {keys: [...], clicks, impressions,
                   ctr, position}
         """
@@ -101,6 +105,7 @@ class GscClient:
             'endDate': end_date,
             'dimensions': list(dimensions),
             'rowLimit': row_limit,
+            'startRow': start_row,
         }, timeout=_TIMEOUT)
         r.raise_for_status()
         return r.json().get('rows', [])

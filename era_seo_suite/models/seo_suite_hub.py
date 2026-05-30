@@ -139,6 +139,13 @@ class EraSeoSuiteHub(models.Model):
         string='CTR (28d)', compute='_compute_kpis', digits=(16, 2))
     kpi_gsc_last_pull = fields.Date(
         string='GSC Last Pull', compute='_compute_kpis')
+    kpi_gsc_queries_tracked = fields.Integer(
+        string='Queries tracked (28d)', compute='_compute_kpis')
+    kpi_gsc_avg_position_28d = fields.Float(
+        string='Avg position (28d)', compute='_compute_kpis', digits=(16, 1))
+    kpi_gsc_top_queries_html = fields.Html(
+        string='Top GSC Queries (28d)', sanitize=False,
+        compute='_compute_gsc_top_queries_html')
 
     # =========================================================================
     # Settings — every ICP-backed key the suite owns, in ONE declarative map.
@@ -747,13 +754,18 @@ class EraSeoSuiteHub(models.Model):
             rec.kpi_gsc_sites = GscSite.sudo().search_count(
                 [('active', '=', True)]) if GscSite is not None else 0
             if GscQuery is not None:
-                rec.kpi_gsc_clicks_28d = sum(GscQuery.sudo().search(
-                    [('date', '>=', d28)]).mapped('clicks'))
-                rec.kpi_gsc_impressions_28d = sum(GscQuery.sudo().search(
-                    [('date', '>=', d28)]).mapped('impressions'))
+                recent = GscQuery.sudo().search([('date', '>=', d28)])
+                rec.kpi_gsc_clicks_28d = sum(recent.mapped('clicks'))
+                rec.kpi_gsc_impressions_28d = sum(recent.mapped('impressions'))
+                rec.kpi_gsc_queries_tracked = len(set(recent.mapped('query')))
+                positions = [p for p in recent.mapped('position') if p]
+                rec.kpi_gsc_avg_position_28d = (
+                    round(sum(positions) / len(positions), 1) if positions else 0.0)
             else:
                 rec.kpi_gsc_clicks_28d = 0
                 rec.kpi_gsc_impressions_28d = 0
+                rec.kpi_gsc_queries_tracked = 0
+                rec.kpi_gsc_avg_position_28d = 0.0
             rec.kpi_gsc_ctr_28d = (
                 round(100 * rec.kpi_gsc_clicks_28d / rec.kpi_gsc_impressions_28d, 2)
                 if rec.kpi_gsc_impressions_28d else 0.0
@@ -784,6 +796,49 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_geo_crawlers_blocked
             )
             rec.kpi_health_score = max(0, min(100, coverage_score - penalty))
+
+    def _compute_gsc_top_queries_html(self):
+        """Render the top search queries of the last 28 days (aggregated per
+        query) as a compact HTML table for the dashboard."""
+        from markupsafe import Markup, escape
+        from datetime import date, timedelta
+        GscQuery = self.env.get('era.gsc.query')
+        d28 = date.today() - timedelta(days=28)
+        rows_html = ''
+        if GscQuery is not None:
+            groups = GscQuery.sudo()._read_group(
+                [('date', '>=', d28)],
+                groupby=['query'],
+                aggregates=['clicks:sum', 'impressions:sum', 'position:avg'],
+                order='clicks:sum desc',
+                limit=10,
+            )
+            for query, clicks, impressions, position in groups:
+                ctr = (100.0 * (clicks or 0) / impressions) if impressions else 0.0
+                rows_html += (
+                    '<tr>'
+                    '<td class="text-truncate" style="max-width:280px">%s</td>'
+                    '<td class="text-end fw-bold">%d</td>'
+                    '<td class="text-end">%d</td>'
+                    '<td class="text-end">%.1f%%</td>'
+                    '<td class="text-end">%.1f</td>'
+                    '</tr>' % (escape(query or '—'), clicks or 0,
+                              impressions or 0, ctr, position or 0.0)
+                )
+        if not rows_html:
+            html = ('<div class="text-muted small">No GSC query data yet — '
+                    'connect a Google account and pull, then backfill 3 months.</div>')
+        else:
+            html = (
+                '<table class="table table-sm table-hover mb-0">'
+                '<thead><tr class="small text-muted">'
+                '<th>Query</th><th class="text-end">Clicks</th>'
+                '<th class="text-end">Impr.</th><th class="text-end">CTR</th>'
+                '<th class="text-end">Pos.</th></tr></thead>'
+                '<tbody>' + rows_html + '</tbody></table>'
+            )
+        for rec in self:
+            rec.kpi_gsc_top_queries_html = Markup(html)
 
     # ------------------------------------------------------------------------
     # Settings round-trip

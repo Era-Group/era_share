@@ -484,12 +484,33 @@ class EraSeoAuditRun(models.Model):
     # ------------------------------------------------------------------------
 
     def _scope_pages(self):
-        """Return the recordset of pages to audit (honours website_id scope)."""
+        """Return the recordset of pages to audit (honours website_id scope).
+
+        Collapses Odoo copy-on-write duplicates: a generic page
+        (``website_id`` unset) and a website-specific page can share the same
+        URL, but only the specific one is actually served — the generic is
+        shadowed. Without this the audit reports the same URL twice (e.g. two
+        'Thin Content' findings for /contactus). Per URL we keep the
+        website-specific page(s) when any exist and drop the generic; if a URL
+        has only generic pages we keep a single one.
+        """
         Page = self.env['website.page'].sudo()
         domain = []
         if self.website_id:
             domain.append(('website_id', '=', self.website_id.id))
-        return Page.search(domain)
+        pages = Page.search(domain)
+
+        from collections import defaultdict
+        by_url = defaultdict(list)
+        for p in pages:
+            by_url[(p.url or '').rstrip('/') or '/'].append(p)
+
+        keep_ids = []
+        for _url, group in by_url.items():
+            specific = [p for p in group if p.website_id]
+            keep = specific if specific else group[:1]
+            keep_ids.extend(p.id for p in keep)
+        return Page.browse(keep_ids)
 
     def _get_check_methods(self):
         """List the bound ``_check_*`` methods to run, in registration order."""

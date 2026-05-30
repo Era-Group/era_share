@@ -1,2 +1,13 @@
 // ERA SEO Manager — frontend styles.
 // Phase 8 adds snippet styles.
+
+// Blog post cover title — force white + bold so it stays legible over the
+// cover hero image (the theme default colour is too light on dark images).
+// Scoped to #o_wblog_post_top (the post-page cover) so the blog index cards,
+// which reuse .o_wblog_post_name, are unaffected.
+#o_wblog_post_top {
+    .o_wblog_post_name {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+}

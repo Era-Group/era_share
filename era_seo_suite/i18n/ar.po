@@ -1559,6 +1559,7 @@ msgstr "رابط الصورة الرمزية"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_query_list
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__position
 msgid "Avg Position"
 msgstr "متوسط الترتيب"
 
@@ -1748,6 +1749,7 @@ msgstr "استيراد CSV"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_query__ctr
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__ctr
 msgid "CTR"
 msgstr "CTR"
 
@@ -1872,6 +1874,8 @@ msgstr ""
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_query__clicks
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_query_list
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__clicks
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_list
 msgid "Clicks"
 msgstr "النقرات"
 
@@ -3651,6 +3655,8 @@ msgstr "استيراد عمليات إعادة التوجيه"
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_query__impressions
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_query_list
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__impressions
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_list
 msgid "Impressions"
 msgstr "مرات الظهور"
 
@@ -5260,6 +5266,7 @@ msgstr "عدد الاستعلامات"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_blog_faq__question
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_question
 msgid "Question"
 msgstr "السؤال"
 
@@ -6200,6 +6207,8 @@ msgstr "عرض دليل الإعداد"
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_query__site_id
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_query_search
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__site_id
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
 msgid "Site"
 msgstr "الموقع"
 
@@ -8545,3 +8554,81 @@ msgstr ""
 "404 و— إذا كان <b>توجيه صفحات 404 غير المطابقة إلى الرئيسية</b> مُفعّلاً — "
 "يذهب الزائر إلى الصفحة الرئيسية؛ أوقِف ذلك للإبقاء على صفحة 404 حقيقية "
 "للصفحات غير المطابقة."
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__query
+msgid "Keyword"
+msgstr "الكلمة المفتاحية"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__impr_recent
+msgid "Impr. (14d)"
+msgstr "الظهور (14 يوم)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__impr_prior
+msgid "Impr. prior 14d"
+msgstr "الظهور (الـ14 يوم السابقة)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_top
+msgid "Top"
+msgstr "الأفضل"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_striking
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Striking distance"
+msgstr "قريبة من الصفحة الأولى"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_low_ctr
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Low CTR"
+msgstr "معدل نقر منخفض"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_rising
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Rising"
+msgstr "متصاعدة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_gsc_keyword__is_new
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "New"
+msgstr "جديدة"
+
+#. module: era_seo_suite
+#: model:ir.model,name:era_seo_suite.model_era_gsc_keyword
+msgid "GSC Keyword Opportunity (28d)"
+msgstr "فرصة كلمة مفتاحية من GSC (28 يوم)"
+
+#. module: era_seo_suite
+#: model:ir.actions.act_window,name:era_seo_suite.action_era_gsc_keyword
+#: model:ir.ui.menu,name:era_seo_suite.menu_era_gsc_keywords
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_list
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_graph
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_pivot
+msgid "Keyword Opportunities"
+msgstr "فرص الكلمات المفتاحية"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Top performers"
+msgstr "الأفضل أداءً"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Questions"
+msgstr "أسئلة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_gsc_keyword_search
+msgid "Any opportunity"
+msgstr "أي فرصة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Open Keyword Opportunities"
+msgstr "فتح فرص الكلمات المفتاحية"

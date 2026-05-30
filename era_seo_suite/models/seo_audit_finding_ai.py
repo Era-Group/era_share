@@ -438,16 +438,26 @@ class EraSeoAuditFinding(models.Model):
     def _ai_apply_thin_content(self, target):
         """Insert the proposed HTML block into the target's content, wrapped in
         a website "Text" (s_text_block) snippet and placed inside #wrap (above
-        the footer)."""
-        html = self._ai_payload().get('html')
+        the footer).
+
+        Reads and writes in the language the content was generated for (stamped
+        on the payload as ``lang`` — the website default language). Essential on
+        a multilang site: the real page content lives in that language version,
+        so appending in another language context would append to an empty shell
+        and lose the existing content.
+        """
+        payload = self._ai_payload()
+        html = payload.get('html')
         if not html:
             raise UserError(_('No expansion HTML to apply.'))
         block = (self._THIN_CONTENT_SNIPPET_OPEN + html
                  + self._THIN_CONTENT_SNIPPET_CLOSE)
-        field = self._ai_content_field(target)
-        html_text = target[field] or ''
+        lang = payload.get('lang')
+        rec = target.with_context(lang=lang) if lang else target
+        field = self._ai_content_field(rec)
+        html_text = rec[field] or ''
         new_html = self._append_html(html_text, block, self._ai_is_xml_field(field))
-        target.sudo().write({field: new_html})
+        rec.sudo().write({field: new_html})
 
     # ------------------------------------------------------------------
     # Content read/write helpers (website.page arch is XML/QWeb; blog.post

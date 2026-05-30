@@ -584,9 +584,23 @@ class AIClient:
         )
 
     def _fix_thin_content(self, finding, target_record):
-        """AI proposes an HTML block to append; confidence is capped for review."""
+        """AI proposes an HTML block to append, IN THE WEBSITE'S DEFAULT
+        LANGUAGE; confidence is capped for review.
+
+        The page signal and the generated content both use the website default
+        language (e.g. ar_001), not the caller's context language — on an
+        Arabic-primary site the en_US version is an empty shell, so reading it
+        gave the model no signal and it answered in English. We read the page
+        in the default language, name that language in the prompt, and stamp it
+        on the payload so Apply writes into the SAME language version.
+        """
         agent = self._resolve_agent()
-        prompt = self._build_thin_prompt(target_record)
+        _langs, default_lang = self._record_languages(target_record)
+        lang_code = (default_lang.code if default_lang
+                     else (target_record.env.context.get('lang') or 'en_US'))
+        lang_name = (default_lang.name if default_lang else lang_code)
+        lang_target = target_record.with_context(lang=lang_code)
+        prompt = self._build_thin_prompt(lang_target, lang_name)
         response = agent.get_direct_response(
             prompt=prompt, context_message=THIN_CONTENT_CONTEXT)
         parsed = self._parse_html_json(response[0] if response else '')
@@ -595,7 +609,7 @@ class AIClient:
         return self._result(
             'thin_content', field='content',
             proposed_value=self._html_preview(html),
-            payload={'html': html},
+            payload={'html': html, 'lang': lang_code},
             explanation=parsed.get('explanation', ''),
             confidence=confidence,
             model=agent.llm_model or _('AI agent'),
@@ -1961,15 +1975,22 @@ class AIClient:
         )
 
     @classmethod
-    def _build_thin_prompt(cls, target):
+    def _build_thin_prompt(cls, target, target_language=None):
         excerpt, h1, detected = cls._extract_page_signal(target)
+        target_language = target_language or detected
         return (
             'INPUT:\n'
             '  page_topic: "{h1}"\n'
-            '  language_hint: {detected}\n'
+            '  target_language: {target_language}\n'
+            '  detected_language: {detected}\n'
             '  current_content_excerpt: "{excerpt}"\n'
+            'CRITICAL: write EVERY heading, paragraph and list item in '
+            '{target_language} (the website language). Do NOT answer in '
+            'English or any other language.\n'
             'OUTPUT:'.format(
-                h1=h1.replace('"', "'"), detected=detected,
+                h1=h1.replace('"', "'"),
+                target_language=target_language,
+                detected=detected,
                 excerpt=excerpt.replace('"', "'"),
             )
         )

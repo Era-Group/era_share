@@ -848,6 +848,9 @@
                         string="Open full query explorer" class="btn btn-sm btn-link"
                         icon="fa-bar-chart"/>
               </div>
+              <button name="action_ai_traffic_advice" type="object"
+                      string="Get AI Traffic Tip" class="btn btn-warning mb-2"
+                      icon="fa-lightbulb-o"/>
 
               <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
 

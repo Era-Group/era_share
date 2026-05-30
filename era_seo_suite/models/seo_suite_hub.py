@@ -2727,6 +2727,19 @@ class EraSeoSuiteHub(models.Model):
         self.invalidate_recordset()
         return True
 
+    def action_ai_traffic_advice(self):
+        """Open the AI traffic-advice dialog with a fresh tip already generated."""
+        wiz = self.env['era.seo.advice.wizard'].create({})
+        wiz._generate()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('AI Traffic Advice'),
+            'res_model': 'era.seo.advice.wizard',
+            'res_id': wiz.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
     def _era_read_action(self, xmlid):
         action = self.env.ref(xmlid, raise_if_not_found=False)
         if not action:

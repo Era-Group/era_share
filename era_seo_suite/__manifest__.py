@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.0.50',
+    'version': '19.0.3.0.51',
     'depends': [
     'base',
     'web',
@@ -57,6 +57,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     # Wizards must load before the view files that reference their actions
     # in menuitems / buttons (e.g. seo_audit_run_views_mgr.xml uses
     # action_seo_audit_wizard).
+    'wizards/seo_advice_wizard_views.xml',
     'wizards/seo_audit_wizard_views.xml',
     'wizards/seo_bulk_update_wizard_views.xml',
     'wizards/seo_redirect_import_wizard_views.xml',

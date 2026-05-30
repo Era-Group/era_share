@@ -224,6 +224,12 @@ class EraSeoAuditFinding(models.Model):
                 'ai_model_used': proposal['model'],
                 'ai_last_log_id': log.id,
             })
+            # Persist each suggestion as it lands. A run with many findings
+            # makes one (slow) AI call per record, so the loop can outlast the
+            # web/proxy timeout; without an incremental commit the whole batch
+            # — every AI call already paid for — would roll back. Committing
+            # per record makes the work durable and lets a re-run resume.
+            self.env.cr.commit()
 
         if errors:
             return self._notify(
@@ -267,6 +273,10 @@ class EraSeoAuditFinding(models.Model):
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
             applied += 1
+            # Commit each applied fix on its own (same rationale as
+            # action_ai_suggest): a timeout mid-batch can't undo the fixes
+            # already written to their target records.
+            self.env.cr.commit()
 
         if errors:
             return self._notify(
@@ -277,14 +287,28 @@ class EraSeoAuditFinding(models.Model):
         return self._notify('success', _('%d fix(es) applied.', applied))
 
     def action_ai_suggest_and_apply(self):
-        """Convenience: suggest then immediately apply for high-confidence proposals."""
-        self.action_ai_suggest()
-        # Auto-apply only the high-confidence ones; admin reviews the rest.
+        """Suggest + auto-apply (confidence >= 0.8) ONE finding at a time.
+
+        Processed per record — not suggest-the-whole-run-then-apply-the-whole-
+        run — so each finding is suggested, applied and committed before the
+        next begins (the commits live in action_ai_suggest / action_ai_apply).
+        The slow part is the per-finding AI call, so a big run easily outlasts
+        the web/proxy timeout; the old two-phase version did every AI call
+        first and applied nothing until the very end, so a timeout discarded
+        the entire run. Per-record means a timeout leaves every finding handled
+        so far fully fixed and saved, and the next click resumes with the rest.
+        """
         threshold = 0.8
-        to_apply = self.filtered(
-            lambda f: f.ai_status == 'suggested' and f.ai_confidence >= threshold
-        )
-        return to_apply.action_ai_apply()
+        applied = 0
+        for rec in self:
+            # Singleton calls reuse the existing per-record handling (provider
+            # errors, savepoints) and commit as they go.
+            rec.action_ai_suggest()
+            if rec.ai_status == 'suggested' and rec.ai_confidence >= threshold:
+                rec.action_ai_apply()
+                if rec.ai_status == 'applied':
+                    applied += 1
+        return self._notify('success', _('%d fix(es) applied.', applied))
 
     def action_ai_retry_failed(self):
         """Reset every failed finding back to `none` so the AI workflow can

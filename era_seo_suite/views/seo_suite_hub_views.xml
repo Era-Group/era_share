@@ -401,9 +401,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- GSC Queries analysis -->
-              <div class="row g-1 mb-1">
+                <!-- GSC Queries analysis -->
                 <div class="col-md-2 col-sm-4 col-6">
                   <div class="card h-100 border-start border-3 border-secondary">
                     <div class="card-body py-1 px-2">

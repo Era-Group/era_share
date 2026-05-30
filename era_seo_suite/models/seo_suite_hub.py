@@ -1164,18 +1164,32 @@ class EraSeoSuiteHub(models.Model):
     # Weekly audit + auto AI-fix
     # ------------------------------------------------------------------------
 
+    # Check codes the UNATTENDED audit cron is allowed to auto-apply. Limited
+    # to fixes with NO visible content change: OG image (set to the company
+    # logo) and JSON-LD schema (structured data, invisible to readers). Other
+    # ai_supported codes stay MANUAL via the finding's AI buttons —
+    # thin_content appends AI-written text to the page, and title/slug rewrites
+    # change user-visible copy, so neither should fire unattended.
+    _UNATTENDED_FIX_CODES = {'missing_og_image', 'missing_schema'}
+    # Max findings auto-fixed per tick. Schema fixes are AI calls; a large
+    # backlog processed in one tick could run past limit_time_real_cron and
+    # get the worker killed. The remainder is picked up on the next daily run.
+    _UNATTENDED_FIX_BATCH = 25
+
     @api.model
     def cron_weekly_audit_and_fix(self):
-        """Run a fresh SEO audit and let the AI agent fix every newly-found,
-        AI-supported finding in one pass.
+        """Run a fresh SEO audit and auto-apply the SAFE, AI-supported fixes.
 
-        Driven by a weekly ir.cron entry. The fix step uses
-        ``action_ai_suggest_and_apply``, which only applies suggestions
-        whose AI confidence is above the agent's threshold — so an
-        unattended weekly run won't push low-confidence changes.
+        Driven by a daily ir.cron entry. Only the no-visible-change fixes in
+        ``_UNATTENDED_FIX_CODES`` (OG image, JSON-LD schema) are auto-applied,
+        in batches of ``_UNATTENDED_FIX_BATCH`` per run. The fix step uses
+        ``action_ai_suggest_and_apply`` (applies only above the agent's
+        confidence threshold). Other ai_supported findings (thin_content,
+        titles, slugs) are left for manual review via the finding form.
 
         Gated by `era_seo.weekly_audit_active` (default True): users can
-        flip it off without disabling the cron entry.
+        flip it off without disabling the cron entry. (Method name kept for
+        the existing ir.cron `code` reference.)
         """
         if _icp_get(self.env, 'era_seo.weekly_audit_active', 'True') not in _TRUE:
             return
@@ -1183,24 +1197,29 @@ class EraSeoSuiteHub(models.Model):
         try:
             run = Run.run_scheduled_audit()
         except Exception:  # noqa: BLE001
-            _logger.exception('weekly_audit_and_fix: audit failed')
+            _logger.exception('daily_audit_and_fix: audit failed')
             return
         if not run:
             return
-        # Only suggest+apply on findings the AI already knows how to fix
-        # AND that haven't been touched yet in this run.
+        # Suggest+apply only on untouched findings in the safe auto-fix set,
+        # bounded to one batch per tick.
         findings = run.finding_ids.filtered(
-            lambda f: f.ai_supported and f.ai_status == 'none')
+            lambda f: f.ai_status == 'none'
+            and f.check_code in self._UNATTENDED_FIX_CODES
+        )[:self._UNATTENDED_FIX_BATCH]
         if not findings:
             _logger.info(
-                'weekly_audit_and_fix: %s findings, none ai-supported / actionable',
-                len(run.finding_ids))
+                'daily_audit_and_fix: %s findings; none untouched in the '
+                'unattended set (%s)', len(run.finding_ids),
+                ', '.join(sorted(self._UNATTENDED_FIX_CODES)))
             return
         try:
             findings.with_context(_era_ai_system=True).action_ai_suggest_and_apply()
+            _logger.info('daily_audit_and_fix: auto-fixed %d finding(s) this tick',
+                         len(findings))
         except Exception:  # noqa: BLE001
             _logger.exception(
-                'weekly_audit_and_fix: AI suggest+apply failed on %d findings',
+                'daily_audit_and_fix: AI suggest+apply failed on %d findings',
                 len(findings))
 
     # ------------------------------------------------------------------------

@@ -3,21 +3,25 @@
   <data noupdate="1">
 
     <!--
-      ERA SEO: Weekly audit + AI auto-fix.
+      ERA SEO: Daily audit + AI auto-fix.
 
-      Every Monday morning, runs a fresh audit, then for every
-      AI-supported, untouched finding calls action_ai_suggest_and_apply
-      (which only applies suggestions whose confidence clears the
-      agent's threshold). Users who want to pause it without disabling
-      the cron flip `era_seo.weekly_audit_active` to False.
+      Daily, runs a fresh audit then auto-applies the SAFE fixes (OG image,
+      JSON-LD schema — see _UNATTENDED_FIX_CODES) for untouched findings, in
+      batches per tick. Other ai_supported findings (thin_content, titles)
+      stay manual. Pause without disabling the cron by flipping
+      `era_seo.weekly_audit_active` to False.
+
+      NOTE: this record is noupdate="1", so changing the interval here only
+      affects FRESH installs. The live record's interval is also updated via
+      the post-init hook / migration so existing instances flip to daily.
     -->
     <record id="cron_weekly_audit_and_fix" model="ir.cron">
-      <field name="name">ERA SEO: Weekly audit + AI auto-fix</field>
+      <field name="name">ERA SEO: Daily audit + AI auto-fix</field>
       <field name="model_id" ref="model_era_seo_suite_hub"/>
       <field name="state">code</field>
       <field name="code">model.cron_weekly_audit_and_fix()</field>
       <field name="interval_number">1</field>
-      <field name="interval_type">weeks</field>
+      <field name="interval_type">days</field>
       <field name="active" eval="True"/>
       <field name="priority">6</field>
     </record>

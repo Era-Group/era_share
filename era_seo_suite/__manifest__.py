@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.0.47',
+    'version': '19.0.3.0.48',
     'depends': [
     'base',
     'web',
@@ -92,6 +92,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'views/ai_fix_log_views.xml',
     'views/geo_ai_crawler_views.xml',
     'views/gsc_account_views.xml',
+    'views/gsc_keyword_views.xml',
     'views/gsc_query_views.xml',
     'views/gsc_site_views.xml',
     # Settings views consume actions defined above.

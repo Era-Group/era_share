@@ -47,3 +47,5 @@ access_era_gsc_site_manager,era.gsc.site manager,model_era_gsc_site,era_seo_suit
 access_era_gsc_site_user,era.gsc.site user,model_era_gsc_site,era_seo_suite.group_era_seo_user,1,0,0,0
 access_era_gsc_query_manager,era.gsc.query manager,model_era_gsc_query,era_seo_suite.group_era_seo_manager,1,1,1,1
 access_era_gsc_query_user,era.gsc.query user,model_era_gsc_query,era_seo_suite.group_era_seo_user,1,0,0,0
+access_era_gsc_keyword_manager,era.gsc.keyword manager,model_era_gsc_keyword,era_seo_suite.group_era_seo_manager,1,0,0,0
+access_era_gsc_keyword_user,era.gsc.keyword user,model_era_gsc_keyword,era_seo_suite.group_era_seo_user,1,0,0,0

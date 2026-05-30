@@ -860,8 +860,8 @@
                 <i class="fa fa-key me-1"/> Keyword opportunities (28 days)
               </div>
               <div class="text-muted small mb-2">
-                Every tracked keyword, tagged with the actions worth taking —
-                highest-volume first. Legend:
+                Every tracked keyword as a sortable, filterable list — click any
+                column to sort, use the search filters to focus on one bucket:
                 <span class="badge bg-dark">top</span> best performers ·
                 <span class="badge bg-success">striking distance</span> pos 5–20, push to page 1 ·
                 <span class="badge bg-primary">low CTR</span> rewrite title/meta ·
@@ -869,7 +869,9 @@
                 <span class="badge bg-warning text-dark">new</span> growing searches ·
                 <span class="badge bg-secondary">question</span> content/FAQ idea.
               </div>
-              <field name="analytics_keywords_html" nolabel="1" readonly="1" widget="html"/>
+              <button name="%(era_seo_suite.action_era_gsc_keyword)d" type="action"
+                      string="Open Keyword Opportunities" class="btn btn-primary"
+                      icon="fa-table"/>
             </page>
 
             <!-- ============================== SEO =============================== -->

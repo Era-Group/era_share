@@ -14,6 +14,11 @@
             parent="menu_era_gsc_root"
             action="action_era_gsc_site"
             sequence="20"/>
+  <menuitem id="menu_era_gsc_keywords"
+            name="Keyword Opportunities"
+            parent="menu_era_gsc_root"
+            action="action_era_gsc_keyword"
+            sequence="25"/>
   <menuitem id="menu_era_gsc_queries"
             name="Queries"
             parent="menu_era_gsc_root"

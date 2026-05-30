@@ -28,6 +28,7 @@ from . import (
     geo_ai_crawler,
     gsc_account,
     gsc_client,
+    gsc_keyword,
     gsc_query,
     gsc_site,
     ir_http,

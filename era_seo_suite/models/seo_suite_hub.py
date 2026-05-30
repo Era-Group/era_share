@@ -152,9 +152,6 @@ class EraSeoSuiteHub(models.Model):
         string='Search trend', sanitize=False, compute='_compute_analytics')
     analytics_summary_html = fields.Html(
         string='Analytics summary', sanitize=False, compute='_compute_analytics')
-    analytics_keywords_html = fields.Html(
-        string='Keyword opportunities', sanitize=False,
-        compute='_compute_analytics')
 
     # =========================================================================
     # Settings — every ICP-backed key the suite owns, in ONE declarative map.
@@ -862,8 +859,7 @@ class EraSeoSuiteHub(models.Model):
     )
 
     _ANALYTICS_FIELDS = (
-        'analytics_trend_html', 'analytics_summary_html',
-        'analytics_keywords_html')
+        'analytics_trend_html', 'analytics_summary_html')
 
     def _compute_analytics(self):
         """Guarded entry point — a data/render edge case must never break the
@@ -883,14 +879,13 @@ class EraSeoSuiteHub(models.Model):
         """Render every Analytics-tab block from the last ~30 days of
         era.gsc.query. One DB pass per block via _read_group; pure-Python
         post-filtering for the opportunity buckets (no fragile HAVING)."""
-        from markupsafe import Markup, escape
+        from markupsafe import Markup
         from datetime import date, timedelta
 
         Q = self.env.get('era.gsc.query')
         today = date.today()
         d28 = today - timedelta(days=28)
         d30 = today - timedelta(days=30)
-        d14 = today - timedelta(days=14)
         empty = ('<div class="text-muted small p-2">No Search Console data yet — '
                  'connect a Google account, pull, then <b>Backfill 3 Months</b> '
                  '(GSC tab) to populate these insights.</div>')
@@ -933,8 +928,7 @@ class EraSeoSuiteHub(models.Model):
 
         # ---- no data / no model short-circuit -------------------------
         blanks = dict.fromkeys((
-            'analytics_trend_html', 'analytics_summary_html',
-            'analytics_keywords_html'), Markup(empty))
+            'analytics_trend_html', 'analytics_summary_html'), Markup(empty))
         if Q is None:
             for rec in self:
                 for f, v in blanks.items():
@@ -971,73 +965,9 @@ class EraSeoSuiteHub(models.Model):
             '%.1f%%</div></div></div></div></div>'
             % (len(agg), tot_clicks, tot_impr, _ctr(tot_clicks, tot_impr)))
 
-        # ---- combined keyword-opportunity table -----------------------
-        # One scannable worklist instead of five separate tables: reuse the
-        # 28d aggregate, tag each keyword with every opportunity bucket it
-        # falls into (top / striking distance / low-CTR / rising / new /
-        # question), and list the tagged keywords highest-volume first.
-        recent = {g[0]: (g[1] or 0) for g in Q._read_group(
-            [('date', '>=', d14)], ['query'], ['impressions:sum'])}
-        prior = {g[0]: (g[1] or 0) for g in Q._read_group(
-            [('date', '>=', d28), ('date', '<', d14)], ['query'],
-            ['impressions:sum'])}
-        top_keys = {r[0] for r in sorted(
-            agg, key=lambda r: r[1] or 0, reverse=True)[:15]}
-
-        def _kw_tags(r):
-            q, clicks, impr, pos = r[0], r[1] or 0, r[2] or 0, r[3] or 0.0
-            ql = (q or '').strip().lower()
-            tags = []
-            if q in top_keys:
-                tags.append('<span class="badge bg-dark">top</span>')
-            if 4.5 <= pos <= 20.0:
-                tags.append('<span class="badge bg-success">striking distance</span>')
-            if impr >= 30 and _ctr(clicks, impr) < 2.0:
-                tags.append('<span class="badge bg-primary">low CTR</span>')
-            rc, pr = recent.get(q, 0), prior.get(q, 0)
-            if rc >= 5 and pr == 0:
-                tags.append('<span class="badge bg-warning text-dark">new</span>')
-            elif rc >= 5 and rc >= 1.5 * pr:
-                tags.append('<span class="badge bg-info">rising +%d%%</span>'
-                            % round(100 * (rc - pr) / pr))
-            if ('?' in ql) or ql.startswith(self._QUESTION_PREFIXES):
-                tags.append('<span class="badge bg-secondary">question</span>')
-            return tags
-
-        tagged = []
-        for r in agg:
-            ts = _kw_tags(r)
-            if ts:
-                tagged.append((r, ts))
-        tagged.sort(key=lambda x: x[0][2] or 0, reverse=True)  # by impressions
-        tagged = tagged[:60]
-        if tagged:
-            body = ''
-            for r, ts in tagged:
-                q, clicks, impr, pos = r[0], r[1] or 0, r[2] or 0, r[3] or 0.0
-                body += (
-                    '<tr><td class="text-truncate" style="max-width:320px">%s</td>'
-                    '<td class="text-end fw-bold">%d</td>'
-                    '<td class="text-end">%d</td>'
-                    '<td class="text-end">%.1f%%</td>'
-                    '<td class="text-end">%.1f</td>'
-                    '<td class="text-nowrap">%s</td></tr>'
-                    % (escape(q or '—'), clicks, impr, _ctr(clicks, impr),
-                       pos, ' '.join(ts)))
-            keywords_html = Markup(
-                '<table class="table table-sm table-hover mb-0"><thead>'
-                '<tr class="small text-muted"><th>Keyword</th>'
-                '<th class="text-end">Clicks</th><th class="text-end">Impr.</th>'
-                '<th class="text-end">CTR</th><th class="text-end">Pos.</th>'
-                '<th>Opportunity</th></tr></thead><tbody>'
-                + body + '</tbody></table>')
-        else:
-            keywords_html = Markup(empty)
-
         vals = {
             'analytics_trend_html': trend_html,
             'analytics_summary_html': summary_html,
-            'analytics_keywords_html': keywords_html,
         }
         for rec in self:
             for f, v in vals.items():

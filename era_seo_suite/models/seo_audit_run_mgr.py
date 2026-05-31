@@ -810,17 +810,38 @@ class EraSeoAuditRun(models.Model):
                     suggested='Add descriptive alt text to every image.',
                 )
 
+    @staticmethod
+    def _visible_word_count(doc):
+        """Crawlable word count for a content block.
+
+        Joins text NODES with spaces rather than using text_content(), which
+        concatenates adjacent block elements with no separator and so merges the
+        last word of one block with the first of the next (e.g. a heading ending
+        '...كنز؟' immediately followed by a paragraph 'اكتشف...' counted as the
+        single token 'كنز؟اكتشف'). That undercounted every page; this counts the
+        words a reader/crawler actually sees."""
+        if doc is None:
+            return 0
+        text = ' '.join(t for t in doc.itertext() if t and t.strip())
+        return len(text.split())
+
     def _check_thin_content(self, pages):
+        # Threshold is tunable (era_seo.thin_content_words) so sites with
+        # intentionally short landing/hub pages can dial it without code.
+        raw = self.env['ir.config_parameter'].sudo().get_param(
+            'era_seo.thin_content_words')
+        try:
+            threshold = int(raw) if raw else _THIN_CONTENT_WORDS
+        except (TypeError, ValueError):
+            threshold = _THIN_CONTENT_WORDS
         for p in pages:
-            doc = self._dom_doc(p)
-            text = '' if doc is None else ' '.join(doc.text_content().split())
-            words = len(text.split())
-            if 0 < words < _THIN_CONTENT_WORDS:
+            words = self._visible_word_count(self._dom_doc(p))
+            if 0 < words < threshold:
                 self._add_finding(
                     p, 'warning', 'thin_content',
                     'Thin Content ({} words)'.format(words),
                     details='Pages with fewer than {} words tend to rank poorly.'.format(
-                        _THIN_CONTENT_WORDS),
+                        threshold),
                     suggested='Expand the content with more depth on the topic.',
                 )
 

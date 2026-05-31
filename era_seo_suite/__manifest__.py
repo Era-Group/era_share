@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.0.56',
+    'version': '19.0.3.0.57',
     'depends': [
     'base',
     'web',
@@ -28,12 +28,14 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'portal',
     'website_blog',
     'ai',
-    # ai_crm adds a REQUIRED source_id to ai.agent (via utm.source.mixin) and
-    # provisions it in create(). We seed an ai.agent in data/ai_agent_data.xml,
-    # so ai_crm must load BEFORE this module — otherwise the mixin is absent
-    # from the ai.agent MRO at data-load time, source_id stays NULL and the
-    # whole install aborts with NotNullViolation on ai_agent.source_id.
-    'ai_crm',
+    # NB: intentionally NOT depending on 'ai_crm' (it would drag in the whole
+    # CRM application). ai_crm makes ai.agent.source_id required via
+    # utm.source.mixin, but it is auto_install gated on ai_app + crm: an
+    # SEO-only site never gets it, so the seeded agent has no source_id field
+    # and installs cleanly. On sites that DO have ai_crm, the agent's source_id
+    # is provisioned by the normal ai.agent create MRO (utm.source.mixin.create
+    # / ai_crm._auto_init backfill) — provided no extension bypasses it (see the
+    # era_voip_ext.create fix that calls super() instead of models.Model.create).
 ],
     'data': [
     'security/seo_security.xml',

@@ -532,8 +532,19 @@ class AIClient:
         nearby text / filename / page topic so the fix never hard-fails — every
         image ends up with *some* descriptive alt.
         """
+        # Editable images live in the page's own content/arch; the audit also
+        # flags images a crawler sees in the RENDERED page (theme / dynamic
+        # snippets) that aren't in the arch and can't be fixed from here.
         images = self._images_without_alt(target_record)
+        rendered_total = self._rendered_missing_alt(target_record)
         if not images:
+            if rendered_total:
+                raise ValueError(_(
+                    "All %d image(s) without alt text on this page are rendered "
+                    "by the theme or a dynamic snippet — not the page's own "
+                    "editable content — so they can't be fixed from here. Add the "
+                    "alt text at the source (the snippet template or the linked "
+                    "image/record).", rendered_total))
             raise ValueError(_('No images without alt text were found on the page.'))
 
         _excerpt, topic, _detected = self._extract_page_signal(target_record)
@@ -573,6 +584,14 @@ class AIClient:
             explanation = (explanation + ' '
                            + _('Some alts were derived mechanically.')).strip()
             confidence = min(confidence, 0.6)
+
+        # Be honest about images the audit sees in the rendered page but that we
+        # can't edit from here (theme / dynamic-snippet images live outside arch).
+        if rendered_total > len(images):
+            explanation = (explanation + ' ' + _(
+                '%d more image(s) on this page are rendered by the theme or a '
+                'dynamic snippet and must be fixed at the source.',
+                rendered_total - len(images))).strip()
 
         preview = '\n'.join(
             '{} → {}'.format((p['src'] or '(no src)')[:50], p['alt']) for p in pairs
@@ -2081,6 +2100,22 @@ class AIClient:
                 near = ' '.join((parent.text_content() or '').split())[:160]
             out.append({'src': src, 'near': near})
         return out
+
+    def _rendered_missing_alt(self, record):
+        """How many <img> lack alt on the RENDERED page — what the audit's
+        image-alt check actually counts. Reuses the audit's page renderer (same
+        HTTP fetch + #wrap scope + per-run cache); returns 0 when the page isn't
+        reachable. Lets the fixer be honest about images it cannot edit from the
+        page's own content (theme / dynamic-snippet images live outside the arch)."""
+        try:
+            Audit = self.env.get('era.seo.audit.run')
+            doc = Audit._rendered_wrap_doc(record) if Audit is not None else None
+            if doc is None:
+                return 0
+            return sum(1 for img in doc.xpath('//img')
+                       if not (img.get('alt') or '').strip())
+        except Exception:  # noqa: BLE001 — diagnostics only, never block the fix
+            return 0
 
     @staticmethod
     def _html_preview(html):

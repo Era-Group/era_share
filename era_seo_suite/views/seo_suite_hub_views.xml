@@ -456,29 +456,32 @@
                         string="Open full query explorer" class="btn btn-sm btn-link"
                         icon="fa-bar-chart"/>
               </div>
-              <!-- ============================== GSC KPIs ============================== -->
-              <div class="mb-2">
-                <div class="fw-bolder small mb-1">Google Search Console</div>
-                <div class="card d-inline-block">
-                  <div class="card-body py-1 px-3">
-                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-google me-1"/>Accounts connected</span><span class="fw-bold"><field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/></span></div>
-                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-globe me-1"/>Sites</span><span class="fw-bold"><field name="kpi_gsc_sites" readonly="1" nolabel="1"/></span></div>
-                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks (28d)</span><span class="fw-bold"><field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/></span></div>
-                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions (28d)</span><span class="fw-bold"><field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/></span></div>
-                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-search me-1"/>Queries tracked (28d)</span><span class="fw-bold"><field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/></span></div>
-                    <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-sort-numeric-asc me-1"/>Avg position (28d)</span><span class="fw-bold"><field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/></span></div>
-                    <div class="text-muted small mt-1" invisible="not kpi_gsc_last_pull">
-                      Last pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
+              <!-- ============================== GSC + Search summary ============================== -->
+              <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
+                <div>
+                  <div class="fw-bolder small mb-1">Google Search Console</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-google me-1"/>Accounts connected</span><span class="fw-bold"><field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-globe me-1"/>Sites</span><span class="fw-bold"><field name="kpi_gsc_sites" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks (28d)</span><span class="fw-bold"><field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions (28d)</span><span class="fw-bold"><field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-search me-1"/>Queries tracked (28d)</span><span class="fw-bold"><field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-sort-numeric-asc me-1"/>Avg position (28d)</span><span class="fw-bold"><field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="text-muted small mt-1" invisible="not kpi_gsc_last_pull">
+                        Last pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
+                      </div>
                     </div>
                   </div>
+                </div>
+                <div>
+                  <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
                 </div>
               </div>
 
               <button name="action_ai_traffic_advice" type="object"
                       string="Get AI Traffic Tip" class="btn btn-warning mb-2"
                       icon="fa-lightbulb-o"/>
-
-              <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
 
               <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
                 Search trend (30 days) — clicks &amp; impressions

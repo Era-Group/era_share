@@ -959,17 +959,22 @@ class EraSeoSuiteHub(models.Model):
         tot_clicks = sum(r[1] or 0 for r in agg)
         tot_impr = sum(r[2] or 0 for r in agg)
         summary_html = Markup(
-            '<div class="row g-2 mb-2"><div class="col"><div class="card"><div '
-            'class="card-body py-2 px-3"><div class="text-muted small">Keywords '
-            '(28d)</div><div class="fs-5 fw-bold">%d</div></div></div></div>'
-            '<div class="col"><div class="card"><div class="card-body py-2 px-3">'
-            '<div class="text-muted small">Clicks</div><div class="fs-5 fw-bold">'
-            '%d</div></div></div></div><div class="col"><div class="card"><div '
-            'class="card-body py-2 px-3"><div class="text-muted small">Impressions'
-            '</div><div class="fs-5 fw-bold">%d</div></div></div></div>'
-            '<div class="col"><div class="card"><div class="card-body py-2 px-3">'
-            '<div class="text-muted small">Avg CTR</div><div class="fs-5 fw-bold">'
-            '%.1f%%</div></div></div></div></div>'
+            '<div class="mb-2">'
+            '<div class="fw-bolder small mb-1">Search summary (28 days)</div>'
+            '<div class="card d-inline-block"><div class="card-body py-1 px-3">'
+            '<div class="d-flex justify-content-between gap-4 border-bottom py-1">'
+            '<span class="text-muted small"><i class="fa fa-key me-1"/>Keywords</span>'
+            '<span class="fw-bold">%d</span></div>'
+            '<div class="d-flex justify-content-between gap-4 border-bottom py-1">'
+            '<span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks</span>'
+            '<span class="fw-bold">%d</span></div>'
+            '<div class="d-flex justify-content-between gap-4 border-bottom py-1">'
+            '<span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions</span>'
+            '<span class="fw-bold">%d</span></div>'
+            '<div class="d-flex justify-content-between gap-4 py-1">'
+            '<span class="text-muted small"><i class="fa fa-percent me-1"/>Avg CTR</span>'
+            '<span class="fw-bold">%.1f%%</span></div>'
+            '</div></div></div>'
             % (len(agg), tot_clicks, tot_impr, _ctr(tot_clicks, tot_impr)))
 
         vals = {

@@ -11,3 +11,42 @@
         font-weight: 700 !important;
     }
 }
+
+// Blog share bar — pinned to the page's LEFT edge, 25% up from the bottom,
+// always visible while reading the article (a fixed vertical stack of icons).
+.o_era_blog_share {
+    position: fixed;
+    left: 12px;
+    bottom: 25%;
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 0 !important;                 // override the template's my-3
+
+    > span {                              // the "Share:" label
+        margin: 0 0 2px 0 !important;
+        white-space: nowrap;
+    }
+    .btn {
+        margin: 0 !important;             // gap handles the spacing
+        background: #fff;                 // stay readable over any content
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+    }
+}
+
+// On phones/tablets a fixed side bar overlaps the content — fall back to the
+// original inline bar after the article body.
+@media (max-width: 991.98px) {
+    .o_era_blog_share {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        left: auto;
+        bottom: auto;
+        margin: 1rem 0 !important;
+        .btn { box-shadow: none; }
+    }
+}

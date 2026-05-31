@@ -1311,6 +1311,9 @@ class AIClient:
         parsed = self._parse_json(raw)
         for k in ('title', 'content_html'):
             if not (parsed.get(k) or '').strip():
+                _logger.warning(
+                    'propose_article: parsed keys=%s, raw[:500]=%r',
+                    list(parsed.keys()), (raw or '')[:500])
                 raise ValueError(_('AI article proposal is missing %r.', k))
         # Word-count enforcement: quality floor.
         # Up to two extension passes — each takes the current best draft

@@ -15,11 +15,18 @@ seen in production as a flood of identical
 Raising the call-site timeout is the surgical fix, but it would mean
 forking the EE call sites. Easier: monkey-patch the helper at module
 import so every caller gets a roomier default. The patch reads the
-ceiling from an ICP key (``era_seo.ai_request_timeout``, default 120s)
+ceiling from an ICP key (``era_seo.ai_request_timeout``, default 180s)
 so admins can tune without touching code.
 
-Idempotent: re-import is a no-op (we stash the original on the class and
-won't double-wrap).
+Coexistence with era_odoo_ai_ext
+--------------------------------
+era_odoo_ai_ext monkey-patches LLMApiService._request with its own
+version (retry loop + custom_llm provider). Load order between the two
+modules is not guaranteed, so this patch resolves the underlying method
+at **call time** via ``LLMApiService`` class lookup rather than
+capturing a stale reference at import time. This way, regardless of
+which module patches first, the timeout wrapper always delegates to
+whatever _request implementation is currently live.
 """
 import logging
 
@@ -27,6 +34,7 @@ _logger = logging.getLogger(__name__)
 
 
 _PATCH_FLAG = '_era_seo_timeout_patched'
+_ORIGINAL_ATTR = '_era_seo_original_request'
 _DEFAULT_TIMEOUT_S = 180
 _ICP_KEY = 'era_seo.ai_request_timeout'
 
@@ -52,8 +60,6 @@ def _apply_patch():
     try:
         from odoo.addons.ai.utils.llm_api_service import LLMApiService
     except ImportError:
-        # AI app not installed — nothing to patch. Safe to no-op; the
-        # suite's other paths gate on `is_available()` already.
         _logger.info(
             'ai_llm_timeout_patch: ai app not importable, skipping patch')
         return
@@ -62,16 +68,25 @@ def _apply_patch():
         return  # already wrapped
 
     original_request = LLMApiService._request
+    setattr(LLMApiService, _ORIGINAL_ATTR, original_request)
 
     def _request_with_stretched_timeout(self, method, endpoint, headers, body,
                                         data=None, files=None, params=None,
                                         base_url=None, timeout=30):
-        # Only override when the caller is using the stock 30s default.
-        # If a caller explicitly passes a different value (e.g. an admin
-        # tool that wants a short ping), respect it.
         if timeout == 30:
             timeout = _resolve_timeout(getattr(self, 'env', None))
-        return original_request(
+        # Resolve the real implementation at call time so that if
+        # era_odoo_ai_ext (or another module) replaced _request after us,
+        # we delegate to their version, not the stale original.
+        real_request = getattr(LLMApiService, _ORIGINAL_ATTR, original_request)
+        current = LLMApiService._request
+        if current is not _request_with_stretched_timeout:
+            # Another module overwrote _request after our patch.
+            # Re-wrap: save their version and reinstall ourselves.
+            setattr(LLMApiService, _ORIGINAL_ATTR, current)
+            LLMApiService._request = _request_with_stretched_timeout
+            real_request = current
+        return real_request(
             self, method, endpoint, headers, body,
             data=data, files=files, params=params,
             base_url=base_url, timeout=timeout,

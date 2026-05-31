@@ -225,8 +225,13 @@
             name="ERA Blog: share buttons">
     <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
       <t t-if="blog_post.era_show_share_buttons">
+        <!-- Share the ASCII id-path (/blog/<blog_id>/<post_id>) rather than the
+             localized slug URL: Arabic slugs percent-encode to very long,
+             fragile strings that break some social share dialogs. Odoo
+             301-redirects /blog/1/436 to the canonical slug, so the shared link
+             still lands on the real article and crawlers read its OG tags. -->
         <t t-set="post_url"
-           t-value="(request.env['ir.config_parameter'].sudo().get_param('web.base.url') or '').rstrip('/') + (blog_post.website_url or '/')"/>
+           t-value="(request.env['ir.config_parameter'].sudo().get_param('web.base.url') or '').rstrip('/') + ('/blog/%s/%s' % (blog_post.blog_id.id, blog_post.id))"/>
         <div class="o_era_blog_share my-3">
           <span class="me-2 text-muted small" t-translation="off">Share:</span>
           <a class="btn btn-sm btn-outline-secondary me-1"

@@ -477,6 +477,7 @@ class EraSeoAuditRun(models.Model):
                 'is_resolved': True,
                 'resolved_date': fields.Datetime.now(),
                 'resolved_user_id': self.env.user.id,
+                'resolved_manually': False,   # auto: reopens if re-detected later
             })
 
     # ------------------------------------------------------------------------
@@ -574,20 +575,18 @@ class EraSeoAuditRun(models.Model):
             ('lang_id', '=', lang_id),
         ], limit=1)
         if existing:
-            if existing.is_resolved:
+            # Reopen ONLY if it was auto-resolved (a clean past audit). A finding
+            # the user MANUALLY marked resolved (resolved_manually) is a
+            # deliberate dismissal — re-running the audit must NOT undo it, even
+            # if the defect is still technically present. The AI status
+            # ('applied'/'suggested') is preserved across audits so re-running
+            # never wipes the record of fixes already attempted.
+            if existing.is_resolved and not existing.resolved_manually:
                 vals.update({
                     'is_resolved': False,
                     'resolved_date': False,
                     'resolved_user_id': False,
                 })
-            # Re-detecting a finding whose AI fix was already 'applied' proves the
-            # fix did NOT resolve the defect (a working fix wouldn't be re-found —
-            # it would auto-resolve instead). Reset to 'none' so the misleading
-            # 'Applied' badge clears and the finding is eligible for a fresh fix
-            # attempt (manual, or the safe-fix cron for auto-fixable codes).
-            # 'suggested' is left intact — that proposal is still pending Apply.
-            if existing.ai_status == 'applied':
-                vals['ai_status'] = 'none'
             existing.write(vals)
         else:
             vals.update({

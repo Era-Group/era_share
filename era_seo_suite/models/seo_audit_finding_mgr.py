@@ -69,6 +69,13 @@ class EraSeoAuditFinding(models.Model):
     resolved_user_id = fields.Many2one(
         'res.users', string='Resolved By', readonly=True,
     )
+    resolved_manually = fields.Boolean(
+        string='Dismissed by user', readonly=True,
+        help='True when a person clicked Mark Resolved (a deliberate '
+             'dismissal). Such findings are NOT reopened by a later audit even '
+             'if the defect is still detectable — only auto-resolved findings '
+             'reopen on re-detection.',
+    )
 
     def init(self):
         """One open finding per (check_code, res_model, res_id, lang).
@@ -93,10 +100,12 @@ class EraSeoAuditFinding(models.Model):
             rec.name = '{} — {}'.format(rec.check_name or rec.check_code or '?', target)
 
     def action_mark_resolved(self):
+        # Manual dismissal — stays resolved across future audits (sticky).
         self.write({
             'is_resolved': True,
             'resolved_date': fields.Datetime.now(),
             'resolved_user_id': self.env.user.id,
+            'resolved_manually': True,
         })
 
     def action_mark_unresolved(self):
@@ -104,6 +113,7 @@ class EraSeoAuditFinding(models.Model):
             'is_resolved': False,
             'resolved_date': False,
             'resolved_user_id': False,
+            'resolved_manually': False,
         })
 
     def action_open_target(self):

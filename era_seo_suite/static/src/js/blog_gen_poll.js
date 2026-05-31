@@ -103,12 +103,19 @@ class EraAutoRefreshWhenTrue extends Component {
         }
     }
 
+    _getMark() {
+        const v = window[this._lastSeenKey];
+        return v && typeof v === "object" ? v : {};
+    }
+    _setMark(obj) {
+        window[this._lastSeenKey] = obj;
+    }
+
     async _tick() {
         if (this._ticking) return;
         this._ticking = true;
         try {
-            // Dedicated server method that bypasses Odoo's field-read
-            // cache by reading ICP directly. Returns {pending: bool}.
+            // Dedicated server method that reads ICP directly. {pending: bool}.
             const state = await this.orm.call(
                 this._rpcModel,
                 this._rpcMethod,
@@ -118,33 +125,49 @@ class EraAutoRefreshWhenTrue extends Component {
             const recordPending = Boolean(
                 this.props.record?.data?.[this.props.name],
             );
-            const lastSeen = window[this._lastSeenKey];
 
-            // The form's view of pending differs from what the server
-            // says — flip detected. Trigger a hard re-render via the
-            // action service's soft_reload (more reliable than
-            // record.load(), which kept the cached field value in some
-            // browser sessions). Skip if we already triggered a reload
-            // for this exact server value, to avoid an infinite loop
-            // when the post-reload remount sees the same mismatch.
-            if (serverPending !== recordPending && lastSeen !== serverPending) {
-                window[this._lastSeenKey] = serverPending;
-                this._stop();
-                try {
-                    await this.action.doAction({
-                        type: "ir.actions.client",
-                        tag: "soft_reload",
-                    });
-                } catch (_) {
-                    /* non-fatal — keep going */
-                }
+            // Drive the reload off the SERVER-state transition, not the form's
+            // cached field. The old logic compared serverPending to the cached
+            // recordPending and guarded with lastSeen; once it reloaded, a
+            // still-stale recordPending left lastSeen === serverPending, which
+            // BLOCKED every later reload — so the spinner stayed up until a
+            // manual refresh. This is the bug being fixed.
+            if (serverPending) {
+                // (Still) running — remember we watched it run so the eventual
+                // flip to not-pending triggers exactly one reload, even if the
+                // form's cached field value never updates on its own.
+                this._setMark({ phase: "pending" });
+                return; // keep polling
+            }
+
+            // serverPending === false.
+            const mark = this._getMark();
+            const sawPending = mark.phase === "pending";
+            if (!sawPending && !recordPending) {
+                this._stop(); // nothing pending and no stale spinner to clear
                 return;
             }
 
-            // Once server and form both agree on `not pending`, we can
-            // stop polling entirely until the user re-clicks the trigger.
-            if (!serverPending && !recordPending) {
-                this._stop();
+            // The run just finished (we watched it) OR the form still shows a
+            // stale spinner — soft_reload re-renders the view so the cleared
+            // ICP flag re-evaluates `invisible="not is_..._pending"`. A small
+            // cap stops a field that somehow never clears from reload-storming.
+            const now = Date.now();
+            const within = now - (mark.ts || 0) < 30000;
+            const count = within ? mark.count || 0 : 0;
+            if (count >= 3) {
+                this._stop(); // give up rather than loop
+                return;
+            }
+            this._setMark({ phase: "reloading", count: count + 1, ts: now });
+            this._stop();
+            try {
+                await this.action.doAction({
+                    type: "ir.actions.client",
+                    tag: "soft_reload",
+                });
+            } catch (_) {
+                /* non-fatal */
             }
         } catch (_) {
             // Transient RPC error — keep polling next tick.

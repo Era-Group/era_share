@@ -250,7 +250,7 @@
             <i class="fa fa-facebook"/>
           </a>
           <a class="btn btn-sm btn-outline-secondary"
-             t-att-href="'https://api.whatsapp.com/send?text=%s' % post_url"
+             t-att-href="'https://api.whatsapp.com/send?text=%s %s' % (blog_post.name or '', post_url)"
              target="_blank" rel="noopener">
             <i class="fa fa-whatsapp"/>
           </a>

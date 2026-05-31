@@ -532,10 +532,20 @@ class AIClient:
         nearby text / filename / page topic so the fix never hard-fails — every
         image ends up with *some* descriptive alt.
         """
-        # Editable images live in the page's own content/arch; the audit also
-        # flags images a crawler sees in the RENDERED page (theme / dynamic
-        # snippets) that aren't in the arch and can't be fixed from here.
-        images = self._images_without_alt(target_record)
+        # The page is rendered/served in the website's DEFAULT language, so read
+        # (and later write) alt text in THAT language version, not the admin's UI
+        # language. The /team avatars, for instance, have alt in en_US but not in
+        # the served ar_001 arch — exactly the 8 the audit flags. Reading the
+        # admin-language arch would miss them and falsely report "nothing to fix".
+        _languages, default_lang = self._record_languages(target_record)
+        lang_code = default_lang.code if default_lang else None
+        lang_record = (target_record.with_context(lang=lang_code)
+                       if lang_code else target_record)
+        # Editable images live in the page's own content/arch (in the served
+        # language). The audit also flags images a crawler sees in the RENDERED
+        # page (theme / dynamic snippets) that aren't in any arch language and
+        # therefore can't be fixed from here.
+        images = self._images_without_alt(lang_record)
         rendered_total = self._rendered_missing_alt(target_record)
         if not images:
             if rendered_total:
@@ -547,11 +557,11 @@ class AIClient:
                     "image/record).", rendered_total))
             raise ValueError(_('No images without alt text were found on the page.'))
 
-        _excerpt, topic, _detected = self._extract_page_signal(target_record)
+        _excerpt, topic, _detected = self._extract_page_signal(lang_record)
         ai_alts, explanation, confidence, model = None, '', 0.0, 'mechanical'
         try:
             agent = self._resolve_agent()
-            prompt = self._build_alt_prompt(target_record, images)
+            prompt = self._build_alt_prompt(lang_record, images)
             response = agent.get_direct_response(
                 prompt=prompt, context_message=ALT_CONTEXT)
             parsed = self._parse_alt_json(response[0] if response else '', len(images))
@@ -598,7 +608,7 @@ class AIClient:
         )
         return self._result(
             'image_alt', field='content', proposed_value=preview,
-            payload={'alts': pairs},
+            payload={'alts': pairs, 'lang': lang_code},
             explanation=explanation, confidence=confidence, model=model,
         )
 

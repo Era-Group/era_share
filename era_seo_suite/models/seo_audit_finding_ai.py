@@ -436,17 +436,27 @@ class EraSeoAuditFinding(models.Model):
             })
 
     def _ai_apply_image_alt(self, target):
-        """Inject the proposed alt text into the target's content images."""
-        pairs = self._ai_payload().get('alts') or []
+        """Inject the proposed alt text into the target's content images.
+
+        Reads/writes in the language the images were scanned in (stamped on the
+        payload as ``lang`` — the website default/served language). The same
+        image can lack alt in one language version of the arch but not another,
+        so applying in the admin's UI language could match nothing or patch the
+        wrong version.
+        """
+        payload = self._ai_payload()
+        pairs = payload.get('alts') or []
         if not pairs:
             raise UserError(_('No alt-text proposals to apply.'))
-        field = self._ai_content_field(target)
-        html_text = target[field] or ''
+        lang = payload.get('lang')
+        rec = target.with_context(lang=lang) if lang else target
+        field = self._ai_content_field(rec)
+        html_text = rec[field] or ''
         new_html, changed = self._inject_alt_text(
             html_text, pairs, self._ai_is_xml_field(field))
         if not changed:
             raise UserError(_('Could not match any image to inject alt text into.'))
-        target.sudo().write({field: new_html})
+        rec.sudo().write({field: new_html})
 
     # Odoo website "Text" snippet shell. The AI block is dropped INSIDE the
     # container so the inserted content is a proper, editable s_text_block

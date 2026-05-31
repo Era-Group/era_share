@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.0.63',
+    'version': '19.0.3.0.64',
     'depends': [
     'base',
     'web',

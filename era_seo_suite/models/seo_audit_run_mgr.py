@@ -760,12 +760,22 @@ class EraSeoAuditRun(models.Model):
     # Checks — content HTML
     # ------------------------------------------------------------------------
 
+    @staticmethod
+    def _meaningful_h1s(doc):
+        """H1 elements that are real headings — i.e. have non-empty text or wrap
+        an image (logo-style heading). Snippets commonly leave EMPTY <h1></h1>
+        placeholders in the markup; those aren't competing headings and must not
+        count toward 'multiple H1' (nor satisfy 'missing H1'). This stops the
+        false 'Multiple <h1> Tags (3)' on pages a user sees only one heading on."""
+        return [h for h in doc.xpath('//h1')
+                if (h.text_content() or '').strip() or h.xpath('.//img')]
+
     def _check_missing_h1(self, pages):
         for p in pages:
             doc = self._dom_doc(p)
             if doc is None:
                 continue
-            if not doc.xpath('//h1'):
+            if not self._meaningful_h1s(doc):
                 self._add_finding(
                     p, 'critical', 'missing_h1', 'Missing <h1>',
                     suggested='Add exactly one H1 to the page content.',
@@ -776,12 +786,12 @@ class EraSeoAuditRun(models.Model):
             doc = self._dom_doc(p)
             if doc is None:
                 continue
-            h1s = doc.xpath('//h1')
+            h1s = self._meaningful_h1s(doc)
             if len(h1s) > 1:
                 self._add_finding(
                     p, 'warning', 'multiple_h1',
                     'Multiple <h1> Tags ({})'.format(len(h1s)),
-                    suggested='Keep only one H1; convert others to H2.',
+                    suggested='Keep only one H1; convert the extra heading(s) to H2.',
                 )
 
     def _check_image_missing_alt(self, pages):

@@ -349,57 +349,53 @@
                 </div>
 
               <!-- ============================== HEALTH + FINDINGS ============================== -->
-              <div class="row g-2 mb-2">
-                <div class="col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body py-2 px-3">
-                      <div class="fw-bolder text-uppercase small mb-2">Site health</div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-file-text-o me-1"/>Published pages</span><span class="fw-bold"><field name="kpi_published_pages" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-code me-1"/>Schema instances</span><span class="fw-bold"><field name="kpi_schema_instances" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-random me-1"/>Active redirects</span><span class="fw-bold"><field name="kpi_active_redirects" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between py-1"><span class="text-muted small"><i class="fa fa-clock-o me-1"/>Last audit</span><span class="fw-bold"><field name="kpi_audit_last_date" readonly="1" nolabel="1"/></span></div>
+              <div class="d-flex flex-wrap gap-3 mb-3">
+                <div>
+                  <div class="fw-bolder small mb-1">Site health</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-file-text-o me-1"/>Published pages</span><span class="fw-bold"><field name="kpi_published_pages" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-code me-1"/>Schema instances</span><span class="fw-bold"><field name="kpi_schema_instances" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-random me-1"/>Active redirects</span><span class="fw-bold"><field name="kpi_active_redirects" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-clock-o me-1"/>Last audit</span><span class="fw-bold"><field name="kpi_audit_last_date" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body py-2 px-3">
-                      <div class="fw-bolder text-uppercase small mb-2">Audit findings</div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-flag me-1"/>Open</span><span class="fw-bold"><field name="kpi_audit_open_findings" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-danger small"><i class="fa fa-exclamation-triangle me-1"/>Critical</span><span class="fw-bold text-danger"><field name="kpi_audit_critical" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-warning small"><i class="fa fa-exclamation-circle me-1"/>Warning</span><span class="fw-bold"><field name="kpi_audit_warning" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between py-1"><span class="text-info small"><i class="fa fa-info-circle me-1"/>Info</span><span class="fw-bold"><field name="kpi_audit_info" readonly="1" nolabel="1"/></span></div>
+                <div>
+                  <div class="fw-bolder small mb-1">Audit findings</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-flag me-1"/>Open</span><span class="fw-bold"><field name="kpi_audit_open_findings" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-danger small"><i class="fa fa-exclamation-triangle me-1"/>Critical</span><span class="fw-bold text-danger"><field name="kpi_audit_critical" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-exclamation-circle me-1"/>Warning</span><span class="fw-bold"><field name="kpi_audit_warning" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-info small"><i class="fa fa-info-circle me-1"/>Info</span><span class="fw-bold"><field name="kpi_audit_info" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- ============================== PROGRESS + GEO ============================== -->
-              <div class="row g-2 mb-2">
-                <div class="col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body py-2 px-3">
-                      <div class="fw-bolder text-uppercase small mb-2">Progress</div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-success small"><i class="fa fa-check-circle me-1"/>Resolved (total)</span><span class="fw-bold text-success"><field name="kpi_findings_resolved_total" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-line-chart me-1"/>Resolved (7d)</span><span class="fw-bold"><field name="kpi_findings_resolved_7d" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-newspaper-o me-1"/>Blog posts</span><span class="fw-bold"><field name="kpi_blog_posts_total" readonly="1" nolabel="1"/> <small class="text-muted">(<field name="kpi_blog_posts_ai_generated" readonly="1" nolabel="1"/> AI)</small></span></div>
-                      <div class="d-flex justify-content-between py-1"><span class="text-muted small"><i class="fa fa-calendar me-1"/>Posts (30d)</span><span class="fw-bold"><field name="kpi_blog_posts_30d" readonly="1" nolabel="1"/></span></div>
+                <div>
+                  <div class="fw-bolder small mb-1">Progress</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-success small"><i class="fa fa-check-circle me-1"/>Resolved (total)</span><span class="fw-bold text-success"><field name="kpi_findings_resolved_total" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-line-chart me-1"/>Resolved (7d)</span><span class="fw-bold"><field name="kpi_findings_resolved_7d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-newspaper-o me-1"/>Blog posts</span><span class="fw-bold"><field name="kpi_blog_posts_total" readonly="1" nolabel="1"/> <small class="text-muted">(<field name="kpi_blog_posts_ai_generated" readonly="1" nolabel="1"/> AI)</small></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-calendar me-1"/>Posts (30d)</span><span class="fw-bold"><field name="kpi_blog_posts_30d" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body py-2 px-3">
-                      <div class="fw-bolder text-uppercase small mb-2">GEO</div>
-                      <div class="d-flex justify-content-between border-bottom py-1">
+                <div>
+                  <div class="fw-bolder small mb-1">GEO</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1">
                         <span class="text-muted small"><i class="fa fa-file-text-o me-1"/>/llms.txt</span>
                         <span class="fw-bold">
                           <span invisible="not kpi_geo_llms_enabled" class="text-success"><i class="fa fa-check-circle"/> Yes</span>
                           <span invisible="kpi_geo_llms_enabled" class="text-muted"><i class="fa fa-circle-o"/> No</span>
                         </span>
                       </div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-android me-1"/>AI crawlers</span><span class="fw-bold"><field name="kpi_geo_crawlers_total" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between py-1">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-android me-1"/>AI crawlers</span><span class="fw-bold"><field name="kpi_geo_crawlers_total" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1">
                         <span class="text-muted small" invisible="kpi_geo_crawlers_blocked"><i class="fa fa-ban me-1"/>Blocked</span>
                         <span class="text-warning small" invisible="not kpi_geo_crawlers_blocked"><i class="fa fa-ban me-1"/>Blocked</span>
                         <span class="fw-bold text-muted" invisible="kpi_geo_crawlers_blocked">0</span>
@@ -411,72 +407,59 @@
               </div>
 
               <!-- ============================== COVERAGE ============================== -->
-              <div class="card mb-2" invisible="not kpi_published_pages">
-                <div class="card-body py-2 px-3">
-                  <div class="fw-bolder text-uppercase small mb-2">SEO coverage (% of published pages)</div>
-                  <div class="row g-2">
-                    <div class="col-md-6">
-                      <div class="d-flex justify-content-between align-items-baseline mb-1">
-                        <span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span>
-                        <span class="fw-bold"><field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%</span>
-                      </div>
-                      <field name="kpi_coverage_title_pct" widget="progressbar" nolabel="1" readonly="1" options="{'max_value': 100}"/>
+              <div class="mb-3" invisible="not kpi_published_pages">
+                <div class="fw-bolder small mb-1">SEO coverage (% of published pages)</div>
+                <div class="card d-inline-block" style="min-width:400px;">
+                  <div class="card-body py-1 px-3">
+                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
+                      <span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span>
+                      <span class="fw-bold"><field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%</span>
                     </div>
-                    <div class="col-md-6">
-                      <div class="d-flex justify-content-between align-items-baseline mb-1">
-                        <span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span>
-                        <span class="fw-bold"><field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%</span>
-                      </div>
-                      <field name="kpi_coverage_meta_pct" widget="progressbar" nolabel="1" readonly="1" options="{'max_value': 100}"/>
+                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
+                      <span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span>
+                      <span class="fw-bold"><field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%</span>
                     </div>
-                    <div class="col-md-6">
-                      <div class="d-flex justify-content-between align-items-baseline mb-1">
-                        <span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span>
-                        <span class="fw-bold"><field name="kpi_coverage_og_image_pct" readonly="1" nolabel="1"/>%</span>
-                      </div>
-                      <field name="kpi_coverage_og_image_pct" widget="progressbar" nolabel="1" readonly="1" options="{'max_value': 100}"/>
+                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
+                      <span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span>
+                      <span class="fw-bold"><field name="kpi_coverage_og_image_pct" readonly="1" nolabel="1"/>%</span>
                     </div>
-                    <div class="col-md-6">
-                      <div class="d-flex justify-content-between align-items-baseline mb-1">
-                        <span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span>
-                        <span class="fw-bold"><field name="kpi_coverage_schema_pct" readonly="1" nolabel="1"/>%</span>
-                      </div>
-                      <field name="kpi_coverage_schema_pct" widget="progressbar" nolabel="1" readonly="1" options="{'max_value': 100}"/>
+                    <div class="d-flex justify-content-between align-items-baseline py-1">
+                      <span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span>
+                      <span class="fw-bold"><field name="kpi_coverage_schema_pct" readonly="1" nolabel="1"/>%</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- ============================== AI WORKFLOW + AUTO-FILL ============================== -->
-              <div class="row g-2 mb-2">
-                <div class="col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body py-2 px-3">
-                      <div class="fw-bolder text-uppercase small mb-2">AI workflow</div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-success small"><i class="fa fa-magic me-1"/>Fixes applied</span><span class="fw-bold text-success"><field name="kpi_ai_findings_applied" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between border-bottom py-1"><span class="text-info small"><i class="fa fa-clock-o me-1"/>Awaiting review</span><span class="fw-bold"><field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between py-1"><span class="text-danger small"><i class="fa fa-times-circle me-1"/>Failed</span><span class="fw-bold text-danger"><field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/></span></div>
+              <div class="d-flex flex-wrap gap-3 mb-3">
+                <div>
+                  <div class="fw-bolder small mb-1">AI workflow</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-success small"><i class="fa fa-magic me-1"/>Fixes applied</span><span class="fw-bold text-success"><field name="kpi_ai_findings_applied" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-info small"><i class="fa fa-clock-o me-1"/>Awaiting review</span><span class="fw-bold"><field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-danger small"><i class="fa fa-times-circle me-1"/>Failed</span><span class="fw-bold text-danger"><field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6">
-                  <div class="card h-100" invisible="not kpi_ai_fill_total">
-                    <div class="card-body py-2 px-3">
-                      <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="fw-bolder text-uppercase small">AI auto-fill</span>
-                        <span class="badge bg-success" invisible="not kpi_ai_fill_active"><i class="fa fa-spinner fa-spin me-1"/>Running</span>
-                        <span class="badge bg-light text-muted border" invisible="kpi_ai_fill_active">Idle</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <div invisible="not kpi_ai_fill_total">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="fw-bolder small">AI auto-fill</span>
+                    <span class="badge bg-success" invisible="not kpi_ai_fill_active"><i class="fa fa-spinner fa-spin me-1"/>Running</span>
+                    <span class="badge bg-light text-muted border" invisible="kpi_ai_fill_active">Idle</span>
+                  </div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1">
                         <span class="text-muted small"><i class="fa fa-magic me-1"/>SEO fields filled</span>
                         <span class="fw-bold">
                           <field name="kpi_ai_fill_done" readonly="1" nolabel="1"/> / <field name="kpi_ai_fill_total" readonly="1" nolabel="1"/>
                           (<field name="kpi_ai_fill_pct" readonly="1" nolabel="1"/>%)
                         </span>
                       </div>
-                      <field name="kpi_ai_fill_pct" widget="progressbar" nolabel="1" readonly="1" options="{'max_value': 100}"/>
-                      <div class="d-flex justify-content-between border-bottom py-1 mt-1"><span class="text-warning small"><i class="fa fa-hourglass-half me-1"/>Remaining</span><span class="fw-bold"><field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/></span></div>
-                      <div class="d-flex justify-content-between py-1"><span class="text-info small"><i class="fa fa-tags me-1"/>Posts to categorize</span><span class="fw-bold"><field name="kpi_blog_taxonomy_remaining" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-hourglass-half me-1"/>Remaining</span><span class="fw-bold"><field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-info small"><i class="fa fa-tags me-1"/>Posts to categorize</span><span class="fw-bold"><field name="kpi_blog_taxonomy_remaining" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
                 </div>
@@ -498,17 +481,19 @@
                         icon="fa-bar-chart"/>
               </div>
               <!-- ============================== GSC KPIs ============================== -->
-              <div class="card mb-2">
-                <div class="card-body py-2 px-3">
-                  <div class="fw-bolder text-uppercase small mb-2">Google Search Console</div>
-                  <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-google me-1"/>Accounts connected</span><span class="fw-bold"><field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/></span></div>
-                  <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-globe me-1"/>Sites</span><span class="fw-bold"><field name="kpi_gsc_sites" readonly="1" nolabel="1"/></span></div>
-                  <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks (28d)</span><span class="fw-bold"><field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/></span></div>
-                  <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions (28d)</span><span class="fw-bold"><field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/></span></div>
-                  <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted small"><i class="fa fa-search me-1"/>Queries tracked (28d)</span><span class="fw-bold"><field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/></span></div>
-                  <div class="d-flex justify-content-between py-1"><span class="text-muted small"><i class="fa fa-sort-numeric-asc me-1"/>Avg position (28d)</span><span class="fw-bold"><field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/></span></div>
-                  <div class="text-muted small mt-1" invisible="not kpi_gsc_last_pull">
-                    Last pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
+              <div class="mb-2">
+                <div class="fw-bolder small mb-1">Google Search Console</div>
+                <div class="card d-inline-block">
+                  <div class="card-body py-1 px-3">
+                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-google me-1"/>Accounts connected</span><span class="fw-bold"><field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/></span></div>
+                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-globe me-1"/>Sites</span><span class="fw-bold"><field name="kpi_gsc_sites" readonly="1" nolabel="1"/></span></div>
+                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks (28d)</span><span class="fw-bold"><field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/></span></div>
+                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions (28d)</span><span class="fw-bold"><field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/></span></div>
+                    <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-search me-1"/>Queries tracked (28d)</span><span class="fw-bold"><field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/></span></div>
+                    <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-sort-numeric-asc me-1"/>Avg position (28d)</span><span class="fw-bold"><field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/></span></div>
+                    <div class="text-muted small mt-1" invisible="not kpi_gsc_last_pull">
+                      Last pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
+                    </div>
                   </div>
                 </div>
               </div>

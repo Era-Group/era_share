@@ -1577,6 +1577,188 @@ class EraSeoSuiteHub(models.Model):
         ], limit=self._UNATTENDED_FIX_BATCH)
         self._apply_safe_fixes(findings, 'daily_ai_fix')
 
+    # ------------------------------------------------------------------
+    # Monthly sitemap rebuild + link health
+    # ------------------------------------------------------------------
+
+    _SITEMAP_FETCH_TIMEOUT_S = 10
+    _SITEMAP_MAX_URLS = 5000
+    _SITEMAP_BUDGET_S = 1500   # wall-clock cap for the whole validation pass
+
+    def cron_monthly_sitemap_rebuild(self):
+        """MONTHLY: rebuild the sitemap, verify every link still resolves, prune
+        pages that are gone, and report broken internal links.
+
+        1. Drop the cached sitemap attachments and regenerate them fresh (Odoo
+           lists only PUBLISHED, existing pages, so deleted/unpublished pages
+           leave the sitemap automatically).
+        2. GET every URL in the fresh sitemap; 404/410 means a dead page — when
+           pruning is on, unpublish the matching website.page so it leaves the
+           site and the next sitemap, then rebuild once more.
+        3. Scan published pages' content for internal links and report any that
+           are broken ('missed links') — logged, not auto-edited.
+
+        Gates (ir.config_parameter):
+          era_seo.sitemap_cron_active    default True  — master switch
+          era_seo.sitemap_prune_enabled  default True  — unpublish dead pages
+        """
+        if _icp_get(self.env, 'era_seo.sitemap_cron_active', 'True') not in _TRUE:
+            return
+        base = (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').rstrip('/')
+        if not base:
+            _logger.warning('ERA SEO sitemap cron: web.base.url not set; skipping.')
+            return
+
+        import json as _json
+        import time as _time
+        deadline = _time.monotonic() + self._SITEMAP_BUDGET_S
+
+        self._sitemap_clear_cache()
+        urls = self._sitemap_collect_urls(base)            # regenerates + caches
+        summary = self._sitemap_validate_and_prune(base, urls, deadline)
+        if summary.get('pruned'):
+            self._sitemap_clear_cache()                    # drop pruned pages
+            self._sitemap_collect_urls(base)
+        summary['missed_links'] = self._sitemap_missed_links(base, urls, deadline)
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('era_seo.sitemap_last_run',
+                      fields.Datetime.to_string(fields.Datetime.now()))
+        ICP.set_param('era_seo.sitemap_last_summary', _json.dumps(summary))
+        _logger.info('ERA SEO monthly sitemap rebuild: %s', summary)
+        return summary
+
+    def _sitemap_clear_cache(self):
+        """Delete cached sitemap attachments so the next request regenerates a
+        fresh sitemap (which excludes deleted / unpublished pages)."""
+        atts = self.env['ir.attachment'].sudo().search(
+            [('name', '=like', '/sitemap%')])
+        n = len(atts)
+        if n:
+            atts.unlink()
+            self.env.cr.commit()   # durable before we re-fetch to regenerate
+        _logger.info('ERA SEO sitemap: cleared %d cached attachment(s).', n)
+        return n
+
+    def _sitemap_collect_urls(self, base):
+        """Fetch the sitemap fresh over HTTP (regenerating + re-caching it) and
+        return every page path in it, following the index to child sitemaps."""
+        import re as _re
+        import requests as _requests
+        from urllib.parse import urlparse as _urlparse
+        out, seen = [], set()
+        headers = {'User-Agent': 'ERA-SEO-Sitemap/1.0'}
+
+        def _fetch(url, depth=0):
+            if depth > 3 or url in seen:
+                return
+            seen.add(url)
+            try:
+                r = _requests.get(url, timeout=self._SITEMAP_FETCH_TIMEOUT_S,
+                                  headers=headers)
+                if r.status_code != 200 or not r.text:
+                    return
+                text = r.text
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning('ERA SEO sitemap: fetch %s failed (%s)', url, exc)
+                return
+            for loc in _re.findall(r'<loc>\s*([^<\s]+)\s*</loc>', text):
+                path = _urlparse(loc).path or loc
+                if path.endswith('.xml') and 'sitemap' in path:
+                    _fetch(loc, depth + 1)          # child sitemap
+                elif path.startswith('/'):
+                    out.append(path)
+
+        _fetch(base + '/sitemap.xml')
+        return list(dict.fromkeys(out))
+
+    def _sitemap_validate_and_prune(self, base, urls, deadline):
+        """GET each sitemap URL; unpublish pages that are gone (404/410) when
+        pruning is enabled. Returns a summary dict."""
+        import time as _time
+        import requests as _requests
+        prune = _icp_get(self.env, 'era_seo.sitemap_prune_enabled',
+                         'True') in _TRUE
+        Page = self.env['website.page'].sudo()
+        headers = {'User-Agent': 'ERA-SEO-Sitemap/1.0'}
+        checked = broken = pruned = errors = 0
+        broken_urls = []
+        for path in urls[:self._SITEMAP_MAX_URLS]:
+            if _time.monotonic() > deadline:
+                _logger.warning('ERA SEO sitemap: validation budget hit at %d/%d.',
+                                checked, len(urls))
+                break
+            try:
+                resp = _requests.get(
+                    base + path, timeout=self._SITEMAP_FETCH_TIMEOUT_S,
+                    allow_redirects=False, headers=headers)
+                code = resp.status_code
+            except Exception:  # noqa: BLE001
+                errors += 1
+                continue
+            checked += 1
+            if code in (404, 410):
+                broken += 1
+                broken_urls.append(path)
+                if prune:
+                    dead = Page.search(
+                        [('url', '=', path), ('is_published', '=', True)])
+                    if dead:
+                        dead.write({'is_published': False})
+                        pruned += len(dead)
+                        _logger.info(
+                            'ERA SEO sitemap: unpublished dead page %s (HTTP %s).',
+                            path, code)
+        return {
+            'in_sitemap': len(urls), 'checked': checked, 'broken': broken,
+            'pruned': pruned, 'errors': errors, 'broken_urls': broken_urls[:50],
+        }
+
+    def _sitemap_missed_links(self, base, sitemap_urls, deadline):
+        """Find broken internal links inside published pages' content. Reports
+        (logs) them; never edits content automatically. Returns a summary."""
+        import re as _re
+        import time as _time
+        import requests as _requests
+        from urllib.parse import urlparse as _urlparse
+        IrHttp = self.env.get('ir.http')
+        ok = set(u.rstrip('/') for u in sitemap_urls)
+        site = self.env['website'].sudo().search([], limit=1)
+        lang = site.default_lang_id.code if site and site.default_lang_id else None
+        Page = self.env['website.page'].sudo()
+        if lang:
+            Page = Page.with_context(lang=lang)
+        # Collect unique internal link targets not already known-good.
+        candidates = {}
+        for pg in Page.search([('is_published', '=', True)]):
+            html = pg.arch or ''
+            for href in _re.findall(r'href=["\']([^"\']+)["\']', html):
+                path = (_urlparse(href).path or '').strip()
+                if not path.startswith('/') or path.rstrip('/') in ok:
+                    continue
+                if IrHttp is not None and (IrHttp._era_is_asset_like(path)
+                                           or IrHttp._era_is_system_path(path)):
+                    continue
+                candidates.setdefault(path, pg.url or pg.name)
+        headers = {'User-Agent': 'ERA-SEO-Sitemap/1.0'}
+        dead = []
+        for path, src in list(candidates.items())[:self._SITEMAP_MAX_URLS]:
+            if _time.monotonic() > deadline:
+                break
+            try:
+                resp = _requests.get(base + path, allow_redirects=False,
+                                     timeout=self._SITEMAP_FETCH_TIMEOUT_S,
+                                     headers=headers)
+                if resp.status_code in (404, 410):
+                    dead.append({'url': path, 'on_page': src})
+                    _logger.info('ERA SEO sitemap: missed link %s (on %s).',
+                                 path, src)
+            except Exception:  # noqa: BLE001
+                continue
+        return {'scanned': len(candidates), 'broken': len(dead),
+                'links': dead[:50]}
+
     def _apply_safe_fixes(self, findings, tag):
         """Shared suggest+apply step for the auto-fix crons.
 

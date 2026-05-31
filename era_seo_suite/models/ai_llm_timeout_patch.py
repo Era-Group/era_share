@@ -27,7 +27,7 @@ _logger = logging.getLogger(__name__)
 
 
 _PATCH_FLAG = '_era_seo_timeout_patched'
-_DEFAULT_TIMEOUT_S = 120
+_DEFAULT_TIMEOUT_S = 180
 _ICP_KEY = 'era_seo.ai_request_timeout'
 
 

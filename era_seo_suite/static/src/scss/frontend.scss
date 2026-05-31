@@ -25,9 +25,8 @@
     gap: 6px;
     margin: 0 !important;                 // override the template's my-3
 
-    > span {                              // the "Share:" label
-        margin: 0 0 2px 0 !important;
-        white-space: nowrap;
+    > span {                              // the "Share:" label — hidden
+        display: none !important;
     }
     .btn {
         margin: 0 !important;             // gap handles the spacing

@@ -348,8 +348,8 @@
                   </div>
                 </div>
 
-              <!-- ============================== HEALTH + FINDINGS ============================== -->
-              <div class="d-flex flex-wrap gap-3 mb-3">
+              <!-- ============================== ALL KPI BLOCKS ============================== -->
+              <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
                 <div>
                   <div class="fw-bolder small mb-1">Site health</div>
                   <div class="card d-inline-block">
@@ -404,35 +404,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- ============================== COVERAGE ============================== -->
-              <div class="mb-3" invisible="not kpi_published_pages">
-                <div class="fw-bolder small mb-1">SEO coverage (% of published pages)</div>
-                <div class="card d-inline-block" style="min-width:400px;">
-                  <div class="card-body py-1 px-3">
-                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
-                      <span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span>
-                      <span class="fw-bold"><field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
-                      <span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span>
-                      <span class="fw-bold"><field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-baseline border-bottom py-1">
-                      <span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span>
-                      <span class="fw-bold"><field name="kpi_coverage_og_image_pct" readonly="1" nolabel="1"/>%</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-baseline py-1">
-                      <span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span>
-                      <span class="fw-bold"><field name="kpi_coverage_schema_pct" readonly="1" nolabel="1"/>%</span>
+                <div invisible="not kpi_published_pages">
+                  <div class="fw-bolder small mb-1">SEO coverage</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span><span class="fw-bold"><field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span><span class="fw-bold"><field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span><span class="fw-bold"><field name="kpi_coverage_og_image_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span><span class="fw-bold"><field name="kpi_coverage_schema_pct" readonly="1" nolabel="1"/>%</span></div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- ============================== AI WORKFLOW + AUTO-FILL ============================== -->
-              <div class="d-flex flex-wrap gap-3 mb-3">
                 <div>
                   <div class="fw-bolder small mb-1">AI workflow</div>
                   <div class="card d-inline-block">
@@ -451,13 +433,7 @@
                   </div>
                   <div class="card d-inline-block">
                     <div class="card-body py-1 px-3">
-                      <div class="d-flex justify-content-between gap-4 border-bottom py-1">
-                        <span class="text-muted small"><i class="fa fa-magic me-1"/>SEO fields filled</span>
-                        <span class="fw-bold">
-                          <field name="kpi_ai_fill_done" readonly="1" nolabel="1"/> / <field name="kpi_ai_fill_total" readonly="1" nolabel="1"/>
-                          (<field name="kpi_ai_fill_pct" readonly="1" nolabel="1"/>%)
-                        </span>
-                      </div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-magic me-1"/>SEO fields filled</span><span class="fw-bold"><field name="kpi_ai_fill_done" readonly="1" nolabel="1"/> / <field name="kpi_ai_fill_total" readonly="1" nolabel="1"/> (<field name="kpi_ai_fill_pct" readonly="1" nolabel="1"/>%)</span></div>
                       <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-hourglass-half me-1"/>Remaining</span><span class="fw-bold"><field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/></span></div>
                       <div class="d-flex justify-content-between gap-4 py-1"><span class="text-info small"><i class="fa fa-tags me-1"/>Posts to categorize</span><span class="fw-bold"><field name="kpi_blog_taxonomy_remaining" readonly="1" nolabel="1"/></span></div>
                     </div>

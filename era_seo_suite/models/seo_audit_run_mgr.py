@@ -580,6 +580,14 @@ class EraSeoAuditRun(models.Model):
                     'resolved_date': False,
                     'resolved_user_id': False,
                 })
+            # Re-detecting a finding whose AI fix was already 'applied' proves the
+            # fix did NOT resolve the defect (a working fix wouldn't be re-found —
+            # it would auto-resolve instead). Reset to 'none' so the misleading
+            # 'Applied' badge clears and the finding is eligible for a fresh fix
+            # attempt (manual, or the safe-fix cron for auto-fixable codes).
+            # 'suggested' is left intact — that proposal is still pending Apply.
+            if existing.ai_status == 'applied':
+                vals['ai_status'] = 'none'
             existing.write(vals)
         else:
             vals.update({

@@ -49,7 +49,9 @@
     "addressCountry": "{{ company.country_id.code | default("") }}"
   },
   "areaServed": "{{ company.country_id.name | default("") }}",
-  "sameAs": {{ company.get_era_seo_social_profiles_json | json }}
+  "sameAs": {{ company.get_era_seo_social_profiles_json | json }},
+  "foundingDate": "{{ settings.founding_date | default("") }}",
+  "knowsAbout": {{ company.get_era_seo_knows_about | json }}
 }]]></field>
     </record>
 

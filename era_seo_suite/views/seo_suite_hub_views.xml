@@ -73,6 +73,9 @@
                  widget="era_auto_refresh_when_true"
                  options="{'model': 'era.seo.audit.run', 'method': 'get_audit_pending_state'}"
                  invisible="1"/>
+          <button name="action_open_audit_findings" type="object"
+                  string="Audit Findings" icon="fa-list-ul"
+                  class="btn-secondary"/>
           <button name="%(era_seo_suite.action_era_seo_onboarding_wizard)d"
                   type="action"
                   string="Setup Wizard" icon="fa-magic"

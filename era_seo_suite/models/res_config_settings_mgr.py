@@ -136,3 +136,15 @@ class ResCompany(models.Model):
         base = ICP.get_param('web.base.url', '')
         return '{}/web/image/res.company/{}/logo'.format(base, self.id) if base else ''
 
+    def get_era_seo_knows_about(self):
+        """Return a list of topics/areas of expertise for schema.org ``knowsAbout``.
+
+        Reads the comma-separated ``era_seo.knows_about`` system parameter and
+        returns the non-blank entries (empty list when unset), so the engine's
+        ``| json`` filter renders a proper JSON array.
+        """
+        self.ensure_one()
+        raw = self.env['ir.config_parameter'].sudo().get_param(
+            'era_seo.knows_about', '')
+        return [t.strip() for t in (raw or '').split(',') if t.strip()]
+

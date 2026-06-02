@@ -3076,6 +3076,18 @@ class EraSeoSuiteHub(models.Model):
         })
         return action
 
+    def action_open_audit_findings(self):
+        """Open ALL unresolved audit findings — every severity, including the
+        info-level GEO recommendations that the Priority Findings view filters
+        out. This is the dashboard's full Findings list."""
+        self.ensure_one()
+        action = self._era_read_action('era_seo_suite.action_seo_audit_finding')
+        action.update({
+            'name': _('Audit Findings'),
+            'domain': [('is_resolved', '=', False)],
+        })
+        return action
+
     def action_open_ai_review_queue(self):
         """Open AI suggestions that are ready for review."""
         self.ensure_one()

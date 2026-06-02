@@ -1,1 +1,19 @@
-<odoo/>
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Entity-enrichment defaults for the Organization schema (foundingDate,
+    knowsAbout). Seeded once (noupdate) so admins can edit them under
+    Settings > Technical > System Parameters without an upgrade overwriting
+    their changes. Values reflect the site's published facts.
+  -->
+  <data noupdate="1">
+    <record id="param_era_seo_founding_date" model="ir.config_parameter">
+      <field name="key">era_seo.founding_date</field>
+      <field name="value">2000</field>
+    </record>
+    <record id="param_era_seo_knows_about" model="ir.config_parameter">
+      <field name="key">era_seo.knows_about</field>
+      <field name="value">Odoo ERP, تنفيذ أودو, تخصيص أودو, الفاتورة الإلكترونية (ZATCA), هيئة الزكاة والضريبة, التأمينات الاجتماعية (GOSI), منصة مقيم, التصنيع ومنحة مصانع المستقبل, المقاولات والإنشاءات, الموارد البشرية, المستشفيات والمراكز الطبية, المختبرات (LIMS), إدارة الممتلكات (PMS), الاستضافة السحابية, الدعم والتدريب</field>
+    </record>
+  </data>
+</odoo>

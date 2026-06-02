@@ -299,6 +299,58 @@ dates, or statistics.
 confidence. This output is always reviewed by a human before it is applied."""
 
 
+# Stable taxonomy of GEO content dimensions the AI review can flag. The codes
+# double as audit-finding check codes (prefix geo_ai_), so they must stay stable.
+GEO_REVIEW_CODES = (
+    'geo_ai_answer_summary',
+    'geo_ai_specificity',
+    'geo_ai_question_headings',
+    'geo_ai_proof',
+    'geo_ai_comparison',
+    'geo_ai_entity_clarity',
+    'geo_ai_language_register',
+)
+
+# Context for the AI GEO content review. The model judges ONE page on the fixed
+# dimensions above and returns only the ones that are genuinely a problem, each
+# with a concrete, page-specific recommendation.
+GEO_REVIEW_CONTEXT = """IMPORTANT: for THIS task, ignore any earlier output-format \
+instruction. You are a GEO (Generative Engine Optimization) reviewer judging how well \
+ONE web page can be understood, extracted, and CITED by AI answer engines (ChatGPT, \
+Perplexity, Google AI Overviews, Gemini) so the site is recommended as a source.
+
+Judge the page ONLY on these fixed dimensions (use the exact code):
+  - geo_ai_answer_summary: a concise, factual answer/definition near the top that \
+directly states what the page/business is (who, what, where).
+  - geo_ai_specificity: concrete, verifiable facts (numbers, dates, %, prices, named \
+entities) versus vague, unquantified marketing claims.
+  - geo_ai_question_headings: section headings phrased as the real questions users ask \
+(cost, timeline, how, comparisons), not just marketing slogans.
+  - geo_ai_proof: extractable TEXT proof — case studies / testimonials with specifics \
+(client, industry, measurable result) — not image-only logos.
+  - geo_ai_comparison: a comparison table or structured comparison where the topic \
+invites one (vs alternatives, tiers, editions).
+  - geo_ai_entity_clarity: an unambiguous statement of organization identity, location, \
+credentials, and who it serves.
+  - geo_ai_language_register: substantive/answer content written in clear standard \
+language an engine quotes well (for Arabic, Modern Standard Arabic) — not only \
+colloquial dialect.
+
+Reply with ONE JSON object and nothing else — no markdown:
+  {"issues": [{"code": "<one code>", "severity": "info"|"warning", \
+"title": "<short>", "detail": "<why it hurts AI citation, 1-2 sentences>", \
+"recommendation": "<specific, actionable fix for THIS page>"}], \
+"summary": "<one sentence>"}
+
+Rules:
+- Include a dimension in "issues" ONLY when it is genuinely a problem on this page; \
+omit dimensions that are already good.
+- Every recommendation must be concrete and specific to THIS page's topic, never generic.
+- Write title / detail / recommendation in the page's own language (Arabic page → Arabic).
+- Never invent facts about the business.
+- severity: "warning" when it materially blocks citation; otherwise "info"."""
+
+
 def _icp(env, key, default=None):
     return env['ir.config_parameter'].sudo().get_param(key, default)
 
@@ -1247,6 +1299,70 @@ class AIClient:
             'reason': str(parsed.get('reason') or '').strip(),
             'confidence': float(parsed.get('confidence') or 0.0),
         }
+
+    def geo_content_review(self, record):
+        """Review one page's content for GEO / AI-citability.
+
+        Asks the agent to judge the page on the fixed GEO_REVIEW_CODES
+        dimensions and returns a list of issue dicts for the dimensions that
+        are genuinely a problem::
+
+            [{'code', 'severity', 'title', 'detail', 'recommendation', 'model'}]
+
+        Unknown codes and entries missing a title/recommendation are dropped,
+        so the caller can trust every returned code is a known dimension.
+
+        :raises AIUnavailable / ValueError
+        """
+        ok, reason = self.is_available()
+        if not ok:
+            raise AIUnavailable(reason)
+        agent = self._resolve_agent()
+        prompt = self._build_geo_review_prompt(record)
+        response = agent.get_direct_response(
+            prompt=prompt, context_message=GEO_REVIEW_CONTEXT)
+        parsed = self._parse_json(response[0] if response else '')
+        model = agent.llm_model or _('AI agent')
+        issues = []
+        for item in (parsed.get('issues') or []):
+            if not isinstance(item, dict):
+                continue
+            code = (item.get('code') or '').strip()
+            title = (item.get('title') or '').strip()
+            recommendation = (item.get('recommendation') or '').strip()
+            if code not in GEO_REVIEW_CODES or not title or not recommendation:
+                continue
+            severity = item.get('severity')
+            if severity not in ('info', 'warning'):
+                severity = 'info'
+            issues.append({
+                'code': code,
+                'severity': severity,
+                'title': title,
+                'detail': (item.get('detail') or '').strip(),
+                'recommendation': recommendation,
+                'model': model,
+            })
+        return issues
+
+    @classmethod
+    def _build_geo_review_prompt(cls, record):
+        excerpt, h1, detected = cls._extract_page_signal(record)
+        url = getattr(record, 'url', None) or '/'
+        return (
+            'INPUT:\n'
+            '  url: {url}\n'
+            '  page_title_or_h1: "{h1}"\n'
+            '  language_hint: {detected}\n'
+            '  page_excerpt (first ~1500 chars): "{excerpt}"\n'
+            'Judge the dimensions described in the system instructions and '
+            'return the JSON object.'.format(
+                url=url,
+                h1=(h1 or '').replace('"', "'"),
+                detected=detected,
+                excerpt=(excerpt or '').replace('"', "'"),
+            )
+        )
 
     def propose_article(self, business_context, past_titles, existing_categories,
                         lang_code=None, trending_now=None, prompt_addendum=None,

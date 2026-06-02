@@ -14,6 +14,7 @@ from . import (
     test_fill_seo,
     test_finding_cleanup,
     test_geo_ai_fix,
+    test_geo_ai_review,
     test_geo_content_checks,
     test_hreflang,
     test_page_faq_schema,

@@ -9,6 +9,7 @@ from . import (
     seo_mixin_ai,
     res_config_settings_geo,
     seo_audit_run_geo,
+    seo_geo_ai_review,
     seo_mixin_geo,
     blog_post_blog,
     blog_post_blogai,

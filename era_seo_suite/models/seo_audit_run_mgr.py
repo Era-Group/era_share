@@ -469,8 +469,12 @@ class EraSeoAuditRun(models.Model):
         ])
         seen = getattr(_run_local, 'seen_finding_keys', set())
         stale = open_findings.filtered(
-            lambda f: (f.check_code, f.res_model, f.res_id,
-                       f.lang_id.id if f.lang_id else False) not in seen
+            # geo_ai_* findings come from the on-demand AI GEO review, not the
+            # rule-based checks — this run never emits them, so excluding them
+            # here keeps a normal audit from auto-resolving the AI's verdict.
+            lambda f: not (f.check_code or '').startswith('geo_ai_')
+            and (f.check_code, f.res_model, f.res_id,
+                 f.lang_id.id if f.lang_id else False) not in seen
         )
         if stale:
             stale.write({

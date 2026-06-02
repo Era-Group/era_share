@@ -28,6 +28,10 @@
                   string="AI: Fill SEO" icon="fa-magic"
                   class="btn-secondary"
                   groups="era_seo_suite.group_era_seo_manager"/>
+          <button name="action_ai_geo_review" type="object"
+                  string="AI: GEO Review" icon="fa-robot"
+                  class="btn-secondary"
+                  groups="era_seo_suite.group_era_seo_manager"/>
         </header>
       </xpath>
       <xpath expr="//sheet" position="inside">

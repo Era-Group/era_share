@@ -16,6 +16,9 @@ from odoo import models
 _TRUE = ('True', '1', 'true', 'yes', 'on')
 _GEO_MIN_WORDS = 150          # only flag heading structure on non-trivial pages
 _GEO_SUMMARY_MIN_WORDS = 300  # only flag missing answer summary on long pages
+_GEO_FAQ_MIN_WORDS = 300      # only nudge an FAQ on substantial pages
+_GEO_FACT_MIN_WORDS = 300     # only assess factual density on substantial pages
+_GEO_FACT_MIN_FIGURES = 3     # fewer figures than this = vague for AI citation
 _GEO_ANSWER_BOTS = ('OAI-SearchBot', 'PerplexityBot', 'ChatGPT-User',
                     'Perplexity-User')
 
@@ -28,7 +31,9 @@ class EraSeoAuditRun(models.Model):
         for name in ('_check_geo_llms_txt',
                      '_check_geo_answer_bots',
                      '_check_geo_heading_structure',
-                     '_check_geo_no_answer_summary'):
+                     '_check_geo_no_answer_summary',
+                     '_check_geo_faq_schema',
+                     '_check_geo_factual_density'):
             if hasattr(self, name):
                 methods.append(getattr(self, name))
         return methods
@@ -115,3 +120,51 @@ class EraSeoAuditRun(models.Model):
                 suggested='Add 1-2 short sentences in the page\'s GEO Answer '
                           'Summary that directly answer the page question.',
             )
+
+    def _check_geo_faq_schema(self, pages):
+        """Substantial page with no FAQPage schema. Question/answer pairs are
+        the format AI answer engines extract and cite most, so flagging this
+        nudges adding an FAQ — which auto-gains FAQPage structured data."""
+        if 'era.seo.schema.instance' not in self.env:
+            return
+        Instance = self.env['era.seo.schema.instance'].sudo()
+        for p in pages:
+            if len(self._content_text(p).split()) < _GEO_FAQ_MIN_WORDS:
+                continue
+            has_faq = Instance.search_count([
+                ('res_model', '=', p._name),
+                ('res_id', '=', p.id),
+                ('template_id.schema_type', '=', 'FAQPage'),
+                ('active', '=', True),
+            ])
+            if not has_faq:
+                self._add_finding(
+                    p, 'info', 'geo_no_faq',
+                    'GEO: No FAQ for AI extraction',
+                    details='This page has substantial content but no FAQ. '
+                            'Q&A pairs are the format AI answer engines extract '
+                            'and cite most often.',
+                    suggested='Add an FAQ section (FAQ accordion snippet); it '
+                              'automatically gains FAQPage structured data.',
+                )
+
+    def _check_geo_factual_density(self, pages):
+        """Long page with very few concrete figures. AI answer engines quote
+        specific, verifiable facts (dates, quantities, %, prices) far more
+        readily than unquantified marketing claims."""
+        for p in pages:
+            words = self._content_text(p).split()
+            if len(words) < _GEO_FACT_MIN_WORDS:
+                continue
+            figures = sum(1 for w in words if any(c.isdigit() for c in w))
+            if figures < _GEO_FACT_MIN_FIGURES:
+                self._add_finding(
+                    p, 'info', 'geo_low_factual_density',
+                    'GEO: Low factual density',
+                    details='%d words but only %d contain figures. Vague, '
+                            'unquantified copy is rarely quoted by AI answer '
+                            'engines.' % (len(words), figures),
+                    suggested='Add concrete, verifiable facts — years in '
+                              'business, number of clients/projects, SLAs, '
+                              'percentages, prices — that AI can extract and cite.',
+                )

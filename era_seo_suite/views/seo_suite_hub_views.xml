@@ -64,6 +64,11 @@
                   class="btn-secondary"
                   invisible="not is_audit_pending"
                   disabled="1"/>
+          <button name="action_run_geo_content_analysis" type="object"
+                  string="GEO Content Analysis" icon="fa-robot"
+                  class="btn-secondary"
+                  invisible="is_audit_pending"
+                  confirm="Scan all pages for GEO / AI-citability content quality — answer summary, FAQ coverage, factual density, heading structure, AI-crawler access, and /llms.txt? It runs in the background; results appear under Findings (filter code starting 'geo_')."/>
           <field name="is_audit_pending"
                  widget="era_auto_refresh_when_true"
                  options="{'model': 'era.seo.audit.run', 'method': 'get_audit_pending_state'}"

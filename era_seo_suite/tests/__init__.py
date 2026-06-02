@@ -13,6 +13,7 @@ from . import (
     test_feeds,
     test_fill_seo,
     test_geo_ai_fix,
+    test_geo_content_checks,
     test_hreflang,
     test_page_faq_schema,
     test_redirects,

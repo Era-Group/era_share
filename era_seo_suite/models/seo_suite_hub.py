@@ -3134,3 +3134,23 @@ class EraSeoSuiteHub(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    def action_run_geo_content_analysis(self):
+        """Queue an audit and open the run, branded for GEO content quality.
+
+        The GEO content checks — answer summary, heading structure, FAQ
+        coverage, factual density, AI-crawler access, and /llms.txt — turn into
+        citability recommendations under Findings (filter check code starting
+        ``geo_``). Generic: works on any database with this module installed.
+        """
+        self.ensure_one()
+        run = self.env['era.seo.audit.run'].create({})
+        run._queue_audit_run()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('GEO Content Analysis'),
+            'res_model': 'era.seo.audit.run',
+            'res_id': run.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

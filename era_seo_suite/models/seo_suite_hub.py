@@ -3136,21 +3136,25 @@ class EraSeoSuiteHub(models.Model):
         }
 
     def action_run_geo_content_analysis(self):
-        """Queue an audit and open the run, branded for GEO content quality.
+        """Queue a fresh audit, then open the GEO content recommendations.
 
-        The GEO content checks — answer summary, heading structure, FAQ
-        coverage, factual density, AI-crawler access, and /llms.txt — turn into
-        citability recommendations under Findings (filter check code starting
-        ``geo_``). Generic: works on any database with this module installed.
+        Runs the audit in the background (re-evaluating every page), and lands
+        the user directly on the GEO findings — the content-quality
+        recommendations (answer summary, FAQ coverage, factual density,
+        heading structure, AI-crawler access, /llms.txt). These are info-level
+        findings, so this view surfaces them on purpose instead of leaving them
+        behind the critical/warning Priority Findings filter. The list reflects
+        the latest completed scan and refreshes when the queued run finishes.
+        Generic: works on any database with this module installed.
         """
         self.ensure_one()
-        run = self.env['era.seo.audit.run'].create({})
-        run._queue_audit_run()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('GEO Content Analysis'),
-            'res_model': 'era.seo.audit.run',
-            'res_id': run.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
+        self.env['era.seo.audit.run'].create({})._queue_audit_run()
+        action = self._era_read_action('era_seo_suite.action_seo_audit_finding')
+        action.update({
+            'name': _('GEO Content Recommendations'),
+            'domain': [
+                ('is_resolved', '=', False),
+                ('check_code', '=like', 'geo%'),
+            ],
+        })
+        return action

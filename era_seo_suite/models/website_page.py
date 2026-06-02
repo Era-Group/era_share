@@ -326,16 +326,35 @@ class WebsitePage(models.Model):
             )
             instances.unlink()
 
+    def _cleanup_audit_findings(self):
+        """Delete audit findings targeting these pages.
+
+        Findings use a polymorphic (res_model, res_id) reference with no
+        DB-level CASCADE, so deleting a page would otherwise leave orphaned
+        findings whose target record has vanished — the AI 'Suggest Fix' then
+        errors with 'target record vanished'. Cleaning them here keeps the
+        Findings list in step with the pages that actually exist.
+        """
+        if 'era.seo.audit.finding' not in self.env:
+            return
+        findings = self.env['era.seo.audit.finding'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', 'in', self.ids),
+        ])
+        if findings:
+            findings.unlink()
+
     def unlink(self):
-        """Override to cascade-delete schema instances + hreflang entries.
+        """Override to cascade-delete schema instances + hreflang + findings.
 
         Per SPEC §8 Step 2 / §12: polymorphic FKs have no DB-level CASCADE,
-        so we clean up both schema instances and hreflang rows here. See the
-        ONDELETE PATTERN comment at the top of this file for how to
+        so we clean up schema instances, hreflang rows and audit findings here.
+        See the ONDELETE PATTERN comment at the top of this file for how to
         replicate this in other host models.
         """
         self._cleanup_schema_instances()
         self._cleanup_era_hreflang()
+        self._cleanup_audit_findings()
         return super().unlink()
 
     # --- Validation helpers --------------------------------------------------

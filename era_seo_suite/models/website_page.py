@@ -1,9 +1,16 @@
 import logging
+import re
 import urllib.parse
+from html import unescape
+
+from lxml import html as lxml_html
 
 from odoo import api, models
 
 _logger = logging.getLogger(__name__)
+
+# Schema template code for the FAQPage auto-derived from a page's content.
+_PAGE_FAQ_SCHEMA_CODE = 'page_faq_page'
 
 # ---------------------------------------------------------------------------
 # ONDELETE PATTERN FOR POLYMORPHIC SCHEMA INSTANCES
@@ -51,6 +58,14 @@ class WebsitePage(models.Model):
             _logger.warning(
                 'website.page.create: hreflang sync skipped (%s)', exc,
             )
+        # Auto-attach the FAQPage schema when the new page already carries an
+        # FAQ accordion (e.g. a page cloned from an FAQ-bearing template).
+        try:
+            records._sync_era_faq_schema()
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                'website.page.create: FAQ schema sync skipped (%s)', exc,
+            )
         return records
 
     # ERA SEO field  <->  stock website.seo.metadata field
@@ -84,6 +99,16 @@ class WebsitePage(models.Model):
             except Exception as exc:  # noqa: BLE001
                 _logger.warning(
                     'website.page.write: hreflang sync skipped (%s)', exc,
+                )
+        # Refresh the FAQPage schema when content changes through the page
+        # record itself. Editor saves that go via ir.ui.view (the common case)
+        # are handled by the ir.ui.view override.
+        if any(k in vals for k in ('arch', 'arch_db', 'arch_base', 'view_id')):
+            try:
+                self._sync_era_faq_schema()
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning(
+                    'website.page.write: FAQ schema sync skipped (%s)', exc,
                 )
         return result
 
@@ -120,6 +145,120 @@ class WebsitePage(models.Model):
                 update[era_field] = value
         if update:
             self.with_context(_era_no_sync=True).write(update)
+
+    # --- FAQPage schema (auto-derived live from page content) ----------------
+
+    @staticmethod
+    def _era_clean_text(text):
+        """Decode HTML entities, then collapse all whitespace (including the
+        resulting non-breaking spaces) to single spaces; '' for falsy input.
+
+        A literal ``&nbsp;`` can survive in the stored arch (double-escaped
+        content); unescaping keeps such entities out of the JSON-LD answer
+        text so the structured data reads cleanly.
+        """
+        if not text:
+            return ''
+        return re.sub(r'\s+', ' ', unescape(text)).strip()
+
+    def era_faq_main_entity(self):
+        """Return this page's FAQ as a schema.org ``FAQPage.mainEntity`` list,
+        parsed LIVE from the page content. Returns ``[]`` when the page has no
+        FAQ accordion.
+
+        Resolved at render time by the ``page_faq_page`` JSON-LD template
+        (``{{ record.era_faq_main_entity | json }}``), so the structured data
+        always reflects current content — including the active language — with
+        nothing stored to go stale.
+
+        Supports the Odoo ``s_faq_collapse`` snippet (``card-header`` /
+        ``card-body``) and the Bootstrap ``accordion-item`` markup. Each
+        question pairs with the answer inside the SAME accordion item, and only
+        cards living inside an accordion / FAQ container are considered — so
+        unrelated ``.card-body`` blocks elsewhere on the page (pricing, blog,
+        team cards, …) are never mistaken for an answer. Never raises.
+        """
+        self.ensure_one()
+        try:
+            arch = self.arch or ''
+            # Cheap pre-filter: skip the lxml parse entirely on the vast
+            # majority of pages, which have no FAQ accordion markup.
+            if 's_faq_collapse' not in arch and 'accordion' not in arch:
+                return []
+            tree = lxml_html.fromstring(arch)
+        except Exception:  # noqa: BLE001
+            return []
+
+        def _in_faq_context(node):
+            anc = node.getparent()
+            while anc is not None:
+                cls = anc.get('class') or ''
+                if 'accordion' in cls or 's_faq_collapse' in cls:
+                    return True
+                anc = anc.getparent()
+            return False
+
+        def _first_text(item, classes):
+            for cls in classes:
+                found = item.find_class(cls)
+                if found:
+                    return self._era_clean_text(found[0].text_content())
+            return ''
+
+        items = tree.find_class('accordion-item') + [
+            card for card in tree.find_class('card') if _in_faq_context(card)
+        ]
+        main_entity, seen = [], set()
+        for item in items:
+            question = _first_text(item, ['accordion-button', 'card-header'])
+            answer = _first_text(item, ['accordion-body', 'card-body'])
+            if (question and answer and len(question) > 2 and len(answer) > 2
+                    and question not in seen):
+                seen.add(question)
+                main_entity.append({
+                    '@type': 'Question',
+                    'name': question,
+                    'acceptedAnswer': {'@type': 'Answer', 'text': answer},
+                })
+        return main_entity
+
+    def _sync_era_faq_schema(self):
+        """Attach a ``page_faq_page`` schema instance to pages whose content
+        has an FAQ accordion; remove it from pages that no longer do.
+
+        Idempotent and side-effect-safe. The instance stores no ``data_json``
+        — the Q&A pairs are resolved live by the template from
+        :meth:`era_faq_main_entity`, so there is nothing to keep in sync beyond
+        the instance's existence.
+        """
+        if 'era.seo.schema.instance' not in self.env:
+            return
+        Template = self.env['era.seo.schema.template'].sudo()
+        Instance = self.env['era.seo.schema.instance'].sudo()
+        faq_tpl = Template.search([('code', '=', _PAGE_FAQ_SCHEMA_CODE)], limit=1)
+        if not faq_tpl:
+            return
+        for page in self.sudo():
+            if not page.id:
+                continue
+            try:
+                has_faq = bool(page.era_faq_main_entity())
+            except Exception:  # noqa: BLE001
+                has_faq = False
+            existing = Instance.search([
+                ('res_model', '=', page._name),
+                ('res_id', '=', page.id),
+                ('template_id', '=', faq_tpl.id),
+            ], limit=1)
+            if has_faq and not existing:
+                Instance.create({
+                    'template_id': faq_tpl.id,
+                    'res_model': page._name,
+                    'res_id': page.id,
+                    'active': True,
+                })
+            elif existing and not has_faq:
+                existing.unlink()
 
     # --- Enrich OG / Twitter via stock get_website_meta() override -----------
 

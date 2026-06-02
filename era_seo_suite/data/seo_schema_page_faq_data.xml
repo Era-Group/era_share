@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Page FAQ JSON-LD template: a FAQPage whose mainEntity is resolved LIVE
+    from the website page's content via record.era_faq_main_entity.
+
+    Unlike blog_faq_page (which reads a stored data_json populated from
+    era.blog.faq rows), this template needs no stored copy: the engine
+    auto-calls the bound method at render time, so the Q&A always matches the
+    current content and the active language. The instance is auto-attached /
+    removed by website.page._sync_era_faq_schema (on page create/write and on
+    ir.ui.view content saves).
+
+    noupdate="0" so an upgrade refreshes the body if the schema changes.
+  -->
+  <data noupdate="0">
+    <record id="schema_tpl_page_faq_page" model="era.seo.schema.template">
+      <field name="name">Page FAQ</field>
+      <field name="code">page_faq_page</field>
+      <field name="schema_type">FAQPage</field>
+      <field name="category">content</field>
+      <field name="description">FAQPage auto-derived live from a website page's FAQ accordion (s_faq_collapse / Bootstrap accordion). Attached automatically to pages that contain an FAQ; the Q&amp;A pairs are read from the page content at render time.</field>
+      <field name="documentation_url">https://schema.org/FAQPage</field>
+      <field name="required_fields_json">["record.seo_title"]</field>
+      <field name="is_default">False</field>
+      <field name="body"><![CDATA[{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "name": "{{ record.seo_title | default("") }}",
+  "url": "{{ record.seo_canonical_url | default("") }}",
+  "mainEntity": {{ record.era_faq_main_entity | json }}
+}]]></field>
+    </record>
+  </data>
+</odoo>

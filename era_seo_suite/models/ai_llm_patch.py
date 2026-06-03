@@ -21,19 +21,30 @@ from odoo.addons.ai.utils import llm_providers as _providers
 _logger = logging.getLogger(__name__)
 
 
-def _register_gpt5_nano():
+# OpenAI models missing from Odoo's base provider list. gpt-4o-mini is a fast,
+# cheap, NON-reasoning model — the recommended default for bulk blog generation
+# (the base list ships gpt-4.1-mini but not gpt-4o-mini). gpt-5-nano is the
+# small reasoning model.
+_EXTRA_OPENAI_MODELS = [
+    ("gpt-4o-mini", "GPT-4o Mini"),
+    ("gpt-5-nano", "GPT-5 Nano"),
+]
+
+
+def _register_extra_models():
     for provider in _providers.PROVIDERS:
         if provider.name == "openai":
-            if not any(m[0] == "gpt-5-nano" for m in provider.llms):
-                provider.llms.append(("gpt-5-nano", "GPT-5 Nano"))
-                _logger.info("era_seo_suite: registered gpt-5-nano under the "
-                             "OpenAI provider")
+            for code, label in _EXTRA_OPENAI_MODELS:
+                if not any(m[0] == code for m in provider.llms):
+                    provider.llms.append((code, label))
+                    _logger.info("era_seo_suite: registered %s under the "
+                                 "OpenAI provider", code)
             return
     _logger.warning("era_seo_suite: OpenAI provider not found; could not "
-                    "register gpt-5-nano")
+                    "register extra models")
 
 
-_register_gpt5_nano()
+_register_extra_models()
 
 
 # gpt-5-family models are reasoning models that REJECT the `temperature` param.

@@ -1488,7 +1488,10 @@ class AIClient:
                 'propose_article: draft is %d words (< %d); extension '
                 'pass %d/2', wc, self._ARTICLE_MIN_WORDS, attempt)
             if progress and msg_extend:
-                progress('%s (%d)' % (msg_extend, attempt))
+                # First pass = plain label; only a 2nd pass adds a counter, so
+                # the banner never shows a puzzling "(1)" (same rule as writing).
+                progress(msg_extend if attempt == 1
+                         else '%s (%d/2)' % (msg_extend, attempt))
             extend_prompt = (
                 'Below is the current draft article. It is %d words; the '
                 'editorial floor is %d words (target %s). Return '

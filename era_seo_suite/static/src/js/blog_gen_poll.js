@@ -149,6 +149,32 @@ class EraAutoRefreshWhenTrue extends Component {
             // BLOCKED every later reload — so the spinner stayed up until a
             // manual refresh. This is the bug being fixed.
             if (serverPending) {
+                // If the form's OWN field is still False, this run was started
+                // OUTSIDE this form (the scheduled cron, another tab, or a
+                // server-side trigger), so the non-stored is_article_pending was
+                // computed False at load and never re-read — the "Generate"
+                // button is showing ALONGSIDE the live banner. Reload ONCE to
+                // re-compute the field True and hide the button. The phase guard
+                // keeps it to a single reload per episode (after it, the field
+                // reads True and this branch is skipped).
+                const mark = this._getMark();
+                if (
+                    !recordPending &&
+                    mark.phase !== "pending" &&
+                    mark.phase !== "reloading"
+                ) {
+                    this._setMark({ phase: "reloading" });
+                    this._stop();
+                    try {
+                        await this.action.doAction({
+                            type: "ir.actions.client",
+                            tag: "soft_reload",
+                        });
+                    } catch (_) {
+                        /* non-fatal */
+                    }
+                    return;
+                }
                 // (Still) running — remember we watched it run so the eventual
                 // flip to not-pending triggers exactly one reload, even if the
                 // form's cached field value never updates on its own.

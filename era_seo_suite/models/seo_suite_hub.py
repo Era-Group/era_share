@@ -1329,46 +1329,46 @@ class EraSeoSuiteHub(models.Model):
         """
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
-        # Flag + manual override of the gate, both consumed by the cron at
-        # the start of its run. `_manual` is cleared inside the cron.
-        # The timestamp drives get_article_pending_state()'s TTL — if the
-        # cron never runs (e.g. Odoo restarted mid-trigger by the watchdog),
-        # the spinner clears itself after _ARTICLE_PENDING_TTL_SECONDS.
+        reload_action = {'type': 'ir.actions.client', 'tag': 'soft_reload'}
+        cron = self.env.ref(
+            'era_seo_suite.cron_generate_blog_article',
+            raise_if_not_found=False)
+        # Any click first CLEARS the queue so rapid clicks never accumulate.
+        if cron:
+            self.env['ir.cron.trigger'].sudo().search(
+                [('cron_id', '=', cron.id)]).unlink()
+        # If a run is ALREADY in flight, the cleared queue is enough — do NOT
+        # enqueue another. Enqueuing one per click is what made the banner cycle
+        # "Preparing… → Writing…" several times: each extra click ran a fresh
+        # generation back-to-back. (Server-side guard, so a stale cached widget
+        # that still shows the button mid-run can't stack runs either.)
+        if ICP.get_param('era_seo.article_pending') in _TRUE:
+            self.invalidate_recordset(['is_article_pending'])
+            return reload_action
+        # Idle → seed the flags + an initial step (so the banner has something
+        # to show before the cron writes its first real step) and enqueue
+        # EXACTLY ONE run. `_manual` overrides the gate and is cleared inside
+        # the cron; the timestamp drives the pending-state TTL.
         ICP.set_param('era_seo.article_pending', 'True')
         ICP.set_param(
             'era_seo.article_pending_started_at',
             fields.Datetime.to_string(fields.Datetime.now()),
         )
         ICP.set_param('era_seo.article_generator_manual', 'True')
-        # Seed an initial step so the live banner has something to show in the
-        # second or two before the cron writes its first real step.
         web = self.env['website'].sudo().search([], limit=1)
         slang = web.default_lang_id.code if web and web.default_lang_id else None
         ICP.set_param(
             'era_seo.article_progress',
             'جارٍ التحضير…' if (slang or '')[:2].lower() == 'ar' else 'Preparing…')
-        # Schedule the cron to run as soon as possible. `_trigger` is the
-        # Odoo 17+ API for "fire this cron now".
-        cron = self.env.ref(
-            'era_seo_suite.cron_generate_blog_article',
-            raise_if_not_found=False)
         if cron:
             try:
-                # Any click CLEARS the queue first, then enqueues EXACTLY ONE
-                # run. So rapid clicks can never stack several generations
-                # (which made the banner cycle "writing (1)" once per stacked
-                # run) — at most one run is ever queued at a time.
-                self.env['ir.cron.trigger'].sudo().search(
-                    [('cron_id', '=', cron.id)]).unlink()
-                cron.sudo()._trigger()
+                cron.sudo()._trigger()  # Odoo 17+ "fire this cron now"
             except Exception:  # noqa: BLE001
                 _logger.exception('Generate Now: cron _trigger failed')
         self.invalidate_recordset(['is_article_pending'])
-        # soft_reload re-reads the current record's fields without losing
-        # the open tab / scroll position. That flips `is_article_pending`
-        # from False to True in the rendered form, which immediately
-        # hides the Generate Now button and shows the spinner banner.
-        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
+        # soft_reload re-reads is_article_pending without losing the open tab /
+        # scroll, flipping the button to the spinner banner immediately.
+        return reload_action
 
     @api.model
     def stop_bulk_ai_fill(self):

@@ -1891,24 +1891,30 @@ class EraSeoSuiteHub(models.Model):
 
     @api.model
     def _pick_article_focus_category(self, BlogPost):
-        """Pick the blog category to anchor the next auto-article on, rotating
-        across the site's OWN categories least-recently-used first.
+        """Steps 1-3 of the rebuilt pipeline: the site's DOMAINS are its blog
+        categories; read the last 5 posts; choose a domain NOT covered by them.
 
-        This is the general, DB-agnostic fix for topic fixation: rather than
-        trusting the model to diversify (it anchors on whatever the business
-        summary emphasises), the generator deterministically cycles the focus
-        across every category the site actually uses, so coverage spreads on
-        any customer install. Returns a category name, or None when there isn't
-        enough taxonomy to rotate (then the prompt-level diversity rules apply).
+        Deterministic (DB-agnostic) so generation can't fixate on one field
+        regardless of how the business summary is worded: the last 5 posts'
+        categories are EXCLUDED, and among the remaining domains the
+        least-recently-used one is picked so coverage keeps spreading. Returns a
+        category name, or None when there's too little taxonomy to rotate (then
+        the prompt-level diversity rules take over).
         """
         Category = self.env.get('era.blog.category')
         if Category is None or BlogPost is None:
             return None
-        cats = Category.sudo().search([])
+        cats = Category.sudo().search([])              # 1: the site's domains
         if len(cats) < 2:
             return None
-        # Most-recent post id per category = recency; never-used categories get
-        # 0 and so sort first. min() => the least-recently-used category.
+        # 2-3: read the last 5 posts, EXCLUDE the domains they covered. If every
+        # category appears in the last 5 (tiny taxonomy), fall back to all.
+        last5 = BlogPost.sudo().search(
+            [('era_category_id', '!=', False)], order='id desc', limit=5)
+        recent_cat_ids = set(last5.mapped('era_category_id').ids)
+        candidates = cats.filtered(lambda c: c.id not in recent_cat_ids) or cats
+        # Among the eligible domains, pick the LEAST-RECENTLY-USED (max post id
+        # per category; never-used = 0 sorts first) to keep spreading coverage.
         last_used = {}
         try:
             for cat, max_id in BlogPost.sudo()._read_group(
@@ -1917,9 +1923,11 @@ class EraSeoSuiteHub(models.Model):
                 if cat:
                     last_used[cat.id] = max_id or 0
         except Exception:  # noqa: BLE001 — degrade to prompt-only diversity
-            return None
-        chosen = min(cats, key=lambda c: last_used.get(c.id, 0))
-        _logger.info('article generator: rotated focus category -> %s', chosen.name)
+            pass
+        chosen = min(candidates, key=lambda c: last_used.get(c.id, 0))
+        _logger.info(
+            'article generator: %d domains, excluded last-5 %s, chose "%s"',
+            len(cats), sorted(recent_cat_ids), chosen.name)
         return chosen.name
 
     def _run_article_gen(self):
@@ -1996,7 +2004,17 @@ class EraSeoSuiteHub(models.Model):
         # Empty when offline / blocked / unparseable — the agent then falls
         # back to its own "what's relevant now" reasoning.
         trending_now = self._fetch_google_trends()
-        lang_code = (ICP.get_param('era_seo.article_lang', '') or '').strip() or None
+        # 5: article language = the WEBSITE's default (served) language. This is
+        # the fix for English articles on an Arabic site — we no longer rely on
+        # a possibly-empty/stale article_lang setting; the live site language
+        # wins, with the setting only as an explicit override and auto-detect
+        # as the last resort.
+        web = self.env['website'].sudo().search([], limit=1)
+        site_lang = (web.default_lang_id.code
+                     if web and web.default_lang_id else None)
+        lang_code = (site_lang
+                     or (ICP.get_param('era_seo.article_lang', '') or '').strip()
+                     or None)
         prompt_addendum = (ICP.get_param('era_seo.article_prompt_addendum', '') or '').strip() or None
         try:
             article = client.propose_article(

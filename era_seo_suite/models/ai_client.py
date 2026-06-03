@@ -1502,6 +1502,23 @@ class AIClient:
                               lang_code=None, trending_now=None, prompt_addendum=None,
                               related_pages=None, search_opportunities=None,
                               recent_subjects=None, focus_category=None):
+        # Step 5 enforcement: resolve a human language NAME and demand the whole
+        # article be written in it. A bare locale code ("ar_001") wasn't forcing
+        # the model hard enough, so Arabic sites got English drafts.
+        _LANG_NAMES = {'ar': 'Arabic', 'en': 'English', 'fr': 'French',
+                       'es': 'Spanish', 'de': 'German', 'tr': 'Turkish',
+                       'ur': 'Urdu', 'hi': 'Hindi', 'id': 'Indonesian'}
+        lang_prefix = (lang_code or '')[:2].lower()
+        lang_name = _LANG_NAMES.get(lang_prefix, lang_code or 'the website language')
+        lang_directive = (
+            '### LANGUAGE — HARD REQUIREMENT ###\n'
+            'Write the ENTIRE article in {ln}: title, subtitle, excerpt, every '
+            'heading, paragraph, list item and FAQ, AND all SEO meta '
+            '(seo_title, seo_description, seo_keywords). The inputs below may be '
+            'in another language — compose/translate in {ln} regardless. Any '
+            'output not written in {ln} is rejected.\n\n'.format(ln=lang_name)
+            if lang_code else ''
+        )
         focus_block = (
             '  assigned_category (MANDATORY — the generator rotates this to '
             'force topic spread): "{fc}"\n'.format(
@@ -1566,6 +1583,7 @@ class AIClient:
         )
         return (
             '{addendum}'
+            '{lang_directive}'
             'INPUT:\n'
             '  business_name: "{name}"\n'
             '  business_summary: "{summary}"\n'
@@ -1608,10 +1626,13 @@ class AIClient:
             'this business offers — treat every one of them as fair game and '
             'spread coverage evenly across them over time, not only the headline '
             'programme named in the summary.\n'
-            '  1. If trending_now has an item genuinely relevant to this '
-            'business and audience, pick that as your trend signal. Otherwise '
+            '  1. TREND WITHIN THE CHOSEN DOMAIN. If assigned_category is set, '
+            'the trend you pick MUST sit inside that domain — ignore trends that '
+            'belong to a different field. If trending_now has an item genuinely '
+            'relevant to this business AND the chosen domain, use it as your '
+            'trend signal. Otherwise '
             'use search_opportunities to spot a real audience question or '
-            'identify another current or emerging trend in the domain. Be '
+            'identify another current or emerging trend in that domain. Be '
             'specific (a concrete tool, behaviour, event, or shift), not '
             'generic ("AI is changing everything"). Surface the chosen signal '
             'in `trend_signal`.\n'
@@ -1667,9 +1688,10 @@ class AIClient:
             '"reason": "<one sentence on why this fits the business>", '
             '"confidence": <0.0-1.0>}}'.format(
                 addendum=addendum_block,
+                lang_directive=lang_directive,
                 name=str(business_context.get('org_name') or '').replace('"', "'"),
                 summary=str(business_context.get('summary') or '').replace('"', "'")[:600],
-                lang=lang_code or 'auto-detect from business_summary',
+                lang=lang_name if lang_code else 'auto-detect from business_summary',
                 past=json.dumps(list(past_titles)[:30], ensure_ascii=False),
                 cats=json.dumps(list(existing_categories)[:30], ensure_ascii=False),
                 trends=trends_block,

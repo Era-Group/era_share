@@ -438,6 +438,27 @@ class AIClient:
         fallback = Agent._get_potential_ask_ai_agent()
         return fallback or Agent.browse()
 
+    def _resolve_article_agent(self):
+        """Return the DEDICATED blog-article agent — kept separate from the SEO
+        Fixer so articles can run on a different (fast) model without changing
+        SEO suggest/apply. Resolution: the era_seo.article_agent_id override,
+        then the shipped era_seo_suite.agent_article record, then the SEO agent.
+        """
+        Agent = self.env['ai.agent'].sudo()
+        aid = _icp(self.env, 'era_seo.article_agent_id')
+        if aid:
+            try:
+                agent = Agent.browse(int(aid))
+                if agent.exists():
+                    return agent
+            except (ValueError, TypeError):
+                pass
+        agent = self.env.ref(
+            'era_seo_suite.agent_article', raise_if_not_found=False)
+        if agent and agent.exists():
+            return agent.sudo()
+        return self._resolve_agent()
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -1409,7 +1430,7 @@ class AIClient:
             raise AIUnavailable(reason)
         import time as _time
         deadline = _time.monotonic() + self._ARTICLE_GEN_BUDGET_S
-        agent = self._resolve_agent()
+        agent = self._resolve_article_agent()  # dedicated article agent
         prompt = self._build_article_prompt(
             business_context, past_titles, existing_categories,
             lang_code, trending_now, prompt_addendum, related_pages,

@@ -85,5 +85,32 @@ your explanation.
 
 Return JSON only. No markdown. No preamble. The host parses with json.loads().]]></field>
     </record>
+
+    <!--
+      Dedicated agent for BLOG ARTICLE generation, separate from the SEO Fixer
+      so admins can run articles on a different (fast, cheap) model without
+      touching the model used for SEO suggest/apply. Defaults to gpt-4o-mini —
+      fast and non-reasoning, ideal for the multi-call article pipeline
+      (reasoning models like gpt-5* are slow here). The "Article AI model"
+      picker in the hub edits THIS agent's model.
+    -->
+    <record id="agent_article" model="ai.agent">
+      <field name="name">ERA Article Writer</field>
+      <field name="subtitle">Writes trend-aware, on-brand blog articles for the website.</field>
+      <field name="response_style">balanced</field>
+      <field name="llm_model">gpt-4o-mini</field>
+      <field name="system_prompt"><![CDATA[# Article Writer
+
+You are a professional bilingual (Arabic / English) blog writer for a business website.
+
+The host sends detailed, non-negotiable instructions plus context on every request.
+Follow them exactly and reply with a SINGLE JSON object and nothing else — no markdown
+fences, no prose before or after. The host parses your reply with json.loads(), so any
+extra text breaks it.
+
+Write naturally for human readers, stay strictly on the assigned topic and category,
+match the requested language, and never invent facts about the business that the host
+did not provide.]]></field>
+    </record>
   </data>
 </odoo>

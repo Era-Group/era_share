@@ -1144,14 +1144,21 @@ class EraSeoSuiteHub(models.Model):
         return opts
 
     def _blog_agent(self):
-        """The agent the blog generator uses (era_seo.ai_agent_id)."""
+        """The DEDICATED article agent the model picker edits — the
+        era_seo.article_agent_id override, else the shipped agent_article
+        record. Kept separate from the SEO agent so the model change here does
+        not affect SEO suggest/apply."""
         ICP = self.env['ir.config_parameter'].sudo()
-        raw = (ICP.get_param('era_seo.ai_agent_id') or '').strip()
         Agent = self.env['ai.agent'].sudo()
+        raw = (ICP.get_param('era_seo.article_agent_id') or '').strip()
         if raw.isdigit():
             agent = Agent.browse(int(raw))
             if agent.exists():
                 return agent
+        agent = self.env.ref(
+            'era_seo_suite.agent_article', raise_if_not_found=False)
+        if agent and agent.exists():
+            return agent.sudo()
         return Agent.browse()
 
     def _compute_article_model(self):
@@ -1916,32 +1923,14 @@ class EraSeoSuiteHub(models.Model):
         only commits the actual blog work; the flag is metadata that
         moves on its own.
         """
-        # Consume this run's trigger UP-FRONT and commit. Generation makes
-        # several slow reasoning-model calls; if the worker is hard-killed
-        # (limit_time_real) partway through, its transaction rolls back. Odoo
-        # deletes the cron trigger only when the callback RETURNS, so a kill
-        # leaves the trigger in place and the cron RE-FIRES every minute — each
-        # re-fire publishing yet another article (the "keeps re-writing" loop;
-        # posts piled up 552, 553, …). Deleting + committing the trigger here
-        # makes consumption durable, so a later kill can't re-fire. The next
-        # SCHEDULED run still happens normally.
-        gen_cron = self.env.ref(
-            'era_seo_suite.cron_generate_blog_article', raise_if_not_found=False)
-        if gen_cron:
-            self.env['ir.cron.trigger'].sudo().search(
-                [('cron_id', '=', gen_cron.id)]).unlink()
-            # Also push nextcall forward NOW, so a hard-kill during a SCHEDULED
-            # run (no trigger involved) can't leave nextcall in the past and
-            # re-fire the same loop every minute. On success the framework
-            # re-sets it at the end; either way it never stays due after a kill.
-            from datetime import timedelta
-            interval = int(self.env['ir.config_parameter'].sudo().get_param(
-                'era_seo.article_interval_days', '3') or 3)
-            gen_cron.sudo().write({
-                'nextcall': fields.Datetime.now() + timedelta(
-                    days=max(1, interval)),
-            })
-            self.env.cr.commit()
+        # NOTE: we deliberately do NOT commit mid-callback to "consume the
+        # trigger up-front". Doing so released Odoo's per-cron FOR-UPDATE lock
+        # early, which let a SECOND worker pick the same cron up on a freshly
+        # queued trigger — two generations ran concurrently and deadlocked on
+        # ir_cron_trigger, hanging the run at "Preparing…" regardless of model.
+        # Re-fire safety is handled instead by (a) catching exceptions below so
+        # the job commits its trigger normally, and (b) using a FAST model so a
+        # run never approaches limit_time_real and gets hard-killed.
         self._set_article_pending(True)
         try:
             return self._run_article_gen()

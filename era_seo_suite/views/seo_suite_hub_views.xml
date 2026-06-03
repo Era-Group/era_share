@@ -619,6 +619,7 @@
                 <group string="Auto-publish settings">
                   <field name="setting_article_generator_active"
                          widget="boolean_toggle"/>
+                  <field name="setting_article_model"/>
                   <field name="setting_article_interval_days"
                          invisible="not setting_article_generator_active"/>
                   <field name="setting_trends_geo"

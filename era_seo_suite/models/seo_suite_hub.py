@@ -280,6 +280,16 @@ class EraSeoSuiteHub(models.Model):
         help='Which AI agent answers Suggest/Apply requests. The agent carries the '
              'provider, model, and API key (configured in the AI app). Leave empty '
              'to fall back to the site\'s "Ask AI" agent.')
+    setting_article_model = fields.Selection(
+        selection='_article_model_selection',
+        string='Article AI model',
+        compute='_compute_article_model',
+        inverse='_inverse_article_model',
+        help='LLM used to write blog articles (it sets the AI Agent above). '
+             'Reasoning models (gpt-5 / gpt-5-mini / gpt-5-nano) are higher '
+             'quality but SLOW — a generation makes several calls and can take '
+             'minutes. gpt-4o-mini is fast and cheap; gpt-4o is a strong '
+             'middle ground. Uses the agent\'s configured OpenAI key.')
 
     # --- Smart 404 (did-you-mean redirect)
     setting_smart_404_enabled = fields.Boolean(
@@ -1118,6 +1128,46 @@ class EraSeoSuiteHub(models.Model):
         for rec in self:
             ICP.set_param('era_seo.ai_agent_id',
                           str(rec.setting_ai_agent_id.id) if rec.setting_ai_agent_id else '')
+
+    def _article_model_selection(self):
+        """Available LLMs for the article generator — the models registered in
+        ai.utils.llm_providers (OpenAI incl. gpt-5-nano, Google, …)."""
+        opts = []
+        try:
+            from odoo.addons.ai.utils.llm_providers import PROVIDERS
+            for prov in PROVIDERS:
+                for code, label in prov.llms:
+                    if not any(c == code for c, _l in opts):
+                        opts.append((code, label))
+        except Exception:  # noqa: BLE001
+            opts = [('gpt-4o-mini', 'GPT-4o Mini'), ('gpt-4o', 'GPT-4o')]
+        return opts
+
+    def _blog_agent(self):
+        """The agent the blog generator uses (era_seo.ai_agent_id)."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        raw = (ICP.get_param('era_seo.ai_agent_id') or '').strip()
+        Agent = self.env['ai.agent'].sudo()
+        if raw.isdigit():
+            agent = Agent.browse(int(raw))
+            if agent.exists():
+                return agent
+        return Agent.browse()
+
+    def _compute_article_model(self):
+        valid = {c for c, _l in (self._article_model_selection() or [])}
+        for rec in self:
+            agent = rec._blog_agent()
+            model = agent.llm_model if agent else False
+            # Only surface a value the Selection actually offers, else the field
+            # renders blank rather than erroring on an unknown stored value.
+            rec.setting_article_model = model if model in valid else False
+
+    def _inverse_article_model(self):
+        for rec in self:
+            agent = rec._blog_agent()
+            if agent and rec.setting_article_model:
+                agent.write({'llm_model': rec.setting_article_model})
 
     def _compute_gsc_redirect_uri(self):
         base = (self.env['ir.config_parameter'].sudo()

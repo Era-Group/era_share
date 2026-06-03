@@ -1050,6 +1050,19 @@ class EraSeoSuiteHub(models.Model):
             if 'setting_article_interval_days' in setting_vals:
                 self._sync_article_cron_interval(
                     int(setting_vals['setting_article_interval_days'] or 3))
+            # When auto-publish is switched ON, make sure the generator cron is
+            # ACTIVE. Otherwise the toggle reads "on" while the cron (the engine
+            # that runs the job AND clears the pending flag) is off, which
+            # surfaces as the puzzling "Article generation is off" on Generate.
+            # We only ever ENABLE here — turning auto-publish off leaves the
+            # cron active so the manual "Generate" button still works (it just
+            # won't auto-run; the gate makes the scheduled run skip).
+            if setting_vals.get('setting_article_generator_active'):
+                gen_cron = self.env.ref(
+                    'era_seo_suite.cron_generate_blog_article',
+                    raise_if_not_found=False)
+                if gen_cron and not gen_cron.sudo().active:
+                    gen_cron.sudo().write({'active': True})
             # Drop the now-stale cache so the next read goes through
             # `_compute_settings` and reflects the values just written.
             self.invalidate_recordset(list(setting_vals))

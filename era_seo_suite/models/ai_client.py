@@ -1366,7 +1366,8 @@ class AIClient:
 
     def propose_article(self, business_context, past_titles, existing_categories,
                         lang_code=None, trending_now=None, prompt_addendum=None,
-                        related_pages=None, search_opportunities=None):
+                        related_pages=None, search_opportunities=None,
+                        recent_subjects=None):
         """Ask the AI agent to propose a fresh, trend-aware blog article for
         the site.
 
@@ -1401,7 +1402,7 @@ class AIClient:
         prompt = self._build_article_prompt(
             business_context, past_titles, existing_categories,
             lang_code, trending_now, prompt_addendum, related_pages,
-            search_opportunities)
+            search_opportunities, recent_subjects=recent_subjects)
         response = agent.get_direct_response(
             prompt=prompt, context_message=ARTICLE_CONTEXT)
         raw = response[0] if response else ''
@@ -1420,7 +1421,8 @@ class AIClient:
                 business_context, past_titles, existing_categories,
                 lang_code, trending_now=None, prompt_addendum=None,
                 related_pages=related_pages,
-                search_opportunities=search_opportunities)
+                search_opportunities=search_opportunities,
+                recent_subjects=recent_subjects)
             response = agent.get_direct_response(
                 prompt=neutral_prompt, context_message=ARTICLE_CONTEXT)
             raw = response[0] if response else ''
@@ -1496,7 +1498,23 @@ class AIClient:
     @classmethod
     def _build_article_prompt(cls, business_context, past_titles, existing_categories,
                               lang_code=None, trending_now=None, prompt_addendum=None,
-                              related_pages=None, search_opportunities=None):
+                              related_pages=None, search_opportunities=None,
+                              recent_subjects=None):
+        recent_items = []
+        for item in list(recent_subjects or [])[:5]:
+            if not isinstance(item, dict):
+                continue
+            title = str(item.get('title') or '').strip()
+            if not title:
+                continue
+            recent_items.append({'title': title[:140],
+                                 'category': str(item.get('category') or '').strip()[:80]})
+        recent_block = (
+            '  recently_covered (the LAST 5 articles with their subject + '
+            'category — these fields are OFF-LIMITS for this one): {s}\n'
+            .format(s=json.dumps(recent_items, ensure_ascii=False))
+            if recent_items else ''
+        )
         trends_block = (
             '  trending_now (Google Trends, daily, for the configured geo): {t}\n'
             .format(t=json.dumps(list(trending_now)[:15], ensure_ascii=False))
@@ -1549,19 +1567,22 @@ class AIClient:
             '{trends}'
             '{links}'
             '{opportunities}'
+            '{recent}'
             'TASK:\n'
-            '  0. TOPIC DIVERSITY — decide this FIRST and treat it as a hard '
-            'constraint. recent_post_titles lists what was published recently '
-            '(newest first). This blog has been over-concentrated on a single '
-            'theme. Read the 5 MOST RECENT titles, name the dominant subject '
-            'they share, and then pick a topic about a CLEARLY DIFFERENT '
-            'service or subject area that those recent posts do NOT cover. '
-            'Treat internal_link_targets as the menu of services this business '
-            'actually offers and deliberately ROTATE to a different one than '
-            'the recent posts used. Do NOT write another article on the '
-            'dominant recent theme; if the most obvious trend points back to '
-            'it, choose a different service and a trend relevant to THAT '
-            'instead. Surface your chosen area in `reason`.\n'
+            '  0. TOPIC DIVERSITY — decide this FIRST and treat it as a HARD, '
+            'NON-NEGOTIABLE constraint. `recently_covered` lists the LAST 5 '
+            'articles with their subject and category. You are FORBIDDEN from '
+            'writing about any of those subjects, their categories, or a '
+            'closely related field — even a different angle on the same field '
+            'is rejected. Steps: (a) state in one phrase the dominant FIELD the '
+            'recent_covered/recent_post_titles share (e.g. "factories / '
+            'manufacturing"); (b) from internal_link_targets — the menu of '
+            'services this business actually offers — choose a DIFFERENT '
+            'service/field that is NOT that dominant field and NOT in '
+            'recently_covered; (c) write about that. If the most obvious trend '
+            'points back to the forbidden field, discard it and pick a trend '
+            'relevant to the different field instead. Put the dominant-recent '
+            'field you avoided AND the new field you chose in `reason`.\n'
             '  1. If trending_now has an item genuinely relevant to this '
             'business and audience, pick that as your trend signal. Otherwise '
             'use search_opportunities to spot a real audience question or '
@@ -1629,6 +1650,7 @@ class AIClient:
                 trends=trends_block,
                 links=links_block,
                 opportunities=opportunities_block,
+                recent=recent_block,
                 min_words=cls._ARTICLE_MIN_WORDS,
                 target_words=cls._ARTICLE_TARGET_WORDS,
             )

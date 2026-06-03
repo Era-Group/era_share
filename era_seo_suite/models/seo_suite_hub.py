@@ -1940,8 +1940,18 @@ class EraSeoSuiteHub(models.Model):
             'org_name': ICP.get_param('era_seo.organization_name', ''),
             'summary':  ICP.get_param('era_seo_suite.site_summary', ''),
         }
-        past_titles = BlogPost.sudo().search(
-            [], order='id desc', limit=30).mapped('name')
+        recent_posts = BlogPost.sudo().search([], order='id desc', limit=30)
+        past_titles = recent_posts.mapped('name')
+        # The LAST 5 posts' subject+category — passed as an explicit OFF-LIMITS
+        # list so the generator can't keep producing the same field (e.g. the
+        # blog had drifted entirely to "factories").
+        recent_subjects = [
+            {'title': (p.name or '').strip(),
+             'category': (p.era_category_id.name
+                          if 'era_category_id' in p._fields and p.era_category_id
+                          else '')}
+            for p in recent_posts[:5] if (p.name or '').strip()
+        ]
         existing_categories = Category.sudo().search([], limit=50).mapped('name')
         related_pages = self._article_internal_link_targets()
         search_opportunities = self._article_search_opportunities()
@@ -1958,7 +1968,8 @@ class EraSeoSuiteHub(models.Model):
                 trending_now=trending_now,
                 prompt_addendum=prompt_addendum,
                 related_pages=related_pages,
-                search_opportunities=search_opportunities)
+                search_opportunities=search_opportunities,
+                recent_subjects=recent_subjects)
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
             return False

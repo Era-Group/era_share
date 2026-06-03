@@ -1880,6 +1880,17 @@ class EraSeoSuiteHub(models.Model):
         if gen_cron:
             self.env['ir.cron.trigger'].sudo().search(
                 [('cron_id', '=', gen_cron.id)]).unlink()
+            # Also push nextcall forward NOW, so a hard-kill during a SCHEDULED
+            # run (no trigger involved) can't leave nextcall in the past and
+            # re-fire the same loop every minute. On success the framework
+            # re-sets it at the end; either way it never stays due after a kill.
+            from datetime import timedelta
+            interval = int(self.env['ir.config_parameter'].sudo().get_param(
+                'era_seo.article_interval_days', '3') or 3)
+            gen_cron.sudo().write({
+                'nextcall': fields.Datetime.now() + timedelta(
+                    days=max(1, interval)),
+            })
             self.env.cr.commit()
         self._set_article_pending(True)
         try:

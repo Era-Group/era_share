@@ -1,3 +1,7 @@
+# Monkey-patch first: registers gpt-5-nano under the OpenAI provider so the
+# blog agent (llm_model='gpt-5-nano') resolves instead of "No provider found".
+from . import ai_llm_patch  # noqa: F401
+
 from . import (
     res_config_settings_mgr,
     seo_audit_finding_mgr,

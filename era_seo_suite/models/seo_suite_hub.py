@@ -200,7 +200,7 @@ class EraSeoSuiteHub(models.Model):
         # Image generation
         'setting_image_provider':           ('era_seo.image_provider',           'char', 'openai'),
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
-        'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
+        'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-2'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
         # Quality tier for OpenAI's gpt-image-1. 'low' is the cheap "mini"
         # tier (~$0.005/image), 'medium' is the default tier (~$0.04),
@@ -490,7 +490,7 @@ class EraSeoSuiteHub(models.Model):
     # --- Image generation
     setting_image_provider = fields.Selection(
         [('none',       'None (skip image)'),
-         ('openai',     'OpenAI (DALL-E / gpt-image-1)'),
+         ('openai',     'OpenAI (gpt-image-2)'),
          ('openrouter', 'OpenRouter (any image-capable model)')],
         string='Image provider',
         compute='_compute_settings', inverse='_inverse_settings',
@@ -511,9 +511,9 @@ class EraSeoSuiteHub(models.Model):
     setting_image_model = fields.Char(
         string='Image model',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Model identifier. OpenAI: gpt-image-1 / dall-e-3 / dall-e-2. '
+        help='Model identifier. OpenAI: gpt-image-2 / gpt-image-1 / dall-e-3. '
              'OpenRouter: e.g. google/gemini-2.5-flash-image-preview, '
-             'openai/gpt-image-1 or any image-capable model from '
+             'openai/gpt-image-2 or any image-capable model from '
              'openrouter.ai/models.')
     setting_image_size = fields.Char(
         string='Image size',
@@ -527,7 +527,7 @@ class EraSeoSuiteHub(models.Model):
          ('auto',   'Auto (provider decides)')],
         string='Image quality',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Quality tier for OpenAI\'s gpt-image-1. "Low" is the cheap '
+        help='Quality tier for OpenAI\'s gpt-image models. "Low" is the cheap '
              '"mini" tier (~$0.005/image, 8x cheaper than medium). '
              'Ignored by dall-e-* models and by OpenRouter.')
 
@@ -2491,7 +2491,7 @@ class EraSeoSuiteHub(models.Model):
                 'image-gen openai: no API key configured (Blog Gen tab '
                 '→ Image API key); skipping')
             return None
-        model = (ICP.get_param('era_seo.image_model', 'gpt-image-1') or 'gpt-image-1').strip()
+        model = (ICP.get_param('era_seo.image_model', 'gpt-image-2') or 'gpt-image-2').strip()
         # Normalize the size string. Admins copy/paste from docs and end up
         # with the Unicode multiplication sign U+00D7 ('×') instead of the
         # ASCII 'x' OpenAI requires. Also fix the fullwidth variants for

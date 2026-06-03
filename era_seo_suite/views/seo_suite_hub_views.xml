@@ -639,7 +639,7 @@
                          placeholder="OpenRouter API key (openrouter.ai/keys)"/>
                   <field name="setting_image_model"
                          invisible="setting_image_provider == 'none'"
-                         placeholder="gpt-image-1 / google/gemini-2.5-flash-image-preview"/>
+                         placeholder="gpt-image-2 / google/gemini-2.5-flash-image-preview"/>
                   <field name="setting_image_quality"
                          invisible="setting_image_provider != 'openai'"/>
                   <field name="setting_image_size"

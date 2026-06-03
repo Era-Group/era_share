@@ -1329,6 +1329,13 @@ class EraSeoSuiteHub(models.Model):
         """
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
+        # Dedup rapid double-clicks: if a generation is already pending, don't
+        # queue ANOTHER cron run. Without this, several quick clicks (before the
+        # button hides) each fired a trigger, so multiple generations ran one
+        # after another — which is why the banner cycled "trends → writing (1)"
+        # several times. Just re-render so the spinner shows.
+        if ICP.get_param('era_seo.article_pending') in _TRUE:
+            return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
         # Flag + manual override of the gate, both consumed by the cron at
         # the start of its run. `_manual` is cleared inside the cron.
         # The timestamp drives get_article_pending_state()'s TTL — if the

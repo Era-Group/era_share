@@ -1639,6 +1639,15 @@ class AIClient:
             'spread coverage across the whole site, so never substitute a '
             'different (e.g. the recently-dominant) field. Still honour the '
             'diversity and quality rules below within that category.\n'
+            '  0y. NO FIELD DRIFT — the recent posts over-fixated on ONE field '
+            '(the dominant field you named in step 0, whatever it is). Write '
+            'about assigned_category strictly ON ITS OWN TERMS, for its OWN '
+            'audience and sector. Do NOT narrow, reframe, or funnel an '
+            'unrelated category back into that over-covered field; draw the '
+            'examples, audiences and angles from the assigned domain itself, '
+            'not from the dominant recent one. If a draft keeps pulling the '
+            'topic toward the over-covered field, REWRITE it around the '
+            'assigned domain real audience.\n'
             '  0. TOPIC DIVERSITY — decide this FIRST and treat it as a HARD, '
             'NON-NEGOTIABLE constraint. `recently_covered` lists the LAST 5 '
             'articles with their subject and category. You are FORBIDDEN from '
@@ -1728,7 +1737,7 @@ class AIClient:
                 name=str(business_context.get('org_name') or '').replace('"', "'"),
                 summary=str(business_context.get('summary') or '').replace('"', "'")[:600],
                 lang=lang_name if lang_code else 'auto-detect from business_summary',
-                past=json.dumps(list(past_titles)[:30], ensure_ascii=False),
+                past=json.dumps(list(past_titles)[:8], ensure_ascii=False),
                 cats=json.dumps(list(existing_categories)[:30], ensure_ascii=False),
                 trends=trends_block,
                 links=links_block,

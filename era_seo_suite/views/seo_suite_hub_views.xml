@@ -680,20 +680,21 @@
               </div>
 
               <div class="mt-3 d-flex align-items-center gap-2 flex-wrap">
-                <button name="action_generate_blog_article_now"
-                        type="object"
-                        string="Generate article now"
-                        class="btn btn-primary"
-                        icon="fa-magic"
-                        invisible="not setting_ai_enabled or is_article_pending"
-                        confirm="Generate and publish a new article now? Runs in the background; the banner updates with each step and the table refreshes on its own when it's ready."/>
-                <!-- Polling widget. While generating it renders a LIVE step
-                     banner ("Searching trends…", "Writing the article (1)…", …)
-                     that updates each tick, and soft-reloads the table when the
-                     article is ready. When not pending it is an invisible span. -->
+                <!-- Self-contained control: the widget renders the "Generate"
+                     button when idle and a LIVE step banner while generating,
+                     flipping between them from the polled state WITHOUT any
+                     soft_reload (so the page never jumps/scrolls). On completion
+                     it refreshes just this record (the table below) in place. -->
                 <field name="is_article_pending"
                        widget="era_auto_refresh_when_true"
-                       options="{'model': 'era.seo.suite.hub', 'method': 'get_article_pending_state'}"
+                       options="{'model': 'era.seo.suite.hub',
+                                 'method': 'get_article_pending_state',
+                                 'action': 'action_generate_blog_article_now',
+                                 'enabled_field': 'setting_ai_enabled',
+                                 'label': 'Generate article now',
+                                 'icon': 'fa-magic',
+                                 'preparing': 'Preparing…',
+                                 'confirm': 'Generate and publish a new article now? It runs in the background; the banner updates with each step and the table refreshes on its own when ready.'}"
                        nolabel="1"/>
               </div>
 

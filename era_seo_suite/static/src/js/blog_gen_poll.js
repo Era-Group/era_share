@@ -156,14 +156,26 @@ class EraAutoRefreshWhenTrue extends Component {
             this.state.pending = true;
             this.state.message = this._preparing;
             this._wasPending = true;
+            let result;
             try {
-                // Server flips the ICP flag + enqueues the cron; we ignore the
-                // soft_reload action it returns (we update in place instead).
-                await this.orm.call(this._rpcModel, this._action, [
+                // Server flips the ICP flag + enqueues the cron; it returns a
+                // soft_reload (ignored — we update in place) OR, if generation
+                // is disabled, a display_notification we should surface.
+                result = await this.orm.call(this._rpcModel, this._action, [
                     [this.props.record.resId],
                 ]);
             } catch (_) {
                 // Surfaced by the web client; let polling reconcile the state.
+                return;
+            }
+            if (result && result.tag === "display_notification") {
+                // Declined (e.g. generation is off) — drop the optimistic
+                // banner and show the message instead of spinning.
+                this._graceUntil = 0;
+                this._wasPending = false;
+                this.state.pending = false;
+                this.state.message = "";
+                this.action.doAction(result);
             }
         };
         if (this._confirm) {

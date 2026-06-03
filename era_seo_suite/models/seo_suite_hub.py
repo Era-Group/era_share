@@ -1333,6 +1333,23 @@ class EraSeoSuiteHub(models.Model):
         cron = self.env.ref(
             'era_seo_suite.cron_generate_blog_article',
             raise_if_not_found=False)
+        # Generation stopped? That cron is the only worker that BOTH runs the
+        # job and clears the pending flag. With it deactivated, seeding the flag
+        # here would spin the banner forever (nothing ever clears it). Tell the
+        # user instead of leaving a stuck "Preparing…" spinner.
+        if not cron or not cron.sudo().active:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'type': 'warning',
+                    'title': _('Article generation is off'),
+                    'message': _(
+                        'Blog article generation is currently disabled. '
+                        'Re-enable it before generating a new article.'),
+                    'sticky': False,
+                },
+            }
         # Any click first CLEARS the queue so rapid clicks never accumulate.
         if cron:
             self.env['ir.cron.trigger'].sudo().search(

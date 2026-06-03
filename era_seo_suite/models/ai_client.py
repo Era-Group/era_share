@@ -1426,7 +1426,12 @@ class AIClient:
         active_prompt = prompt
         for gen_attempt in range(1, 4):
             if progress and msg_writing:
-                progress('%s (%d)' % (msg_writing, gen_attempt))
+                # Attempt 1 shows the plain step; only a RETRY gets a counter.
+                # That way the normal path never shows a puzzling "(1)", and a
+                # changing number ("2/3", "3/3") genuinely signals a retry — the
+                # number no longer looks "stuck at 1" across separate runs.
+                progress(msg_writing if gen_attempt == 1
+                         else '%s (%d/3)' % (msg_writing, gen_attempt))
             try:
                 response = agent.get_direct_response(
                     prompt=active_prompt, context_message=ARTICLE_CONTEXT)

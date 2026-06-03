@@ -1329,13 +1329,6 @@ class EraSeoSuiteHub(models.Model):
         """
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
-        # Dedup rapid double-clicks: if a generation is already pending, don't
-        # queue ANOTHER cron run. Without this, several quick clicks (before the
-        # button hides) each fired a trigger, so multiple generations ran one
-        # after another — which is why the banner cycled "trends → writing (1)"
-        # several times. Just re-render so the spinner shows.
-        if ICP.get_param('era_seo.article_pending') in _TRUE:
-            return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
         # Flag + manual override of the gate, both consumed by the cron at
         # the start of its run. `_manual` is cleared inside the cron.
         # The timestamp drives get_article_pending_state()'s TTL — if the
@@ -1361,6 +1354,12 @@ class EraSeoSuiteHub(models.Model):
             raise_if_not_found=False)
         if cron:
             try:
+                # Any click CLEARS the queue first, then enqueues EXACTLY ONE
+                # run. So rapid clicks can never stack several generations
+                # (which made the banner cycle "writing (1)" once per stacked
+                # run) — at most one run is ever queued at a time.
+                self.env['ir.cron.trigger'].sudo().search(
+                    [('cron_id', '=', cron.id)]).unlink()
                 cron.sudo()._trigger()
             except Exception:  # noqa: BLE001
                 _logger.exception('Generate Now: cron _trigger failed')
@@ -1840,6 +1839,17 @@ class EraSeoSuiteHub(models.Model):
         self._set_article_pending(True)
         try:
             return self._run_article_gen()
+        except Exception:  # noqa: BLE001
+            # CRITICAL: swallow so the cron job COMMITS and its queued trigger
+            # is consumed. If the exception propagated, Odoo would roll the
+            # whole cron transaction back — the trigger would NOT be consumed
+            # and would re-fire every minute, looping "writing (1)" forever
+            # (the bug behind "5+ rounds"). Log it; the next scheduled run
+            # retries on its own.
+            _logger.exception(
+                'cron_generate_blog_article: generation failed; consuming the '
+                'trigger to prevent a re-fire loop')
+            return False
         finally:
             # Always clear — even on no-op runs (gate off, AI unavailable).
             # The UI's spinner stops on the next poll tick.

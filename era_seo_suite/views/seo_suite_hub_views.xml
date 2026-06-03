@@ -679,28 +679,22 @@
                        placeholder="Free-form admin guidance — appended to every prompt under an &quot;ADMIN GUIDANCE&quot; section. Use it to nudge tone, audiences, regional angles, brands to mention/avoid, etc. Leave blank for defaults."/>
               </div>
 
-              <!-- Polling widget: while is_article_pending is True, the
-                   form auto-reloads every 3 seconds so the new article
-                   appears in the table on its own. Invisible to the user. -->
-              <field name="is_article_pending"
-                     widget="era_auto_refresh_when_true"
-                     invisible="1"/>
-
-              <div class="mt-3 d-flex align-items-center gap-2">
+              <div class="mt-3 d-flex align-items-center gap-2 flex-wrap">
                 <button name="action_generate_blog_article_now"
                         type="object"
                         string="Generate article now"
                         class="btn btn-primary"
                         icon="fa-magic"
                         invisible="not setting_ai_enabled or is_article_pending"
-                        confirm="Generate and publish a new article now? Runs in the background; the tab auto-refreshes every 3 seconds while it runs."/>
-                <div class="alert alert-info mb-0 py-1 px-3"
-                     role="status"
-                     invisible="not is_article_pending">
-                  <i class="fa fa-spinner fa-spin me-2"/>
-                  Generating in the background — the table will refresh
-                  on its own when the article is ready.
-                </div>
+                        confirm="Generate and publish a new article now? Runs in the background; the banner updates with each step and the table refreshes on its own when it's ready."/>
+                <!-- Polling widget. While generating it renders a LIVE step
+                     banner ("Searching trends…", "Writing the article (1)…", …)
+                     that updates each tick, and soft-reloads the table when the
+                     article is ready. When not pending it is an invisible span. -->
+                <field name="is_article_pending"
+                       widget="era_auto_refresh_when_true"
+                       options="{'model': 'era.seo.suite.hub', 'method': 'get_article_pending_state'}"
+                       nolabel="1"/>
               </div>
 
               <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">

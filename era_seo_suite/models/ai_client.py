@@ -1375,7 +1375,8 @@ class AIClient:
     def propose_article(self, business_context, past_titles, existing_categories,
                         lang_code=None, trending_now=None, prompt_addendum=None,
                         related_pages=None, search_opportunities=None,
-                        recent_subjects=None, focus_category=None):
+                        recent_subjects=None, focus_category=None,
+                        progress=None, msg_writing=None, msg_extend=None):
         """Ask the AI agent to propose a fresh, trend-aware blog article for
         the site.
 
@@ -1414,37 +1415,54 @@ class AIClient:
             lang_code, trending_now, prompt_addendum, related_pages,
             search_opportunities, recent_subjects=recent_subjects,
             focus_category=focus_category)
-        response = agent.get_direct_response(
-            prompt=prompt, context_message=ARTICLE_CONTEXT)
-        raw = response[0] if response else ''
-        # Refusal detection. When the model declines (often because a
-        # trends item is sensitive — politics, public figures, breaking
-        # news — or the admin's addendum tripped a safety rail) the body
-        # is plain prose ("I'm sorry, I can't…") instead of JSON. Retry
-        # once with a neutral prompt: no trend signal, no addendum, so
-        # the agent picks its own safe topic.
-        if self._looks_like_refusal(raw):
-            _logger.info(
-                'propose_article: agent refused (likely due to trend or '
-                'addendum). Retrying with a neutral prompt. First response: %r',
-                (raw or '')[:200])
-            neutral_prompt = self._build_article_prompt(
-                business_context, past_titles, existing_categories,
-                lang_code, trending_now=None, prompt_addendum=None,
-                related_pages=related_pages,
-                search_opportunities=search_opportunities,
-                recent_subjects=recent_subjects,
-                focus_category=focus_category)
-            response = agent.get_direct_response(
-                prompt=neutral_prompt, context_message=ARTICLE_CONTEXT)
-            raw = response[0] if response else ''
-        parsed = self._parse_json(raw)
-        for k in ('title', 'content_html'):
-            if not (parsed.get(k) or '').strip():
-                _logger.warning(
-                    'propose_article: parsed keys=%s, raw[:500]=%r',
-                    list(parsed.keys()), (raw or '')[:500])
-                raise ValueError(_('AI article proposal is missing %r.', k))
+        # The agent (a custom LLM here) intermittently returns a TRUNCATED reply
+        # ("not valid JSON") or NOTHING at all ("Processing loop ended with no
+        # response"). Those are fast failures, so retry a few times instead of
+        # abandoning the whole run on the first bad reply — empirically ~4 of 7
+        # succeed, so 3 tries make it reliable. A refusal still falls back to a
+        # neutral prompt; every retry is gated by the wall-clock budget.
+        parsed = None
+        last_err = ''
+        active_prompt = prompt
+        for gen_attempt in range(1, 4):
+            if progress and msg_writing:
+                progress('%s (%d)' % (msg_writing, gen_attempt))
+            try:
+                response = agent.get_direct_response(
+                    prompt=active_prompt, context_message=ARTICLE_CONTEXT)
+                raw = (response[0] if response else '') or ''
+                if self._looks_like_refusal(raw):
+                    _logger.info(
+                        'propose_article: agent refused; retrying with a neutral '
+                        'prompt. First response: %r', raw[:200])
+                    active_prompt = self._build_article_prompt(
+                        business_context, past_titles, existing_categories,
+                        lang_code, trending_now=None, prompt_addendum=None,
+                        related_pages=related_pages,
+                        search_opportunities=search_opportunities,
+                        recent_subjects=recent_subjects,
+                        focus_category=focus_category)
+                    response = agent.get_direct_response(
+                        prompt=active_prompt, context_message=ARTICLE_CONTEXT)
+                    raw = (response[0] if response else '') or ''
+                candidate = self._parse_json(raw)
+                if ((candidate.get('title') or '').strip()
+                        and (candidate.get('content_html') or '').strip()):
+                    parsed = candidate
+                    break
+                last_err = 'reply missing title/content_html'
+            except Exception as exc:  # noqa: BLE001 — flaky provider/agent reply
+                last_err = str(exc) or exc.__class__.__name__
+            _logger.warning(
+                'propose_article: generation attempt %d/3 produced no usable '
+                'article (%s)', gen_attempt, last_err[:160])
+            if _time.monotonic() > deadline:
+                break
+        if parsed is None:
+            raise ValueError(_(
+                'AI returned no usable article after 3 attempts (the model — '
+                '%s — kept replying empty or truncated). Last error: %s',
+                getattr(agent, 'llm_model', '') or 'AI agent', last_err[:200]))
         # Word-count enforcement: quality floor.
         # Up to two extension passes — each takes the current best draft
         # and asks the agent to EXTEND it (not rewrite). Extending is
@@ -1464,6 +1482,8 @@ class AIClient:
             _logger.info(
                 'propose_article: draft is %d words (< %d); extension '
                 'pass %d/2', wc, self._ARTICLE_MIN_WORDS, attempt)
+            if progress and msg_extend:
+                progress('%s (%d)' % (msg_extend, attempt))
             extend_prompt = (
                 'Below is the current draft article. It is %d words; the '
                 'editorial floor is %d words (target %s). Return '

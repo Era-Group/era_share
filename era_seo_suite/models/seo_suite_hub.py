@@ -389,7 +389,10 @@ class EraSeoSuiteHub(models.Model):
     # in-flight work. We'd rather show a stale spinner for 60s than for
     # 10 minutes — if the cron IS still working when we clear, it'll
     # republish its `True` on the next set_param.
-    _ARTICLE_PENDING_TTL_SECONDS = 90
+    # Generation makes several multi-minute LLM calls (bounded to ~9 min by
+    # _ARTICLE_GEN_BUDGET_S + image/create), so the stuck-spinner safety net
+    # must be longer than a real run — 90s used to clear it mid-generation.
+    _ARTICLE_PENDING_TTL_SECONDS = 1200
 
     @api.model
     def get_article_pending_state(self):
@@ -441,7 +444,11 @@ class EraSeoSuiteHub(models.Model):
                         'era_seo.article_pending_started_at': '',
                     })
                     pending = False
-        return {'pending': pending}
+        # The live step message (e.g. "Searching trends…", "Writing the
+        # article…") the generator publishes on a side cursor as it works, so
+        # the banner updates with each phase instead of a static line.
+        message = ICP.get_param('era_seo.article_progress', '') if pending else ''
+        return {'pending': pending, 'message': message}
 
     def _compute_recent_ai_articles(self):
         Post = self.env.get('blog.post')
@@ -1333,6 +1340,13 @@ class EraSeoSuiteHub(models.Model):
             fields.Datetime.to_string(fields.Datetime.now()),
         )
         ICP.set_param('era_seo.article_generator_manual', 'True')
+        # Seed an initial step so the live banner has something to show in the
+        # second or two before the cron writes its first real step.
+        web = self.env['website'].sudo().search([], limit=1)
+        slang = web.default_lang_id.code if web and web.default_lang_id else None
+        ICP.set_param(
+            'era_seo.article_progress',
+            'جارٍ التحضير…' if (slang or '')[:2].lower() == 'ar' else 'Preparing…')
         # Schedule the cron to run as soon as possible. `_trigger` is the
         # Odoo 17+ API for "fire this cron now".
         cron = self.env.ref(
@@ -1823,6 +1837,7 @@ class EraSeoSuiteHub(models.Model):
             # Always clear — even on no-op runs (gate off, AI unavailable).
             # The UI's spinner stops on the next poll tick.
             self._set_article_pending(False)
+            self._set_article_progress('')
 
     @api.model
     def _set_article_pending(self, pending):
@@ -1888,6 +1903,29 @@ class EraSeoSuiteHub(models.Model):
             ICP = self.env['ir.config_parameter'].sudo()
             for key, value in params.items():
                 ICP.set_param(key, value)
+
+    def _set_article_progress(self, msg):
+        """Publish a one-line generation step (e.g. "Searching trends…") on a
+        side cursor that commits immediately, so the form's pending banner shows
+        it live mid-generation — the cron's own long transaction won't be visible
+        to the polling form until it commits, so we can't write this inline."""
+        self._era_commit_icp({'era_seo.article_progress': msg or ''})
+
+    @staticmethod
+    def _article_progress_msgs(lang_code):
+        """Step labels in the site's language (ar/en — falls back to en). Kept
+        here, not _()-wrapped, because the cron writes them in the cron user's
+        language, not the viewer's; rendering in the site language is what users
+        actually want to read in the banner."""
+        ar = (lang_code or '')[:2].lower() == 'ar'
+        return {
+            'domain':  'اختيار مجال جديد…'        if ar else 'Choosing a fresh topic area…',
+            'trends':  'البحث عن الترند…'          if ar else 'Searching trends…',
+            'writing': 'كتابة المقال'             if ar else 'Writing the article',
+            'extend':  'إطالة المحتوى'            if ar else 'Expanding the article',
+            'image':   'إنشاء صورة الغلاف…'        if ar else 'Creating the cover image…',
+            'publish': 'حفظ ونشر المقال…'         if ar else 'Saving the article…',
+        }
 
     @api.model
     def _pick_article_focus_category(self, BlogPost):
@@ -1999,11 +2037,6 @@ class EraSeoSuiteHub(models.Model):
         focus_category = self._pick_article_focus_category(BlogPost)
         existing_categories = Category.sudo().search([], limit=50).mapped('name')
         related_pages = self._article_internal_link_targets()
-        search_opportunities = self._article_search_opportunities()
-        # Real trends signal: today's top Google Trends for the configured geo.
-        # Empty when offline / blocked / unparseable — the agent then falls
-        # back to its own "what's relevant now" reasoning.
-        trending_now = self._fetch_google_trends()
         # 5: article language = the WEBSITE's default (served) language. This is
         # the fix for English articles on an Arabic site — we no longer rely on
         # a possibly-empty/stale article_lang setting; the live site language
@@ -2015,7 +2048,16 @@ class EraSeoSuiteHub(models.Model):
         lang_code = (site_lang
                      or (ICP.get_param('era_seo.article_lang', '') or '').strip()
                      or None)
+        # Live progress shown in the form banner, step by step.
+        steps = self._article_progress_msgs(lang_code)
+        self._set_article_progress(steps['trends'])
+        search_opportunities = self._article_search_opportunities()
+        # Real trends signal: today's top Google Trends for the configured geo.
+        # Empty when offline / blocked / unparseable — the agent then falls
+        # back to its own "what's relevant now" reasoning.
+        trending_now = self._fetch_google_trends()
         prompt_addendum = (ICP.get_param('era_seo.article_prompt_addendum', '') or '').strip() or None
+        self._set_article_progress(steps['writing'])
         try:
             article = client.propose_article(
                 business_context, past_titles, existing_categories,
@@ -2025,7 +2067,9 @@ class EraSeoSuiteHub(models.Model):
                 related_pages=related_pages,
                 search_opportunities=search_opportunities,
                 recent_subjects=recent_subjects,
-                focus_category=focus_category)
+                focus_category=focus_category,
+                progress=self._set_article_progress,
+                msg_writing=steps['writing'], msg_extend=steps['extend'])
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
             return False
@@ -2100,10 +2144,12 @@ class EraSeoSuiteHub(models.Model):
         if 'era_category_id' in BlogPost._fields and category:
             post_vals['era_category_id'] = category.id
 
+        self._set_article_progress(steps['publish'])
         post = BlogPost.sudo().create(post_vals)
 
         # Hero image — call the hook, attach to all relevant slots if it
         # returned bytes.
+        self._set_article_progress(steps['image'])
         try:
             image_bytes = self._generate_article_image(article['image_prompt'])
         except Exception:  # noqa: BLE001

@@ -47,7 +47,7 @@
  */
 
 import { registry } from "@web/core/registry";
-import { Component, onMounted, onWillUnmount, xml } from "@odoo/owl";
+import { Component, onMounted, onWillUnmount, useState, xml } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
@@ -56,12 +56,26 @@ const DEFAULT_MODEL = "era.seo.suite.hub";
 const DEFAULT_METHOD = "get_article_pending_state";
 
 class EraAutoRefreshWhenTrue extends Component {
-    static template = xml`<span class="d-none"/>`;
+    // When the polled RPC returns a live step message (the blog generator
+    // publishes "Searching trends…", "Writing the article (1)…", etc.) we render
+    // it as a progress banner that updates every tick — no reload. When there's
+    // no message (e.g. the audit spinner, which returns only {pending}) we stay
+    // an invisible span and let that form's own static banner show.
+    static template = xml`
+        <t t-if="state.message">
+            <div class="alert alert-info d-flex align-items-center gap-2 mb-2 py-2" role="status">
+                <span class="fa fa-circle-o-notch fa-spin"/>
+                <span t-esc="state.message"/>
+            </div>
+        </t>
+        <span t-else="" class="d-none"/>
+    `;
     static props = { ...standardFieldProps };
 
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.state = useState({ message: "" });
         this._timer = null;
         this._ticking = false;
         // The widget itself unmounts and remounts after a soft_reload,
@@ -125,6 +139,8 @@ class EraAutoRefreshWhenTrue extends Component {
             const recordPending = Boolean(
                 this.props.record?.data?.[this.props.name],
             );
+            // Live step label (blog generator only); empty otherwise.
+            this.state.message = serverPending ? (state?.message || "") : "";
 
             // Drive the reload off the SERVER-state transition, not the form's
             // cached field. The old logic compared serverPending to the cached

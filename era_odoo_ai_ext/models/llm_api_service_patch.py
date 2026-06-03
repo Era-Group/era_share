@@ -494,6 +494,12 @@ def _patch_llm_api_service():
         )
 
     def _request_llm_openai_helper(self, body, tools=None, inputs=()):
+        # gpt-5-family models are reasoning models that REJECT `temperature`.
+        # The base only special-cases gpt-5 / gpt-5-mini when building the body,
+        # so a newly-surfaced gpt-5-* (e.g. gpt-5-nano) would still carry it and
+        # the API would 400. Strip it for any gpt-5* before the request is sent.
+        if isinstance(body, dict) and (body.get("model") or "").startswith("gpt-5"):
+            body.pop("temperature", None)
         if self.provider != "custom_llm":
             return original_request_llm_openai_helper(self, body, tools=tools, inputs=inputs)
 

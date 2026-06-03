@@ -1425,13 +1425,23 @@ class EraSeoSuiteHub(models.Model):
             self.env['ir.cron.trigger'].sudo().search(
                 [('cron_id', '=', cron.id)]).unlink()
         # If a run is ALREADY in flight, the cleared queue is enough — do NOT
-        # enqueue another. Enqueuing one per click is what made the banner cycle
-        # "Preparing… → Writing…" several times: each extra click ran a fresh
-        # generation back-to-back. (Server-side guard, so a stale cached widget
-        # that still shows the button mid-run can't stack runs either.)
+        # enqueue another (prevents click-stacking). BUT only when the pending
+        # flag is FRESH: a flag left stuck by a killed run must not block new
+        # runs forever (that's the "Preparing… forever, no button" deadlock).
+        # Treat pending older than the TTL as stale and fall through to enqueue.
         if ICP.get_param('era_seo.article_pending') in _TRUE:
-            self.invalidate_recordset(['is_article_pending'])
-            return reload_action
+            started = ICP.get_param('era_seo.article_pending_started_at') or ''
+            fresh = False
+            if started:
+                try:
+                    age = (fields.Datetime.now()
+                           - fields.Datetime.to_datetime(started)).total_seconds()
+                    fresh = 0 <= age < self._ARTICLE_PENDING_TTL_SECONDS
+                except Exception:  # noqa: BLE001 — unparseable → treat as stale
+                    fresh = False
+            if fresh:
+                self.invalidate_recordset(['is_article_pending'])
+                return reload_action
         # Idle → seed the flags + an initial step (so the banner has something
         # to show before the cron writes its first real step) and enqueue
         # EXACTLY ONE run. `_manual` overrides the gate and is cleared inside

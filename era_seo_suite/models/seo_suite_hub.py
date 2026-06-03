@@ -1890,6 +1890,38 @@ class EraSeoSuiteHub(models.Model):
                 ICP.set_param(key, value)
 
     @api.model
+    def _pick_article_focus_category(self, BlogPost):
+        """Pick the blog category to anchor the next auto-article on, rotating
+        across the site's OWN categories least-recently-used first.
+
+        This is the general, DB-agnostic fix for topic fixation: rather than
+        trusting the model to diversify (it anchors on whatever the business
+        summary emphasises), the generator deterministically cycles the focus
+        across every category the site actually uses, so coverage spreads on
+        any customer install. Returns a category name, or None when there isn't
+        enough taxonomy to rotate (then the prompt-level diversity rules apply).
+        """
+        Category = self.env.get('era.blog.category')
+        if Category is None or BlogPost is None:
+            return None
+        cats = Category.sudo().search([])
+        if len(cats) < 2:
+            return None
+        # Most-recent post id per category = recency; never-used categories get
+        # 0 and so sort first. min() => the least-recently-used category.
+        last_used = {}
+        try:
+            for cat, max_id in BlogPost.sudo()._read_group(
+                    [('era_category_id', '!=', False)],
+                    groupby=['era_category_id'], aggregates=['id:max']):
+                if cat:
+                    last_used[cat.id] = max_id or 0
+        except Exception:  # noqa: BLE001 — degrade to prompt-only diversity
+            return None
+        chosen = min(cats, key=lambda c: last_used.get(c.id, 0))
+        _logger.info('article generator: rotated focus category -> %s', chosen.name)
+        return chosen.name
+
     def _run_article_gen(self):
         """Generate a fresh, trend-aware blog post from the AI agent.
 
@@ -1952,6 +1984,11 @@ class EraSeoSuiteHub(models.Model):
                           else '')}
             for p in recent_posts[:5] if (p.name or '').strip()
         ]
+        # GENERAL anti-fixation: deterministically rotate the article's topic
+        # across the site's OWN blog categories (least-recently-used first),
+        # independent of how the business summary is worded. Works on any DB;
+        # falls back to prompt-only diversity when there are <2 categories.
+        focus_category = self._pick_article_focus_category(BlogPost)
         existing_categories = Category.sudo().search([], limit=50).mapped('name')
         related_pages = self._article_internal_link_targets()
         search_opportunities = self._article_search_opportunities()
@@ -1969,7 +2006,8 @@ class EraSeoSuiteHub(models.Model):
                 prompt_addendum=prompt_addendum,
                 related_pages=related_pages,
                 search_opportunities=search_opportunities,
-                recent_subjects=recent_subjects)
+                recent_subjects=recent_subjects,
+                focus_category=focus_category)
         except (AIUnavailable, ValueError) as exc:
             _logger.warning('cron_generate_blog_article: skipped — %s', exc)
             return False
@@ -1986,6 +2024,11 @@ class EraSeoSuiteHub(models.Model):
         except Exception:  # noqa: BLE001
             _logger.exception('cron_generate_blog_article: AI call failed')
             return False
+
+        # Deterministic rotation wins: file under the assigned category even if
+        # the model's returned `category` drifted, so coverage actually spreads.
+        if focus_category:
+            article['category'] = focus_category
 
         # Find or create the category the agent picked.
         category = False

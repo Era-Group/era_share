@@ -1367,7 +1367,7 @@ class AIClient:
     def propose_article(self, business_context, past_titles, existing_categories,
                         lang_code=None, trending_now=None, prompt_addendum=None,
                         related_pages=None, search_opportunities=None,
-                        recent_subjects=None):
+                        recent_subjects=None, focus_category=None):
         """Ask the AI agent to propose a fresh, trend-aware blog article for
         the site.
 
@@ -1402,7 +1402,8 @@ class AIClient:
         prompt = self._build_article_prompt(
             business_context, past_titles, existing_categories,
             lang_code, trending_now, prompt_addendum, related_pages,
-            search_opportunities, recent_subjects=recent_subjects)
+            search_opportunities, recent_subjects=recent_subjects,
+            focus_category=focus_category)
         response = agent.get_direct_response(
             prompt=prompt, context_message=ARTICLE_CONTEXT)
         raw = response[0] if response else ''
@@ -1422,7 +1423,8 @@ class AIClient:
                 lang_code, trending_now=None, prompt_addendum=None,
                 related_pages=related_pages,
                 search_opportunities=search_opportunities,
-                recent_subjects=recent_subjects)
+                recent_subjects=recent_subjects,
+                focus_category=focus_category)
             response = agent.get_direct_response(
                 prompt=neutral_prompt, context_message=ARTICLE_CONTEXT)
             raw = response[0] if response else ''
@@ -1499,7 +1501,13 @@ class AIClient:
     def _build_article_prompt(cls, business_context, past_titles, existing_categories,
                               lang_code=None, trending_now=None, prompt_addendum=None,
                               related_pages=None, search_opportunities=None,
-                              recent_subjects=None):
+                              recent_subjects=None, focus_category=None):
+        focus_block = (
+            '  assigned_category (MANDATORY — the generator rotates this to '
+            'force topic spread): "{fc}"\n'.format(
+                fc=str(focus_category).replace('"', "'"))
+            if focus_category else ''
+        )
         recent_items = []
         for item in list(recent_subjects or [])[:5]:
             if not isinstance(item, dict):
@@ -1568,7 +1576,15 @@ class AIClient:
             '{links}'
             '{opportunities}'
             '{recent}'
+            '{focus}'
             'TASK:\n'
+            '  0z. ASSIGNED CATEGORY — if assigned_category is present it is a '
+            'HARD directive that OVERRIDES your own topic choice: the article '
+            'MUST be squarely about that category, and the output `category` '
+            'MUST equal it verbatim. The host rotates this value every run to '
+            'spread coverage across the whole site, so never substitute a '
+            'different (e.g. the recently-dominant) field. Still honour the '
+            'diversity and quality rules below within that category.\n'
             '  0. TOPIC DIVERSITY — decide this FIRST and treat it as a HARD, '
             'NON-NEGOTIABLE constraint. `recently_covered` lists the LAST 5 '
             'articles with their subject and category. You are FORBIDDEN from '
@@ -1660,6 +1676,7 @@ class AIClient:
                 links=links_block,
                 opportunities=opportunities_block,
                 recent=recent_block,
+                focus=focus_block,
                 min_words=cls._ARTICLE_MIN_WORDS,
                 target_words=cls._ARTICLE_TARGET_WORDS,
             )

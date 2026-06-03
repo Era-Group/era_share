@@ -374,6 +374,14 @@ class AIClient:
     _ARTICLE_MIN_WORDS = 900
     _ARTICLE_TARGET_WORDS = '1000-1400'
     _ARTICLE_MAX_LINK_TARGETS = 16
+    # Wall-clock budget for the whole propose_article call (initial draft +
+    # refusal retry + word-floor extension passes). Each LLM round-trip on a
+    # 1000+ word article can take minutes; chaining 3-4 of them used to blow
+    # past the worker's limit_time_real (1200s) and get the process force-killed
+    # mid-article. We stop entering new extension passes once this budget is
+    # spent and publish the best draft so far. Kept well under 1200s so the
+    # post-steps (image, category, create) still finish inside the worker limit.
+    _ARTICLE_GEN_BUDGET_S = 540
 
     def __init__(self, env):
         self.env = env
@@ -1398,6 +1406,8 @@ class AIClient:
         ok, reason = self.is_available()
         if not ok:
             raise AIUnavailable(reason)
+        import time as _time
+        deadline = _time.monotonic() + self._ARTICLE_GEN_BUDGET_S
         agent = self._resolve_agent()
         prompt = self._build_article_prompt(
             business_context, past_titles, existing_categories,
@@ -1444,6 +1454,12 @@ class AIClient:
         wc = self._count_words(parsed.get('content_html', ''))
         for attempt in range(1, 3):
             if wc >= self._ARTICLE_MIN_WORDS:
+                break
+            if _time.monotonic() > deadline:
+                _logger.info(
+                    'propose_article: %ds budget spent; publishing the %d-word '
+                    'draft rather than risk a force-kill on more passes.',
+                    self._ARTICLE_GEN_BUDGET_S, wc)
                 break
             _logger.info(
                 'propose_article: draft is %d words (< %d); extension '

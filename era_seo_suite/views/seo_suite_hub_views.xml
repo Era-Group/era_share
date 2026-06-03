@@ -655,8 +655,7 @@
                 </group>
                 <group string="Status">
                   <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>
-                  <field name="setting_ai_agent_id" readonly="1"
-                         options="{'no_create': True}"/>
+                  <field name="setting_article_agent_name"/>
                 </group>
               </group>
 

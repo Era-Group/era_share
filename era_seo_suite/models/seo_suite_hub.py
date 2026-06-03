@@ -285,11 +285,18 @@ class EraSeoSuiteHub(models.Model):
         string='Article AI model',
         compute='_compute_article_model',
         inverse='_inverse_article_model',
-        help='LLM used to write blog articles (it sets the AI Agent above). '
+        help='LLM used to write blog articles (it sets the dedicated Article '
+             'AI Agent, shown under Status). '
              'Reasoning models (gpt-5 / gpt-5-mini / gpt-5-nano) are higher '
              'quality but SLOW — a generation makes several calls and can take '
              'minutes. gpt-4o-mini is fast and cheap; gpt-4o is a strong '
              'middle ground. Uses the agent\'s configured OpenAI key.')
+    setting_article_agent_name = fields.Char(
+        string='Article AI Agent', readonly=True,
+        compute='_compute_article_agent_name',
+        help='The dedicated agent that writes blog articles — separate from '
+             'the SEO Fixer used by Auto-Fix, so the two can run on different '
+             'models.')
 
     # --- Smart 404 (did-you-mean redirect)
     setting_smart_404_enabled = fields.Boolean(
@@ -1169,6 +1176,12 @@ class EraSeoSuiteHub(models.Model):
             # Only surface a value the Selection actually offers, else the field
             # renders blank rather than erroring on an unknown stored value.
             rec.setting_article_model = model if model in valid else False
+
+    def _compute_article_agent_name(self):
+        for rec in self:
+            agent = rec._blog_agent()
+            rec.setting_article_agent_name = (
+                agent.name if agent and agent.exists() else _('(none configured)'))
 
     def _inverse_article_model(self):
         for rec in self:

@@ -118,6 +118,48 @@ class BlogPost(models.Model):
             },
         }
 
+    def action_era_regenerate_image(self):
+        """(Re)generate ONLY the hero/cover image for this post — for articles
+        that were published without an image (the image step failed) or when a
+        fresh cover is wanted. Retries up to 3×; the article text is untouched
+        if every attempt fails.
+        """
+        self.ensure_one()
+        Hub = self.env['era.seo.suite.hub'].sudo()
+        title = (self.name or '').strip()
+        subtitle = (getattr(self, 'era_subtitle', '') or '').strip()
+        # The original AI image_prompt isn't stored, so build one from the post.
+        prompt = (
+            'A professional, modern editorial hero image for a blog article '
+            'titled "%s".%s Clean and high-quality, no text overlay.' % (
+                title, (' Theme: %s.' % subtitle) if subtitle else '')
+        )
+        ok = Hub._era_generate_post_image(
+            self, prompt, {'title': title}, attempts=3)
+        if ok:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'type': 'success',
+                    'message': _('Cover image generated for: %s', title),
+                    'sticky': False,
+                },
+            }
+        provider = self.env['ir.config_parameter'].sudo().get_param(
+            'era_seo.image_provider', 'none') or 'none'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'warning',
+                'message': _('Could not generate an image after 3 tries '
+                             '(provider: %s). The article is unchanged.',
+                             provider),
+                'sticky': False,
+            },
+        }
+
     def action_era_open_website(self):
         """Open this post's live URL in a new tab."""
         self.ensure_one()

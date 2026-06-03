@@ -709,6 +709,9 @@
                   <field name="era_ai_confidence" string="Confidence" widget="float" digits="[3,2]"/>
                   <field name="is_published" string="Published" widget="boolean_toggle"/>
                   <field name="website_url" widget="url" string="URL" optional="show"/>
+                  <button name="action_era_regenerate_image" type="object"
+                          string="Generate image" icon="fa-image"
+                          help="Generate (or replace) only the cover/hero image for this article. Retries up to 3 times; the text is left unchanged. Use it when an article was published without an image."/>
                   <button name="action_era_ai_regenerate" type="object"
                           string="Regenerate" icon="fa-refresh"
                           help="Replace this article with a fresh AI proposal (same record)."

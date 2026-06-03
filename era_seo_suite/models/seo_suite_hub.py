@@ -2181,27 +2181,27 @@ class EraSeoSuiteHub(models.Model):
         self._set_article_progress(steps['publish'])
         post = BlogPost.sudo().create(post_vals)
 
-        # Hero image — call the hook, attach to all relevant slots if it
-        # returned bytes.
-        self._set_article_progress(steps['image'])
-        try:
-            image_bytes = self._generate_article_image(article['image_prompt'])
-        except Exception:  # noqa: BLE001
-            _logger.exception(
-                'cron_generate_blog_article: image hook raised — skipping image')
-            image_bytes = None
-        if not image_bytes:
+        # ── STAGE 1 DONE: the article is written. COMMIT it now so it is
+        # durable and its cron trigger is consumed BEFORE the optional image
+        # step. A slow or failing image must never roll the article back or
+        # leave the trigger to re-fire — that was the "trends → writing" loop
+        # (the image step hung, the worker was killed, everything rolled back,
+        # the trigger re-fired). The image below is pure best-effort.
+        self.env.cr.commit()
+
+        # ── STAGE 2 (best-effort): hero image, retried up to 3×. The article
+        # already exists; if every attempt fails it simply has no cover (the
+        # admin can re-request it from the Recently-generated table).
+        attached = self._era_generate_post_image(
+            post, article.get('image_prompt'), article,
+            attempts=3, progress_msg=steps.get('image'))
+        if not attached:
             provider = ICP.get_param('era_seo.image_provider', 'none') or 'none'
             _logger.info(
-                'cron_generate_blog_article: no image generated '
-                '(provider=%s) — post.cover stays empty. Configure the Blog '
+                'cron_generate_blog_article: no image after 3 attempts '
+                '(provider=%s) — post kept without a cover. Configure the Blog '
                 'Gen tab → Image generation to enable.', provider)
-        else:
-            try:
-                self._attach_article_image(post, image_bytes, article)
-            except Exception:  # noqa: BLE001
-                _logger.exception(
-                    'cron_generate_blog_article: failed to attach generated image')
+        self.env.cr.commit()  # persist the cover if one was attached
 
         # Notify the SEO Manager group with the live URL.
         try:
@@ -2333,6 +2333,45 @@ class EraSeoSuiteHub(models.Model):
         for item in opportunities:
             item.pop('_score', None)
         return opportunities[:limit]
+
+    def _era_generate_post_image(self, post, image_prompt, article,
+                                 attempts=3, progress_msg=None):
+        """Best-effort hero image for ``post``, retried up to ``attempts`` times.
+
+        Generates via the configured provider and attaches on success. It NEVER
+        raises and NEVER rolls the post back — the article stands on its own if
+        every attempt fails (the admin can re-request it later from the
+        Recently-generated table). Returns True iff an image was generated AND
+        attached.
+
+        Shared by the generator cron (Stage 2) and the per-article
+        "Generate image" button.
+        """
+        image_prompt = (image_prompt or '').strip()
+        if not image_prompt:
+            return False
+        attempts = attempts or 1
+        for n in range(1, attempts + 1):
+            if progress_msg:
+                self._set_article_progress(
+                    progress_msg if n == 1
+                    else '%s (%d/%d)' % (progress_msg, n, attempts))
+            try:
+                image_bytes = self._generate_article_image(image_prompt)
+            except Exception:  # noqa: BLE001 — flaky provider; retry
+                _logger.exception(
+                    'image generation attempt %d/%d raised', n, attempts)
+                image_bytes = None
+            if image_bytes:
+                try:
+                    self._attach_article_image(post, image_bytes, article)
+                    return True
+                except Exception:  # noqa: BLE001
+                    _logger.exception(
+                        'image attach attempt %d/%d failed', n, attempts)
+        _logger.info('no usable image after %d attempts for post#%s',
+                     attempts, getattr(post, 'id', '?'))
+        return False
 
     def _attach_article_image(self, post, image_bytes, article):
         """Persist the generated image into every slot the blog + SEO stack
@@ -2537,7 +2576,7 @@ class EraSeoSuiteHub(models.Model):
                     'Authorization': 'Bearer %s' % api_key,
                     'Content-Type': 'application/json',
                 },
-                json=body, timeout=600,
+                json=body, timeout=90,
             )
         except Exception as exc:  # noqa: BLE001
             _logger.warning('image-gen openrouter: network error: %s', exc)
@@ -2566,7 +2605,7 @@ class EraSeoSuiteHub(models.Model):
                     return None
             # Plain HTTPS — download.
             try:
-                dl = _requests.get(url, timeout=600)
+                dl = _requests.get(url, timeout=45)
                 dl.raise_for_status()
                 return dl.content
             except Exception:  # noqa: BLE001
@@ -2683,7 +2722,7 @@ class EraSeoSuiteHub(models.Model):
                     # 10-minute timeout — the cron runs in the background,
                     # so it's fine to wait. DALL-E 3 and gpt-image-1 can
                     # both run several minutes at peak load.
-                    json=body, timeout=600,
+                    json=body, timeout=90,
                 )
             except Exception as exc:  # noqa: BLE001
                 _logger.warning('image-gen openai: network error: %s', exc)
@@ -2707,7 +2746,7 @@ class EraSeoSuiteHub(models.Model):
                 try:
                     # Same rationale as the POST above — background job,
                     # generous timeout for the PNG download.
-                    dl = _requests.get(item['url'], timeout=600)
+                    dl = _requests.get(item['url'], timeout=45)
                     dl.raise_for_status()
                     return dl.content, None
                 except Exception as exc:  # noqa: BLE001

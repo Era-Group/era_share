@@ -1866,6 +1866,21 @@ class EraSeoSuiteHub(models.Model):
         only commits the actual blog work; the flag is metadata that
         moves on its own.
         """
+        # Consume this run's trigger UP-FRONT and commit. Generation makes
+        # several slow reasoning-model calls; if the worker is hard-killed
+        # (limit_time_real) partway through, its transaction rolls back. Odoo
+        # deletes the cron trigger only when the callback RETURNS, so a kill
+        # leaves the trigger in place and the cron RE-FIRES every minute — each
+        # re-fire publishing yet another article (the "keeps re-writing" loop;
+        # posts piled up 552, 553, …). Deleting + committing the trigger here
+        # makes consumption durable, so a later kill can't re-fire. The next
+        # SCHEDULED run still happens normally.
+        gen_cron = self.env.ref(
+            'era_seo_suite.cron_generate_blog_article', raise_if_not_found=False)
+        if gen_cron:
+            self.env['ir.cron.trigger'].sudo().search(
+                [('cron_id', '=', gen_cron.id)]).unlink()
+            self.env.cr.commit()
         self._set_article_pending(True)
         try:
             return self._run_article_gen()

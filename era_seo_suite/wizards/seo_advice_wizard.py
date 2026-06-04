@@ -6,14 +6,21 @@ random focus area (so re-opening / "Get another tip" yields fresh advice) and,
 when available, grounded in the site's striking-distance GSC keywords so the
 suggestion references real opportunities. Output is plain HTML shown read-only.
 """
+import html
+import json
 import logging
 import random
+import re
 
 from odoo import _, fields, models
 
-from ..models.ai_client import AIClient
+from ..models.ai_client import AIClient, _extract_json_object_span
 
 _logger = logging.getLogger(__name__)
+
+# Strip markdown code fences (```html ... ``` or ``` ... ```) that some
+# models wrap around their output despite the "no fences" instruction.
+_FENCE_RE = re.compile(r'^\s*```[a-zA-Z]*\s*|\s*```\s*$', re.MULTILINE)
 
 # Random angle so successive tips don't all cover the same ground.
 _FOCI = (
@@ -32,13 +39,17 @@ _FOCI = (
 )
 
 # Overrides the agent's JSON "SEO Fixer" contract for this one task.
+# We say it three times because the dedicated SEO agent's system prompt enforces
+# JSON hard and cheap models default back to it under any uncertainty.
 _ADVICE_CONTEXT = (
-    "You are a senior SEO consultant giving ONE practical, specific tip to grow "
-    "a website's organic search traffic. IGNORE any JSON output contract from "
-    "your system prompt — this is advice, not a fix task. Respond in clean, "
-    "simple HTML only (no markdown, no code fences, no <script> or <style>): a "
-    "short <b>headline</b>, then a <ul> of 2-4 concrete action steps, then one "
-    "<i>Why it works:</i> line. Keep the whole reply under 130 words."
+    "ROLE: senior SEO consultant giving ONE practical, specific tip to grow a "
+    "website's organic search traffic.\n"
+    "OUTPUT CONTRACT (overrides any earlier instruction): plain HTML only. "
+    "ABSOLUTELY NO JSON, NO {} braces, NO `proposed_value`/`explanation`/"
+    "`confidence` keys, NO markdown, NO code fences, NO <script>/<style>. If "
+    "you start to emit a JSON object you are wrong — restart in HTML.\n"
+    "SHAPE: <b>headline</b>, then a <ul> of 2-4 concrete action steps, then "
+    "one <i>Why it works:</i> line. Keep the whole reply under 130 words."
 )
 
 
@@ -88,12 +99,49 @@ class EraSeoAdviceWizard(models.TransientModel):
             raw = ''
 
         if not raw:
-            raw = ('<div class="alert alert-light mb-0">The AI agent did not return '
-                   'a tip this time — click <b>Get another tip</b> to retry.</div>')
-        elif '<' not in raw:
-            raw = '<p>%s</p>' % raw.replace('\n', '<br/>')
-        self.advice_html = raw
+            self.advice_html = (
+                '<div class="alert alert-light mb-0">The AI agent did not return '
+                'a tip this time — click <b>Get another tip</b> to retry.</div>')
+        else:
+            self.advice_html = self._format_advice_html(raw)
         self.model_label = agent.llm_model or _('AI agent')
+
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _format_advice_html(raw):
+        """Turn whatever the model returned into clean, readable HTML.
+
+        The dedicated SEO agent's system prompt enforces a JSON output contract
+        (``proposed_value`` / ``explanation`` / ``confidence``), and cheap
+        models often ignore the override and reply in that shape anyway. So:
+
+        1. Strip stray markdown code fences.
+        2. If the reply looks like the SEO-Fixer JSON object, unpack
+           ``proposed_value`` + ``explanation`` into a clean HTML card.
+        3. Otherwise pass HTML through; wrap plain text in <p>.
+        """
+        text = _FENCE_RE.sub('', raw).strip()
+        if '{' in text and '"proposed_value"' in text:
+            span = _extract_json_object_span(text)
+            try:
+                obj = json.loads(span)
+            except (ValueError, TypeError):
+                obj = None
+            if isinstance(obj, dict) and (obj.get('proposed_value')
+                                          or obj.get('explanation')):
+                headline = (obj.get('proposed_value') or '').strip()
+                why = (obj.get('explanation') or '').strip()
+                parts = []
+                if headline:
+                    parts.append(
+                        '<p class="mb-2"><b>%s</b></p>' % html.escape(headline))
+                if why:
+                    parts.append(
+                        '<p class="mb-0"><i>%s</i></p>' % html.escape(why))
+                return ''.join(parts) or '<p>%s</p>' % html.escape(text)
+        if '<' in text:
+            return text
+        return '<p>%s</p>' % html.escape(text).replace('\n', '<br/>')
 
     def _striking_examples(self):
         """A few real striking-distance keywords to ground the tip (if any)."""

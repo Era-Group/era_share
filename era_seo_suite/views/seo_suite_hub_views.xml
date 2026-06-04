@@ -279,6 +279,10 @@
                           class="btn btn-primary"
                           invisible="is_audit_pending"
                           confirm="سيتم تشغيل فحص جديد للموقع في الخلفية. يمكنك متابعة العمل، وستظهر النتيجة عند اكتماله. هل تريد المتابعة؟"/>
+                  <button name="action_ai_traffic_advice" type="object"
+                          string="Get AI Traffic Tip"
+                          icon="fa-lightbulb-o"
+                          class="btn btn-warning"/>
                   <button name="action_open_priority_findings" type="object"
                           string="فتح الأولويات"
                           icon="fa-exclamation-triangle"
@@ -718,10 +722,6 @@
                   <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
                 </div>
               </div>
-
-              <button name="action_ai_traffic_advice" type="object"
-                      string="Get AI Traffic Tip" class="btn btn-warning mb-2"
-                      icon="fa-lightbulb-o"/>
 
               <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
                 Search trend (30 days) — clicks &amp; impressions

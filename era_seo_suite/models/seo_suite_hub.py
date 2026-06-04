@@ -88,6 +88,8 @@ class EraSeoSuiteHub(models.Model):
         string='AI fixes awaiting review', compute='_compute_kpis')
     kpi_ai_findings_failed = fields.Integer(
         string='AI fixes failed', compute='_compute_kpis')
+    kpi_ai_findings_review = fields.Integer(
+        string='AI fixes needing review', compute='_compute_kpis')
 
     # AI auto-fill progress — how far the unattended bulk-fill sweep has
     # gotten through the pages/posts that still need SEO fields. `done` are
@@ -179,6 +181,11 @@ class EraSeoSuiteHub(models.Model):
         'setting_social_youtube':   ('era_seo.social_youtube',        'char', ''),
         # ---------- AI Auto-Fix (era_seo_ai) ----------
         'setting_ai_enabled':       ('era_seo.ai_enabled',            'bool', False),
+        'setting_autopilot_active': ('era_seo.autopilot_active',      'bool', False),
+        'setting_autopilot_confidence_pct': (
+            'era_seo.autopilot_confidence_pct', 'int', 80),
+        'setting_autopilot_max_attempts': (
+            'era_seo.autopilot_max_attempts', 'int', 2),
         # ---------- Smart 404 (did-you-mean redirect) ----------
         'setting_smart_404_enabled':       ('era_seo.smart_404_enabled',       'bool', True),
         'setting_smart_404_home_fallback': ('era_seo.smart_404_home_fallback', 'bool', True),
@@ -268,6 +275,32 @@ class EraSeoSuiteHub(models.Model):
     setting_ai_enabled = fields.Boolean(
         string='AI Auto-Fix Enabled', compute='_compute_settings', inverse='_inverse_settings',
         help='Master switch. When off, all AI buttons hide and no AI calls happen.')
+    setting_autopilot_active = fields.Boolean(
+        string='Autopilot: Apply Safe Metadata Fixes',
+        compute='_compute_settings',
+        inverse='_inverse_settings',
+        help='When enabled, scheduled AI auto-fix may apply high-confidence '
+             'SEO titles, meta descriptions, and image alt text in addition '
+             'to the always-safe OG image and schema fixes. Page body copy '
+             'and URL slug changes remain review-only.',
+    )
+    setting_autopilot_confidence_pct = fields.Integer(
+        string='Autopilot Confidence Threshold (%)',
+        compute='_compute_settings',
+        inverse='_inverse_settings',
+        help='Minimum AI confidence required before Autopilot applies a '
+             'proposal without review. Lower-confidence proposals stay in '
+             'the AI Review Queue.',
+    )
+    setting_autopilot_max_attempts = fields.Integer(
+        string='Max Attempts per Finding',
+        compute='_compute_settings',
+        inverse='_inverse_settings',
+        help='Maximum unattended Suggest attempts for the same persistent '
+             'finding before it is stopped and sent to manual review. Retry '
+             'Failed resets the counter after a person changes the setup or '
+             'decides another attempt is worth the cost.',
+    )
     setting_ai_agent_name = fields.Char(
         string='AI Agent (current)', compute='_compute_ai_agent_name', readonly=True,
         help='Read-only display of the configured agent name. Kept for any view that '
@@ -725,6 +758,10 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_ai_findings_failed = F.search_count(
                     [('ai_status', '=', 'failed'),
                      ('is_resolved', '=', False)])
+                rec.kpi_ai_findings_review = F.search_count(
+                    [('ai_needs_manual_review', '=', True),
+                     ('ai_status', '!=', 'failed'),
+                     ('is_resolved', '=', False)])
             else:
                 rec.kpi_audit_open_findings = 0
                 rec.kpi_audit_critical = 0
@@ -735,6 +772,7 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_ai_findings_applied = 0
                 rec.kpi_ai_findings_suggested = 0
                 rec.kpi_ai_findings_failed = 0
+                rec.kpi_ai_findings_review = 0
 
             rec.kpi_coverage_title_pct = _pct(with_title)
             rec.kpi_coverage_meta_pct = _pct(with_meta)
@@ -816,6 +854,7 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_audit_critical +
                 rec.kpi_audit_warning +
                 rec.kpi_ai_findings_failed +
+                rec.kpi_ai_findings_review +
                 rec.kpi_geo_crawlers_blocked
             )
             penalty = min(
@@ -823,6 +862,7 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_audit_critical * 10 +
                 rec.kpi_audit_warning * 2 +
                 rec.kpi_ai_findings_failed * 3 +
+                rec.kpi_ai_findings_review * 2 +
                 rec.kpi_geo_crawlers_blocked
             )
             rec.kpi_health_score = max(0, min(100, coverage_score - penalty))
@@ -1638,13 +1678,22 @@ class EraSeoSuiteHub(models.Model):
     # Weekly audit + auto AI-fix
     # ------------------------------------------------------------------------
 
-    # Check codes the UNATTENDED audit cron is allowed to auto-apply. Limited
-    # to fixes with NO visible content change: OG image (set to the company
-    # logo) and JSON-LD schema (structured data, invisible to readers). Other
-    # ai_supported codes stay MANUAL via the finding's AI buttons —
-    # thin_content appends AI-written text to the page, and title/slug rewrites
-    # change user-visible copy, so neither should fire unattended.
+    # Check codes the UNATTENDED audit cron is always allowed to auto-apply.
+    # These have no visible page-body change: OG image (set to the company
+    # logo) and JSON-LD schema (structured data, invisible to readers).
     _UNATTENDED_FIX_CODES = {'missing_og_image', 'missing_schema'}
+    # Optional Autopilot expansion. These are metadata/accessibility edits
+    # that are safe enough to apply when confidence clears the configured
+    # threshold. URL slug changes and thin_content remain review-only.
+    _AUTOPILOT_METADATA_CODES = {
+        'missing_seo_title',
+        'title_too_long',
+        'title_too_short',
+        'missing_meta_description',
+        'description_too_long',
+        'description_too_short',
+        'image_missing_alt',
+    }
     # Max findings SELECTED per tick. Schema fixes are AI calls; a large
     # backlog processed in one tick could run past limit_time_real and get the
     # worker killed. The remainder is picked up on the next tick.
@@ -1657,6 +1706,57 @@ class EraSeoSuiteHub(models.Model):
     # AI provider can't push one tick past limit_time_real (1200s). Budget +
     # one chunk's worst case stays comfortably under that ceiling.
     _UNATTENDED_FIX_TICK_BUDGET_S = 600
+
+    def _autopilot_fix_codes(self):
+        codes = set(self._UNATTENDED_FIX_CODES)
+        if _icp_get(self.env, 'era_seo.autopilot_active', 'False') in _TRUE:
+            codes |= self._AUTOPILOT_METADATA_CODES
+        return codes
+
+    def _autopilot_max_attempts(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        try:
+            value = int(ICP.get_param('era_seo.autopilot_max_attempts', '2'))
+        except (TypeError, ValueError):
+            value = 2
+        return max(1, value)
+
+    def _autopilot_candidate_domain(self, codes):
+        return [
+            ('is_resolved', '=', False),
+            ('ai_status', '=', 'none'),
+            ('check_code', 'in', list(codes)),
+            ('ai_attempt_count', '<', self._autopilot_max_attempts()),
+        ]
+
+    def _mark_autopilot_attempt_limited(self, codes, tag):
+        """Move over-budget untouched findings to the review queue.
+
+        Without this, a finding whose status was reset by an older version or
+        a direct write could stay at `none` forever and be re-selected on every
+        cron tick. Marking it once makes the spend cap visible to the user.
+        """
+        Finding = self.env['era.seo.audit.finding'].sudo()
+        limit = self._autopilot_max_attempts()
+        blocked = Finding.search([
+            ('is_resolved', '=', False),
+            ('ai_status', '=', 'none'),
+            ('check_code', 'in', list(codes)),
+            ('ai_attempt_count', '>=', limit),
+        ], limit=100)
+        if not blocked:
+            return
+        reason = _(
+            'Autopilot stopped after the configured %d attempt(s). Review '
+            'manually, or use Retry Failed to reset the counter after fixing '
+            'the AI/provider setup.', limit)
+        blocked.write({
+            'ai_status': 'manual_review',
+            'ai_needs_manual_review': True,
+            'ai_review_reason': reason,
+        })
+        _logger.info('%s: parked %d over-attempt finding(s) for review',
+                     tag, len(blocked))
 
     @api.model
     def cron_weekly_audit_and_fix(self):
@@ -1681,9 +1781,12 @@ class EraSeoSuiteHub(models.Model):
             return
         if not run:
             return
+        codes = self._autopilot_fix_codes()
+        self._mark_autopilot_attempt_limited(codes, 'weekly_audit_and_fix')
         findings = run.finding_ids.filtered(
             lambda f: f.ai_status == 'none'
-            and f.check_code in self._UNATTENDED_FIX_CODES
+            and f.check_code in codes
+            and (f.ai_attempt_count or 0) < self._autopilot_max_attempts()
         )[:self._UNATTENDED_FIX_BATCH]
         self._apply_safe_fixes(findings, 'weekly_audit_and_fix')
 
@@ -1700,11 +1803,11 @@ class EraSeoSuiteHub(models.Model):
         """
         if _icp_get(self.env, 'era_seo.weekly_audit_active', 'True') not in _TRUE:
             return
-        findings = self.env['era.seo.audit.finding'].sudo().search([
-            ('is_resolved', '=', False),
-            ('ai_status', '=', 'none'),
-            ('check_code', 'in', list(self._UNATTENDED_FIX_CODES)),
-        ], limit=self._UNATTENDED_FIX_BATCH)
+        codes = self._autopilot_fix_codes()
+        self._mark_autopilot_attempt_limited(codes, 'daily_ai_fix')
+        findings = self.env['era.seo.audit.finding'].sudo().search(
+            self._autopilot_candidate_domain(codes),
+            limit=self._UNATTENDED_FIX_BATCH)
         self._apply_safe_fixes(findings, 'daily_ai_fix')
 
     # ------------------------------------------------------------------
@@ -1900,8 +2003,8 @@ class EraSeoSuiteHub(models.Model):
         failing finding to its chunk instead of aborting the whole batch.
         """
         if not findings:
-            _logger.info('%s: no untouched safe-fixable findings (%s)',
-                         tag, ', '.join(sorted(self._UNATTENDED_FIX_CODES)))
+            _logger.info('%s: no untouched autopilot-fixable findings (%s)',
+                         tag, ', '.join(sorted(self._autopilot_fix_codes())))
             return
         import time as _time
         deadline = _time.monotonic() + self._UNATTENDED_FIX_TICK_BUDGET_S
@@ -3381,14 +3484,16 @@ class EraSeoSuiteHub(models.Model):
         return action
 
     def action_open_ai_review_queue(self):
-        """Open AI suggestions that are ready for review."""
+        """Open AI items that need a person before more automation."""
         self.ensure_one()
         action = self._era_read_action('era_seo_suite.action_seo_audit_finding')
         action.update({
             'name': _('AI Review Queue'),
             'domain': [
                 ('is_resolved', '=', False),
-                ('ai_status', '=', 'suggested'),
+                '|',
+                ('ai_status', 'in', ['suggested', 'failed', 'manual_review']),
+                ('ai_needs_manual_review', '=', True),
             ],
         })
         return action

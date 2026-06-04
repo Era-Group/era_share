@@ -130,6 +130,7 @@
               <field name="kpi_ai_findings_applied" invisible="1"/>
               <field name="kpi_ai_findings_suggested" invisible="1"/>
               <field name="kpi_ai_findings_failed" invisible="1"/>
+              <field name="kpi_ai_findings_review" invisible="1"/>
               <field name="kpi_ai_fill_total" invisible="1"/>
               <field name="kpi_ai_fill_done" invisible="1"/>
               <field name="kpi_ai_fill_remaining" invisible="1"/>
@@ -230,7 +231,7 @@
                           string="AI Review Queue"
                           icon="fa-magic"
                           class="btn btn-info"
-                          invisible="not kpi_ai_findings_suggested"/>
+                          invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
                   <button name="action_open_pages_missing_seo" type="object"
                           string="Pages Missing SEO"
                           icon="fa-pencil"
@@ -282,7 +283,7 @@
                   </div>
                   <div class="col-lg-4 col-md-6">
                     <div class="o_era_work_tile o_era_work_tile_info h-100"
-                         invisible="not kpi_ai_fill_remaining and not kpi_ai_findings_suggested">
+                         invisible="not kpi_ai_fill_remaining and not kpi_ai_findings_suggested and not kpi_ai_findings_review">
                       <div class="o_era_work_tile_icon"><i class="fa fa-magic"/></div>
                       <div>
                         <div class="o_era_work_tile_title">AI workload</div>
@@ -292,9 +293,15 @@
                           <field name="kpi_posts_missing_seo" readonly="1" nolabel="1"/>
                           posts missing SEO,
                           <field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/>
-                          suggested fixes
+                          suggested,
+                          <field name="kpi_ai_findings_review" readonly="1" nolabel="1"/>
+                          need review
                         </div>
                       </div>
+                      <button name="action_open_ai_review_queue" type="object"
+                              string="Review"
+                              class="btn btn-sm btn-outline-primary"
+                              invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
                       <button name="action_start_bulk_ai_fill" type="object"
                               string="Start"
                               class="btn btn-sm btn-outline-info"
@@ -306,7 +313,7 @@
                               invisible="not kpi_ai_fill_active"/>
                     </div>
                     <div class="o_era_work_tile h-100"
-                         invisible="kpi_ai_fill_remaining or kpi_ai_findings_suggested">
+                         invisible="kpi_ai_fill_remaining or kpi_ai_findings_suggested or kpi_ai_findings_review">
                       <div class="o_era_work_tile_icon"><i class="fa fa-check"/></div>
                       <div>
                         <div class="o_era_work_tile_title">AI workload</div>
@@ -429,6 +436,7 @@
                     <div class="card-body py-1 px-3">
                       <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-success small"><i class="fa fa-magic me-1"/>Fixes applied</span><span class="fw-bold text-success"><field name="kpi_ai_findings_applied" readonly="1" nolabel="1"/></span></div>
                       <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-info small"><i class="fa fa-clock-o me-1"/>Awaiting review</span><span class="fw-bold"><field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-pause-circle me-1"/>Needs decision</span><span class="fw-bold text-warning"><field name="kpi_ai_findings_review" readonly="1" nolabel="1"/></span></div>
                       <div class="d-flex justify-content-between gap-4 py-1"><span class="text-danger small"><i class="fa fa-times-circle me-1"/>Failed</span><span class="fw-bold text-danger"><field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/></span></div>
                     </div>
                   </div>
@@ -778,12 +786,26 @@
                          widget="boolean_toggle"
                          invisible="not setting_ai_enabled"/>
                 </group>
+                <group invisible="not setting_ai_enabled">
+                  <field name="setting_autopilot_active" widget="boolean_toggle"/>
+                  <field name="setting_autopilot_confidence_pct"
+                         invisible="not setting_autopilot_active"/>
+                  <field name="setting_autopilot_max_attempts"
+                         invisible="not setting_autopilot_active"/>
+                </group>
               </group>
               <div class="text-muted small mb-3" invisible="not setting_ai_enabled">
                 The agent carries the provider, model, and API key — all configured in the
                 <b>AI</b> app (Odoo Enterprise). Leave the picker empty to fall back to the
                 site's "Ask AI" agent. The SEO house-style rules are sent with every
                 request, so a generic agent works fine.
+              </div>
+              <div class="alert alert-info mb-3"
+                   invisible="not setting_ai_enabled or not setting_autopilot_active">
+                Autopilot applies high-confidence SEO titles, meta descriptions,
+                image alt text, OG images, and schema. Low-confidence proposals,
+                repeated failures, thin-content expansions, and slug changes stay
+                in the AI Review Queue.
               </div>
               <div class="text-muted small mb-3"
                    invisible="not setting_article_generator_active">

@@ -190,6 +190,74 @@ class TestAIWorkflow(TransactionCase):
         self.assertEqual(f_lo.ai_status, 'suggested')
         # Low-confidence suggestion must NOT overwrite the page title.
         self.assertNotEqual(page_lo.seo_title, 'Low')
+        self.assertTrue(f_lo.ai_needs_manual_review)
+        self.assertIn('below', f_lo.ai_review_reason)
+
+    def test_suggest_records_attempt_count(self):
+        page = self._make_page(url='/attempt-count')
+        f = self._make_finding(page, 'missing_seo_title')
+        agent = _mock_agent(
+            '{"proposed_value": "Attempted", "explanation": "x", "confidence": 0.9}'
+        )
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            f.action_ai_suggest()
+        f.invalidate_recordset()
+        self.assertEqual(f.ai_attempt_count, 1)
+        self.assertTrue(f.ai_last_attempt_date)
+
+    def test_system_suggest_stops_at_attempt_limit_without_ai_call(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('era_seo.autopilot_max_attempts', '1')
+        page = self._make_page(url='/attempt-limit')
+        f = self._make_finding(page, 'missing_seo_title')
+        f.write({'ai_attempt_count': 1})
+        agent = _mock_agent(
+            '{"proposed_value": "Should Not Call", "explanation": "x", "confidence": 0.9}'
+        )
+        with patch.object(AIClient, '_resolve_agent', return_value=agent):
+            f.with_context(_era_ai_system=True).action_ai_suggest()
+        f.invalidate_recordset()
+        self.assertEqual(f.ai_status, 'manual_review')
+        self.assertTrue(f.ai_needs_manual_review)
+        self.assertIn('Autopilot stopped', f.ai_review_reason)
+        agent.get_direct_response.assert_not_called()
+
+    def test_retry_failed_resets_attempt_budget_and_review_flag(self):
+        page = self._make_page(url='/attempt-reset')
+        f = self._make_finding(page, 'missing_seo_title')
+        f.write({
+            'ai_status': 'manual_review',
+            'ai_attempt_count': 2,
+            'ai_needs_manual_review': True,
+            'ai_review_reason': 'stopped',
+        })
+        f.action_ai_retry_failed()
+        f.invalidate_recordset()
+        self.assertEqual(f.ai_status, 'none')
+        self.assertEqual(f.ai_attempt_count, 0)
+        self.assertFalse(f.ai_needs_manual_review)
+
+    def test_redetected_applied_ai_fix_moves_to_manual_review(self):
+        page = self._make_page(url='/redetect-applied')
+        f = self._make_finding(page, 'missing_seo_title')
+        f.write({
+            'ai_status': 'applied',
+            'is_resolved': True,
+            'resolved_manually': False,
+        })
+        rerun = self.Run.create({})
+        rerun._add_finding(
+            page,
+            'critical',
+            'missing_seo_title',
+            'Missing SEO Title',
+            suggested='Add a title.',
+        )
+        f.invalidate_recordset()
+        self.assertFalse(f.is_resolved)
+        self.assertEqual(f.ai_status, 'manual_review')
+        self.assertTrue(f.ai_needs_manual_review)
+        self.assertIn('previous AI fix', f.ai_review_reason)
 
     def test_bad_json_records_failure(self):
         page = self._make_page(url='/badjson')

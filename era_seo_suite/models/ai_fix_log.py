@@ -44,6 +44,27 @@ class EraSeoAiFixLog(models.Model):
     explanation = fields.Text()
     confidence = fields.Float(string='Confidence', digits=(3, 2))
 
+    autopilot_decision = fields.Selection(
+        [
+            ('suggested', 'Suggested'),
+            ('auto_applied', 'Auto-Applied'),
+            ('review', 'Sent to Review'),
+            ('blocked', 'Stopped'),
+            ('failed', 'Failed'),
+        ],
+        string='Autopilot Decision',
+        readonly=True,
+        index=True,
+        help='How the unattended workflow handled this proposal. Empty means '
+             'a manual user action created the log.',
+    )
+    autopilot_reason = fields.Text(
+        string='Autopilot Reason',
+        readonly=True,
+        help='Why the unattended workflow applied, queued, stopped, or failed '
+             'this proposal.',
+    )
+
     applied = fields.Boolean(string='Applied', default=False)
     applied_date = fields.Datetime(readonly=True)
     applied_user_id = fields.Many2one('res.users', readonly=True)

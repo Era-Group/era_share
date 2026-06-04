@@ -29,6 +29,7 @@ AI_STATUS = [
     ('suggested', 'Suggested'),
     ('applied', 'Applied'),
     ('failed', 'Failed'),
+    ('manual_review', 'Needs Review'),
     ('not_supported', 'Not AI-Fixable'),
 ]
 
@@ -50,6 +51,11 @@ AI_FIXABLE_CODES = {
     'image_missing_alt',    # AI writes alt text, injected into the content imgs
     'thin_content',         # AI proposes an HTML block, appended on apply
 }
+
+# Even if the configured threshold is lowered, these fix families must never
+# be applied without a human clicking Apply. Thin-content writes AI-authored
+# page body copy; keeping it review-only preserves editorial control.
+AI_NEVER_AUTO_APPLY_FIX_TYPES = {'thin_content'}
 
 
 class EraSeoAuditFinding(models.Model):
@@ -94,6 +100,30 @@ class EraSeoAuditFinding(models.Model):
     )
     ai_model_used = fields.Char(string='Model', readonly=True)
     ai_last_log_id = fields.Many2one('era.seo.ai.fix.log', readonly=True)
+    ai_attempt_count = fields.Integer(
+        string='AI Attempts',
+        readonly=True,
+        default=0,
+        help='Number of automated or manual Suggest Fix attempts made for '
+             'this persistent finding. Used by Autopilot to avoid spending '
+             'repeated AI calls on the same unresolved issue.',
+    )
+    ai_last_attempt_date = fields.Datetime(
+        string='Last AI Attempt',
+        readonly=True,
+    )
+    ai_needs_manual_review = fields.Boolean(
+        string='Needs Manual Review',
+        readonly=True,
+        index=True,
+        help='Set when Autopilot produced a low-confidence proposal, hit the '
+             'attempt limit, could not apply the proposal, or found a case '
+             'that should be decided by a person.',
+    )
+    ai_review_reason = fields.Text(
+        string='Manual Review Reason',
+        readonly=True,
+    )
     ai_supported = fields.Boolean(
         string='AI-Fixable',
         compute='_compute_ai_supported',
@@ -114,7 +144,7 @@ class EraSeoAuditFinding(models.Model):
     # ------------------------------------------------------------------
 
     def action_ai_suggest(self):
-        """Call Claude for each selected finding; store proposals."""
+        """Call the configured Odoo AI agent for each finding; store proposals."""
         self._check_manager()
         Log = self.env['era.seo.ai.fix.log'].sudo()
         client = AIClient(self.env)
@@ -136,6 +166,10 @@ class EraSeoAuditFinding(models.Model):
                 continue
             target = rec._ai_resolve_target()
             if not target:
+                rec._ai_mark_manual_review(
+                    _('Target record no longer exists; inspect the finding manually.'),
+                    status='manual_review',
+                )
                 errors.append(_('Finding %s: target record vanished.', rec.id))
                 continue
             if provider_error is not None:
@@ -143,11 +177,36 @@ class EraSeoAuditFinding(models.Model):
                 # the remaining findings as failed without re-calling the
                 # provider — the next sweep will retry after the admin
                 # fixes the configuration.
-                rec.write({'ai_status': 'failed'})
+                rec.write({
+                    'ai_status': 'failed',
+                    'ai_needs_manual_review': True,
+                    'ai_review_reason': provider_error,
+                })
+                continue
+            if rec._ai_system_attempt_limit_reached():
+                reason = rec._ai_attempt_limit_message()
+                log = Log.create({
+                    'finding_id': rec.id,
+                    'check_code': rec.check_code,
+                    'target_model': rec.res_model,
+                    'target_id': rec.res_id,
+                    'target_url': rec.url,
+                    'error_message': reason,
+                    'autopilot_decision': 'blocked',
+                    'autopilot_reason': reason,
+                })
+                rec.write({'ai_last_log_id': log.id})
+                rec._ai_mark_manual_review(reason, status='manual_review')
                 continue
             try:
+                rec._ai_register_attempt()
                 proposal = client.suggest_fix(rec, target)
             except AIUnavailable as exc:
+                rec.write({
+                    'ai_status': 'failed',
+                    'ai_needs_manual_review': True,
+                    'ai_review_reason': str(exc),
+                })
                 errors.append(str(exc))
                 continue
             except UserError as exc:
@@ -165,21 +224,40 @@ class EraSeoAuditFinding(models.Model):
                     'target_id': rec.res_id,
                     'target_url': rec.url,
                     'error_message': provider_error,
+                    'autopilot_decision': (
+                        'failed' if rec.env.context.get('_era_ai_system') else False
+                    ),
+                    'autopilot_reason': provider_error,
                 })
-                rec.write({'ai_status': 'failed', 'ai_last_log_id': log.id})
+                rec.write({
+                    'ai_status': 'failed',
+                    'ai_last_log_id': log.id,
+                    'ai_needs_manual_review': True,
+                    'ai_review_reason': provider_error,
+                })
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
             except Exception as exc:  # noqa: BLE001
                 _logger.exception('AI suggest_fix failed for finding %d', rec.id)
+                reason = str(exc)
                 log = Log.create({
                     'finding_id': rec.id,
                     'check_code': rec.check_code,
                     'target_model': rec.res_model,
                     'target_id': rec.res_id,
                     'target_url': rec.url,
-                    'error_message': str(exc),
+                    'error_message': reason,
+                    'autopilot_decision': (
+                        'failed' if rec.env.context.get('_era_ai_system') else False
+                    ),
+                    'autopilot_reason': reason,
                 })
-                rec.write({'ai_status': 'failed', 'ai_last_log_id': log.id})
+                rec.write({
+                    'ai_status': 'failed',
+                    'ai_last_log_id': log.id,
+                    'ai_needs_manual_review': True,
+                    'ai_review_reason': reason,
+                })
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
 
@@ -207,6 +285,9 @@ class EraSeoAuditFinding(models.Model):
                 ),
                 'explanation': proposal['explanation'],
                 'confidence': proposal['confidence'],
+                'autopilot_decision': (
+                    'suggested' if rec.env.context.get('_era_ai_system') else False
+                ),
             })
             rec.write({
                 'ai_status': 'suggested',
@@ -223,6 +304,8 @@ class EraSeoAuditFinding(models.Model):
                 'ai_confidence': proposal['confidence'],
                 'ai_model_used': proposal['model'],
                 'ai_last_log_id': log.id,
+                'ai_needs_manual_review': False,
+                'ai_review_reason': False,
             })
             # Persist each suggestion as it lands. A run with many findings
             # makes one (slow) AI call per record, so the loop can outlast the
@@ -241,7 +324,6 @@ class EraSeoAuditFinding(models.Model):
     def action_ai_apply(self):
         """Write the stored proposal to the target record."""
         self._check_manager()
-        Log = self.env['era.seo.ai.fix.log'].sudo()
         applied = 0
         errors = []
         for rec in self:
@@ -249,6 +331,10 @@ class EraSeoAuditFinding(models.Model):
                 continue
             target = rec._ai_resolve_target()
             if not target:
+                rec._ai_mark_manual_review(
+                    _('Target record no longer exists; inspect the finding manually.'),
+                    status='manual_review',
+                )
                 errors.append(_('Finding %s: target gone.', rec.id))
                 continue
             try:
@@ -262,14 +348,32 @@ class EraSeoAuditFinding(models.Model):
                         'is_resolved': True,
                         'resolved_date': fields.Datetime.now(),
                         'resolved_user_id': self.env.user.id,
+                        'ai_needs_manual_review': False,
+                        'ai_review_reason': False,
                     })
                     if rec.ai_last_log_id:
                         rec.ai_last_log_id.sudo().write({
                             'applied': True,
                             'applied_date': fields.Datetime.now(),
                             'applied_user_id': self.env.user.id,
+                            'autopilot_decision': (
+                                'auto_applied'
+                                if rec.env.context.get('_era_ai_system')
+                                else rec.ai_last_log_id.autopilot_decision
+                            ),
                         })
             except Exception as exc:  # noqa: BLE001
+                reason = str(exc)
+                rec._ai_mark_manual_review(reason, status='suggested')
+                if rec.ai_last_log_id:
+                    rec.ai_last_log_id.sudo().write({
+                        'error_message': reason,
+                        'autopilot_decision': (
+                            'failed' if rec.env.context.get('_era_ai_system')
+                            else rec.ai_last_log_id.autopilot_decision
+                        ),
+                        'autopilot_reason': reason,
+                    })
                 errors.append(_('Finding %s: %s', rec.id, exc))
                 continue
             applied += 1
@@ -287,7 +391,7 @@ class EraSeoAuditFinding(models.Model):
         return self._notify('success', _('%d fix(es) applied.', applied))
 
     def action_ai_suggest_and_apply(self):
-        """Suggest + auto-apply (confidence >= 0.8) ONE finding at a time.
+        """Suggest + auto-apply above the configured confidence threshold.
 
         Processed per record — not suggest-the-whole-run-then-apply-the-whole-
         run — so each finding is suggested, applied and committed before the
@@ -298,21 +402,30 @@ class EraSeoAuditFinding(models.Model):
         the entire run. Per-record means a timeout leaves every finding handled
         so far fully fixed and saved, and the next click resumes with the rest.
         """
-        threshold = 0.8
+        threshold = self._ai_confidence_threshold()
         applied = 0
         for rec in self:
             # Singleton calls reuse the existing per-record handling (provider
             # errors, savepoints) and commit as they go.
             rec.action_ai_suggest()
-            if rec.ai_status == 'suggested' and rec.ai_confidence >= threshold:
+            if rec.ai_status != 'suggested':
+                continue
+            if rec._ai_can_auto_apply(threshold):
                 rec.action_ai_apply()
                 if rec.ai_status == 'applied':
                     applied += 1
+            else:
+                reason = rec._ai_auto_review_reason(threshold)
+                rec._ai_mark_manual_review(reason, status='suggested')
+                if rec.ai_last_log_id:
+                    rec.ai_last_log_id.sudo().write({
+                        'autopilot_decision': 'review',
+                        'autopilot_reason': reason,
+                    })
         return self._notify('success', _('%d fix(es) applied.', applied))
 
     def action_ai_retry_failed(self):
-        """Reset every failed finding back to `none` so the AI workflow can
-        pick them up again.
+        """Reset failed/review-blocked findings so AI can pick them up again.
 
         Background: when the AI provider is temporarily down or
         misconfigured (no key, ReadTimeout, quota), the per-finding
@@ -322,15 +435,19 @@ class EraSeoAuditFinding(models.Model):
         the failed ones — so once you've fixed the provider config,
         you'd be stuck having to delete + re-run an audit to retry.
 
-        This action just flips status `failed` → `none` on the selected
-        records, clearing the stored explanation / proposed_value too
-        so the next Suggest pass starts from a clean slate. Honors the
-        SEO Manager group check.
+        This action flips failed/manual-review states back to `none`, clears
+        the stored proposal, and resets the attempt counter so the next
+        Suggest pass starts from a clean slate. Honors the SEO Manager group
+        check.
         """
         self._check_manager()
-        failed = self.filtered(lambda f: f.ai_status == 'failed')
+        failed = self.filtered(
+            lambda f: f.ai_status in ('failed', 'manual_review')
+            or f.ai_needs_manual_review
+        )
         if not failed:
-            return self._notify('info', _('No failed findings in the selection.'))
+            return self._notify(
+                'info', _('No failed or review-blocked findings in the selection.'))
         failed.write({
             'ai_status': 'none',
             'ai_proposed_value': False,
@@ -341,10 +458,14 @@ class EraSeoAuditFinding(models.Model):
             'ai_explanation': False,
             'ai_confidence': 0.0,
             'ai_model_used': False,
+            'ai_attempt_count': 0,
+            'ai_last_attempt_date': False,
+            'ai_needs_manual_review': False,
+            'ai_review_reason': False,
         })
         return self._notify(
             'success',
-            _('Reset %d failed finding(s) — they will be picked up on the '
+            _('Reset %d finding(s) — they will be picked up on the '
               'next Suggest Fixes run.', len(failed)),
         )
 
@@ -360,6 +481,80 @@ class EraSeoAuditFinding(models.Model):
             return False
         target = self.env[self.res_model].sudo().browse(self.res_id)
         return target if target.exists() else False
+
+    def _ai_register_attempt(self):
+        """Record one Suggest attempt before the provider/mechanical handler.
+
+        The value is stored on the persistent finding, not the transient run,
+        so repeated audits do not reset the spend guard for the same defect.
+        """
+        self.ensure_one()
+        self.sudo().write({
+            'ai_attempt_count': (self.ai_attempt_count or 0) + 1,
+            'ai_last_attempt_date': fields.Datetime.now(),
+        })
+
+    def _ai_max_attempts(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        try:
+            value = int(ICP.get_param('era_seo.autopilot_max_attempts', '2'))
+        except (TypeError, ValueError):
+            value = 2
+        return max(1, value)
+
+    def _ai_confidence_threshold(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        try:
+            pct = int(ICP.get_param('era_seo.autopilot_confidence_pct', '80'))
+        except (TypeError, ValueError):
+            pct = 80
+        pct = max(0, min(100, pct))
+        return pct / 100.0
+
+    def _ai_system_attempt_limit_reached(self):
+        self.ensure_one()
+        if not self.env.context.get('_era_ai_system'):
+            return False
+        return (self.ai_attempt_count or 0) >= self._ai_max_attempts()
+
+    def _ai_attempt_limit_message(self):
+        self.ensure_one()
+        return _(
+            'Autopilot stopped after %(attempts)d attempt(s) on this same '
+            'finding. Review it manually, or use Retry Failed to reset the '
+            'attempt budget after changing the AI/provider setup.',
+            attempts=self.ai_attempt_count or 0,
+        )
+
+    def _ai_can_auto_apply(self, threshold):
+        self.ensure_one()
+        if self.ai_status != 'suggested':
+            return False
+        if (self.ai_fix_type or 'field') in AI_NEVER_AUTO_APPLY_FIX_TYPES:
+            return False
+        return (self.ai_confidence or 0.0) >= threshold
+
+    def _ai_auto_review_reason(self, threshold):
+        self.ensure_one()
+        fix_type = self.ai_fix_type or 'field'
+        if fix_type in AI_NEVER_AUTO_APPLY_FIX_TYPES:
+            return _(
+                'Autopilot kept this proposal for review because "%s" changes '
+                'page body content.', fix_type)
+        return _(
+            'AI confidence %.2f is below the automatic apply threshold %.2f.',
+            self.ai_confidence or 0.0, threshold)
+
+    def _ai_mark_manual_review(self, reason, status='manual_review'):
+        """Park the finding for a person without deleting the AI proposal."""
+        self.ensure_one()
+        vals = {
+            'ai_needs_manual_review': True,
+            'ai_review_reason': reason,
+        }
+        if status:
+            vals['ai_status'] = status
+        self.sudo().write(vals)
 
     # ------------------------------------------------------------------
     # Apply dispatch — one writer per fix type

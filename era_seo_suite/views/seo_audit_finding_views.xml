@@ -21,7 +21,7 @@
         <field name="ai_status" widget="badge"
                decoration-success="ai_status == 'applied'"
                decoration-info="ai_status == 'suggested'"
-               decoration-warning="ai_status == 'failed'"
+               decoration-warning="ai_status in ('failed', 'manual_review')"
                decoration-muted="ai_status in ('none', 'not_supported')"/>
       </xpath>
 
@@ -42,9 +42,14 @@
                    invisible="ai_status not in ('suggested', 'applied')"/>
             <field name="ai_model_used"
                    invisible="ai_status not in ('suggested', 'applied')"/>
+            <field name="ai_attempt_count"/>
+            <field name="ai_last_attempt_date"/>
+            <field name="ai_needs_manual_review" widget="boolean_toggle"/>
           </group>
-          <group invisible="ai_status not in ('suggested', 'applied')">
+          <group invisible="ai_status not in ('suggested', 'applied') and not ai_needs_manual_review">
             <field name="ai_explanation" nolabel="1"/>
+            <field name="ai_review_reason" nolabel="1"
+                   invisible="not ai_needs_manual_review"/>
           </group>
         </group>
       </xpath>
@@ -65,9 +70,30 @@
         <field name="ai_status" widget="badge" optional="show"
                decoration-success="ai_status == 'applied'"
                decoration-info="ai_status == 'suggested'"
-               decoration-warning="ai_status == 'failed'"
+               decoration-warning="ai_status in ('failed', 'manual_review')"
                decoration-muted="ai_status in ('none', 'not_supported')"/>
         <field name="ai_confidence" widget="progressbar" optional="show"/>
+        <field name="ai_attempt_count" optional="show"/>
+        <field name="ai_needs_manual_review" widget="boolean_toggle" optional="show"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="view_seo_audit_finding_search_ai" model="ir.ui.view">
+    <field name="name">era.seo.audit.finding.search.ai</field>
+    <field name="model">era.seo.audit.finding</field>
+    <field name="inherit_id" ref="era_seo_suite.view_seo_audit_finding_search"/>
+    <field name="arch" type="xml">
+      <xpath expr="//filter[@name='unresolved']" position="after">
+        <filter name="ai_review_needed" string="AI Needs Review"
+                domain="['&amp;', ('is_resolved', '=', False),
+                         '|',
+                         ('ai_needs_manual_review', '=', True),
+                         ('ai_status', 'in', ['suggested', 'failed', 'manual_review'])]"/>
+      </xpath>
+      <xpath expr="//group" position="inside">
+        <filter name="group_ai_status" string="AI Status"
+                context="{'group_by': 'ai_status'}"/>
       </xpath>
     </field>
   </record>
@@ -102,7 +128,7 @@ if records:
 
   <record id="action_seo_audit_finding_ai_suggest_and_apply"
           model="ir.actions.server">
-    <field name="name">Suggest + Auto-Apply (≥0.8 confidence)</field>
+    <field name="name">Suggest + Auto-Apply (Configured Threshold)</field>
     <field name="model_id" ref="era_seo_suite.model_era_seo_audit_finding"/>
     <field name="binding_model_id" ref="era_seo_suite.model_era_seo_audit_finding"/>
     <field name="binding_view_types">list</field>
@@ -110,6 +136,19 @@ if records:
     <field name="code">
 if records:
     action = records.action_ai_suggest_and_apply()
+    </field>
+  </record>
+
+  <record id="action_seo_audit_finding_ai_retry_failed"
+          model="ir.actions.server">
+    <field name="name">Retry Failed / Review-Blocked AI</field>
+    <field name="model_id" ref="era_seo_suite.model_era_seo_audit_finding"/>
+    <field name="binding_model_id" ref="era_seo_suite.model_era_seo_audit_finding"/>
+    <field name="binding_view_types">list</field>
+    <field name="state">code</field>
+    <field name="code">
+if records:
+    action = records.action_ai_retry_failed()
     </field>
   </record>
 </odoo>

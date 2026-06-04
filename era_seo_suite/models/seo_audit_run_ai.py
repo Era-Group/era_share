@@ -4,7 +4,7 @@ Adds two one-click buttons to the audit run form so the admin can fix the
 whole run without opening each finding:
 
   - Suggest Fixes (AI)  -> action_ai_suggest_findings
-  - Auto-Fix (>=0.8)     -> action_ai_fix_findings (suggest + apply confident)
+  - Auto-Fix             -> action_ai_fix_findings (suggest + apply confident)
 
 Both operate only on the run's AI-fixable, unresolved findings.
 
@@ -37,6 +37,12 @@ class EraSeoAuditRun(models.Model):
              'Use Retry Failed to flip them back to "none" so the next '
              'Suggest pass picks them up again.',
     )
+    ai_review_count = fields.Integer(
+        string='AI Review Needed',
+        compute='_compute_ai_review_count',
+        help='Findings Autopilot deliberately left for a person: low '
+             'confidence, attempt limit reached, or apply failed.',
+    )
 
     @api.depends('finding_ids.ai_supported', 'finding_ids.is_resolved')
     def _compute_ai_fixable_count(self):
@@ -48,6 +54,13 @@ class EraSeoAuditRun(models.Model):
         for run in self:
             run.ai_failed_count = len(
                 run.finding_ids.filtered(lambda f: f.ai_status == 'failed'))
+
+    @api.depends('finding_ids.ai_needs_manual_review', 'finding_ids.is_resolved')
+    def _compute_ai_review_count(self):
+        for run in self:
+            run.ai_review_count = len(run.finding_ids.filtered(
+                lambda f: f.ai_needs_manual_review and not f.is_resolved
+            ))
 
     def _ai_fixable_findings(self):
         self.ensure_one()
@@ -64,7 +77,7 @@ class EraSeoAuditRun(models.Model):
         return targets.action_ai_suggest()
 
     def action_ai_fix_findings(self):
-        """Queue a BACKGROUND suggest + auto-apply (>=0.8) sweep for this run.
+        """Queue a BACKGROUND suggest + auto-apply sweep for this run.
 
         Does not do the AI work in-request — see the module docstring. Flips
         `era_seo.bulk_fix_active`, records this run, and fires the drain cron.
@@ -114,10 +127,13 @@ class EraSeoAuditRun(models.Model):
         re-running the audit from scratch.
         """
         self.ensure_one()
-        targets = self.finding_ids.filtered(lambda f: f.ai_status == 'failed')
+        targets = self.finding_ids.filtered(
+            lambda f: f.ai_status in ('failed', 'manual_review')
+            or f.ai_needs_manual_review
+        )
         if not targets:
             return self._ai_run_notify(
-                'info', _('No failed findings in this run.'))
+                'info', _('No failed or review-blocked findings in this run.'))
         return targets.action_ai_retry_failed()
 
     @staticmethod

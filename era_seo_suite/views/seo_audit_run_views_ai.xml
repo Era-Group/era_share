@@ -17,6 +17,7 @@
       <xpath expr="//header" position="inside">
         <field name="ai_fixable_count" invisible="1"/>
         <field name="ai_failed_count" invisible="1"/>
+        <field name="ai_review_count" invisible="1"/>
         <!-- Always shown after a run; the actions return a clean "no
              AI-fixable findings" notification when there's nothing to do,
              so the buttons stay discoverable. -->
@@ -24,16 +25,16 @@
                 string="Suggest Fixes (AI)" class="btn-info"
                 invisible="state not in ('done', 'failed')"/>
         <button name="action_ai_fix_findings" type="object"
-                string="Auto-Fix (≥0.8)" class="btn-primary"
+                string="Auto-Fix" class="btn-primary"
                 invisible="state not in ('done', 'failed')"
-                confirm="Generate AI suggestions for every AI-fixable finding and automatically apply the high-confidence ones. Continue?"/>
+                confirm="Generate AI suggestions for every AI-fixable finding and automatically apply the ones above the configured confidence threshold. Continue?"/>
         <!-- Only visible when there's actually something to retry. -->
         <button name="action_ai_retry_failed_findings" type="object"
                 string="Retry Failed"
                 class="btn-warning"
                 icon="fa-refresh"
-                invisible="state not in ('done', 'failed') or ai_failed_count == 0"
-                help="Reset every finding currently marked 'failed' back to 'none' so the next Suggest Fixes pass picks them up again. Use this after fixing the AI provider configuration."/>
+                invisible="state not in ('done', 'failed') or (ai_failed_count == 0 and ai_review_count == 0)"
+                help="Reset every finding currently marked failed or stopped by Autopilot back to none, including its attempt counter. Use this after fixing the AI provider configuration or deciding another paid attempt is worth it."/>
       </xpath>
 
       <!-- Inline buttons + status on the embedded findings list -->
@@ -43,8 +44,10 @@
         <field name="ai_status" widget="badge" optional="show"
                decoration-success="ai_status == 'applied'"
                decoration-info="ai_status == 'suggested'"
-               decoration-warning="ai_status == 'failed'"
+               decoration-warning="ai_status in ('failed', 'manual_review')"
                decoration-muted="ai_status in ('none', 'not_supported')"/>
+        <field name="ai_attempt_count" optional="show"/>
+        <field name="ai_needs_manual_review" widget="boolean_toggle" optional="show"/>
       </xpath>
 
       <xpath expr="//field[@name='finding_ids']/list/button[@name='action_open_target']"

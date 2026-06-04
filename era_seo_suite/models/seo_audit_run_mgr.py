@@ -591,6 +591,15 @@ class EraSeoAuditRun(models.Model):
                     'resolved_date': False,
                     'resolved_user_id': False,
                 })
+                if 'ai_status' in existing._fields and existing.ai_status == 'applied':
+                    vals.update({
+                        'ai_status': 'manual_review',
+                        'ai_needs_manual_review': True,
+                        'ai_review_reason': _(
+                            'A previous AI fix was applied, but the latest '
+                            'audit still detects this issue. Review manually '
+                            'instead of spending more automatic attempts.'),
+                    })
             existing.write(vals)
         else:
             vals.update({

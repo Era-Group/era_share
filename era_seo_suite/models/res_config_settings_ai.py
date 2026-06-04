@@ -32,6 +32,26 @@ class ResConfigSettings(models.TransientModel):
              'provider, model, and API key (configured in the AI app). Leave '
              'empty to fall back to the site\'s "Ask AI" agent.',
     )
+    era_seo_autopilot_active = fields.Boolean(
+        string='Apply safe metadata fixes automatically',
+        config_parameter='era_seo.autopilot_active',
+        help='When enabled, scheduled Autopilot may apply high-confidence SEO '
+             'titles, meta descriptions, and image alt text. Slug edits and '
+             'AI-authored body content still require review.',
+    )
+    era_seo_autopilot_confidence_pct = fields.Integer(
+        string='Autopilot confidence threshold (%)',
+        config_parameter='era_seo.autopilot_confidence_pct',
+        default=80,
+        help='Minimum confidence required for unattended apply.',
+    )
+    era_seo_autopilot_max_attempts = fields.Integer(
+        string='Max attempts per finding',
+        config_parameter='era_seo.autopilot_max_attempts',
+        default=2,
+        help='Unattended Suggest attempts allowed for the same persistent '
+             'finding before it is sent to manual review.',
+    )
 
     def action_test_ai_agent(self):
         """Round-trip a tiny prompt through the configured agent."""

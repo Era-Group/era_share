@@ -18,6 +18,21 @@ separate addons (now marked `installable: False`):
 Everything is accessed via a single top-level app **ERA SEO Suite** in the
 main menu, with a tabbed Hub: Dashboard / SEO / GEO / GSC / Settings / Guide.
 
+## AI Autopilot
+
+The suite uses Odoo's native `ai.agent` records for SEO work; no separate LLM
+SDK or API-key store is required inside this module.
+
+Unattended automation is deliberately bounded:
+
+- Always-safe fixes keep running as before: missing OG image and JSON-LD schema.
+- Optional **Autopilot** can also apply high-confidence SEO titles, meta
+  descriptions, and image alt text.
+- Slug changes and AI-written page-body expansions stay review-only.
+- Each persistent finding keeps an AI attempt counter. When the configured
+  attempt limit is reached, the finding is parked in the AI Review Queue instead
+  of spending more provider calls on the same unresolved issue.
+
 ## Install (fresh)
 
 ```bash

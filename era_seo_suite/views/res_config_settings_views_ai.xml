@@ -27,6 +27,24 @@
                       string="Test Agent" class="btn btn-secondary btn-sm"/>
             </div>
           </setting>
+          <setting id="era_seo_autopilot_active"
+                   string="Autopilot"
+                   invisible="not era_seo_ai_enabled"
+                   help="Let the scheduled AI fixer apply high-confidence metadata/accessibility fixes without waiting for a user click.">
+            <field name="era_seo_autopilot_active"/>
+            <div class="text-muted small mt-2">
+              Applies SEO titles, meta descriptions, image alt text, OG images,
+              and schema when confidence is high. Slug edits and page body
+              copy remain review-only.
+            </div>
+          </setting>
+          <setting id="era_seo_autopilot_limits"
+                   string="Autopilot limits"
+                   invisible="not era_seo_ai_enabled or not era_seo_autopilot_active"
+                   help="Controls cost and review handoff for unattended fixes.">
+            <field name="era_seo_autopilot_confidence_pct"/>
+            <field name="era_seo_autopilot_max_attempts"/>
+          </setting>
         </block>
       </xpath>
     </field>

@@ -91,6 +91,73 @@
 
           <notebook>
 
+            <!-- ======================= OWNER SUMMARY ======================= -->
+            <page string="ملخص المالك" name="owner_summary">
+              <field name="kpi_published_pages" invisible="1"/>
+              <field name="kpi_health_score" invisible="1"/>
+              <field name="kpi_attention_items" invisible="1"/>
+              <field name="kpi_audit_critical" invisible="1"/>
+              <field name="kpi_audit_warning" invisible="1"/>
+              <field name="kpi_pages_missing_seo" invisible="1"/>
+              <field name="kpi_posts_missing_seo" invisible="1"/>
+              <field name="kpi_ai_findings_suggested" invisible="1"/>
+              <field name="kpi_ai_findings_failed" invisible="1"/>
+              <field name="kpi_ai_findings_review" invisible="1"/>
+              <field name="kpi_ai_fill_remaining" invisible="1"/>
+              <field name="kpi_ai_fill_active" invisible="1"/>
+              <field name="kpi_gsc_accounts_connected" invisible="1"/>
+              <field name="kpi_gsc_sites" invisible="1"/>
+              <field name="kpi_geo_crawlers_blocked" invisible="1"/>
+
+              <div class="o_era_owner_page">
+                <field name="owner_summary_html"
+                       nolabel="1"
+                       readonly="1"
+                       widget="html"/>
+
+                <div class="o_era_owner_actions mt-3">
+                  <button name="action_run_audit_now" type="object"
+                          string="تحديث الفحص"
+                          icon="fa-play-circle"
+                          class="btn btn-primary"
+                          invisible="is_audit_pending"
+                          confirm="سيتم تشغيل فحص جديد للموقع في الخلفية. يمكنك متابعة العمل، وستظهر النتيجة عند اكتماله. هل تريد المتابعة؟"/>
+                  <button name="action_open_priority_findings" type="object"
+                          string="فتح الأولويات"
+                          icon="fa-exclamation-triangle"
+                          class="btn btn-danger"
+                          invisible="not kpi_audit_critical and not kpi_audit_warning"/>
+                  <button name="action_open_ai_review_queue" type="object"
+                          string="مراجعة قرارات الذكاء الاصطناعي"
+                          icon="fa-magic"
+                          class="btn btn-warning"
+                          invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
+                  <button name="action_start_bulk_ai_fill" type="object"
+                          string="تشغيل الإكمال التلقائي"
+                          icon="fa-play"
+                          class="btn btn-info"
+                          invisible="kpi_ai_fill_active or not kpi_ai_fill_remaining"
+                          confirm="سيبدأ الذكاء الاصطناعي بإكمال بيانات الصفحات والمقالات تدريجيا في الخلفية حتى تنتهي القائمة. هل تريد المتابعة؟"/>
+                  <button name="action_stop_bulk_ai_fill" type="object"
+                          string="إيقاف الإكمال مؤقتا"
+                          icon="fa-pause"
+                          class="btn btn-secondary"
+                          invisible="not kpi_ai_fill_active"/>
+                  <button name="action_open_pages_missing_seo" type="object"
+                          string="صفحات تحتاج عنوانا"
+                          icon="fa-pencil"
+                          class="btn btn-secondary"
+                          invisible="not kpi_pages_missing_seo"/>
+                  <button name="%(era_seo_suite.action_era_gsc_account)d"
+                          type="action"
+                          string="ربط بيانات Google"
+                          icon="fa-google"
+                          class="btn btn-secondary"
+                          invisible="kpi_gsc_accounts_connected"/>
+                </div>
+              </div>
+            </page>
+
             <!-- ============================ DASHBOARD ============================ -->
             <page string="Dashboard" name="dashboard">
               <!--

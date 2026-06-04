@@ -149,6 +149,13 @@ class EraSeoSuiteHub(models.Model):
         string='Top GSC Queries (28d)', sanitize=False,
         compute='_compute_gsc_top_queries_html')
 
+    owner_summary_html = fields.Html(
+        string='Executive Summary',
+        sanitize=False,
+        compute='_compute_owner_summary_html',
+        help='Plain-language owner summary of the website and work status.',
+    )
+
     # --- Analytics & Keywords tab (all rendered from era.gsc.query) ---
     analytics_trend_html = fields.Html(
         string='Search trend', sanitize=False, compute='_compute_analytics')
@@ -866,6 +873,180 @@ class EraSeoSuiteHub(models.Model):
                 rec.kpi_geo_crawlers_blocked
             )
             rec.kpi_health_score = max(0, min(100, coverage_score - penalty))
+
+    @api.depends(
+        'kpi_health_score', 'kpi_attention_items', 'kpi_published_pages',
+        'kpi_audit_critical', 'kpi_audit_warning', 'kpi_pages_missing_seo',
+        'kpi_posts_missing_seo', 'kpi_ai_findings_review',
+        'kpi_ai_findings_failed', 'kpi_ai_fill_active',
+        'kpi_ai_fill_remaining', 'kpi_geo_crawlers_blocked',
+        'kpi_gsc_accounts_connected', 'kpi_gsc_sites',
+        'kpi_gsc_clicks_28d', 'kpi_gsc_impressions_28d', 'kpi_gsc_ctr_28d',
+        'kpi_blog_posts_30d', 'kpi_coverage_title_pct',
+        'kpi_coverage_meta_pct', 'kpi_coverage_schema_pct',
+    )
+    def _compute_owner_summary_html(self):
+        """Plain-language status for a site owner, not an SEO specialist."""
+        from markupsafe import Markup
+
+        for rec in self:
+            score = rec.kpi_health_score or 0
+            if not rec.kpi_published_pages:
+                tone = 'muted'
+                status = 'لا توجد صفحات منشورة كافية للحكم على الموقع.'
+                meaning = (
+                    'بعد نشر الصفحات وتشغيل أول فحص ستظهر هنا قراءة أوضح عن '
+                    'جاهزية الموقع للزوار ومحركات البحث.'
+                )
+            elif rec.kpi_audit_critical or score < 55:
+                tone = 'danger'
+                status = 'الموقع يحتاج متابعة قريبة.'
+                meaning = (
+                    'هناك نقاط يمكن أن تؤثر على ظهور الموقع في البحث أو على '
+                    'انطباع الزائر، والأفضل التعامل معها قبل إضافة أعمال جديدة.'
+                )
+            elif rec.kpi_attention_items or score < 80:
+                tone = 'warning'
+                status = 'الوضع مقبول، مع نقاط واضحة تحتاج ترتيب.'
+                meaning = (
+                    'أساس الموقع يعمل، لكن توجد تحسينات مباشرة سترفع جودة '
+                    'الظهور وتقلل الحاجة للتدخل اليدوي لاحقا.'
+                )
+            else:
+                tone = 'success'
+                status = 'الوضع العام جيد.'
+                meaning = (
+                    'لا توجد إشارات حرجة حاليا. الأفضل الاستمرار في مراقبة '
+                    'الأداء ونشر محتوى مفيد بانتظام.'
+                )
+
+            search_text = rec._owner_search_summary()
+            automation_text = rec._owner_automation_summary()
+            priorities = rec._owner_priority_items()
+            priority_html = ''.join(
+                '<li>%s</li>' % item for item in priorities
+            ) or '<li>لا توجد أولويات عاجلة الآن.</li>'
+
+            rec.owner_summary_html = Markup(
+                '<div class="o_era_owner_summary" dir="rtl">'
+                '  <div class="o_era_owner_lead o_era_owner_%s">'
+                '    <div class="o_era_owner_label">الخلاصة التنفيذية</div>'
+                '    <div class="o_era_owner_status">%s</div>'
+                '    <div class="o_era_owner_meaning">%s</div>'
+                '  </div>'
+                '  <div class="o_era_owner_grid">'
+                '    <div class="o_era_owner_card">'
+                '      <span>جاهزية الموقع</span>'
+                '      <strong>%d/100</strong>'
+                '      <small>%d صفحة منشورة، اكتمال العناوين %d%% والوصف %d%%.</small>'
+                '    </div>'
+                '    <div class="o_era_owner_card">'
+                '      <span>الوضع في Google</span>'
+                '      <strong>%s</strong>'
+                '      <small>%s</small>'
+                '    </div>'
+                '    <div class="o_era_owner_card">'
+                '      <span>عمل الذكاء الاصطناعي</span>'
+                '      <strong>%s</strong>'
+                '      <small>%s</small>'
+                '    </div>'
+                '  </div>'
+                '  <div class="o_era_owner_next">'
+                '    <div class="o_era_owner_label">الأولوية التالية</div>'
+                '    <ul>%s</ul>'
+                '  </div>'
+                '</div>' % (
+                    tone,
+                    status,
+                    meaning,
+                    score,
+                    rec.kpi_published_pages or 0,
+                    rec.kpi_coverage_title_pct or 0,
+                    rec.kpi_coverage_meta_pct or 0,
+                    rec._owner_google_title(),
+                    search_text,
+                    rec._owner_ai_title(),
+                    automation_text,
+                    priority_html,
+                )
+            )
+
+    def _owner_google_title(self):
+        self.ensure_one()
+        if not (self.kpi_gsc_accounts_connected and self.kpi_gsc_sites):
+            return 'غير مربوط'
+        if self.kpi_gsc_clicks_28d:
+            return '%d زيارة' % (self.kpi_gsc_clicks_28d or 0)
+        return 'مربوط'
+
+    def _owner_search_summary(self):
+        self.ensure_one()
+        if not self.kpi_gsc_accounts_connected:
+            return 'لم يتم ربط بيانات Google بعد، لذلك لا تظهر زيارات البحث هنا.'
+        if not self.kpi_gsc_sites:
+            return 'الحساب مربوط، لكن لم يتم اختيار موقع لسحب بيانات البحث.'
+        if self.kpi_gsc_impressions_28d:
+            return (
+                '%d ظهور في نتائج البحث خلال آخر 28 يوما، ونسبة الضغط %.2f%%.'
+                % (self.kpi_gsc_impressions_28d or 0, self.kpi_gsc_ctr_28d or 0.0)
+            )
+        return 'الربط موجود، لكن لا توجد بيانات كافية بعد في آخر 28 يوما.'
+
+    def _owner_ai_title(self):
+        self.ensure_one()
+        if self.kpi_ai_findings_failed:
+            return 'يحتاج متابعة'
+        if self.kpi_ai_fill_active:
+            return 'يعمل الآن'
+        if self.kpi_ai_findings_review:
+            return 'ينتظر قرار'
+        return 'مستقر'
+
+    def _owner_automation_summary(self):
+        self.ensure_one()
+        if self.kpi_ai_findings_failed:
+            return '%d حالة فشلت وتحتاج مراجعة الإعداد أو القرار.' % (
+                self.kpi_ai_findings_failed or 0)
+        if self.kpi_ai_fill_active:
+            return 'يجري إكمال بيانات الصفحات تلقائيا، والمتبقي %d سجل.' % (
+                self.kpi_ai_fill_remaining or 0)
+        if self.kpi_ai_findings_review:
+            return '%d اقتراح جاهز أو متوقف ينتظر موافقة شخص مسؤول.' % (
+                self.kpi_ai_findings_review or 0)
+        if self.kpi_ai_fill_remaining:
+            return 'توجد %d صفحة أو مقالة يمكن تركها للمعالجة التلقائية.' % (
+                self.kpi_ai_fill_remaining or 0)
+        return 'لا توجد قائمة عمل آلية كبيرة حاليا.'
+
+    def _owner_priority_items(self):
+        self.ensure_one()
+        items = []
+        if self.kpi_audit_critical:
+            items.append(
+                'معالجة %d نقطة مهمة قد تؤثر مباشرة على ظهور الموقع أو تجربة الزائر.'
+                % self.kpi_audit_critical)
+        if self.kpi_audit_warning:
+            items.append(
+                'ترتيب %d ملاحظة تحسين قبل أن تتحول إلى عمل متراكم.'
+                % self.kpi_audit_warning)
+        missing_content = (self.kpi_pages_missing_seo or 0) + (self.kpi_posts_missing_seo or 0)
+        if missing_content:
+            items.append(
+                'إكمال عناوين وأوصاف %d صفحة أو مقالة حتى تظهر بشكل أوضح في البحث.'
+                % missing_content)
+        if self.kpi_ai_findings_failed or self.kpi_ai_findings_review:
+            items.append(
+                'مراجعة قائمة الذكاء الاصطناعي: %d تحتاج قرارا و%d فشلت.'
+                % (self.kpi_ai_findings_review or 0, self.kpi_ai_findings_failed or 0))
+        if self.kpi_geo_crawlers_blocked:
+            items.append(
+                'السماح لمحركات الإجابة الحديثة بقراءة الموقع إذا كان الهدف زيادة الظهور في إجابات الذكاء الاصطناعي.'
+            )
+        if not self.kpi_gsc_accounts_connected:
+            items.append(
+                'ربط Google Search Console حتى تظهر أرقام الزيارات والبحث داخل هذه الشاشة.'
+            )
+        return items[:5]
 
     def _compute_gsc_top_queries_html(self):
         """Render the top search queries of the last 28 days (aggregated per

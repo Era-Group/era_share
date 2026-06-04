@@ -100,6 +100,8 @@
               <field name="kpi_audit_warning" invisible="1"/>
               <field name="kpi_pages_missing_seo" invisible="1"/>
               <field name="kpi_posts_missing_seo" invisible="1"/>
+              <field name="kpi_coverage_title_pct" invisible="1"/>
+              <field name="kpi_coverage_meta_pct" invisible="1"/>
               <field name="kpi_ai_findings_suggested" invisible="1"/>
               <field name="kpi_ai_findings_failed" invisible="1"/>
               <field name="kpi_ai_findings_review" invisible="1"/>
@@ -107,13 +109,168 @@
               <field name="kpi_ai_fill_active" invisible="1"/>
               <field name="kpi_gsc_accounts_connected" invisible="1"/>
               <field name="kpi_gsc_sites" invisible="1"/>
+              <field name="kpi_gsc_clicks_28d" invisible="1"/>
+              <field name="kpi_gsc_impressions_28d" invisible="1"/>
+              <field name="kpi_gsc_ctr_28d" invisible="1"/>
               <field name="kpi_geo_crawlers_blocked" invisible="1"/>
 
               <div class="o_era_owner_page">
-                <field name="owner_summary_html"
-                       nolabel="1"
-                       readonly="1"
-                       widget="html"/>
+                <div class="o_era_owner_summary" dir="rtl">
+                  <div class="o_era_owner_lead o_era_owner_muted"
+                       invisible="kpi_published_pages">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      لا توجد صفحات منشورة كافية للحكم على الموقع.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      بعد نشر الصفحات وتشغيل أول فحص ستظهر هنا قراءة أوضح عن
+                      جاهزية الموقع للزوار ومحركات البحث.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_danger"
+                       invisible="not kpi_published_pages or (not kpi_audit_critical and kpi_health_score &gt;= 55)">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الموقع يحتاج متابعة قريبة.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      هناك نقاط يمكن أن تؤثر على ظهور الموقع في البحث أو على
+                      انطباع الزائر، والأفضل التعامل معها قبل إضافة أعمال جديدة.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_warning"
+                       invisible="not kpi_published_pages or kpi_audit_critical or kpi_health_score &lt; 55 or (not kpi_attention_items and kpi_health_score &gt;= 80)">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الوضع مقبول، مع نقاط واضحة تحتاج ترتيب.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      أساس الموقع يعمل، لكن توجد تحسينات مباشرة سترفع جودة
+                      الظهور وتقلل الحاجة للتدخل اليدوي لاحقا.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_success"
+                       invisible="not kpi_published_pages or kpi_attention_items or kpi_health_score &lt; 80">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الوضع العام جيد.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      لا توجد إشارات حرجة حاليا. الأفضل الاستمرار في مراقبة
+                      الأداء ونشر محتوى مفيد بانتظام.
+                    </div>
+                  </div>
+
+                  <div class="o_era_owner_grid">
+                    <div class="o_era_owner_card">
+                      <span>جاهزية الموقع</span>
+                      <strong>
+                        <field name="kpi_health_score" readonly="1" nolabel="1"/>/100
+                      </strong>
+                      <small>
+                        <field name="kpi_published_pages" readonly="1" nolabel="1"/>
+                        صفحة منشورة، اكتمال العناوين
+                        <field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%
+                        والوصف
+                        <field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%.
+                      </small>
+                    </div>
+                    <div class="o_era_owner_card">
+                      <span>الوضع في Google</span>
+                      <strong invisible="kpi_gsc_accounts_connected and kpi_gsc_sites">
+                        غير مربوط
+                      </strong>
+                      <strong invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or not kpi_gsc_clicks_28d">
+                        <field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/>
+                        زيارة
+                      </strong>
+                      <strong invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_gsc_clicks_28d">
+                        مربوط
+                      </strong>
+                      <small invisible="kpi_gsc_accounts_connected">
+                        لم يتم ربط بيانات Google بعد، لذلك لا تظهر زيارات البحث هنا.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or kpi_gsc_sites">
+                        الحساب مربوط، لكن لم يتم اختيار موقع لسحب بيانات البحث.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or not kpi_gsc_impressions_28d">
+                        <field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/>
+                        ظهور في نتائج البحث خلال آخر 28 يوما، ونسبة الضغط
+                        <field name="kpi_gsc_ctr_28d" readonly="1" nolabel="1"/>%.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_gsc_impressions_28d">
+                        الربط موجود، لكن لا توجد بيانات كافية بعد في آخر 28 يوما.
+                      </small>
+                    </div>
+                    <div class="o_era_owner_card">
+                      <span>عمل الذكاء الاصطناعي</span>
+                      <strong invisible="not kpi_ai_findings_failed">
+                        يحتاج متابعة
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or not kpi_ai_fill_active">
+                        يعمل الآن
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or kpi_ai_fill_active or not kpi_ai_findings_review">
+                        ينتظر قرار
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review">
+                        مستقر
+                      </strong>
+                      <small invisible="not kpi_ai_findings_failed">
+                        <field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/>
+                        حالة فشلت وتحتاج مراجعة الإعداد أو القرار.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or not kpi_ai_fill_active">
+                        يجري إكمال بيانات الصفحات تلقائيا، والمتبقي
+                        <field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/>
+                        سجل.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or not kpi_ai_findings_review">
+                        <field name="kpi_ai_findings_review" readonly="1" nolabel="1"/>
+                        اقتراح جاهز أو متوقف ينتظر موافقة شخص مسؤول.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review or not kpi_ai_fill_remaining">
+                        توجد
+                        <field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/>
+                        صفحة أو مقالة يمكن تركها للمعالجة التلقائية.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review or kpi_ai_fill_remaining">
+                        لا توجد قائمة عمل آلية كبيرة حاليا.
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="o_era_owner_next">
+                    <div class="o_era_owner_label">الأولوية التالية</div>
+                    <ul>
+                      <li invisible="not kpi_audit_critical">
+                        معالجة
+                        <field name="kpi_audit_critical" readonly="1" nolabel="1"/>
+                        نقطة مهمة قد تؤثر مباشرة على ظهور الموقع أو تجربة الزائر.
+                      </li>
+                      <li invisible="not kpi_audit_warning">
+                        ترتيب
+                        <field name="kpi_audit_warning" readonly="1" nolabel="1"/>
+                        ملاحظة تحسين قبل أن تتحول إلى عمل متراكم.
+                      </li>
+                      <li invisible="not kpi_pages_missing_seo and not kpi_posts_missing_seo">
+                        إكمال عناوين وأوصاف الصفحات والمقالات حتى تظهر بشكل أوضح في البحث.
+                      </li>
+                      <li invisible="not kpi_ai_findings_failed and not kpi_ai_findings_review">
+                        مراجعة قائمة الذكاء الاصطناعي: توجد حالات تحتاج قرارا أو مراجعة إعداد.
+                      </li>
+                      <li invisible="not kpi_geo_crawlers_blocked">
+                        السماح لمحركات الإجابة الحديثة بقراءة الموقع إذا كان الهدف زيادة الظهور في إجابات الذكاء الاصطناعي.
+                      </li>
+                      <li invisible="kpi_gsc_accounts_connected">
+                        ربط Google Search Console حتى تظهر أرقام الزيارات والبحث داخل هذه الشاشة.
+                      </li>
+                      <li invisible="kpi_attention_items or not kpi_gsc_accounts_connected">
+                        لا توجد أولويات عاجلة الآن.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
                 <div class="o_era_owner_actions mt-3">
                   <button name="action_run_audit_now" type="object"

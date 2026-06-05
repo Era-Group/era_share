@@ -19,54 +19,50 @@ msgstr ""
 #. module: era_spy_crm
 #: model:ir.actions.server,name:era_spy_crm.action_crm_lead_eraspy_bulk
 #: model_terms:ir.ui.view,arch_db:era_spy_crm.view_crm_lead_eraspy_form
-msgid "EraSpy Enrich"
-msgstr "إثراء EraSpy"
-
-#. module: era_spy_crm
-#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_crm_lead_eraspy_form
+#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
 #: code:addons/era_spy_crm/models/crm_lead.py:0
-msgid "EraSpy"
-msgstr "EraSpy"
+msgid "Era Enrich"
+msgstr "Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_profile_url
-msgid "EraSpy Profile URL"
-msgstr "رابط ملف EraSpy"
+msgid "Era Enrich Profile URL"
+msgstr "رابط ملف Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_debug_payload
-msgid "EraSpy Debug Payload"
-msgstr "حمولة تصحيح EraSpy"
+msgid "Era Enrich Debug Payload"
+msgstr "حمولة تصحيح Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_more_data
-msgid "EraSpy More Data"
-msgstr "بيانات إضافية من EraSpy"
+msgid "Era Enrich More Data"
+msgstr "بيانات إضافية من Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_request_id
-msgid "EraSpy Last Request ID"
-msgstr "معرّف آخر طلب EraSpy"
+msgid "Era Enrich Last Request ID"
+msgstr "معرّف آخر طلب Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_identifier
-msgid "EraSpy Last Identifier"
-msgstr "آخر مُعرِّف EraSpy"
+msgid "Era Enrich Last Identifier"
+msgstr "آخر مُعرِّف Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_status
-msgid "Eraspy Last Status"
-msgstr "آخر حالة لـ EraSpy"
+msgid "Era Enrich Last Status"
+msgstr "آخر حالة لـ Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_last_checked
-msgid "Eraspy Last Checked"
-msgstr "آخر تحقق لـ EraSpy"
+msgid "Era Enrich Last Checked"
+msgstr "آخر تحقق لـ Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__eraspy_rating
-msgid "Eraspy Rating"
-msgstr "تقييم EraSpy"
+msgid "Era Enrich Rating"
+msgstr "تقييم Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,field_description:era_spy_crm.field_crm_lead__linkedin_url
@@ -95,13 +91,13 @@ msgstr "استبدال الحقول الحالية للعميل المحتمل"
 
 #. module: era_spy_crm
 #: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__without_contacts
-msgid "When enabled, EraSpy returns public profile data without revealing contact details, saving credits."
-msgstr "عند التفعيل، تُرجع EraSpy بيانات عامة للملف دون إظهار بيانات الاتصال لتوفير الرصيد."
+msgid "When enabled, Era Enrich returns public profile data without revealing contact details, saving credits."
+msgstr "عند التفعيل، تُرجع Era Enrich بيانات عامة للملف دون إظهار بيانات الاتصال لتوفير الرصيد."
 
 #. module: era_spy_crm
 #: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__lookup_source
-msgid "Pick how EraSpy should locate the contact. Automatic uses lead email, phone, or LinkedIn URL if available."
-msgstr "اختر كيفية بحث EraSpy عن جهة الاتصال. التلقائي يستخدم بريد العميل المحتمل أو هاتفه أو رابط LinkedIn إن توفر."
+msgid "Pick how Era Enrich should locate the contact. Automatic uses lead email, phone, or LinkedIn URL if available."
+msgstr "اختر كيفية بحث Era Enrich عن جهة الاتصال. التلقائي يستخدم بريد العميل المحتمل أو هاتفه أو رابط LinkedIn إن توفر."
 
 #. module: era_spy_crm
 #: model:ir.model.fields,help:era_spy_crm.field_eraspy_enrich_wizard__overwrite_existing
@@ -135,11 +131,6 @@ msgstr "استعلام حر"
 
 #. module: era_spy_crm
 #: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
-msgid "EraSpy Enrichment"
-msgstr "إثراء EraSpy"
-
-#. module: era_spy_crm
-#: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_enrich_wizard
 msgid "Enrich"
 msgstr "إثراء"
 
@@ -153,8 +144,8 @@ msgstr "إلغاء"
 #: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_list
 #: model_terms:ir.ui.view,arch_db:era_spy_crm.view_eraspy_callback_queue_form
 #: model:ir.actions.act_window,name:era_spy_crm.action_eraspy_callback_queue
-msgid "EraSpy Callback Queue"
-msgstr "قائمة ردود EraSpy"
+msgid "Era Enrich Callback Queue"
+msgstr "قائمة ردود Era Enrich"
 
 #. module: era_spy_crm
 #: model:ir.ui.menu,name:era_spy_crm.menu_eraspy_callback_queue
@@ -169,18 +160,18 @@ msgstr "إعادة المحاولة"
 
 #. module: era_spy_crm
 #: model:ir.cron,name:era_spy_crm.ir_cron_eraspy_process_queue
-msgid "EraSpy: Process Callback Queue (CRM)"
-msgstr "EraSpy: معالجة قائمة الردود (CRM)"
+msgid "Era Enrich: Process Callback Queue (CRM)"
+msgstr "Era Enrich: معالجة قائمة الردود (CRM)"
 
 #. module: era_spy_crm
 #: model:ir.cron,name:era_spy_crm.ir_cron_eraspy_auto_enrich_leads
-msgid "EraSpy: Auto Enrich New Leads"
-msgstr "EraSpy: إثراء تلقائي للعملاء المحتملين الجدد"
+msgid "Era Enrich: Auto Enrich New Leads"
+msgstr "Era Enrich: إثراء تلقائي للعملاء المحتملين الجدد"
 
 #. module: era_spy_crm
 #: model:ir.model,name:era_spy_crm.model_eraspy_enrich_wizard
-msgid "Enrich CRM leads via EraSpy"
-msgstr "إثراء العملاء المحتملين في CRM عبر EraSpy"
+msgid "Enrich CRM leads via Era Enrich"
+msgstr "إثراء العملاء المحتملين في CRM عبر Era Enrich"
 
 #. module: era_spy_crm
 #: code:addons/era_spy_crm/models/crm_lead.py:0
@@ -204,8 +195,8 @@ msgstr "تم الإثراء"
 
 #. module: era_spy_crm
 #: code:addons/era_spy_crm/models/crm_lead.py:0
-msgid "EraSpy did not return any profile data."
-msgstr "لم تُرجع EraSpy أي بيانات للملف."
+msgid "Era Enrich did not return any profile data."
+msgstr "لم تُرجع Era Enrich أي بيانات للملف."
 
 #. module: era_spy_crm
 #: code:addons/era_spy_crm/models/crm_lead.py:0
@@ -219,8 +210,8 @@ msgstr "لم يتم تطبيق بيانات جديدة (موجودة مسبقً�
 
 #. module: era_spy_crm
 #: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0
-msgid "%s lead(s) enriched via EraSpy."
-msgstr "تم إثراء %s عميل/عملاء محتملين عبر EraSpy."
+msgid "%s lead(s) enriched via Era Enrich."
+msgstr "تم إثراء %s عميل/عملاء محتملين عبر Era Enrich."
 
 #. module: era_spy_crm
 #: code:addons/era_spy_crm/wizards/eraspy_enrich_wizard.py:0

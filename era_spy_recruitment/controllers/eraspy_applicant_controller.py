@@ -96,7 +96,7 @@ class EraSpyApplicantController(http.Controller):
                         if not applicant:
                             unmatched += 1
                             _logger.warning(
-                                "EraSpy applicant callback unmatched: request_id=%s status=%s identifier=%s",
+                                "Era Enrich applicant callback unmatched: request_id=%s status=%s identifier=%s",
                                 request_id, status, identifier,
                             )
                             env["eraspy.applicant.callback.queue"].log_callback(
@@ -166,7 +166,7 @@ class EraSpyApplicantController(http.Controller):
                             )
                             processed += 1
                             _logger.info(
-                                "EraSpy duplicate_query for applicant=%s copied=%s",
+                                "Era Enrich duplicate_query for applicant=%s copied=%s",
                                 applicant.id, copied,
                             )
                             break
@@ -181,7 +181,7 @@ class EraSpyApplicantController(http.Controller):
                                 # Only schedule AI match if it hasn't been generated yet.
                                 if not ai_match_done:
                                     _logger.info(
-                                        "EraSpy callback: applicant %s already enriched, skipping profile "
+                                        "Era Enrich callback: applicant %s already enriched, skipping profile "
                                         "re-write for identifier=%s; scheduling AI match retry.",
                                         applicant.id, identifier,
                                     )
@@ -189,7 +189,7 @@ class EraSpyApplicantController(http.Controller):
                                     matched_candidate_for_ai = candidate_dict
                                 else:
                                     _logger.info(
-                                        "EraSpy callback: applicant %s already enriched and has AI match, "
+                                        "Era Enrich callback: applicant %s already enriched and has AI match, "
                                         "nothing to do for identifier=%s.",
                                         applicant.id, identifier,
                                     )
@@ -257,11 +257,11 @@ class EraSpyApplicantController(http.Controller):
                     msg = str(exc).lower()
                     if "serialize" in msg or "concurrent" in msg:
                         _logger.warning(
-                            "EraSpy AI match skipped for applicant %s (concurrent update)", matched_applicant_id
+                            "Era Enrich AI match skipped for applicant %s (concurrent update)", matched_applicant_id
                         )
                     else:
                         _logger.exception(
-                            "EraSpy AI match write failed for applicant %s", matched_applicant_id
+                            "Era Enrich AI match write failed for applicant %s", matched_applicant_id
                         )
 
         # AI match in background — completely decoupled, never blocks the response.

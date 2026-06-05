@@ -93,7 +93,7 @@ export class EraspyStatusField extends Component {
 
 export const eraspyStatusField = {
     component: EraspyStatusField,
-    displayName: "EraSpy Status",
+    displayName: "Era Enrich Status",
     supportedTypes: ["char"],
     extractProps: () => ({}),
 };

@@ -10,13 +10,13 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     eraspy_base_url = fields.Char(
-        string="EraSpy Base URL",
+        string="Era Enrich Base URL",
         default="https://spy.era.net.sa/api",
         config_parameter="era_spy.base_url",
-        help="Root URL for the EraSpy API or your proxy endpoint.",
+        help="Root URL for the Era Enrich API or your proxy endpoint.",
     )
     eraspy_rate_limit_per_minute = fields.Integer(
-        string="EraSpy Max Calls / Minute",
+        string="Era Enrich Max Calls / Minute",
         default=600,
         config_parameter="era_spy.rate_limit_per_minute",
         help="Person API limit is 600 elements/min. Reduce if you see 429 responses.",

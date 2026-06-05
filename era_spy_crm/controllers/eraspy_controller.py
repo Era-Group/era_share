@@ -94,7 +94,7 @@ class EraSpyController(http.Controller):
                         if not lead:
                             unmatched += 1
                             _logger.warning(
-                                "EraSpy callback unmatched: request_id=%s status=%s identifier=%s",
+                                "Era Enrich callback unmatched: request_id=%s status=%s identifier=%s",
                                 request_id, status, identifier,
                             )
                             env["eraspy.callback.queue"].log_callback(
@@ -162,7 +162,7 @@ class EraSpyController(http.Controller):
                             )
                             processed += 1
                             _logger.info(
-                                "EraSpy duplicate_query for lead=%s copied=%s",
+                                "Era Enrich duplicate_query for lead=%s copied=%s",
                                 lead.id, copied,
                             )
                             break

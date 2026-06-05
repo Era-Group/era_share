@@ -37,17 +37,17 @@ class HrApplicant(models.Model):
         )
         return records
 
-    eraspy_last_status = fields.Char(readonly=True)
-    eraspy_last_checked = fields.Datetime(readonly=True)
-    eraspy_profile_url = fields.Char(string="EraSpy Profile URL", readonly=True)
-    eraspy_rating = fields.Char(readonly=True)
+    eraspy_last_status = fields.Char(string="Era Enrich Last Status", readonly=True)
+    eraspy_last_checked = fields.Datetime(string="Era Enrich Last Checked", readonly=True)
+    eraspy_profile_url = fields.Char(string="Era Enrich Profile URL", readonly=True)
+    eraspy_rating = fields.Char(string="Era Enrich Rating", readonly=True)
     eraspy_debug_payload = fields.Text(
-        string="EraSpy Debug Payload",
+        string="Era Enrich Debug Payload",
         readonly=True,
     )
-    eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
-    eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
-    eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
+    eraspy_more_data = fields.Html(string="Era Enrich More Data", readonly=True)
+    eraspy_last_request_id = fields.Char(string="Era Enrich Last Request ID", readonly=True)
+    eraspy_last_identifier = fields.Char(string="Era Enrich Last Identifier", readonly=True)
     eraspy_ai_match = fields.Html(string="AI Qualification Match", readonly=True, sanitize=True)
     eraspy_enrichment_state = fields.Selection(
         [("queued", "Queued"), ("done", "Done"), ("failed", "Failed")],
@@ -100,7 +100,7 @@ class HrApplicant(models.Model):
             names = ", ".join(blocked.mapped("display_name")[:5])
             more = len(blocked) - 5
             suffix = _(" and %s more") % more if more > 0 else ""
-            raise UserError(_("EraSpy enrichment is already queued for: %s%s") % (names, suffix))
+            raise UserError(_("Era Enrich enrichment is already queued for: %s%s") % (names, suffix))
         if len(applicant_ids) > 80:
             raise UserError(_("You can enrich at most 80 applicants at a time. Please split your selection."))
         client = self.env["eraspy.client"]
@@ -117,7 +117,7 @@ class HrApplicant(models.Model):
         response_debug = []
 
         _logger.info(
-            "EraSpy applicant enrich started: without_contacts=%s applicants=%s",
+            "Era Enrich applicant enrich started: without_contacts=%s applicants=%s",
             without_contacts,
             len(applicants),
         )
@@ -183,7 +183,7 @@ class HrApplicant(models.Model):
 
             skipped.append(applicant.display_name)
 
-        message = _("%s applicant(s) enriched via EraSpy.") % enriched
+        message = _("%s applicant(s) enriched via Era Enrich.") % enriched
         if pending:
             message += _(" %s applicant(s) queued; results will be applied on callback.") % pending
             if pending_requests:
@@ -392,7 +392,7 @@ class HrApplicant(models.Model):
                     })
                     applicant.write(copy_fields)
                     _logger.info(
-                        "EraSpy copied enrichment from applicant %s to %s (identifier=%s)",
+                        "Era Enrich copied enrichment from applicant %s to %s (identifier=%s)",
                         donor.id, applicant.id, ident,
                     )
                     return True
@@ -417,7 +417,7 @@ class HrApplicant(models.Model):
                             applicant.write(write_vals)
                             applicant._write_eraspy_ai_match_safely(candidate)
                             _logger.info(
-                                "EraSpy copied enrichment from callback log %s to applicant %s (identifier=%s)",
+                                "Era Enrich copied enrichment from callback log %s to applicant %s (identifier=%s)",
                                 log_record.id, applicant.id, ident,
                             )
                             return True
@@ -429,7 +429,7 @@ class HrApplicant(models.Model):
     def _apply_eraspy_profile(self, profile: dict, overwrite=False):
         self.ensure_one()
         if not profile:
-            raise UserError(_("EraSpy did not return any profile data."))
+            raise UserError(_("Era Enrich did not return any profile data."))
 
         # Save profile data first (skip AI match so a slow/failing AI call
         # never prevents the profile from being persisted).
@@ -458,7 +458,7 @@ class HrApplicant(models.Model):
         if not profile:
             return {}
         _logger.info(
-            "EraSpy prepare write vals: applicant=%s profile_keys=%s",
+            "Era Enrich prepare write vals: applicant=%s profile_keys=%s",
             self.id,
             list(profile.keys())[:20],
         )
@@ -650,7 +650,7 @@ class HrApplicant(models.Model):
 
         trimmed = self._trim_eraspy_profile(profile)
         _logger.info(
-            "EraSpy AI match start: applicant=%s job_title=%s profile_keys=%s",
+            "Era Enrich AI match start: applicant=%s job_title=%s profile_keys=%s",
             self.id,
             job_title,
             list(trimmed.keys())[:20],

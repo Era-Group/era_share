@@ -31,7 +31,7 @@
         <field name="name">eraspy.callback.queue.list</field>
         <field name="model">eraspy.callback.queue</field>
         <field name="arch" type="xml">
-            <list string="EraSpy Callback Log"
+            <list string="Era Enrich Callback Log"
                   decoration-danger="state == 'error'"
                   decoration-success="state == 'done'">
                 <field name="create_date" string="Created"/>
@@ -53,7 +53,7 @@
         <field name="name">eraspy.callback.queue.form</field>
         <field name="model">eraspy.callback.queue</field>
         <field name="arch" type="xml">
-            <form string="EraSpy Callback Record" create="0" edit="0">
+            <form string="Era Enrich Callback Record" create="0" edit="0">
                 <header>
                     <field name="state" widget="statusbar"/>
                 </header>

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "ERA EraSpy CRM",
+    "name": "ERA Era Enrich CRM",
     "version": "19.0.1.0.0",
     "category": "CRM",
-    "summary": "EraSpy enrichment for CRM leads",
+    "summary": "Era Enrich enrichment for CRM leads",
     "icon": "static/description/icon.png",
     'images': ["static/description/icon.png"],
     "description": (
-        "EraSpy CRM adds lead enrichment from the EraSpy service. Users can enrich leads "
+        "Era Enrich CRM adds lead enrichment from the Era Enrich service. Users can enrich leads "
         "directly from the CRM form or list, sending identifiers such as LinkedIn, phone, "
         "and email to the API. Callback processing is handled directly in the controller "
         "with results applied immediately, while respecting rate limits and bulk caps."

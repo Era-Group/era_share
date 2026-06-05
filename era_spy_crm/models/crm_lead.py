@@ -32,19 +32,19 @@ class CrmLead(models.Model):
         )
         return records
 
-    eraspy_last_status = fields.Char(readonly=True)
-    eraspy_last_checked = fields.Datetime(readonly=True)
-    eraspy_profile_url = fields.Char(string="EraSpy Profile URL", readonly=True)
+    eraspy_last_status = fields.Char(string="Era Enrich Last Status", readonly=True)
+    eraspy_last_checked = fields.Datetime(string="Era Enrich Last Checked", readonly=True)
+    eraspy_profile_url = fields.Char(string="Era Enrich Profile URL", readonly=True)
     linkedin_url = fields.Char(string="LinkedIn")
-    eraspy_rating = fields.Char(readonly=True)
+    eraspy_rating = fields.Char(string="Era Enrich Rating", readonly=True)
     eraspy_debug_payload = fields.Text(
-        string="EraSpy Debug Payload",
+        string="Era Enrich Debug Payload",
         readonly=True,
         groups="base.group_system",
     )
-    eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
-    eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
-    eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
+    eraspy_more_data = fields.Html(string="Era Enrich More Data", readonly=True)
+    eraspy_last_request_id = fields.Char(string="Era Enrich Last Request ID", readonly=True)
+    eraspy_last_identifier = fields.Char(string="Era Enrich Last Identifier", readonly=True)
     eraspy_enrichment_state = fields.Selection(
         [("queued", "Queued"), ("done", "Done"), ("failed", "Failed")],
         compute="_compute_eraspy_enrichment_state",
@@ -156,10 +156,10 @@ class CrmLead(models.Model):
                 lead.write({"eraspy_auto_enrich_pending": False})
 
     def _apply_eraspy_profile(self, profile: dict, overwrite=False):
-        """Update lead with data returned by EraSpy profile."""
+        """Update lead with data returned by Era Enrich profile."""
         self.ensure_one()
         if not profile:
-            raise UserError(_("EraSpy did not return any profile data."))
+            raise UserError(_("Era Enrich did not return any profile data."))
 
         write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite, skip_ai_match=True)
         if write_vals:
@@ -169,7 +169,7 @@ class CrmLead(models.Model):
             _logger.info("EraSpy returned data but nothing new to write for lead %s", self.id)
 
     def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False, skip_ai_match=False):
-        """Build a single write dict for EraSpy updates."""
+        """Build a single write dict for Era Enrich updates."""
         self.ensure_one()
         if not profile:
             return {}
@@ -551,7 +551,7 @@ class CrmLead(models.Model):
                     })
                     lead.write(copy_fields)
                     _logger.info(
-                        "EraSpy copied enrichment from lead %s to %s (identifier=%s)",
+                        "Era Enrich copied enrichment from lead %s to %s (identifier=%s)",
                         donor.id, lead.id, ident,
                     )
                     return True
@@ -575,7 +575,7 @@ class CrmLead(models.Model):
                             write_vals["eraspy_last_identifier"] = ident
                             lead.write(write_vals)
                             _logger.info(
-                                "EraSpy copied enrichment from callback log %s to lead %s (identifier=%s)",
+                                "Era Enrich copied enrichment from callback log %s to lead %s (identifier=%s)",
                                 log_record.id, lead.id, ident,
                             )
                             return True

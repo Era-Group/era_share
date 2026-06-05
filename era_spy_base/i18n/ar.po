@@ -20,8 +20,8 @@ msgstr ""
 #: model:ir.ui.menu,name:era_spy_base.menu_eraspy_root
 #: model:ir.ui.menu,name:era_spy_base.menu_eraspy_technical_root
 #: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
-msgid "EraSpy"
-msgstr "EraSpy"
+msgid "Era Enrich"
+msgstr "Era Enrich"
 
 #. module: era_spy_base
 #: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
@@ -35,8 +35,8 @@ msgstr "الرابط الأساسي"
 
 #. module: era_spy_base
 #: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
-msgid "Use the EraSpy API or your proxy endpoint."
-msgstr "استخدم واجهة EraSpy أو نقطة الوكيل الخاصة بك."
+msgid "Use the Era Enrich API or your proxy endpoint."
+msgstr "استخدم واجهة Era Enrich أو نقطة الوكيل الخاصة بك."
 
 #. module: era_spy_base
 #: model_terms:ir.ui.view,arch_db:era_spy_base.view_res_config_settings_eraspy
@@ -51,18 +51,18 @@ msgstr "إثراء تلقائي للعملاء المحتملين والمتقد
 
 #. module: era_spy_base
 #: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_base_url
-msgid "EraSpy Base URL"
-msgstr "رابط EraSpy الأساسي"
+msgid "Era Enrich Base URL"
+msgstr "رابط Era Enrich الأساسي"
 
 #. module: era_spy_base
 #: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_base_url
-msgid "Root URL for the EraSpy API or your proxy endpoint."
-msgstr "الرابط الجذري لواجهة EraSpy أو لنقطة الوكيل الخاصة بك."
+msgid "Root URL for the Era Enrich API or your proxy endpoint."
+msgstr "الرابط الجذري لواجهة Era Enrich أو لنقطة الوكيل الخاصة بك."
 
 #. module: era_spy_base
 #: model:ir.model.fields,field_description:era_spy_base.field_res_config_settings__eraspy_rate_limit_per_minute
-msgid "EraSpy Max Calls / Minute"
-msgstr "أقصى عدد طلبات EraSpy في الدقيقة"
+msgid "Era Enrich Max Calls / Minute"
+msgstr "أقصى عدد طلبات Era Enrich في الدقيقة"
 
 #. module: era_spy_base
 #: model:ir.model.fields,help:era_spy_base.field_res_config_settings__eraspy_rate_limit_per_minute
@@ -86,47 +86,47 @@ msgstr "عند التفعيل، يتم إثراء العملاء المحتمل�
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy rate limit reached. Please wait %s seconds and try again."
-msgstr "تم الوصول إلى حد الطلبات في EraSpy. الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
+msgid "Era Enrich rate limit reached. Please wait %s seconds and try again."
+msgstr "تم الوصول إلى حد الطلبات في Era Enrich. الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "Set the system base URL in General Settings so EraSpy callbacks can reach Odoo."
-msgstr "قم بتحديد رابط النظام الأساسي في الإعدادات العامة حتى تتمكن ردود EraSpy من الوصول إلى أودو."
+msgid "Set the system base URL in General Settings so Era Enrich callbacks can reach Odoo."
+msgstr "قم بتحديد رابط النظام الأساسي في الإعدادات العامة حتى تتمكن ردود Era Enrich من الوصول إلى أودو."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy request failed: %s"
-msgstr "فشل طلب EraSpy: %s"
+msgid "Era Enrich request failed: %s"
+msgstr "فشل طلب Era Enrich: %s"
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy authentication failed (401)."
-msgstr "فشل التحقق من هوية EraSpy (401)."
+msgid "Era Enrich authentication failed (401)."
+msgstr "فشل التحقق من هوية Era Enrich (401)."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy rate limit reached (429). Please wait %s seconds and try again."
-msgstr "تم الوصول إلى حد الطلبات في EraSpy (429). الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
+msgid "Era Enrich rate limit reached (429). Please wait %s seconds and try again."
+msgstr "تم الوصول إلى حد الطلبات في Era Enrich (429). الرجاء الانتظار %s ثانية ثم المحاولة مرة أخرى."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy service is temporarily unavailable (status %s)."
-msgstr "خدمة EraSpy غير متاحة مؤقتًا (الحالة %s)."
+msgid "Era Enrich service is temporarily unavailable (status %s)."
+msgstr "خدمة Era Enrich غير متاحة مؤقتًا (الحالة %s)."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "Access to EraSpy is blocked. Contact info@era.net.sa to activate your account."
-msgstr "تم حظر الوصول إلى EraSpy. تواصل مع info@era.net.sa لتفعيل حسابك."
+msgid "Access to Era Enrich is blocked. Contact info@era.net.sa to activate your account."
+msgstr "تم حظر الوصول إلى Era Enrich. تواصل مع info@era.net.sa لتفعيل حسابك."
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy returned an unexpected response. Please try again later. Status: %s"
-msgstr "أعاد EraSpy استجابة غير متوقعة. الرجاء المحاولة لاحقًا. الحالة: %s"
+msgid "Era Enrich returned an unexpected response. Please try again later. Status: %s"
+msgstr "أعاد Era Enrich استجابة غير متوقعة. الرجاء المحاولة لاحقًا. الحالة: %s"
 
 #. module: era_spy_base
 #: code:addons/era_spy_base/services/eraspy_client.py:0
-msgid "EraSpy error: %s"
+msgid "Era Enrich error: %s"
 msgstr "خطأ: %s"
 
 #. module: era_spy_base

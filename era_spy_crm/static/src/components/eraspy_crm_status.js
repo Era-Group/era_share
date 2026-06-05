@@ -93,7 +93,7 @@ export class EraspyCrmStatusField extends Component {
 
 export const eraspyCrmStatusField = {
     component: EraspyCrmStatusField,
-    displayName: "EraSpy CRM Status",
+    displayName: "Era Enrich CRM Status",
     supportedTypes: ["char"],
     extractProps: () => ({}),
 };

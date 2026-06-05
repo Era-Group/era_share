@@ -13,7 +13,7 @@ QUEUE_LIKE_STATUSES = {"queued", "queue", "pending", "in_queue", "in queue", "pr
 
 class EraSpyApplicantCallbackQueue(models.Model):
     _name = "eraspy.applicant.callback.queue"
-    _description = "EraSpy Applicant Callback Queue"
+    _description = "Era Enrich Applicant Callback Queue"
     _order = "create_date desc"
     _request_id_unique = models.Constraint(
         "unique(request_id)",
@@ -162,7 +162,7 @@ class EraSpyApplicantCallbackQueue(models.Model):
         ])
         if queued_applicants:
             _logger.warning(
-                "EraSpy cleanup: marking %s stuck applicant(s) as failed (queued before %s)",
+                "Era Enrich cleanup: marking %s stuck applicant(s) as failed (queued before %s)",
                 len(queued_applicants), cutoff,
             )
             queued_applicants.write({

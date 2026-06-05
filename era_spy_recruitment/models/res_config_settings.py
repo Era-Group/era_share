@@ -10,7 +10,7 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     def _set_default_eraspy_base_url(self):
-        """Set the default EraSpy Base URL on module installation/upgrade."""
+        """Set the default Era Enrich Base URL on module installation/upgrade."""
         ICP = self.env['ir.config_parameter'].sudo()
         current_url = ICP.get_param('era_spy.base_url')
         if not current_url:
@@ -27,8 +27,8 @@ class ResConfigSettings(models.TransientModel):
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
-                    "title": _("EraSpy"),
-                    "message": _("No applicants with 'Queued' EraSpy status were found."),
+                    "title": _("Era Enrich"),
+                    "message": _("No applicants with 'Queued' Era Enrich status were found."),
                     "type": "warning",
                     "sticky": False,
                 },
@@ -49,7 +49,7 @@ class ResConfigSettings(models.TransientModel):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("EraSpy"),
+                "title": _("Era Enrich"),
                 "message": message,
                 "type": "success",
                 "sticky": False,

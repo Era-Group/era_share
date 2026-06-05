@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class EraSpyEnrichWizard(models.TransientModel):
     _name = "eraspy.enrich.wizard"
-    _description = "Enrich CRM leads via EraSpy"
+    _description = "Enrich CRM leads via Era Enrich"
 
     lead_ids = fields.Many2many("crm.lead", string="Leads", required=True)
     lookup_source = fields.Selection(
@@ -25,13 +25,13 @@ class EraSpyEnrichWizard(models.TransientModel):
         ],
         default="auto",
         required=True,
-        help="Pick how EraSpy should locate the contact. Automatic uses lead email, phone, or LinkedIn URL if available.",
+        help="Pick how Era Enrich should locate the contact. Automatic uses lead email, phone, or LinkedIn URL if available.",
     )
     query = fields.Char(string="Identifier or Query")
     without_contacts = fields.Boolean(
         string="Profile preview only (no credits)",
         default=lambda self: self._default_without_contacts(),
-        help="When enabled, EraSpy returns public profile data without revealing contact details, saving credits.",
+        help="When enabled, Era Enrich returns public profile data without revealing contact details, saving credits.",
     )
     overwrite_existing = fields.Boolean(
         string="Overwrite existing lead fields",
@@ -90,7 +90,7 @@ class EraSpyEnrichWizard(models.TransientModel):
         request_debug = []
         response_debug = []
         _logger.info(
-            "EraSpy enrich started: lookup_source=%s without_contacts=%s leads=%s",
+            "Era Enrich enrich started: lookup_source=%s without_contacts=%s leads=%s",
             self.lookup_source,
             self.without_contacts,
             len(leads),
@@ -142,7 +142,7 @@ class EraSpyEnrichWizard(models.TransientModel):
 
             skipped.append(lead.display_name)
 
-        message = _("%s lead(s) enriched via EraSpy.") % enriched
+        message = _("%s lead(s) enriched via Era Enrich.") % enriched
         if pending:
             message += _(" %s lead(s) queued; results will be applied on callback.") % pending
             if pending_requests:
@@ -156,7 +156,7 @@ class EraSpyEnrichWizard(models.TransientModel):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("EraSpy"),
+                "title": _("Era Enrich"),
                 "message": message,
                 "type": "success" if enriched else "warning",
                 "sticky": False,

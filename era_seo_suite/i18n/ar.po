@@ -1523,8 +1523,9 @@ msgstr "فهرس مولّد تلقائياً"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_onboarding_wizard__blog_taxonomy_opt_in
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_blog_taxonomy_active
 msgid "Auto-classify blog posts (AI)"
-msgstr "تصنيف المقالات تلقائياً (AI)"
+msgstr "تصنيف تلقائي لمقالات المدونة (AI)"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
@@ -3731,11 +3732,12 @@ msgid "Indexing & Canonical"
 msgstr "الفهرسة والعنوان الأساسي"
 
 #. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_info
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_audit_finding__severity__info
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_finding_search
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_list
 msgid "Info"
-msgstr "معلومة"
+msgstr "معلومات"
 
 #. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_audit_run__info_count
@@ -4489,8 +4491,9 @@ msgstr "ملاحظات"
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_onboarding_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Nothing to do — every page and post already has an SEO title."
-msgstr "لا شيء للقيام به — جميع الصفحات والمقالات لديها عنوان SEO."
+msgstr "لا شيء للقيام به — كل صفحة ومقال يحتوي بالفعل على عنوان SEO."
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_res_config_settings_era_gsc
@@ -7222,6 +7225,7 @@ msgid "View profile"
 msgstr "عرض الملف الشخصي"
 
 #. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_warning
 #: model:ir.model.fields.selection,name:era_seo_suite.selection__era_seo_audit_finding__severity__warning
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_finding_search
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_seo_audit_run_list
@@ -8258,11 +8262,6 @@ msgstr "سجل/سجلات تحتوي حالياً على <i>عنوان SEO</i> �
 
 #. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
-msgid "Nothing to do — every page and post already has an SEO title."
-msgstr "لا شيء للقيام به — كل صفحة ومقال يحتوي بالفعل على عنوان SEO."
-
-#. module: era_seo_suite
-#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid ""
 "A bulk-fill run is <b>already in progress</b>. Click\n"
 "                  <b>Pause</b> to stop the cron sweep; the cursor is kept\n"
@@ -8369,11 +8368,6 @@ msgstr ""
 "                  مقال(ات) بلا فئة بعد."
 
 #. module: era_seo_suite
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_blog_taxonomy_active
-msgid "Auto-classify blog posts (AI)"
-msgstr "تصنيف تلقائي لمقالات المدونة (AI)"
-
-#. module: era_seo_suite
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid ""
 "The same cron that runs AI Bulk Fill also processes blog\n"
@@ -8387,16 +8381,6 @@ msgstr ""
 
 #. module: era_seo_suite
 # === Dashboard KPIs (added 19.0.3.x) ===
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_warning
-msgid "Warning"
-msgstr "تحذير"
-
-#. module: era_seo_suite
-#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_audit_info
-msgid "Info"
-msgstr "معلومات"
-
-#. module: era_seo_suite
 #: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__kpi_findings_resolved_total
 msgid "Resolved findings (total)"
 msgstr "اكتشافات تم حلّها (الإجمالي)"
@@ -8632,3 +8616,41 @@ msgstr "أي فرصة"
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Open Keyword Opportunities"
 msgstr "فتح فرص الكلمات المفتاحية"
+
+#. module: era_seo_suite
+# === v19.0.3.1.x — Top keywords + AI Traffic Advice ===
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Top keywords (28 days)"
+msgstr "أعلى الكلمات (آخر 28 يوم)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Open all keywords"
+msgstr "فتح كل الكلمات"
+
+#. module: era_seo_suite
+#: model:ir.actions.act_window,name:era_seo_suite.action_era_seo_advice_wizard
+#: model:ir.model,name:era_seo_suite.model_era_seo_advice_wizard
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_advice_wizard_form
+msgid "AI Traffic Advice"
+msgstr "نصيحة الذكاء الاصطناعي لزيادة الزيارات"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_advice_wizard_form
+msgid "AI tip to grow your traffic"
+msgstr "نصيحة ذكاء اصطناعي لزيادة زيارات موقعك"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_advice_wizard_form
+msgid "Get another tip"
+msgstr "نصيحة أخرى"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_advice_wizard__advice_html
+msgid "AI advice"
+msgstr "نصيحة الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Get AI Traffic Tip"
+msgstr "احصل على نصيحة AI للزيارات"

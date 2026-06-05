@@ -8654,3 +8654,312 @@ msgstr "نصيحة الذكاء الاصطناعي"
 #: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
 msgid "Get AI Traffic Tip"
 msgstr "احصل على نصيحة AI للزيارات"
+
+#. module: era_seo_suite
+# === v19.0.3.1.10 — Dashboard, settings autopilot, Analytics intro ===
+
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_autopilot_active
+msgid "Autopilot: Apply Safe Metadata Fixes"
+msgstr "الطيار الآلي: تطبيق إصلاحات الميتاداتا الآمنة"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_autopilot_confidence_pct
+msgid "Autopilot Confidence Threshold (%)"
+msgstr "حد ثقة الطيار الآلي (%)"
+
+#. module: era_seo_suite
+#: model:ir.model.fields,field_description:era_seo_suite.field_era_seo_suite_hub__setting_autopilot_max_attempts
+msgid "Max Attempts per Finding"
+msgstr "الحد الأقصى للمحاولات لكل اكتشاف"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Analytics &amp; Keywords"
+msgstr "التحليلات والكلمات المفتاحية"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid ""
+"Keyword intelligence from Google Search Console (last 28–30 days).\n"
+"                Use it to find quick wins — keywords on the edge of page 1, pages\n"
+"                with low click-through, and rising or brand-new searches to build\n"
+"                content around."
+msgstr ""
+"معلومات الكلمات المفتاحية من Google Search Console (آخر 28–30 يوم). "
+"استخدمها للعثور على مكاسب سريعة — كلمات على حافة الصفحة الأولى، وصفحات "
+"بنسبة نقر منخفضة، وعمليات بحث صاعدة أو جديدة لبناء محتوى حولها."
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Open full query explorer"
+msgstr "فتح مستكشف الاستعلامات الكامل"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Live dashboard"
+msgstr "اللوحة الحية"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "SEO health score"
+msgstr "درجة صحة الـ SEO"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Clear"
+msgstr "خالٍ"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "needs attention"
+msgstr "تحتاج انتباه"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Audit running"
+msgstr "الفحص قيد التشغيل"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Open findings"
+msgstr "اكتشافات مفتوحة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "critical"
+msgstr "حرج"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Title coverage"
+msgstr "تغطية العناوين"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "published pages"
+msgstr "صفحات منشورة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "GSC performance"
+msgstr "أداء GSC"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "% CTR"
+msgstr "% CTR"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI fill"
+msgstr "تعبئة الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "remaining"
+msgstr "متبقٍ"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Priority Findings"
+msgstr "الاكتشافات ذات الأولوية"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI Review Queue"
+msgstr "قائمة مراجعة الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Pages Missing SEO"
+msgstr "صفحات بدون SEO"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Pages"
+msgstr "الصفحات"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Discovery signals"
+msgstr "إشارات الاكتشاف"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "GSC and GEO are connected"
+msgstr "GSC و GEO متصلان"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI workload"
+msgstr "حمل عمل الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "No pending AI queue"
+msgstr "لا توجد مهام في قائمة الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Audit priorities"
+msgstr "أولويات التدقيق"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "No critical or warning findings"
+msgstr "لا توجد اكتشافات حرجة أو تحذيرات"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Connect GSC"
+msgstr "اربط GSC"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Add GSC sites"
+msgstr "أضف مواقع GSC"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI crawlers blocked"
+msgstr "زواحف الذكاء الاصطناعي المحجوبة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Crawlers"
+msgstr "الزواحف"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Review"
+msgstr "مراجعة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Start"
+msgstr "بدء"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Site health"
+msgstr "صحة الموقع"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Published pages"
+msgstr "الصفحات المنشورة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Schema instances"
+msgstr "حالات Schema"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Active redirects"
+msgstr "إعادة التوجيه النشطة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Last audit"
+msgstr "آخر تدقيق"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Audit findings"
+msgstr "اكتشافات التدقيق"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Resolved (total)"
+msgstr "تم حلّها (الإجمالي)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Resolved (7d)"
+msgstr "تم حلّها (7 أيام)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Posts (30d)"
+msgstr "مقالات (30 يوم)"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI crawlers"
+msgstr "زواحف الذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Yes"
+msgstr "نعم"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "No"
+msgstr "لا"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "SEO coverage"
+msgstr "تغطية الـ SEO"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "SEO title"
+msgstr "عنوان SEO"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Meta description"
+msgstr "وصف Meta"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "OG image"
+msgstr "صورة OG"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Schema instance"
+msgstr "Schema"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Fixes applied"
+msgstr "إصلاحات مطبَّقة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Awaiting review"
+msgstr "بانتظار المراجعة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Needs decision"
+msgstr "تحتاج قراراً"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "AI auto-fill"
+msgstr "التعبئة التلقائية بالذكاء الاصطناعي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Idle"
+msgstr "خامل"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "SEO fields filled"
+msgstr "حقول SEO مكتملة"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Remaining"
+msgstr "المتبقي"
+
+#. module: era_seo_suite
+#: model_terms:ir.ui.view,arch_db:era_seo_suite.view_era_seo_suite_hub_form
+msgid "Posts to categorize"
+msgstr "مقالات للتصنيف"

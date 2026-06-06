@@ -902,14 +902,14 @@ async function startAgent(options = {}) {
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-  const modelUrl = cfg.model || "gpt-realtime-mini";
-  const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls?model=" + modelUrl, {
+  // GA WebRTC handshake: no ?model= query param and no OpenAI-Beta header.
+  // The model/voice/session config come from the minted ephemeral client secret.
+  const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls", {
     method: "POST",
     body: offer.sdp,
     headers: {
       "Authorization": `Bearer ${EPHEMERAL_KEY.trim()}`,
       "Content-Type": "application/sdp",
-      "OpenAI-Beta": "realtime=v1",
     },
   });
   if (!sdpResp.ok) {
@@ -924,11 +924,17 @@ async function startAgent(options = {}) {
   dc.addEventListener("open", async () => {
     setStatus(connectedStatusText());
 
+    // GA session.update shape: model is fixed at mint time and cannot be
+    // changed here; voice/transcription live under audio.{output,input}.
     const sessionUpdate = {
-      model: cfg.model,
-      voice: cfg.voice,
-      input_audio_transcription: {
-        model: "gpt-4o-mini-transcribe",
+      type: "realtime",
+      audio: {
+        input: {
+          transcription: { model: "gpt-4o-mini-transcribe" },
+        },
+        output: {
+          voice: cfg.voice,
+        },
       },
     };
 

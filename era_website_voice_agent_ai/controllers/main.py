@@ -20,6 +20,9 @@ from odoo.http import request
 class RealtimeAgentController(http.Controller):
     MAX_AUDIO_BYTES = 40 * 1024 * 1024
     MAX_TRANSCRIBE_AUDIO_BYTES = 24 * 1024 * 1024
+    # An "agent" session from a given IP is considered idle (and may be dropped
+    # to let a new session start) once it has shown no activity for this long.
+    IDLE_TIMEOUT_SECONDS = 20
 
     def _get_realtime_model(self, ICP):
         """Return the configured model or the default gpt-realtime-mini."""
@@ -308,6 +311,10 @@ class RealtimeAgentController(http.Controller):
                 if incoming_session_key and active.session_key and active.session_key == incoming_session_key:
                     return None
 
+        # Different browser/session on this IP: drop the existing one only if it
+        # is idle; a live call keeps blocking with the message below.
+        if self._drop_idle_session(active):
+            return None
         return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
 
     def _find_recent_open_summary(
@@ -344,6 +351,56 @@ class RealtimeAgentController(http.Controller):
         cutoff = fields.Datetime.now() - timedelta(minutes=max_age_minutes)
         domain.append(("create_date", ">=", cutoff))
         return Summary.search(domain, order="id desc", limit=1)
+
+    def _idle_timeout_seconds(self):
+        """Idle window (seconds) before an active agent session can be dropped.
+        Overridable via the ``openai.realtime_idle_timeout_seconds`` parameter."""
+        raw = request.env["ir.config_parameter"].sudo().get_param(
+            "openai.realtime_idle_timeout_seconds"
+        )
+        try:
+            value = int(raw)
+        except (TypeError, ValueError):
+            value = self.IDLE_TIMEOUT_SECONDS
+        return value if value > 0 else self.IDLE_TIMEOUT_SECONDS
+
+    def _session_idle_seconds(self, record):
+        """Seconds since the session last showed activity. Uses the ``last_seen``
+        heartbeat, falling back to write/create date for older records."""
+        if not record:
+            return None
+        last_seen = record.last_seen if "last_seen" in record._fields else False
+        last_seen = last_seen or record.write_date or record.create_date
+        if not last_seen:
+            return None
+        return (fields.Datetime.now() - last_seen).total_seconds()
+
+    def _session_is_idle(self, record):
+        idle = self._session_idle_seconds(record)
+        return idle is not None and idle >= self._idle_timeout_seconds()
+
+    def _drop_idle_session(self, record):
+        """Close ``record`` if it is an idle active session. Returns True when the
+        record no longer blocks a new session from the same IP (either it was
+        already inactive, or it was idle and has now been dropped)."""
+        if not record:
+            return True
+        if "is_active" in record._fields and not record.is_active:
+            return True
+        if not self._session_is_idle(record):
+            return False
+        if "is_active" in record._fields:
+            record.sudo().write({"is_active": False})
+        return True
+
+    def _touch_session_activity(self, record):
+        """Throttled heartbeat: refresh ``last_seen`` so a live call is never
+        mistaken for idle. Writes at most about once per half-timeout."""
+        if not record or "last_seen" not in record._fields:
+            return
+        idle = self._session_idle_seconds(record)
+        if idle is None or idle >= (self._idle_timeout_seconds() / 2):
+            record.sudo().write({"last_seen": fields.Datetime.now()})
 
     def _parse_allowed_embed_origins(self, ICP):
         raw = (ICP.get_param("openai.realtime_embed_allowed_origins") or "").strip()
@@ -768,32 +825,42 @@ class RealtimeAgentController(http.Controller):
             except Exception as e:
                 prompt_warning = f"Prompt lookup failed: {e}"
 
-        url = "https://api.openai.com/v1/realtime/sessions"
+        # GA Realtime API: the beta POST /v1/realtime/sessions endpoint was
+        # removed; ephemeral keys are now minted via /v1/realtime/client_secrets
+        # with the session config nested under "session".
+        url = "https://api.openai.com/v1/realtime/client_secrets"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "OpenAI-Beta": "realtime=v1",
         }
-        payload = {
-            "model": model,
-            "voice": voice,
-            "modalities": ["audio", "text"],
-            "turn_detection": {
-                "type": "server_vad",
-                "threshold": vad_threshold,
-                "interrupt_response": interrupt_response_enabled,
-            },
+        turn_detection = {
+            "type": "server_vad",
+            "threshold": vad_threshold,
+            "interrupt_response": interrupt_response_enabled,
         }
         if idle_timeout_seconds > 0:
-            payload["turn_detection"]["idle_timeout_ms"] = idle_timeout_seconds * 1000
+            turn_detection["idle_timeout_ms"] = idle_timeout_seconds * 1000
+        session = {
+            "type": "realtime",
+            "model": model,
+            "output_modalities": ["audio"],
+            "audio": {
+                "input": {
+                    "turn_detection": turn_detection,
+                    "transcription": {"model": "gpt-4o-mini-transcribe"},
+                },
+                "output": {"voice": voice},
+            },
+        }
+        payload = {"session": session}
         if system_instructions:
-            payload["instructions"] = system_instructions
+            session["instructions"] = system_instructions
         else:
             prompt_instructions = ""
             if prompt_profile:
                 prompt_instructions = (prompt_profile.get("instructions") or "").strip()
             if prompt_instructions:
-                payload["instructions"] = prompt_instructions
+                session["instructions"] = prompt_instructions
 
         current_page_url = (kwargs.get("current_page_url") or "").strip()
         if current_page_url:
@@ -803,10 +870,10 @@ class RealtimeAgentController(http.Controller):
                     # Keep full link (path + query), drop fragment.
                     safe_url = parsed._replace(fragment="").geturl()
                     page_line = f"You are in this page now: {safe_url}"
-                    if payload.get("instructions"):
-                        payload["instructions"] = f'{payload["instructions"]}\n\n{page_line}'
+                    if session.get("instructions"):
+                        session["instructions"] = f'{session["instructions"]}\n\n{page_line}'
                     else:
-                        payload["instructions"] = page_line
+                        session["instructions"] = page_line
             except Exception:
                 pass
 
@@ -819,10 +886,10 @@ class RealtimeAgentController(http.Controller):
                 "Continue the same conversation using this previous context:\n"
                 f"{cleaned_memory}"
             )
-            if payload.get("instructions"):
-                payload["instructions"] = f'{payload["instructions"]}\n\n{memory_block}'
+            if session.get("instructions"):
+                session["instructions"] = f'{session["instructions"]}\n\n{memory_block}'
             else:
-                payload["instructions"] = memory_block
+                session["instructions"] = memory_block
 
         def _is_idle_timeout_not_supported(response_text):
             text = (response_text or "").lower()
@@ -885,10 +952,12 @@ class RealtimeAgentController(http.Controller):
             and idle_timeout_seconds > 0
             and _is_idle_timeout_not_supported(r.text)
         ):
-            fallback_payload = dict(payload)
-            turn_detection = dict(fallback_payload.get("turn_detection") or {})
-            turn_detection.pop("idle_timeout_ms", None)
-            fallback_payload["turn_detection"] = turn_detection
+            fallback_payload = json.loads(json.dumps(payload))
+            fallback_td = (
+                fallback_payload.get("session", {}).get("audio", {}).get("input", {}).get("turn_detection")
+            )
+            if isinstance(fallback_td, dict):
+                fallback_td.pop("idle_timeout_ms", None)
             fallback_resp, fallback_error = _mint_session(fallback_payload)
             if fallback_error:
                 short_err = _short_error_text(fallback_error)
@@ -909,7 +978,11 @@ class RealtimeAgentController(http.Controller):
             }
 
         data = r.json()
-        client_secret = (data.get("client_secret") or {}).get("value")
+        # GA returns the ephemeral key at top-level "value"; keep the old beta
+        # shape (client_secret.value) as a fallback for safety.
+        client_secret = data.get("value")
+        if not client_secret and isinstance(data.get("client_secret"), dict):
+            client_secret = data["client_secret"].get("value")
         if not client_secret:
             return {"error": "No client_secret returned by OpenAI", "details": data}
 
@@ -990,6 +1063,8 @@ class RealtimeAgentController(http.Controller):
                     write_vals["caller_ip"] = caller_ip
                 if "is_active" in Summary._fields and not existing.is_active:
                     write_vals["is_active"] = True
+                if "last_seen" in Summary._fields:
+                    write_vals["last_seen"] = fields.Datetime.now()
                 if (
                     "salesperson_user_id" in Summary._fields
                     and configured_salesperson_id
@@ -1015,10 +1090,17 @@ class RealtimeAgentController(http.Controller):
             )
         if existing:
             active_client_call_id = self._normalize_client_call_id(existing.client_call_id)
-            if active_client_call_id and client_call_id and active_client_call_id != client_call_id:
-                return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
-            if active_client_call_id and not client_call_id:
-                return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
+            if active_client_call_id and active_client_call_id != client_call_id:
+                # A different browser/session is active on this IP. Drop it only
+                # if it is idle, then fall through to start a fresh session; a
+                # live call keeps blocking. (The same browser reuses its session
+                # via the client_call_id match above.)
+                if self._drop_idle_session(existing):
+                    existing = Summary.browse()
+                else:
+                    return {"error": "يوجد وكيل نشط بالفعل من نفس عنوان IP. أغلق الجلسة الحالية أولاً."}
+
+        if existing:
             existing_key = existing.session_key or ""
             write_vals = {}
             if "session_key" in Summary._fields and not existing_key:
@@ -1030,6 +1112,8 @@ class RealtimeAgentController(http.Controller):
                 write_vals["caller_ip"] = caller_ip
             if "is_active" in Summary._fields and not existing.is_active:
                 write_vals["is_active"] = True
+            if "last_seen" in Summary._fields:
+                write_vals["last_seen"] = fields.Datetime.now()
             if (
                 "salesperson_user_id" in Summary._fields
                 and configured_salesperson_id
@@ -1053,6 +1137,7 @@ class RealtimeAgentController(http.Controller):
             "caller_company": caller_company,
             "caller_ip": caller_ip,
             "is_active": True,
+            "last_seen": fields.Datetime.now(),
             "salesperson_user_id": configured_salesperson_id,
         }
         lead = self._find_lead(phone=values["caller_phone"], company=values["caller_company"])
@@ -1075,6 +1160,9 @@ class RealtimeAgentController(http.Controller):
         record = self._get_session_record(kwargs)
         if not record:
             return {"error": "Invalid session"}
+        # Heartbeat: this live call keeps refreshing last_seen so it is never
+        # treated as idle and dropped by a new session from the same IP.
+        self._touch_session_activity(record)
         audio_chunk_base64 = (kwargs.get("audio_chunk_base64") or "").strip()
         if not audio_chunk_base64:
             return {"error": "Missing audio chunk"}

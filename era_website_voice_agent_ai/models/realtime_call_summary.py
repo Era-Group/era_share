@@ -43,6 +43,12 @@ class CrmRealtimeCallSummary(models.Model):
     is_active = fields.Boolean(default=False, copy=False, index=True)
     session_key = fields.Char(copy=False, index=True)
     client_call_id = fields.Char(copy=False, index=True)
+    last_seen = fields.Datetime(
+        string="آخر نشاط",
+        copy=False,
+        index=True,
+        help="آخر وقت أظهرت فيه الجلسة نشاطًا (نبضة). يُستخدم لتحديد الجلسات الخاملة.",
+    )
 
     _client_call_id_uniq = models.Constraint(
         "unique(client_call_id)",

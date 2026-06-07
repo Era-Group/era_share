@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- App category (top level grouping on the user form). -->
     <record id="module_category_crm_ai_agents" model="ir.module.category">
         <field name="name">CRM AI Agents</field>
         <field name="description">Access to the Era CRM AI Agents suite.</field>
         <field name="sequence">20</field>
     </record>
 
+    <!-- Odoo 19: groups no longer carry category_id directly. They belong to a
+         res.groups.privilege, and the privilege carries the module category.
+         (Verified against core sales_team/security/sales_team_security.xml.) -->
+    <record id="privilege_crm_ai_agents" model="res.groups.privilege">
+        <field name="name">CRM AI Agents</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="module_category_crm_ai_agents"/>
+    </record>
+
     <!-- Salesperson-level: agents run within this user's scope (Rule 09). -->
     <record id="group_crm_ai_user" model="res.groups">
         <field name="name">AI Agents User</field>
-        <field name="category_id" ref="module_category_crm_ai_agents"/>
+        <field name="privilege_id" ref="privilege_crm_ai_agents"/>
     </record>
 
     <!-- Oversight: full visibility incl. the audit log; manages the catalog. -->
     <record id="group_crm_ai_manager" model="res.groups">
         <field name="name">AI Agents Manager</field>
-        <field name="category_id" ref="module_category_crm_ai_agents"/>
+        <field name="privilege_id" ref="privilege_crm_ai_agents"/>
         <field name="implied_ids" eval="[(4, ref('group_crm_ai_user'))]"/>
-        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 
 </odoo>

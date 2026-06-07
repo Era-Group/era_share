@@ -16,7 +16,7 @@ from odoo import SUPERUSER_ID, api
 
 _logger = logging.getLogger(__name__)
 
-
+#test
 def migrate(cr, version):
     env = api.Environment(cr, SUPERUSER_ID, {})
     Model = env["crm.ai.model"]

@@ -71,7 +71,7 @@
                 <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
                 <separator/>
                 <filter name="mine" string="My Queue" domain="[('reviewer_id', '=', uid)]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
                     <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                 </group>

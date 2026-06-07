@@ -49,7 +49,7 @@
                 <field name="agent_id"/>
                 <field name="user_id"/>
                 <field name="event_type"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_event" string="Event Type" context="{'group_by': 'event_type'}"/>
                     <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                     <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>

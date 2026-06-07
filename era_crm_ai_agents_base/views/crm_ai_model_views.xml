@@ -72,7 +72,7 @@
                 <filter name="advanced" string="Advanced" domain="[('tier', '=', 'advanced')]"/>
                 <separator/>
                 <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
                     <filter name="group_tier" string="Tier" context="{'group_by': 'tier'}"/>
                 </group>

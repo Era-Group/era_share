@@ -5,3 +5,4 @@ from . import crm_ai_usage
 from . import crm_ai_audit_log
 from . import crm_ai_approval
 from . import crm_ai_agent_mixin
+from . import res_partner

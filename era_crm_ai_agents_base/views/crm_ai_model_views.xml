@@ -30,12 +30,12 @@
                     <div class="oe_title">
                         <label for="name"/>
                         <h1>
-                            <field name="name" placeholder="e.g. Claude Opus 4.8"/>
+                            <field name="name" placeholder="e.g. GPT-4o"/>
                         </h1>
                     </div>
                     <group>
                         <group string="Identity">
-                            <field name="code" placeholder="e.g. claude-opus-4-8"/>
+                            <field name="code" placeholder="e.g. gpt-4o, gemini-2.5-flash"/>
                             <field name="provider"/>
                             <field name="tier"/>
                             <field name="active" widget="boolean_toggle"/>
@@ -48,11 +48,13 @@
                     </group>
                     <group string="Credentials">
                         <field name="env_key_param"
-                               placeholder="e.g. era_crm_ai_agents.anthropic_api_key"/>
+                               placeholder="e.g. ODOO_AI_CHATGPT_TOKEN"/>
                         <div class="text-muted" colspan="2">
-                            This is the <strong>name</strong> of the system parameter that
-                            holds the API key — never the key itself. The secret is read
-                            from the environment via ir.config_parameter.
+                            Documentation only: the <strong>name</strong> of the server
+                            environment variable Odoo native AI reads for this provider's
+                            key (ODOO_AI_CHATGPT_TOKEN / ODOO_AI_GEMINI_TOKEN). Never store
+                            the secret here, and leave the native AI UI key fields blank
+                            (Rule 03).
                         </div>
                     </group>
                 </sheet>
@@ -90,8 +92,9 @@
                 Add an LLM model to the catalog.
             </p>
             <p>
-                The catalog ships seeded with Claude, GPT, and ALLaM entries.
-                The router picks a cheap or advanced model per task sensitivity.
+                The catalog ships seeded with OpenAI (GPT) and Google (Gemini)
+                entries — the two providers Odoo native AI supports. The mixin
+                picks a cheap or advanced model per task sensitivity.
             </p>
         </field>
     </record>

@@ -2,23 +2,34 @@
 """The heart of the architecture.
 
 ``crm.ai.agent.mixin`` is an AbstractModel every concrete agent inherits to get,
-for free: a unified LLM call, a pre-call hard cost-cap check (Rule 14), critical
-audit logging (Rule 20), and the human approval gate.
+for free: a convenient LLM call that runs through Odoo's NATIVE AI (so the AI
+Compliance Guard governs it), critical audit logging (Rule 20), and the human
+approval gate.
+
+Architecture (final): we do NOT call providers ourselves and we do NOT route by
+provider. Every LLM call goes through Odoo 19 native ``ai.utils.LLMApiService``;
+the AI Compliance Guard (services/ai_compliance_guard.py) is monkeypatched onto
+that service and enforces — pre-flight, before any outbound call — PDPL consent +
+record-driven PII redaction, the hard cost cap (Rule 14), env-only keys
+(Rule 03), and the persistent audit (Rule 20). This mixin's only job for an LLM
+call is to (a) pick a catalog model for the requested sensitivity and (b) stamp
+the context the guard needs (which agent, which record, attended vs unattended).
 
 Design rule honored here:
-- NO sudo / superuser anywhere in this mixin. Every record is read and written
-  under the calling user's permissions (Rule 09 / 19). Where an operation needs
-  elevation (audit create, usage record, agent state/last_run writes, cap reads)
-  it is delegated to a narrow, single-purpose helper on the target model — never
-  done here. Security task 0.8 grants the AI groups the access they need;
-  satellite modules should pre-seed their agent record so runtime stays read-only.
+- NO sudo / superuser anywhere in this mixin. Records are read/written under the
+  calling user (Rule 09 / 19). Elevation needed for audit/usage/cap/state is
+  delegated to narrow helpers on the target models (the guard records usage; the
+  audit model sudo-creates its immutable row).
 """
 from odoo import _, models
 from odoo.exceptions import UserError
 
-from odoo.addons.era_crm_ai_agents_base.services.llm_router import (
-    LLMRouter,
-    LLMRouterError,
+from odoo.addons.ai.utils.llm_api_service import LLMApiService
+
+from odoo.addons.era_crm_ai_agents_base.services.ai_compliance_guard import (
+    CTX_AGENT,
+    CTX_RECORD,
+    CTX_UNATTENDED,
 )
 
 
@@ -32,56 +43,78 @@ class CrmAiAgentMixin(models.AbstractModel):
     # ------------------------------------------------------------------
     # Public API (called by concrete agents)
     # ------------------------------------------------------------------
-    def _call_llm(self, prompt, sensitivity="low", **kw):
-        """Run one LLM call for this agent, enforcing the cap and recording usage.
+    def _call_llm(self, prompt, sensitivity="low", system=None, record=None,
+                  unattended=False, max_output_tokens=1024):
+        """Run one LLM call through native Odoo AI under the Compliance Guard.
 
-        Order is strict: check the cap FIRST (never spend then check), then call
-        the router, then record usage. Returns the router result dict
-        ``{text, input_tokens, output_tokens, cost, model}``.
+        The guard enforces consent, PII redaction, the cost cap, env-only keys,
+        and audit/usage — this method just selects the model and hands the guard
+        the context it needs. Real PII is masked before egress and restored in the
+        returned text by the guard.
 
-        :raises UserError: if the agent is paused/capped or over its cost cap.
-        :raises LLMRouterError: if the provider call fails (already clean — the
-            router converts raw network/provider errors; we log then re-raise it
-            so callers can catch a single, typed, secret-free exception).
+        :param prompt: the user prompt (str).
+        :param sensitivity: 'high' -> advanced model, else cheap (Rule 14 default).
+        :param system: optional system prompt (str).
+        :param record: the record this call is about (res.partner / crm.lead / …).
+            Drives record-driven redaction and consent. Strongly recommended
+            whenever personal data is involved.
+        :param unattended: True for cron/batch flows — on a guard block the call
+            is dropped-with-audit and an empty result returns (the batch
+            continues; PII is never sent). False (default) raises on a block.
+        :param max_output_tokens: advisory cap on output length.
+        :returns: list[str] — the native response message(s), PII restored.
+        :raises UserError: when the guard blocks an attended call (no consent,
+            unmappable PII, cost cap) — see services/ai_compliance_guard.py.
         """
         agent = self._get_agent_record()
-        # 1. Hard cost-cap gate — blocks BEFORE any provider spend (Rule 14).
-        self._check_cost_cap(agent=agent)
-        # 2. Call the provider.
-        try:
-            result = LLMRouter(self.env).call(prompt, sensitivity=sensitivity, **kw)
-        except LLMRouterError as exc:
-            self._log_critical("llm_call_failed", agent, {"sensitivity": sensitivity}, {"error": str(exc)})
-            raise
-        # 3. Record usage (feeds the cap and the cost dashboards).
-        self._record_usage(agent, result)
-        agent._record_run()
-        return result
+        model = self._select_model(sensitivity)
+
+        ctx = {CTX_AGENT: agent.tech_name}
+        if record is not None:
+            ctx[CTX_RECORD] = record
+        if unattended:
+            ctx[CTX_UNATTENDED] = True
+
+        service = LLMApiService(env=self.with_context(**ctx).env, provider=model.provider)
+        return service.request_llm(
+            model.code,
+            [system] if system else [],
+            [prompt],
+            temperature=0.2,
+        )
+
+    def _select_model(self, sensitivity):
+        """Pick a catalog model for the sensitivity. 'high' -> advanced, else cheap.
+
+        Native AI supports OpenAI and Google only; the catalog is constrained to
+        those providers. Cost-safe default is the cheap tier (Rule 14).
+        """
+        tier = "advanced" if sensitivity == "high" else "cheap"
+        Model = self.env["crm.ai.model"]
+        model = Model.search(
+            [("tier", "=", tier), ("active", "=", True),
+             ("provider", "in", ("openai", "google"))], limit=1)
+        if not model:
+            raise UserError(
+                _("No active '%s' AI model is configured in the catalog.", tier))
+        return model
 
     def _check_cost_cap(self, agent=None):
-        """Raise (and auto-pause) if the agent is over its monthly cost cap.
+        """Advisory pre-check: raise if this agent is paused/capped or over cap.
 
-        Enforced inline here on every call — not only by a cron (Rule 14).
+        Authoritative enforcement happens in the guard at call time (it also
+        auto-pauses and audits). Agents may call this to fail fast before doing
+        expensive prep work.
         """
         agent = agent or self._get_agent_record()
         if agent.state in ("paused", "capped"):
             raise UserError(
                 _("AI agent '%(name)s' is %(state)s and cannot run.",
-                  name=agent.name, state=agent.state)
-            )
-        # Single source of truth: crm.ai.usage.is_over_cap (same check the
-        # daily cron uses). Fails safe if the cap is unreadable.
+                  name=agent.name, state=agent.state))
         if self.env["crm.ai.usage"].is_over_cap(agent):
-            # Auto-pause and record the breach before blocking.
-            agent._mark_state("capped")
-            self._log_critical(
-                "cost_cap_exceeded", agent,
-                {"monthly_cost": agent.monthly_cost}, {"capped": True},
-            )
             raise UserError(
-                _("AI agent '%(name)s' has hit its monthly cost cap and has "
-                  "been paused.", name=agent.name)
-            )
+                _("AI agent '%(name)s' is over its monthly cost cap (Rule 14).",
+                  name=agent.name))
         return True
 
     def _log_critical(self, event_type, record=None, before=None, after=None):
@@ -141,20 +174,4 @@ class CrmAiAgentMixin(models.AbstractModel):
             )
         return self.env["crm.ai.agent"]._get_or_create_agent(
             tech_name, {"name": tech_name}
-        )
-
-    def _record_usage(self, agent, result):
-        """Record a crm.ai.usage row for this call via the usage model (no sudo)."""
-        # The router returns the model *code*; map it to the catalog record.
-        model = False
-        model_code = result.get("model")
-        if model_code:
-            model = self.env["crm.ai.model"].search(
-                [("code", "=", model_code)], limit=1
-            )
-        return self.env["crm.ai.usage"].record(
-            agent, model or False,
-            result.get("input_tokens", 0),
-            result.get("output_tokens", 0),
-            result.get("cost", 0.0),
         )

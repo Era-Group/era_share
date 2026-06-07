@@ -5,11 +5,16 @@ from odoo import api, fields, models
 class CrmAiModel(models.Model):
     """Catalog of available LLM models.
 
-    One record per model the suite can call. The LLMRouter (task 0.3) picks a
-    cheap vs advanced model by task sensitivity, then uses ``code`` as the
-    provider's model identifier and ``env_key_param`` to look up the API key
-    from ir.config_parameter / the environment — the secret itself is NEVER
-    stored here, only the name of the config key that holds it (Rule 03 / PDPL).
+    One record per model the suite can call. The mixin picks a cheap vs advanced
+    model by task sensitivity and passes ``code`` (the provider model id) and
+    ``provider`` to Odoo's native AI service. Native AI supports OpenAI and Google
+    only, so the catalog is constrained to those two providers.
+
+    Secrets are never stored here. API keys come ONLY from the server environment
+    via Odoo's native AI (env vars ODOO_AI_CHATGPT_TOKEN / ODOO_AI_GEMINI_TOKEN);
+    the native UI key fields must be left blank and the guard fails closed if a
+    key is found in the database (Rule 03 / PDPL). ``env_key_param`` is retained
+    for documentation only.
     """
 
     _name = "crm.ai.model"
@@ -19,18 +24,18 @@ class CrmAiModel(models.Model):
     name = fields.Char(required=True, translate=True)
     code = fields.Char(
         string="Model Code",
-        help="The provider's model identifier used in the API call "
-             "(e.g. 'claude-opus-4-8', 'gpt-4o'). Used by the router.",
+        help="The provider's model identifier used in the native AI call "
+             "(e.g. 'gpt-4o', 'gemini-2.5-flash'). Must match a model Odoo's "
+             "native AI supports.",
     )
     provider = fields.Selection(
         selection=[
-            ("anthropic", "Anthropic"),
             ("openai", "OpenAI"),
-            ("allam", "ALLaM"),
-            ("local", "Local"),
+            ("google", "Google"),
         ],
         string="Provider",
         required=True,
+        help="Only OpenAI and Google are supported by Odoo 19 native AI.",
     )
     tier = fields.Selection(
         selection=[
@@ -41,7 +46,7 @@ class CrmAiModel(models.Model):
         required=True,
         default="cheap",
         help="Cheap models handle low-sensitivity tasks; advanced models are "
-             "reserved for high-sensitivity ones. The router selects by tier.",
+             "reserved for high-sensitivity ones. The mixin selects by tier.",
     )
     price_input_1k = fields.Float(
         string="Input Price / 1K",
@@ -58,10 +63,11 @@ class CrmAiModel(models.Model):
         help="Maximum context window size in tokens.",
     )
     env_key_param = fields.Char(
-        string="API Key Parameter",
-        help="The ir.config_parameter KEY NAME that holds this provider's API "
-             "key (e.g. 'era_crm_ai_agents.anthropic_api_key'). NEVER store the "
-             "secret value here — only the name of the parameter (Rule 03).",
+        string="API Key Env Var",
+        help="Documentation only: the server ENV VAR Odoo native AI reads for "
+             "this provider's key (ODOO_AI_CHATGPT_TOKEN for OpenAI, "
+             "ODOO_AI_GEMINI_TOKEN for Google). NEVER store the secret here, and "
+             "leave the native AI UI key fields blank (Rule 03).",
     )
     active = fields.Boolean(default=True)
 

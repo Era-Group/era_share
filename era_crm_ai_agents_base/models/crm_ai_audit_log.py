@@ -29,6 +29,9 @@ class CrmAiAuditLog(models.Model):
             ("llm_call_failed", "LLM Call Failed"),
             ("cost_cap_exceeded", "Cost Cap Exceeded"),
             ("approval_requested", "Approval Requested"),
+            # AI Compliance Guard decisions (native AI egress)
+            ("ai_request", "AI Request (allowed)"),
+            ("blocked", "AI Request Blocked"),
             ("other", "Other"),
         ],
         string="Event Type",

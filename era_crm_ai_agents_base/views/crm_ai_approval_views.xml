@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_approval_list" model="ir.ui.view">
+        <field name="name">crm.ai.approval.list</field>
+        <field name="model">crm.ai.approval</field>
+        <field name="arch" type="xml">
+            <list string="AI Approvals" create="false"
+                  decoration-warning="state == 'pending'"
+                  decoration-success="state == 'approved'"
+                  decoration-muted="state == 'rejected'">
+                <field name="create_date"/>
+                <field name="agent_id"/>
+                <field name="record_ref"/>
+                <field name="reviewer_id"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+                <field name="decided_on"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_approval_form" model="ir.ui.view">
+        <field name="name">crm.ai.approval.form</field>
+        <field name="model">crm.ai.approval</field>
+        <field name="arch" type="xml">
+            <form string="AI Approval" create="false">
+                <header>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="oe_highlight" invisible="state != 'pending'"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'pending'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="agent_id" readonly="1"/>
+                            <field name="record_ref" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="reviewer_id" readonly="1"/>
+                            <field name="decided_on"/>
+                        </group>
+                    </group>
+                    <group string="Proposed Content">
+                        <field name="proposed_content" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="Edited Content (optional — supersedes proposed on approval)">
+                        <field name="edited_content" nolabel="1"
+                               readonly="state != 'pending'"
+                               placeholder="Leave blank to approve as proposed, or edit here..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_approval_search" model="ir.ui.view">
+        <field name="name">crm.ai.approval.search</field>
+        <field name="model">crm.ai.approval</field>
+        <field name="arch" type="xml">
+            <search string="AI Approvals">
+                <field name="agent_id"/>
+                <field name="reviewer_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="mine" string="My Queue" domain="[('reviewer_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Dedicated queue: pending items only -->
+    <record id="action_crm_ai_approval_queue" model="ir.actions.act_window">
+        <field name="name">AI Approval Queue</field>
+        <field name="res_model">crm.ai.approval</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_crm_ai_approval_search"/>
+        <field name="domain">[('state', '=', 'pending')]</field>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Nothing waiting for sign-off.
+            </p>
+            <p>
+                Agent outputs that need human approval (e.g. Arabic messages)
+                appear here for the reviewer to edit, approve, or reject.
+            </p>
+        </field>
+    </record>
+
+    <!-- Full history (all states) -->
+    <record id="action_crm_ai_approval_all" model="ir.actions.act_window">
+        <field name="name">AI Approvals</field>
+        <field name="res_model">crm.ai.approval</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_crm_ai_approval_search"/>
+    </record>
+
+</odoo>

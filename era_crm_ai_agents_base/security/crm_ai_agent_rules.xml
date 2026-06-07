@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============ Usage: own rows for users, all for managers ============ -->
+        <!-- user_id is captured at call time (record() sudo-creates), so we scope
+             on it rather than create_uid (which would be the superuser). -->
+        <record id="rule_crm_ai_usage_user" model="ir.rule">
+            <field name="name">AI Usage: own</field>
+            <field name="model_id" ref="model_crm_ai_usage"/>
+            <field name="groups" eval="[(4, ref('group_crm_ai_user'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+        </record>
+        <record id="rule_crm_ai_usage_manager" model="ir.rule">
+            <field name="name">AI Usage: all (manager)</field>
+            <field name="model_id" ref="model_crm_ai_usage"/>
+            <field name="groups" eval="[(4, ref('group_crm_ai_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- ============ Approval: assigned queue for users, all for managers ====== -->
+        <record id="rule_crm_ai_approval_user" model="ir.rule">
+            <field name="name">AI Approval: assigned</field>
+            <field name="model_id" ref="model_crm_ai_approval"/>
+            <field name="groups" eval="[(4, ref('group_crm_ai_user'))]"/>
+            <field name="domain_force">[('reviewer_id', '=', user.id)]</field>
+        </record>
+        <record id="rule_crm_ai_approval_manager" model="ir.rule">
+            <field name="name">AI Approval: all (manager)</field>
+            <field name="model_id" ref="model_crm_ai_approval"/>
+            <field name="groups" eval="[(4, ref('group_crm_ai_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- crm.ai.agent and crm.ai.model are shared registry/catalog: readable by
+             all AI users, no per-user restriction needed. crm.ai.audit.log access
+             is governed entirely by ACL (user: none, manager: read-all). -->
+
+    </data>
+</odoo>

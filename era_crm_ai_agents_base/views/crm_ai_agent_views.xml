@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_agent_list" model="ir.ui.view">
+        <field name="name">crm.ai.agent.list</field>
+        <field name="model">crm.ai.agent</field>
+        <field name="arch" type="xml">
+            <list string="AI Agents" decoration-muted="state == 'paused'" decoration-danger="state == 'capped'">
+                <field name="name"/>
+                <field name="tech_name"/>
+                <field name="default_model_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'enabled'"
+                       decoration-warning="state == 'paused'"
+                       decoration-danger="state == 'capped'"/>
+                <field name="monthly_cost" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="last_run"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_agent_form" model="ir.ui.view">
+        <field name="name">crm.ai.agent.form</field>
+        <field name="model">crm.ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <header>
+                    <button name="action_enable" type="object" string="Enable"
+                            class="oe_highlight" invisible="state == 'enabled'"/>
+                    <button name="action_pause" type="object" string="Pause"
+                            invisible="state != 'enabled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="enabled,paused,capped"/>
+                </header>
+                <sheet>
+                    <field name="icon" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Dead-Lead Resurrection"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tech_name" placeholder="e.g. era_dead_lead"/>
+                            <field name="default_model_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="monthly_cost" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="last_run"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_agent_search" model="ir.ui.view">
+        <field name="name">crm.ai.agent.search</field>
+        <field name="model">crm.ai.agent</field>
+        <field name="arch" type="xml">
+            <search string="AI Agents">
+                <field name="name"/>
+                <field name="tech_name"/>
+                <field name="default_model_id"/>
+                <filter name="enabled" string="Enabled" domain="[('state', '=', 'enabled')]"/>
+                <filter name="paused" string="Paused" domain="[('state', '=', 'paused')]"/>
+                <filter name="capped" string="Capped" domain="[('state', '=', 'capped')]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_model" string="Default Model" context="{'group_by': 'default_model_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_agent" model="ir.actions.act_window">
+        <field name="name">AI Agents</field>
+        <field name="res_model">crm.ai.agent</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_crm_ai_agent_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI agents registered yet.
+            </p>
+            <p>
+                Each satellite module registers its agent here automatically on
+                install. You can pause, enable, or inspect monthly cost from this view.
+            </p>
+        </field>
+    </record>
+
+</odoo>

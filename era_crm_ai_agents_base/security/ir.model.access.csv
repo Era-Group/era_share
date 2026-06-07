@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_ai_agent_user,crm.ai.agent user,model_crm_ai_agent,group_crm_ai_user,1,0,0,0
+access_crm_ai_agent_manager,crm.ai.agent manager,model_crm_ai_agent,group_crm_ai_manager,1,1,1,1
+access_crm_ai_model_user,crm.ai.model user,model_crm_ai_model,group_crm_ai_user,1,0,0,0
+access_crm_ai_model_manager,crm.ai.model manager,model_crm_ai_model,group_crm_ai_manager,1,1,1,1
+access_crm_ai_usage_user,crm.ai.usage user,model_crm_ai_usage,group_crm_ai_user,1,0,0,0
+access_crm_ai_usage_manager,crm.ai.usage manager,model_crm_ai_usage,group_crm_ai_manager,1,1,1,1
+access_crm_ai_audit_log_manager,crm.ai.audit.log manager,model_crm_ai_audit_log,group_crm_ai_manager,1,0,0,0
+access_crm_ai_audit_log_system,crm.ai.audit.log system,model_crm_ai_audit_log,base.group_system,1,1,1,1
+access_crm_ai_approval_user,crm.ai.approval user,model_crm_ai_approval,group_crm_ai_user,1,1,1,0
+access_crm_ai_approval_manager,crm.ai.approval manager,model_crm_ai_approval,group_crm_ai_manager,1,1,1,1

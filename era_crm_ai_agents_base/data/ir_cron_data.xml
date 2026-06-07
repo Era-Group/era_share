@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Daily safety net (Rule 14). Runs as root so it reads the cap config
+             and pauses/re-enables agents with full rights. The hard cap is ALSO
+             enforced inline in crm.ai.agent.mixin._call_llm before any spend. -->
+        <record id="ir_cron_crm_ai_check_caps" model="ir.cron">
+            <field name="name">CRM AI Agents: Check cost caps</field>
+            <field name="model_id" ref="model_crm_ai_usage"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_check_caps()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:00:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

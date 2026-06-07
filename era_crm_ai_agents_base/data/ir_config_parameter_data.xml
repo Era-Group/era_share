@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate="1": seeded once; admins adjust the cap afterwards and their
+         change survives module upgrades. -->
+    <data noupdate="1">
+
+        <!-- Global monthly cost cap in USD (Rule 14). 0 or negative = no cap. -->
+        <record id="param_monthly_cost_cap" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.monthly_cost_cap</field>
+            <field name="value">100.0</field>
+        </record>
+
+        <!--
+        Per-agent overrides are config parameters too, added per deployment once
+        the agents exist (a satellite module is installed). The key is the global
+        key suffixed with the agent's tech_name, e.g.:
+
+            era_crm_ai_agents.monthly_cost_cap.era_dead_lead   ->  50.0
+
+        is_over_cap() reads the per-agent key first, then falls back to the
+        global cap above.
+        -->
+
+    </data>
+</odoo>

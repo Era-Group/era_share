@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root app menu -->
+    <menuitem id="menu_crm_ai_root"
+              name="CRM AI Agents"
+              sequence="90"
+              groups="group_crm_ai_user"/>
+
+    <!-- User-facing -->
+    <menuitem id="menu_crm_ai_dashboard"
+              name="Dashboard"
+              parent="menu_crm_ai_root"
+              action="action_crm_ai_dashboard"
+              sequence="10"
+              groups="group_crm_ai_user"/>
+
+    <menuitem id="menu_crm_ai_agents"
+              name="Agents"
+              parent="menu_crm_ai_root"
+              action="action_crm_ai_agent"
+              sequence="20"
+              groups="group_crm_ai_user"/>
+
+    <menuitem id="menu_crm_ai_approvals"
+              name="Approvals"
+              parent="menu_crm_ai_root"
+              action="action_crm_ai_approval_queue"
+              sequence="30"
+              groups="group_crm_ai_user"/>
+
+    <!-- Configuration (managers only) -->
+    <menuitem id="menu_crm_ai_config"
+              name="Configuration"
+              parent="menu_crm_ai_root"
+              sequence="90"
+              groups="group_crm_ai_manager"/>
+
+    <menuitem id="menu_crm_ai_config_models"
+              name="Models"
+              parent="menu_crm_ai_config"
+              action="action_crm_ai_model"
+              sequence="10"/>
+
+    <menuitem id="menu_crm_ai_config_usage"
+              name="Usage"
+              parent="menu_crm_ai_config"
+              action="action_crm_ai_usage"
+              sequence="20"/>
+
+    <menuitem id="menu_crm_ai_config_audit"
+              name="Audit Log"
+              parent="menu_crm_ai_config"
+              action="action_crm_ai_audit_log"
+              sequence="30"/>
+
+</odoo>

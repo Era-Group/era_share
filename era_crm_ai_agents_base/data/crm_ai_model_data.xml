@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate="1": seeded once on install; admins maintain pricing afterwards
+         and their edits survive module upgrades. -->
+    <data noupdate="1">
+
+        <!-- ============ Anthropic (Claude) ============ -->
+        <!-- Pricing from the authoritative Claude model reference (USD / 1K tokens). -->
+        <record id="model_claude_haiku_45" model="crm.ai.model">
+            <field name="name">Claude Haiku 4.5</field>
+            <field name="code">claude-haiku-4-5</field>
+            <field name="provider">anthropic</field>
+            <field name="tier">cheap</field>
+            <field name="price_input_1k">0.001</field>
+            <field name="price_output_1k">0.005</field>
+            <field name="max_context">200000</field>
+            <field name="env_key_param">era_crm_ai_agents.anthropic_api_key</field>
+        </record>
+
+        <record id="model_claude_sonnet_46" model="crm.ai.model">
+            <field name="name">Claude Sonnet 4.6</field>
+            <field name="code">claude-sonnet-4-6</field>
+            <field name="provider">anthropic</field>
+            <field name="tier">advanced</field>
+            <field name="price_input_1k">0.003</field>
+            <field name="price_output_1k">0.015</field>
+            <field name="max_context">1000000</field>
+            <field name="env_key_param">era_crm_ai_agents.anthropic_api_key</field>
+        </record>
+
+        <record id="model_claude_opus_48" model="crm.ai.model">
+            <field name="name">Claude Opus 4.8</field>
+            <field name="code">claude-opus-4-8</field>
+            <field name="provider">anthropic</field>
+            <field name="tier">advanced</field>
+            <field name="price_input_1k">0.005</field>
+            <field name="price_output_1k">0.025</field>
+            <field name="max_context">1000000</field>
+            <field name="env_key_param">era_crm_ai_agents.anthropic_api_key</field>
+        </record>
+
+        <!-- ============ OpenAI (GPT) ============ -->
+        <!-- TODO: verify pricing against current OpenAI rate card before go-live. -->
+        <record id="model_gpt_4o_mini" model="crm.ai.model">
+            <field name="name">GPT-4o mini</field>
+            <field name="code">gpt-4o-mini</field>
+            <field name="provider">openai</field>
+            <field name="tier">cheap</field>
+            <field name="price_input_1k">0.00015</field>
+            <field name="price_output_1k">0.0006</field>
+            <field name="max_context">128000</field>
+            <field name="env_key_param">era_crm_ai_agents.openai_api_key</field>
+        </record>
+
+        <record id="model_gpt_4o" model="crm.ai.model">
+            <field name="name">GPT-4o</field>
+            <field name="code">gpt-4o</field>
+            <field name="provider">openai</field>
+            <field name="tier">advanced</field>
+            <field name="price_input_1k">0.0025</field>
+            <field name="price_output_1k">0.01</field>
+            <field name="max_context">128000</field>
+            <field name="env_key_param">era_crm_ai_agents.openai_api_key</field>
+        </record>
+
+        <!-- ============ ALLaM (Saudi Arabic LLM) ============ -->
+        <!-- Self-hosted / regional endpoint: pricing 0 by default; set if billed.
+             Arabic-first model; keep a human in the loop for Arabic messages. -->
+        <record id="model_allam" model="crm.ai.model">
+            <field name="name">ALLaM</field>
+            <field name="code">allam-2-7b</field>
+            <field name="provider">allam</field>
+            <field name="tier">cheap</field>
+            <field name="price_input_1k">0.0</field>
+            <field name="price_output_1k">0.0</field>
+            <field name="max_context">4096</field>
+            <field name="env_key_param">era_crm_ai_agents.allam_api_key</field>
+        </record>
+
+    </data>
+</odoo>

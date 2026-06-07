@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_crm_ai_agents" model="ir.module.category">
+        <field name="name">CRM AI Agents</field>
+        <field name="description">Access to the Era CRM AI Agents suite.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Salesperson-level: agents run within this user's scope (Rule 09). -->
+    <record id="group_crm_ai_user" model="res.groups">
+        <field name="name">AI Agents User</field>
+        <field name="category_id" ref="module_category_crm_ai_agents"/>
+    </record>
+
+    <!-- Oversight: full visibility incl. the audit log; manages the catalog. -->
+    <record id="group_crm_ai_manager" model="res.groups">
+        <field name="name">AI Agents Manager</field>
+        <field name="category_id" ref="module_category_crm_ai_agents"/>
+        <field name="implied_ids" eval="[(4, ref('group_crm_ai_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>

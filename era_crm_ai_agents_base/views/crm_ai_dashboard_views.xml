@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard list: per-agent cost + cap status; footer sum = total spend.
+         (monthly_cost is non-stored, so cost lives here, not in the graph.) -->
+    <record id="view_crm_ai_agent_dashboard_list" model="ir.ui.view">
+        <field name="name">crm.ai.agent.dashboard.list</field>
+        <field name="model">crm.ai.agent</field>
+        <field name="arch" type="xml">
+            <list string="AI Agents — Cost &amp; Status" create="false" edit="false"
+                  decoration-danger="state == 'capped'"
+                  decoration-muted="state == 'paused'">
+                <field name="name"/>
+                <field name="default_model_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'enabled'"
+                       decoration-warning="state == 'paused'"
+                       decoration-danger="state == 'capped'"/>
+                <field name="last_run"/>
+                <field name="monthly_cost" widget="monetary" sum="Total Spend (Month)"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Dashboard graph: agents grouped by status (cap-status distribution). -->
+    <record id="view_crm_ai_agent_dashboard_graph" model="ir.ui.view">
+        <field name="name">crm.ai.agent.dashboard.graph</field>
+        <field name="model">crm.ai.agent</field>
+        <field name="arch" type="xml">
+            <graph string="Agents by Status" type="bar">
+                <field name="state"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_dashboard" model="ir.actions.act_window">
+        <field name="name">AI Dashboard</field>
+        <field name="res_model">crm.ai.agent</field>
+        <field name="view_mode">list,graph</field>
+        <field name="views"
+               eval="[(ref('view_crm_ai_agent_dashboard_list'), 'list'),
+                      (ref('view_crm_ai_agent_dashboard_graph'), 'graph')]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI agents registered yet.
+            </p>
+            <p>
+                This dashboard shows each agent's monthly spend (with the total in
+                the column footer) and its cap status. The chart breaks agents down
+                by status. Salespeople see their own cost slice; managers see the
+                global totals.
+            </p>
+        </field>
+    </record>
+
+</odoo>

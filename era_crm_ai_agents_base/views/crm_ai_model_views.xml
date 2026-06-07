@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_model_list" model="ir.ui.view">
+        <field name="name">crm.ai.model.list</field>
+        <field name="model">crm.ai.model</field>
+        <field name="arch" type="xml">
+            <list string="AI Models">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="provider"/>
+                <field name="tier" widget="badge"
+                       decoration-info="tier == 'cheap'"
+                       decoration-warning="tier == 'advanced'"/>
+                <field name="price_input_1k"/>
+                <field name="price_output_1k"/>
+                <field name="max_context"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_model_form" model="ir.ui.view">
+        <field name="name">crm.ai.model.form</field>
+        <field name="model">crm.ai.model</field>
+        <field name="arch" type="xml">
+            <form string="AI Model">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Claude Opus 4.8"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="code" placeholder="e.g. claude-opus-4-8"/>
+                            <field name="provider"/>
+                            <field name="tier"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Pricing &amp; Limits">
+                            <field name="price_input_1k"/>
+                            <field name="price_output_1k"/>
+                            <field name="max_context"/>
+                        </group>
+                    </group>
+                    <group string="Credentials">
+                        <field name="env_key_param"
+                               placeholder="e.g. era_crm_ai_agents.anthropic_api_key"/>
+                        <div class="text-muted" colspan="2">
+                            This is the <strong>name</strong> of the system parameter that
+                            holds the API key — never the key itself. The secret is read
+                            from the environment via ir.config_parameter.
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_model_search" model="ir.ui.view">
+        <field name="name">crm.ai.model.search</field>
+        <field name="model">crm.ai.model</field>
+        <field name="arch" type="xml">
+            <search string="AI Models">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="provider"/>
+                <filter name="cheap" string="Cheap" domain="[('tier', '=', 'cheap')]"/>
+                <filter name="advanced" string="Advanced" domain="[('tier', '=', 'advanced')]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                    <filter name="group_tier" string="Tier" context="{'group_by': 'tier'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_model" model="ir.actions.act_window">
+        <field name="name">AI Models</field>
+        <field name="res_model">crm.ai.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_crm_ai_model_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add an LLM model to the catalog.
+            </p>
+            <p>
+                The catalog ships seeded with Claude, GPT, and ALLaM entries.
+                The router picks a cheap or advanced model per task sensitivity.
+            </p>
+        </field>
+    </record>
+
+</odoo>

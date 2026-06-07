@@ -10,5 +10,3 @@ dist/
 build/
 *.egg
 
-# Project working notes / Claude Code reference (local only)
-era_crm_ai_agents_rules.md

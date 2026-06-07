@@ -3,7 +3,7 @@
 
     <!-- Root app menu -->
     <menuitem id="menu_crm_ai_root"
-              name="CRM AI Agents"
+              name="CRM AI Agent Base"
               sequence="90"
               groups="group_crm_ai_user"/>
 

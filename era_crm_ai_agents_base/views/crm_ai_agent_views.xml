@@ -71,7 +71,7 @@
                 <filter name="capped" string="Capped" domain="[('state', '=', 'capped')]"/>
                 <separator/>
                 <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
                     <filter name="group_model" string="Default Model" context="{'group_by': 'default_model_id'}"/>
                 </group>

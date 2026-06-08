@@ -109,7 +109,8 @@ class TestEraAiAccounts(TransactionCase):
         with patch.object(llm_cli_transport, "resolve_cli_binary", return_value="/usr/bin/claude"), \
              patch.object(llm_cli_transport.subprocess, "run", side_effect=fake_run):
             text = llm_cli_transport.cli_complete(
-                {"account_id": 1, "home_dir": "/opt/odoo", "max_concurrency": 1},
+                {"account_id": 1, "home_dir": "/opt/odoo",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
                 "claude-opus-4-8", "system here", "user asks", timeout=30)
         self.assertEqual(text, "hi there")
         self.assertIn("-p", captured["args"])
@@ -133,11 +134,33 @@ class TestEraAiAccounts(TransactionCase):
              patch.object(llm_cli_transport.subprocess, "run", return_value=_Proc()):
             with self.assertRaises(Exception) as cm:
                 llm_cli_transport.cli_complete(
-                    {"account_id": 1, "home_dir": "/opt/odoo", "max_concurrency": 1},
+                    {"account_id": 1, "home_dir": "/opt/odoo",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
                     "haiku", "sys", "hi", timeout=10)
         msg = str(cm.exception)
         self.assertIn("Out of memory", msg)
         self.assertNotIn('{"type"', msg)  # clean message, not the raw JSON blob
+
+    def test_gap_scales_with_request_size(self):
+        cfg = {"min_gap": 1.0, "gap_per_kb": 0.05, "max_gap": 30.0}
+        small = llm_cli_transport._compute_gap(cfg, 1024)        # ~1 KB
+        big = llm_cli_transport._compute_gap(cfg, 200 * 1024)    # 200 KB
+        self.assertGreater(big, small)                           # bigger -> longer wait
+        self.assertGreaterEqual(small, 1.0)                      # at least the base gap
+        self.assertLessEqual(big, 30.0)                          # capped at max_gap
+        # Throttle fully disabled -> no gap.
+        self.assertEqual(
+            llm_cli_transport._compute_gap({"min_gap": 0, "gap_per_kb": 0, "max_gap": 30}, 9_999_999),
+            0.0)
+
+    def test_global_serializer_allows_one_at_a_time(self):
+        if llm_cli_transport.fcntl is None:
+            self.skipTest("fcntl unavailable")
+        with llm_cli_transport._global_serializer(5):
+            # A second acquisition (across the host) must not succeed immediately.
+            with self.assertRaises(Exception):
+                with llm_cli_transport._global_serializer(0):
+                    pass
 
     def test_agent_routes_through_cli_account(self):
         acc = self.Account.create({

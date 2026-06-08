@@ -5,9 +5,15 @@ on this server (today: the Claude Code ``claude`` binary). The CLI performs the
 model call itself under its own auth, which is the legitimate way to use a
 "connected account" — we never read or replay the CLI's credentials.
 
+To stay gentle on the connected account, calls are **globally serialized** (at
+most one CLI call at a time across every Odoo worker / user, via a host-wide file
+lock) and separated by a **gap proportional to the request body size** (bigger
+requests wait longer). Both are tunable via ``ir.config_parameter``.
+
 Only chat/text completion is supported (the standard Odoo tool-calling loop and
 embeddings are not available through this transport).
 """
+import contextlib
 import glob
 import json
 import logging
@@ -16,7 +22,12 @@ import shlex
 import subprocess
 import tempfile
 import threading
+import time
 
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - non-unix
+    fcntl = None
 try:
     import resource
 except ImportError:  # pragma: no cover - non-unix
@@ -24,6 +35,7 @@ except ImportError:  # pragma: no cover - non-unix
 
 from odoo import _
 from odoo.exceptions import UserError
+from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
@@ -35,10 +47,16 @@ _CLAUDE_GLOBS = [
     os.path.expanduser("~/.vscode-server/extensions/anthropic.claude-code-*/resources/native-binary/claude"),
 ]
 
-# Per-(process, account) concurrency gates. Best-effort: Odoo runs several worker
-# processes, so this caps concurrency within a worker, not across the whole host.
-_semaphores = {}
-_semaphores_lock = threading.Lock()
+# Host-wide serialization. The file lock works across worker processes; the
+# thread lock is only a fallback when fcntl is unavailable (non-unix).
+_LOCK_FILE = "era_ai_cli_proxy.lock"
+_STATE_FILE = "era_ai_cli_proxy.last"
+_thread_lock = threading.Lock()
+
+
+def _shared_dir():
+    """A directory shared by every Odoo worker on this host (the data dir)."""
+    return config.get("data_dir") or tempfile.gettempdir()
 
 
 def _preexec_unlimit_as():  # pragma: no cover - runs in the forked child
@@ -82,22 +100,84 @@ def resolve_cli_binary(override=None):
     return candidates[-1]
 
 
-def _gate(account_id, max_concurrency):
-    max_concurrency = max(1, int(max_concurrency or 1))
-    with _semaphores_lock:
-        sem = _semaphores.get(account_id)
-        if sem is None or getattr(sem, "_era_size", None) != max_concurrency:
-            sem = threading.BoundedSemaphore(max_concurrency)
-            sem._era_size = max_concurrency
-            _semaphores[account_id] = sem
-        return sem
+@contextlib.contextmanager
+def _global_serializer(wait_seconds):
+    """Hold a host-wide exclusive lock for the duration of one CLI call.
+
+    Guarantees at most ONE Claude CLI call runs at a time across all Odoo worker
+    processes and users. The OS releases the flock automatically if a worker dies,
+    so a crash can't deadlock the queue. Falls back to a per-process thread lock
+    when fcntl is unavailable.
+    """
+    if fcntl is None:
+        with _thread_lock:
+            yield
+        return
+    path = os.path.join(_shared_dir(), _LOCK_FILE)
+    fd = os.open(path, os.O_CREAT | os.O_RDWR, 0o600)
+    deadline = time.monotonic() + max(0.0, float(wait_seconds))
+    try:
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except OSError:
+                if time.monotonic() >= deadline:
+                    raise UserError(_(
+                        "The AI service is busy (another request is already running). "
+                        "Please retry in a moment."
+                    ))
+                time.sleep(0.2)
+        yield
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        except OSError:
+            pass
+        os.close(fd)
+
+
+def _compute_gap(cfg, req_size):
+    """Seconds to keep between consecutive calls, scaled by request body size."""
+    min_gap = float(cfg.get("min_gap", 1.0))
+    per_kb = float(cfg.get("gap_per_kb", 0.05))
+    max_gap = float(cfg.get("max_gap", 30.0))
+    return max(0.0, min(max_gap, min_gap + per_kb * (req_size / 1024.0)))
+
+
+def _enforce_gap(gap):
+    """Sleep so that at least ``gap`` seconds have elapsed since the last call ended.
+
+    The last-call time is shared across workers via a small state file, so the
+    spacing is global, not per-process. Must be called while holding the lock.
+    """
+    if gap <= 0:
+        return
+    last = 0.0
+    try:
+        with open(os.path.join(_shared_dir(), _STATE_FILE)) as fh:
+            last = float(fh.read().strip() or 0)
+    except (OSError, ValueError):
+        last = 0.0
+    wait = gap - (time.time() - last)
+    if wait > 0:
+        time.sleep(min(wait, gap))
+
+
+def _record_call_end():
+    try:
+        with open(os.path.join(_shared_dir(), _STATE_FILE), "w") as fh:
+            fh.write(repr(time.time()))
+    except OSError:
+        pass
 
 
 def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     """Run a single chat completion through the local CLI and return the text.
 
     ``cfg`` is a plain dict (no ORM coupling):
-        {account_id, cli_path, home_dir, extra_args, max_concurrency}
+        {account_id, cli_path, home_dir, extra_args,
+         min_gap, gap_per_kb, max_gap, lock_wait}
     """
     binary = resolve_cli_binary(cfg.get("cli_path"))
     if not binary:
@@ -121,48 +201,56 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     # connected account's own (subscription/OAuth) auth, not bill an API key.
     run_env.pop("ANTHROPIC_API_KEY", None)
 
-    sem = _gate(cfg.get("account_id") or 0, cfg.get("max_concurrency", 2))
-    if not sem.acquire(timeout=max(1, int(timeout))):
-        raise UserError(_("The AI account is busy (max concurrency reached). Please retry."))
-    sysfile = None
-    try:
-        # The system prompt can be very large (RAG context, model/menu listings),
-        # so pass it via a file — putting it in argv overflows the OS argument
-        # limit (E2BIG / "argument list too long"). The user prompt goes on stdin.
-        if system_prompt:
-            fd, sysfile = tempfile.mkstemp(prefix="era_ai_sys_", suffix=".txt")
-            with os.fdopen(fd, "w", encoding="utf-8") as fh:
-                fh.write(system_prompt)
-            args += ["--append-system-prompt-file", sysfile]
+    req_size = len(system_prompt or "") + len(user_prompt or "")
+    gap = _compute_gap(cfg, req_size)
+    lock_wait = float(cfg.get("lock_wait", 300.0))
 
-        _logger.info("era_ai_accounts: invoking CLI %s (model=%s)", binary, model or "default")
-        proc = subprocess.run(
-            args,
-            input=(user_prompt or ""),
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            env=run_env,
-            cwd=home,
-            check=False,
-            preexec_fn=_preexec_unlimit_as if resource else None,
-        )
-    except subprocess.TimeoutExpired:
-        raise UserError(_("The AI request timed out after %ss.", timeout))
-    except UserError:
-        raise
-    except Exception as exc:  # noqa: BLE001
-        raise UserError(_("Failed to launch the AI CLI: %s", exc))
-    finally:
+    proc = None
+    sysfile = None
+    # One CLI call at a time across the whole host, with a size-proportional gap
+    # between consecutive calls, so the connected Claude account is never hit by
+    # concurrent or rapid-fire requests.
+    with _global_serializer(lock_wait):
+        _enforce_gap(gap)
         try:
-            sem.release()
-        except (ValueError, threading.ThreadError):
-            pass
-        if sysfile:
-            try:
-                os.unlink(sysfile)
-            except OSError:
-                pass
+            # The system prompt can be very large (RAG context, model/menu
+            # listings), so pass it via a file — putting it in argv overflows the
+            # OS argument limit (E2BIG). The user prompt goes on stdin.
+            if system_prompt:
+                fd, sysfile = tempfile.mkstemp(prefix="era_ai_sys_", suffix=".txt")
+                with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                    fh.write(system_prompt)
+                args += ["--append-system-prompt-file", sysfile]
+
+            _logger.info(
+                "era_ai_accounts: invoking CLI %s (model=%s, req=%dB, gap=%.1fs)",
+                binary, model or "default", req_size, gap)
+            proc = subprocess.run(
+                args,
+                input=(user_prompt or ""),
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                env=run_env,
+                cwd=home,
+                check=False,
+                preexec_fn=_preexec_unlimit_as if resource else None,
+            )
+        except subprocess.TimeoutExpired:
+            raise UserError(_("The AI request timed out after %ss.", timeout))
+        except UserError:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            raise UserError(_("Failed to launch the AI CLI: %s", exc))
+        finally:
+            # Stamp the end time even on failure, so the gap also spaces out
+            # retries after an error/timeout.
+            _record_call_end()
+            if sysfile:
+                try:
+                    os.unlink(sysfile)
+                except OSError:
+                    pass
 
     if proc.returncode != 0:
         # The CLI often returns a structured error on stdout even on non-zero exit;

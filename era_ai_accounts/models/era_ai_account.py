@@ -78,7 +78,9 @@ class EraAiAccount(models.Model):
         help="Temporarily block all AI calls through this account without archiving it.",
     )
     max_concurrency = fields.Integer(
-        default=2, help="Max simultaneous CLI-proxy calls per worker for this account.",
+        default=1,
+        help="Legacy hint. CLI-proxy calls are now globally serialized (one at a "
+             "time across all workers/users), so concurrency is effectively 1.",
     )
 
     # --- Secret (encrypted, manager-only) ------------------------------------
@@ -223,12 +225,25 @@ class EraAiAccount(models.Model):
 
     def _cli_cfg(self):
         self.ensure_one()
+        param = self.env["ir.config_parameter"].sudo()
+
+        def _f(key, default):
+            try:
+                return float(param.get_param(key, default))
+            except (TypeError, ValueError):
+                return float(default)
+
         return {
             "account_id": self.id,
             "cli_path": self.cli_path or False,
             "home_dir": self.cli_home_dir or "/opt/odoo",
             "extra_args": self.cli_extra_args or False,
-            "max_concurrency": self.max_concurrency or 2,
+            # Throttle: one CLI call at a time across the whole host, separated by
+            # a gap that grows with the request body size (bigger -> longer wait).
+            "min_gap": _f("ai.cli_min_gap", "1.0"),
+            "gap_per_kb": _f("ai.cli_gap_per_kb", "0.05"),
+            "max_gap": _f("ai.cli_max_gap", "30"),
+            "lock_wait": _f("ai.cli_lock_wait", "300"),
         }
 
     def _assert_usable(self):

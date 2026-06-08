@@ -66,8 +66,18 @@ blocked by Anthropic and violates the ToS.
 |---|---|---|
 | `ai.cli_timeout` | 180 | CLI-proxy subprocess timeout (s) |
 | `ai.cli_max_prompt_chars` | 400000 | Max system+user prompt size for the CLI proxy; larger → clear error (use an API-key account) |
+| `ai.cli_min_gap` | 1.0 | Base gap (s) enforced between consecutive CLI calls |
+| `ai.cli_gap_per_kb` | 0.05 | Extra gap (s) per KB of request body — bigger requests wait longer |
+| `ai.cli_max_gap` | 30 | Cap (s) on the inter-call gap |
+| `ai.cli_lock_wait` | 300 | Max time (s) a request waits for the global one-at-a-time lock before erroring |
 | `ai.http_timeout` | 120 | Anthropic HTTP timeout (s) |
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |
+
+> **Throttling (gentle on the connected account):** CLI-proxy calls are **globally
+> serialized** — at most one runs at a time across every Odoo worker and user, via a
+> host-wide file lock (`<data_dir>/era_ai_cli_proxy.lock`). Consecutive calls are also
+> separated by a gap that **scales with the request body size** (`min_gap + gap_per_kb ×
+> KB`, capped at `max_gap`), so large requests wait longer. Tune via the parameters above.
 
 > **Note (memory):** Odoo applies a soft `RLIMIT_AS` (= `limit_memory_hard`) to its
 > workers; the CLI's JS runtime needs far more *virtual* address space than that and

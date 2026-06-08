@@ -15,6 +15,22 @@
                             string="Open AI Accounts" class="btn-link"/>
                 </setting>
                 <setting
+                    id="era_cli_protection"
+                    string="Claude CLI rate protection"
+                    help="Keep the connected Claude account safe from concurrent or rapid-fire calls. Calls are serialized and paced; tune the limits below."
+                    groups="base.group_system">
+                    <field name="cli_gap_enabled"/>
+                    <group class="mt-2">
+                        <field name="cli_min_gap" invisible="not cli_gap_enabled"/>
+                        <field name="cli_gap_per_kb" invisible="not cli_gap_enabled"/>
+                        <field name="cli_max_gap" invisible="not cli_gap_enabled"/>
+                        <field name="cli_max_concurrency"/>
+                        <field name="cli_lock_wait"/>
+                        <field name="cli_timeout"/>
+                        <field name="cli_max_prompt_chars"/>
+                    </group>
+                </setting>
+                <setting
                     id="custom_llm_provider"
                     string="Use your own custom LLM provider"
                     help="Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local gateways, etc.)."

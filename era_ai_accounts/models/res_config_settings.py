@@ -65,6 +65,53 @@ class ResConfigSettings(models.TransientModel):
         default="Odoo AI", readonly=False, groups="base.group_system",
     )
 
+    # --- Claude CLI rate protection (global, host-wide) ----------------------
+    cli_gap_enabled = fields.Boolean(
+        string="Pace calls (gap between requests)",
+        config_parameter="ai.cli_gap_enabled", default=True,
+        readonly=False, groups="base.group_system",
+        help="Insert a delay between consecutive Claude CLI calls so the connected "
+             "account is not hit by rapid-fire requests. Turn off to disable the gap "
+             "(the one-at-a-time limit still applies unless you raise concurrency).",
+    )
+    cli_min_gap = fields.Float(
+        string="Base gap (seconds)", config_parameter="ai.cli_min_gap", default=1.0,
+        readonly=False, groups="base.group_system",
+        help="Minimum delay applied before every CLI call.",
+    )
+    cli_gap_per_kb = fields.Float(
+        string="Extra gap per KB (seconds)", config_parameter="ai.cli_gap_per_kb", default=0.05,
+        readonly=False, groups="base.group_system",
+        help="Added to the gap for each KB of request body — bigger requests wait longer.",
+    )
+    cli_max_gap = fields.Float(
+        string="Maximum gap (seconds)", config_parameter="ai.cli_max_gap", default=30.0,
+        readonly=False, groups="base.group_system",
+        help="Upper bound on the inter-call gap.",
+    )
+    cli_max_concurrency = fields.Integer(
+        string="Max concurrent calls", config_parameter="ai.cli_max_concurrency", default=1,
+        readonly=False, groups="base.group_system",
+        help="How many Claude CLI calls may run at the same time across ALL workers "
+             "and users. 1 = strictly one at a time (recommended for a single connected account).",
+    )
+    cli_lock_wait = fields.Integer(
+        string="Max wait for a free slot (seconds)", config_parameter="ai.cli_lock_wait", default=300,
+        readonly=False, groups="base.group_system",
+        help="How long a request waits for a free slot before returning a 'busy' error.",
+    )
+    cli_timeout = fields.Integer(
+        string="Call timeout (seconds)", config_parameter="ai.cli_timeout", default=180,
+        readonly=False, groups="base.group_system",
+        help="Maximum duration of a single Claude CLI call.",
+    )
+    cli_max_prompt_chars = fields.Integer(
+        string="Max prompt size (characters)", config_parameter="ai.cli_max_prompt_chars", default=400000,
+        readonly=False, groups="base.group_system",
+        help="Reject CLI-proxy requests whose prompt exceeds this size with a clear message "
+             "(very large tool-driven 'Ask AI' contexts should use an API-key account).",
+    )
+
     def _compute_custom_llm_key_enabled(self):
         for record in self:
             record.custom_llm_key_enabled = bool(record.custom_llm_key)

@@ -153,14 +153,24 @@ class TestEraAiAccounts(TransactionCase):
             llm_cli_transport._compute_gap({"min_gap": 0, "gap_per_kb": 0, "max_gap": 30}, 9_999_999),
             0.0)
 
-    def test_global_serializer_allows_one_at_a_time(self):
+    def test_global_slot_one_at_a_time(self):
         if llm_cli_transport.fcntl is None:
             self.skipTest("fcntl unavailable")
-        with llm_cli_transport._global_serializer(5):
+        with llm_cli_transport._global_slot(1, 5):
             # A second acquisition (across the host) must not succeed immediately.
             with self.assertRaises(Exception):
-                with llm_cli_transport._global_serializer(0):
+                with llm_cli_transport._global_slot(1, 0):
                     pass
+
+    def test_global_slot_allows_configured_concurrency(self):
+        if llm_cli_transport.fcntl is None:
+            self.skipTest("fcntl unavailable")
+        # With 2 slots, two calls run together; a third is refused immediately.
+        with llm_cli_transport._global_slot(2, 5):
+            with llm_cli_transport._global_slot(2, 5):
+                with self.assertRaises(Exception):
+                    with llm_cli_transport._global_slot(2, 0):
+                        pass
 
     def test_agent_routes_through_cli_account(self):
         acc = self.Account.create({

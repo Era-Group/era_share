@@ -233,16 +233,29 @@ class EraAiAccount(models.Model):
             except (TypeError, ValueError):
                 return float(default)
 
+        def _b(key, default=True):
+            v = param.get_param(key)
+            if v in (None, "", False):
+                return default
+            return str(v).strip().lower() in ("1", "true", "yes", "on")
+
+        try:
+            concurrency = max(1, int(float(param.get_param("ai.cli_max_concurrency", "1"))))
+        except (TypeError, ValueError):
+            concurrency = 1
+
         return {
             "account_id": self.id,
             "cli_path": self.cli_path or False,
             "home_dir": self.cli_home_dir or "/opt/odoo",
             "extra_args": self.cli_extra_args or False,
-            # Throttle: one CLI call at a time across the whole host, separated by
-            # a gap that grows with the request body size (bigger -> longer wait).
+            # Throttle (configurable in Settings > AI): up to `concurrency` CLI calls
+            # at a time across the whole host, separated by a size-scaled gap.
+            "gap_enabled": _b("ai.cli_gap_enabled", True),
             "min_gap": _f("ai.cli_min_gap", "1.0"),
             "gap_per_kb": _f("ai.cli_gap_per_kb", "0.05"),
             "max_gap": _f("ai.cli_max_gap", "30"),
+            "concurrency": concurrency,
             "lock_wait": _f("ai.cli_lock_wait", "300"),
         }
 

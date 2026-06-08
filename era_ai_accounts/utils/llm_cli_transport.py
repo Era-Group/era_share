@@ -47,9 +47,9 @@ _CLAUDE_GLOBS = [
     os.path.expanduser("~/.vscode-server/extensions/anthropic.claude-code-*/resources/native-binary/claude"),
 ]
 
-# Host-wide serialization. The file lock works across worker processes; the
+# Host-wide serialization. The file locks work across worker processes; the
 # thread lock is only a fallback when fcntl is unavailable (non-unix).
-_LOCK_FILE = "era_ai_cli_proxy.lock"
+_LOCK_SLOT = "era_ai_cli_proxy.%d.lock"
 _STATE_FILE = "era_ai_cli_proxy.last"
 _thread_lock = threading.Lock()
 
@@ -101,40 +101,53 @@ def resolve_cli_binary(override=None):
 
 
 @contextlib.contextmanager
-def _global_serializer(wait_seconds):
-    """Hold a host-wide exclusive lock for the duration of one CLI call.
+def _global_slot(slots, wait_seconds):
+    """Hold one of ``slots`` host-wide slots for the duration of one CLI call.
 
-    Guarantees at most ONE Claude CLI call runs at a time across all Odoo worker
-    processes and users. The OS releases the flock automatically if a worker dies,
-    so a crash can't deadlock the queue. Falls back to a per-process thread lock
-    when fcntl is unavailable.
+    A cross-process counting semaphore built from ``slots`` lock files: a call
+    grabs the first free slot, so at most ``slots`` Claude CLI calls run at once
+    across *all* Odoo workers and users (``slots=1`` => strictly one at a time).
+    The OS releases a slot automatically if a worker dies, so a crash can't
+    deadlock the queue. Falls back to a per-process thread lock when fcntl is
+    unavailable (non-unix).
     """
+    slots = max(1, int(slots or 1))
     if fcntl is None:
         with _thread_lock:
             yield
         return
-    path = os.path.join(_shared_dir(), _LOCK_FILE)
-    fd = os.open(path, os.O_CREAT | os.O_RDWR, 0o600)
+    shared = _shared_dir()
+    fds = [os.open(os.path.join(shared, _LOCK_SLOT % i), os.O_CREAT | os.O_RDWR, 0o600)
+           for i in range(slots)]
+    held = None
     deadline = time.monotonic() + max(0.0, float(wait_seconds))
     try:
-        while True:
-            try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                break
-            except OSError:
+        while held is None:
+            for fd in fds:
+                try:
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    held = fd
+                    break
+                except OSError:
+                    continue
+            if held is None:
                 if time.monotonic() >= deadline:
                     raise UserError(_(
-                        "The AI service is busy (another request is already running). "
-                        "Please retry in a moment."
-                    ))
+                        "The AI service is busy (all %s slot(s) in use). Please retry in a moment.",
+                        slots))
                 time.sleep(0.2)
         yield
     finally:
-        try:
-            fcntl.flock(fd, fcntl.LOCK_UN)
-        except OSError:
-            pass
-        os.close(fd)
+        if held is not None:
+            try:
+                fcntl.flock(held, fcntl.LOCK_UN)
+            except OSError:
+                pass
+        for fd in fds:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
 
 
 def _compute_gap(cfg, req_size):
@@ -202,15 +215,16 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     run_env.pop("ANTHROPIC_API_KEY", None)
 
     req_size = len(system_prompt or "") + len(user_prompt or "")
-    gap = _compute_gap(cfg, req_size)
+    gap = _compute_gap(cfg, req_size) if cfg.get("gap_enabled", True) else 0.0
     lock_wait = float(cfg.get("lock_wait", 300.0))
+    slots = int(cfg.get("concurrency", 1) or 1)
 
     proc = None
     sysfile = None
-    # One CLI call at a time across the whole host, with a size-proportional gap
-    # between consecutive calls, so the connected Claude account is never hit by
-    # concurrent or rapid-fire requests.
-    with _global_serializer(lock_wait):
+    # At most `slots` CLI calls at a time across the whole host (default 1), with a
+    # size-proportional gap between calls, so the connected Claude account is never
+    # hit by concurrent or rapid-fire requests. Both are set in Settings > AI.
+    with _global_slot(slots, lock_wait):
         _enforce_gap(gap)
         try:
             # The system prompt can be very large (RAG context, model/menu

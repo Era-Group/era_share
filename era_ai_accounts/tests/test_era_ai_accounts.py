@@ -172,6 +172,25 @@ class TestEraAiAccounts(TransactionCase):
                     with llm_cli_transport._global_slot(2, 0):
                         pass
 
+    def test_cli_gap_enabled_persists_when_unchecked(self):
+        Settings = self.env["res.config.settings"]
+        icp = self.env["ir.config_parameter"].sudo()
+        # Default (no param set) -> ON.
+        icp.search([("key", "=", "ai.cli_gap_enabled")]).unlink()
+        self.assertTrue(Settings.create({}).cli_gap_enabled)
+        # Uncheck + save -> persisted as the string "False" (not deleted).
+        rec = Settings.create({})
+        rec.cli_gap_enabled = False
+        rec._inverse_cli_gap_enabled()
+        self.assertEqual(icp.get_param("ai.cli_gap_enabled"), "False")
+        # The bug was: a fresh form reverted to True. It must now stay unchecked.
+        self.assertFalse(Settings.create({}).cli_gap_enabled)
+        # Re-enable round-trips too.
+        rec.cli_gap_enabled = True
+        rec._inverse_cli_gap_enabled()
+        self.assertEqual(icp.get_param("ai.cli_gap_enabled"), "True")
+        self.assertTrue(Settings.create({}).cli_gap_enabled)
+
     def test_agent_routes_through_cli_account(self):
         acc = self.Account.create({
             "name": "Claude route", "provider": "anthropic", "auth_mode": "cli_proxy",

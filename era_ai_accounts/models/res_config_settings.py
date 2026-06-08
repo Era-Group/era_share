@@ -66,9 +66,14 @@ class ResConfigSettings(models.TransientModel):
     )
 
     # --- Claude CLI rate protection (global, host-wide) ----------------------
+    # NB: this is a Boolean that defaults to ON. A plain `config_parameter`
+    # Boolean cannot persist an unchecked (False) value — Odoo's set_param deletes
+    # the key for a Python False, and its settings reader does bool("False") (==True)
+    # — so it always reverts to the default on reload. We therefore store an
+    # explicit "True"/"False" string via compute/inverse and parse it ourselves.
     cli_gap_enabled = fields.Boolean(
         string="Pace calls (gap between requests)",
-        config_parameter="ai.cli_gap_enabled", default=True,
+        compute="_compute_cli_gap_enabled", inverse="_inverse_cli_gap_enabled",
         readonly=False, groups="base.group_system",
         help="Insert a delay between consecutive Claude CLI calls so the connected "
              "account is not hit by rapid-fire requests. Turn off to disable the gap "
@@ -115,3 +120,14 @@ class ResConfigSettings(models.TransientModel):
     def _compute_custom_llm_key_enabled(self):
         for record in self:
             record.custom_llm_key_enabled = bool(record.custom_llm_key)
+
+    def _compute_cli_gap_enabled(self):
+        val = self.env["ir.config_parameter"].sudo().get_param("ai.cli_gap_enabled", "True")
+        enabled = str(val).strip().lower() not in ("false", "0", "no", "off", "")
+        for record in self:
+            record.cli_gap_enabled = enabled
+
+    def _inverse_cli_gap_enabled(self):
+        icp = self.env["ir.config_parameter"].sudo()
+        for record in self:
+            icp.set_param("ai.cli_gap_enabled", "True" if record.cli_gap_enabled else "False")

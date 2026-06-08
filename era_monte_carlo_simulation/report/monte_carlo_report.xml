@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_monte_carlo_run" model="ir.actions.report">
+        <field name="name">Monte Carlo Summary</field>
+        <field name="model">monte.carlo.run</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_monte_carlo_simulation.report_monte_carlo_run</field>
+        <field name="report_file">era_monte_carlo_simulation.report_monte_carlo_run</field>
+        <field name="binding_model_id" ref="model_monte_carlo_run"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Monte Carlo - %s' % (object.name or object.id)</field>
+    </record>
+
+    <template id="report_monte_carlo_run_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2 t-out="o.model_id.name"/>
+                <div class="text-muted" t-field="o.name"/>
+                <div class="text-muted" t-out="o._report_subtitle()"/>
+                <div class="text-muted mb-3" t-field="o.finished_at"/>
+
+                <div t-if="o.interpretation">
+                    <h4>What this means</h4>
+                    <div t-out="o.interpretation"/>
+                </div>
+
+                <div t-if="o.ai_interpretation" class="mt-2">
+                    <h4>AI Summary</h4>
+                    <div class="alert alert-success" t-out="o.ai_interpretation"/>
+                </div>
+
+                <table class="table table-sm mt-3" style="font-size:12px;">
+                    <tr>
+                        <th>Mean</th><td t-esc="o._report_amount(o.summary_mean)"/>
+                        <th>Median</th><td t-esc="o._report_amount(o.summary_median)"/>
+                        <th>Standard Deviation</th><td t-esc="o._report_amount(o.summary_std)"/>
+                    </tr>
+                    <tr>
+                        <th>P5</th><td t-esc="o._report_amount(o.p05)"/>
+                        <th>P50</th><td t-esc="o._report_amount(o.p50)"/>
+                        <th>P95</th><td t-esc="o._report_amount(o.p95)"/>
+                    </tr>
+                    <tr>
+                        <th>Minimum</th><td t-esc="o._report_amount(o.summary_min)"/>
+                        <th>Maximum</th><td t-esc="o._report_amount(o.summary_max)"/>
+                        <th>Success Threshold</th><td t-esc="o._report_amount(o.success_threshold)"/>
+                    </tr>
+                    <tr>
+                        <th>Value at Risk (95%)</th><td t-esc="o._report_amount(o.var_95)"/>
+                        <th>Expected Shortfall (CVaR 95%)</th><td t-esc="o._report_amount(o.cvar_95)"/>
+                        <th>Chance of reaching target</th>
+                        <td><span t-esc="'%.1f' % o.probability_above_threshold"/>%</td>
+                    </tr>
+                </table>
+
+                <div t-if="o.distribution_data">
+                    <h4 class="mt-3">Outcome Distribution</h4>
+                    <div style="height:140px; border-bottom:1px solid #999; font-size:0; white-space:nowrap;">
+                        <t t-foreach="o._report_distribution_bars()" t-as="bar">
+                            <span t-attf-style="display:inline-block; vertical-align:bottom; width:#{bar['w']}px; height:#{bar['h']}px; background:#7ba7d7;"/>
+                        </t>
+                    </div>
+                    <div class="text-muted" style="font-size:11px;">
+                        <span t-esc="o._report_amount(o.summary_min)"/> …
+                        <span t-esc="o._report_amount(o.summary_max)"/>
+                    </div>
+                </div>
+
+                <div t-if="o._report_drivers()">
+                    <h4 class="mt-3">Key Drivers</h4>
+                    <table class="table table-sm" style="font-size:12px;">
+                        <t t-foreach="o._report_drivers()" t-as="d">
+                            <tr>
+                                <td style="width:35%;"><span t-esc="d['name']"/></td>
+                                <td>
+                                    <div t-attf-style="width:#{d['pct']}%; height:14px; background:#{d['color']}; border-radius:2px;"/>
+                                </td>
+                                <td style="width:64px; text-align:right;">
+                                    <span t-esc="'%+.2f' % d['corr']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_monte_carlo_run">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="era_monte_carlo_simulation.report_monte_carlo_run_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

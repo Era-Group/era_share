@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="monte_carlo_run_view_list" model="ir.ui.view">
+        <field name="name">monte.carlo.run.list</field>
+        <field name="model">monte.carlo.run</field>
+        <field name="arch" type="xml">
+            <list string="Simulation Runs"
+                  decoration-success="state == 'done'"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'draft'">
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="iterations"/>
+                <field name="summary_mean" optional="show"/>
+                <field name="p05" optional="hide"/>
+                <field name="p95" optional="show"/>
+                <field name="create_date" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state == 'running'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="monte_carlo_run_view_form" model="ir.ui.view">
+        <field name="name">monte.carlo.run.form</field>
+        <field name="model">monte.carlo.run</field>
+        <field name="arch" type="xml">
+            <form string="Simulation Run">
+                <header>
+                    <button name="action_run_simulation" type="object"
+                            string="Run Simulation" class="btn-primary"
+                            invisible="state == 'running'"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('done','failed')"/>
+                    <button name="action_export_xlsx" type="object"
+                            string="Export Excel" icon="fa-file-excel-o"
+                            invisible="state != 'done'"/>
+                    <button name="action_explain_with_ai" type="object"
+                            string="Explain with AI" icon="fa-magic"
+                            invisible="state != 'done' or ai_pending"/>
+                    <button name="action_explain_with_ai" type="object"
+                            string="Generating AI summary..."
+                            icon="fa-circle-o-notch fa-spin"
+                            invisible="not ai_pending" disabled="1"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,running,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_results" type="object"
+                                class="oe_stat_button" icon="fa-list-ol"
+                                invisible="result_count == 0">
+                            <field name="result_count" widget="statinfo" string="Results"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Run reference"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="state == 'failed'">
+                        A run executes the model over many random scenarios. Set the
+                        number of <b>Iterations</b> and an optional <b>Success Threshold</b>,
+                        then click <b>Run Simulation</b>. When it finishes, read
+                        <b>What this means</b>, the summary statistics, the percentiles
+                        (P5…P95) and the probability of reaching your threshold. Use
+                        <b>Reset to Draft</b> to change inputs and run it again.
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                         invisible="state != 'failed'">
+                        <field name="error_message" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group string="Settings">
+                            <field name="model_id"
+                                   readonly="state in ('running','done')"
+                                   options="{'no_create': True}"/>
+                            <field name="iterations"
+                                   readonly="state in ('running','done')"/>
+                            <field name="seed"
+                                   readonly="state in ('running','done')"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="ai_pending" invisible="1"/>
+                        </group>
+                        <group string="Threshold Analysis">
+                            <field name="success_threshold"
+                                   readonly="state == 'running'"/>
+                            <field name="probability_above_threshold" widget="float"
+                                   invisible="state != 'done'"/>
+                            <field name="probability_below_threshold" widget="float"
+                                   invisible="state != 'done'"/>
+                        </group>
+                    </group>
+                    <div class="text-muted" style="margin:0 0 8px;" invisible="state != 'done'">
+                        How to read the two percentages above: one is the chance the
+                        outcome reaches your target or better (good for revenue or profit),
+                        the other is the chance it stays below the target (good for cost
+                        or duration).
+                    </div>
+                    <div class="row mt-2" invisible="state != 'done'">
+                        <div class="col-lg-6">
+                            <separator string="What this means"/>
+                            <field name="interpretation" nolabel="1"/>
+                        </div>
+                        <div class="col-lg-6">
+                            <separator string="AI Summary"/>
+                            <div class="alert alert-success mb-0" role="alert"
+                                 invisible="not ai_interpretation">
+                                <field name="ai_interpretation" nolabel="1"/>
+                            </div>
+                            <div class="text-muted"
+                                 invisible="ai_interpretation or not ai_pending">
+                                Generating AI summary...
+                            </div>
+                        </div>
+                    </div>
+                    <separator string="Outcome Distribution" invisible="state != 'done'"/>
+                    <div class="text-muted" style="margin:0 0 6px;" invisible="state != 'done'">
+                        How to read the chart: each bar is a range of possible outcomes —
+                        a taller bar means that range is more likely. The dark curve is the
+                        cumulative chance: pick a value on the bottom axis and it tells you
+                        the share of scenarios at or below it. Dashed lines mark the
+                        pessimistic (P5), middle (median) and optimistic (P95) outcomes;
+                        the blue line is the average and the red line is your target.
+                    </div>
+                    <field name="distribution_chart" nolabel="1" invisible="state != 'done'"/>
+                    <separator string="Key Drivers" invisible="state != 'done'"/>
+                    <div class="text-muted" style="margin:0 0 6px;" invisible="state != 'done'">
+                        How to read the chart: the longer a bar, the more that input moves
+                        the result. Blue inputs push it up, orange inputs pull it down. Work
+                        on the top variable first to make the result more predictable.
+                    </div>
+                    <field name="sensitivity_chart" nolabel="1" invisible="state != 'done'"/>
+                    <separator string="Input Correlations"
+                               invisible="state != 'done' or not correlation_summary"/>
+                    <div class="text-muted" style="margin:0 0 6px;"
+                         invisible="state != 'done' or not correlation_summary">
+                        How to read this: each row is a pair of inputs you asked
+                        to move together. <b>Target</b> is the correlation you
+                        requested; <b>Achieved</b> is what the run actually
+                        reproduced. They should be close.
+                    </div>
+                    <field name="correlation_summary" nolabel="1"
+                           invisible="state != 'done' or not correlation_summary"/>
+                    <div class="text-muted" style="margin:8px 0 6px;" invisible="state != 'done'">
+                        How to read these numbers — Mean: the typical outcome. Median: the
+                        middle outcome (half the scenarios are above it, half below).
+                        Standard deviation: how spread out the outcomes are (bigger means
+                        more risk). Each percentile is the value that this share of scenarios
+                        stays at or below. Tail Risk looks at the worst 5% of cases only:
+                        Value at Risk is where that bad zone begins, and Expected Shortfall
+                        is the average outcome inside it.
+                    </div>
+                    <group col="4" invisible="state != 'done'">
+                        <group string="Summary">
+                            <field name="summary_mean"/>
+                            <field name="summary_median"/>
+                            <field name="summary_std"/>
+                            <field name="se_mean"/>
+                            <field name="summary_min"/>
+                            <field name="summary_max"/>
+                        </group>
+                        <group string="Percentiles">
+                            <field name="p05" string="P5 (pessimistic)"/>
+                            <field name="p25"/>
+                            <field name="p50"/>
+                            <field name="p75"/>
+                            <field name="p95" string="P95 (optimistic)"/>
+                        </group>
+                        <group string="Tail Risk">
+                            <field name="var_95"/>
+                            <field name="cvar_95"/>
+                        </group>
+                        <group string="Timing">
+                            <field name="started_at"/>
+                            <field name="finished_at"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="monte_carlo_run_view_search" model="ir.ui.view">
+        <field name="name">monte.carlo.run.search</field>
+        <field name="model">monte.carlo.run</field>
+        <field name="arch" type="xml">
+            <search string="Simulation Runs">
+                <field name="name"/>
+                <field name="model_id"/>
+                <filter name="done" string="Done" domain="[('state','=','done')]"/>
+                <filter name="failed" string="Failed" domain="[('state','=','failed')]"/>
+                <group>
+                    <filter name="group_model" string="Model"
+                            context="{'group_by': 'model_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="monte_carlo_run_action" model="ir.actions.act_window">
+        <field name="name">Simulation Runs</field>
+        <field name="res_model">monte.carlo.run</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="monte_carlo_run_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No simulation run yet
+            </p>
+            <p>
+                A run executes a simulation model over many scenarios and
+                stores the resulting outcome distribution.
+            </p>
+        </field>
+    </record>
+
+</odoo>

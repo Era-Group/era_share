@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_monte_carlo" model="ir.module.category">
+        <field name="name">Monte Carlo</field>
+        <field name="description">Monte Carlo Simulation</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="res_groups_privilege_monte_carlo" model="res.groups.privilege">
+        <field name="name">Monte Carlo Simulation</field>
+        <field name="sequence">25</field>
+        <field name="category_id" ref="module_category_monte_carlo"/>
+    </record>
+
+    <record id="group_monte_carlo_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_monte_carlo"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Create and run Monte Carlo simulations.</field>
+    </record>
+
+    <record id="group_monte_carlo_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_monte_carlo"/>
+        <field name="implied_ids" eval="[(4, ref('group_monte_carlo_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="comment">Full access to Monte Carlo configuration and results.</field>
+    </record>
+
+    <!-- Multi-company isolation: a user only sees simulations/runs/results of
+         their allowed companies (records with no company are shared). -->
+    <record id="mc_model_company_rule" model="ir.rule">
+        <field name="name">Monte Carlo Model: multi-company</field>
+        <field name="model_id" ref="model_monte_carlo_model"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','in',company_ids)]</field>
+    </record>
+    <record id="mc_run_company_rule" model="ir.rule">
+        <field name="name">Monte Carlo Run: multi-company</field>
+        <field name="model_id" ref="model_monte_carlo_run"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','in',company_ids)]</field>
+    </record>
+    <record id="mc_result_company_rule" model="ir.rule">
+        <field name="name">Monte Carlo Result: multi-company</field>
+        <field name="model_id" ref="model_monte_carlo_result"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','in',company_ids)]</field>
+    </record>
+    <record id="mc_variable_company_rule" model="ir.rule">
+        <field name="name">Monte Carlo Variable: multi-company</field>
+        <field name="model_id" ref="model_monte_carlo_variable"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('model_id.company_id','=',False),('model_id.company_id','in',company_ids)]</field>
+    </record>
+    <record id="mc_correlation_company_rule" model="ir.rule">
+        <field name="name">Monte Carlo Correlation: multi-company</field>
+        <field name="model_id" ref="model_monte_carlo_correlation"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','in',company_ids)]</field>
+    </record>
+
+</odoo>

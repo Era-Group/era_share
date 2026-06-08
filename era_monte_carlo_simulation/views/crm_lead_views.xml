@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_lead_view_form_monte_carlo" model="ir.ui.view">
+        <field name="name">crm.lead.form.monte.carlo</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Monte Carlo VALUE forecast beside Expected Revenue. -->
+            <xpath expr="//div[hasclass('oe_title')]/h2" position="after">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2 p-2 bg-light border rounded"
+                     groups="era_monte_carlo_simulation.group_monte_carlo_user"
+                     invisible="type == 'lead' or not expected_revenue">
+                    <field name="mc_run_id" invisible="1"/>
+                    <i class="fa fa-cubes text-info"/>
+                    <field name="mc_forecast" nolabel="1" readonly="1" class="oe_inline"/>
+                    <button name="action_monte_carlo_simulate" type="object"
+                            string="Recompute" icon="fa-dice"
+                            class="btn btn-sm btn-info ms-auto"
+                            title="Compute the value forecast with Monte Carlo"/>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

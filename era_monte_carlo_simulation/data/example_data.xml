@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Starter examples, one per objective. Loaded as normal data (not demo)
+         so every install - including real/live databases - ships with ready
+         templates. noupdate="1": created once, never overwritten on upgrade,
+         so user edits are preserved. Delete any you do not need. -->
+    <data noupdate="1">
+
+        <!-- 1) Revenue forecast - Revenue = Leads x Conversion x Deal Value -->
+        <record id="ex_model_revenue" model="monte.carlo.model">
+            <field name="name">مثال: توقّع الإيرادات</field>
+            <field name="objective">revenue_forecast</field>
+            <field name="formula_type">simple_revenue</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">مثال جاهز: الإيراد = عدد العملاء المحتملين × معدّل التحويل × متوسط قيمة الصفقة.</field>
+        </record>
+        <record id="ex_var_revenue_leads" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_revenue"/>
+            <field name="name">عدد العملاء المحتملين</field>
+            <field name="code">leads</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">100</field>
+            <field name="mode_value">180</field>
+            <field name="max_value">300</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_revenue_conversion" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_revenue"/>
+            <field name="name">معدّل التحويل</field>
+            <field name="code">conversion_rate</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">0.10</field>
+            <field name="max_value">0.35</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_revenue_deal" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_revenue"/>
+            <field name="name">متوسط قيمة الصفقة</field>
+            <field name="code">average_deal_value</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">50000</field>
+            <field name="std_dev">12000</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_run_revenue" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_revenue"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">2000000</field>
+        </record>
+
+        <!-- 2) Cost estimation (custom) -->
+        <record id="ex_model_cost" model="monte.carlo.model">
+            <field name="name">مثال: تقدير تكلفة مشروع تطوير</field>
+            <field name="objective">cost_estimation</field>
+            <field name="formula_type">custom_python_limited</field>
+            <field name="formula_expression">labor_hours * hourly_rate + materials + overhead</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">إجمالي تكلفة مشروع تطوير. العتبة = الميزانية، فانظر إلى احتمال (&lt; العتبة) = احتمال البقاء ضمن الميزانية.</field>
+        </record>
+        <record id="ex_var_cost_hours" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_cost"/>
+            <field name="name">ساعات العمل</field>
+            <field name="code">labor_hours</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">800</field>
+            <field name="mode_value">1200</field>
+            <field name="max_value">2000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_cost_rate" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_cost"/>
+            <field name="name">سعر الساعة</field>
+            <field name="code">hourly_rate</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">150</field>
+            <field name="max_value">250</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_cost_materials" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_cost"/>
+            <field name="name">تكلفة المواد</field>
+            <field name="code">materials</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">80000</field>
+            <field name="std_dev">20000</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_var_cost_overhead" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_cost"/>
+            <field name="name">التكاليف الإدارية</field>
+            <field name="code">overhead</field>
+            <field name="distribution">fixed</field>
+            <field name="fixed_value">50000</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ex_run_cost" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_cost"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">500000</field>
+        </record>
+
+        <!-- 3) Profit analysis (predefined profit formula) -->
+        <record id="ex_model_profit" model="monte.carlo.model">
+            <field name="name">مثال: تحليل ربح خط إنتاج جديد</field>
+            <field name="objective">profit_analysis</field>
+            <field name="formula_type">profit</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">الربح = الكمية × (سعر الوحدة - تكلفة الوحدة) - التكاليف الثابتة. العتبة = 0 → احتمال (≥ العتبة) = احتمال تحقيق ربح.</field>
+        </record>
+        <record id="ex_var_profit_units" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_profit"/>
+            <field name="name">الكمية المباعة</field>
+            <field name="code">units</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">1000</field>
+            <field name="mode_value">2500</field>
+            <field name="max_value">5000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_profit_price" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_profit"/>
+            <field name="name">سعر الوحدة</field>
+            <field name="code">unit_price</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">200</field>
+            <field name="std_dev">25</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_profit_cost" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_profit"/>
+            <field name="name">تكلفة الوحدة</field>
+            <field name="code">unit_cost</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">90</field>
+            <field name="max_value">130</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_var_profit_fixed" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_profit"/>
+            <field name="name">التكاليف الثابتة</field>
+            <field name="code">fixed_cost</field>
+            <field name="distribution">fixed</field>
+            <field name="fixed_value">150000</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ex_run_profit" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_profit"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">0</field>
+        </record>
+
+        <!-- 4) Project duration (custom) -->
+        <record id="ex_model_duration" model="monte.carlo.model">
+            <field name="name">مثال: تقدير مدة تنفيذ مشروع Odoo (أيام)</field>
+            <field name="objective">project_duration</field>
+            <field name="formula_type">custom_python_limited</field>
+            <field name="formula_expression">analysis + development + testing + deployment</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">إجمالي مدة المشروع بالأيام كمجموع مراحله. العتبة = 90 يومًا → احتمال (&lt; العتبة) = احتمال الإنجاز خلال 90 يومًا.</field>
+        </record>
+        <record id="ex_var_dur_analysis" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_duration"/>
+            <field name="name">التحليل</field>
+            <field name="code">analysis</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">5</field>
+            <field name="mode_value">10</field>
+            <field name="max_value">20</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_dur_dev" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_duration"/>
+            <field name="name">التطوير</field>
+            <field name="code">development</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">20</field>
+            <field name="mode_value">35</field>
+            <field name="max_value">60</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_dur_testing" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_duration"/>
+            <field name="name">الاختبار</field>
+            <field name="code">testing</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">5</field>
+            <field name="mode_value">12</field>
+            <field name="max_value">25</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_var_dur_deploy" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_duration"/>
+            <field name="name">النشر</field>
+            <field name="code">deployment</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">3</field>
+            <field name="max_value">10</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ex_run_duration" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_duration"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">90</field>
+        </record>
+
+        <!-- 5) Inventory demand (custom) -->
+        <record id="ex_model_inventory" model="monte.carlo.model">
+            <field name="name">مثال: توقّع الطلب خلال مهلة التوريد</field>
+            <field name="objective">inventory_demand</field>
+            <field name="formula_type">custom_python_limited</field>
+            <field name="formula_expression">daily_demand * lead_time_days</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">الطلب المتراكم خلال مهلة التوريد = الطلب اليومي × عدد أيام المهلة. العتبة = مخزون الأمان (2500) → احتمال (≥ العتبة) = خطر نفاد المخزون.</field>
+        </record>
+        <record id="ex_var_inv_daily" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_inventory"/>
+            <field name="name">الطلب اليومي</field>
+            <field name="code">daily_demand</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">120</field>
+            <field name="std_dev">30</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_inv_lead" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_inventory"/>
+            <field name="name">مهلة التوريد (أيام)</field>
+            <field name="code">lead_time_days</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">7</field>
+            <field name="mode_value">14</field>
+            <field name="max_value">30</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_run_inventory" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_inventory"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">2500</field>
+        </record>
+
+        <!-- 6) Custom - marketing campaign ROI -->
+        <record id="ex_model_custom" model="monte.carlo.model">
+            <field name="name">مثال: تحليل عائد حملة تسويقية</field>
+            <field name="objective">custom</field>
+            <field name="formula_type">custom_python_limited</field>
+            <field name="formula_expression">reach * ctr * conversion * avg_order_value - campaign_cost</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">صافي عائد الحملة = (الوصول × نسبة النقر × نسبة التحويل × متوسط قيمة الطلب) - تكلفة الحملة. العتبة = 0 → احتمال (≥ العتبة) = احتمال ربحية الحملة.</field>
+        </record>
+        <record id="ex_var_cus_reach" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="name">مدى الوصول</field>
+            <field name="code">reach</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">50000</field>
+            <field name="mode_value">100000</field>
+            <field name="max_value">200000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_cus_ctr" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="name">نسبة النقر</field>
+            <field name="code">ctr</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">0.01</field>
+            <field name="max_value">0.05</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_cus_conversion" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="name">نسبة التحويل</field>
+            <field name="code">conversion</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">0.02</field>
+            <field name="max_value">0.08</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_var_cus_aov" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="name">متوسط قيمة الطلب</field>
+            <field name="code">avg_order_value</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">350</field>
+            <field name="std_dev">80</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ex_var_cus_cost" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="name">تكلفة الحملة</field>
+            <field name="code">campaign_cost</field>
+            <field name="distribution">fixed</field>
+            <field name="fixed_value">60000</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="ex_run_custom" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_custom"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">0</field>
+        </record>
+
+        <!-- 7) Correlated inputs - price vs demand (Iman-Conover) -->
+        <record id="ex_model_corr" model="monte.carlo.model">
+            <field name="name">مثال: ربح مع ارتباط بين السعر والطلب</field>
+            <field name="objective">profit_analysis</field>
+            <field name="formula_type">profit</field>
+            <field name="default_iterations">10000</field>
+            <field name="description">يوضّح أثر الارتباط بين المدخلات: رفع السعر يقلّل الكمية المباعة (ارتباط سالب -0.6 بين الكمية وسعر الوحدة). افتح تبويب «الارتباطات» لرؤية الإعداد، وقارن النتيجة مع نفس النموذج بدون ارتباط. العتبة = 0 → احتمال (≥ العتبة) = احتمال تحقيق ربح.</field>
+        </record>
+        <record id="ex_var_corr_units" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="name">الكمية المباعة</field>
+            <field name="code">units</field>
+            <field name="distribution">triangular</field>
+            <field name="min_value">1000</field>
+            <field name="mode_value">2500</field>
+            <field name="max_value">5000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="ex_var_corr_price" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="name">سعر الوحدة</field>
+            <field name="code">unit_price</field>
+            <field name="distribution">normal</field>
+            <field name="mean_value">200</field>
+            <field name="std_dev">30</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="ex_var_corr_cost" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="name">تكلفة الوحدة</field>
+            <field name="code">unit_cost</field>
+            <field name="distribution">uniform</field>
+            <field name="min_value">90</field>
+            <field name="max_value">130</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="ex_var_corr_fixed" model="monte.carlo.variable">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="name">التكاليف الثابتة</field>
+            <field name="code">fixed_cost</field>
+            <field name="distribution">fixed</field>
+            <field name="fixed_value">150000</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="ex_corr_units_price" model="monte.carlo.correlation">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="variable1_id" ref="ex_var_corr_units"/>
+            <field name="variable2_id" ref="ex_var_corr_price"/>
+            <field name="coefficient">-0.6</field>
+        </record>
+        <record id="ex_run_corr" model="monte.carlo.run">
+            <field name="model_id" ref="ex_model_corr"/>
+            <field name="iterations">10000</field>
+            <field name="success_threshold">0</field>
+        </record>
+
+    </data>
+</odoo>

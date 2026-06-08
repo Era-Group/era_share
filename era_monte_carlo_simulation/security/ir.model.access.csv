@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_monte_carlo_model_user,monte.carlo.model.user,model_monte_carlo_model,group_monte_carlo_user,1,1,1,1
+access_monte_carlo_variable_user,monte.carlo.variable.user,model_monte_carlo_variable,group_monte_carlo_user,1,1,1,1
+access_monte_carlo_run_user,monte.carlo.run.user,model_monte_carlo_run,group_monte_carlo_user,1,1,1,1
+access_monte_carlo_result_user,monte.carlo.result.user,model_monte_carlo_result,group_monte_carlo_user,1,0,0,0
+access_monte_carlo_model_manager,monte.carlo.model.manager,model_monte_carlo_model,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_variable_manager,monte.carlo.variable.manager,model_monte_carlo_variable,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_run_manager,monte.carlo.run.manager,model_monte_carlo_run,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_result_manager,monte.carlo.result.manager,model_monte_carlo_result,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_comparison_user,monte.carlo.comparison.user,model_monte_carlo_comparison,group_monte_carlo_user,1,1,1,0
+access_monte_carlo_comparison_manager,monte.carlo.comparison.manager,model_monte_carlo_comparison,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_correlation_user,monte.carlo.correlation.user,model_monte_carlo_correlation,group_monte_carlo_user,1,1,1,1
+access_monte_carlo_correlation_manager,monte.carlo.correlation.manager,model_monte_carlo_correlation,group_monte_carlo_manager,1,1,1,1
+access_monte_carlo_dashboard_user,monte.carlo.dashboard.user,model_monte_carlo_dashboard,group_monte_carlo_user,1,1,1,0
+access_monte_carlo_dashboard_manager,monte.carlo.dashboard.manager,model_monte_carlo_dashboard,group_monte_carlo_manager,1,1,1,1

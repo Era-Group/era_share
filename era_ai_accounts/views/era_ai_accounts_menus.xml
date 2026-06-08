@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="era_ai_accounts_menu"
+              name="AI Accounts"
+              parent="ai_app.ai_menu_root"
+              action="era_ai_account_action"
+              sequence="46"
+              groups="era_ai_accounts.group_ai_account_manager"/>
+</odoo>

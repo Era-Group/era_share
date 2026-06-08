@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_agent_view_form_era_account" model="ir.ui.view">
+        <field name="name">ai.agent.form.era.account</field>
+        <field name="model">ai.agent</field>
+        <field name="inherit_id" ref="ai_app.ai_agent_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='llm_model']" position="after">
+                <field name="era_account_id"/>
+                <field name="era_model_id" invisible="not era_account_id"/>
+                <div class="text-muted" colspan="2" invisible="not era_account_id">
+                    Responses are generated through this account. The "LLM Model" above is
+                    used only for knowledge-source embeddings (keep it on OpenAI/Gemini if
+                    the agent has sources).
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

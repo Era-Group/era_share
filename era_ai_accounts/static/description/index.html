@@ -19,7 +19,9 @@
       شغّل ميزات الذكاء الاصطناعي في أودو 19 عبر <b>حسابات مزوّدين مرتبطة</b>: استخدم Claude من خلال
       واجهة Claude&nbsp;Code المُسجَّل دخولها على الخادم <b>دون مفتاح API ودون فوترة لكل رمز</b>، أو اربط
       حسابات OpenAI و Gemini و Anthropic أو أي مزوّد متوافق مع OpenAI عبر مفتاح، ثم <b>شارك كل حساب مع
-      المستخدمين المناسبين</b>. الأسرار مُشفَّرة، والوصول محكوم بصلاحيات دقيقة.
+      المستخدمين المناسبين</b>. الأسرار مُشفَّرة، والوصول محكوم بصلاحيات دقيقة. ويُستدعى Claude
+      <b>باستدعاء واحد في كل مرة على مستوى الخادم</b> مع <b>مباعدة زمنية تتناسب مع حجم الطلب</b>،
+      حفاظًا على الاشتراك من الاستدعاءات المتزامنة أو المتسارعة.
     </p>
   </div>
 
@@ -57,9 +59,9 @@
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
-      <div style="font-size:26px;">🛡️</div>
-      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Cost &amp; rate guards</h3>
-      <p style="margin:0;color:#4b5563;line-height:1.6;">Per-account concurrency cap and an instant kill switch keep subscription limits under control. Connections validate before use.</p>
+      <div style="font-size:26px;">🪶</div>
+      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Gentle on your account</h3>
+      <p style="margin:0;color:#4b5563;line-height:1.6;"><b>One CLI call at a time</b> across all workers and users, plus a <b>gap that grows with the request size</b> — bigger requests wait longer. With an instant kill switch and pre-use validation, the subscription is never hammered.</p>
     </div>
 
   </div>
@@ -75,11 +77,37 @@
     </ol>
   </div>
 
+  <!-- Throttling (gentle on the connected account) -->
+  <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:16px;padding:30px 34px;margin:6px 0 28px;">
+    <h2 style="margin:0 0 16px;color:#5b21b6;font-size:24px;">🪶 Gentle on your connected account</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:26px;">
+
+      <!-- English -->
+      <div style="flex:1 1 360px;">
+        <ul style="margin:0;padding-left:20px;line-height:1.8;color:#374151;font-size:16px;">
+          <li><b>One call at a time, host-wide.</b> A global lock guarantees at most one Claude CLI call runs at any instant across <i>every</i> Odoo worker and user — the connected subscription never receives concurrent requests.</li>
+          <li><b>Size-aware pacing.</b> Consecutive calls are separated by a gap that scales with the request body size (small chats ≈ 1&nbsp;s, large contexts up to 30&nbsp;s) — <b>bigger requests wait longer</b>.</li>
+          <li><b>Crash-safe &amp; tunable.</b> The lock auto-releases if a worker dies (no deadlocks), and every threshold is a live <code>ir.config_parameter</code> (<code>ai.cli_min_gap</code>, <code>ai.cli_gap_per_kb</code>, <code>ai.cli_max_gap</code>, <code>ai.cli_lock_wait</code>).</li>
+        </ul>
+      </div>
+
+      <!-- Arabic -->
+      <div dir="rtl" style="flex:1 1 360px;text-align:right;border-right:3px solid #ddd6fe;padding-right:18px;">
+        <ul style="margin:0;padding-right:20px;line-height:1.9;color:#374151;font-size:16px;list-style-position:inside;">
+          <li><b>استدعاء واحد في كل مرة على مستوى الخادم.</b> قفل عام يضمن تشغيل استدعاء واحد فقط لواجهة Claude في أي لحظة عبر <i>جميع</i> عمّال أودو وكل المستخدمين — فلا تصل أي طلبات متزامنة إلى الاشتراك.</li>
+          <li><b>مباعدة حسب الحجم.</b> تُفصل الاستدعاءات المتتالية بفجوة زمنية تكبر مع حجم الطلب (المحادثات الصغيرة ≈ ثانية واحدة، والسياقات الكبيرة حتى 30 ثانية) — <b>كلما كبر الطلب طال الانتظار</b>.</li>
+          <li><b>آمن عند الأعطال وقابل للضبط.</b> يتحرّر القفل تلقائيًا إذا توقّف أحد العمّال (بلا تجمّد)، وكل العتبات معاملات <code>ir.config_parameter</code> يمكن ضبطها مباشرةً.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Compliance + limitations -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
     <div style="flex:1 1 320px;background:#fffbeb;border:1px solid #fde68a;border-radius:14px;padding:20px 24px;">
       <h3 style="margin:0 0 8px;color:#92400e;font-size:17px;">⚖️ Used responsibly</h3>
-      <p style="margin:0;color:#78350f;line-height:1.6;">The CLI proxy invokes the sanctioned first-party tool; it never replays OAuth tokens to the raw API. Serving many users from one subscription draws on its rate limits — that's what the concurrency cap and kill switch are for.</p>
+      <p style="margin:0;color:#78350f;line-height:1.6;">The CLI proxy invokes the sanctioned first-party tool; it never replays OAuth tokens to the raw API. Serving many users from one subscription draws on its rate limits — so calls are globally serialized (one at a time) and paced by request size, with an instant kill switch.</p>
     </div>
     <div style="flex:1 1 320px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:20px 24px;">
       <h3 style="margin:0 0 8px;color:#1e40af;font-size:17px;">ℹ️ Good to know (v1)</h3>

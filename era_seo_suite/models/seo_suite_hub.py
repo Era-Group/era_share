@@ -3312,13 +3312,30 @@ class EraSeoSuiteHub(models.Model):
         AI app, so admins don't have to paste the same key twice. Returns
         '' when none found.
 
-        Odoo 19's AI app stores provider keys in ir.config_parameter
-        under per-provider keys (the OpenAI one is `ai.openai_key`).
-        Older / forks may keep them on the ai.agent record — checked as a
-        secondary fallback.
+        Resolution order:
+          1. An OpenAI ``era.ai.account`` (api_key) — the dedicated account
+             admins link for image generation, since the Claude CLI proxy
+             cannot produce images. Its key is stored encrypted.
+          2. Odoo 19's AI app config slot ``ai.openai_key``.
+          3. The ai.agent record itself, in case a fork stores the key there.
         """
         ICP = self.env['ir.config_parameter'].sudo()
-        # Primary: the AI app's own config slot.
+        # Primary: a dedicated OpenAI account from era_ai_accounts (key stored
+        # encrypted). Soft-checked so this works whether or not the module is
+        # installed.
+        Account = self.env.get('era.ai.account')
+        if Account is not None:
+            acc = Account.sudo().search([
+                ('provider', '=', 'openai'),
+                ('auth_mode', '=', 'api_key'),
+                ('active', '=', True),
+                ('secret_is_set', '=', True),
+            ], order='id', limit=1)
+            if acc:
+                key = (acc._get_secret() or '').strip()
+                if key:
+                    return key
+        # Secondary: the AI app's own config slot.
         key = (ICP.get_param('ai.openai_key') or '').strip()
         if key:
             return key

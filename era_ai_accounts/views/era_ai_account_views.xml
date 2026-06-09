@@ -94,6 +94,9 @@
                                 <field name="last_error" readonly="1"/>
                             </group>
                         </page>
+                        <page string="Note" name="note">
+                            <field name="note" placeholder="What is this account for? Which key should be linked?"/>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

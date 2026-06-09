@@ -131,6 +131,13 @@ class EraAiAccount(models.Model):
     last_validated = fields.Datetime(readonly=True, copy=False)
     last_error = fields.Text(readonly=True, copy=False)
 
+    # --- Admin note ----------------------------------------------------------
+    note = fields.Text(
+        string="Note",
+        help="Free-form note for administrators (what this account is for, which "
+             "key to link, etc.). Never sent to any provider.",
+    )
+
     # ------------------------------------------------------------------ compute
     @api.depends("secret_encrypted")
     def _compute_secret(self):

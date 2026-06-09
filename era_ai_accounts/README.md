@@ -50,6 +50,11 @@ blocked by Anthropic and violates the ToS.
 - Claude has no embeddings: for agents with **knowledge sources**, keep the
   agent's *LLM Model* on OpenAI/Gemini (used only for embeddings); generation
   still goes through the account.
+- Claude has **no image generation**: the CLI proxy produces text only. For
+  blog/article cover images, create an **OpenAI** account (`api_key`) and paste
+  an OpenAI key — `era_seo_suite`'s image generator reads the key from the first
+  active OpenAI `api_key` account (then set *ERA SEO → Image provider = OpenAI*).
+  Use the account's **Note** field to record what it is linked for.
 - `codex` / `gemini` CLIs are not installed here, so OpenAI/Gemini use API keys.
 
 ## Security

@@ -1,0 +1,850 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_ai_accounts
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-08 11:23+0000\n"
+"PO-Revision-Date: 2026-06-08 11:23+0000\n"
+"Last-Translator: Era Group\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__era_account_id
+msgid "AI Account"
+msgstr "حساب الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#: model:res.groups,name:era_ai_accounts.group_ai_account_manager
+msgid "AI Account Manager"
+msgstr "مدير حسابات الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_era_ai_model
+msgid "AI Account Model"
+msgstr "نموذج حساب الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#: model:ir.actions.act_window,name:era_ai_accounts.era_ai_account_action
+#: model:ir.ui.menu,name:era_ai_accounts.era_ai_accounts_menu
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "AI Accounts"
+msgstr "حسابات الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_ai_agent
+msgid "AI Agent"
+msgstr "وكيل الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "AI CLI error: %s"
+msgstr "خطأ في واجهة الذكاء الاصطناعي: %s"
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_era_ai_account
+msgid "AI Provider Account"
+msgstr "حساب مزوّد الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "AI account '%s' is archived."
+msgstr "حساب الذكاء الاصطناعي '%s' مؤرشف."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "AI account '%s' is disabled (kill switch)."
+msgstr "حساب الذكاء الاصطناعي '%s' معطّل (مفتاح الإيقاف)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/ai_agent.py:0
+msgid "AI request failed due to an unexpected error. Please try again."
+msgstr "فشل طلب الذكاء الاصطناعي بسبب خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__secret
+msgid "API Key"
+msgstr "مفتاح API"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__auth_mode__api_key
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "API key"
+msgstr "مفتاح API"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__account_id
+msgid "Account"
+msgstr "الحساب"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__era_model_id
+msgid "Account Model"
+msgstr "نموذج الحساب"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__active
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/custom_llm_service_patch.py:0
+msgid "All configured models failed (%(models)s): %(error)s"
+msgstr "فشلت جميع النماذج المُهيّأة (%(models)s): %(error)s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__allowed_user_ids
+msgid "Allowed Users"
+msgstr "المستخدمون المسموح لهم"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__anthropic
+msgid "Anthropic (Claude)"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "Anthropic returned no text (stop_reason=%s)."
+msgstr "لم تُرجع Anthropic أي نص (stop_reason=%s)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_title
+msgid "App Name"
+msgstr "اسم التطبيق"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__auth_header
+msgid "Auth Header"
+msgstr "ترويسة المصادقة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__auth_mode
+msgid "Auth Mode"
+msgstr "وضع المصادقة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__auth_prefix
+msgid "Auth Prefix"
+msgstr "بادئة المصادقة"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Authorization"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_auth_header
+msgid "Authorization Header"
+msgstr "ترويسة التفويض"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_auth_prefix
+msgid "Authorization Prefix"
+msgstr "بادئة التفويض"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__base_url
+msgid "Base URL for an OpenAI-compatible endpoint (custom provider)."
+msgstr "العنوان الأساسي (URL) لنقطة نهاية متوافقة مع OpenAI (مزوّد مخصّص)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__base_url
+msgid "Base Url"
+msgstr "العنوان الأساسي (URL)"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Bearer"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_home_dir
+msgid "CLI HOME"
+msgstr "مجلد HOME لواجهة الأوامر"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_path
+msgid "CLI binary path"
+msgstr "مسار ملف واجهة الأوامر التنفيذي"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_extra_args
+msgid "CLI extra arguments"
+msgstr "وسائط إضافية لواجهة الأوامر"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "CLI proxy"
+msgstr "وكيل واجهة الأوامر"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__auth_mode
+msgid ""
+"CLI proxy routes calls through the locally-authenticated Claude CLI (no API "
+"key, no per-token billing). API key calls the provider over HTTP."
+msgstr "يوجّه وكيل واجهة الأوامر الطلبات عبر واجهة Claude المُصادَق عليها محليًا (بدون مفتاح API وبدون فوترة لكل رمز). أما مفتاح API فيستدعي المزوّد عبر HTTP."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_model__kind__chat
+msgid "Chat"
+msgstr "محادثة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_model
+msgid "Chat Model 1"
+msgstr "نموذج المحادثة 1"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_model_2
+msgid "Chat Model 2"
+msgstr "نموذج المحادثة 2"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_model_3
+msgid "Chat Model 3"
+msgstr "نموذج المحادثة 3"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_model_4
+msgid "Chat Model 4"
+msgstr "نموذج المحادثة 4"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__chat_model_count
+msgid "Chat Model Count"
+msgstr "عدد نماذج المحادثة"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_list
+msgid "Chat models"
+msgstr "نماذج المحادثة"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Claude CLI binary not found on this server."
+msgstr "تعذّر العثور على ملف واجهة Claude التنفيذي على هذا الخادم."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Claude CLI not runnable: %s"
+msgstr "تعذّر تشغيل واجهة Claude: %s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid ""
+"Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local "
+"gateways, etc.)."
+msgstr "هيّئ أي مزوّد متوافق مع OpenAI (OpenRouter وGroq وTogether والبوابات المحلية وغيرها)."
+
+#. module: era_ai_accounts
+#: model_terms:ir.actions.act_window,help:era_ai_accounts.era_ai_account_action
+msgid "Connect an AI provider account"
+msgstr "اربط حساب مزوّد ذكاء اصطناعي"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Connection validated."
+msgstr "تم التحقق من الاتصال."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "Could not parse the AI CLI response."
+msgstr "تعذّر تحليل استجابة واجهة الذكاء الاصطناعي."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__create_uid
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__create_date
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__custom
+msgid "Custom (OpenAI-compatible)"
+msgstr "مخصّص (متوافق مع OpenAI)"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Disabled"
+msgstr "معطّل"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__kill_switch
+msgid "Disabled (kill switch)"
+msgstr "معطّل (مفتاح الإيقاف)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__display_name
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__display_name
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__display_name
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ir_actions_server__display_name
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_model__kind__embedding
+msgid "Embedding"
+msgstr "التضمين"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_embedding_model
+msgid "Embedding Model"
+msgstr "نموذج التضمين"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Empty = everyone (shared)"
+msgstr "فارغ = الجميع (مشترك)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_key_enabled
+msgid "Enable custom LLM provider"
+msgstr "تفعيل مزوّد نموذج لغوي مخصّص"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__secret_encrypted
+msgid "Encrypted secret"
+msgstr "السر المُشفّر"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__state__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "Failed to launch the AI CLI: %s"
+msgstr "تعذّر تشغيل واجهة الذكاء الاصطناعي: %s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__google
+msgid "Google Gemini"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_home_dir
+msgid "HOME directory whose connected-account auth the CLI should use."
+msgstr "مجلد HOME الذي ستستخدم واجهة الأوامر بيانات اعتماد الحساب المرتبط به."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__id
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__id
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__id
+#: model:ir.model.fields,field_description:era_ai_accounts.field_ir_actions_server__id
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/custom_llm_service_patch.py:0
+msgid "LLM provider request failed for an unknown reason."
+msgstr "فشل طلب مزوّد النموذج اللغوي لسبب غير معروف."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/custom_llm_service_patch.py:0
+msgid "LLM request failed."
+msgstr "فشل طلب النموذج اللغوي."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__label
+msgid "Label"
+msgstr "التسمية"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__write_uid
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__write_date
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__last_validated
+msgid "Last Validated"
+msgstr "آخر تحقّق"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid ""
+"Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via"
+" API keys, and share them with users."
+msgstr "اربط Claude عبر وكيل واجهة الأوامر المحلي (بدون مفتاح API) أو OpenAI/Gemini/مخصّص عبر مفاتيح API، وشاركها مع المستخدمين."
+
+#. module: era_ai_accounts
+#: model_terms:ir.actions.act_window,help:era_ai_accounts.era_ai_account_action
+msgid ""
+"Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via an API key,\n"
+"               then share the account with your users."
+msgstr "اربط Claude عبر وكيل واجهة الأوامر المحلي (بدون مفتاح API) أو OpenAI/Gemini/مخصّص عبر مفتاح API، ثم شارك الحساب مع المستخدمين."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__auth_mode__cli_proxy
+msgid "Local CLI proxy (connected account)"
+msgstr "وكيل واجهة الأوامر المحلي (حساب مرتبط)"
+
+#. module: era_ai_accounts
+#: model:res.groups,comment:era_ai_accounts.group_ai_account_manager
+msgid "Manage AI provider accounts, their secrets and sharing."
+msgstr "إدارة حسابات مزوّدي الذكاء الاصطناعي وأسرارها ومشاركتها."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__max_concurrency
+msgid "Max Concurrency"
+msgstr "الحد الأقصى للتزامن"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__max_concurrency
+msgid "Max simultaneous CLI-proxy calls per worker for this account."
+msgstr "الحد الأقصى لعدد طلبات وكيل واجهة الأوامر المتزامنة لكل عامل لهذا الحساب."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__model_id
+msgid "Model"
+msgstr "النموذج"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__model_ids
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Models"
+msgstr "النماذج"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Models synced."
+msgstr "تمت مزامنة النماذج."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "No AI account bound to this CLI request."
+msgstr "لا يوجد حساب ذكاء اصطناعي مرتبط بطلب واجهة الأوامر هذا."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "No API key set for AI account '%s'."
+msgstr "لم يتم تعيين مفتاح API لحساب الذكاء الاصطناعي '%s'."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/custom_llm_service_patch.py:0
+msgid "No API key set for provider '%s'"
+msgstr "لم يتم تعيين مفتاح API للمزوّد '%s'"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "No chat model configured for account '%s'. Sync models first."
+msgstr "لا يوجد نموذج محادثة مُهيّأ للحساب '%s'. قم بمزامنة النماذج أولًا."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/custom_llm_service_patch.py:0
+msgid "No custom LLM model is configured."
+msgstr "لم تتم تهيئة أي نموذج لغوي مخصّص."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__state__draft
+msgid "Not validated"
+msgstr "غير مُتحقَّق منه"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Open AI Accounts"
+msgstr "فتح حسابات الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__openai
+msgid "OpenAI"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "OpenRouter"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__referer
+msgid "Optional HTTP-Referer header (custom/OpenRouter)."
+msgstr "ترويسة HTTP-Referer اختيارية (مخصّص/OpenRouter)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__title
+msgid "Optional X-Title header (custom/OpenRouter)."
+msgstr "ترويسة X-Title اختيارية (مخصّص/OpenRouter)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_path
+msgid ""
+"Optional override for the AI CLI binary. Auto-detected from the Claude Code "
+"extension when empty."
+msgstr "تجاوز اختياري لملف واجهة الذكاء الاصطناعي التنفيذي. يُكتشف تلقائيًا من امتداد Claude Code عند تركه فارغًا."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__owner_user_id
+msgid "Owner"
+msgstr "المالك"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__scope__personal
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Personal"
+msgstr "شخصي"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__provider
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__provider
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Provider"
+msgstr "المزوّد"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_key
+msgid "Provider API key"
+msgstr "مفتاح API للمزوّد"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__secret
+msgid ""
+"Provider API key. Stored encrypted; only AI Account Managers can set it."
+msgstr "مفتاح API للمزوّد. يُخزَّن مُشفَّرًا؛ ولا يمكن تعيينه إلا لمديري حسابات الذكاء الاصطناعي."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_base_url
+msgid "Provider Base URL"
+msgstr "العنوان الأساسي (URL) للمزوّد"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_provider_name
+msgid "Provider Name"
+msgstr "اسم المزوّد"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_model__model_id
+msgid "Provider model id, e.g. claude-opus-4-8 or gpt-4o."
+msgstr "معرّف نموذج المزوّد، مثل claude-opus-4-8 أو gpt-4o."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Provider request failed: %s %s"
+msgstr "فشل طلب المزوّد: %s %s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__referer
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_referer
+msgid "Referer"
+msgstr "المُحيل (Referer)"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.ai_agent_view_form_era_account
+msgid ""
+"Responses are generated through this account. The \"LLM Model\" above is\n"
+"                    used only for knowledge-source embeddings (keep it on OpenAI/Gemini if\n"
+"                    the agent has sources)."
+msgstr "تُولَّد الردود من خلال هذا الحساب. ويُستخدم \"النموذج اللغوي\" أعلاه فقط لتضمين مصادر المعرفة (أبقِه على OpenAI/Gemini إذا كان للوكيل مصادر)."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid ""
+"Routes calls through the locally-authenticated Claude CLI (the connected\n"
+"                            account). No API key is used. Serving many users draws on that\n"
+"                            subscription's rate limits — use the kill switch / concurrency to control it."
+msgstr "يوجّه الطلبات عبر واجهة Claude المُصادَق عليها محليًا (الحساب المرتبط). لا يُستخدم أي مفتاح API. خدمة عدد كبير من المستخدمين تستهلك حدود معدّل ذلك الاشتراك — استخدم مفتاح الإيقاف/التزامن للتحكّم بذلك."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__scope
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__secret_is_set
+msgid "Secret stored"
+msgstr "السر مُخزَّن"
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_ir_actions_server
+msgid "Server Action"
+msgstr "إجراء الخادم"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Set an API key before syncing models."
+msgstr "عيّن مفتاح API قبل مزامنة النماذج."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__scope__shared
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
+msgid "Shared"
+msgstr "مشترك"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__scope
+msgid ""
+"Shared: usable by every allowed user in the company. Personal: usable only "
+"by the owner and explicitly allowed users."
+msgstr "مشترك: قابل للاستخدام من قِبل كل مستخدم مسموح له في الشركة. شخصي: قابل للاستخدام فقط من قِبل المالك والمستخدمين المسموح لهم صراحةً."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__secret_masked
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Stored key"
+msgstr "المفتاح المُخزَّن"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Sync models"
+msgstr "مزامنة النماذج"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__kill_switch
+msgid ""
+"Temporarily block all AI calls through this account without archiving it."
+msgstr "حظر جميع طلبات الذكاء الاصطناعي عبر هذا الحساب مؤقتًا دون أرشفته."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "The AI CLI returned an empty answer."
+msgstr "أرجعت واجهة الذكاء الاصطناعي إجابة فارغة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "The AI CLI returned an empty response."
+msgstr "أرجعت واجهة الذكاء الاصطناعي استجابة فارغة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "The AI account is busy (max concurrency reached). Please retry."
+msgstr "حساب الذكاء الاصطناعي مشغول (تم بلوغ الحد الأقصى للتزامن). يرجى إعادة المحاولة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "The AI request timed out after %ss."
+msgstr "انتهت مهلة طلب الذكاء الاصطناعي بعد %s ثانية."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid ""
+"The Claude CLI was not found on this server. Set the account's 'CLI binary "
+"path' or the ERA_AI_CLAUDE_BIN environment variable."
+msgstr "تعذّر العثور على واجهة Claude على هذا الخادم. عيّن 'مسار ملف واجهة الأوامر التنفيذي' للحساب أو متغيّر البيئة ERA_AI_CLAUDE_BIN."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid ""
+"The local CLI proxy is currently only available for the Anthropic (Claude) "
+"provider."
+msgstr "وكيل واجهة الأوامر المحلي متاح حاليًا فقط لمزوّد Anthropic (Claude)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/ai_agent.py:0
+msgid "The selected Account Model does not belong to the AI Account."
+msgstr "نموذج الحساب المحدد لا ينتمي إلى حساب الذكاء الاصطناعي."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/ir_actions_server.py:0
+msgid "The tool request is missing required information."
+msgstr "طلب الأداة تنقصه معلومات مطلوبة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid ""
+"This agent's prompt is too large for the Claude CLI proxy (%(n)s characters,"
+" limit %(max)s). This usually means a tool-driven 'Ask AI' navigation agent "
+"— the CLI proxy supports chat/RAG only. Assign an API-key Anthropic account "
+"to that agent, or point this account at a simpler chat agent. (Raise "
+"ai.cli_max_prompt_chars to override.)"
+msgstr "موجّه هذا الوكيل أكبر من أن يتعامل معه وكيل واجهة Claude (%(n)s حرفًا، الحد الأقصى %(max)s). يعني هذا عادةً وكيل تنقّل 'اسأل الذكاء الاصطناعي' المعتمِد على الأدوات — إذ يدعم وكيل واجهة الأوامر المحادثة/استرجاع المعرفة فقط. عيّن حساب Anthropic بمفتاح API لذلك الوكيل، أو وجّه هذا الحساب إلى وكيل محادثة أبسط. (ارفع القيمة ai.cli_max_prompt_chars للتجاوز.)"
+
+#. module: era_ai_accounts
+#: model:ir.model.constraint,message:era_ai_accounts.constraint_era_ai_model_uniq_model_per_account
+msgid "This model already exists for the account."
+msgstr "هذا النموذج موجود بالفعل للحساب."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__title
+msgid "Title"
+msgstr "العنوان"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Use your own custom LLM provider"
+msgstr "استخدم مزوّد النموذج اللغوي المخصّص الخاص بك"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__allowed_user_ids
+msgid ""
+"Users who may use this account. For shared accounts, leave empty to allow "
+"everyone in the company."
+msgstr "المستخدمون الذين يمكنهم استخدام هذا الحساب. بالنسبة إلى الحسابات المشتركة، اتركه فارغًا للسماح للجميع في الشركة."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Validate connection"
+msgstr "التحقق من الاتصال"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__state__valid
+msgid "Validated"
+msgstr "مُتحقَّق منه"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Validation failed: %s"
+msgstr "فشل التحقق: %s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_ai_agent__era_account_id
+msgid ""
+"When set, this agent's responses are generated through the selected account "
+"(e.g. Claude via the local CLI proxy) instead of the global provider keys. "
+"Knowledge-source embeddings still use the standard provider from 'LLM "
+"Model'."
+msgstr "عند تعيينه، تُولَّد ردود هذا الوكيل من خلال الحساب المحدد (مثل Claude عبر وكيل واجهة الأوامر المحلي) بدلًا من مفاتيح المزوّد العامة. أما تضمين مصادر المعرفة فيستمر في استخدام المزوّد القياسي من 'النموذج اللغوي'."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Your App Name"
+msgstr "اسم تطبيقك"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "auto-detected from Claude Code extension"
+msgstr "يُكتشف تلقائيًا من امتداد Claude Code"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "e.g. Claude (company)"
+msgstr "مثال: Claude (الشركة)"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "google/gemini-2.0-flash-exp:free"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "https://openrouter.ai/api/v1"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "https://your-domain.example"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "meta-llama/llama-3.3-70b-instruct:free"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "openai/gpt-4o-mini"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "openai/text-embedding-3-small"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "openrouter/free"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "optional, e.g. --add-dir /tmp"
+msgstr "اختياري، مثل ‎--add-dir /tmp"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "paste API key (write-only)"
+msgstr "الصق مفتاح API (للكتابة فقط)"

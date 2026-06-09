@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_ai_account_manager" model="res.groups">
+        <field name="name">AI Account Manager</field>
+        <field name="comment">Manage AI provider accounts, their secrets and sharing.</field>
+    </record>
+
+    <!-- All settings administrators are AI Account Managers. -->
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('era_ai_accounts.group_ai_account_manager'))]"/>
+    </record>
+</odoo>

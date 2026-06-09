@@ -74,7 +74,8 @@
                                groups="era_ai_accounts.group_ai_account_manager"/>
                         <div class="text-muted" colspan="2" invisible="provider != 'cloudflare'">
                             Cloudflare Workers AI: chat via the OpenAI-compatible endpoint and images via
-                            FLUX.1-schnell. Billed in <b>Neurons</b> with <b>10,000 free per day</b>.
+                            FLUX (1-schnell / 2). Billed in <b>Neurons</b> (a compute-usage unit, not money)
+                            with <b>10,000 free per day</b>; beyond that, <b>USD $0.011 per 1,000 Neurons</b>.
                             Sync models to see each model's indicative rate.
                         </div>
                         <field name="base_url" invisible="provider != 'custom'"

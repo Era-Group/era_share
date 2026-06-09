@@ -275,6 +275,32 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(captured["headers"]["Authorization"], "Bearer tok")
         self.assertEqual(captured["json"]["steps"], 4)
 
+    def test_cloudflare_image_model_choice(self):
+        acc = self.Account.create({
+            "name": "CFimg", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        acc.action_sync_models()
+        # FLUX.2 models are in the catalog so the admin can pick a better one.
+        image_ids = set(acc.model_ids.filtered(lambda m: m.kind == "image").mapped("model_id"))
+        self.assertIn("@cf/black-forest-labs/flux-2-dev", image_ids)
+        self.assertIn("@cf/black-forest-labs/flux-2-klein-9b", image_ids)
+        # An explicit model is passed straight through to the run URL.
+        captured = {}
+
+        class _Resp:
+            status_code = 200
+            headers = {"Content-Type": "application/json"}
+            text = ""
+
+            def json(self):
+                return {"success": True, "result": {"image": base64.b64encode(b"x").decode()}}
+
+        with patch.object(era_ai_account.requests, "post",
+                          side_effect=lambda url, **kw: captured.update(url=url) or _Resp()):
+            acc.generate_image("a hero image", model="@cf/black-forest-labs/flux-2-klein-9b")
+        self.assertIn("/ai/run/@cf/black-forest-labs/flux-2-klein-9b", captured["url"])
+
     def test_generate_image_requires_cloudflare(self):
         acc = self.Account.create({
             "name": "k", "provider": "openai", "auth_mode": "api_key", "secret": "x",

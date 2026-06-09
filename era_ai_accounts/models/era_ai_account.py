@@ -35,8 +35,18 @@ CLOUDFLARE_MODELS = [
      "≈25,608 in / 75,147 out neurons per 1M tokens"),
     ("@cf/meta/llama-3.3-70b-instruct-fp8-fast", "Llama 3.3 70B (fast)", "chat",
      "≈26,668 in / 204,805 out neurons per 1M tokens"),
-    ("@cf/black-forest-labs/flux-1-schnell", "FLUX.1 schnell (image)", "image",
+    # Image models (text-to-image). FLUX.2 gives much better article-hero quality
+    # than FLUX.1 schnell; schnell stays as the commercial-safe (Apache-2.0) default.
+    ("@cf/black-forest-labs/flux-1-schnell", "FLUX.1 [schnell] — fast, Apache-2.0", "image",
      "≈9.60 neurons/step (4.80 per 512×512 tile)"),
+    ("@cf/black-forest-labs/flux-2-dev", "FLUX.2 [dev] — highest quality", "image",
+     "FLUX.2 — billed in Neurons; see pricing page"),
+    ("@cf/black-forest-labs/flux-2-klein-9b", "FLUX.2 [klein] 9B — fast, high quality", "image",
+     "FLUX.2 — billed in Neurons; see pricing page"),
+    ("@cf/black-forest-labs/flux-2-klein-4b", "FLUX.2 [klein] 4B — fastest", "image",
+     "FLUX.2 — billed in Neurons; see pricing page"),
+    ("@cf/bytedance/stable-diffusion-xl-lightning", "SDXL Lightning — fast", "image",
+     "billed in Neurons; see pricing page"),
     ("@cf/baai/bge-m3", "BGE-M3 (embeddings)", "embedding",
      "≈1,075 neurons per 1M input tokens"),
 ]

@@ -885,12 +885,16 @@
                          options="{'no_create': True, 'no_open': True}"/>
                   <field name="setting_image_account_id"
                          options="{'no_create': True, 'no_open': True}"/>
+                  <field name="setting_image_model_id"
+                         invisible="not setting_image_account_id"
+                         options="{'no_create': True, 'no_open': True}"/>
                   <div class="text-muted small" colspan="2">
                     Pick the accounts to use — provider, key and model are configured
                     once on the account itself. The <b>content</b> account writes the
                     article; the <b>image</b> account generates the cover (e.g. a
-                    Cloudflare Workers AI account for free FLUX images — the Claude CLI
-                    cannot make images). Leave the image account empty to skip the cover.
+                    Cloudflare Workers AI account — pick a <b>FLUX.2</b> image model for
+                    better quality than FLUX.1-schnell). Leave the image account empty
+                    to skip the cover (the Claude CLI cannot make images).
                   </div>
                 </group>
                 <group string="Status">

@@ -2719,11 +2719,19 @@ class EraSeoSuiteHub(models.Model):
         help="AI account used to generate the article COVER image (e.g. a "
              "Cloudflare Workers AI account for free FLUX images). Leave empty to "
              "publish without a cover — the Claude CLI proxy cannot make images.")
+    setting_image_model_id = fields.Many2one(
+        'era.ai.model', string='Image model',
+        compute='_compute_ai_accounts', inverse='_inverse_image_model',
+        domain="[('account_id', '=', setting_image_account_id), ('kind', '=', 'image')]",
+        help="Which image model the account uses for the cover (e.g. a FLUX.2 model "
+             "for higher quality than FLUX.1-schnell). Leave empty for the account's "
+             "default. Sync the account's models first to populate this list.")
 
     def _compute_ai_accounts(self):
         for rec in self:
             rec.setting_content_account_id = rec._resolve_ai_account('era_seo.content_account_id').id
             rec.setting_image_account_id = rec._resolve_ai_account('era_seo.image_account_id').id
+            rec.setting_image_model_id = rec._resolve_image_model_record().id
 
     def _inverse_content_account(self):
         ICP = self.env['ir.config_parameter'].sudo()
@@ -2734,6 +2742,15 @@ class EraSeoSuiteHub(models.Model):
         ICP = self.env['ir.config_parameter'].sudo()
         for rec in self:
             ICP.set_param('era_seo.image_account_id', str(rec.setting_image_account_id.id or ''))
+            # An image model from another account is meaningless — drop it.
+            if (rec.setting_image_model_id
+                    and rec.setting_image_model_id.account_id != rec.setting_image_account_id):
+                ICP.set_param('era_seo.image_model_id', '')
+
+    def _inverse_image_model(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        for rec in self:
+            ICP.set_param('era_seo.image_model_id', str(rec.setting_image_model_id.id or ''))
 
     def _resolve_ai_account(self, icp_key):
         """Browse the era.ai.account referenced by an ICP key (empty if unset/stale)."""
@@ -2750,23 +2767,41 @@ class EraSeoSuiteHub(models.Model):
     def _resolve_image_account(self):
         return self._resolve_ai_account('era_seo.image_account_id')
 
+    def _resolve_image_model_record(self):
+        """The era.ai.model picked for images, only if it belongs to the current
+        image account and is an image model (else empty — falls back to default)."""
+        Model = self.env['era.ai.model'].sudo()
+        raw = self.env['ir.config_parameter'].sudo().get_param('era_seo.image_model_id')
+        if not raw:
+            return Model.browse()
+        try:
+            m = Model.browse(int(raw))
+        except (TypeError, ValueError):
+            return Model.browse()
+        acc = self._resolve_image_account()
+        if m.exists() and m.kind == 'image' and acc and m.account_id == acc:
+            return m
+        return Model.browse()
+
     def _generate_article_image(self, prompt):
         """Return raw image bytes (PNG/JPEG) for the article's hero, or None.
 
         Uses the era_ai_accounts **image account** picked in Blog Gen (e.g. a
-        Cloudflare Workers AI / FLUX account). No external fallback: if no image
-        account is configured, the post is published without a cover.
+        Cloudflare Workers AI / FLUX account), with the optional **image model**
+        override. No external fallback: if no image account is configured, the
+        post is published without a cover.
         """
         acc = self._resolve_image_account()
         if not acc:
             _logger.info('image-gen: no image account set (Blog Gen → Image '
                          'generation account); publishing without a cover.')
             return None
+        model = self._resolve_image_model_record()
         try:
-            return acc.generate_image(prompt)
+            return acc.generate_image(prompt, model=model.model_id if model else None)
         except Exception as exc:  # noqa: BLE001
-            _logger.warning('image-gen: account %s (%s) failed: %s',
-                            acc.id, acc.name, exc)
+            _logger.warning('image-gen: account %s (%s) model=%s failed: %s',
+                            acc.id, acc.name, model.model_id if model else 'default', exc)
             return None
 
     def _generate_image_openrouter(self, prompt):

@@ -18,9 +18,10 @@ class EraAiModel(models.Model):
     )
     cost_info = fields.Char(
         string="Rate",
-        help="Approximate provider rate for this model (e.g. Cloudflare bills in "
-             "Neurons, with 10,000 free per day). Indicative, captured at sync time — "
-             "always confirm on the provider's live pricing page.",
+        help="Approximate provider rate for this model. NOTE: Cloudflare bills in "
+             "'Neurons' — a compute-usage unit, not money — with 10,000 free per day; "
+             "beyond that they cost USD $0.011 per 1,000 Neurons. Indicative, captured "
+             "at sync time — always confirm on the provider's live pricing page.",
     )
     active = fields.Boolean(default=True)
 

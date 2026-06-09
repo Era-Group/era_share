@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_suggest_translation_wizard_form" model="ir.ui.view">
+        <field name="name">suggest.translation.wizard.form</field>
+        <field name="model">suggest.translation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Translation Suggestions">
+                <sheet>
+                    <group string="Term">
+                        <field name="source_text" readonly="1" string="Source Text"/>
+                        <field name="source_lang" readonly="1" invisible="1"/>
+                        <field name="target_lang_code" readonly="1" invisible="1"/>
+                        <field name="line_id" invisible="1"/>
+                        <field name="session_id" invisible="1"/>
+                    </group>
+
+                    <group string="Suggestions">
+                        <field name="suggestion_ids" nolabel="1">
+                            <list string="Suggestions" create="false" delete="false">
+                                <field name="suggestion" string="Suggested Translation"/>
+                                <button name="action_select"
+                                        string="Use This"
+                                        type="object"
+                                        icon="fa-check"
+                                        class="btn-sm btn-secondary"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group string="Apply Translation">
+                        <field name="chosen_translation" string="Translation to Apply"
+                               placeholder="Select a suggestion above or type here..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_load_suggestions"
+                            string="Fetch Suggestions"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_apply"
+                            string="Apply"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

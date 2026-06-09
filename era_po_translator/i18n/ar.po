@@ -1,0 +1,611 @@
+# Arabic translation for ERA PO Translator
+# Copyright (C) ERA
+# This file is distributed under the same license as the ERA PO Translator module.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-13 00:00+0000\n"
+"PO-Revision-Date: 2026-05-13 12:00+0000\n"
+"Language-Team: Arabic\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_translation_session
+msgid "Translation Session"
+msgstr "جلسة الترجمة"
+
+#. module: era_po_translator
+#: model:ir.actions.act_window,name:era_po_translator.action_translation_session
+#: model:ir.ui.menu,name:era_po_translator.menu_translation_sessions
+msgid "Translation Sessions"
+msgstr "جلسات الترجمة"
+
+#. module: era_po_translator
+#: model:ir.ui.menu,name:era_po_translator.menu_po_translator_root
+msgid "PO Translator"
+msgstr "مترجم PO"
+
+#. module: era_po_translator
+#: model:ir.actions.act_window,name:era_po_translator.action_quick_translate_wizard
+#: model:ir.ui.menu,name:era_po_translator.menu_quick_translate
+msgid "Quick Translate"
+msgstr "ترجمة سريعة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__name
+msgid "Session Name"
+msgstr "اسم الجلسة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__module_name
+msgid "Module"
+msgstr "الوحدة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__source_lang
+msgid "Source Language Code"
+msgstr "رمز اللغة المصدر"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__target_lang_id
+msgid "Target Language"
+msgstr "اللغة الهدف"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__target_lang_code
+msgid "Target Language Code"
+msgstr "رمز اللغة الهدف"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__line_ids
+msgid "Translation Terms"
+msgstr "مصطلحات الترجمة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__total_count
+msgid "Total Terms"
+msgstr "إجمالي المصطلحات"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__translated_count
+msgid "Translated"
+msgstr "مُترجم"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__untranslated_count
+msgid "Untranslated"
+msgstr "غير مُترجم"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__progress
+msgid "Progress (%)"
+msgstr "نسبة التقدم (%)"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__state
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_po_translator
+#: selection:translation.session,state:draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_po_translator
+#: selection:translation.session,state:in_progress
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#. module: era_po_translator
+#: selection:translation.session,state:done
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_translation_session_line
+msgid "Translation Session Line"
+msgstr "سطر جلسة الترجمة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__session_id
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__msgid
+msgid "Source Text (msgid)"
+msgstr "النص المصدر (msgid)"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__msgstr
+msgid "Translation (msgstr)"
+msgstr "الترجمة (msgstr)"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__comment
+msgid "PO Comment"
+msgstr "تعليق ملف PO"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__is_translated
+msgid "Translated"
+msgstr "مُترجم"
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_quick_translate_wizard
+msgid "Quick Translate Wizard"
+msgstr "معالج الترجمة السريعة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__module_name
+msgid "Module"
+msgstr "الوحدة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__source_lang
+msgid "Source Language"
+msgstr "اللغة المصدر"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__target_lang_id
+msgid "Target Language"
+msgstr "اللغة الهدف"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__auto_translate
+msgid "Auto-Translate on Open"
+msgstr "ترجمة تلقائية عند الفتح"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__session_name
+msgid "Session Name"
+msgstr "اسم الجلسة"
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_suggest_translation_wizard
+msgid "Translation Suggestions Wizard"
+msgstr "معالج اقتراحات الترجمة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__source_text
+msgid "Source Text"
+msgstr "النص المصدر"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__chosen_translation
+msgid "Chosen Translation"
+msgstr "الترجمة المختارة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__suggestion_ids
+msgid "Suggestions"
+msgstr "الاقتراحات"
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_suggest_translation_wizard_line
+msgid "Translation Suggestion"
+msgstr "اقتراح الترجمة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__suggestion
+msgid "Suggested Translation"
+msgstr "الترجمة المقترحة"
+
+#. ============================================================
+#. View labels & buttons
+#. ============================================================
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Load / Reload PO File"
+msgstr "تحميل / إعادة تحميل ملف PO"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Reload PO File"
+msgstr "إعادة تحميل ملف PO"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Auto-Translate All"
+msgstr "ترجمة الكل تلقائياً"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Save & Import into Odoo"
+msgstr "حفظ واستيراد إلى Odoo"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى المسودة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Module & Languages"
+msgstr "الوحدة واللغات"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Progress"
+msgstr "التقدم"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Suggest"
+msgstr "اقتراح"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Get Translation Suggestions"
+msgstr "الحصول على اقتراحات الترجمة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Progress %"
+msgstr "نسبة التقدم %"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Last Updated"
+msgstr "آخر تحديث"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "Get Suggestions"
+msgstr "الحصول على اقتراحات"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Start a Translation Session"
+msgstr "بدء جلسة ترجمة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Open Session"
+msgstr "فتح الجلسة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Auto-Translate on Open (requires deep-translator)"
+msgstr "ترجمة تلقائية عند الفتح (يتطلب deep-translator)"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select an installed module..."
+msgstr "اختر وحدة مثبتة..."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select target language..."
+msgstr "اختر اللغة الهدف..."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select source language..."
+msgstr "اختر اللغة المصدر..."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Optional session name"
+msgstr "اسم الجلسة (اختياري)"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Translation Suggestions"
+msgstr "اقتراحات الترجمة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Fetch Suggestions"
+msgstr "جلب الاقتراحات"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Use This"
+msgstr "استخدام هذا"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Select a suggestion above or type here..."
+msgstr "اختر اقتراحاً من الأعلى أو اكتب هنا..."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Translation to Apply"
+msgstr "الترجمة المراد تطبيقها"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Term"
+msgstr "المصطلح"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.action_translation_session
+msgid "No translation sessions yet."
+msgstr "لا توجد جلسات ترجمة بعد."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.action_translation_session
+msgid "Use the Quick Translate button to start a new translation session for any installed module."
+msgstr "استخدم زر الترجمة السريعة لبدء جلسة ترجمة جديدة لأي وحدة مثبتة."
+
+#. ============================================================
+#. Python / UserError / Notification messages
+#. ============================================================
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "%d terms loaded from %s"
+msgstr "تم تحميل %d مصطلح من %s"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "%d terms translated."
+msgstr "تمت ترجمة %d مصطلح."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Auto-Translate Complete"
+msgstr "اكتملت الترجمة التلقائية"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Auto-Translate"
+msgstr "ترجمة تلقائية"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No untranslated terms found."
+msgstr "لا توجد مصطلحات غير مترجمة."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Translation Started"
+msgstr "بدأت الترجمة"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "%d terms queued for background translation. The page will refresh automatically."
+msgstr "تمت جدولة %d مصطلح للترجمة في الخلفية. سيتم تحديث الصفحة تلقائياً."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+#, python-format
+msgid "Google Translate error: %s"
+msgstr "خطأ في Google Translate: %s"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Module \"%s\" not found on this server."
+msgstr "الوحدة \"%s\" غير موجودة على هذا الخادم."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "No translatable terms found in module \"%s\"."
+msgstr "لا توجد مصطلحات قابلة للترجمة في الوحدة \"%s\"."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "PO File Loaded"
+msgstr "تم تحميل ملف PO"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "Please select or enter a translation."
+msgstr "يرجى اختيار ترجمة أو إدخالها."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Import Complete"
+msgstr "اكتمل الاستيراد"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Source code scanned but no translatable terms found in \"%s\"."
+msgstr "تم فحص الكود المصدري ولم يُعثر على مصطلحات قابلة للترجمة في \"%s\"."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "Source text is empty."
+msgstr "النص المصدر فارغ."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Translations saved to %s and imported into Odoo."
+msgstr "تم حفظ الترجمات في %s واستيرادها إلى Odoo."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "The deep_translator Python package is required for auto-translation.\n\nInstall it with:\n  pip install deep-translator"
+msgstr "حزمة Python المسماة deep_translator مطلوبة للترجمة التلقائية.\n\nقم بتثبيتها بالأمر:\n  pip install deep-translator"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "The deep_translator Python package is required.\n\nInstall it with:  pip install deep-translator"
+msgstr "حزمة Python المسماة deep_translator مطلوبة.\n\nقم بتثبيتها بالأمر: pip install deep-translator"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Language \"%s\" is not installed in Odoo.\nGo to Settings → Translations → Languages to add it first."
+msgstr "اللغة \"%s\" غير مثبتة في Odoo.\nاذهب إلى الإعدادات ← الترجمات ← اللغات لإضافتها أولاً."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No PO/POT file found. The i18n/ directory was created. You can add terms manually."
+msgstr "لم يُعثر على ملف PO أو POT. تم إنشاء مجلد i18n/. يمكنك إضافة المصطلحات يدوياً."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/quick_translate_wizard.py:0
+msgid "Translation Session"
+msgstr "جلسة الترجمة"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/quick_translate_wizard.py:0
+msgid "Translation Suggestions"
+msgstr "اقتراحات الترجمة"
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__name
+msgid "New Session"
+msgstr "جلسة جديدة"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Module \"%s\" is a standard Odoo module — translations were applied directly to the database without modifying any files."
+msgstr "الوحدة \"%s\" هي وحدة Odoo قياسية — تم تطبيق الترجمات مباشرةً على قاعدة البيانات دون تعديل أي ملفات."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "This will reload all terms from the PO file and discard unsaved changes. Continue?"
+msgstr "سيؤدي هذا إلى إعادة تحميل جميع المصطلحات من ملف PO وتجاهل التغييرات غير المحفوظة. هل تريد المتابعة؟"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "This will reload all terms and discard current changes. Continue?"
+msgstr "سيؤدي هذا إلى إعادة تحميل جميع المصطلحات وتجاهل التغييرات الحالية. هل تريد المتابعة؟"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Auto-translate all untranslated terms using Google Translate?"
+msgstr "ترجمة جميع المصطلحات غير المترجمة تلقائياً باستخدام Google Translate؟"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Save translations to file and import into Odoo?"
+msgstr "حفظ الترجمات في الملف واستيرادها إلى Odoo؟"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Note:"
+msgstr "ملاحظة:"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Auto-translate requires the deep-translator Python package. Install it with: pip install deep-translator"
+msgstr "الترجمة التلقائية تتطلب حزمة Python المسماة deep-translator. قم بتثبيتها بالأمر: pip install deep-translator"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.action_translation_session
+msgid "Click Quick Translate in the top menu to start a new translation session for any installed module."
+msgstr "انقر على «ترجمة سريعة» في القائمة العلوية لبدء جلسة ترجمة جديدة لأي وحدة مثبتة."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "⏳ Translating…"
+msgstr "⏳ جارٍ الترجمة…"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Rescan Source"
+msgstr "إعادة فحص كود الوحدة"
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Re-scan the module source code and add any new untranslated terms?"
+msgstr "إعادة فحص كود الوحدة المصدري وإضافة أي مصطلحات جديدة غير مترجمة؟"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Rescan Complete"
+msgstr "اكتمل إعادة الفحص"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "%d new terms added from source code."
+msgstr "تمت إضافة %d مصطلح جديد من الكود المصدري."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No new terms found — session is up to date."
+msgstr "لا توجد مصطلحات جديدة — الجلسة محدّثة."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Stopped"
+msgstr "تم الإيقاف"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Background translation has been stopped."
+msgstr "تم إيقاف الترجمة في الخلفية."
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Background translation stopped by user."
+msgstr "تم إيقاف الترجمة في الخلفية من قِبل المستخدم."
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Stop Translation"
+msgstr "إيقاف الترجمة"

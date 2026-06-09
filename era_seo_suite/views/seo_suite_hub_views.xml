@@ -870,7 +870,6 @@
                 <group string="Auto-publish settings">
                   <field name="setting_article_generator_active"
                          widget="boolean_toggle"/>
-                  <field name="setting_article_model"/>
                   <field name="setting_article_interval_days"
                          invisible="not setting_article_generator_active"/>
                   <field name="setting_trends_geo"
@@ -880,33 +879,22 @@
                          placeholder="en_US / ar_001 (blank = auto-detect)"
                          invisible="not setting_article_generator_active"/>
                 </group>
-                <group string="Image generation"
+                <group string="AI accounts (from AI ▸ AI Accounts)"
                        invisible="not setting_article_generator_active">
-                  <field name="setting_image_provider"/>
-                  <field name="setting_image_api_key" password="True"
-                         invisible="setting_image_provider != 'openai'"
-                         placeholder="blank = reuse the AI agent's OpenAI key"/>
-                  <field name="setting_image_openrouter_key" password="True"
-                         invisible="setting_image_provider != 'openrouter'"
-                         placeholder="OpenRouter API key (openrouter.ai/keys)"/>
-                  <field name="setting_image_model"
-                         invisible="setting_image_provider == 'none'"
-                         placeholder="gpt-image-2 / google/gemini-2.5-flash-image-preview"/>
-                  <field name="setting_image_quality"
-                         invisible="setting_image_provider != 'openai'"/>
-                  <field name="setting_image_size"
-                         invisible="setting_image_provider == 'none'"/>
-                  <div class="text-muted small" colspan="2"
-                       invisible="setting_image_provider == 'none'">
-                    OpenAI is the default and works out of the box.
-                    Switch to OpenRouter only if you have an OpenRouter
-                    key and want to use a different image-capable model
-                    (e.g. Google's Nano Banana).
+                  <field name="setting_content_account_id"
+                         options="{'no_create': True, 'no_open': True}"/>
+                  <field name="setting_image_account_id"
+                         options="{'no_create': True, 'no_open': True}"/>
+                  <div class="text-muted small" colspan="2">
+                    Pick the accounts to use — provider, key and model are configured
+                    once on the account itself. The <b>content</b> account writes the
+                    article; the <b>image</b> account generates the cover (e.g. a
+                    Cloudflare Workers AI account for free FLUX images — the Claude CLI
+                    cannot make images). Leave the image account empty to skip the cover.
                   </div>
                 </group>
                 <group string="Status">
                   <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>
-                  <field name="setting_article_agent_name"/>
                 </group>
               </group>
 

@@ -2706,27 +2706,67 @@ class EraSeoSuiteHub(models.Model):
             url=full_url,
         )
 
-    def _generate_article_image(self, prompt):
-        """Return raw image bytes (PNG/JPEG) for the article's hero, or
-        None to skip.
+    # --- era_ai_accounts integration (Blog Gen) ------------------------------
+    setting_content_account_id = fields.Many2one(
+        'era.ai.account', string='Article content account',
+        compute='_compute_ai_accounts', inverse='_inverse_content_account',
+        help="AI account (AI ▸ AI Accounts) used to WRITE the article. The "
+             "provider/model are configured once on the account itself.")
+    setting_image_account_id = fields.Many2one(
+        'era.ai.account', string='Image generation account',
+        compute='_compute_ai_accounts', inverse='_inverse_image_account',
+        help="AI account used to generate the article COVER image (e.g. a "
+             "Cloudflare Workers AI account for free FLUX images). Leave empty to "
+             "publish without a cover — the Claude CLI proxy cannot make images.")
 
-        Dispatches on the `era_seo.image_provider` ICP setting:
-          - 'none'       → returns None
-          - 'openai'     → OpenAI's image-generation API (DALL-E / gpt-image-1)
-          - 'openrouter' → OpenRouter (any image-capable model)
+    def _compute_ai_accounts(self):
+        for rec in self:
+            rec.setting_content_account_id = rec._resolve_ai_account('era_seo.content_account_id').id
+            rec.setting_image_account_id = rec._resolve_ai_account('era_seo.image_account_id').id
 
-        Override this method in a custom addon for additional providers;
-        return raw bytes or None.
-        """
+    def _inverse_content_account(self):
         ICP = self.env['ir.config_parameter'].sudo()
-        provider = (
-            ICP.get_param('era_seo.image_provider', 'none') or 'none'
-        ).strip().lower()
-        if provider == 'openai':
-            return self._generate_image_openai(prompt)
-        if provider == 'openrouter':
-            return self._generate_image_openrouter(prompt)
-        return None
+        for rec in self:
+            ICP.set_param('era_seo.content_account_id', str(rec.setting_content_account_id.id or ''))
+
+    def _inverse_image_account(self):
+        ICP = self.env['ir.config_parameter'].sudo()
+        for rec in self:
+            ICP.set_param('era_seo.image_account_id', str(rec.setting_image_account_id.id or ''))
+
+    def _resolve_ai_account(self, icp_key):
+        """Browse the era.ai.account referenced by an ICP key (empty if unset/stale)."""
+        Acc = self.env['era.ai.account'].sudo()
+        raw = self.env['ir.config_parameter'].sudo().get_param(icp_key)
+        if not raw:
+            return Acc.browse()
+        try:
+            acc = Acc.browse(int(raw))
+        except (TypeError, ValueError):
+            return Acc.browse()
+        return acc if acc.exists() else Acc.browse()
+
+    def _resolve_image_account(self):
+        return self._resolve_ai_account('era_seo.image_account_id')
+
+    def _generate_article_image(self, prompt):
+        """Return raw image bytes (PNG/JPEG) for the article's hero, or None.
+
+        Uses the era_ai_accounts **image account** picked in Blog Gen (e.g. a
+        Cloudflare Workers AI / FLUX account). No external fallback: if no image
+        account is configured, the post is published without a cover.
+        """
+        acc = self._resolve_image_account()
+        if not acc:
+            _logger.info('image-gen: no image account set (Blog Gen → Image '
+                         'generation account); publishing without a cover.')
+            return None
+        try:
+            return acc.generate_image(prompt)
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning('image-gen: account %s (%s) failed: %s',
+                            acc.id, acc.name, exc)
+            return None
 
     def _generate_image_openrouter(self, prompt):
         """Call OpenRouter for an image-capable model and return raw bytes.

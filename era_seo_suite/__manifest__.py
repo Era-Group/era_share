@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.1.10',
+    'version': '19.0.3.2.0',
     'depends': [
     'base',
     'web',
@@ -28,6 +28,10 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'portal',
     'website_blog',
     'ai',
+    # Blog Gen picks an era.ai.account for article content and one for images
+    # (account.generate_text / account.generate_image) instead of per-module
+    # provider/key/model settings.
+    'era_ai_accounts',
     # NB: intentionally NOT depending on 'ai_crm' (it would drag in the whole
     # CRM application). ai_crm makes ai.agent.source_id required via
     # utm.source.mixin, but it is auto_install gated on ai_app + crm: an

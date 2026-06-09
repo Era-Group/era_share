@@ -363,6 +363,21 @@ class AIUnavailable(Exception):
     """Raised when the AI app isn't installed, not enabled, or no agent is set."""
 
 
+class _AccountAgent:
+    """Adapter that lets an ``era.ai.account`` stand in for an ``ai.agent`` on the
+    article path. Exposes the same ``get_direct_response(prompt, context_message)``
+    contract, generating content via ``account.generate_text`` (the account is
+    picked in Blog Gen → "Article content account").
+    """
+
+    def __init__(self, account):
+        self._account = account
+
+    def get_direct_response(self, prompt, context_message="", enable_html_response=False):
+        text = self._account.generate_text(prompt, system=context_message or "")
+        return [text or ""]
+
+
 # Process-wide cache of agent-id values we've already warned about. Resets at
 # every worker restart, which is when an admin would re-check the log anyway.
 _STALE_AGENT_WARNED = set()
@@ -438,12 +453,29 @@ class AIClient:
         fallback = Agent._get_potential_ask_ai_agent()
         return fallback or Agent.browse()
 
+    def _resolve_content_account(self):
+        """The era_ai_accounts content account picked in Blog Gen, or None."""
+        Acc = self.env.get('era.ai.account')
+        if Acc is None:
+            return None
+        raw = _icp(self.env, 'era_seo.content_account_id')
+        if not raw:
+            return None
+        try:
+            acc = Acc.sudo().browse(int(raw))
+        except (TypeError, ValueError):
+            return None
+        return acc if acc.exists() else None
+
     def _resolve_article_agent(self):
-        """Return the DEDICATED blog-article agent — kept separate from the SEO
-        Fixer so articles can run on a different (fast) model without changing
-        SEO suggest/apply. Resolution: the era_seo.article_agent_id override,
-        then the shipped era_seo_suite.agent_article record, then the SEO agent.
+        """Return the DEDICATED blog-article writer. Resolution: the era_ai_accounts
+        content account picked in Blog Gen (wrapped so it quacks like an agent),
+        then the era_seo.article_agent_id override, then the shipped
+        era_seo_suite.agent_article record, then the SEO agent.
         """
+        acc = self._resolve_content_account()
+        if acc:
+            return _AccountAgent(acc)
         Agent = self.env['ai.agent'].sudo()
         aid = _icp(self.env, 'era_seo.article_agent_id')
         if aid:

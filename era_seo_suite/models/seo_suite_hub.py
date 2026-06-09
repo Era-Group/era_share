@@ -110,7 +110,7 @@ class EraSeoSuiteHub(models.Model):
 
     # Content — what's been written / generated.
     kpi_blog_posts_total = fields.Integer(
-        string='Blog posts', compute='_compute_kpis')
+        string='Blog posts (total)', compute='_compute_kpis')
     kpi_blog_posts_ai_generated = fields.Integer(
         string='AI-generated blog posts', compute='_compute_kpis')
     kpi_blog_posts_30d = fields.Integer(

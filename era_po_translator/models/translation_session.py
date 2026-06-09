@@ -423,9 +423,26 @@ class TranslationSession(models.Model):
 
         # Clear the ORM cache so the cron cursor doesn't flush stale computed
         # field values (translated_count etc.) and conflict with our commits.
-        self.env.invalidate_all()
-        # Post to chatter using the cron cursor (no ir.cron write, so safe)
-        self.message_post(body=_('%d terms translated.') % count)
+        # The loop can run for minutes (one network call per term), long enough
+        # that the cron's own cursor may already be closed here — so post the
+        # completion chatter defensively and never let a dead cursor turn a
+        # successful, already-committed run into a cron ERROR.
+        try:
+            self.env.invalidate_all()
+            self.message_post(body=_('%d terms translated.') % count)
+        except Exception as exc:  # noqa: BLE001 — cron cursor may be closed after a long run
+            _logger.warning(
+                'Auto-translate: completion chatter on the cron cursor failed '
+                '(%s); retrying on a fresh cursor. %d terms were translated and '
+                'committed.', exc, count)
+            try:
+                with self.pool.cursor() as post_cr:
+                    self.with_env(self.env(cr=post_cr)).message_post(
+                        body=_('%d terms translated.') % count)
+                    post_cr.commit()
+            except Exception as exc2:  # noqa: BLE001
+                _logger.warning(
+                    'Auto-translate: completion chatter retry also failed: %s', exc2)
         _logger.info('Background auto-translate finished: %d terms for session %d',
                      count, session_id)
 

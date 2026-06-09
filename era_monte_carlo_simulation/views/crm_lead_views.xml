@@ -13,7 +13,7 @@
                      groups="era_monte_carlo_simulation.group_monte_carlo_user"
                      invisible="type == 'lead' or not expected_revenue">
                     <field name="mc_run_id" invisible="1"/>
-                    <i class="fa fa-cubes text-info"/>
+                    <i class="fa fa-cubes text-info" title="Monte Carlo forecast" role="img" aria-label="Monte Carlo forecast"/>
                     <field name="mc_forecast" nolabel="1" readonly="1" class="oe_inline"/>
                     <button name="action_monte_carlo_simulate" type="object"
                             string="Recompute" icon="fa-dice"

@@ -266,12 +266,29 @@ class EraAiAccount(models.Model):
         img = self.model_ids.filtered(lambda m: m.kind == "image" and m.active)
         return img[0].model_id if img else CLOUDFLARE_DEFAULT_IMAGE_MODEL
 
-    def generate_image(self, prompt, model=None, steps=4):
+    @staticmethod
+    def _cf_default_steps(model):
+        """Sensible inference steps per Cloudflare image model family.
+
+        FLUX.1-schnell / SDXL-Lightning are distilled (few steps); FLUX.2 [dev]
+        is the full model and needs many more steps for good quality, while the
+        FLUX.2 [klein] distilled variants sit in between.
+        """
+        m = model or ""
+        if "flux-2-dev" in m:
+            return 28
+        if "flux-2-klein" in m:
+            return 8
+        return 4  # flux-1-schnell, sdxl-lightning
+
+    def generate_image(self, prompt, model=None, steps=None, width=1024, height=1024):
         """Generate an image and return the raw bytes (PNG/JPEG), or raise.
 
-        Currently implemented for Cloudflare Workers AI (FLUX.1-schnell / SDXL).
-        Cloudflare returns either JSON ``{"result": {"image": "<base64>"}}`` or
-        raw image bytes depending on the model — both are handled.
+        Cloudflare Workers AI. Two request shapes exist and are NOT interchangeable:
+        FLUX.1-schnell / SDXL take a JSON body ``{"prompt", "steps"}``, while the
+        newer FLUX.2 models REQUIRE ``multipart/form-data`` (prompt/steps/width/
+        height) — sending JSON to FLUX.2 fails with 'required properties … multipart'.
+        The response is JSON with the image as base64 (``result.image`` or ``image``).
         """
         self.ensure_one()
         self._assert_usable()
@@ -283,18 +300,33 @@ class EraAiAccount(models.Model):
         if not token:
             raise UserError(_("Set the Cloudflare API token on account '%s'.", self.name))
         model = model or self._default_image_model()
+        if steps is None:
+            steps = self._cf_default_steps(model)
         try:
-            steps = max(1, min(8, int(steps or 4)))
+            steps = max(1, min(50, int(steps)))
         except (TypeError, ValueError):
-            steps = 4
+            steps = self._cf_default_steps(model)
+        url = self._cloudflare_run_url(model)
+        prompt = (prompt or "")[:2048]
+        auth = {"Authorization": "Bearer %s" % token}
         try:
-            resp = requests.post(
-                self._cloudflare_run_url(model),
-                headers={"Authorization": "Bearer %s" % token,
-                         "Content-Type": "application/json"},
-                json={"prompt": (prompt or "")[:2048], "steps": steps},
-                timeout=90,
-            )
+            if "flux-2" in model:
+                # FLUX.2 unified input: multipart/form-data. Let requests set the
+                # Content-Type (with boundary) by passing files=.
+                resp = requests.post(
+                    url, headers=auth, timeout=120,
+                    files={
+                        "prompt": (None, prompt),
+                        "steps": (None, str(steps)),
+                        "width": (None, str(int(width))),
+                        "height": (None, str(int(height))),
+                    },
+                )
+            else:
+                resp = requests.post(
+                    url, headers=dict(auth, **{"Content-Type": "application/json"}),
+                    json={"prompt": prompt, "steps": steps}, timeout=120,
+                )
         except requests.exceptions.RequestException as exc:
             raise UserError(_("Cloudflare image request failed: %s", exc))
         if resp.status_code >= 400:
@@ -304,7 +336,7 @@ class EraAiAccount(models.Model):
             data = resp.json()
             if not data.get("success", True):
                 raise UserError(_("Cloudflare image error: %s", data.get("errors") or "unknown"))
-            b64 = (data.get("result") or {}).get("image")
+            b64 = (data.get("result") or {}).get("image") or data.get("image")
             if not b64:
                 raise UserError(_("Cloudflare returned no image data."))
             import base64  # local import; only used here

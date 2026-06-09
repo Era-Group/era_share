@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Manager-only settings tab for the AI protection layers (Change 1).
+         The whole app block is gated to the AI manager group, and the two
+         compliance toggles carry a visible PDPL warning. -->
+    <record id="res_config_settings_view_form_crm_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crm.ai.agents</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="CRM AI Agents" string="CRM AI Agents"
+                     name="era_crm_ai_agents_base"
+                     groups="era_crm_ai_agents_base.group_crm_ai_manager">
+                    <block title="Operational Layers"
+                           name="era_crm_ai_operational">
+                        <setting string="AI Cost Cap (Rule 14)"
+                                 help="Enforce the hard monthly cost cap before any spend.">
+                            <field name="era_enable_cost_cap"/>
+                        </setting>
+                        <setting string="Detailed Audit Log (Rule 20)"
+                                 help="Record an audit row for every AI request and decision.">
+                            <field name="era_enable_audit"/>
+                        </setting>
+                        <setting string="Block Unpriced Models (Rule 14 fail-safe)"
+                                 help="Block AI calls whose model has no price in the rate card, so cost is never silently uncounted.">
+                            <field name="era_block_unpriced_model"/>
+                        </setting>
+                    </block>
+                    <block title="Compliance Layers (PDPL)"
+                           name="era_crm_ai_compliance">
+                        <setting string="PII Redaction"
+                                 help="PDPL: mask personal data before it is sent to an international AI provider, and restore it on the response. Turning this OFF sends unredacted personal data abroad and is audited.">
+                            <field name="era_enable_pii_redaction"/>
+                        </setting>
+                        <setting string="Consent Check"
+                                 help="PDPL: block AI calls carrying a customer's personal data unless they consented to international processing. Turning this OFF is audited.">
+                            <field name="era_enable_consent_check"/>
+                        </setting>
+                        <div class="text-warning mt-2">
+                            Disabling a compliance layer sends personal data to a
+                            non-Saudi AI provider without PDPL protection. Each
+                            change is recorded in the AI audit log.
+                        </div>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

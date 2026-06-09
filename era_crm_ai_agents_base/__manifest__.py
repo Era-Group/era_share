@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA CRM AI Agents — Base",
-    "version": "19.0.2.0.0",
+    "version": "19.0.3.0.0",
     "category": "CRM",
     "summary": "Shared infrastructure for the Era CRM AI Agents suite",
     "description": (
@@ -44,6 +44,7 @@
         "views/crm_ai_approval_views.xml",
         "views/crm_ai_dashboard_views.xml",
         "views/res_partner_views.xml",
+        "views/res_config_settings_views.xml",
         # Menus last — all actions must be defined before they are referenced.
         "views/crm_ai_agents_menus.xml",
         # Data

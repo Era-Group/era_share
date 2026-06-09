@@ -56,6 +56,45 @@ _NATIVE_UI_KEY_PARAM = {
     "google": "ai.google_key",
 }
 
+# Configurable protection layers (Change 1). ir.config_parameter, all default ON.
+#   Operational (toggle freely): enable_cost_cap, enable_audit.
+#   Compliance / PDPL (friction): enable_pii_redaction, enable_consent_check —
+#     changed only via the manager-only Settings field, audited on True->False,
+#     and warning-logged on EVERY call while off (see _compliance_on).
+# The env-only-key assertion (Rule 03) is NOT a toggle; it is always enforced.
+_FLAG_PREFIX = "era_crm_ai_agents."
+
+
+def _flag(env, name, default=True):
+    """Read a boolean protection toggle from ir.config_parameter (default ON)."""
+    raw = env["ir.config_parameter"].sudo().get_param(_FLAG_PREFIX + name)
+    if raw in (None, ""):
+        return default
+    return str(raw).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _compliance_on(env, name):
+    """Read a COMPLIANCE toggle and warn LOUDLY on every call while it is off.
+
+    PDPL protection must never be disabled *silently*: even if the underlying
+    config param was flipped outside the manager Settings UI, every call made
+    while a compliance layer is off emits this warning.
+    """
+    on = _flag(env, name)
+    if not on:
+        _logger.warning(
+            "PDPL: %s%s is DISABLED — data is being sent to an international AI "
+            "provider WITHOUT this protection for this call.", _FLAG_PREFIX, name)
+    return on
+
+
+def _model_is_priced(env, llm_model):
+    """True if the rate card (crm.ai.model) has an active price for this code."""
+    if "crm.ai.model" not in env or not llm_model:
+        return False
+    return bool(env["crm.ai.model"].sudo().search_count(
+        [("code", "=", llm_model), ("active", "=", True)]))
+
 
 # ======================================================================
 # Install
@@ -184,30 +223,70 @@ def _guard_text(service, call, llm_model, system_prompts, user_prompts):
 
 
 def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
-    """OUR agents — full PDPL + cap enforcement; hard-block on any gap."""
-    capped = _enforce_cost_cap(env, agent, record)      # Rule 14 (pre-spend)
-    if capped is not None:
-        return capped
-    # Consent gate (PDPL): if real PII is present, every involved partner must
-    # have consented to international processing — else block (never send).
-    if redactor.has_values() and not _all_consented(_consent_partners(record) or []):
+    """OUR agents — full enforcement, each layer behind its toggle (all default
+    ON). Compliance layers warn-on-every-call when disabled; operational layers
+    toggle silently."""
+    cap_on = _flag(env, "enable_cost_cap")              # operational
+    audit_on = _flag(env, "enable_audit")               # operational
+    redaction_on = _compliance_on(env, "enable_pii_redaction")
+    consent_on = _compliance_on(env, "enable_consent_check")
+
+    if cap_on:                                          # Rule 14 (pre-spend)
+        capped = _enforce_cost_cap(env, agent, record)
+        if capped is not None:
+            return capped
+
+    # Consent gate (PDPL): real PII present -> every partner must have consented.
+    if consent_on and redactor.has_values() and \
+            not _all_consented(_consent_partners(record) or []):
         return _block(env, record, "blocked_no_consent", {}, text=True)
-    masked_system, leftover_s = _mask_all(redactor, sys_in)
-    masked_user, leftover_u = _mask_all(redactor, usr_in)
-    leftover = leftover_s + leftover_u
-    if leftover:                                        # fail-safe: unmapped PII
-        return _block(env, record, "blocked_unmapped_pii",
-                      {"patterns": [k for k, _ in leftover]}, text=True)
-    _audit(env, "ai_request", agent, record,
-           {"model": llm_model, "scope": "agent"},
-           {"decision": "allowed", "pii_tokens": len(redactor.mapping)})
+
+    # Record-driven redaction (PDPL). When off, prompts go out unmasked (warned).
+    if redaction_on:
+        masked_system, leftover_s = _mask_all(redactor, sys_in)
+        masked_user, leftover_u = _mask_all(redactor, usr_in)
+        leftover = leftover_s + leftover_u
+        if leftover:                                    # fail-safe: unmapped PII
+            return _block(env, record, "blocked_unmapped_pii",
+                          {"patterns": [k for k, _ in leftover]}, text=True)
+    else:
+        masked_system, masked_user = sys_in, usr_in
+
+    # Unpriced-model fail-safe (Rule 14): a model with no rate-card price must
+    # NOT silently cost 0. Only meaningful while the cap is active and we have an
+    # agent to attribute cost to.
+    unpriced = False
+    if cap_on and agent and not _model_is_priced(env, llm_model):
+        unpriced = True
+        _logger.warning("Rule 14: model %r has no active price in the rate card "
+                        "(crm.ai.model); cost cannot be computed.", llm_model)
+        if _flag(env, "block_unpriced_model", default=True):
+            return _block(env, record, "unpriced_model",
+                          {"model": llm_model}, text=True, event="unpriced_model")
+        _audit(env, "unpriced_model", agent, record,
+               {"model": llm_model}, {"decision": "allowed_unpriced"},
+               event="unpriced_model")
+
+    if audit_on:
+        _audit(env, "ai_request", agent, record,
+               {"model": llm_model, "scope": "agent",
+                "redaction": redaction_on, "consent": consent_on},
+               {"decision": "allowed", "pii_tokens": len(redactor.mapping)})
+
     responses = call(masked_system, masked_user)       # outbound (PII masked)
-    try:
-        restored = [redactor.unmask(r) for r in (responses or [])]   # strict
-    except RedactionError as exc:
-        return _block(env, record, "redaction_reinsert_failed",
-                      {"error": str(exc)}, text=True)
-    _record_usage(env, agent, llm_model, sys_in + usr_in, restored)  # Rule 14 feed
+
+    if redaction_on:
+        try:
+            restored = [redactor.unmask(r) for r in (responses or [])]   # strict
+        except RedactionError as exc:
+            return _block(env, record, "redaction_reinsert_failed",
+                          {"error": str(exc)}, text=True)
+    else:
+        restored = responses or []
+
+    if cap_on:
+        _record_usage(env, agent, llm_model, sys_in + usr_in, restored,
+                      unpriced=unpriced)              # Rule 14 feed
     return restored
 
 
@@ -215,15 +294,23 @@ def _text_native(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
     """Native Ask-AI / ai_fields — best-effort record-PII masking + audit, NO
     hard block, so native features keep working. PII the redactor does not know
     about may egress here (accepted trade-off; see _is_our_agent_call)."""
-    masked_system, leftover_s = _mask_all(redactor, sys_in)
-    masked_user, leftover_u = _mask_all(redactor, usr_in)
-    unmapped = len(leftover_s) + len(leftover_u)
-    _audit(env, "ai_request", agent, record,
-           {"model": llm_model, "scope": "native"},
-           {"decision": "allowed_native",
-            "pii_tokens": len(redactor.mapping),
-            "unmapped_pii_seen": unmapped})
+    redaction_on = _compliance_on(env, "enable_pii_redaction")
+    if redaction_on:
+        masked_system, leftover_s = _mask_all(redactor, sys_in)
+        masked_user, leftover_u = _mask_all(redactor, usr_in)
+        unmapped = len(leftover_s) + len(leftover_u)
+    else:
+        masked_system, masked_user = sys_in, usr_in
+        unmapped = 0
+    if _flag(env, "enable_audit"):
+        _audit(env, "ai_request", agent, record,
+               {"model": llm_model, "scope": "native"},
+               {"decision": "allowed_native",
+                "pii_tokens": len(redactor.mapping),
+                "unmapped_pii_seen": unmapped})
     responses = call(masked_system, masked_user)
+    if not redaction_on:
+        return responses or []
     # Best-effort restore; never withhold native output, never raise.
     return [redactor.unmask(r, strict=False) for r in (responses or [])]
 
@@ -237,27 +324,31 @@ def _guard_embedding(service, call, input):
     agent = _resolve_agent(env)
     redactor = _build_redactor(record)
     our = _is_our_agent_call(env)
-    if our and redactor.has_values() and not _all_consented(_consent_partners(record) or []):
+    redaction_on = _compliance_on(env, "enable_pii_redaction")
+    consent_on = _compliance_on(env, "enable_consent_check")
+    if our and consent_on and redactor.has_values() and \
+            not _all_consented(_consent_partners(record) or []):
         return _block(env, record, "blocked_no_consent", {"op": "embedding"},
                       text=False)
     items = input if isinstance(input, list) else [input]
     masked = []
     leftover_all = []
     for item in items:
-        if isinstance(item, str):
+        if isinstance(item, str) and redaction_on:
             m, leftover = redactor.mask(item)
             masked.append(m)
             leftover_all += leftover
         else:
-            masked.append(item)  # token-id inputs: nothing to redact
-    if our and leftover_all:                            # hard-block: our agents only
+            masked.append(item)  # token-id inputs / redaction-off: leave as-is
+    if our and redaction_on and leftover_all:           # hard-block: our agents only
         return _block(env, record, "blocked_unmapped_pii",
                       {"patterns": [k for k, _ in leftover_all]}, text=False)
-    _audit(env, "ai_request", agent, record,
-           {"op": "embedding", "scope": "agent" if our else "native"},
-           {"decision": "allowed" if our else "allowed_native",
-            "pii_tokens": len(redactor.mapping),
-            "unmapped_pii_seen": 0 if our else len(leftover_all)})
+    if _flag(env, "enable_audit"):
+        _audit(env, "ai_request", agent, record,
+               {"op": "embedding", "scope": "agent" if our else "native"},
+               {"decision": "allowed" if our else "allowed_native",
+                "pii_tokens": len(redactor.mapping),
+                "unmapped_pii_seen": 0 if our else len(leftover_all)})
     return call(masked if isinstance(input, list) else masked[0])
 
 
@@ -268,16 +359,20 @@ def _guard_transcription(service, call):
     _assert_env_only_key(service)                       # GLOBAL (Rule 03)
     record = _resolve_record(env)
     agent = _resolve_agent(env)
+    audit_on = _flag(env, "enable_audit")
     if _is_our_agent_call(env):
-        partners = _consent_partners(record)
-        if not partners or not _all_consented(partners):
-            return _block(env, record, "blocked_no_consent",
-                          {"op": "transcription"}, text=False)
-        _audit(env, "ai_request", agent, record,
-               {"op": "transcription", "scope": "agent"}, {"decision": "allowed"})
+        if _compliance_on(env, "enable_consent_check"):
+            partners = _consent_partners(record)
+            if not partners or not _all_consented(partners):
+                return _block(env, record, "blocked_no_consent",
+                              {"op": "transcription"}, text=False)
+        if audit_on:
+            _audit(env, "ai_request", agent, record,
+                   {"op": "transcription", "scope": "agent"}, {"decision": "allowed"})
         return call()
-    _audit(env, "ai_request", agent, record,
-           {"op": "transcription", "scope": "native"}, {"decision": "allowed_native"})
+    if audit_on:
+        _audit(env, "ai_request", agent, record,
+               {"op": "transcription", "scope": "native"}, {"decision": "allowed_native"})
     return call()
 
 
@@ -470,15 +565,21 @@ def _block_message(decision):
         "cost_cap_exceeded": (
             "This AI agent has hit its monthly cost cap and has been paused "
             "(Rule 14)."),
+        "unpriced_model": (
+            "This AI model has no price in the rate card, so its cost cannot be "
+            "tracked against the cap. The request was blocked (Rule 14). Add a "
+            "price for it under CRM AI → Configuration → Models."),
     }.get(decision, "The AI request was blocked by the compliance guard.")
 
 
-def _record_usage(env, agent, llm_model, in_texts, out_texts):
+def _record_usage(env, agent, llm_model, in_texts, out_texts, unpriced=False):
     """Estimate tokens (native does not return counts here) and record usage.
 
     Token estimate matches Odoo's own heuristic (~1 token / 4 chars). Cost is
-    priced from the crm.ai.model catalog by model code. Skipped when no agent is
-    in context (e.g. Odoo's own AI features) — those have no cost bucket here.
+    priced from the slim rate card (crm.ai.model) by model code. When the model
+    is unpriced (and the call was allowed anyway), cost is 0 and the usage row is
+    flagged so a manager can spot it and add a price. Skipped when no agent is in
+    context (e.g. Odoo's own AI features).
     """
     if not agent or "crm.ai.usage" not in env:
         return
@@ -488,10 +589,11 @@ def _record_usage(env, agent, llm_model, in_texts, out_texts):
     if "crm.ai.model" in env and llm_model:
         model = env["crm.ai.model"].sudo().search([("code", "=", llm_model)], limit=1)
     cost = 0.0
-    if model:
+    if model and not unpriced:
         cost = (in_tok / 1000.0) * (model.price_input_1k or 0.0) \
             + (out_tok / 1000.0) * (model.price_output_1k or 0.0)
     try:
-        env["crm.ai.usage"].record(agent, model or False, in_tok, out_tok, cost)
+        env["crm.ai.usage"].record(agent, model or False, in_tok, out_tok, cost,
+                                   unpriced=unpriced)
     except Exception:  # pragma: no cover
         _logger.exception("AI guard: failed to record usage.")

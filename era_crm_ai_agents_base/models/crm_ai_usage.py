@@ -58,6 +58,12 @@ class CrmAiUsage(models.Model):
         default=lambda self: self.env.company.currency_id.id,
     )
     cost = fields.Monetary(string="Cost", currency_field="currency_id")
+    unpriced = fields.Boolean(
+        string="Unpriced",
+        help="The model used had no price in the rate card, so this call's cost "
+             "could not be computed (recorded as 0). A manager should add a "
+             "price for the model so the cap stays accurate (Rule 14).",
+    )
     # create_date is provided automatically by Odoo and is the month boundary.
 
     @api.depends("input_tokens", "output_tokens")
@@ -69,12 +75,13 @@ class CrmAiUsage(models.Model):
     # Recording
     # ------------------------------------------------------------------
     @api.model
-    def record(self, agent, model, in_tok, out_tok, cost):
+    def record(self, agent, model, in_tok, out_tok, cost, unpriced=False):
         """Create one usage row for an LLM call.
 
         Approved sudo elevation (create-only): AI users are read-only on this
         model, so record() sudo-creates. user_id is captured from the caller
-        before elevating so per-user visibility still works.
+        before elevating so per-user visibility still works. ``unpriced`` flags a
+        call whose model had no rate-card price (cost recorded as 0).
         """
         if not agent:
             raise ValueError("crm.ai.usage.record() requires an agent.")
@@ -85,6 +92,7 @@ class CrmAiUsage(models.Model):
             "input_tokens": int(in_tok or 0),
             "output_tokens": int(out_tok or 0),
             "cost": float(cost or 0.0),
+            "unpriced": bool(unpriced),
         })
 
     # ------------------------------------------------------------------

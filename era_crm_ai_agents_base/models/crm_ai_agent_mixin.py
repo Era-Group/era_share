@@ -67,7 +67,10 @@ class CrmAiAgentMixin(models.AbstractModel):
             unmappable PII, cost cap) — see services/ai_compliance_guard.py.
         """
         agent = self._get_agent_record()
-        model = self._select_model(sensitivity)
+        # Model selection lives on the agent (explicit code per sensitivity);
+        # provider is derived from the code. Pricing for Rule 14 comes from the
+        # rate card (crm.ai.model) by that code.
+        provider, code = agent._model_for_sensitivity(sensitivity)
 
         ctx = {CTX_AGENT: agent.tech_name}
         if record is not None:
@@ -75,29 +78,13 @@ class CrmAiAgentMixin(models.AbstractModel):
         if unattended:
             ctx[CTX_UNATTENDED] = True
 
-        service = LLMApiService(env=self.with_context(**ctx).env, provider=model.provider)
+        service = LLMApiService(env=self.with_context(**ctx).env, provider=provider)
         return service.request_llm(
-            model.code,
+            code,
             [system] if system else [],
             [prompt],
             temperature=0.2,
         )
-
-    def _select_model(self, sensitivity):
-        """Pick a catalog model for the sensitivity. 'high' -> advanced, else cheap.
-
-        Native AI supports OpenAI and Google only; the catalog is constrained to
-        those providers. Cost-safe default is the cheap tier (Rule 14).
-        """
-        tier = "advanced" if sensitivity == "high" else "cheap"
-        Model = self.env["crm.ai.model"]
-        model = Model.search(
-            [("tier", "=", tier), ("active", "=", True),
-             ("provider", "in", ("openai", "google"))], limit=1)
-        if not model:
-            raise UserError(
-                _("No active '%s' AI model is configured in the catalog.", tier))
-        return model
 
     def _check_cost_cap(self, agent=None):
         """Advisory pre-check: raise if this agent is paused/capped or over cap.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class CrmAiAgent(models.Model):
@@ -26,14 +27,20 @@ class CrmAiAgent(models.Model):
     )
     icon = fields.Binary(string="Icon", attachment=True)
 
-    # Forward reference: crm.ai.model is introduced in task 0.2. The module
-    # becomes installable once that model exists (install gate is task 0.10).
-    default_model_id = fields.Many2one(
-        comodel_name="crm.ai.model",
-        string="Default Model",
-        ondelete="set null",
-        help="Default LLM the agent uses unless the router overrides it by "
-             "task sensitivity.",
+    # Model SELECTION lives here (not in the rate card). Each agent declares the
+    # native model code(s) it uses; the provider is derived from the code. This
+    # is what makes "this agent uses gpt-4o for Arabic drafting" explicit and
+    # manager-configurable — and fixes the old catalog-ordering default.
+    model_code = fields.Char(
+        string="Model",
+        help="Native model code this agent uses by default (e.g. "
+             "'gpt-4.1-mini', 'gemini-2.5-flash'). Must be supported by Odoo "
+             "native AI and priced in the rate card (CRM AI → Models).",
+    )
+    model_code_advanced = fields.Char(
+        string="Advanced Model",
+        help="Optional native model code for high-sensitivity calls "
+             "(sensitivity='high'). Falls back to Model when empty.",
     )
 
     active = fields.Boolean(default=True)
@@ -137,3 +144,30 @@ class CrmAiAgent(models.Model):
             vals.setdefault("name", tech_name)
             agent = self.sudo().create(vals)
         return agent.with_env(self.env)
+
+    # ------------------------------------------------------------------
+    # Model selection (provider derived from the code)
+    # ------------------------------------------------------------------
+    @api.model
+    def _provider_for_code(self, code):
+        """Map a native model code to its Odoo-native provider."""
+        c = (code or "").lower()
+        if c.startswith("gemini") or c.startswith("google"):
+            return "google"
+        return "openai"  # gpt-*, o*, chatgpt-*, etc.
+
+    def _model_for_sensitivity(self, sensitivity):
+        """Return (provider, code) for this agent at the requested sensitivity.
+
+        'high' uses ``model_code_advanced`` when set, else ``model_code``.
+        Raises if the agent has no model configured (no silent default).
+        """
+        self.ensure_one()
+        code = self.model_code
+        if sensitivity == "high" and self.model_code_advanced:
+            code = self.model_code_advanced
+        if not code:
+            raise UserError(_(
+                "AI agent '%(name)s' has no model configured. Set its Model "
+                "(and optionally Advanced Model) on the agent.", name=self.name))
+        return self._provider_for_code(code), code

@@ -21,5 +21,30 @@
         global cap above.
         -->
 
+        <!-- Protection-layer toggles (Change 1). Seeded True so the manager
+             Settings checkboxes match the guard's default-ON behaviour. The
+             guard also treats a missing param as ON (fail-safe). -->
+        <record id="param_enable_cost_cap" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.enable_cost_cap</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_enable_audit" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.enable_audit</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_enable_pii_redaction" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.enable_pii_redaction</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_enable_consent_check" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.enable_consent_check</field>
+            <field name="value">True</field>
+        </record>
+        <!-- Rule 14 fail-safe: block AI calls on models with no rate-card price. -->
+        <record id="param_block_unpriced_model" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.block_unpriced_model</field>
+            <field name="value">True</field>
+        </record>
+
     </data>
 </odoo>

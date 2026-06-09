@@ -5,16 +5,12 @@
         <field name="name">crm.ai.model.list</field>
         <field name="model">crm.ai.model</field>
         <field name="arch" type="xml">
-            <list string="AI Models">
+            <list string="AI Model Pricing" editable="bottom">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="provider"/>
-                <field name="tier" widget="badge"
-                       decoration-info="tier == 'cheap'"
-                       decoration-warning="tier == 'advanced'"/>
                 <field name="price_input_1k"/>
                 <field name="price_output_1k"/>
-                <field name="max_context"/>
             </list>
         </field>
     </record>
@@ -23,7 +19,7 @@
         <field name="name">crm.ai.model.form</field>
         <field name="model">crm.ai.model</field>
         <field name="arch" type="xml">
-            <form string="AI Model">
+            <form string="AI Model Pricing">
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
                             invisible="active"/>
@@ -34,29 +30,22 @@
                         </h1>
                     </div>
                     <group>
-                        <group string="Identity">
+                        <group string="Model">
                             <field name="code" placeholder="e.g. gpt-4o, gemini-2.5-flash"/>
                             <field name="provider"/>
-                            <field name="tier"/>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
-                        <group string="Pricing &amp; Limits">
+                        <group string="Pricing (USD / 1K tokens)">
                             <field name="price_input_1k"/>
                             <field name="price_output_1k"/>
-                            <field name="max_context"/>
                         </group>
                     </group>
-                    <group string="Credentials">
-                        <field name="env_key_param"
-                               placeholder="e.g. ODOO_AI_CHATGPT_TOKEN"/>
-                        <div class="text-muted" colspan="2">
-                            Documentation only: the <strong>name</strong> of the server
-                            environment variable Odoo native AI reads for this provider's
-                            key (ODOO_AI_CHATGPT_TOKEN / ODOO_AI_GEMINI_TOKEN). Never store
-                            the secret here, and leave the native AI UI key fields blank
-                            (Rule 03).
-                        </div>
-                    </group>
+                    <div class="text-muted">
+                        Rate card only — the list of available models is owned by
+                        Odoo native AI. This supplies per-token pricing so the cost
+                        cap (Rule 14) can be computed. Review prices when a provider
+                        changes its rates or Odoo adds a model.
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -66,35 +55,33 @@
         <field name="name">crm.ai.model.search</field>
         <field name="model">crm.ai.model</field>
         <field name="arch" type="xml">
-            <search string="AI Models">
+            <search string="AI Model Pricing">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="provider"/>
-                <filter name="cheap" string="Cheap" domain="[('tier', '=', 'cheap')]"/>
-                <filter name="advanced" string="Advanced" domain="[('tier', '=', 'advanced')]"/>
                 <separator/>
                 <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
                 <group>
                     <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
-                    <filter name="group_tier" string="Tier" context="{'group_by': 'tier'}"/>
                 </group>
             </search>
         </field>
     </record>
 
     <record id="action_crm_ai_model" model="ir.actions.act_window">
-        <field name="name">AI Models</field>
+        <field name="name">AI Model Pricing</field>
         <field name="res_model">crm.ai.model</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_crm_ai_model_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Add an LLM model to the catalog.
+                Add a model price to the rate card.
             </p>
             <p>
-                The catalog ships seeded with OpenAI (GPT) and Google (Gemini)
-                entries — the two providers Odoo native AI supports. The mixin
-                picks a cheap or advanced model per task sensitivity.
+                This is a pricing rate card keyed by model code — not the model
+                list (Odoo native AI owns that). Seeded with OpenAI (GPT) and
+                Google (Gemini) prices; keep it complete so the cost cap (Rule 14)
+                stays accurate as providers change pricing.
             </p>
         </field>
     </record>

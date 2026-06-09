@@ -3,50 +3,39 @@ from odoo import api, fields, models
 
 
 class CrmAiModel(models.Model):
-    """Catalog of available LLM models.
+    """Pricing rate card for AI models — NOT a model catalog.
 
-    One record per model the suite can call. The mixin picks a cheap vs advanced
-    model by task sensitivity and passes ``code`` (the provider model id) and
-    ``provider`` to Odoo's native AI service. Native AI supports OpenAI and Google
-    only, so the catalog is constrained to those two providers.
+    The list of *available* models is owned by Odoo native AI (we don't define or
+    maintain it). This table adds the one thing native AI does not expose:
+    PER-TOKEN PRICING, so the hard cost cap (Rule 14) can compute spend. It is a
+    rate card keyed by the native model ``code``.
 
-    Secrets are never stored here. API keys come ONLY from the server environment
-    via Odoo's native AI (env vars ODOO_AI_CHATGPT_TOKEN / ODOO_AI_GEMINI_TOKEN);
-    the native UI key fields must be left blank and the guard fails closed if a
-    key is found in the database (Rule 03 / PDPL). ``env_key_param`` is retained
-    for documentation only.
+    Model SELECTION lives on ``crm.ai.agent`` (``model_code`` / ``model_code_advanced``),
+    not here. Keys come only from the server environment via native AI; nothing
+    secret is stored here.
+
+    Keep this card complete as providers change prices or Odoo adds models: a call
+    on a code with no active row here is a Rule-14 fail-safe (blocked by default,
+    or flagged ``unpriced`` on the usage row) — see the AI Compliance Guard.
     """
 
     _name = "crm.ai.model"
-    _description = "CRM AI Model Catalog"
-    _order = "provider, tier desc, name"
+    _description = "CRM AI Model Pricing (Rate Card)"
+    _order = "provider, name"
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char(
         string="Model Code",
-        help="The provider's model identifier used in the native AI call "
-             "(e.g. 'gpt-4o', 'gemini-2.5-flash'). Must match a model Odoo's "
-             "native AI supports.",
+        required=True,
+        help="The native model identifier this price applies to "
+             "(e.g. 'gpt-4o', 'gemini-2.5-flash'). Must match the code an agent "
+             "uses and a model Odoo native AI supports.",
     )
     provider = fields.Selection(
-        selection=[
-            ("openai", "OpenAI"),
-            ("google", "Google"),
-        ],
+        selection=[("openai", "OpenAI"), ("google", "Google")],
         string="Provider",
-        required=True,
-        help="Only OpenAI and Google are supported by Odoo 19 native AI.",
-    )
-    tier = fields.Selection(
-        selection=[
-            ("cheap", "Cheap"),
-            ("advanced", "Advanced"),
-        ],
-        string="Tier",
-        required=True,
-        default="cheap",
-        help="Cheap models handle low-sensitivity tasks; advanced models are "
-             "reserved for high-sensitivity ones. The mixin selects by tier.",
+        help="Informational label (OpenAI / Google). Selection is driven by the "
+             "agent's model code, not by this field.",
     )
     price_input_1k = fields.Float(
         string="Input Price / 1K",
@@ -58,25 +47,10 @@ class CrmAiModel(models.Model):
         digits=(12, 6),
         help="Cost in USD per 1,000 output (completion) tokens.",
     )
-    max_context = fields.Integer(
-        string="Max Context",
-        help="Maximum context window size in tokens.",
-    )
-    env_key_param = fields.Char(
-        string="API Key Env Var",
-        help="Documentation only: the server ENV VAR Odoo native AI reads for "
-             "this provider's key (ODOO_AI_CHATGPT_TOKEN for OpenAI, "
-             "ODOO_AI_GEMINI_TOKEN for Google). NEVER store the secret here, and "
-             "leave the native AI UI key fields blank (Rule 03).",
-    )
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        (
-            "code_uniq",
-            "unique(code)",
-            "The model code must be unique.",
-        ),
+        ("code_uniq", "unique(code)", "The model code must be unique."),
     ]
 
     @api.depends("name", "provider")

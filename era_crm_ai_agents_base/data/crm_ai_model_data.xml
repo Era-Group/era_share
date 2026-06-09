@@ -1,61 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- noupdate="1": seeded once on install; admins maintain pricing afterwards
-         and their edits survive module upgrades.
+    <!-- Rate card (pricing only) — seeded once; managers maintain prices and add
+         rows as providers change pricing or Odoo adds models. noupdate="1" so
+         manager edits survive upgrades.
 
-         Only OpenAI + Google: Odoo 19 native AI supports exactly these two
-         providers. Codes must match models the native service accepts
-         (ai/utils/llm_providers.py). Keys come ONLY from the environment
-         (ODOO_AI_CHATGPT_TOKEN / ODOO_AI_GEMINI_TOKEN); never store secrets and
-         leave the native AI UI key fields blank (Rule 03 / PDPL). -->
+         This is NOT the model list (Odoo native AI owns that). It only supplies
+         per-token PRICING so the cost cap (Rule 14) can compute spend. A call on
+         a code not listed here is a Rule-14 fail-safe (blocked by default).
+         REVIEW these prices when OpenAI/Google change their rate cards. -->
     <data noupdate="1">
 
         <!-- ============ OpenAI ============ -->
-        <!-- TODO: verify pricing against the current OpenAI rate card before go-live. -->
         <record id="model_gpt_41_mini" model="crm.ai.model">
             <field name="name">GPT-4.1 mini</field>
             <field name="code">gpt-4.1-mini</field>
             <field name="provider">openai</field>
-            <field name="tier">cheap</field>
             <field name="price_input_1k">0.0004</field>
             <field name="price_output_1k">0.0016</field>
-            <field name="max_context">128000</field>
-            <field name="env_key_param">ODOO_AI_CHATGPT_TOKEN</field>
         </record>
 
         <record id="model_gpt_4o" model="crm.ai.model">
             <field name="name">GPT-4o</field>
             <field name="code">gpt-4o</field>
             <field name="provider">openai</field>
-            <field name="tier">advanced</field>
             <field name="price_input_1k">0.0025</field>
             <field name="price_output_1k">0.01</field>
-            <field name="max_context">128000</field>
-            <field name="env_key_param">ODOO_AI_CHATGPT_TOKEN</field>
         </record>
 
         <!-- ============ Google (Gemini) ============ -->
-        <!-- TODO: verify pricing against the current Google AI rate card before go-live. -->
         <record id="model_gemini_25_flash" model="crm.ai.model">
             <field name="name">Gemini 2.5 Flash</field>
             <field name="code">gemini-2.5-flash</field>
             <field name="provider">google</field>
-            <field name="tier">cheap</field>
             <field name="price_input_1k">0.0003</field>
             <field name="price_output_1k">0.0025</field>
-            <field name="max_context">1000000</field>
-            <field name="env_key_param">ODOO_AI_GEMINI_TOKEN</field>
         </record>
 
         <record id="model_gemini_25_pro" model="crm.ai.model">
             <field name="name">Gemini 2.5 Pro</field>
             <field name="code">gemini-2.5-pro</field>
             <field name="provider">google</field>
-            <field name="tier">advanced</field>
             <field name="price_input_1k">0.00125</field>
             <field name="price_output_1k">0.01</field>
-            <field name="max_context">1000000</field>
-            <field name="env_key_param">ODOO_AI_GEMINI_TOKEN</field>
         </record>
 
     </data>

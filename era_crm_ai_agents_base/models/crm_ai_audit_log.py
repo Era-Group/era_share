@@ -32,6 +32,8 @@ class CrmAiAuditLog(models.Model):
             # AI Compliance Guard decisions (native AI egress)
             ("ai_request", "AI Request (allowed)"),
             ("blocked", "AI Request Blocked"),
+            ("unpriced_model", "Unpriced Model Used"),
+            ("compliance_disabled", "PDPL Protection Disabled"),
             ("other", "Other"),
         ],
         string="Event Type",

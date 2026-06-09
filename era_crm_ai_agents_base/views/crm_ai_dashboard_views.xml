@@ -11,7 +11,7 @@
                   decoration-danger="state == 'capped'"
                   decoration-muted="state == 'paused'">
                 <field name="name"/>
-                <field name="default_model_id"/>
+                <field name="model_code"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'enabled'"
                        decoration-warning="state == 'paused'"

@@ -13,8 +13,14 @@ class EraAiModel(models.Model):
     model_id = fields.Char(required=True, help="Provider model id, e.g. claude-opus-4-8 or gpt-4o.")
     label = fields.Char()
     kind = fields.Selection(
-        selection=[("chat", "Chat"), ("embedding", "Embedding")],
+        selection=[("chat", "Chat"), ("embedding", "Embedding"), ("image", "Image")],
         default="chat", required=True,
+    )
+    cost_info = fields.Char(
+        string="Rate",
+        help="Approximate provider rate for this model (e.g. Cloudflare bills in "
+             "Neurons, with 10,000 free per day). Indicative, captured at sync time — "
+             "always confirm on the provider's live pricing page.",
     )
     active = fields.Boolean(default=True)
 

@@ -5,6 +5,8 @@ import requests
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
+from odoo.addons.ai.utils.llm_api_service import LLMApiService
+
 from ..utils import crypto
 from ..utils import llm_cli_transport
 
@@ -22,6 +24,24 @@ CLAUDE_CLI_MODELS = [
     ("haiku", "Claude Haiku (latest)"),
 ]
 
+# Curated Cloudflare Workers AI models — (model_id, label, kind, rate).
+# Cloudflare bills in "Neurons" with 10,000 free per day; it does NOT expose
+# per-model price via its API, so the rates below are captured from the public
+# pricing page (as of 2026-06) and shown as guidance only — verify the live page:
+# https://developers.cloudflare.com/workers-ai/platform/pricing/
+CLOUDFLARE_FREE_NEURONS_PER_DAY = 10000
+CLOUDFLARE_MODELS = [
+    ("@cf/meta/llama-3.1-8b-instruct", "Llama 3.1 8B Instruct", "chat",
+     "≈25,608 in / 75,147 out neurons per 1M tokens"),
+    ("@cf/meta/llama-3.3-70b-instruct-fp8-fast", "Llama 3.3 70B (fast)", "chat",
+     "≈26,668 in / 204,805 out neurons per 1M tokens"),
+    ("@cf/black-forest-labs/flux-1-schnell", "FLUX.1 schnell (image)", "image",
+     "≈9.60 neurons/step (4.80 per 512×512 tile)"),
+    ("@cf/baai/bge-m3", "BGE-M3 (embeddings)", "embedding",
+     "≈1,075 neurons per 1M input tokens"),
+]
+CLOUDFLARE_DEFAULT_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell"
+
 
 class EraAiAccount(models.Model):
     _name = "era.ai.account"
@@ -35,6 +55,7 @@ class EraAiAccount(models.Model):
             ("anthropic", "Anthropic (Claude)"),
             ("openai", "OpenAI"),
             ("google", "Google Gemini"),
+            ("cloudflare", "Cloudflare Workers AI"),
             ("custom", "Custom (OpenAI-compatible)"),
         ],
         required=True,
@@ -106,6 +127,14 @@ class EraAiAccount(models.Model):
     referer = fields.Char(help="Optional HTTP-Referer header (custom/OpenRouter).")
     title = fields.Char(help="Optional X-Title header (custom/OpenRouter).")
 
+    # --- Cloudflare Workers AI -----------------------------------------------
+    cf_account_id = fields.Char(
+        string="Cloudflare Account ID",
+        help="Your Cloudflare account ID — it goes in the Workers AI URL path "
+             "(api.cloudflare.com/.../accounts/<ID>/ai/...). Find it in the Cloudflare "
+             "dashboard. The API token goes in the 'API Key' field (Bearer auth).",
+    )
+
     # --- CLI-proxy transport config -----------------------------------------
     cli_path = fields.Char(
         string="CLI binary path",
@@ -165,6 +194,13 @@ class EraAiAccount(models.Model):
         for rec in self:
             rec.chat_model_count = len(rec.model_ids.filtered(lambda m: m.kind == "chat" and m.active))
 
+    # ----------------------------------------------------------------- onchange
+    @api.onchange("provider")
+    def _onchange_provider(self):
+        # Only Anthropic has a local CLI proxy; everything else needs an API key.
+        if self.provider != "anthropic" and self.auth_mode == "cli_proxy":
+            self.auth_mode = "api_key"
+
     # ---------------------------------------------------------------- constraints
     @api.constrains("auth_mode", "provider")
     def _check_auth_mode(self):
@@ -188,13 +224,107 @@ class EraAiAccount(models.Model):
             return "anthropic_cli"
         if self.provider == "custom":
             return "custom_llm"
-        return self.provider  # openai / google / anthropic
+        return self.provider  # openai / google / anthropic / cloudflare
 
     _PROVIDER_DEFAULT_MODEL = {
         "anthropic": "claude-opus-4-8",
         "openai": "gpt-4o",
         "google": "gemini-2.5-flash",
+        "cloudflare": "@cf/meta/llama-3.1-8b-instruct",
     }
+
+    # ------------------------------------------------------------- Cloudflare
+    def _cloudflare_account(self):
+        self.ensure_one()
+        acct = (self.cf_account_id or "").strip()
+        if not acct:
+            raise UserError(_("Set the Cloudflare Account ID on account '%s'.", self.name))
+        return acct
+
+    def _cloudflare_base_url(self):
+        """OpenAI-compatible base for Cloudflare Workers AI (chat/embeddings)."""
+        return "https://api.cloudflare.com/client/v4/accounts/%s/ai/v1" % self._cloudflare_account()
+
+    def _cloudflare_run_url(self, model):
+        """Native Workers AI run endpoint for a specific model (used for images)."""
+        return "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/%s" % (
+            self._cloudflare_account(), model)
+
+    def _default_image_model(self):
+        """Best image model id for this account (first active image model, else FLUX schnell)."""
+        self.ensure_one()
+        img = self.model_ids.filtered(lambda m: m.kind == "image" and m.active)
+        return img[0].model_id if img else CLOUDFLARE_DEFAULT_IMAGE_MODEL
+
+    def generate_image(self, prompt, model=None, steps=4):
+        """Generate an image and return the raw bytes (PNG/JPEG), or raise.
+
+        Currently implemented for Cloudflare Workers AI (FLUX.1-schnell / SDXL).
+        Cloudflare returns either JSON ``{"result": {"image": "<base64>"}}`` or
+        raw image bytes depending on the model — both are handled.
+        """
+        self.ensure_one()
+        self._assert_usable()
+        if self.provider != "cloudflare":
+            raise UserError(_(
+                "Image generation is currently supported only for Cloudflare "
+                "Workers AI accounts (account '%s' is '%s').", self.name, self.provider))
+        token = self._get_secret()
+        if not token:
+            raise UserError(_("Set the Cloudflare API token on account '%s'.", self.name))
+        model = model or self._default_image_model()
+        try:
+            steps = max(1, min(8, int(steps or 4)))
+        except (TypeError, ValueError):
+            steps = 4
+        try:
+            resp = requests.post(
+                self._cloudflare_run_url(model),
+                headers={"Authorization": "Bearer %s" % token,
+                         "Content-Type": "application/json"},
+                json={"prompt": (prompt or "")[:2048], "steps": steps},
+                timeout=90,
+            )
+        except requests.exceptions.RequestException as exc:
+            raise UserError(_("Cloudflare image request failed: %s", exc))
+        if resp.status_code >= 400:
+            raise UserError(_("Cloudflare image error (%(code)s): %(detail)s",
+                              code=resp.status_code, detail=(resp.text or "")[:400]))
+        if "application/json" in (resp.headers.get("Content-Type") or ""):
+            data = resp.json()
+            if not data.get("success", True):
+                raise UserError(_("Cloudflare image error: %s", data.get("errors") or "unknown"))
+            b64 = (data.get("result") or {}).get("image")
+            if not b64:
+                raise UserError(_("Cloudflare returned no image data."))
+            import base64  # local import; only used here
+            return base64.b64decode(b64)
+        return resp.content
+
+    # --------------------------------------------------------------- public API
+    def generate_text(self, prompt, system="", model=None, temperature=0.2):
+        """Generate a text/chat completion through this account; return the string.
+
+        Provider-agnostic: works for the Claude CLI proxy, OpenAI/Google/Anthropic
+        keys, Cloudflare Workers AI, and custom OpenAI-compatible endpoints. Lets
+        any module use an account for content without wiring up an ai.agent.
+        """
+        self.ensure_one()
+        self._assert_usable()
+        model = model or self._default_chat_model()
+        system_messages = [system] if system else []
+        service = LLMApiService(
+            env=self.with_context(era_ai_account_id=self.id).env,
+            provider=self._service_provider(),
+        )
+        response = service.request_llm(
+            model, system_messages, [],
+            inputs=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+        )
+        if isinstance(response, (list, tuple)):
+            response = response[0] if response else ""
+        return response if isinstance(response, str) else (str(response) if response else "")
 
     def _preferred_chat_model(self):
         """Preferred default model id for this account, by provider + auth mode.
@@ -326,6 +456,15 @@ class EraAiAccount(models.Model):
             if out.returncode != 0:
                 raise UserError(_("Claude CLI not runnable: %s", (out.stderr or "").strip()))
             return True
+        if self.provider == "cloudflare":
+            # Verify token + account + Workers AI access without spending tokens.
+            token = self._get_secret()
+            if not token:
+                raise UserError(_("Set the Cloudflare API token before validating."))
+            url = ("https://api.cloudflare.com/client/v4/accounts/%s/ai/models/search?per_page=1"
+                   % self._cloudflare_account())
+            self._http_get_json(url, {"Authorization": "Bearer %s" % token}, 30)
+            return True
         # API-key: list models (no token spend) to prove the key works.
         self._http_list_models()
         return True
@@ -338,21 +477,24 @@ class EraAiAccount(models.Model):
     def _sync_models(self):
         self.ensure_one()
         Model = self.env["era.ai.model"]
+        # rows: (model_id, label, kind, cost_info)
         if self.auth_mode == "cli_proxy":
-            pairs = [(mid, label, "chat") for mid, label in CLAUDE_CLI_MODELS]
+            rows = [(mid, label, "chat", "") for mid, label in CLAUDE_CLI_MODELS]
+        elif self.provider == "cloudflare":
+            # Cloudflare has no per-model price API, so use the curated catalog with
+            # the published Neuron rates baked in (see CLOUDFLARE_MODELS).
+            rows = list(CLOUDFLARE_MODELS)
         else:
-            pairs = self._http_list_models()
+            rows = [(mid, label, kind, "") for mid, label, kind in self._http_list_models()]
         existing = {(m.model_id, m.kind): m for m in self.model_ids}
         seen = set()
-        for model_id, label, kind in pairs:
+        for model_id, label, kind, cost in rows:
             seen.add((model_id, kind))
+            vals = {"label": label, "active": True, "cost_info": cost}
             if (model_id, kind) in existing:
-                existing[(model_id, kind)].write({"label": label, "active": True})
+                existing[(model_id, kind)].write(vals)
             else:
-                Model.create({
-                    "account_id": self.id, "model_id": model_id,
-                    "label": label, "kind": kind,
-                })
+                Model.create(dict(vals, account_id=self.id, model_id=model_id, kind=kind))
         # Deactivate models that disappeared from the provider (keep history).
         for key, rec in existing.items():
             if key not in seen:

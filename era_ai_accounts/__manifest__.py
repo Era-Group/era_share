@@ -1,8 +1,8 @@
 # Part of the ERA Group custom addon layer. License: LGPL-3.
 {
     "name": "ERA AI Accounts",
-    "summary": "Link AI provider accounts (Claude via local CLI proxy, OpenAI/Gemini/custom via key), "
-               "share them with users, and pick models dynamically per account.",
+    "summary": "Link AI provider accounts (Claude via local CLI proxy, OpenAI/Gemini/Cloudflare/custom via key), "
+               "share them with users, generate text or images, and pick models dynamically per account.",
     "description": """
 ERA AI Accounts
 ===============
@@ -25,7 +25,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.4.0",
+    "version": "19.0.1.5.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

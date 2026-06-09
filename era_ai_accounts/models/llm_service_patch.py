@@ -78,6 +78,12 @@ def _patch():
             self.base_url = self._era_account.base_url or _cfg(
                 env, "ai.custom_llm_base_url", "https://openrouter.ai/api/v1")
             return
+        if provider == "cloudflare" and self._era_account:
+            # Cloudflare Workers AI exposes an OpenAI-compatible chat endpoint at
+            # /accounts/<id>/ai/v1; the account id lives in the URL path.
+            self.provider, self.env = "cloudflare", env
+            self.base_url = self._era_account._cloudflare_base_url()
+            return
         return original_init(self, env, provider)
 
     def _get_api_token(self):
@@ -108,6 +114,11 @@ def _patch():
             if acc.title:
                 headers["X-Title"] = acc.title
             return headers
+        if self.provider == "cloudflare":
+            return {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self._get_api_token()}",
+            }
         return original_get_base_headers(self)
 
     def _request_llm(self, *args, **kwargs):
@@ -115,6 +126,8 @@ def _patch():
             return _request_llm_cli(self, *args, **kwargs)
         if self.provider == "anthropic":
             return _request_llm_anthropic(self, *args, **kwargs)
+        if self.provider == "cloudflare":
+            return _request_llm_cloudflare(self, *args, **kwargs)
         return original_request_llm(self, *args, **kwargs)
 
     # ----------------------------------------------------------- new transports
@@ -177,12 +190,34 @@ def _patch():
             raise UserError(_("Anthropic returned no text (stop_reason=%s).", response.get("stop_reason")))
         return [text], [], list(inputs or ())
 
+    def _request_llm_cloudflare(self, llm_model, system_prompts, user_prompts, tools=None,
+                                files=None, schema=None, temperature=0.2, inputs=(), web_grounding=False):
+        # Cloudflare Workers AI, via its OpenAI-compatible /chat/completions endpoint.
+        system_full, user_text = _flatten(system_prompts, user_prompts, inputs)
+        messages = []
+        if system_full:
+            messages.append({"role": "system", "content": system_full})
+        messages.append({"role": "user", "content": user_text or "Hello"})
+        body = {"model": llm_model, "messages": messages}
+        response = self._request(
+            method="post", endpoint="/chat/completions",
+            headers=self._get_base_headers(), body=body)
+        choices = response.get("choices") or []
+        message = choices[0].get("message") if choices else {}
+        text = (message or {}).get("content") or ""
+        if isinstance(text, list):  # some gateways return content blocks
+            text = "".join(b.get("text", "") for b in text if isinstance(b, dict))
+        if not text.strip():
+            raise UserError(_("Cloudflare Workers AI returned no text."))
+        return [text], [], list(inputs or ())
+
     LLMApiService.__init__ = __init__
     LLMApiService._get_api_token = _get_api_token
     LLMApiService._get_base_headers = _get_base_headers
     LLMApiService._request_llm = _request_llm
     LLMApiService._request_llm_cli = _request_llm_cli
     LLMApiService._request_llm_anthropic = _request_llm_anthropic
+    LLMApiService._request_llm_cloudflare = _request_llm_cloudflare
     LLMApiService._era_ai_accounts_patched = True
     _logger.info("era_ai_accounts: account-aware LLMApiService layer active (CLI + Anthropic)")
 

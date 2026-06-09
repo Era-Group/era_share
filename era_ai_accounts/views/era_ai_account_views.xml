@@ -65,10 +65,18 @@
                     </group>
 
                     <group string="API key" invisible="auth_mode != 'api_key'">
-                        <field name="secret" password="True" placeholder="paste API key (write-only)"
+                        <field name="cf_account_id" invisible="provider != 'cloudflare'"
+                               placeholder="Cloudflare account ID (dashboard → Workers AI)"/>
+                        <field name="secret" password="True"
+                               placeholder="paste API key / token (write-only)"
                                groups="era_ai_accounts.group_ai_account_manager"/>
                         <field name="secret_masked" string="Stored key"
                                groups="era_ai_accounts.group_ai_account_manager"/>
+                        <div class="text-muted" colspan="2" invisible="provider != 'cloudflare'">
+                            Cloudflare Workers AI: chat via the OpenAI-compatible endpoint and images via
+                            FLUX.1-schnell. Billed in <b>Neurons</b> with <b>10,000 free per day</b>.
+                            Sync models to see each model's indicative rate.
+                        </div>
                         <field name="base_url" invisible="provider != 'custom'"
                                placeholder="https://openrouter.ai/api/v1"/>
                         <field name="auth_header" invisible="provider != 'custom'"/>
@@ -84,6 +92,7 @@
                                     <field name="model_id"/>
                                     <field name="label"/>
                                     <field name="kind"/>
+                                    <field name="cost_info" string="Rate" optional="show"/>
                                     <field name="active"/>
                                 </list>
                             </field>

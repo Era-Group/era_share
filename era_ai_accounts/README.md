@@ -13,13 +13,38 @@ OpenAI/Google, and exposes a fixed model list. This module adds:
   binary that is already authenticated on this server (the "connected account"),
   so AI works **without per-token API billing**. The first-party CLI performs the
   call under its own auth; the module never reads or replays its credentials.
-- **API-key accounts** — OpenAI, Google Gemini, Anthropic (Messages API), and any
-  OpenAI-compatible custom endpoint, with secrets stored **encrypted** and
-  restricted to *AI Account Managers*.
+- **API-key accounts** — OpenAI, Google Gemini, Anthropic (Messages API),
+  **Cloudflare Workers AI**, and any OpenAI-compatible custom endpoint, with
+  secrets stored **encrypted** and restricted to *AI Account Managers*.
 - **Shared vs personal accounts** — one account for everyone or per-user accounts,
   with `owner` + `allowed users` + record rules controlling who may use each.
 - **Dynamic model catalog** — synced from each account (curated set for the CLI
-  proxy; live `/models` for key accounts).
+  proxy and Cloudflare; live `/models` for key accounts).
+
+## Using an account from code
+
+Any module can drive a configured account directly — no `ai.agent` needed:
+
+- `account.generate_text(prompt, system="", model=None)` → `str` — chat/content
+  through the account's provider (CLI proxy, OpenAI, Cloudflare, …).
+- `account.generate_image(prompt, model=None, steps=4)` → image **bytes** —
+  currently Cloudflare Workers AI (FLUX.1-schnell / SDXL).
+
+This is how other ERA modules (e.g. `era_seo_suite`) let an admin pick *one
+account for content* and *one account for images* instead of re-entering
+provider/key/model settings in each module.
+
+## Cloudflare Workers AI
+
+Pick provider **Cloudflare Workers AI** (auth: API key), set the **Cloudflare
+Account ID** (it goes in the URL path) and paste an **API token**. Then **Sync
+models** for a curated catalog of chat, image (FLUX.1-schnell) and embedding
+models. Cloudflare bills in **Neurons** with **10,000 free per day**; it does
+**not** expose per-model price via its API, so each synced model shows an
+*indicative* Neuron rate captured from the public pricing page — confirm the
+live rate at <https://developers.cloudflare.com/workers-ai/platform/pricing/>.
+Content runs through Cloudflare's OpenAI-compatible `/ai/v1/chat/completions`;
+images through `/ai/run/@cf/black-forest-labs/flux-1-schnell`.
 
 ## Configure
 

@@ -1,9 +1,11 @@
+import base64
 from unittest.mock import patch
 
 from odoo.exceptions import AccessError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 from odoo.addons.era_ai_accounts.utils import crypto, llm_cli_transport
+from odoo.addons.era_ai_accounts.models import era_ai_account
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 
@@ -206,3 +208,116 @@ class TestEraAiAccounts(TransactionCase):
         self.assertTrue(mocked.called)
         # The selected model id was passed to the transport.
         self.assertEqual(mocked.call_args.args[1], "opus")
+
+    # ------------------------------------------------------------- Cloudflare
+    def test_cloudflare_account_basics(self):
+        acc = self.Account.create({
+            "name": "CF", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct123", "secret": "cf-token",
+        })
+        self.assertEqual(acc._service_provider(), "cloudflare")
+        self.assertEqual(
+            acc._cloudflare_base_url(),
+            "https://api.cloudflare.com/client/v4/accounts/acct123/ai/v1")
+        self.assertEqual(
+            acc._cloudflare_run_url("@cf/x"),
+            "https://api.cloudflare.com/client/v4/accounts/acct123/ai/run/@cf/x")
+
+    def test_cloudflare_onchange_forces_api_key(self):
+        # The form default auth_mode is cli_proxy (Anthropic-only); picking another
+        # provider must auto-switch to api_key so the constraint isn't violated.
+        acc = self.Account.new({"provider": "anthropic", "auth_mode": "cli_proxy"})
+        acc.provider = "cloudflare"
+        acc._onchange_provider()
+        self.assertEqual(acc.auth_mode, "api_key")
+
+    def test_cloudflare_sync_models_with_rates(self):
+        acc = self.Account.create({
+            "name": "CF2", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "a", "secret": "t",
+        })
+        acc.action_sync_models()
+        kinds = set(acc.model_ids.mapped("kind"))
+        self.assertIn("chat", kinds)
+        self.assertIn("image", kinds)
+        # Indicative Neuron rate captured at sync time.
+        flux = acc.model_ids.filtered(lambda m: m.kind == "image")[:1]
+        self.assertTrue(flux and flux.cost_info)
+        self.assertEqual(acc._default_chat_model(), "@cf/meta/llama-3.1-8b-instruct")
+        self.assertEqual(acc._default_image_model(), "@cf/black-forest-labs/flux-1-schnell")
+
+    def test_cloudflare_generate_image(self):
+        acc = self.Account.create({
+            "name": "CF3", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        png = b"\x89PNG-fake-bytes"
+        captured = {}
+
+        class _Resp:
+            status_code = 200
+            headers = {"Content-Type": "application/json"}
+            text = ""
+
+            def json(self):
+                return {"success": True, "result": {"image": base64.b64encode(png).decode()}}
+
+        def fake_post(url, **kwargs):
+            captured["url"] = url
+            captured["json"] = kwargs.get("json")
+            captured["headers"] = kwargs.get("headers")
+            return _Resp()
+
+        with patch.object(era_ai_account.requests, "post", side_effect=fake_post):
+            out = acc.generate_image("a cat on a roof", steps=4)
+        self.assertEqual(out, png)
+        self.assertIn("/ai/run/@cf/black-forest-labs/flux-1-schnell", captured["url"])
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer tok")
+        self.assertEqual(captured["json"]["steps"], 4)
+
+    def test_generate_image_requires_cloudflare(self):
+        acc = self.Account.create({
+            "name": "k", "provider": "openai", "auth_mode": "api_key", "secret": "x",
+        })
+        with self.assertRaises(Exception):
+            acc.generate_image("anything")
+
+    def test_cloudflare_content_via_agent(self):
+        acc = self.Account.create({
+            "name": "CFchat", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "CF agent", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        captured = {}
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            captured["endpoint"] = endpoint
+            captured["body"] = body
+            captured["headers"] = headers
+            return {"choices": [{"message": {"content": "cf says hi"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["cf says hi"])
+        self.assertEqual(captured["endpoint"], "/chat/completions")
+        self.assertEqual(captured["body"]["model"], "@cf/meta/llama-3.1-8b-instruct")
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer tok")
+
+    def test_account_generate_text(self):
+        # Provider-agnostic content helper any module can call (no ai.agent needed).
+        acc = self.Account.create({
+            "name": "CFtext", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        acc.action_sync_models()
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            return {"choices": [{"message": {"content": "hello from cf"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            text = acc.generate_text("hi", system="be brief")
+        self.assertEqual(text, "hello from cf")

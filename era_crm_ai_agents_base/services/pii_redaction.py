@@ -175,25 +175,32 @@ class Redactor:
     # ------------------------------------------------------------------
     # Re-insertion (inbound)
     # ------------------------------------------------------------------
-    def unmask(self, text):
+    def unmask(self, text, strict=True):
         """Restore real values into the model's response.
 
-        Defends against a model that mangled or partially echoed a token: we only
-        substitute well-formed placeholders we issued, then verify nothing that
-        looks like a (broken) token remains. If anything does, we raise
-        :class:`RedactionError` rather than leak a raw token or guess.
+        Substitutes every well-formed placeholder we issued back to its real
+        value.
+
+        :param strict: when True (OUR agents' path), defend against a model that
+            mangled or partially echoed a token — if any unknown/residual token
+            remains, raise :class:`RedactionError` rather than leak a raw token or
+            guess (the guard then withholds the response). When False (native
+            Ask-AI / ai_fields path), do the best-effort substitution and never
+            raise — a leftover mangled fragment is a placeholder string, not real
+            PII, so it is safe to return rather than break a native feature.
         """
         if not text:
             return text
         restored = _PLACEHOLDER_RE.sub(
             lambda m: self._map.get(m.group(0), m.group(0)), text
         )
-        # Any well-formed token we don't recognise, or any residual fragment of a
-        # token, means re-insertion is not clean -> refuse.
-        unknown = [t for t in _PLACEHOLDER_RE.findall(restored) if t not in self._map]
-        if unknown or _RESIDUAL_RE.search(restored):
-            raise RedactionError(
-                "Re-insertion failed: the model returned a mangled or unknown "
-                "PII placeholder; response withheld."
-            )
+        if strict:
+            # Any well-formed token we don't recognise, or any residual fragment
+            # of a token, means re-insertion is not clean -> refuse.
+            unknown = [t for t in _PLACEHOLDER_RE.findall(restored) if t not in self._map]
+            if unknown or _RESIDUAL_RE.search(restored):
+                raise RedactionError(
+                    "Re-insertion failed: the model returned a mangled or unknown "
+                    "PII placeholder; response withheld."
+                )
         return restored

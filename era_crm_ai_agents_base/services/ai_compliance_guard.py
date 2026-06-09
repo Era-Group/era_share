@@ -146,60 +146,100 @@ def install():
 # ======================================================================
 # Pipelines
 # ======================================================================
+def _is_our_agent_call(env):
+    """The security-relevant SCOPE GATE (Option C — hybrid enforcement).
+
+    Returns True when the call originates from one of OUR agents, signalled by
+    the CTX_AGENT context key that crm.ai.agent.mixin._call_llm stamps.
+
+      * OUR agents  (CTX_AGENT set)  -> FULL enforcement: cost cap + consent gate
+        + record-driven redaction + regex fail-safe HARD-BLOCK + audit + usage.
+        This is the path that carries REAL customer data, so it must never let an
+        unmapped PII value through.
+      * native AI   (no CTX_AGENT)   -> best-effort record-PII redaction + audit,
+        but NO hard block, so Odoo's own Ask-AI / ai_fields keep working.
+
+    ACCEPTED TRADE-OFF: on the native path a PII value the record-driven redactor
+    does not know about CAN egress (there is no regex hard-block). That is why
+    full hard enforcement MUST remain tied to CTX_AGENT — our agents' path.
+
+    The env-only-key assertion (Rule 03) is enforced GLOBALLY, before this gate,
+    on every call regardless of origin.
+    """
+    return bool(env.context.get(CTX_AGENT))
+
+
 def _guard_text(service, call, llm_model, system_prompts, user_prompts):
-    """Full pipeline for a text chat call. ``call(masked_system, masked_user)``
-    invokes the original with redacted prompts and returns ``list[str]``."""
+    """Text chat entry: global key check, then branch on the scope gate."""
     env = service.env
-    _assert_env_only_key(service)                       # Rule 03
+    _assert_env_only_key(service)                       # GLOBAL (Rule 03)
     record = _resolve_record(env)
     agent = _resolve_agent(env)
+    redactor = _build_redactor(record)
+    sys_in = list(system_prompts or [])
+    usr_in = list(user_prompts or [])
+    if _is_our_agent_call(env):
+        return _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in)
+    return _text_native(env, call, llm_model, record, agent, redactor, sys_in, usr_in)
 
+
+def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
+    """OUR agents — full PDPL + cap enforcement; hard-block on any gap."""
     capped = _enforce_cost_cap(env, agent, record)      # Rule 14 (pre-spend)
     if capped is not None:
         return capped
-
-    redactor = _build_redactor(record)
     # Consent gate (PDPL): if real PII is present, every involved partner must
     # have consented to international processing — else block (never send).
     if redactor.has_values() and not _all_consented(_consent_partners(record) or []):
         return _block(env, record, "blocked_no_consent", {}, text=True)
-
-    sys_in = list(system_prompts or [])
-    usr_in = list(user_prompts or [])
     masked_system, leftover_s = _mask_all(redactor, sys_in)
     masked_user, leftover_u = _mask_all(redactor, usr_in)
     leftover = leftover_s + leftover_u
     if leftover:                                        # fail-safe: unmapped PII
         return _block(env, record, "blocked_unmapped_pii",
                       {"patterns": [k for k, _ in leftover]}, text=True)
-
     _audit(env, "ai_request", agent, record,
-           {"model": llm_model},
+           {"model": llm_model, "scope": "agent"},
            {"decision": "allowed", "pii_tokens": len(redactor.mapping)})
-
     responses = call(masked_system, masked_user)       # outbound (PII masked)
-
     try:
-        restored = [redactor.unmask(r) for r in (responses or [])]
+        restored = [redactor.unmask(r) for r in (responses or [])]   # strict
     except RedactionError as exc:
         return _block(env, record, "redaction_reinsert_failed",
                       {"error": str(exc)}, text=True)
-
     _record_usage(env, agent, llm_model, sys_in + usr_in, restored)  # Rule 14 feed
     return restored
 
 
+def _text_native(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
+    """Native Ask-AI / ai_fields — best-effort record-PII masking + audit, NO
+    hard block, so native features keep working. PII the redactor does not know
+    about may egress here (accepted trade-off; see _is_our_agent_call)."""
+    masked_system, leftover_s = _mask_all(redactor, sys_in)
+    masked_user, leftover_u = _mask_all(redactor, usr_in)
+    unmapped = len(leftover_s) + len(leftover_u)
+    _audit(env, "ai_request", agent, record,
+           {"model": llm_model, "scope": "native"},
+           {"decision": "allowed_native",
+            "pii_tokens": len(redactor.mapping),
+            "unmapped_pii_seen": unmapped})
+    responses = call(masked_system, masked_user)
+    # Best-effort restore; never withhold native output, never raise.
+    return [redactor.unmask(r, strict=False) for r in (responses or [])]
+
+
 def _guard_embedding(service, call, input):
-    """Embedding input is text that would leave the Kingdom — redact it too."""
+    """Embedding input is text that would leave the Kingdom — redact it too.
+    Hard consent/PII block only for OUR agents; native gets best-effort masking."""
     env = service.env
-    _assert_env_only_key(service)
+    _assert_env_only_key(service)                       # GLOBAL (Rule 03)
     record = _resolve_record(env)
     agent = _resolve_agent(env)
     redactor = _build_redactor(record)
-    if redactor.has_values() and not _all_consented(_consent_partners(record) or []):
+    our = _is_our_agent_call(env)
+    if our and redactor.has_values() and not _all_consented(_consent_partners(record) or []):
         return _block(env, record, "blocked_no_consent", {"op": "embedding"},
                       text=False)
-
     items = input if isinstance(input, list) else [input]
     masked = []
     leftover_all = []
@@ -210,27 +250,34 @@ def _guard_embedding(service, call, input):
             leftover_all += leftover
         else:
             masked.append(item)  # token-id inputs: nothing to redact
-    if leftover_all:
+    if our and leftover_all:                            # hard-block: our agents only
         return _block(env, record, "blocked_unmapped_pii",
                       {"patterns": [k for k, _ in leftover_all]}, text=False)
-    _audit(env, "ai_request", agent, record, {"op": "embedding"},
-           {"decision": "allowed", "pii_tokens": len(redactor.mapping)})
+    _audit(env, "ai_request", agent, record,
+           {"op": "embedding", "scope": "agent" if our else "native"},
+           {"decision": "allowed" if our else "allowed_native",
+            "pii_tokens": len(redactor.mapping),
+            "unmapped_pii_seen": 0 if our else len(leftover_all)})
     return call(masked if isinstance(input, list) else masked[0])
 
 
 def _guard_transcription(service, call):
-    """Audio cannot be text-redacted; gate strictly on consent before sending."""
+    """Audio cannot be text-redacted. OUR agents: gate strictly on consent.
+    Native (e.g. voip_ai): audit only, never block a native feature."""
     env = service.env
-    _assert_env_only_key(service)
+    _assert_env_only_key(service)                       # GLOBAL (Rule 03)
     record = _resolve_record(env)
     agent = _resolve_agent(env)
-    # No record context -> we cannot establish consent for the audio -> block.
-    partners = _consent_partners(record)
-    if not partners or not _all_consented(partners):
-        return _block(env, record, "blocked_no_consent",
-                      {"op": "transcription"}, text=False)
-    _audit(env, "ai_request", agent, record, {"op": "transcription"},
-           {"decision": "allowed"})
+    if _is_our_agent_call(env):
+        partners = _consent_partners(record)
+        if not partners or not _all_consented(partners):
+            return _block(env, record, "blocked_no_consent",
+                          {"op": "transcription"}, text=False)
+        _audit(env, "ai_request", agent, record,
+               {"op": "transcription", "scope": "agent"}, {"decision": "allowed"})
+        return call()
+    _audit(env, "ai_request", agent, record,
+           {"op": "transcription", "scope": "native"}, {"decision": "allowed_native"})
     return call()
 
 

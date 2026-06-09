@@ -13,9 +13,10 @@
     default model at call time, so this record installs cleanly regardless
     of which LLM provider the customer configured (OpenAI, Gemini, Claude…).
 
-    The post_init_hook points era_seo.ai_agent_id at this agent, but only
-    when that setting is still empty, so a re-install never overrides an
-    admin's later choice.
+    Article-writer resolution order: the era_ai_accounts content account
+    (Blog Gen → "Article content account", era_seo.content_account_id) wins;
+    else the era_seo.article_agent_id / era_seo.ai_agent_id pick; else this
+    shipped agent as the fallback. Nothing auto-sets era_seo.ai_agent_id.
 
     The system_prompt shipped here is the GENERIC, brand-neutral fallback —
     it teaches the SEO craft without making any assumption about industry

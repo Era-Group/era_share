@@ -2247,7 +2247,7 @@ class EraSeoSuiteHub(models.Model):
         ICP = self.env['ir.config_parameter'].sudo()
         from .ai_client import AIClient, AIUnavailable
         client = AIClient(self.env)
-        ok, reason = client.is_available()
+        ok, reason = client.is_available_for_article()
         if not ok:
             _logger.warning('cron_generate_blog_article: AI unavailable: %s', reason)
             return False
@@ -2400,11 +2400,12 @@ class EraSeoSuiteHub(models.Model):
             post, article.get('image_prompt'), article,
             attempts=3, progress_msg=steps.get('image'))
         if not attached:
-            provider = ICP.get_param('era_seo.image_provider', 'none') or 'none'
+            acc = self._resolve_image_account()
             _logger.info(
                 'cron_generate_blog_article: no image after 3 attempts '
-                '(provider=%s) — post kept without a cover. Configure the Blog '
-                'Gen tab → Image generation to enable.', provider)
+                '(image account: %s) — post kept without a cover. Pick an Image '
+                'generation account under Blog Gen → AI accounts to enable.',
+                acc.name if acc else 'none set')
         self.env.cr.commit()  # persist the cover if one was attached
 
         # Notify the SEO Manager group with the live URL.

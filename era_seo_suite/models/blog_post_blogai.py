@@ -53,7 +53,7 @@ class BlogPost(models.Model):
         Hub = self.env['era.seo.suite.hub'].sudo()
         from .ai_client import AIClient, AIUnavailable
         client = AIClient(self.env)
-        ok, reason = client.is_available()
+        ok, reason = client.is_available_for_article()
         if not ok:
             from odoo.exceptions import UserError
             raise UserError(reason)
@@ -146,16 +146,15 @@ class BlogPost(models.Model):
                     'sticky': False,
                 },
             }
-        provider = self.env['ir.config_parameter'].sudo().get_param(
-            'era_seo.image_provider', 'none') or 'none'
+        acc = Hub._resolve_image_account()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': 'warning',
                 'message': _('Could not generate an image after 3 tries '
-                             '(provider: %s). The article is unchanged.',
-                             provider),
+                             '(image account: %s). The article is unchanged.',
+                             acc.name if acc else 'none set — pick one in Blog Gen'),
                 'sticky': False,
             },
         }

@@ -417,6 +417,20 @@ class AIClient:
                             '→ AI Auto-Fix, or create an agent in the AI app.')
         return True, ''
 
+    def is_available_for_article(self):
+        """Availability for the BLOG ARTICLE writer specifically.
+
+        An era_ai_accounts *content account* (Blog Gen → "Article content
+        account") is a complete substitute for an ai.agent — so accept it and
+        skip the agent requirement. Otherwise fall back to the normal
+        agent-based check. The global AI on/off gate is always honored.
+        """
+        if not _enabled(self.env):
+            return False, _('AI auto-fix is disabled in settings.')
+        if self._resolve_content_account():
+            return True, ''
+        return self.is_available()
+
     def _resolve_agent(self):
         """Return the configured ai.agent record, or the Ask-AI fallback, or empty.
 
@@ -1457,7 +1471,7 @@ class AIClient:
                           'confidence'}``.
         :raises AIUnavailable / ValueError
         """
-        ok, reason = self.is_available()
+        ok, reason = self.is_available_for_article()
         if not ok:
             raise AIUnavailable(reason)
         import time as _time

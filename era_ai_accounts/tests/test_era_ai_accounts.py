@@ -301,9 +301,47 @@ class TestEraAiAccounts(TransactionCase):
             acc.generate_image("a hero image", model="@cf/black-forest-labs/flux-2-klein-9b")
         self.assertIn("/ai/run/@cf/black-forest-labs/flux-2-klein-9b", captured["url"])
 
-    def test_generate_image_requires_cloudflare(self):
+    def test_openai_generate_image(self):
         acc = self.Account.create({
-            "name": "k", "provider": "openai", "auth_mode": "api_key", "secret": "x",
+            "name": "GPT", "provider": "openai", "auth_mode": "api_key", "secret": "sk-x",
+        })
+        png = b"\x89PNG-openai"
+        captured = {}
+
+        class _Resp:
+            status_code = 200
+            text = ""
+
+            def json(self):
+                return {"data": [{"b64_json": base64.b64encode(png).decode()}]}
+
+        def fake_post(url, **kwargs):
+            captured["url"] = url
+            captured["json"] = kwargs.get("json")
+            captured["headers"] = kwargs.get("headers")
+            return _Resp()
+
+        with patch.object(era_ai_account.requests, "post", side_effect=fake_post):
+            out = acc.generate_image("a hero image", model="gpt-image-1")
+        self.assertEqual(out, png)
+        self.assertIn("/images/generations", captured["url"])
+        self.assertEqual(captured["json"]["model"], "gpt-image-1")
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer sk-x")
+
+    def test_openai_sync_includes_image_models(self):
+        acc = self.Account.create({
+            "name": "GPT2", "provider": "openai", "auth_mode": "api_key", "secret": "sk-y",
+        })
+        # Avoid a live /models call — stub the chat list; image models are appended.
+        with patch.object(type(acc), "_http_list_models", return_value=[("gpt-4o", "gpt-4o", "chat")]):
+            acc.action_sync_models()
+        image_ids = set(acc.model_ids.filtered(lambda m: m.kind == "image").mapped("model_id"))
+        self.assertIn("gpt-image-1", image_ids)
+        self.assertIn("dall-e-3", image_ids)
+
+    def test_generate_image_unsupported_provider(self):
+        acc = self.Account.create({
+            "name": "g", "provider": "google", "auth_mode": "api_key", "secret": "x",
         })
         with self.assertRaises(Exception):
             acc.generate_image("anything")

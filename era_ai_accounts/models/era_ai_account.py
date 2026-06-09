@@ -52,6 +52,13 @@ CLOUDFLARE_MODELS = [
 ]
 CLOUDFLARE_DEFAULT_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell"
 
+# Curated OpenAI image models (the /models endpoint lists chat models only, not
+# image ones). Much higher quality than free Cloudflare FLUX, at a per-image cost.
+OPENAI_IMAGE_MODELS = [
+    ("gpt-image-1", "GPT Image 1 (high quality)", "image", "paid — see OpenAI image pricing"),
+    ("dall-e-3", "DALL·E 3", "image", "paid — see OpenAI image pricing"),
+]
+
 
 class EraAiAccount(models.Model):
     _name = "era.ai.account"
@@ -284,18 +291,26 @@ class EraAiAccount(models.Model):
     def generate_image(self, prompt, model=None, steps=None, width=1024, height=1024):
         """Generate an image and return the raw bytes (PNG/JPEG), or raise.
 
-        Cloudflare Workers AI. Two request shapes exist and are NOT interchangeable:
-        FLUX.1-schnell / SDXL take a JSON body ``{"prompt", "steps"}``, while the
-        newer FLUX.2 models REQUIRE ``multipart/form-data`` (prompt/steps/width/
-        height) — sending JSON to FLUX.2 fails with 'required properties … multipart'.
-        The response is JSON with the image as base64 (``result.image`` or ``image``).
+        Supported providers: Cloudflare Workers AI (FLUX/SDXL) and OpenAI
+        (gpt-image-1 / DALL·E). OpenAI gives much higher quality than free
+        Cloudflare FLUX, at a per-image cost.
         """
         self.ensure_one()
         self._assert_usable()
-        if self.provider != "cloudflare":
-            raise UserError(_(
-                "Image generation is currently supported only for Cloudflare "
-                "Workers AI accounts (account '%s' is '%s').", self.name, self.provider))
+        prompt = (prompt or "")[:4000]
+        if self.provider == "cloudflare":
+            return self._generate_image_cloudflare(prompt, model, steps, width, height)
+        if self.provider == "openai":
+            return self._generate_image_openai(prompt, model, width, height)
+        raise UserError(_(
+            "Image generation is supported for Cloudflare Workers AI and OpenAI "
+            "accounts (account '%s' is '%s').", self.name, self.provider))
+
+    def _generate_image_cloudflare(self, prompt, model, steps, width, height):
+        """Cloudflare Workers AI image gen. Two request shapes that are NOT
+        interchangeable: FLUX.1-schnell / SDXL take JSON ``{"prompt","steps"}``,
+        while FLUX.2 REQUIRES ``multipart/form-data`` (prompt/steps/width/height)
+        — sending JSON to FLUX.2 fails with 'required properties … multipart'."""
         token = self._get_secret()
         if not token:
             raise UserError(_("Set the Cloudflare API token on account '%s'.", self.name))
@@ -307,7 +322,6 @@ class EraAiAccount(models.Model):
         except (TypeError, ValueError):
             steps = self._cf_default_steps(model)
         url = self._cloudflare_run_url(model)
-        prompt = (prompt or "")[:2048]
         auth = {"Authorization": "Bearer %s" % token}
         try:
             if "flux-2" in model:
@@ -316,7 +330,7 @@ class EraAiAccount(models.Model):
                 resp = requests.post(
                     url, headers=auth, timeout=120,
                     files={
-                        "prompt": (None, prompt),
+                        "prompt": (None, prompt[:2048]),
                         "steps": (None, str(steps)),
                         "width": (None, str(int(width))),
                         "height": (None, str(int(height))),
@@ -325,7 +339,7 @@ class EraAiAccount(models.Model):
             else:
                 resp = requests.post(
                     url, headers=dict(auth, **{"Content-Type": "application/json"}),
-                    json={"prompt": prompt, "steps": steps}, timeout=120,
+                    json={"prompt": prompt[:2048], "steps": steps}, timeout=120,
                 )
         except requests.exceptions.RequestException as exc:
             raise UserError(_("Cloudflare image request failed: %s", exc))
@@ -342,6 +356,43 @@ class EraAiAccount(models.Model):
             import base64  # local import; only used here
             return base64.b64decode(b64)
         return resp.content
+
+    def _generate_image_openai(self, prompt, model, width, height):
+        """OpenAI image generation (gpt-image-1 / DALL·E 3). High quality, paid."""
+        import base64  # local import; only used here
+        key = self._get_secret()
+        if not key:
+            raise UserError(_("Set the OpenAI API key on account '%s'.", self.name))
+        model = model or "gpt-image-1"
+        body = {"model": model, "prompt": prompt[:4000], "n": 1,
+                "size": "%dx%d" % (int(width), int(height))}
+        if model.startswith("gpt-image"):
+            body["quality"] = "high"  # article heroes — favor quality
+        base = (self.base_url or "https://api.openai.com/v1").rstrip("/")
+        try:
+            resp = requests.post(
+                base + "/images/generations",
+                headers={"Authorization": "Bearer %s" % key, "Content-Type": "application/json"},
+                json=body, timeout=180)
+        except requests.exceptions.RequestException as exc:
+            raise UserError(_("OpenAI image request failed: %s", exc))
+        if resp.status_code >= 400:
+            raise UserError(_("OpenAI image error (%(code)s): %(detail)s",
+                              code=resp.status_code, detail=(resp.text or "")[:400]))
+        try:
+            item = resp.json()["data"][0]
+        except (ValueError, KeyError, IndexError) as exc:
+            raise UserError(_("OpenAI returned an unexpected image response: %s", exc))
+        if item.get("b64_json"):
+            return base64.b64decode(item["b64_json"])
+        if item.get("url"):
+            try:
+                dl = requests.get(item["url"], timeout=60)
+                dl.raise_for_status()
+                return dl.content
+            except requests.exceptions.RequestException as exc:
+                raise UserError(_("OpenAI image download failed: %s", exc))
+        raise UserError(_("OpenAI returned no image."))
 
     # --------------------------------------------------------------- public API
     def generate_text(self, prompt, system="", model=None, temperature=0.2):
@@ -526,6 +577,11 @@ class EraAiAccount(models.Model):
             # Cloudflare has no per-model price API, so use the curated catalog with
             # the published Neuron rates baked in (see CLOUDFLARE_MODELS).
             rows = list(CLOUDFLARE_MODELS)
+        elif self.provider == "openai":
+            # /models lists chat models only — add the image models so they can be
+            # picked for cover generation (gpt-image-1 / DALL·E).
+            rows = [(mid, label, kind, "") for mid, label, kind in self._http_list_models()]
+            rows += list(OPENAI_IMAGE_MODELS)
         else:
             rows = [(mid, label, kind, "") for mid, label, kind in self._http_list_models()]
         existing = {(m.model_id, m.kind): m for m in self.model_ids}

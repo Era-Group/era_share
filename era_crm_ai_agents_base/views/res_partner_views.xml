@@ -3,15 +3,19 @@
 
     <!-- Expose the PDPL AI consent flag on the partner form so humans can record
          consent. The AI Compliance Guard reads this before any personal data is
-         sent to an international AI provider. -->
+         sent to an international AI provider.
+
+         Note (Odoo 19): an INHERITED view must not set group_ids on the record
+         ("Inherited view cannot have 'groups' defined on the record"). Restrict
+         visibility with a groups="..." attribute on the element instead. -->
     <record id="view_partner_form_crm_ai_consent" model="ir.ui.view">
         <field name="name">res.partner.form.crm.ai.consent</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="groups_id" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_user'))]"/>
         <field name="arch" type="xml">
             <notebook position="inside">
-                <page string="AI &amp; PDPL" name="crm_ai_pdpl">
+                <page string="AI &amp; PDPL" name="crm_ai_pdpl"
+                      groups="era_crm_ai_agents_base.group_crm_ai_user">
                     <group>
                         <group string="International AI Processing Consent">
                             <field name="crm_ai_intl_processing_consent"/>

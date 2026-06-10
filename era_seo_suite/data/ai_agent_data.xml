@@ -13,10 +13,11 @@
     default model at call time, so this record installs cleanly regardless
     of which LLM provider the customer configured (OpenAI, Gemini, Claude…).
 
-    Article-writer resolution order: the era_ai_accounts content account
-    (Blog Gen → "Article content account", era_seo.content_account_id) wins;
-    else the era_seo.article_agent_id / era_seo.ai_agent_id pick; else this
-    shipped agent as the fallback. Nothing auto-sets era_seo.ai_agent_id.
+    Article-writer resolution order (see ai_client._resolve_article_agent):
+    the Blog Gen picker (era_seo.article_agent_id) wins; else this shipped
+    agent_article record; else the SEO agent. The selected agent may route
+    its generation through an era.ai.account (Claude via the CLI proxy, …)
+    via its own era_account_id field — that wiring lives on the agent.
 
     The system_prompt shipped here is the GENERIC, brand-neutral fallback —
     it teaches the SEO craft without making any assumption about industry

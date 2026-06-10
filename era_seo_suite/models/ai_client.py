@@ -363,21 +363,6 @@ class AIUnavailable(Exception):
     """Raised when the AI app isn't installed, not enabled, or no agent is set."""
 
 
-class _AccountAgent:
-    """Adapter that lets an ``era.ai.account`` stand in for an ``ai.agent`` on the
-    article path. Exposes the same ``get_direct_response(prompt, context_message)``
-    contract, generating content via ``account.generate_text`` (the account is
-    picked in Blog Gen → "Article content account").
-    """
-
-    def __init__(self, account):
-        self._account = account
-
-    def get_direct_response(self, prompt, context_message="", enable_html_response=False):
-        text = self._account.generate_text(prompt, system=context_message or "")
-        return [text or ""]
-
-
 # Process-wide cache of agent-id values we've already warned about. Resets at
 # every worker restart, which is when an admin would re-check the log anyway.
 _STALE_AGENT_WARNED = set()
@@ -418,18 +403,21 @@ class AIClient:
         return True, ''
 
     def is_available_for_article(self):
-        """Availability for the BLOG ARTICLE writer specifically.
-
-        An era_ai_accounts *content account* (Blog Gen → "Article content
-        account") is a complete substitute for an ai.agent — so accept it and
-        skip the agent requirement. Otherwise fall back to the normal
-        agent-based check. The global AI on/off gate is always honored.
+        """Availability for the BLOG ARTICLE writer specifically: the global AI
+        gate, the AI app being installed, and a resolvable article agent. The
+        shipped ``agent_article`` is auto-created (and self-healed if deleted),
+        so in practice this guards the on/off switch and a missing AI app.
         """
         if not _enabled(self.env):
             return False, _('AI auto-fix is disabled in settings.')
-        if self._resolve_content_account():
-            return True, ''
-        return self.is_available()
+        if 'ai.agent' not in self.env:
+            return False, _('The Odoo AI app is not installed. Install the "AI" '
+                            'app (Apps) and configure a provider first.')
+        if not self._resolve_article_agent():
+            return False, _('No AI agent configured to write articles. Pick one '
+                            'in Settings → ERA SEO → Blog Gen, or create an '
+                            'agent in the AI app.')
+        return True, ''
 
     def _resolve_agent(self):
         """Return the configured ai.agent record, or the Ask-AI fallback, or empty.
@@ -467,29 +455,15 @@ class AIClient:
         fallback = Agent._get_potential_ask_ai_agent()
         return fallback or Agent.browse()
 
-    def _resolve_content_account(self):
-        """The era_ai_accounts content account picked in Blog Gen, or None."""
-        Acc = self.env.get('era.ai.account')
-        if Acc is None:
-            return None
-        raw = _icp(self.env, 'era_seo.content_account_id')
-        if not raw:
-            return None
-        try:
-            acc = Acc.sudo().browse(int(raw))
-        except (TypeError, ValueError):
-            return None
-        return acc if acc.exists() else None
-
     def _resolve_article_agent(self):
-        """Return the DEDICATED blog-article writer. Resolution: the era_ai_accounts
-        content account picked in Blog Gen (wrapped so it quacks like an agent),
-        then the era_seo.article_agent_id override, then the shipped
-        era_seo_suite.agent_article record, then the SEO agent.
+        """Return the DEDICATED blog-article writer ai.agent. Resolution: the
+        Blog Gen picker (``era_seo.article_agent_id`` ICP) → the shipped
+        ``era_seo_suite.agent_article`` record → the SEO agent.
+
+        The agent may route its generation through an ``era.ai.account`` (e.g.
+        Claude via the local CLI proxy) by setting its own ``era_account_id`` —
+        that wiring lives on the agent record, not here.
         """
-        acc = self._resolve_content_account()
-        if acc:
-            return _AccountAgent(acc)
         Agent = self.env['ai.agent'].sudo()
         aid = _icp(self.env, 'era_seo.article_agent_id')
         if aid:

@@ -8,6 +8,28 @@ from . import wizards
 _logger = logging.getLogger(__name__)
 
 
+def _ensure_seo_agents(env):
+    """Guarantee the shipped Blog/SEO AI agents exist, re-creating any an admin
+    deleted, so Blog Gen and Auto-Fix always have a writer.
+
+    The agents (``era_seo_suite.agent_seo`` / ``agent_article``) are declared
+    ``noupdate="1"`` in ``data/ai_agent_data.xml`` — Odoo recreates them on a
+    module UPGRADE if their xmlid is missing. This helper makes the same
+    guarantee on INSTALL (via ``post_init_hook``) and is callable from
+    migrations. It never duplicates the prompt text: missing agents are
+    re-seeded straight from the single source of truth (the XML); existing
+    agents (with their admin-tuned prompt/model) are left untouched.
+    """
+    wanted = ('agent_seo', 'agent_article')
+    if all(env.ref('era_seo_suite.' + x, raise_if_not_found=False)
+           for x in wanted):
+        return
+    from odoo.tools.convert import convert_file
+    convert_file(env, 'era_seo_suite', 'data/ai_agent_data.xml', None,
+                 mode='init', noupdate=True)
+    _logger.info('era_seo_suite: (re)seeded missing Blog/SEO AI agent(s).')
+
+
 def post_init_hook(env):
     """Add every Settings/Admin user (`base.group_system`) to the suite's
     SEO Manager group.
@@ -24,6 +46,10 @@ def post_init_hook(env):
     Idempotent — re-running on upgrade just adds whichever admins joined
     `base.group_system` since the last install.
     """
+    # Always ensure the shipped Blog/SEO agents exist — must run regardless of
+    # the group-membership early-returns below.
+    _ensure_seo_agents(env)
+
     seo_manager = env.ref(
         'era_seo_suite.group_era_seo_manager', raise_if_not_found=False)
     sys_group = env.ref('base.group_system', raise_if_not_found=False)

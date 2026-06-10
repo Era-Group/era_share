@@ -2707,12 +2707,15 @@ class EraSeoSuiteHub(models.Model):
             url=full_url,
         )
 
-    # --- era_ai_accounts integration (Blog Gen) ------------------------------
-    setting_content_account_id = fields.Many2one(
-        'era.ai.account', string='Article content account',
-        compute='_compute_ai_accounts', inverse='_inverse_content_account',
-        help="AI account (AI ▸ AI Accounts) used to WRITE the article. The "
-             "provider/model are configured once on the account itself.")
+    # --- Blog Gen writer agent + image accounts ------------------------------
+    setting_article_agent_id = fields.Many2one(
+        'ai.agent', string='Article writer',
+        compute='_compute_article_agent_id', inverse='_inverse_article_agent_id',
+        help="The AI agent that WRITES blog articles — it carries the system "
+             "prompt, response style and model (configured in AI ▸ Agents), "
+             "and may route through an AI Account (e.g. Claude) via the agent's "
+             "own AI Account field. The module ships and auto-creates a default "
+             "'ERA Article Writer' agent; pick another here to override.")
     setting_image_account_id = fields.Many2one(
         'era.ai.account', string='Image generation account',
         compute='_compute_ai_accounts', inverse='_inverse_image_account',
@@ -2729,14 +2732,24 @@ class EraSeoSuiteHub(models.Model):
 
     def _compute_ai_accounts(self):
         for rec in self:
-            rec.setting_content_account_id = rec._resolve_ai_account('era_seo.content_account_id').id
             rec.setting_image_account_id = rec._resolve_ai_account('era_seo.image_account_id').id
             rec.setting_image_model_id = rec._resolve_image_model_record().id
 
-    def _inverse_content_account(self):
+    def _compute_article_agent_id(self):
+        """Surface the effective blog-article writer (the era_seo.article_agent_id
+        override, else the shipped agent_article) so the Blog Gen picker always
+        shows who will actually write."""
+        for rec in self:
+            agent = rec._blog_agent()
+            rec.setting_article_agent_id = agent.id if agent and agent.exists() else False
+
+    def _inverse_article_agent_id(self):
+        """Persist the picked writer agent to era_seo.article_agent_id ICP."""
         ICP = self.env['ir.config_parameter'].sudo()
         for rec in self:
-            ICP.set_param('era_seo.content_account_id', str(rec.setting_content_account_id.id or ''))
+            ICP.set_param(
+                'era_seo.article_agent_id',
+                str(rec.setting_article_agent_id.id) if rec.setting_article_agent_id else '')
 
     def _inverse_image_account(self):
         ICP = self.env['ir.config_parameter'].sudo()

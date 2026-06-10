@@ -879,19 +879,21 @@
                          placeholder="en_US / ar_001 (blank = auto-detect)"
                          invisible="not setting_article_generator_active"/>
                 </group>
-                <group string="AI accounts (from AI ▸ AI Accounts)"
+                <group string="AI writer &amp; image account"
                        invisible="not setting_article_generator_active">
-                  <field name="setting_content_account_id"
-                         options="{'no_create': True, 'no_open': True}"/>
+                  <field name="setting_article_agent_id"
+                         options="{'no_create': True}"/>
                   <field name="setting_image_account_id"
                          options="{'no_create': True, 'no_open': True}"/>
                   <field name="setting_image_model_id"
                          invisible="not setting_image_account_id"
                          options="{'no_create': True, 'no_open': True}"/>
                   <div class="text-muted small" colspan="2">
-                    Pick the accounts to use — provider, key and model are configured
-                    once on the account itself. The <b>content</b> account writes the
-                    article; the <b>image</b> account generates the cover (e.g. a
+                    The <b>article writer</b> is an AI Agent (AI ▸ Agents) — it carries
+                    the system prompt, response style and model, and may route through
+                    an AI Account (e.g. Claude). The module ships and auto-creates a
+                    default <b>ERA Article Writer</b>; open it to tune the prompt or
+                    provider. The <b>image</b> account generates the cover (e.g. a
                     Cloudflare Workers AI account — pick a <b>FLUX.2</b> image model for
                     better quality than FLUX.1-schnell). Leave the image account empty
                     to skip the cover (the Claude CLI cannot make images).

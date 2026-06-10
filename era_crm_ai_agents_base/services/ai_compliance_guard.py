@@ -25,9 +25,11 @@ Per-call pipeline (pre-flight, BEFORE any outbound HTTP):
   consent → PII redaction (record-driven + regex net) → cost cap → audit →
   delegate to the original → re-insert real values → record usage.
 
-Guarantees enforced: PDPL (consent + record-driven redaction), hard cost cap
-(Rule 14), persistent audit (Rule 20), env-only secrets (Rule 03). The in-memory
-PII map lives only for the duration of one call and is never persisted or sent.
+Guarantees enforced: PDPL (consent + record-driven redaction), hard consumption
+limit (Rule 14: dollar cost cap on the priced API path, estimated-token limit on
+the Claude CLI/subscription path), persistent audit (Rule 20), env-only secrets
+(Rule 03; the CLI path uses no API key, so there is no secret to leak). The
+in-memory PII map lives only for one call and is never persisted or sent.
 """
 import inspect
 import logging
@@ -49,6 +51,14 @@ ORIGINAL_SIGNATURES = {}
 CTX_RECORD = "_pdpl_record"            # recordset stamped by patch #4 / our mixin
 CTX_AGENT = "_crm_ai_agent_tech_name"  # str, for cost attribution (optional)
 CTX_UNATTENDED = "crm_ai_unattended"   # True for cron/batch: skip-with-audit, no raise
+
+# Provider token of the era_ai_accounts Claude CLI / subscription transport. A
+# call on this provider has no per-token dollar cost, so on our agents' path it is
+# governed by the monthly TOKEN limit (estimated) instead of the dollar cost cap,
+# and is exempt from the unpriced-model rate-card block. The redaction/consent
+# guarantees are identical — the guard still sits OUTERMOST on the public
+# request_llm, so prompts are masked BEFORE the CLI subprocess ever runs.
+CLI_PROVIDER = "anthropic_cli"
 
 # Native UI key parameters that MUST stay blank (Rule 03 — keys only from env).
 _NATIVE_UI_KEY_PARAM = {
@@ -212,27 +222,42 @@ def _guard_text(service, call, llm_model, system_prompts, user_prompts):
     """Text chat entry: global key check, then branch on the scope gate."""
     env = service.env
     _assert_env_only_key(service)                       # GLOBAL (Rule 03)
+    is_cli = getattr(service, "provider", None) == CLI_PROVIDER
     record = _resolve_record(env)
     agent = _resolve_agent(env)
     redactor = _build_redactor(record)
     sys_in = list(system_prompts or [])
     usr_in = list(user_prompts or [])
+    if is_cli and not _is_our_agent_call(env):
+        # TRIPWIRE. A Claude-CLI call reached the guard WITHOUT CTX_AGENT, so it
+        # will fall to the best-effort native path (NO consent gate, NO unmapped-
+        # PII hard-block). Our agents MUST reach the CLI through
+        # crm.ai.agent.mixin._call_llm, which stamps CTX_AGENT. A hit here means
+        # an ERA agent bypassed the mixin — surface it loudly.
+        _logger.warning(
+            "TRIPWIRE: a Claude-CLI LLM call arrived WITHOUT CTX_AGENT — it will "
+            "use best-effort redaction only (PDPL consent + unmapped-PII hard-"
+            "block NOT enforced). ERA agents must call the CLI via "
+            "crm.ai.agent.mixin._call_llm.")
     if _is_our_agent_call(env):
-        return _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in)
+        return _text_strict(env, call, llm_model, record, agent, redactor,
+                            sys_in, usr_in, is_cli)
     return _text_native(env, call, llm_model, record, agent, redactor, sys_in, usr_in)
 
 
-def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
+def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in,
+                 is_cli=False):
     """OUR agents — full enforcement, each layer behind its toggle (all default
     ON). Compliance layers warn-on-every-call when disabled; operational layers
-    toggle silently."""
+    toggle silently. ``is_cli`` selects the consumption control: estimated-token
+    limit (CLI/subscription) vs dollar cost cap (priced API)."""
     cap_on = _flag(env, "enable_cost_cap")              # operational
     audit_on = _flag(env, "enable_audit")               # operational
     redaction_on = _compliance_on(env, "enable_pii_redaction")
     consent_on = _compliance_on(env, "enable_consent_check")
 
     if cap_on:                                          # Rule 14 (pre-spend)
-        capped = _enforce_cost_cap(env, agent, record)
+        capped = _enforce_consumption(env, agent, record, is_cli)
         if capped is not None:
             return capped
 
@@ -252,11 +277,13 @@ def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
     else:
         masked_system, masked_user = sys_in, usr_in
 
-    # Unpriced-model fail-safe (Rule 14): a model with no rate-card price must
-    # NOT silently cost 0. Only meaningful while the cap is active and we have an
-    # agent to attribute cost to.
+    # Unpriced-model fail-safe (Rule 14) — DOLLAR path only. A priced-path model
+    # with no rate-card price must NOT silently cost 0. The CLI/subscription path
+    # has no per-token dollar cost at all (cost is always 0) and is governed by
+    # the token limit above, not the rate card — so the unpriced block is
+    # intentionally skipped for it (an opus/sonnet alias is never "priced").
     unpriced = False
-    if cap_on and agent and not _model_is_priced(env, llm_model):
+    if cap_on and agent and not is_cli and not _model_is_priced(env, llm_model):
         unpriced = True
         _logger.warning("Rule 14: model %r has no active price in the rate card "
                         "(crm.ai.model); cost cannot be computed.", llm_model)
@@ -270,6 +297,7 @@ def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
     if audit_on:
         _audit(env, "ai_request", agent, record,
                {"model": llm_model, "scope": "agent",
+                "transport": "cli" if is_cli else "api",
                 "redaction": redaction_on, "consent": consent_on},
                {"decision": "allowed", "pii_tokens": len(redactor.mapping)})
 
@@ -286,7 +314,7 @@ def _text_strict(env, call, llm_model, record, agent, redactor, sys_in, usr_in):
 
     if cap_on:
         _record_usage(env, agent, llm_model, sys_in + usr_in, restored,
-                      unpriced=unpriced)              # Rule 14 feed
+                      unpriced=unpriced, is_cli=is_cli)  # Rule 14 feed
     return restored
 
 
@@ -421,17 +449,27 @@ def _resolve_agent(env):
     ) or None
 
 
-def _enforce_cost_cap(env, agent, record):
-    """Rule 14: block before any spend when the agent is over its monthly cap.
+def _enforce_consumption(env, agent, record, is_cli):
+    """Rule 14: block before any spend when the agent is over its monthly limit.
+
+    Path-aware, same shape/outcome (block + auto-pause to ``capped`` + audit):
+      * CLI/subscription -> estimated-TOKEN limit (``is_over_token_limit``).
+      * priced API       -> dollar cost cap     (``is_over_cap``).
 
     Returns None when the call may proceed, or the block result (interactive:
     raises; unattended: empty result) which the caller must return as-is.
     """
     if not agent or "crm.ai.usage" not in env:
         return None
-    if agent.state in ("paused", "capped") or env["crm.ai.usage"].is_over_cap(agent):
+    Usage = env["crm.ai.usage"]
+    over = Usage.is_over_token_limit(agent) if is_cli else Usage.is_over_cap(agent)
+    if agent.state in ("paused", "capped") or over:
         if agent.state == "enabled":
             agent._mark_state("capped")
+        if is_cli:
+            return _block(env, record, "token_limit_exceeded",
+                          {"monthly_tokens": agent.monthly_tokens},
+                          text=True, event="blocked")
         return _block(env, record, "cost_cap_exceeded",
                       {"monthly_cost": agent.monthly_cost}, text=True, event="blocked")
     return None
@@ -565,6 +603,11 @@ def _block_message(decision):
         "cost_cap_exceeded": (
             "This AI agent has hit its monthly cost cap and has been paused "
             "(Rule 14)."),
+        "token_limit_exceeded": (
+            "This AI agent has reached its monthly token limit on the Claude "
+            "subscription (CLI) path and has been paused (Rule 14). The token "
+            "count is estimated. Raise the limit under CRM AI → "
+            "Configuration, or wait for next month."),
         "unpriced_model": (
             "This AI model has no price in the rate card, so its cost cannot be "
             "tracked against the cap. The request was blocked (Rule 14). Add a "
@@ -572,28 +615,36 @@ def _block_message(decision):
     }.get(decision, "The AI request was blocked by the compliance guard.")
 
 
-def _record_usage(env, agent, llm_model, in_texts, out_texts, unpriced=False):
-    """Estimate tokens (native does not return counts here) and record usage.
+def _record_usage(env, agent, llm_model, in_texts, out_texts, unpriced=False,
+                  is_cli=False):
+    """Estimate tokens and record usage.
 
-    Token estimate matches Odoo's own heuristic (~1 token / 4 chars). Cost is
-    priced from the slim rate card (crm.ai.model) by model code. When the model
-    is unpriced (and the call was allowed anyway), cost is 0 and the usage row is
-    flagged so a manager can spot it and add a price. Skipped when no agent is in
-    context (e.g. Odoo's own AI features).
+    Token counts are ESTIMATED (~1 token / 4 chars): the native public
+    request_llm returns only text, not provider usage, so no measured count is
+    available at this seam — the usage row is marked ``token_source=estimated``
+    accordingly (CLI and API alike). Cost:
+
+      * CLI/subscription (``is_cli``) -> 0 by design; consumption is the token
+        count, governed by the token limit. Row flagged ``via_cli``.
+      * priced API -> priced from the rate card (crm.ai.model) by model code.
+      * unpriced API -> 0, flagged ``unpriced`` so a manager can add a price.
+
+    Skipped when no agent is in context (e.g. Odoo's own AI features).
     """
     if not agent or "crm.ai.usage" not in env:
         return
     in_tok = sum(len(t) for t in in_texts if isinstance(t, str)) // 4
     out_tok = sum(len(t) for t in out_texts if isinstance(t, str)) // 4
     model = False
-    if "crm.ai.model" in env and llm_model:
+    if "crm.ai.model" in env and llm_model and not is_cli:
         model = env["crm.ai.model"].sudo().search([("code", "=", llm_model)], limit=1)
     cost = 0.0
-    if model and not unpriced:
+    if model and not unpriced and not is_cli:
         cost = (in_tok / 1000.0) * (model.price_input_1k or 0.0) \
             + (out_tok / 1000.0) * (model.price_output_1k or 0.0)
     try:
         env["crm.ai.usage"].record(agent, model or False, in_tok, out_tok, cost,
-                                   unpriced=unpriced)
+                                   unpriced=unpriced, token_source="estimated",
+                                   via_cli=is_cli)
     except Exception:  # pragma: no cover
         _logger.exception("AI guard: failed to record usage.")

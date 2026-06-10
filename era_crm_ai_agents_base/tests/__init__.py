@@ -4,3 +4,4 @@ from . import test_pii_redaction
 from . import test_guard_scope
 from . import test_guard_toggles
 from . import test_unpriced
+from . import test_cli_token_path

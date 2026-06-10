@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Dashboard list: per-agent cost + cap status; footer sum = total spend.
-         (monthly_cost is non-stored, so cost lives here, not in the graph.) -->
+    <!-- Dashboard list: per-agent consumption + cap status. Shows BOTH tokens and
+         $ so the two transports read correctly: CLI agents consume TOKENS (no
+         dollar cost — a 0 there is NOT free), API agents consume $.
+         (computes are non-stored, so they live here, not in the graph.) -->
     <record id="view_crm_ai_agent_dashboard_list" model="ir.ui.view">
         <field name="name">crm.ai.agent.dashboard.list</field>
         <field name="model">crm.ai.agent</field>
         <field name="arch" type="xml">
-            <list string="AI Agents — Cost &amp; Status" create="false" edit="false"
+            <list string="AI Agents — Consumption &amp; Status" create="false" edit="false"
                   decoration-danger="state == 'capped'"
-                  decoration-muted="state == 'paused'">
+                  decoration-muted="state == 'paused'"
+                  decoration-info="transport == 'cli'">
                 <field name="name"/>
-                <field name="model_code"/>
+                <field name="transport"/>
+                <field name="model_code" optional="show"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'enabled'"
                        decoration-warning="state == 'paused'"
                        decoration-danger="state == 'capped'"/>
                 <field name="last_run"/>
+                <field name="monthly_tokens" sum="Total Tokens (Month)"/>
                 <field name="monthly_cost" widget="monetary" sum="Total Spend (Month)"/>
                 <field name="currency_id" column_invisible="1"/>
             </list>

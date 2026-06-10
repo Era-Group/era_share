@@ -63,6 +63,32 @@ Every **sending** agent calls `guard()` **before any message goes out**. `guard(
 
 ---
 
+## AI Transport, Compliance Guard & Consumption Control (FINAL architecture)
+
+> This section reflects the final, implemented architecture and **supersedes any earlier "LLMRouter builds the request and calls the provider" wording in the bricks/mixin above.** We add **no** provider and call **no** provider ourselves.
+
+**All LLM work runs through Odoo 19 native AI** (`odoo.addons.ai`, OpenAI/Google), **or** through the **Claude CLI / subscription** transport from `era_ai_accounts`. No MCP, no Claude/Anthropic API key.
+
+**AI Compliance Guard — the single enforcement point.** `services/ai_compliance_guard.py` monkeypatches the native `LLMApiService` (`request_llm`, `get_embedding`, `get_transcription`) + `ir.actions.server._ai_action_run`. It sits **OUTERMOST on the public `request_llm` — a call-graph guarantee, not a load-order one**: the public method we patch is what every caller hits, and native `request_llm` only reaches the transport (incl. the Claude CLI subprocess) through the private `_request_llm` underneath us. Therefore **PII redaction + PDPL consent always run before any prompt leaves**, including before the CLI subprocess. A mandatory signature smoke test fails loudly if Odoo changes a patched signature on upgrade.
+
+**Claude CLI / subscription transport (`era_ai_accounts`) — adopted.** An agent may set `transport='cli'` to generate through the editor's Claude subscription via the `era_ai_accounts` local CLI proxy instead of the priced OpenAI/Google API. The four compliance guarantees are unchanged (guard outermost, above).
+
+**HARD RULE — `CTX_AGENT`:** every LLM call (CLI **or** API) MUST go through `crm.ai.agent.mixin._call_llm`, which stamps `CTX_AGENT` (+ `CTX_RECORD`). That flag is what makes the guard run FULL enforcement (consent gate + record-driven redaction + unmapped-PII hard-block). An agent that reaches the CLI/LLM any other way **silently drops to best-effort** (no consent gate, no hard-block); a **tripwire warning** fires if a CLI call ever arrives without `CTX_AGENT`.
+
+**Consumption control (Rule 14) is path-specific:**
+- **Priced API path** (OpenAI/Google) → **dollar cost cap** (`era_crm_ai_agents.monthly_cost_cap[.<tech_name>]`).
+- **CLI/subscription path** → the CLI returns no cost, so a dollar cap is impossible; it is governed by a per-agent **monthly estimated-token limit** (`era_crm_ai_agents.monthly_token_limit[.<tech_name>]`), same fail-safe shape as the cost cap (undeterminable → block; `≤0` → explicit opt-out). The CLI path is **exempt from the unpriced-model rate-card block** and governed by the token limit instead.
+
+**Accuracy of counts — do NOT overstate:** token/cost counts at our seam are length-**ESTIMATED on BOTH the CLI and the priced API path**, because the native `request_llm` returns **text only** (no provider usage at the `request_llm` seam). They are an **operational budget, not an accounting figure** — a future reader must not believe the dollar cap is precise. The `token_source` field is `estimated` everywhere today; `measured` is reserved for if we ever thread real provider usage through. The dashboard shows tokens **and** $ side by side so a `$0` CLI agent is never read as free/unlimited.
+
+**Rule 03 on the CLI path — clean by construction:** the CLI authenticates via the subscription/OAuth through the `claude` binary — **no API key, therefore no DB-stored secret** in our path or in a `cli_proxy` account. (Env-only keys remain mandatory and non-toggleable for the API path; the guard fails closed if a key is pasted into the native AI UI.)
+
+**Accepted risk (ToS):** serving multiple Odoo users through one Claude subscription draws on that subscription's intended-use terms; this is a **knowingly accepted operational risk**, mitigated by `era_ai_accounts`' host-wide concurrency cap + kill switch.
+
+**Configurable protection layers:** four toggles, all default ON. Operational (cost cap, audit) toggle freely; compliance (PII redaction, consent) are **manager-only, audited on disable, and warn on every call while off**. The env-only-key assertion (Rule 03) is never a toggle.
+
+---
+
 ## Non-Negotiable Global Rules
 
 - Build **ONLY** in `/opt/odoo/addons/`. **Never** touch `ce/addons`, `ee`, `themes`, `waha`, or `odoo.conf`.

@@ -6,13 +6,16 @@
         <field name="model">crm.ai.usage</field>
         <field name="arch" type="xml">
             <list string="AI Usage" create="false" edit="false"
-                  decoration-warning="unpriced">
+                  decoration-warning="unpriced" decoration-info="via_cli">
                 <field name="create_date"/>
                 <field name="agent_id"/>
                 <field name="model_id"/>
                 <field name="input_tokens" sum="Input"/>
                 <field name="output_tokens" sum="Output"/>
                 <field name="total_tokens" sum="Total"/>
+                <field name="token_source"/>
+                <field name="via_cli" widget="boolean_toggle" readonly="1"
+                       string="CLI"/>
                 <field name="cost" sum="Cost" widget="monetary"/>
                 <field name="unpriced" widget="boolean_toggle" readonly="1"/>
                 <field name="currency_id" column_invisible="1"/>
@@ -31,9 +34,12 @@
                         domain="[('create_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
                 <separator/>
                 <filter name="unpriced" string="Unpriced (no rate)" domain="[('unpriced', '=', True)]"/>
+                <filter name="via_cli" string="CLI / Subscription" domain="[('via_cli', '=', True)]"/>
+                <filter name="via_api" string="Priced API" domain="[('via_cli', '=', False)]"/>
                 <group>
                     <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                     <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
+                    <filter name="group_transport" string="Transport" context="{'group_by': 'via_cli'}"/>
                     <filter name="group_month" string="Month" context="{'group_by': 'create_date:month'}"/>
                 </group>
             </search>

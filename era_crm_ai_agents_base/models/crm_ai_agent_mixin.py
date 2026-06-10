@@ -27,10 +27,16 @@ from odoo.exceptions import UserError
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 from odoo.addons.era_crm_ai_agents_base.services.ai_compliance_guard import (
+    CLI_PROVIDER,
     CTX_AGENT,
     CTX_RECORD,
     CTX_UNATTENDED,
 )
+
+# era_ai_accounts contract: the context key its patched LLMApiService.__init__
+# reads to bind a provider account to the call. Kept here as a named constant so
+# the coupling to era_ai_accounts is explicit and greppable.
+CTX_ERA_ACCOUNT = "era_ai_account_id"
 
 
 class CrmAiAgentMixin(models.AbstractModel):
@@ -67,18 +73,40 @@ class CrmAiAgentMixin(models.AbstractModel):
             unmappable PII, cost cap) — see services/ai_compliance_guard.py.
         """
         agent = self._get_agent_record()
-        # Model selection lives on the agent (explicit code per sensitivity);
-        # provider is derived from the code. Pricing for Rule 14 comes from the
-        # rate card (crm.ai.model) by that code.
-        provider, code = agent._model_for_sensitivity(sensitivity)
 
+        # Context the guard needs, stamped on EVERY path. CTX_AGENT is the
+        # load-bearing flag: it makes the guard run FULL enforcement (consent +
+        # PII redaction + hard-block + cap/limit) before any prompt leaves. An
+        # agent that reaches the LLM/CLI without going through this method drops
+        # to best-effort — which is why all LLM work MUST come through here.
         ctx = {CTX_AGENT: agent.tech_name}
         if record is not None:
             ctx[CTX_RECORD] = record
         if unattended:
             ctx[CTX_UNATTENDED] = True
 
-        service = LLMApiService(env=self.with_context(**ctx).env, provider=provider)
+        if agent.transport == "cli":
+            # Claude CLI / subscription path (era_ai_accounts). No dollar cost;
+            # governed by the monthly token limit. Bind the account + use the
+            # anthropic_cli provider; the guard still sits OUTERMOST on the public
+            # request_llm, so redaction runs before the CLI subprocess.
+            account = agent.cli_account_id
+            if not account:
+                raise UserError(_(
+                    "AI agent '%(name)s' is set to the Claude CLI transport but "
+                    "has no Claude Account configured.", name=agent.name))
+            ctx[CTX_ERA_ACCOUNT] = account.id
+            service = LLMApiService(
+                env=self.with_context(**ctx).env, provider=CLI_PROVIDER)
+            code = agent.cli_model_code or "opus"
+        else:
+            # Native API path (OpenAI/Google). Model selection lives on the agent
+            # (explicit code per sensitivity); provider derived from the code.
+            # Pricing for Rule 14 comes from the rate card (crm.ai.model).
+            provider, code = agent._model_for_sensitivity(sensitivity)
+            service = LLMApiService(
+                env=self.with_context(**ctx).env, provider=provider)
+
         return service.request_llm(
             code,
             [system] if system else [],
@@ -98,10 +126,13 @@ class CrmAiAgentMixin(models.AbstractModel):
             raise UserError(
                 _("AI agent '%(name)s' is %(state)s and cannot run.",
                   name=agent.name, state=agent.state))
-        if self.env["crm.ai.usage"].is_over_cap(agent):
+        # Path-aware: CLI agents are bounded by the token limit, API agents by the
+        # dollar cost cap (authoritative enforcement is in the guard at call time).
+        if self.env["crm.ai.usage"]._is_over_limit(agent):
+            kind = "token" if agent.transport == "cli" else "cost"
             raise UserError(
-                _("AI agent '%(name)s' is over its monthly cost cap (Rule 14).",
-                  name=agent.name))
+                _("AI agent '%(name)s' is over its monthly %(kind)s limit "
+                  "(Rule 14).", name=agent.name, kind=kind))
         return True
 
     def _log_critical(self, event_type, record=None, before=None, after=None):

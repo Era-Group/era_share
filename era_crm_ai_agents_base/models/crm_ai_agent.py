@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class CrmAiAgent(models.Model):
@@ -27,10 +27,48 @@ class CrmAiAgent(models.Model):
     )
     icon = fields.Binary(string="Icon", attachment=True)
 
+    # --------------------------------------------------------------
+    # Transport: which AI path this agent's LLM calls take.
+    #   'api' — Odoo native AI (OpenAI/Google) over HTTP. Priced via the rate
+    #           card; governed by the DOLLAR cost cap (Rule 14).
+    #   'cli' — Claude via the era_ai_accounts local CLI proxy (subscription).
+    #           No per-token dollar cost; governed by the monthly TOKEN limit.
+    # In BOTH cases the call MUST go through crm.ai.agent.mixin._call_llm, which
+    # stamps CTX_AGENT so the AI Compliance Guard runs full enforcement (consent +
+    # PII redaction) BEFORE the prompt reaches the provider/CLI.
+    # --------------------------------------------------------------
+    transport = fields.Selection(
+        selection=[
+            ("api", "Native API (OpenAI / Google)"),
+            ("cli", "Claude CLI (subscription)"),
+        ],
+        string="Transport",
+        default="api",
+        required=True,
+        help="How this agent calls the LLM. 'Native API' is priced per token "
+             "(dollar cost cap). 'Claude CLI' runs through the era_ai_accounts "
+             "subscription proxy — no dollar cost, governed by the monthly token "
+             "limit; tokens are estimated.",
+    )
+    cli_account_id = fields.Many2one(
+        comodel_name="era.ai.account",
+        string="Claude Account",
+        ondelete="set null",
+        help="The era_ai_accounts provider account used when Transport is "
+             "'Claude CLI'. Should be a local-CLI-proxy (Anthropic) account.",
+    )
+    cli_model_code = fields.Char(
+        string="CLI Model",
+        default="opus",
+        help="Claude CLI model alias (e.g. 'opus', 'sonnet', 'haiku') or a full "
+             "model id. Aliases resolve to the latest model of that tier.",
+    )
+
     # Model SELECTION lives here (not in the rate card). Each agent declares the
     # native model code(s) it uses; the provider is derived from the code. This
     # is what makes "this agent uses gpt-4o for Arabic drafting" explicit and
     # manager-configurable — and fixes the old catalog-ordering default.
+    # (Used for the 'api' transport; the 'cli' transport uses cli_model_code.)
     model_code = fields.Char(
         string="Model",
         help="Native model code this agent uses by default (e.g. "
@@ -69,7 +107,17 @@ class CrmAiAgent(models.Model):
         compute="_compute_monthly_cost",
         currency_field="currency_id",
         help="Total AI spend recorded for this agent in the current calendar "
-             "month, summed from crm.ai.usage.",
+             "month, summed from crm.ai.usage. Meaningful for the 'Native API' "
+             "transport; the 'Claude CLI' transport has no dollar cost — see "
+             "Monthly Tokens.",
+    )
+    monthly_tokens = fields.Integer(
+        string="Monthly Tokens",
+        compute="_compute_monthly_tokens",
+        help="Total (estimated) tokens recorded for this agent in the current "
+             "calendar month. This is the consumption figure governed by the "
+             "monthly token limit on the 'Claude CLI' (subscription) transport — "
+             "where there is no dollar cost, this is NOT zero/free.",
     )
 
     _sql_constraints = [
@@ -100,6 +148,34 @@ class CrmAiAgent(models.Model):
                 ])
                 cost = sum(usage.mapped("cost"))
             agent.monthly_cost = cost
+
+    def _compute_monthly_tokens(self):
+        """Sum crm.ai.usage total_tokens for the current month, per agent.
+
+        Mirrors _compute_monthly_cost; this is the consumption figure the CLI
+        token limit governs. Guarded the same way (model may not exist yet /
+        transient records)."""
+        has_usage = "crm.ai.usage" in self.env
+        month_start = fields.Date.context_today(self).replace(day=1)
+        month_start_dt = fields.Datetime.to_datetime(month_start)
+        for agent in self:
+            tokens = 0
+            if has_usage and isinstance(agent.id, int):
+                usage = self.env["crm.ai.usage"].search([
+                    ("agent_id", "=", agent.id),
+                    ("create_date", ">=", month_start_dt),
+                ])
+                tokens = sum(usage.mapped("total_tokens"))
+            agent.monthly_tokens = tokens
+
+    @api.constrains("transport", "cli_account_id")
+    def _check_cli_account(self):
+        for agent in self:
+            if agent.transport == "cli" and not agent.cli_account_id:
+                raise ValidationError(_(
+                    "AI agent '%(name)s' uses the Claude CLI transport but has no "
+                    "Claude Account set. Pick an era_ai_accounts account.",
+                    name=agent.name))
 
     def action_pause(self):
         """Manually switch the agent off (manager action)."""

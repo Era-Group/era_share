@@ -8,11 +8,13 @@
             <list string="AI Agents" decoration-muted="state == 'paused'" decoration-danger="state == 'capped'">
                 <field name="name"/>
                 <field name="tech_name"/>
+                <field name="transport"/>
                 <field name="model_code"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'enabled'"
                        decoration-warning="state == 'paused'"
                        decoration-danger="state == 'capped'"/>
+                <field name="monthly_tokens"/>
                 <field name="monthly_cost" widget="monetary"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="last_run"/>
@@ -42,15 +44,26 @@
                         </h1>
                     </div>
                     <group>
-                        <group>
+                        <group string="Transport &amp; Model">
                             <field name="tech_name" placeholder="e.g. era_dead_lead"/>
-                            <field name="model_code" placeholder="e.g. gpt-4.1-mini"/>
-                            <field name="model_code_advanced" placeholder="e.g. gpt-4o (optional)"/>
+                            <field name="transport" widget="radio"/>
+                            <field name="model_code" placeholder="e.g. gpt-4.1-mini"
+                                   invisible="transport != 'api'"
+                                   required="transport == 'api'"/>
+                            <field name="model_code_advanced" placeholder="e.g. gpt-4o (optional)"
+                                   invisible="transport != 'api'"/>
+                            <field name="cli_account_id"
+                                   invisible="transport != 'cli'"
+                                   required="transport == 'cli'"/>
+                            <field name="cli_model_code" placeholder="e.g. opus"
+                                   invisible="transport != 'cli'"/>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
-                        <group>
-                            <field name="monthly_cost" widget="monetary"/>
+                        <group string="Consumption (this month)">
+                            <field name="monthly_cost" widget="monetary"
+                                   invisible="transport != 'api'"/>
                             <field name="currency_id" invisible="1"/>
+                            <field name="monthly_tokens"/>
                             <field name="last_run"/>
                         </group>
                     </group>
@@ -74,6 +87,7 @@
                 <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
                 <group>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_transport" string="Transport" context="{'group_by': 'transport'}"/>
                     <filter name="group_model" string="Model" context="{'group_by': 'model_code'}"/>
                 </group>
             </search>

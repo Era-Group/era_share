@@ -103,7 +103,7 @@ Every **sending** agent calls `guard()` **before any message goes out**. `guard(
 
 ## Approved `sudo` Elevations (exhaustive)
 
-The mixin (`crm.ai.agent.mixin`) and all agent business logic run under the calling user — **never** `sudo` (Rule 09 / 19). The ONLY permitted superuser elevations are these five narrow, single-purpose helpers on the base models. Each does exactly one thing; nothing else may ride on them:
+The mixin (`crm.ai.agent.mixin`) and all agent business logic run under the calling user — **never** `sudo` (Rule 09 / 19). The ONLY permitted superuser elevations are these narrow, single-purpose helpers. Elevations 1–5 live on the base models; each does exactly one thing; nothing else may ride on them:
 
 1. **Cap read** — `crm.ai.usage._get_cap()` reads the cap from `ir.config_parameter` (sudo read only).
 2. **Audit create** — `crm.ai.audit.log.log()` creates one immutable audit row (sudo create only; edits/deletes stay blocked for non-admins).
@@ -111,7 +111,11 @@ The mixin (`crm.ai.agent.mixin`) and all agent business logic run under the call
 4. **Usage record** — `crm.ai.usage.record()` creates one usage row (sudo create only).
 5. **Agent controlled writers** — `crm.ai.agent._record_run()` (last_run), `_mark_state()` (state), and `_get_or_create_agent()` (registry lookup/create) — each strictly field/purpose-scoped, result rebound to the caller's env.
 
-**This list is exhaustive. Any new `sudo` elevation must be flagged and approved before use — never assumed.**
+Module-specific elevations (approved per module, same single-purpose discipline):
+
+6. **Public opt-out controller** (`era_crm_ai_agents_compliance`, module 1) — the public unsubscribe endpoint (`controllers/opt_out_controller.py`) runs `auth='public'` because the opting-out recipient is, by definition, not logged in (PDPL-mandated). It uses one narrow sudo solely to: validate a signed token → resolve the partner → call `process_opt_out` (withdraw marketing consent + clear `crm_ai_intl_processing_consent` + audit). The token is signed with Odoo's instance secret (`database.secret`); no new stored secret. It writes nothing else under sudo. (The 72h enforcement cron runs as `base.user_root`, the normal cron context, not an ad-hoc sudo.)
+
+**Any new `sudo` elevation must be flagged and approved before use — never assumed.** This list is the registry of what has been approved; extend it (with the same single-purpose discipline) when a new elevation is approved.
 
 ---
 

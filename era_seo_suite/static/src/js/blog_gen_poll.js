@@ -80,7 +80,13 @@ class EraAutoRefreshWhenTrue extends Component {
             <span t-else="" class="d-none"/>
         </t>
     `;
-    static props = { ...standardFieldProps };
+    static props = {
+        ...standardFieldProps,
+        // extractProps below forwards the raw view `options` object; Owl
+        // validates props strictly, so it must be declared here or the
+        // component is rejected with "unknown key 'options'".
+        options: { type: Object, optional: true },
+    };
 
     setup() {
         this.orm = useService("orm");

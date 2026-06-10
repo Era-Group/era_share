@@ -369,11 +369,18 @@ class EraAiAccount(models.Model):
         if model.startswith("gpt-image"):
             body["quality"] = "high"  # article heroes — favor quality
         base = (self.base_url or "https://api.openai.com/v1").rstrip("/")
+        # gpt-image at high quality routinely takes 1-3 minutes; the timeout is
+        # generous (and ICP-tunable) so a slow-but-successful render isn't cut off.
+        try:
+            timeout = int(self.env["ir.config_parameter"].sudo().get_param(
+                "ai.openai_image_timeout", "300"))
+        except (TypeError, ValueError):
+            timeout = 300
         try:
             resp = requests.post(
                 base + "/images/generations",
                 headers={"Authorization": "Bearer %s" % key, "Content-Type": "application/json"},
-                json=body, timeout=180)
+                json=body, timeout=timeout)
         except requests.exceptions.RequestException as exc:
             raise UserError(_("OpenAI image request failed: %s", exc))
         if resp.status_code >= 400:

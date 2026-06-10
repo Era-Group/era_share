@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Consent log: list (append-only → no inline edit) ====== -->
+    <record id="view_crm_ai_consent_list" model="ir.ui.view">
+        <field name="name">crm.ai.consent.list</field>
+        <field name="model">crm.ai.consent</field>
+        <field name="arch" type="xml">
+            <list string="AI Consent Log" create="true" edit="false"
+                  decoration-success="state == 'granted'"
+                  decoration-muted="erased"
+                  decoration-warning="state == 'withdrawn'">
+                <field name="create_date"/>
+                <field name="partner_id"/>
+                <field name="consent_type"/>
+                <field name="state"/>
+                <field name="granted_on"/>
+                <field name="opt_out_on"/>
+                <field name="source"/>
+                <field name="erased" widget="boolean_toggle" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ Consent log: form (read-only; log is immutable) ======== -->
+    <record id="view_crm_ai_consent_form" model="ir.ui.view">
+        <field name="name">crm.ai.consent.form</field>
+        <field name="model">crm.ai.consent</field>
+        <field name="arch" type="xml">
+            <form string="AI Consent" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="consent_type"/>
+                            <field name="state"/>
+                            <field name="erased"/>
+                        </group>
+                        <group>
+                            <field name="granted_on"/>
+                            <field name="opt_out_on"/>
+                            <field name="source"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ Consent log: search + group-by ======================== -->
+    <record id="view_crm_ai_consent_search" model="ir.ui.view">
+        <field name="name">crm.ai.consent.search</field>
+        <field name="model">crm.ai.consent</field>
+        <field name="arch" type="xml">
+            <search string="AI Consent">
+                <field name="partner_id"/>
+                <field name="source"/>
+                <filter name="granted" string="Granted" domain="[('state', '=', 'granted')]"/>
+                <filter name="withdrawn" string="Withdrawn" domain="[('state', '=', 'withdrawn')]"/>
+                <separator/>
+                <filter name="marketing" string="Marketing" domain="[('consent_type', '=', 'marketing')]"/>
+                <filter name="service" string="Service" domain="[('consent_type', '=', 'service')]"/>
+                <separator/>
+                <filter name="erased" string="Erased (DSAR)" domain="[('erased', '=', True)]"/>
+                <group>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'consent_type'}"/>
+                    <filter name="group_partner" string="Contact" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ Compliance status: graph + pivot ====================== -->
+    <record id="view_crm_ai_consent_graph" model="ir.ui.view">
+        <field name="name">crm.ai.consent.graph</field>
+        <field name="model">crm.ai.consent</field>
+        <field name="arch" type="xml">
+            <graph string="Consent by State" type="bar">
+                <field name="state"/>
+                <field name="consent_type"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_consent_pivot" model="ir.ui.view">
+        <field name="name">crm.ai.consent.pivot</field>
+        <field name="model">crm.ai.consent</field>
+        <field name="arch" type="xml">
+            <pivot string="Consent">
+                <field name="consent_type" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ============ Actions =============================================== -->
+    <record id="action_crm_ai_consent" model="ir.actions.act_window">
+        <field name="name">Consent Log</field>
+        <field name="res_model">crm.ai.consent</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_crm_ai_consent_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No consent records yet</p>
+            <p>PDPL consent events (grants, withdrawals, opt-outs) are logged here.</p>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_consent_status" model="ir.actions.act_window">
+        <field name="name">Compliance Status</field>
+        <field name="res_model">crm.ai.consent</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="search_view_id" ref="view_crm_ai_consent_search"/>
+    </record>
+
+</odoo>

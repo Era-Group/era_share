@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_crm_ai_consent" model="ir.ui.view">
+        <field name="name">res.partner.form.crm.ai.consent</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="AI Consent &amp; PDPL"
+                      groups="era_crm_ai_agents_base.group_crm_ai_manager">
+                    <div class="oe_button_box">
+                        <button name="action_crm_ai_opt_out" type="object"
+                                string="Apply Opt-out" class="btn-secondary"
+                                confirm="Withdraw this contact's marketing consent?"/>
+                        <button name="action_crm_ai_open_dsar" type="object"
+                                string="DSAR…" class="btn-secondary"/>
+                    </div>
+                    <group>
+                        <field name="crm_ai_opt_out_requested_on" readonly="1"/>
+                    </group>
+                    <field name="crm_ai_consent_ids" readonly="1">
+                        <list string="Consent Log" create="false" edit="false">
+                            <field name="create_date"/>
+                            <field name="consent_type"/>
+                            <field name="state"/>
+                            <field name="source"/>
+                            <field name="erased" widget="boolean_toggle" readonly="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

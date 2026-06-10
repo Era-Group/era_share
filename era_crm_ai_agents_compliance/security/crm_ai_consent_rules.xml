@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============ Consent log: record-level visibility ============
+             Tamper protection itself is ACL-driven (users get create+read only;
+             no write/unlink — see ir.model.access.csv). These rules add row
+             visibility on top:
+             - AI users see only LIVE consent rows. DSAR-erased rows are
+               anonymized residue (no partner link) kept solely as a
+               manager/DPO audit count, so they are hidden from regular users.
+             - Managers see everything, including erased rows.
+             Rules are OR'd across a user's groups, so a manager (who also holds
+             the user group) gets the unrestricted manager domain. -->
+
+        <record id="rule_crm_ai_consent_user" model="ir.rule">
+            <field name="name">AI Consent: live rows only (user)</field>
+            <field name="model_id" ref="model_crm_ai_consent"/>
+            <field name="groups"
+                   eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_user'))]"/>
+            <field name="domain_force">[('erased', '=', False)]</field>
+        </record>
+
+        <record id="rule_crm_ai_consent_manager" model="ir.rule">
+            <field name="name">AI Consent: all rows (manager)</field>
+            <field name="model_id" ref="model_crm_ai_consent"/>
+            <field name="groups"
+                   eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

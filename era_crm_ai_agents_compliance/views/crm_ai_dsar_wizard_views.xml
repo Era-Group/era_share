@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_dsar_wizard_form" model="ir.ui.view">
+        <field name="name">crm.ai.dsar.wizard.form</field>
+        <field name="model">crm.ai.dsar.wizard</field>
+        <field name="arch" type="xml">
+            <form string="DSAR Request">
+                <group>
+                    <field name="partner_id"/>
+                    <field name="kind"/>
+                </group>
+                <field name="result" widget="text" readonly="1"
+                       invisible="not result"/>
+                <footer>
+                    <button name="action_run" type="object" string="Run DSAR"
+                            class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_dsar_wizard" model="ir.actions.act_window">
+        <field name="name">DSAR Requests</field>
+        <field name="res_model">crm.ai.dsar.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

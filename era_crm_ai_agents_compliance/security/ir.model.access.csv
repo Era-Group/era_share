@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_ai_consent_user,crm.ai.consent user,model_crm_ai_consent,era_crm_ai_agents_base.group_crm_ai_user,1,0,1,0
+access_crm_ai_consent_manager,crm.ai.consent manager,model_crm_ai_consent,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,0
+access_crm_ai_consent_system,crm.ai.consent system,model_crm_ai_consent,base.group_system,1,1,1,1
+access_crm_ai_dsar_wizard_manager,crm.ai.dsar.wizard manager,model_crm_ai_dsar_wizard,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_dsar_wizard_system,crm.ai.dsar.wizard system,model_crm_ai_dsar_wizard,base.group_system,1,1,1,1

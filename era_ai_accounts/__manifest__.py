@@ -25,7 +25,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.6.1",
+    "version": "19.0.1.7.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",
@@ -35,6 +35,7 @@ subscription-backed CLI to serve multiple users.
         "security/era_ai_accounts_groups.xml",
         "security/era_ai_accounts_security.xml",
         "security/ir.model.access.csv",
+        "wizards/era_ai_account_login_views.xml",
         "views/era_ai_account_views.xml",
         "views/ai_agent_views.xml",
         "views/res_config_settings_views.xml",

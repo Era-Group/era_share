@@ -53,14 +53,37 @@
                     </group>
 
                     <group string="CLI proxy" invisible="auth_mode != 'cli_proxy'">
+                        <field name="cli_oauth_linked" invisible="1"/>
+                        <div colspan="2">
+                            <div invisible="not cli_oauth_linked"
+                                 class="alert alert-success d-flex align-items-center mb-2" role="status">
+                                <i class="fa fa-check-circle me-2" title="Linked"/>
+                                <span><field name="cli_oauth_label" readonly="1" nolabel="1"/> — used by every user, no API key.</span>
+                            </div>
+                            <button name="action_ai_claude_login" type="object" class="btn-primary"
+                                    string="Login with Claude" icon="fa-sign-in"
+                                    invisible="cli_oauth_linked"/>
+                            <button name="action_ai_claude_login" type="object" class="btn-secondary"
+                                    string="Re-link account" icon="fa-refresh"
+                                    invisible="not cli_oauth_linked"/>
+                            <button name="action_ai_claude_logout" type="object" class="btn-secondary"
+                                    string="Disconnect" icon="fa-sign-out"
+                                    invisible="not cli_oauth_linked"
+                                    confirm="Disconnect this Claude account for all users?"/>
+                            <div class="text-muted mt-2">
+                                Link a Claude subscription here and <b>every user</b> in the system uses
+                                it — no API key, one shared login. If you don't link one, the CLI falls
+                                back to the server's own login under the HOME below.
+                            </div>
+                        </div>
                         <field name="cli_path" placeholder="auto-detected from Claude Code extension"/>
-                        <field name="cli_home_dir"/>
+                        <field name="cli_home_dir" invisible="cli_oauth_linked"/>
                         <field name="max_concurrency"/>
                         <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
                         <div class="text-muted" colspan="2">
-                            Routes calls through the locally-authenticated Claude CLI (the connected
-                            account). No API key is used. Serving many users draws on that
-                            subscription's rate limits — use the kill switch / concurrency to control it.
+                            Routes calls through the locally-authenticated Claude CLI. No API key is used.
+                            Serving many users draws on that subscription's rate limits — use the kill
+                            switch / concurrency to control it.
                         </div>
                     </group>
 

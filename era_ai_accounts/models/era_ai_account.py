@@ -1,9 +1,17 @@
+import base64
+import hashlib
+import json
 import logging
+import os
+import secrets
+import time
+from urllib.parse import urlencode
 
 import requests
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import config
 
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
@@ -13,6 +21,24 @@ from ..utils import llm_cli_transport
 _logger = logging.getLogger(__name__)
 
 MANAGER_GROUP = "era_ai_accounts.group_ai_account_manager"
+
+# --- Claude Code OAuth (subscription "Login with Claude") --------------------
+# Public Claude Code OAuth client parameters used by the `claude /login` /
+# `setup-token` flow. The server has no browser, so we use the manual
+# "copy code" redirect: an admin authorises in their own browser and pastes the
+# returned ``code#state`` string back into Odoo. We mint the token and write it
+# to the standard ``.credentials.json`` that the first-party ``claude`` binary
+# reads — we never replay the token to api.anthropic.com ourselves (the CLI does
+# the call under its own auth). Unlike Claudoo's per-user login, this links ONE
+# account, stored under the Odoo data dir and used by every user in the system.
+OAUTH_CLIENT_ID = "9d1c250a-e61b-44d9-88ed-5944d1962f5e"
+OAUTH_AUTHORIZE_URL = "https://claude.ai/oauth/authorize"
+OAUTH_TOKEN_URL = "https://console.anthropic.com/v1/oauth/token"
+OAUTH_REDIRECT_URI = "https://console.anthropic.com/oauth/code/callback"
+OAUTH_SCOPES = "org:create_api_key user:profile user:inference"
+# Transient PKCE state (verifier + state) stashed per account while a login is in
+# flight. Cleared once the code is exchanged.
+_PKCE_PARAM = "era_ai_accounts.oauth_pkce.%s"
 
 # Curated chat models for the Claude CLI-proxy (the CLI has no list endpoint).
 # Use the CLI's *aliases*: `claude --model` resolves them to the latest model of
@@ -161,9 +187,23 @@ class EraAiAccount(models.Model):
     cli_home_dir = fields.Char(
         string="CLI HOME",
         default="/opt/odoo",
-        help="HOME directory whose connected-account auth the CLI should use.",
+        help="HOME directory whose connected-account auth the CLI should use. "
+             "Ignored once you link a Claude account below (the linked credentials "
+             "take over).",
     )
     cli_extra_args = fields.Char(string="CLI extra arguments")
+
+    # --- Linked Claude account ("Login with Claude", system-wide) ------------
+    cli_oauth_linked = fields.Boolean(
+        string="Claude account linked",
+        compute="_compute_cli_oauth_linked",
+        help="Whether a Claude subscription has been linked to this account via "
+             "'Login with Claude'. The credentials are stored once, on the server, "
+             "and used by every user — there is no per-user Claude login.",
+    )
+    cli_oauth_label = fields.Char(
+        string="Linked account", compute="_compute_cli_oauth_linked",
+    )
 
     # --- Models catalog ------------------------------------------------------
     model_ids = fields.One2many("era.ai.model", "account_id", string="Models")
@@ -210,6 +250,21 @@ class EraAiAccount(models.Model):
     def _compute_model_counts(self):
         for rec in self:
             rec.chat_model_count = len(rec.model_ids.filtered(lambda m: m.kind == "chat" and m.active))
+
+    @api.depends()
+    def _compute_cli_oauth_linked(self):
+        # Reflects on-disk credential state (not an ORM field), so it carries no
+        # field-level @api.depends triggers; the explicit empty @api.depends()
+        # documents that and silences the framework's "missing depends" warning.
+        # Recomputed on each fresh read (e.g. a form reload after linking).
+        for rec in self:
+            info = rec.sudo()._cli_oauth_info() if rec.id else {}
+            rec.cli_oauth_linked = bool(info.get("linked"))
+            if info.get("linked"):
+                sub = info.get("subscription") or "subscription"
+                rec.cli_oauth_label = _("Claude %s linked", sub)
+            else:
+                rec.cli_oauth_label = ""
 
     # ----------------------------------------------------------------- onchange
     @api.onchange("provider")
@@ -460,6 +515,205 @@ class EraAiAccount(models.Model):
         return self.model_ids.filtered(
             lambda m: m.kind == "chat" and m.active and m.model_id == target)[:1]
 
+    # ----------------------------------------------- linked-Claude config dir
+    def _cli_managed_home(self):
+        """HOME for a linked Claude account — isolated, under the Odoo data dir.
+
+        Deliberately NOT the server's own HOME (/opt/odoo): linking here must
+        never overwrite the server operator's `~/.claude` Claude Code login. One
+        directory per account record; in practice the business links a single
+        shared account that every user routes through.
+        """
+        self.ensure_one()
+        data_dir = config.get("data_dir") or "/var/lib/odoo"
+        return os.path.join(data_dir, "era_ai_accounts", "cli", str(self.id or "new"))
+
+    def _cli_managed_config_dir(self, create=False):
+        """The linked account's private CLAUDE_CONFIG_DIR (holds .credentials.json)."""
+        self.ensure_one()
+        home = self._cli_managed_home()
+        path = os.path.join(home, ".claude")
+        if create:
+            try:
+                os.makedirs(path, mode=0o700, exist_ok=True)
+                # makedirs masks mode by umask and only the leaf is guaranteed;
+                # force the account-private dirs to 0700 so a linked account's
+                # presence/ids aren't world-listable (the token file is 0600).
+                for p in (home, path):
+                    try:
+                        os.chmod(p, 0o700)
+                    except OSError:
+                        pass
+            except OSError as e:
+                raise UserError(_("Cannot create Claude config dir %s: %s", path, e))
+        return path
+
+    def _cli_credentials_path(self):
+        self.ensure_one()
+        return os.path.join(self._cli_managed_config_dir(), ".credentials.json")
+
+    def _cli_oauth_info(self):
+        """Read the linked credentials; return {linked, subscription, expires_at}."""
+        self.ensure_one()
+        try:
+            with open(self._cli_credentials_path(), "r") as f:
+                oauth = (json.load(f).get("claudeAiOauth") or {})
+        except (OSError, ValueError):
+            return {"linked": False}
+        if not oauth.get("accessToken"):
+            return {"linked": False}
+        return {
+            "linked": True,
+            "subscription": oauth.get("subscriptionType") or "",
+            "expires_at": oauth.get("expiresAt") or 0,
+        }
+
+    def _cli_is_linked(self):
+        self.ensure_one()
+        return bool(self.sudo()._cli_oauth_info().get("linked"))
+
+    def _cli_write_credentials(self, creds):
+        """Atomically write `.credentials.json` (mode 0600) for the linked account."""
+        self.ensure_one()
+        self._cli_managed_config_dir(create=True)
+        path = self._cli_credentials_path()
+        tmp = path + ".tmp"
+        fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w") as f:
+            json.dump(creds, f)
+        os.replace(tmp, path)
+
+    # ----------------------------------------------------- OAuth (PKCE) login
+    def _assert_oauth_manager(self):
+        """Linking a Claude account is a system-wide credential change: managers only."""
+        self.ensure_one()
+        if not (self.env.su or self.env.user.has_group(MANAGER_GROUP)):
+            raise UserError(_("Only AI Account Managers can link or unlink a Claude account."))
+
+    def _oauth_start(self):
+        """Begin a login: mint a PKCE pair, stash it, return the authorize URL."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if self.auth_mode != "cli_proxy":
+            raise UserError(_("Linking a Claude account only applies to CLI-proxy accounts."))
+        verifier = secrets.token_urlsafe(64)
+        challenge = base64.urlsafe_b64encode(
+            hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+        state = secrets.token_urlsafe(32)
+        self.env["ir.config_parameter"].sudo().set_param(
+            _PKCE_PARAM % self.id, json.dumps({"verifier": verifier, "state": state}))
+        params = {
+            "code": "true",
+            "client_id": OAUTH_CLIENT_ID,
+            "response_type": "code",
+            "redirect_uri": OAUTH_REDIRECT_URI,
+            "scope": OAUTH_SCOPES,
+            "code_challenge": challenge,
+            "code_challenge_method": "S256",
+            "state": state,
+        }
+        return "%s?%s" % (OAUTH_AUTHORIZE_URL, urlencode(params))
+
+    def _oauth_complete(self, pasted_code):
+        """Exchange the pasted ``code#state`` for tokens and persist them."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        pasted_code = (pasted_code or "").strip()
+        if not pasted_code:
+            raise UserError(_("Paste the authorization code from Claude."))
+        ICP = self.env["ir.config_parameter"].sudo()
+        raw = ICP.get_param(_PKCE_PARAM % self.id)
+        if not raw:
+            raise UserError(_("No login in progress. Click “Login with Claude” first."))
+        pkce = json.loads(raw)
+        # The console callback returns "<code>#<state>".
+        code, _sep, state = pasted_code.partition("#")
+        if state and pkce.get("state") and state != pkce["state"]:
+            raise UserError(_("Authorization state mismatch. Please log in again."))
+        payload = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "state": state or pkce.get("state"),
+            "client_id": OAUTH_CLIENT_ID,
+            "redirect_uri": OAUTH_REDIRECT_URI,
+            "code_verifier": pkce["verifier"],
+        }
+        try:
+            resp = requests.post(
+                OAUTH_TOKEN_URL, json=payload,
+                headers={"Content-Type": "application/json"}, timeout=30)
+        except requests.RequestException as e:
+            raise UserError(_("Could not reach Claude to exchange the code: %s", e))
+        if resp.status_code != 200:
+            _logger.warning("Claude OAuth exchange failed (%s): %s",
+                            resp.status_code, resp.text[:500])
+            raise UserError(_(
+                "Claude rejected the authorization code (HTTP %s). The code may have "
+                "expired — please log in again.", resp.status_code))
+        data = resp.json()
+        access = data.get("access_token")
+        if not access:
+            raise UserError(_("Claude did not return an access token."))
+        expires_in = int(data.get("expires_in") or 0)
+        scopes = (data.get("scope") or OAUTH_SCOPES).split()
+        creds = {
+            "claudeAiOauth": {
+                "accessToken": access,
+                "refreshToken": data.get("refresh_token") or "",
+                # Claude Code stores the expiry as a millisecond epoch.
+                "expiresAt": int((time.time() + expires_in) * 1000),
+                "scopes": scopes,
+                "subscriptionType": data.get("subscription_type") or "",
+            }
+        }
+        self.sudo()._cli_write_credentials(creds)
+        ICP.set_param(_PKCE_PARAM % self.id, "")  # consume the PKCE state
+        return True
+
+    def _oauth_logout(self):
+        """Remove the linked account's stored credentials (forces re-link)."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        try:
+            os.remove(self.sudo()._cli_credentials_path())
+        except OSError:
+            pass
+        self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % self.id, "")
+        return True
+
+    def action_ai_claude_login(self):
+        """Button: open the 'Login with Claude' wizard for this account."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if not self.id:
+            raise UserError(_("Save the account first, then link a Claude subscription."))
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Login with Claude"),
+            "res_model": "era.ai.account.login",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_account_id": self.id},
+        }
+
+    def action_ai_claude_logout(self):
+        """Button: disconnect the linked Claude account."""
+        for rec in self:
+            rec._oauth_logout()
+        return self._notify(_("Claude account disconnected."))
+
+    def unlink(self):
+        # Remove any linked-Claude credential dir so deleting an account leaves no
+        # orphaned tokens on disk (best-effort; never blocks the delete).
+        import shutil
+        for rec in self:
+            try:
+                shutil.rmtree(rec._cli_managed_home(), ignore_errors=True)
+            except Exception:  # noqa: BLE001
+                pass
+            self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % rec.id, "")
+        return super().unlink()
+
     def _cli_cfg(self):
         self.ensure_one()
         param = self.env["ir.config_parameter"].sudo()
@@ -481,10 +735,22 @@ class EraAiAccount(models.Model):
         except (TypeError, ValueError):
             concurrency = 1
 
+        # A linked ("Login with Claude") account routes through its own isolated
+        # credentials dir; otherwise fall back to the ambient HOME-based login.
+        if self._cli_is_linked():
+            home_dir = self._cli_managed_home()
+            # create=True: guarantee the dir exists for CLAUDE_CONFIG_DIR even if
+            # it was removed out from under us between the link check and the call.
+            config_dir = self._cli_managed_config_dir(create=True)
+        else:
+            home_dir = self.cli_home_dir or "/opt/odoo"
+            config_dir = False
+
         return {
             "account_id": self.id,
             "cli_path": self.cli_path or False,
-            "home_dir": self.cli_home_dir or "/opt/odoo",
+            "home_dir": home_dir,
+            "config_dir": config_dir,
             "extra_args": self.cli_extra_args or False,
             # Throttle (configurable in Settings > AI): up to `concurrency` CLI calls
             # at a time across the whole host, separated by a size-scaled gap.

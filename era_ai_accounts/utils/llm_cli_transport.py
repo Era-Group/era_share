@@ -210,6 +210,12 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     run_env = dict(os.environ)
     home = cfg.get("home_dir") or "/opt/odoo"
     run_env["HOME"] = home
+    # When a Claude account has been linked in-app ("Login with Claude"), its
+    # credentials live in a dedicated dir; point the CLI at it explicitly so it
+    # uses that account regardless of HOME. Absent (ambient login) -> unchanged.
+    config_dir = cfg.get("config_dir")
+    if config_dir:
+        run_env["CLAUDE_CONFIG_DIR"] = config_dir
     # Never inherit an API key into the subprocess: we want it to use the
     # connected account's own (subscription/OAuth) auth, not bill an API key.
     run_env.pop("ANTHROPIC_API_KEY", None)

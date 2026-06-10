@@ -1,7 +1,11 @@
 import base64
+import json
+import os
+import shutil
+import tempfile
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 from odoo.addons.era_ai_accounts.utils import crypto, llm_cli_transport
@@ -370,6 +374,137 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(captured["endpoint"], "/chat/completions")
         self.assertEqual(captured["body"]["model"], "@cf/meta/llama-3.1-8b-instruct")
         self.assertEqual(captured["headers"]["Authorization"], "Bearer tok")
+
+    # ------------------------------------------------- Login with Claude (OAuth)
+    def _linked_cli_account(self, name="ClaudeLink"):
+        """A cli_proxy account whose managed credential dir is a throwaway tmpdir."""
+        acc = self.Account.create({
+            "name": name, "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        tmp = tempfile.mkdtemp(prefix="era_ai_test_")
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        # Redirect the managed HOME to the tmpdir so tests never touch data_dir.
+        patcher = patch.object(type(acc), "_cli_managed_home", return_value=tmp)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return acc, tmp
+
+    def _oauth_token_response(self, **over):
+        data = {
+            "access_token": "tok-access", "refresh_token": "tok-refresh",
+            "expires_in": 3600, "scope": era_ai_account.OAUTH_SCOPES,
+            "subscription_type": "max",
+        }
+        data.update(over)
+
+        class _Resp:
+            status_code = 200
+            text = ""
+
+            def json(self):
+                return data
+        return _Resp()
+
+    def test_oauth_start_returns_url_and_stashes_pkce(self):
+        acc, _tmp = self._linked_cli_account()
+        url = acc._oauth_start()
+        self.assertIn(era_ai_account.OAUTH_AUTHORIZE_URL, url)
+        self.assertIn("code_challenge=", url)
+        self.assertIn(era_ai_account.OAUTH_CLIENT_ID, url)
+        raw = self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id)
+        self.assertTrue(json.loads(raw).get("verifier"))
+
+    def test_oauth_complete_links_account(self):
+        acc, tmp = self._linked_cli_account()
+        acc._oauth_start()
+        state = json.loads(self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id))["state"]
+        with patch.object(era_ai_account.requests, "post",
+                          return_value=self._oauth_token_response()):
+            acc._oauth_complete("the-auth-code#%s" % state)
+        # Credentials written to the managed dir in Claude Code's format.
+        creds_path = os.path.join(tmp, ".claude", ".credentials.json")
+        self.assertTrue(os.path.exists(creds_path))
+        with open(creds_path) as f:
+            oauth = json.load(f)["claudeAiOauth"]
+        self.assertEqual(oauth["accessToken"], "tok-access")
+        self.assertEqual(oauth["refreshToken"], "tok-refresh")
+        self.assertEqual(oauth["subscriptionType"], "max")
+        # The record now reports linked + a friendly label, and the PKCE state is consumed.
+        acc.invalidate_recordset(["cli_oauth_linked", "cli_oauth_label"])
+        self.assertTrue(acc.cli_oauth_linked)
+        self.assertIn("max", acc.cli_oauth_label)
+        self.assertFalse(self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id))
+
+    def test_oauth_complete_rejects_state_mismatch(self):
+        acc, _tmp = self._linked_cli_account()
+        acc._oauth_start()
+        with self.assertRaises(UserError):
+            acc._oauth_complete("code#totally-wrong-state")
+
+    def test_oauth_complete_needs_login_in_progress(self):
+        acc, _tmp = self._linked_cli_account()
+        with self.assertRaises(UserError):
+            acc._oauth_complete("code#state")  # never called _oauth_start
+
+    def test_cli_cfg_uses_managed_dir_when_linked(self):
+        acc, tmp = self._linked_cli_account()
+        # Not linked yet -> ambient HOME, no config_dir.
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["home_dir"], "/opt/odoo")
+        self.assertFalse(cfg["config_dir"])
+        # Link it, then the cfg points the CLI at the isolated dir.
+        acc._oauth_start()
+        state = json.loads(self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id))["state"]
+        with patch.object(era_ai_account.requests, "post",
+                          return_value=self._oauth_token_response()):
+            acc._oauth_complete("code#%s" % state)
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["home_dir"], tmp)
+        self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".claude"))
+
+    def test_oauth_logout_removes_credentials(self):
+        acc, tmp = self._linked_cli_account()
+        acc._oauth_start()
+        state = json.loads(self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id))["state"]
+        with patch.object(era_ai_account.requests, "post",
+                          return_value=self._oauth_token_response()):
+            acc._oauth_complete("code#%s" % state)
+        self.assertTrue(acc._cli_is_linked())
+        acc.action_ai_claude_logout()
+        self.assertFalse(acc._cli_is_linked())
+        self.assertFalse(os.path.exists(os.path.join(tmp, ".claude", ".credentials.json")))
+
+    def test_oauth_requires_manager(self):
+        acc, _tmp = self._linked_cli_account()
+        user = new_test_user(self.env, login="era_nomgr", groups="base.group_user")
+        with self.assertRaises(UserError):
+            acc.with_user(user)._oauth_start()
+
+    def test_oauth_start_rejects_api_key_account(self):
+        acc = self.Account.create({
+            "name": "keyacc", "provider": "openai", "auth_mode": "api_key", "secret": "sk",
+        })
+        with self.assertRaises(UserError):
+            acc._oauth_start()
+
+    def test_login_wizard_opens_and_completes(self):
+        acc, tmp = self._linked_cli_account()
+        wiz = self.env["era.ai.account.login"].with_context(
+            default_account_id=acc.id).create({})
+        # Opening the wizard mints the authorize URL.
+        self.assertIn(era_ai_account.OAUTH_AUTHORIZE_URL, wiz.authorize_url or "")
+        state = json.loads(self.env["ir.config_parameter"].sudo().get_param(
+            era_ai_account._PKCE_PARAM % acc.id))["state"]
+        wiz.code = "code#%s" % state
+        with patch.object(era_ai_account.requests, "post",
+                          return_value=self._oauth_token_response()):
+            wiz.action_complete()
+        self.assertTrue(acc._cli_is_linked())
 
     def test_account_generate_text(self):
         # Provider-agnostic content helper any module can call (no ai.agent needed).

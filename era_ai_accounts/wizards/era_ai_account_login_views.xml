@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="era_ai_account_login_form" model="ir.ui.view">
+        <field name="name">era.ai.account.login.form</field>
+        <field name="model">era.ai.account.login</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="account_id" invisible="1"/>
+                <field name="linked" invisible="1"/>
+                <field name="authorize_url" invisible="1"/>
+                <div class="alert alert-info" role="status">
+                    Link a Claude subscription once, for <b>all users</b> in this system —
+                    no API key and no per-user login. The credentials are stored on the
+                    server and the Claude CLI keeps the token refreshed.
+                </div>
+                <group>
+                    <div colspan="2">
+                        <b>1. Authorize</b>
+                        <div class="mt-1">
+                            <button name="action_open_url" type="object" class="btn-primary"
+                                    string="Open Claude login page" icon="fa-external-link"/>
+                        </div>
+                        <div class="text-muted mt-1">
+                            Opens in a new tab. Sign in to the Claude account you want the
+                            whole system to use, approve access, then copy the code it shows.
+                        </div>
+                    </div>
+                </group>
+                <group>
+                    <field name="code" string="2. Paste the code Claude shows"
+                           placeholder="paste the code#state value from Claude"/>
+                </group>
+                <footer>
+                    <button name="action_complete" type="object" string="Complete login"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -19,7 +19,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'website': 'https://era.net.sa',
     'license': 'OPL-1',
     'category': 'Website/SEO',
-    'version': '19.0.3.3.1',
+    'version': '19.0.3.3.2',
     'depends': [
     'base',
     'web',
@@ -51,6 +51,7 @@ blog enhancements (series, TOC, related, feeds), and the unified hub
     'data/ir_cron_bulk_ai.xml',
     'data/ir_cron_weekly_audit.xml',
     'data/ir_cron_article_generator.xml',
+    'data/ir_cron_article_finalize.xml',
     'data/ir_cron_run_cleanup.xml',
     'data/ir_cron_run_audit.xml',
     'data/ir_cron_sitemap.xml',

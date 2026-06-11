@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: Finalize auto-generated articles (cover image + manager email).
+
+      The article generator (cron_generate_blog_article) creates each post as a
+      DRAFT flagged `era_ai_needs_finalize = True` and returns immediately,
+      keeping that run short. THIS cron does the slow, best-effort
+      post-processing OUTSIDE the generator's transaction, so the generator is
+      never killed by limit_time_real_cron mid-run (a kill would strand its
+      trigger and re-fire it, generating duplicate articles — the original bug).
+
+      It is fired on demand by the generator (cron._trigger) and also runs on
+      this periodic interval as a safety net to drain anything a crash left
+      behind. Idempotent + re-fire-safe: a killed tick only retries a post's
+      image/email, it never creates articles.
+    -->
+    <record id="cron_finalize_articles" model="ir.cron">
+      <field name="name">ERA SEO: Finalize generated articles (image + notify)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_finalize_articles()</field>
+      <field name="interval_number">30</field>
+      <field name="interval_type">minutes</field>
+      <field name="active" eval="True"/>
+      <field name="priority">9</field>
+    </record>
+
+  </data>
+</odoo>

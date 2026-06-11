@@ -65,7 +65,7 @@ class ResConfigSettings(models.TransientModel):
         default="Odoo AI", readonly=False, groups="base.group_system",
     )
 
-    # --- Claude CLI rate protection (global, host-wide) ----------------------
+    # --- AI CLI rate protection (global, host-wide; applies per provider pool) ---
     # NB: this is a Boolean that defaults to ON. A plain `config_parameter`
     # Boolean cannot persist an unchecked (False) value — Odoo's set_param deletes
     # the key for a Python False, and its settings reader does bool("False") (==True)
@@ -75,7 +75,7 @@ class ResConfigSettings(models.TransientModel):
         string="Pace calls (gap between requests)",
         compute="_compute_cli_gap_enabled", inverse="_inverse_cli_gap_enabled",
         readonly=False, groups="base.group_system",
-        help="Insert a delay between consecutive Claude CLI calls so the connected "
+        help="Insert a delay between consecutive AI CLI calls so the connected "
              "account is not hit by rapid-fire requests. Turn off to disable the gap "
              "(the one-at-a-time limit still applies unless you raise concurrency).",
     )
@@ -97,8 +97,9 @@ class ResConfigSettings(models.TransientModel):
     cli_max_concurrency = fields.Integer(
         string="Max concurrent calls", config_parameter="ai.cli_max_concurrency", default=1,
         readonly=False, groups="base.group_system",
-        help="How many Claude CLI calls may run at the same time across ALL workers "
-             "and users. 1 = strictly one at a time (recommended for a single connected account).",
+        help="How many CLI calls may run at the same time across ALL workers and "
+             "users, per provider pool. 1 = strictly one at a time (recommended; "
+             "for Codex it also prevents token-refresh races on auth.json).",
     )
     cli_lock_wait = fields.Integer(
         string="Max wait for a free slot (seconds)", config_parameter="ai.cli_lock_wait", default=300,
@@ -108,7 +109,7 @@ class ResConfigSettings(models.TransientModel):
     cli_timeout = fields.Integer(
         string="Call timeout (seconds)", config_parameter="ai.cli_timeout", default=180,
         readonly=False, groups="base.group_system",
-        help="Maximum duration of a single Claude CLI call.",
+        help="Maximum duration of a single AI CLI call.",
     )
     cli_max_prompt_chars = fields.Integer(
         string="Max prompt size (characters)", config_parameter="ai.cli_max_prompt_chars", default=400000,

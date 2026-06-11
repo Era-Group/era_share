@@ -6,7 +6,8 @@ preserved untouched. This layer only adds:
 
 * binding of the request's ``era.ai.account`` (from ``env.context['era_ai_account_id']``);
 * per-account credential resolution for api_key accounts (openai/google/anthropic/custom);
-* the ``anthropic`` (Messages API) and ``anthropic_cli`` (local CLI) transports.
+* the ``anthropic`` (Messages API) and ``anthropic_cli`` / ``openai_cli``
+  (local Claude / Codex CLI) transports.
 
 Everything else is delegated to the captured "original" methods.
 """
@@ -17,6 +18,7 @@ from odoo.exceptions import UserError
 
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
+from ..utils import codex_cli_transport
 from ..utils import llm_cli_transport
 
 _logger = logging.getLogger(__name__)
@@ -73,8 +75,8 @@ def _patch():
         self._era_account = (
             env["era.ai.account"].sudo().browse(account_id) if account_id else None
         )
-        if provider == "anthropic_cli":
-            self.provider, self.env, self.base_url = "anthropic_cli", env, None
+        if provider in ("anthropic_cli", "openai_cli"):
+            self.provider, self.env, self.base_url = provider, env, None
             return
         if provider == "anthropic":
             self.provider, self.env = "anthropic", env
@@ -136,7 +138,7 @@ def _patch():
         return original_get_base_headers(self)
 
     def _request_llm(self, *args, **kwargs):
-        if self.provider == "anthropic_cli":
+        if self.provider in ("anthropic_cli", "openai_cli"):
             return _request_llm_cli(self, *args, **kwargs)
         if self.provider == "anthropic":
             return _request_llm_anthropic(self, *args, **kwargs)
@@ -159,14 +161,15 @@ def _patch():
         total = len(system_full) + len(user_text)
         if max_chars and total > max_chars:
             raise UserError(_(
-                "This agent's prompt is too large for the Claude CLI proxy "
+                "This agent's prompt is too large for the local CLI proxy "
                 "(%(n)s characters, limit %(max)s). This usually means a tool-driven "
                 "'Ask AI' navigation agent — the CLI proxy supports chat/RAG only. "
-                "Assign an API-key Anthropic account to that agent, or point this "
+                "Assign an API-key account to that agent, or point this "
                 "account at a simpler chat agent. (Raise ai.cli_max_prompt_chars to override.)",
                 n=total, max=max_chars))
         timeout = _cfg_int(self.env, "ai.cli_timeout", 180)
-        text = llm_cli_transport.cli_complete(
+        transport = codex_cli_transport if acc.provider == "openai" else llm_cli_transport
+        text = transport.cli_complete(
             acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout)
         if not (text and text.strip()):
             raise UserError(_("The AI CLI returned an empty answer."))
@@ -224,7 +227,9 @@ def _patch():
     LLMApiService._request_llm_anthropic = _request_llm_anthropic
     LLMApiService._request_llm_cloudflare = _request_llm_cloudflare
     LLMApiService._era_ai_accounts_patched = True
-    _logger.info("era_ai_accounts: account-aware LLMApiService layer active (CLI + Anthropic)")
+    _logger.info(
+        "era_ai_accounts: account-aware LLMApiService layer active "
+        "(Claude/Codex CLI + Anthropic)")
 
 
 _patch()

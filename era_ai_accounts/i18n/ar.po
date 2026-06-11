@@ -795,7 +795,7 @@ msgstr "اسم تطبيقك"
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "auto-detected from Claude Code extension"
+msgid "auto-detected (Claude Code extension / codex on PATH)"
 msgstr "يُكتشف تلقائيًا من امتداد Claude Code"
 
 #. module: era_ai_accounts
@@ -851,8 +851,8 @@ msgstr "الصق مفتاح API (للكتابة فقط)"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_linked
-msgid "Claude account linked"
-msgstr "حساب Claude مرتبط"
+msgid "Subscription account linked"
+msgstr "حساب اشتراك مرتبط"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_label
@@ -917,8 +917,8 @@ msgstr "تم ربط حساب Claude ‏%s"
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Only AI Account Managers can link or unlink a Claude account."
-msgstr "مديرو حسابات الذكاء الاصطناعي وحدهم يمكنهم ربط حساب Claude أو فصله."
+msgid "Only AI Account Managers can link or unlink a subscription account."
+msgstr "مديرو حسابات الذكاء الاصطناعي وحدهم يمكنهم ربط حساب الاشتراك أو فصله."
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -971,20 +971,20 @@ msgstr "لم يُرجع Claude رمز وصول."
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Claude account disconnected."
-msgstr "تم فصل حساب Claude."
+msgid "Subscription account disconnected."
+msgstr "تم فصل حساب الاشتراك."
 
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Save the account first, then link a Claude subscription."
-msgstr "احفظ الحساب أولاً، ثم اربط اشتراك Claude."
+msgid "Save the account first, then link a subscription."
+msgstr "احفظ الحساب أولاً، ثم اربط الاشتراك."
 
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cannot create Claude config dir %s: %s"
-msgstr "تعذّر إنشاء مجلد إعدادات Claude ‏%s: ‏%s"
+msgid "Cannot create the CLI config dir %s: %s"
+msgstr "تعذّر إنشاء مجلد إعدادات واجهة الأوامر %s: ‏%s"
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -1069,3 +1069,127 @@ msgstr "فشل تنزيل الصورة من OpenAI: ‏%s"
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "OpenAI returned no image."
 msgstr "لم يُرجع OpenAI أي صورة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "The local CLI proxy is only available for the Anthropic (Claude CLI) and OpenAI (Codex CLI) providers."
+msgstr "وكيل واجهة الأوامر المحلي متاح فقط لمزوّدي Anthropic ‏(Claude CLI) وOpenAI ‏(Codex CLI)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "ChatGPT %s linked"
+msgstr "تم ربط حساب ChatGPT ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "ChatGPT account linked"
+msgstr "تم ربط حساب ChatGPT"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Connect ChatGPT account"
+msgstr "ربط حساب ChatGPT"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "In-app OAuth login is only available for Anthropic (Claude). For OpenAI, run 'codex login' on your own computer and paste the auth.json contents in the connect dialog."
+msgstr "تسجيل الدخول عبر OAuth داخل التطبيق متاح فقط لـ Anthropic ‏(Claude). بالنسبة لـ OpenAI، نفّذ الأمر 'codex login' على جهازك ثم الصق محتويات auth.json في نافذة الربط."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Pasting a Codex auth.json only applies to OpenAI CLI-proxy accounts."
+msgstr "لصق ملف auth.json الخاص بـ Codex متاح فقط لحسابات OpenAI عبر وكيل واجهة الأوامر."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Paste the contents of your ~/.codex/auth.json file."
+msgstr "الصق محتويات ملف ‎~/.codex/auth.json الخاص بك."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "That is not valid JSON. Paste the complete, unmodified contents of ~/.codex/auth.json."
+msgstr "هذا ليس نص JSON صالحًا. الصق المحتويات الكاملة وغير المعدّلة لملف ‎~/.codex/auth.json."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Unexpected auth.json structure (expected a JSON object)."
+msgstr "بنية auth.json غير متوقعة (المتوقع كائن JSON)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json contains an API key, not a ChatGPT login. Sign in with 'codex login' (choose 'Sign in with ChatGPT') and paste the resulting auth.json — or use an API-key account instead."
+msgstr "يحتوي ملف auth.json هذا على مفتاح API وليس تسجيل دخول ChatGPT. سجّل الدخول عبر 'codex login' (اختر 'Sign in with ChatGPT') ثم الصق ملف auth.json الناتج — أو استخدم حسابًا بمفتاح API بدلاً من ذلك."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json has no ChatGPT tokens (tokens.access_token / refresh_token). Run 'codex login' on your computer first; if your auth.json looks empty, set cli_auth_credentials_store = \"file\" in ~/.codex/config.toml and log in again."
+msgstr "لا يحتوي ملف auth.json هذا على رموز ChatGPT ‏(tokens.access_token / refresh_token). نفّذ 'codex login' على جهازك أولاً؛ وإذا بدا الملف فارغًا فأضف cli_auth_credentials_store = \"file\" إلى ‎~/.codex/config.toml وسجّل الدخول من جديد."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json is not a ChatGPT-account login (auth_mode=%s)."
+msgstr "ملف auth.json هذا ليس تسجيل دخول بحساب ChatGPT ‏(auth_mode=%s)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Image generation is not available through the Codex CLI proxy (account '%s') — use an OpenAI API-key account for images."
+msgstr "توليد الصور غير متاح عبر وكيل Codex CLI (الحساب '%s') — استخدم حساب OpenAI بمفتاح API للصور."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI was not found on this server. Install it (npm i -g @openai/codex), or set the account's 'CLI binary path' or the ERA_AI_CODEX_BIN environment variable."
+msgstr "لم يُعثر على Codex CLI في هذا الخادم. ثبّته (npm i -g @openai/codex)، أو حدد 'مسار برنامج CLI' في الحساب أو متغير البيئة ERA_AI_CODEX_BIN."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI is installed but not signed in for this account (%s). Connect a ChatGPT account on the AI account form, or run 'codex login' on the server."
+msgstr "‏Codex CLI مثبّت لكنه غير مسجّل الدخول لهذا الحساب (%s). اربط حساب ChatGPT من نموذج حساب الذكاء الاصطناعي، أو نفّذ 'codex login' على الخادم."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "Codex CLI error: %s"
+msgstr "خطأ في Codex CLI: ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI returned an empty response."
+msgstr "أعاد Codex CLI استجابة فارغة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "Failed to launch the Codex CLI: %s"
+msgstr "تعذّر تشغيل Codex CLI: ‏%s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__auth_json
+msgid "auth.json contents"
+msgstr "محتويات auth.json"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "1. Sign in with ChatGPT on your own computer"
+msgstr "1. سجّل الدخول بحساب ChatGPT على جهازك الخاص"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "2. Paste the contents of ~/.codex/auth.json"
+msgstr "2. الصق محتويات ‎~/.codex/auth.json"

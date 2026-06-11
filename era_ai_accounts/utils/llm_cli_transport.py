@@ -49,6 +49,9 @@ _CLAUDE_GLOBS = [
 
 # Host-wide serialization. The file locks work across worker processes; the
 # thread lock is only a fallback when fcntl is unavailable (non-unix).
+# Each CLI provider gets its own slot pool + state file (a Claude call must not
+# queue behind a Codex call); the Claude names keep their historical values so
+# in-flight locks survive an upgrade.
 _LOCK_SLOT = "era_ai_cli_proxy.%d.lock"
 _STATE_FILE = "era_ai_cli_proxy.last"
 _thread_lock = threading.Lock()
@@ -101,15 +104,15 @@ def resolve_cli_binary(override=None):
 
 
 @contextlib.contextmanager
-def _global_slot(slots, wait_seconds):
+def _global_slot(slots, wait_seconds, lock_name=_LOCK_SLOT):
     """Hold one of ``slots`` host-wide slots for the duration of one CLI call.
 
     A cross-process counting semaphore built from ``slots`` lock files: a call
-    grabs the first free slot, so at most ``slots`` Claude CLI calls run at once
+    grabs the first free slot, so at most ``slots`` CLI calls run at once
     across *all* Odoo workers and users (``slots=1`` => strictly one at a time).
     The OS releases a slot automatically if a worker dies, so a crash can't
     deadlock the queue. Falls back to a per-process thread lock when fcntl is
-    unavailable (non-unix).
+    unavailable (non-unix). ``lock_name`` namespaces the pool per provider.
     """
     slots = max(1, int(slots or 1))
     if fcntl is None:
@@ -117,7 +120,7 @@ def _global_slot(slots, wait_seconds):
             yield
         return
     shared = _shared_dir()
-    fds = [os.open(os.path.join(shared, _LOCK_SLOT % i), os.O_CREAT | os.O_RDWR, 0o600)
+    fds = [os.open(os.path.join(shared, lock_name % i), os.O_CREAT | os.O_RDWR, 0o600)
            for i in range(slots)]
     held = None
     deadline = time.monotonic() + max(0.0, float(wait_seconds))
@@ -158,7 +161,7 @@ def _compute_gap(cfg, req_size):
     return max(0.0, min(max_gap, min_gap + per_kb * (req_size / 1024.0)))
 
 
-def _enforce_gap(gap):
+def _enforce_gap(gap, state_file=_STATE_FILE):
     """Sleep so that at least ``gap`` seconds have elapsed since the last call ended.
 
     The last-call time is shared across workers via a small state file, so the
@@ -168,7 +171,7 @@ def _enforce_gap(gap):
         return
     last = 0.0
     try:
-        with open(os.path.join(_shared_dir(), _STATE_FILE)) as fh:
+        with open(os.path.join(_shared_dir(), state_file)) as fh:
             last = float(fh.read().strip() or 0)
     except (OSError, ValueError):
         last = 0.0
@@ -177,9 +180,9 @@ def _enforce_gap(gap):
         time.sleep(min(wait, gap))
 
 
-def _record_call_end():
+def _record_call_end(state_file=_STATE_FILE):
     try:
-        with open(os.path.join(_shared_dir(), _STATE_FILE), "w") as fh:
+        with open(os.path.join(_shared_dir(), state_file), "w") as fh:
             fh.write(repr(time.time()))
     except OSError:
         pass

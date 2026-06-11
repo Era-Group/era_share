@@ -13,6 +13,10 @@ OpenAI/Google, and exposes a fixed model list. This module adds:
   binary that is already authenticated on this server (the "connected account"),
   so AI works **without per-token API billing**. The first-party CLI performs the
   call under its own auth; the module never reads or replays its credentials.
+- **OpenAI (ChatGPT account) via Codex CLI proxy** — the same idea for OpenAI:
+  route chat through the first-party `codex` binary signed in with a ChatGPT
+  subscription (Plus/Pro/Business/Edu/Enterprise), **no API key**. See
+  "OpenAI via Codex CLI" below.
 - **API-key accounts** — OpenAI, Google Gemini, Anthropic (Messages API),
   **Cloudflare Workers AI**, and any OpenAI-compatible custom endpoint, with
   secrets stored **encrypted** and restricted to *AI Account Managers*.
@@ -35,6 +39,43 @@ This is how other ERA modules (e.g. `era_seo_suite`) let an admin pick *one
 account for content* and *one account for images* instead of re-entering
 provider/key/model settings in each module.
 
+## OpenAI via Codex CLI (ChatGPT account, no API key)
+
+Pick provider **OpenAI** with auth mode **Local CLI proxy**. Requirements: the
+`codex` binary on the server (`npm i -g @openai/codex`; or set the account's
+*CLI binary path* / `ERA_AI_CODEX_BIN`) and a ChatGPT plan with Codex access
+(Plus, Pro, Business, Edu or Enterprise).
+
+Linking the account (manager-only, click **Connect ChatGPT account**): OpenAI's
+OAuth client only redirects to `localhost:1455` (there is no hosted copy-code
+page like Claude's), so the in-app flow uses OpenAI's **officially documented
+server/CI pattern** instead — run `codex login` on your own computer (choose
+*Sign in with ChatGPT*), then paste the contents of `~/.codex/auth.json` into
+the dialog. The file is stored under an isolated per-account `CODEX_HOME`
+(`<data_dir>/era_ai_accounts/cli/<id>/.codex/auth.json`, mode 0600), and the
+codex CLI refreshes/rotates the tokens in place during use. If no account is
+linked, the CLI falls back to the server's own `~/.codex` login under the
+account's *CLI HOME* (e.g. after running `codex login --device-auth` on the
+server). **Validate connection** runs `codex login status` — it confirms both
+the binary and the credentials without spending tokens.
+
+Generation runs through `codex exec` locked down to **pure text**: read-only
+sandbox, shell tool disabled, web search disabled, user `config.toml` ignored,
+no session files (`--ephemeral`). Tool-calling, embeddings and images are not
+available through this transport (same v1 limitation as the Claude proxy).
+Models are a curated catalog (`gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`) —
+ChatGPT-plan auth has no model-list endpoint; edit the rows if your plan serves
+different slugs. Keep `ai.cli_max_concurrency` at 1: codex rewrites `auth.json`
+when it refreshes tokens, and the per-provider one-at-a-time lock prevents two
+processes racing a refresh.
+
+**Heads-up (ToS):** OpenAI's own docs restrict ChatGPT-account auth to
+*trusted private infrastructure* and recommend API keys for most server/CI
+use; ChatGPT subscriptions are personal and rate-limited in rolling 5-hour +
+weekly windows shared with any other Codex use of that account. Same posture
+as the Claude compliance note below — keep the kill switch / pacing on, and
+prefer an API-key account for heavy or commercial-scale traffic.
+
 ## Cloudflare Workers AI
 
 Pick provider **Cloudflare Workers AI** (auth: API key), set the **Cloudflare
@@ -51,12 +92,13 @@ images through `/ai/run/@cf/black-forest-labs/flux-1-schnell`.
 
 1. **AI ▸ AI Accounts ▸ New** (managers only).
 2. Pick a **provider** and **auth mode**:
-   - *Local CLI proxy* (Anthropic): optionally set the CLI binary path / `HOME`;
-     no key needed. **Or click "Login with Claude"** to link a Claude
-     subscription in-app (OAuth, manual copy-code flow): the credentials are
-     stored once on the server — in an isolated directory, never touching the
-     server's own `~/.claude` login — and **every user** runs through that one
-     account. *Re-link* / *Disconnect* buttons manage it; managers only.
+   - *Local CLI proxy* (Anthropic or OpenAI): optionally set the CLI binary
+     path / `HOME`; no key needed. **Or link a subscription in-app** — *"Login
+     with Claude"* (OAuth, manual copy-code flow) or *"Connect ChatGPT
+     account"* (paste the Codex CLI's `auth.json`): the credentials are stored
+     once on the server — in an isolated directory, never touching the server's
+     own `~/.claude` / `~/.codex` login — and **every user** runs through that
+     one account. *Re-link* / *Disconnect* buttons manage it; managers only.
    - *API key*: paste the provider key (write-only, stored encrypted). For a
      *custom* provider also set base URL / auth header.
 3. **Validate connection**, then **Sync models**.
@@ -66,26 +108,28 @@ images through `/ai/run/@cf/black-forest-labs/flux-1-schnell`.
 
 ## Compliance note
 
-Using a Pro/Max **subscription** through the local CLI to serve many Odoo users
-draws on that subscription's rate limits and intended-use terms. The per-account
-**concurrency cap** and **kill switch** keep this controllable. Replaying the
-CLI's OAuth token directly against `api.anthropic.com` is **not** done — it is
-blocked by Anthropic and violates the ToS.
+Using a **subscription** (Claude Pro/Max or ChatGPT Plus/Pro/…) through the
+local CLI to serve many Odoo users draws on that subscription's rate limits and
+intended-use terms. The per-account **concurrency cap** and **kill switch**
+keep this controllable. Replaying the CLIs' OAuth tokens directly against
+`api.anthropic.com` / `api.openai.com` is **not** done — the first-party
+binaries make every call under their own auth, and direct replay is blocked
+and violates the providers' ToS.
 
 ## Limitations (v1)
 
-- The CLI proxy supports **chat / RAG answers** only — Odoo's tool-calling
-  "Ask-AI navigation" tools are not bridged through the CLI (use an API-key
-  account for tool-using agents).
-- Claude has no embeddings: for agents with **knowledge sources**, keep the
-  agent's *LLM Model* on OpenAI/Gemini (used only for embeddings); generation
-  still goes through the account.
-- Claude has **no image generation**: the CLI proxy produces text only. For
+- The CLI proxies (Claude and Codex) support **chat / RAG answers** only —
+  Odoo's tool-calling "Ask-AI navigation" tools are not bridged through the
+  CLIs (use an API-key account for tool-using agents).
+- No CLI embeddings: for agents with **knowledge sources**, keep the agent's
+  *LLM Model* on OpenAI/Gemini (used only for embeddings); generation still
+  goes through the account.
+- The CLI proxies have **no image generation** — they produce text only. For
   blog/article cover images, create a **Cloudflare** or **OpenAI** (`api_key`)
   account and sync its models — `era_seo_suite`'s *Blog Gen* tab then lets you
   pick that account (and a specific image model) directly. Use the account's
   **Note** field to record what it is linked for.
-- `codex` / `gemini` CLIs are not installed here, so OpenAI/Gemini use API keys.
+- The `gemini` CLI is not bridged, so Google Gemini uses API keys.
 
 ## Security
 
@@ -111,16 +155,19 @@ blocked by Anthropic and violates the ToS.
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |
 | `ai.openai_image_timeout` | 300 | OpenAI image-generation HTTP timeout (s) — high-quality `gpt-image-1` renders can take minutes |
 
-All of the `ai.cli_*` settings above are editable in the UI: **Settings ▸ AI ▸ "Claude
-CLI rate protection"** (no redeploy needed).
+All of the `ai.cli_*` settings above are editable in the UI: **Settings ▸ AI ▸ "AI
+CLI rate protection"** (no redeploy needed). They apply to both CLI providers.
 
 > **Throttling (gentle on the connected account):** CLI-proxy calls are throttled by a
 > host-wide cross-process semaphore of `ai.cli_max_concurrency` slots (default **1** = at
 > most one call at a time across every Odoo worker and user; raise it to allow controlled
-> concurrency). Lock files live under `<data_dir>/era_ai_cli_proxy.<n>.lock` and auto-release
-> if a worker dies. When `ai.cli_gap_enabled` is on, consecutive calls are also separated by a
-> gap that **scales with the request body size** (`min_gap + gap_per_kb × KB`, capped at
-> `max_gap`), so large requests wait longer.
+> concurrency). Each provider has its own slot pool — a Claude call never queues behind a
+> Codex call. Lock files live under `<data_dir>/era_ai_cli_proxy.<n>.lock` (Claude) and
+> `<data_dir>/era_ai_cli_proxy.codex.<n>.lock` (Codex) and auto-release if a worker dies.
+> When `ai.cli_gap_enabled` is on, consecutive calls are also separated by a gap that
+> **scales with the request body size** (`min_gap + gap_per_kb × KB`, capped at `max_gap`),
+> so large requests wait longer. For Codex, keep concurrency at 1 — `auth.json` is
+> single-writer (tokens rotate on refresh).
 
 > **Note (memory):** Odoo applies a soft `RLIMIT_AS` (= `limit_memory_hard`) to its
 > workers; the CLI's JS runtime needs far more *virtual* address space than that and

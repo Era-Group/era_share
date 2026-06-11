@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_era_ai_account_user,era.ai.account user,model_era_ai_account,base.group_user,1,0,0,0
+access_era_ai_account_manager,era.ai.account manager,model_era_ai_account,era_ai_accounts.group_ai_account_manager,1,1,1,1
+access_era_ai_model_user,era.ai.model user,model_era_ai_model,base.group_user,1,0,0,0
+access_era_ai_model_manager,era.ai.model manager,model_era_ai_model,era_ai_accounts.group_ai_account_manager,1,1,1,1
+access_era_ai_account_login_manager,era.ai.account.login manager,model_era_ai_account_login,era_ai_accounts.group_ai_account_manager,1,1,1,1

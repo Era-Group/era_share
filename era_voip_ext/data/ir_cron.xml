@@ -1,0 +1,13 @@
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_analyze_pending_voip_calls" model="ir.cron">
+            <field name="name">Analyze Pending VoIP Calls</field>
+            <field name="model_id" ref="voip.model_voip_call"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_analyze_pending_voip_calls()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+        </record>
+    </data>
+</odoo>

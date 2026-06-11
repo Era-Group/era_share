@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Frontend overrides on website_blog.blog_post_complete.
+
+    Each xpath is independently guarded by the matching ``era_show_*`` toggle
+    so admins can selectively disable any element per post. The blog.post
+    record is exposed inside website_blog templates as `blog_post`.
+
+    Element order (top → bottom):
+      Step A: Subtitle and reading-time meta line below the H1 title
+      Step B: Inline TOC immediately after the post header
+      Step C: Author box BEFORE the post body (when present)
+      Step D: Author box AFTER the post body
+      Step E: FAQ accordion BEFORE the footer
+      Step F: Related posts block BEFORE the footer
+      Step G: Series prev/next nav BEFORE the footer
+
+    Share buttons (era_show_share_buttons) are rendered inside the author box
+    so they appear once per post.
+  -->
+
+  <!-- ===================================================================
+       Step A — Subtitle + reading-time meta line
+  =================================================================== -->
+  <template id="blog_post_subtitle_meta"
+            inherit_id="website_blog.blog_post_complete"
+            name="ERA Blog: subtitle + reading time">
+    <xpath expr="//div[contains(@t-attf-class, 'o_wblog_post_title')]" position="inside">
+      <div t-if="blog_post.era_subtitle" class="o_wblog_post_subtitle text-muted h5 mt-2">
+        <t t-esc="blog_post.era_subtitle"/>
+      </div>
+      <div class="o_wblog_post_meta_extra small text-muted mt-2"
+           t-if="blog_post.era_reading_time_minutes">
+        <i class="fa fa-clock-o me-1" role="img" aria-label="Reading time"/>
+        <span><t t-esc="blog_post.era_reading_time_minutes"/>
+              <t t-translation="off"> </t>
+              <span t-translation="off">min read</span></span>
+        <t t-if="blog_post.era_word_count">
+          <span class="mx-2">·</span>
+          <span><t t-esc="blog_post.era_word_count"/>
+                <span t-translation="off"> words</span></span>
+        </t>
+      </div>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Step B — TOC after the post header (inline, collapsible)
+  =================================================================== -->
+  <template id="blog_post_toc"
+            inherit_id="website_blog.blog_post_content"
+            name="ERA Blog: auto table of contents">
+    <xpath expr="//div[@t-field='blog_post.content']" position="before">
+      <t t-if="blog_post.era_show_toc and blog_post.era_toc_html">
+        <details class="o_era_blog_toc_container card my-3" open="open">
+          <summary class="card-header h6 m-0">
+            <i class="fa fa-list-ul me-2" role="img" aria-label="Table of contents"/>
+            <span t-translation="off">Contents</span>
+          </summary>
+          <div class="card-body">
+            <t t-out="blog_post.era_toc_html"/>
+          </div>
+        </details>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Step C/D — Author box BEFORE and AFTER the post body
+  =================================================================== -->
+  <template id="blog_post_author_box_top"
+            inherit_id="website_blog.blog_post_content"
+            name="ERA Blog: author box (top)">
+    <xpath expr="//div[@t-field='blog_post.content']" position="before">
+      <t t-if="blog_post.era_show_author_box and blog_post.era_author_profile_id">
+        <t t-set="author" t-value="blog_post.era_author_profile_id"/>
+        <div class="o_era_blog_author_box card my-3">
+          <div class="card-body d-flex align-items-start">
+            <img t-if="author.avatar_url"
+                 t-att-src="author.avatar_url"
+                 alt="" class="o_era_blog_author_avatar rounded-circle me-3"
+                 style="width:64px;height:64px;object-fit:cover;"/>
+            <div>
+              <h6 class="mb-1">
+                <a t-att-href="author._get_seo_path()">
+                  <t t-esc="author.name"/>
+                </a>
+              </h6>
+              <div t-if="author.role" class="text-muted small mb-2">
+                <t t-esc="author.role"/>
+              </div>
+              <div t-if="author.bio" class="o_era_blog_author_bio small">
+                <t t-out="author.bio"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Step E — FAQ accordion BEFORE the footer
+  =================================================================== -->
+  <template id="blog_post_faq_accordion"
+            inherit_id="website_blog.blog_post_complete"
+            name="ERA Blog: FAQ accordion">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
+      <t t-if="blog_post.era_faq_ids">
+        <section class="o_era_blog_faq my-4">
+          <h3 class="mb-3" t-translation="off">Frequently Asked Questions</h3>
+          <div class="accordion" t-attf-id="faq_acc_{{ blog_post.id }}">
+            <t t-foreach="blog_post.era_faq_ids.filtered(lambda f: f.active).sorted(key=lambda f: (f.sequence, f.id))"
+               t-as="faq">
+              <div class="accordion-item">
+                <h4 class="accordion-header" t-attf-id="faq_h_{{ blog_post.id }}_{{ faq.id }}">
+                  <button class="accordion-button collapsed" type="button"
+                          data-bs-toggle="collapse"
+                          t-attf-data-bs-target="#faq_c_{{ blog_post.id }}_{{ faq.id }}"
+                          aria-expanded="false">
+                    <t t-esc="faq.question"/>
+                  </button>
+                </h4>
+                <div t-attf-id="faq_c_{{ blog_post.id }}_{{ faq.id }}"
+                     class="accordion-collapse collapse"
+                     t-attf-data-bs-parent="#faq_acc_{{ blog_post.id }}">
+                  <div class="accordion-body">
+                    <t t-out="faq.answer"/>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </div>
+        </section>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Step F — Related posts block BEFORE the footer
+  =================================================================== -->
+  <template id="blog_post_related"
+            inherit_id="website_blog.blog_post_complete"
+            name="ERA Blog: related posts">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
+      <t t-if="blog_post.era_show_related and blog_post.era_related_post_ids">
+        <section class="o_era_blog_related my-4">
+          <h3 class="mb-3" t-translation="off">Related Posts</h3>
+          <div class="row g-3">
+            <t t-foreach="blog_post.era_related_post_ids[:4]" t-as="related">
+              <div class="col-md-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h6 class="card-title">
+                      <a t-att-href="related.website_url">
+                        <t t-esc="related.name"/>
+                      </a>
+                    </h6>
+                    <div t-if="related.era_reading_time_minutes"
+                         class="text-muted small">
+                      <i class="fa fa-clock-o me-1" role="img" aria-label="Reading time"/>
+                      <t t-esc="related.era_reading_time_minutes"/>
+                      <span t-translation="off"> min</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </div>
+        </section>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Step G — Series prev/next navigation
+  =================================================================== -->
+  <template id="blog_post_series_nav"
+            inherit_id="website_blog.blog_post_complete"
+            name="ERA Blog: series navigation">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
+      <t t-if="blog_post.era_series_id">
+        <nav class="o_era_blog_series_nav my-4 d-flex justify-content-between"
+             t-attf-aria-label="Series navigation: #{blog_post.era_series_id.name}">
+          <div>
+            <a t-if="blog_post.era_series_prev_id"
+               t-att-href="blog_post.era_series_prev_id.website_url"
+               class="btn btn-outline-secondary">
+              <i class="fa fa-arrow-left me-2" role="img" aria-label="Previous post"/>
+              <span t-translation="off">Previous</span>
+              <span class="d-none d-md-inline ms-1">·</span>
+              <span class="d-none d-md-inline">
+                <t t-esc="blog_post.era_series_prev_id.name"/>
+              </span>
+            </a>
+          </div>
+          <div class="text-muted small align-self-center">
+            <a t-att-href="blog_post.era_series_id._get_seo_path()">
+              <t t-esc="blog_post.era_series_id.name"/>
+            </a>
+          </div>
+          <div>
+            <a t-if="blog_post.era_series_next_id"
+               t-att-href="blog_post.era_series_next_id.website_url"
+               class="btn btn-outline-secondary">
+              <span class="d-none d-md-inline">
+                <t t-esc="blog_post.era_series_next_id.name"/>
+              </span>
+              <span class="d-none d-md-inline mx-1">·</span>
+              <span t-translation="off">Next</span>
+              <i class="fa fa-arrow-right ms-2" role="img" aria-label="Next post"/>
+            </a>
+          </div>
+        </nav>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- ===================================================================
+       Share buttons (compact bar after the article body)
+  =================================================================== -->
+  <template id="blog_post_share_buttons"
+            inherit_id="website_blog.blog_post_complete"
+            name="ERA Blog: share buttons">
+    <xpath expr="//section[@id='o_wblog_post_footer']" position="before">
+      <t t-if="blog_post.era_show_share_buttons">
+        <!-- Share the ASCII id-path (/blog/<blog_id>/<post_id>) rather than the
+             localized slug URL: Arabic slugs percent-encode to very long,
+             fragile strings that break some social share dialogs. Odoo
+             301-redirects /blog/1/436 to the canonical slug, so the shared link
+             still lands on the real article and crawlers read its OG tags. -->
+        <t t-set="post_url"
+           t-value="(request.env['ir.config_parameter'].sudo().get_param('web.base.url') or '').rstrip('/') + ('/blog/%s/%s' % (blog_post.blog_id.id, blog_post.id))"/>
+        <div class="o_era_blog_share my-3">
+          <span class="me-2 text-muted small" t-translation="off">Share:</span>
+          <a class="btn btn-sm btn-outline-secondary me-1"
+             t-att-href="'https://twitter.com/intent/tweet?url=%s&amp;text=%s' % (post_url, blog_post.name or '')"
+             target="_blank" rel="noopener">
+            <i class="fa fa-twitter" role="img" aria-label="Share on Twitter"/>
+          </a>
+          <a class="btn btn-sm btn-outline-secondary me-1"
+             t-att-href="'https://www.linkedin.com/sharing/share-offsite/?url=%s' % post_url"
+             target="_blank" rel="noopener">
+            <i class="fa fa-linkedin" role="img" aria-label="Share on LinkedIn"/>
+          </a>
+          <a class="btn btn-sm btn-outline-secondary me-1"
+             t-att-href="'https://www.facebook.com/sharer/sharer.php?u=%s' % post_url"
+             target="_blank" rel="noopener">
+            <i class="fa fa-facebook" role="img" aria-label="Share on Facebook"/>
+          </a>
+          <a class="btn btn-sm btn-outline-secondary"
+             t-att-href="'https://api.whatsapp.com/send?text=%s %s' % (blog_post.name or '', post_url)"
+             target="_blank" rel="noopener">
+            <i class="fa fa-whatsapp" role="img" aria-label="Share on WhatsApp"/>
+          </a>
+        </div>
+      </t>
+    </xpath>
+  </template>
+</odoo>

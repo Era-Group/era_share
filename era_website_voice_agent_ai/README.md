@@ -18,12 +18,18 @@ Fill:
 - Realtime Prompt Version (optional)
 - Model (default: gpt-realtime-mini; must match your Prompt's model)
 - Voice (default: alloy)
+- Auto-Start Assistant Greeting (optional)
+- Auto Greeting Instruction (optional; controls the first spoken reply)
 - Show Website Widget (toggle)
+- Require Push-to-Talk (toggle)
 - Summary Prompt (used for call analysis in Arabic)
 
 ## Usage
 Open your website, you'll see a floating button bottom-right.
 - Click **تكلّم** to connect (browser will ask microphone permission)
+- If auto greeting is enabled, the assistant will start speaking immediately after connection
+- If `Require Push-to-Talk` is enabled, hold the mic button while speaking
+- If `Require Push-to-Talk` is disabled, the microphone stays live after connect
 - Optional: type and send text from the panel
 - When the call ends, the recording is saved in CRM with a summary
 
@@ -52,6 +58,9 @@ Use this script on any external website:
 
 Optional attributes:
 - `data-prompt-id`: Override the prompt for this embed only.
+- `data-auto-greet`: Set to `1` or `true` to make the assistant speak first for this embed.
+- `data-auto-greet-instruction`: Override the first spoken greeting instruction for this embed.
+- `data-require-ptt`: Set to `0` or `false` to keep the microphone live for this embed.
 - `data-caller-company`: Pre-fill company name in saved summaries.
 - `data-closed-width` / `data-closed-height`: Control button-only frame size.
 

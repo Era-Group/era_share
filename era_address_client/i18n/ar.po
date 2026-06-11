@@ -1,0 +1,103 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_address_client
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-25 00:00+0000\n"
+"PO-Revision-Date: 2026-05-25 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: era_address_client
+#: model:ir.model.fields,field_description:era_address_client.field_res_partner__x_short_address
+#: model_terms:ir.ui.view,arch_db:era_address_client.view_partner_form_era_address_client
+msgid "Short Address"
+msgstr "العنوان المختصر"
+
+#. module: era_address_client
+#: model:ir.model.fields,help:era_address_client.field_res_partner__x_short_address
+msgid "Saudi National Short Address code (e.g. JCHA4298)"
+msgstr "رمز العنوان الوطني السعودي المختصر (مثال: JCHA4298)"
+
+#. module: era_address_client
+#: model_terms:ir.ui.view,arch_db:era_address_client.view_partner_form_era_address_client
+msgid "Resolve Short Address"
+msgstr "تحويل العنوان المختصر"
+
+#. module: era_address_client
+#: model_terms:ir.ui.view,arch_db:era_address_client.view_partner_form_era_address_client
+msgid "Building Number"
+msgstr "رقم المبنى"
+
+#. module: era_address_client
+#: model_terms:ir.ui.view,arch_db:era_address_client.view_partner_form_era_address_client
+msgid "Additional Number"
+msgstr "الرقم الإضافي"
+
+#. module: era_address_client
+#: model:ir.model.fields,field_description:era_address_client.field_res_config_settings__era_address_server_url
+#: model_terms:ir.ui.view,arch_db:era_address_client.res_config_settings_view_era_address_client
+msgid "Address Lookup Server URL"
+msgstr "عنوان خادم تحويل العنوان"
+
+#. module: era_address_client
+#: model:ir.model.fields,help:era_address_client.field_res_config_settings__era_address_server_url
+msgid ""
+"URL of the server running the era_address_lookup module (e.g. "
+"https://service.era.net.sa)"
+msgstr ""
+"عنوان URL للخادم الذي يشغّل وحدة era_address_lookup (مثال: "
+"https://service.era.net.sa)"
+
+#. module: era_address_client
+#: model_terms:ir.ui.view,arch_db:era_address_client.res_config_settings_view_era_address_client
+msgid "URL of the server running the era_address_lookup module"
+msgstr "عنوان URL للخادم الذي يشغّل وحدة era_address_lookup"
+
+#. module: era_address_client
+#: model_terms:ir.ui.view,arch_db:era_address_client.res_config_settings_view_era_address_client
+msgid "Address Lookup Services"
+msgstr "خدمات تحويل العنوان"
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid "Please enter the short address first."
+msgstr "الرجاء إدخال العنوان المختصر أولاً."
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid ""
+"Timed out connecting to the address server (%s).\n"
+"Check network connectivity and the server URL in settings."
+msgstr ""
+"انتهت مهلة الاتصال بخادم العنوان (%s).\n"
+"تحقق من اتصال الشبكة وعنوان الخادم في الإعدادات."
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid "Failed to connect to the address server: %s"
+msgstr "فشل الاتصال بخادم العنوان: %s"
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid "Server error: %s"
+msgstr "خطأ من الخادم: %s"
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid "Address not found: %s"
+msgstr "لم يتم العثور على العنوان: %s"
+
+#. module: era_address_client
+#: code:addons/era_address_client/models/res_partner.py:0
+msgid "Unknown error"
+msgstr "خطأ غير معروف"

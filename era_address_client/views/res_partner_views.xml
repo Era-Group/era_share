@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_era_address_client" model="ir.ui.view">
+        <field name="name">res.partner.form.era.address.client</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[@name='address_name']" position="before">
+                <label for="x_short_address" string="Short Address"/>
+                <div class="o_row">
+                    <field
+                        name="x_short_address"
+                        placeholder="JCHA4298"
+                        nolabel="1"
+                    />
+                    <button
+                        name="action_resolve_short_address"
+                        type="object"
+                        string="اكمل العنوان"
+                        class="btn-primary"
+                        invisible="x_short_address == ''"
+                    />
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

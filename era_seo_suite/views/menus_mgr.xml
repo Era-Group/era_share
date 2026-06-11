@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- ===================================================================
+       ERA SEO backend menu structure
+       Phase 1: SEO tab on website.page form
+       Phase 2: SEO root menu, Schema Templates, Schemas tab on page form
+  =================================================================== -->
+
+  <!-- SEO tab (Phase 1) + Schemas tab (Phase 2) on website.page form -->
+  <record id="view_website_page_form_seo" model="ir.ui.view">
+    <field name="name">website.page.form.era.seo</field>
+    <field name="model">website.page</field>
+    <field name="inherit_id" ref="website.website_pages_form_view"/>
+    <field name="arch" type="xml">
+      <!--
+        The stock website.page backend form has no header. Add one with the
+        AI button so admins can fill SEO + auto-pick a JSON-LD schema in one
+        click. Mirrors the pattern used in blog.post and content_block forms.
+      -->
+      <xpath expr="//sheet" position="before">
+        <header>
+          <button name="action_ai_fill_seo_and_schema" type="object"
+                  string="AI: Fill SEO + Schema"
+                  class="btn-primary"
+                  icon="fa-magic"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+          <button name="action_ai_fill_seo" type="object"
+                  string="AI: Fill SEO" icon="fa-magic"
+                  class="btn-secondary"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+          <button name="action_ai_geo_review" type="object"
+                  string="AI: GEO Review" icon="fa-robot"
+                  class="btn-secondary"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+        </header>
+      </xpath>
+      <xpath expr="//sheet" position="inside">
+        <notebook>
+          <page string="SEO" name="era_seo">
+            <group string="Title &amp; Description">
+              <field name="seo_title"/>
+              <field name="seo_title_length" string="Title length (chars)"/>
+              <field name="seo_description"/>
+              <field name="seo_description_length" string="Description length (chars)"/>
+              <field name="seo_keywords"/>
+            </group>
+            <group string="Open Graph">
+              <field name="seo_og_title"/>
+              <field name="seo_og_description"/>
+              <field name="seo_og_image" widget="image"/>
+              <field name="seo_og_type"/>
+            </group>
+            <group string="Twitter Card">
+              <field name="seo_twitter_card"/>
+              <field name="seo_twitter_site"/>
+              <field name="seo_twitter_creator"/>
+            </group>
+            <group string="Indexing &amp; Canonical">
+              <field name="seo_canonical_url"/>
+              <field name="seo_robots_index"/>
+              <field name="seo_robots_follow"/>
+              <field name="seo_robots_archive"/>
+              <field name="seo_robots_snippet"/>
+            </group>
+            <group string="Sitemap">
+              <field name="seo_sitemap_include"/>
+              <field name="seo_sitemap_priority"/>
+              <field name="seo_sitemap_changefreq"/>
+            </group>
+          </page>
+
+          <!-- Phase 2: JSON-LD schema instances -->
+          <page string="Schemas" name="era_schemas">
+            <div class="mb-2 d-flex gap-2">
+              <button name="action_add_schema_instance"
+                      string="Add Schema"
+                      type="object"
+                      class="btn btn-primary btn-sm"
+                      icon="fa-plus"
+                      groups="era_seo_suite.group_era_seo_manager"/>
+              <button name="action_open_rich_results_test"
+                      string="Validate JSON-LD"
+                      type="object"
+                      class="btn btn-secondary btn-sm"
+                      help="Open Google Rich Results Test with this page URL pre-filled."/>
+            </div>
+            <field name="seo_schema_instance_ids"
+                   context="{'default_res_model': 'website.page', 'default_res_id': id}"
+                   mode="list"
+                   nolabel="1">
+              <list string="Schema Instances" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="template_id"/>
+                <field name="active" optional="show"/>
+                <field name="name" optional="show"/>
+              </list>
+              <form>
+                <group>
+                  <group string="Configuration">
+                    <field name="template_id"/>
+                    <field name="sequence"/>
+                    <field name="active"/>
+                  </group>
+                </group>
+                <notebook>
+                  <page string="Context Overrides" name="data_json">
+                    <field name="data_json"
+                           widget="ace"
+                           options="{'mode': 'json'}"
+                           style="min-height:200px;font-family:monospace;"
+                           nolabel="1"/>
+                  </page>
+                  <page string="Rendered Preview" name="rendered_json">
+                    <field name="rendered_json"
+                           readonly="1"
+                           widget="ace"
+                           options="{'mode': 'json', 'readOnly': true}"
+                           style="min-height:200px;font-family:monospace;"
+                           nolabel="1"/>
+                  </page>
+                </notebook>
+              </form>
+            </field>
+          </page>
+        </notebook>
+      </xpath>
+    </field>
+  </record>
+
+  <!--
+    Phase 2: SEO submenu under Website → Configuration.
+    parent = website.menu_website_global_configuration  ("Configuration" tab).
+    No groups restriction on the root item — leaf items are protected by model ACLs.
+  -->
+  <menuitem
+    id="menu_website_seo_root"
+    name="SEO"
+    parent="website.menu_website_global_configuration"
+    sequence="50"/>
+
+  <menuitem
+    id="menu_seo_overview"
+    name="Overview"
+    parent="menu_website_seo_root"
+    action="era_seo_suite.action_seo_status"
+    sequence="5"/>
+
+  <menuitem
+    id="menu_seo_schema_templates"
+    name="Schema Templates"
+    parent="menu_website_seo_root"
+    action="action_seo_schema_template"
+    sequence="10"/>
+
+  <!--
+    Direct list+form on website.page.
+
+    Odoo 19's stock list view for website.page is declared with
+        <list js_class="website_pages_list" type="object" action="open_website_url" …>
+    which hijacks every row-click and sends the user to the page's PUBLIC URL
+    instead of the form. That's fine for content editors but blocks SEO admins
+    from reaching the backend form (where the SEO + Schemas tabs live).
+
+    We define our own minimal list view WITHOUT type/action/js_class, and
+    point the action at it explicitly via view_ids. Row-click then falls
+    back to the default "open form" behavior, landing on the inherited
+    backend form `website.page.form.era.seo`.
+  -->
+  <!--
+    NOTE: `view_era_seo_website_page_list` + `action_era_seo_pages` used to
+    live here, but the hub's Dashboard quick-links bar references
+    `era_seo_suite.action_era_seo_pages` via `%(…)d`, and the hub view
+    loads BEFORE this file (intentionally — menus go last). The action
+    has been moved into `seo_suite_hub_views.xml` so it's defined before
+    the hub references it. This menuitem keeps the same xmlid reference;
+    Odoo resolves it at menu-load time.
+  -->
+  <menuitem
+    id="menu_seo_pages"
+    name="Pages (SEO + Schemas)"
+    parent="menu_website_seo_root"
+    action="action_era_seo_pages"
+    sequence="15"/>
+
+</odoo>

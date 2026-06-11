@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="monte_carlo_model_view_list" model="ir.ui.view">
+        <field name="name">monte.carlo.model.list</field>
+        <field name="model">monte.carlo.model</field>
+        <field name="arch" type="xml">
+            <list string="Simulation Models">
+                <field name="name"/>
+                <field name="objective"/>
+                <field name="formula_type"/>
+                <field name="variable_count" string="Variables"/>
+                <field name="run_count" string="Runs"/>
+                <field name="latest_mean" string="Expected" optional="show"/>
+                <field name="latest_success" string="Success %" optional="show"/>
+                <field name="latest_risk" string="Confidence" optional="show" widget="badge"
+                       decoration-success="latest_risk == 'high'"
+                       decoration-warning="latest_risk == 'medium'"
+                       decoration-danger="latest_risk == 'low'"/>
+                <field name="latest_run_date" string="Last Run" optional="hide"/>
+                <field name="ai_summary_preview" string="AI Summary" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="monte_carlo_model_view_form" model="ir.ui.view">
+        <field name="name">monte.carlo.model.form</field>
+        <field name="model">monte.carlo.model</field>
+        <field name="arch" type="xml">
+            <form string="Simulation Model">
+                <header>
+                    <button name="action_new_run" type="object"
+                            string="New Run" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_runs" type="object"
+                                class="oe_stat_button" icon="fa-play">
+                            <field name="run_count" widget="statinfo" string="Runs"/>
+                        </button>
+                        <button name="action_view_results" type="object"
+                                class="oe_stat_button" icon="fa-list-ol">
+                            <field name="result_count" widget="statinfo" string="Results"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Q3 Revenue Forecast"/>
+                        </h1>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        A simulation model turns a business question into a formula over
+                        uncertain inputs. <b>1)</b> Choose an Objective and a Formula.
+                        <b>2)</b> In the Variables tab, add each uncertain input and its
+                        probability distribution (give each one the exact Code the formula
+                        expects). <b>3)</b> Click <b>New Run</b> to simulate thousands of
+                        scenarios and read the probable range of outcomes.
+                    </div>
+                    <group>
+                        <group string="Objective">
+                            <field name="objective"/>
+                            <field name="default_iterations"/>
+                            <field name="result_storage"/>
+                            <field name="result_sample_size"
+                                   invisible="result_storage != 'sample'"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Formula">
+                            <field name="formula_type"/>
+                            <field name="formula_help"/>
+                            <field name="formula_expression"
+                                   invisible="formula_type != 'custom_python_limited'"
+                                   placeholder="leads * conversion_rate * average_deal_value"/>
+                            <separator string="AI Summary" colspan="2"
+                                       invisible="not ai_summary"/>
+                            <field name="ai_summary" nolabel="1" colspan="2"
+                                   invisible="not ai_summary"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Variables" name="variables">
+                            <field name="variable_ids">
+                                <list string="Variables" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="distribution"/>
+                                    <field name="fixed_value"
+                                           invisible="distribution != 'fixed'"/>
+                                    <field name="min_value"
+                                           invisible="distribution not in ('uniform','triangular')"/>
+                                    <field name="mode_value"
+                                           invisible="distribution != 'triangular'"/>
+                                    <field name="max_value"
+                                           invisible="distribution not in ('uniform','triangular')"/>
+                                    <field name="mean_value"
+                                           invisible="distribution not in ('normal','lognormal')"/>
+                                    <field name="std_dev"
+                                           invisible="distribution not in ('normal','lognormal')"/>
+                                    <field name="discrete_values"
+                                           invisible="distribution != 'discrete'"/>
+                                    <field name="distribution_summary"/>
+                                    <field name="source_model_id" optional="show"
+                                           options="{'no_create': True}"/>
+                                    <field name="source_mode" optional="show"/>
+                                    <field name="source_field_id" optional="show"
+                                           options="{'no_create': True}"/>
+                                    <field name="source_date_field_id" optional="hide"
+                                           options="{'no_create': True}"/>
+                                    <field name="source_period" optional="hide"/>
+                                    <field name="source_success_domain" optional="hide"/>
+                                    <field name="source_lookback" optional="show"/>
+                                    <field name="source_domain" optional="hide"/>
+                                    <button name="action_refresh_from_source"
+                                            type="object" icon="fa-cloud-download"
+                                            string="Refresh" title="Refresh from data"
+                                            invisible="not source_model_id"/>
+                                    <button name="action_ask_ai" type="object"
+                                            icon="fa-comments" string="Ask AI"
+                                            title="Ask Odoo AI to estimate this variable"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Correlations" name="correlations">
+                            <div class="alert alert-info" role="alert">
+                                Optional. By default every input varies on its
+                                own. Add a row here when two inputs really move
+                                together — e.g. a higher price lowers demand
+                                (a negative correlation) or a bigger pipeline
+                                comes with smaller deals. Pick the two variables
+                                and a correlation between <b>-1</b> and <b>+1</b>;
+                                the run reproduces it without changing any single
+                                input's distribution. Fixed inputs are ignored.
+                                Save the variables first so they appear in the
+                                lists.
+                            </div>
+                            <field name="correlation_ids">
+                                <list string="Input Correlations" editable="bottom">
+                                    <field name="variable1_id"
+                                           options="{'no_create': True}"
+                                           domain="[('model_id', '=', parent.id)]"/>
+                                    <field name="variable2_id"
+                                           options="{'no_create': True}"
+                                           domain="[('model_id', '=', parent.id)]"/>
+                                    <field name="coefficient"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Runs" name="runs">
+                            <field name="run_ids" readonly="1">
+                                <list string="Runs">
+                                    <field name="name"/>
+                                    <field name="iterations"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'done'"
+                                           decoration-danger="state == 'failed'"
+                                           decoration-info="state == 'running'"/>
+                                    <field name="summary_mean"/>
+                                    <field name="p95"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"
+                                   placeholder="What business question does this model answer?"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="monte_carlo_model_view_search" model="ir.ui.view">
+        <field name="name">monte.carlo.model.search</field>
+        <field name="model">monte.carlo.model</field>
+        <field name="arch" type="xml">
+            <search string="Simulation Models">
+                <field name="name"/>
+                <filter name="standalone" string="Authored Models"
+                        domain="[('source_model','=',False)]"/>
+                <filter name="generated" string="One-click Forecasts"
+                        domain="[('source_model','!=',False)]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
+                <group>
+                    <filter name="group_objective" string="Objective"
+                            context="{'group_by': 'objective'}"/>
+                    <filter name="group_formula" string="Formula"
+                            context="{'group_by': 'formula_type'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="monte_carlo_model_action" model="ir.actions.act_window">
+        <field name="name">Simulation Models</field>
+        <field name="res_model">monte.carlo.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="monte_carlo_model_view_search"/>
+        <!-- Hide the per-opportunity one-click forecast models by default:
+             an active CRM creates one per opportunity and they would drown
+             the authored portfolio models (clear the filter to see them). -->
+        <field name="context">{'search_default_standalone': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first simulation model
+            </p>
+            <p>
+                Define the uncertain inputs of a business question and run
+                thousands of scenarios to see the probable range of outcomes.
+            </p>
+        </field>
+    </record>
+
+</odoo>

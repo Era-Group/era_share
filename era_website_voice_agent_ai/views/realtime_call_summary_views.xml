@@ -4,7 +4,7 @@
     <field name="name">crm.realtime.call.summary.tree</field>
     <field name="model">crm.realtime_call_summary</field>
     <field name="arch" type="xml">
-      <list string="ملخصات المكالمات الفورية">
+      <list string="ملخصات المكالمات الفورية" create="0">
         <field name="create_date" string="أُنشئ في"/>
         <field name="caller_phone" string="هاتف المتصل"/>
         <field name="salesperson_user_id" string="مندوب المبيعات"/>
@@ -25,7 +25,7 @@
     <field name="name">crm.realtime.call.summary.form</field>
     <field name="model">crm.realtime_call_summary</field>
     <field name="arch" type="xml">
-      <form string="ملخص مكالمة فورية">
+      <form string="ملخص مكالمة فورية" create="0">
         <sheet>
           <group>
             <field name="name" string="الاسم"/>

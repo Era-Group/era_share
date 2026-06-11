@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_gsc_keyword_list" model="ir.ui.view">
+    <field name="name">era.gsc.keyword.list</field>
+    <field name="model">era.gsc.keyword</field>
+    <field name="arch" type="xml">
+      <list string="Keyword Opportunities" default_order="impressions desc"
+            create="0" delete="0">
+        <field name="query"/>
+        <field name="clicks" sum="Clicks"/>
+        <field name="impressions" sum="Impressions"/>
+        <field name="ctr" widget="percentage"/>
+        <field name="position"/>
+        <field name="is_top" optional="show"/>
+        <field name="is_striking" optional="show"/>
+        <field name="is_low_ctr" optional="show"/>
+        <field name="is_rising" optional="show"/>
+        <field name="is_new" optional="hide"/>
+        <field name="is_question" optional="hide"/>
+        <field name="impr_recent" optional="hide"/>
+        <field name="impr_prior" optional="hide"/>
+        <field name="site_id" optional="hide"
+               groups="website.group_multi_website"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_keyword_graph" model="ir.ui.view">
+    <field name="name">era.gsc.keyword.graph</field>
+    <field name="model">era.gsc.keyword</field>
+    <field name="arch" type="xml">
+      <graph string="Keyword Opportunities" type="bar" sample="1">
+        <field name="query"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+      </graph>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_keyword_pivot" model="ir.ui.view">
+    <field name="name">era.gsc.keyword.pivot</field>
+    <field name="model">era.gsc.keyword</field>
+    <field name="arch" type="xml">
+      <pivot string="Keyword Opportunities" sample="1">
+        <field name="query" type="row"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+        <field name="position" type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_keyword_search" model="ir.ui.view">
+    <field name="name">era.gsc.keyword.search</field>
+    <field name="model">era.gsc.keyword</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="query"/>
+        <field name="site_id"/>
+        <filter name="f_top" string="Top performers"
+                domain="[('is_top','=',True)]"/>
+        <filter name="f_striking" string="Striking distance"
+                domain="[('is_striking','=',True)]"/>
+        <filter name="f_low_ctr" string="Low CTR"
+                domain="[('is_low_ctr','=',True)]"/>
+        <filter name="f_rising" string="Rising"
+                domain="[('is_rising','=',True)]"/>
+        <filter name="f_new" string="New"
+                domain="[('is_new','=',True)]"/>
+        <filter name="f_question" string="Questions"
+                domain="[('is_question','=',True)]"/>
+        <separator/>
+        <filter name="f_opportunity" string="Any opportunity"
+                domain="['|','|','|','|',
+                         ('is_striking','=',True),('is_low_ctr','=',True),
+                         ('is_rising','=',True),('is_new','=',True),
+                         ('is_question','=',True)]"/>
+        <group>
+          <filter name="g_site" string="Site" context="{'group_by':'site_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_era_gsc_keyword" model="ir.actions.act_window">
+    <field name="name">Keyword Opportunities</field>
+    <field name="res_model">era.gsc.keyword</field>
+    <field name="view_mode">list,graph,pivot</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">No Search Console data yet</p>
+      <p>Connect a Google account, pull, then <b>Backfill 3 Months</b>
+         (GSC tab) to populate keyword opportunities.</p>
+    </field>
+  </record>
+</odoo>

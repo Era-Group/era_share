@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Pages (SEO + Schemas) — own list view + action.
+
+    Defined here ABOVE the hub form because the Dashboard quick-links
+    bar at the top of the form references `era_seo_suite.action_era_seo_pages`
+    via `%(…)d`, and that expansion requires the action's database id
+    to exist by the time the form view is processed. The menuitem
+    in menus_mgr.xml references the same xmlid by name and resolves
+    at menu-load time.
+
+    Why a custom list view: Odoo 19's stock website.page list is
+        <list js_class="website_pages_list"
+              type="object" action="open_website_url" …>
+    which routes row-click to the public URL. That blocks SEO admins
+    from reaching the backend form (where our SEO + Schemas tabs live).
+    The minimal view below has no js_class / type / action, so
+    row-click falls back to the default "open form" behavior.
+  -->
+  <record id="view_era_seo_website_page_list" model="ir.ui.view">
+    <field name="name">era.seo.website.page.list</field>
+    <field name="model">website.page</field>
+    <field name="arch" type="xml">
+      <list string="Pages (SEO + Schemas)" default_order="url asc">
+        <field name="name"/>
+        <field name="url"/>
+        <field name="website_id" groups="website.group_multi_website"/>
+        <field name="is_published"/>
+        <field name="website_indexed"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="action_era_seo_pages" model="ir.actions.act_window">
+    <field name="name">Pages (SEO + Schemas)</field>
+    <field name="res_model">website.page</field>
+    <field name="view_mode">list,form</field>
+    <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_era_seo_website_page_list')}),
+    ]"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No pages yet. Create one from the Website app, then come back here
+        to attach schema templates or tune SEO meta.
+      </p>
+    </field>
+  </record>
+
+  <record id="view_era_seo_suite_hub_form" model="ir.ui.view">
+    <field name="name">era.seo.suite.hub.form</field>
+    <field name="model">era.seo.suite.hub</field>
+    <field name="arch" type="xml">
+      <form create="0" delete="0" duplicate="0" js_class="form">
+        <header>
+          <button name="action_run_audit_now" type="object"
+                  string="Run Audit Now" icon="fa-play-circle"
+                  class="btn-primary"
+                  invisible="is_audit_pending"
+                  confirm="Queue a fresh SEO + GEO audit? It runs in the background; the audit form page refreshes on its own when scanning completes."/>
+          <button name="action_run_audit_now" type="object"
+                  string="Audit running…" icon="fa-spinner fa-spin"
+                  class="btn-secondary"
+                  invisible="not is_audit_pending"
+                  disabled="1"/>
+          <button name="action_run_geo_content_analysis" type="object"
+                  string="GEO Content Analysis" icon="fa-robot"
+                  class="btn-secondary"
+                  invisible="is_audit_pending"
+                  confirm="Scan all pages for GEO / AI-citability content quality — answer summary, FAQ coverage, factual density, heading structure, AI-crawler access, and /llms.txt? It runs in the background; results appear under Findings (filter code starting 'geo_')."/>
+          <field name="is_audit_pending"
+                 widget="era_auto_refresh_when_true"
+                 options="{'model': 'era.seo.audit.run', 'method': 'get_audit_pending_state'}"
+                 invisible="1"/>
+          <button name="action_open_audit_findings" type="object"
+                  string="Audit Findings" icon="fa-list-ul"
+                  class="btn-secondary"/>
+          <button name="%(era_seo_suite.action_era_seo_onboarding_wizard)d"
+                  type="action"
+                  string="Setup Wizard" icon="fa-magic"
+                  class="btn-secondary"/>
+          <button name="action_refresh" type="object"
+                  string="Refresh" icon="fa-refresh" class="btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1 class="mb-0">ERA SEO Suite</h1>
+            <div class="text-muted">SEO · GEO · GSC — one screen, one click away.</div>
+          </div>
+
+          <notebook>
+
+            <!-- ======================= OWNER SUMMARY ======================= -->
+            <page string="ملخص المالك" name="owner_summary">
+              <field name="kpi_published_pages" invisible="1"/>
+              <field name="kpi_health_score" invisible="1"/>
+              <field name="kpi_attention_items" invisible="1"/>
+              <field name="kpi_audit_critical" invisible="1"/>
+              <field name="kpi_audit_warning" invisible="1"/>
+              <field name="kpi_pages_missing_seo" invisible="1"/>
+              <field name="kpi_posts_missing_seo" invisible="1"/>
+              <field name="kpi_coverage_title_pct" invisible="1"/>
+              <field name="kpi_coverage_meta_pct" invisible="1"/>
+              <field name="kpi_ai_findings_suggested" invisible="1"/>
+              <field name="kpi_ai_findings_failed" invisible="1"/>
+              <field name="kpi_ai_findings_review" invisible="1"/>
+              <field name="kpi_ai_fill_remaining" invisible="1"/>
+              <field name="kpi_ai_fill_active" invisible="1"/>
+              <field name="kpi_gsc_accounts_connected" invisible="1"/>
+              <field name="kpi_gsc_sites" invisible="1"/>
+              <field name="kpi_gsc_clicks_28d" invisible="1"/>
+              <field name="kpi_gsc_impressions_28d" invisible="1"/>
+              <field name="kpi_gsc_ctr_28d" invisible="1"/>
+              <field name="kpi_geo_crawlers_blocked" invisible="1"/>
+
+              <div class="o_era_owner_page">
+                <div class="o_era_owner_summary" dir="rtl">
+                  <div class="o_era_owner_lead o_era_owner_muted"
+                       invisible="kpi_published_pages">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      لا توجد صفحات منشورة كافية للحكم على الموقع.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      بعد نشر الصفحات وتشغيل أول فحص ستظهر هنا قراءة أوضح عن
+                      جاهزية الموقع للزوار ومحركات البحث.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_danger"
+                       invisible="not kpi_published_pages or (not kpi_audit_critical and kpi_health_score &gt;= 55)">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الموقع يحتاج متابعة قريبة.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      هناك نقاط يمكن أن تؤثر على ظهور الموقع في البحث أو على
+                      انطباع الزائر، والأفضل التعامل معها قبل إضافة أعمال جديدة.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_warning"
+                       invisible="not kpi_published_pages or kpi_audit_critical or kpi_health_score &lt; 55 or (not kpi_attention_items and kpi_health_score &gt;= 80)">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الوضع مقبول، مع نقاط واضحة تحتاج ترتيب.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      أساس الموقع يعمل، لكن توجد تحسينات مباشرة سترفع جودة
+                      الظهور وتقلل الحاجة للتدخل اليدوي لاحقا.
+                    </div>
+                  </div>
+                  <div class="o_era_owner_lead o_era_owner_success"
+                       invisible="not kpi_published_pages or kpi_attention_items or kpi_health_score &lt; 80">
+                    <div class="o_era_owner_label">الخلاصة التنفيذية</div>
+                    <div class="o_era_owner_status">
+                      الوضع العام جيد.
+                    </div>
+                    <div class="o_era_owner_meaning">
+                      لا توجد إشارات حرجة حاليا. الأفضل الاستمرار في مراقبة
+                      الأداء ونشر محتوى مفيد بانتظام.
+                    </div>
+                  </div>
+
+                  <div class="o_era_owner_grid">
+                    <div class="o_era_owner_card">
+                      <span>جاهزية الموقع</span>
+                      <strong>
+                        <field name="kpi_health_score" readonly="1" nolabel="1"/>/100
+                      </strong>
+                      <small>
+                        <field name="kpi_published_pages" readonly="1" nolabel="1"/>
+                        صفحة منشورة، اكتمال العناوين
+                        <field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%
+                        والوصف
+                        <field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%.
+                      </small>
+                    </div>
+                    <div class="o_era_owner_card">
+                      <span>الوضع في Google</span>
+                      <strong invisible="kpi_gsc_accounts_connected and kpi_gsc_sites">
+                        غير مربوط
+                      </strong>
+                      <strong invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or not kpi_gsc_clicks_28d">
+                        <field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/>
+                        زيارة
+                      </strong>
+                      <strong invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_gsc_clicks_28d">
+                        مربوط
+                      </strong>
+                      <small invisible="kpi_gsc_accounts_connected">
+                        لم يتم ربط بيانات Google بعد، لذلك لا تظهر زيارات البحث هنا.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or kpi_gsc_sites">
+                        الحساب مربوط، لكن لم يتم اختيار موقع لسحب بيانات البحث.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or not kpi_gsc_impressions_28d">
+                        <field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/>
+                        ظهور في نتائج البحث خلال آخر 28 يوما، ونسبة الضغط
+                        <field name="kpi_gsc_ctr_28d" readonly="1" nolabel="1"/>%.
+                      </small>
+                      <small invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_gsc_impressions_28d">
+                        الربط موجود، لكن لا توجد بيانات كافية بعد في آخر 28 يوما.
+                      </small>
+                    </div>
+                    <div class="o_era_owner_card">
+                      <span>عمل الذكاء الاصطناعي</span>
+                      <strong invisible="not kpi_ai_findings_failed">
+                        يحتاج متابعة
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or not kpi_ai_fill_active">
+                        يعمل الآن
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or kpi_ai_fill_active or not kpi_ai_findings_review">
+                        ينتظر قرار
+                      </strong>
+                      <strong invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review">
+                        مستقر
+                      </strong>
+                      <small invisible="not kpi_ai_findings_failed">
+                        <field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/>
+                        حالة فشلت وتحتاج مراجعة الإعداد أو القرار.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or not kpi_ai_fill_active">
+                        يجري إكمال بيانات الصفحات تلقائيا، والمتبقي
+                        <field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/>
+                        سجل.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or not kpi_ai_findings_review">
+                        <field name="kpi_ai_findings_review" readonly="1" nolabel="1"/>
+                        اقتراح جاهز أو متوقف ينتظر موافقة شخص مسؤول.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review or not kpi_ai_fill_remaining">
+                        توجد
+                        <field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/>
+                        صفحة أو مقالة يمكن تركها للمعالجة التلقائية.
+                      </small>
+                      <small invisible="kpi_ai_findings_failed or kpi_ai_fill_active or kpi_ai_findings_review or kpi_ai_fill_remaining">
+                        لا توجد قائمة عمل آلية كبيرة حاليا.
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="o_era_owner_next">
+                    <div class="o_era_owner_label">الأولوية التالية</div>
+                    <ul>
+                      <li invisible="not kpi_audit_critical">
+                        معالجة
+                        <field name="kpi_audit_critical" readonly="1" nolabel="1"/>
+                        نقطة مهمة قد تؤثر مباشرة على ظهور الموقع أو تجربة الزائر.
+                      </li>
+                      <li invisible="not kpi_audit_warning">
+                        ترتيب
+                        <field name="kpi_audit_warning" readonly="1" nolabel="1"/>
+                        ملاحظة تحسين قبل أن تتحول إلى عمل متراكم.
+                      </li>
+                      <li invisible="not kpi_pages_missing_seo and not kpi_posts_missing_seo">
+                        إكمال عناوين وأوصاف الصفحات والمقالات حتى تظهر بشكل أوضح في البحث.
+                      </li>
+                      <li invisible="not kpi_ai_findings_failed and not kpi_ai_findings_review">
+                        مراجعة قائمة الذكاء الاصطناعي: توجد حالات تحتاج قرارا أو مراجعة إعداد.
+                      </li>
+                      <li invisible="not kpi_geo_crawlers_blocked">
+                        السماح لمحركات الإجابة الحديثة بقراءة الموقع إذا كان الهدف زيادة الظهور في إجابات الذكاء الاصطناعي.
+                      </li>
+                      <li invisible="kpi_gsc_accounts_connected">
+                        ربط Google Search Console حتى تظهر أرقام الزيارات والبحث داخل هذه الشاشة.
+                      </li>
+                      <li invisible="kpi_attention_items or not kpi_gsc_accounts_connected">
+                        لا توجد أولويات عاجلة الآن.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="o_era_owner_actions mt-3">
+                  <button name="action_run_audit_now" type="object"
+                          string="تحديث الفحص"
+                          icon="fa-play-circle"
+                          class="btn btn-primary"
+                          invisible="is_audit_pending"
+                          confirm="سيتم تشغيل فحص جديد للموقع في الخلفية. يمكنك متابعة العمل، وستظهر النتيجة عند اكتماله. هل تريد المتابعة؟"/>
+                  <button name="action_ai_traffic_advice" type="object"
+                          string="Get AI Traffic Tip"
+                          icon="fa-lightbulb-o"
+                          class="btn btn-warning"/>
+                  <button name="action_open_priority_findings" type="object"
+                          string="فتح الأولويات"
+                          icon="fa-exclamation-triangle"
+                          class="btn btn-danger"
+                          invisible="not kpi_audit_critical and not kpi_audit_warning"/>
+                  <button name="action_open_ai_review_queue" type="object"
+                          string="مراجعة قرارات الذكاء الاصطناعي"
+                          icon="fa-magic"
+                          class="btn btn-warning"
+                          invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
+                  <button name="action_start_bulk_ai_fill" type="object"
+                          string="تشغيل الإكمال التلقائي"
+                          icon="fa-play"
+                          class="btn btn-info"
+                          invisible="kpi_ai_fill_active or not kpi_ai_fill_remaining"
+                          confirm="سيبدأ الذكاء الاصطناعي بإكمال بيانات الصفحات والمقالات تدريجيا في الخلفية حتى تنتهي القائمة. هل تريد المتابعة؟"/>
+                  <button name="action_stop_bulk_ai_fill" type="object"
+                          string="إيقاف الإكمال مؤقتا"
+                          icon="fa-pause"
+                          class="btn btn-secondary"
+                          invisible="not kpi_ai_fill_active"/>
+                  <button name="action_open_pages_missing_seo" type="object"
+                          string="صفحات تحتاج عنوانا"
+                          icon="fa-pencil"
+                          class="btn btn-secondary"
+                          invisible="not kpi_pages_missing_seo"/>
+                  <button name="%(era_seo_suite.action_era_gsc_account)d"
+                          type="action"
+                          string="ربط بيانات Google"
+                          icon="fa-google"
+                          class="btn btn-secondary"
+                          invisible="kpi_gsc_accounts_connected"/>
+                </div>
+              </div>
+            </page>
+
+            <!-- ============================ DASHBOARD ============================ -->
+            <page string="Dashboard" name="dashboard">
+              <!--
+                Card-grid dashboard. Every KPI is a Bootstrap card with a
+                FontAwesome icon, large value, and short label. Severity
+                gets color-coded (danger/warning/info/success/muted). The
+                coverage block uses progress bars rendered as %-filled
+                strips so the user reads them at-a-glance.
+
+                Every field is `<field readonly="1" nolabel="1"/>` since
+                the surrounding HTML supplies the label.
+              -->
+
+              <!-- Invisible holders so all field values are loaded before
+                   the conditional `invisible=…` HTML below evaluates. -->
+              <field name="kpi_published_pages" invisible="1"/>
+              <field name="kpi_active_redirects" invisible="1"/>
+              <field name="kpi_schema_instances" invisible="1"/>
+              <field name="kpi_audit_last_date" invisible="1"/>
+              <field name="kpi_audit_open_findings" invisible="1"/>
+              <field name="kpi_audit_critical" invisible="1"/>
+              <field name="kpi_audit_warning" invisible="1"/>
+              <field name="kpi_audit_info" invisible="1"/>
+              <field name="kpi_findings_resolved_total" invisible="1"/>
+              <field name="kpi_findings_resolved_7d" invisible="1"/>
+              <field name="kpi_health_score" invisible="1"/>
+              <field name="kpi_attention_items" invisible="1"/>
+              <field name="kpi_blog_posts_total" invisible="1"/>
+              <field name="kpi_blog_posts_ai_generated" invisible="1"/>
+              <field name="kpi_blog_posts_30d" invisible="1"/>
+              <field name="kpi_pages_missing_seo" invisible="1"/>
+              <field name="kpi_posts_missing_seo" invisible="1"/>
+              <field name="kpi_coverage_title_pct" invisible="1"/>
+              <field name="kpi_coverage_meta_pct" invisible="1"/>
+              <field name="kpi_coverage_og_image_pct" invisible="1"/>
+              <field name="kpi_coverage_schema_pct" invisible="1"/>
+              <field name="kpi_ai_findings_applied" invisible="1"/>
+              <field name="kpi_ai_findings_suggested" invisible="1"/>
+              <field name="kpi_ai_findings_failed" invisible="1"/>
+              <field name="kpi_ai_findings_review" invisible="1"/>
+              <field name="kpi_ai_fill_total" invisible="1"/>
+              <field name="kpi_ai_fill_done" invisible="1"/>
+              <field name="kpi_ai_fill_remaining" invisible="1"/>
+              <field name="kpi_ai_fill_pct" invisible="1"/>
+              <field name="kpi_ai_fill_active" invisible="1"/>
+              <field name="kpi_blog_taxonomy_remaining" invisible="1"/>
+              <field name="kpi_geo_crawlers_total" invisible="1"/>
+              <field name="kpi_geo_crawlers_blocked" invisible="1"/>
+              <field name="kpi_geo_llms_enabled" invisible="1"/>
+              <field name="kpi_gsc_accounts_connected" invisible="1"/>
+              <field name="kpi_gsc_sites" invisible="1"/>
+              <field name="kpi_gsc_clicks_28d" invisible="1"/>
+              <field name="kpi_gsc_impressions_28d" invisible="1"/>
+              <field name="kpi_gsc_ctr_28d" invisible="1"/>
+              <field name="kpi_gsc_last_pull" invisible="1"/>
+
+              <div class="o_era_seo_dashboard">
+                <div class="o_era_dash_hero mb-3">
+                  <div class="o_era_dash_hero_main">
+                    <div class="o_era_dash_eyebrow">Live dashboard</div>
+                    <div class="o_era_dash_score">
+                      <field name="kpi_health_score" readonly="1" nolabel="1"/>
+                      <span class="o_era_dash_score_unit">/100</span>
+                    </div>
+                    <div class="o_era_dash_score_label">SEO health score</div>
+                    <div class="o_era_dash_badges mt-2">
+                      <span class="badge rounded-pill bg-success"
+                            invisible="kpi_attention_items">
+                        <i class="fa fa-check-circle me-1"/>Clear
+                      </span>
+                      <span class="badge rounded-pill bg-danger"
+                            invisible="not kpi_attention_items">
+                        <i class="fa fa-exclamation-triangle me-1" title="Needs attention"/>
+                        <field name="kpi_attention_items" readonly="1" nolabel="1"/>
+                        needs attention
+                      </span>
+                      <span class="badge rounded-pill bg-info"
+                            invisible="not is_audit_pending">
+                        <i class="fa fa-spinner fa-spin me-1"/>Audit running
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="o_era_dash_hero_stats">
+                    <div class="o_era_dash_stat">
+                      <span class="o_era_dash_stat_label">Open findings</span>
+                      <strong><field name="kpi_audit_open_findings" readonly="1" nolabel="1"/></strong>
+                      <small>
+                        <field name="kpi_audit_critical" readonly="1" nolabel="1"/>
+                        critical
+                      </small>
+                    </div>
+                    <div class="o_era_dash_stat">
+                      <span class="o_era_dash_stat_label">Title coverage</span>
+                      <strong>
+                        <field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%
+                      </strong>
+                      <small>
+                        <field name="kpi_published_pages" readonly="1" nolabel="1"/>
+                        published pages
+                      </small>
+                    </div>
+                    <div class="o_era_dash_stat">
+                      <span class="o_era_dash_stat_label">GSC performance</span>
+                      <strong>
+                        <field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/>
+                      </strong>
+                      <small>
+                        <field name="kpi_gsc_ctr_28d" readonly="1" nolabel="1"/>% CTR
+                      </small>
+                    </div>
+                    <div class="o_era_dash_stat">
+                      <span class="o_era_dash_stat_label">AI fill</span>
+                      <strong>
+                        <field name="kpi_ai_fill_pct" readonly="1" nolabel="1"/>%
+                      </strong>
+                      <small>
+                        <field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/>
+                        remaining
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="o_era_dash_actions mb-3">
+                  <button name="action_run_audit_now" type="object"
+                          string="Run Audit"
+                          icon="fa-play-circle"
+                          class="btn btn-primary"
+                          invisible="is_audit_pending"
+                          confirm="Queue a fresh SEO + GEO audit? It runs in the background; the audit form page refreshes on its own when scanning completes."/>
+                  <button name="action_open_priority_findings" type="object"
+                          string="Priority Findings"
+                          icon="fa-exclamation-triangle"
+                          class="btn btn-danger"
+                          invisible="not kpi_audit_critical and not kpi_audit_warning"/>
+                  <button name="action_open_ai_review_queue" type="object"
+                          string="AI Review Queue"
+                          icon="fa-magic"
+                          class="btn btn-info"
+                          invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
+                  <button name="action_open_pages_missing_seo" type="object"
+                          string="Pages Missing SEO"
+                          icon="fa-pencil"
+                          class="btn btn-secondary"
+                          invisible="not kpi_pages_missing_seo"/>
+                  <button name="%(era_seo_suite.action_era_seo_pages)d"
+                          type="action"
+                          string="Pages"
+                          class="btn btn-light"
+                          icon="fa-file-text-o"/>
+                  <button name="%(era_seo_suite.action_seo_audit_run)d"
+                          type="action"
+                          string="Audit Runs"
+                          class="btn btn-light"
+                          icon="fa-search"/>
+                  <button name="%(era_seo_suite.action_seo_schema_template)d"
+                          type="action"
+                          string="Schema Templates"
+                          class="btn btn-light"
+                          icon="fa-code"/>
+                </div>
+
+                <div class="row g-2 mb-3">
+                  <div class="col-lg-4 col-md-6">
+                    <div class="o_era_work_tile o_era_work_tile_danger h-100"
+                         invisible="not kpi_audit_critical and not kpi_audit_warning">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-flag" title="Audit priorities"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">Audit priorities</div>
+                        <div class="o_era_work_tile_value">
+                          <field name="kpi_audit_critical" readonly="1" nolabel="1"/>
+                          critical,
+                          <field name="kpi_audit_warning" readonly="1" nolabel="1"/>
+                          warnings
+                        </div>
+                      </div>
+                      <button name="action_open_priority_findings" type="object"
+                              string="Open"
+                              class="btn btn-sm btn-outline-danger"/>
+                    </div>
+                    <div class="o_era_work_tile h-100"
+                         invisible="kpi_audit_critical or kpi_audit_warning">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">Audit priorities</div>
+                        <div class="o_era_work_tile_value">No critical or warning findings</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6">
+                    <div class="o_era_work_tile o_era_work_tile_info h-100"
+                         invisible="not kpi_ai_fill_remaining and not kpi_ai_findings_suggested and not kpi_ai_findings_review">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-magic" title="AI workload"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">AI workload</div>
+                        <div class="o_era_work_tile_value">
+                          <field name="kpi_pages_missing_seo" readonly="1" nolabel="1"/>
+                          pages,
+                          <field name="kpi_posts_missing_seo" readonly="1" nolabel="1"/>
+                          posts missing SEO,
+                          <field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/>
+                          suggested,
+                          <field name="kpi_ai_findings_review" readonly="1" nolabel="1"/>
+                          need review
+                        </div>
+                      </div>
+                      <button name="action_open_ai_review_queue" type="object"
+                              string="Review"
+                              class="btn btn-sm btn-outline-primary"
+                              invisible="not kpi_ai_findings_suggested and not kpi_ai_findings_review and not kpi_ai_findings_failed"/>
+                      <button name="action_start_bulk_ai_fill" type="object"
+                              string="Start"
+                              class="btn btn-sm btn-outline-info"
+                              invisible="kpi_ai_fill_active or not kpi_ai_fill_remaining"
+                              confirm="Start the AI Bulk Fill cron now? Runs in the background — 10 records every 2 minutes — until the queue is empty."/>
+                      <button name="action_stop_bulk_ai_fill" type="object"
+                              string="Pause"
+                              class="btn btn-sm btn-outline-warning"
+                              invisible="not kpi_ai_fill_active"/>
+                    </div>
+                    <div class="o_era_work_tile h-100"
+                         invisible="kpi_ai_fill_remaining or kpi_ai_findings_suggested or kpi_ai_findings_review">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">AI workload</div>
+                        <div class="o_era_work_tile_value">No pending AI queue</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6">
+                    <div class="o_era_work_tile o_era_work_tile_warning h-100"
+                         invisible="kpi_gsc_accounts_connected and kpi_gsc_sites and not kpi_geo_crawlers_blocked">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-signal" title="Discovery signals"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">Discovery signals</div>
+                        <div class="o_era_work_tile_value">
+                          <span class="d-block" invisible="kpi_gsc_accounts_connected">Connect GSC</span>
+                          <span class="d-block" invisible="not kpi_gsc_accounts_connected or kpi_gsc_sites">Add GSC sites</span>
+                          <span class="d-block" invisible="not kpi_geo_crawlers_blocked">
+                            <field name="kpi_geo_crawlers_blocked" readonly="1" nolabel="1"/>
+                            AI crawlers blocked
+                          </span>
+                        </div>
+                      </div>
+                      <button name="%(era_seo_suite.action_era_gsc_account)d"
+                              type="action"
+                              string="GSC"
+                              class="btn btn-sm btn-outline-warning"
+                              invisible="kpi_gsc_accounts_connected"/>
+                      <button name="%(era_seo_suite.action_era_gsc_site)d"
+                              type="action"
+                              string="Sites"
+                              class="btn btn-sm btn-outline-warning"
+                              invisible="not kpi_gsc_accounts_connected or kpi_gsc_sites"/>
+                      <button name="%(era_seo_suite.action_era_geo_ai_crawler)d"
+                              type="action"
+                              string="Crawlers"
+                              class="btn btn-sm btn-outline-warning"
+                              invisible="not kpi_geo_crawlers_blocked"/>
+                    </div>
+                    <div class="o_era_work_tile h-100"
+                         invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_geo_crawlers_blocked">
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
+                      <div>
+                        <div class="o_era_work_tile_title">Discovery signals</div>
+                        <div class="o_era_work_tile_value">GSC and GEO are connected</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              <!-- ============================== ALL KPI BLOCKS ============================== -->
+              <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
+                <div>
+                  <div class="fw-bolder small mb-1">Site health</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-file-text-o me-1"/>Published pages</span><span class="fw-bold"><field name="kpi_published_pages" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-code me-1"/>Schema instances</span><span class="fw-bold"><field name="kpi_schema_instances" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-random me-1"/>Active redirects</span><span class="fw-bold"><field name="kpi_active_redirects" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-clock-o me-1"/>Last audit</span><span class="fw-bold"><field name="kpi_audit_last_date" readonly="1" nolabel="1"/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bolder small mb-1">Audit findings</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-flag me-1"/>Open</span><span class="fw-bold"><field name="kpi_audit_open_findings" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-danger small"><i class="fa fa-exclamation-triangle me-1"/>Critical</span><span class="fw-bold text-danger"><field name="kpi_audit_critical" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-exclamation-circle me-1"/>Warning</span><span class="fw-bold"><field name="kpi_audit_warning" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-info small"><i class="fa fa-info-circle me-1"/>Info</span><span class="fw-bold"><field name="kpi_audit_info" readonly="1" nolabel="1"/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bolder small mb-1">Progress</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-success small"><i class="fa fa-check-circle me-1"/>Resolved (total)</span><span class="fw-bold text-success"><field name="kpi_findings_resolved_total" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-line-chart me-1"/>Resolved (7d)</span><span class="fw-bold"><field name="kpi_findings_resolved_7d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-newspaper-o me-1"/>Blog posts</span><span class="fw-bold"><field name="kpi_blog_posts_total" readonly="1" nolabel="1"/> <small class="text-muted">(<field name="kpi_blog_posts_ai_generated" readonly="1" nolabel="1"/> AI)</small></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-calendar me-1"/>Posts (30d)</span><span class="fw-bold"><field name="kpi_blog_posts_30d" readonly="1" nolabel="1"/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bolder small mb-1">GEO</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1">
+                        <span class="text-muted small"><i class="fa fa-file-text-o me-1"/>/llms.txt</span>
+                        <span class="fw-bold">
+                          <span invisible="not kpi_geo_llms_enabled" class="text-success"><i class="fa fa-check-circle"/> Yes</span>
+                          <span invisible="kpi_geo_llms_enabled" class="text-muted"><i class="fa fa-circle-o"/> No</span>
+                        </span>
+                      </div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-android me-1"/>AI crawlers</span><span class="fw-bold"><field name="kpi_geo_crawlers_total" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1">
+                        <span class="text-muted small" invisible="kpi_geo_crawlers_blocked"><i class="fa fa-ban me-1"/>Blocked</span>
+                        <span class="text-warning small" invisible="not kpi_geo_crawlers_blocked"><i class="fa fa-ban me-1"/>Blocked</span>
+                        <span class="fw-bold text-muted" invisible="kpi_geo_crawlers_blocked">0</span>
+                        <span class="fw-bold text-warning" invisible="not kpi_geo_crawlers_blocked"><field name="kpi_geo_crawlers_blocked" readonly="1" nolabel="1"/></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div invisible="not kpi_published_pages">
+                  <div class="fw-bolder small mb-1">SEO coverage</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-header me-1"/>SEO title</span><span class="fw-bold"><field name="kpi_coverage_title_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-align-left me-1"/>Meta description</span><span class="fw-bold"><field name="kpi_coverage_meta_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-image me-1"/>OG image</span><span class="fw-bold"><field name="kpi_coverage_og_image_pct" readonly="1" nolabel="1"/>%</span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-code me-1"/>Schema instance</span><span class="fw-bold"><field name="kpi_coverage_schema_pct" readonly="1" nolabel="1"/>%</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="fw-bolder small mb-1">AI workflow</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-success small"><i class="fa fa-magic me-1"/>Fixes applied</span><span class="fw-bold text-success"><field name="kpi_ai_findings_applied" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-info small"><i class="fa fa-clock-o me-1"/>Awaiting review</span><span class="fw-bold"><field name="kpi_ai_findings_suggested" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-pause-circle me-1"/>Needs decision</span><span class="fw-bold text-warning"><field name="kpi_ai_findings_review" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-danger small"><i class="fa fa-times-circle me-1"/>Failed</span><span class="fw-bold text-danger"><field name="kpi_ai_findings_failed" readonly="1" nolabel="1"/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <div invisible="not kpi_ai_fill_total">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="fw-bolder small">AI auto-fill</span>
+                    <span class="badge bg-success" invisible="not kpi_ai_fill_active"><i class="fa fa-spinner fa-spin me-1"/>Running</span>
+                    <span class="badge bg-light text-muted border" invisible="kpi_ai_fill_active">Idle</span>
+                  </div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-magic me-1"/>SEO fields filled</span><span class="fw-bold"><field name="kpi_ai_fill_done" readonly="1" nolabel="1"/> / <field name="kpi_ai_fill_total" readonly="1" nolabel="1"/> (<field name="kpi_ai_fill_pct" readonly="1" nolabel="1"/>%)</span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-warning small"><i class="fa fa-hourglass-half me-1"/>Remaining</span><span class="fw-bold"><field name="kpi_ai_fill_remaining" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-info small"><i class="fa fa-tags me-1"/>Posts to categorize</span><span class="fw-bold"><field name="kpi_blog_taxonomy_remaining" readonly="1" nolabel="1"/></span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ============================== TOP KEYWORDS ============================== -->
+              <div class="mt-3">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="fw-bolder small">
+                    <i class="fa fa-key me-1"/>Top keywords (28 days)
+                  </span>
+                  <button name="%(era_seo_suite.action_era_gsc_keyword)d"
+                          type="action" string="Open all keywords"
+                          class="btn btn-sm btn-link p-0"
+                          icon="fa-external-link"/>
+                </div>
+                <div class="card">
+                  <div class="card-body py-2 px-3">
+                    <field name="kpi_gsc_top_queries_html" nolabel="1"
+                           readonly="1" widget="html"/>
+                  </div>
+                </div>
+              </div>
+
+              </div>
+            </page>
+
+            <!-- ============================ ANALYTICS =========================== -->
+            <page string="Analytics &amp; Keywords" name="analytics">
+              <field name="analytics_trend_html" invisible="1"/>
+              <div class="alert alert-light mb-2" role="status">
+                Keyword intelligence from Google Search Console (last 28–30 days).
+                Use it to find quick wins — keywords on the edge of page 1, pages
+                with low click-through, and rising or brand-new searches to build
+                content around.
+                <button name="%(era_seo_suite.action_era_gsc_query)d" type="action"
+                        string="Open full query explorer" class="btn btn-sm btn-link"
+                        icon="fa-bar-chart"/>
+              </div>
+              <!-- ============================== GSC + Search summary ============================== -->
+              <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
+                <div>
+                  <div class="fw-bolder small mb-1">Google Search Console</div>
+                  <div class="card d-inline-block">
+                    <div class="card-body py-1 px-3">
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-google me-1"/>Accounts connected</span><span class="fw-bold"><field name="kpi_gsc_accounts_connected" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-globe me-1"/>Sites</span><span class="fw-bold"><field name="kpi_gsc_sites" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-mouse-pointer me-1"/>Clicks (28d)</span><span class="fw-bold"><field name="kpi_gsc_clicks_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-eye me-1"/>Impressions (28d)</span><span class="fw-bold"><field name="kpi_gsc_impressions_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 border-bottom py-1"><span class="text-muted small"><i class="fa fa-search me-1"/>Queries tracked (28d)</span><span class="fw-bold"><field name="kpi_gsc_queries_tracked" readonly="1" nolabel="1"/></span></div>
+                      <div class="d-flex justify-content-between gap-4 py-1"><span class="text-muted small"><i class="fa fa-sort-numeric-asc me-1"/>Avg position (28d)</span><span class="fw-bold"><field name="kpi_gsc_avg_position_28d" readonly="1" nolabel="1"/></span></div>
+                      <div class="text-muted small mt-1" invisible="not kpi_gsc_last_pull">
+                        Last pull: <field name="kpi_gsc_last_pull" readonly="1" nolabel="1"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <field name="analytics_summary_html" nolabel="1" readonly="1" widget="html"/>
+                </div>
+              </div>
+
+              <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
+                Search trend (30 days) — clicks &amp; impressions
+              </div>
+              <field name="analytics_trend_html" nolabel="1" readonly="1" widget="html"/>
+
+              <div class="o_horizontal_separator mb-1 mt-2 text-uppercase fw-bolder small">
+                <i class="fa fa-key me-1"/> Keyword opportunities (28 days)
+              </div>
+              <div class="text-muted small mb-2">
+                Every tracked keyword as a sortable, filterable list — click any
+                column to sort, use the search filters to focus on one bucket:
+                <span class="badge bg-dark">top</span> best performers ·
+                <span class="badge bg-success">striking distance</span> pos 5–20, push to page 1 ·
+                <span class="badge bg-primary">low CTR</span> rewrite title/meta ·
+                <span class="badge bg-info">rising</span> /
+                <span class="badge bg-warning text-dark">new</span> growing searches ·
+                <span class="badge bg-secondary">question</span> content/FAQ idea.
+              </div>
+              <button name="%(era_seo_suite.action_era_gsc_keyword)d" type="action"
+                      string="Open Keyword Opportunities" class="btn btn-primary"
+                      icon="fa-table"/>
+            </page>
+
+            <!-- ============================== SEO =============================== -->
+            <page string="SEO" name="seo">
+              <div class="alert alert-light mb-3" role="status">
+                Manage every SEO surface from here. Buttons open the existing
+                lists; closing them returns you to this hub.
+              </div>
+              <group>
+                <group string="Pages &amp; Schema">
+                  <button name="%(era_seo_suite.action_seo_schema_template)d"
+                          type="action" string="Schema Templates"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_era_content_block)d"
+                          type="action" string="Content Blocks"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_seo_status)d"
+                          type="action" string="SEO Overview"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+                <group string="Routing">
+                  <button name="%(era_seo_suite.action_seo_redirect)d"
+                          type="action" string="Redirects"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_seo_redirect_log)d"
+                          type="action" string="404 Log"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_seo_hreflang)d"
+                          type="action" string="Hreflang"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+                <group string="Audit">
+                  <button name="%(era_seo_suite.action_seo_audit_run)d"
+                          type="action" string="Audit Runs"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_seo_audit_finding)d"
+                          type="action" string="All Findings"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+            </page>
+
+            <!-- ============================== GEO =============================== -->
+            <page string="GEO" name="geo">
+              <div class="alert alert-light mb-3" role="status">
+                Generative Engine Optimization — discoverability and citation by
+                AI answer engines.
+              </div>
+              <group>
+                <group string="Status">
+                  <field name="kpi_geo_llms_enabled" widget="boolean_toggle" readonly="1"/>
+                  <field name="kpi_geo_crawlers_total"/>
+                  <field name="kpi_geo_crawlers_blocked"/>
+                </group>
+                <group string="Quick links">
+                  <button name="%(era_seo_suite.action_era_geo_ai_crawler)d"
+                          type="action" string="Manage AI Crawlers"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+              <div class="mt-2 small text-muted">
+                Open <code>/llms.txt</code> on your domain to verify the live
+                output: <code>https://&lt;your-domain&gt;/llms.txt</code>
+              </div>
+            </page>
+
+            <!-- ============================== GSC =============================== -->
+            <page string="GSC" name="gsc">
+              <div class="alert alert-light mb-3" role="status">
+                Google Search Console connector — pull search performance into
+                Odoo.
+              </div>
+              <group>
+                <group string="Status">
+                  <field name="kpi_gsc_accounts_connected"/>
+                  <field name="kpi_gsc_sites"/>
+                  <field name="kpi_gsc_last_pull"/>
+                  <field name="kpi_gsc_clicks_28d"/>
+                  <field name="kpi_gsc_impressions_28d"/>
+                </group>
+                <group string="Quick links">
+                  <button name="%(era_seo_suite.action_era_gsc_account)d"
+                          type="action" string="Accounts"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_era_gsc_site)d"
+                          type="action" string="Sites"
+                          class="btn-link" icon="fa-arrow-right"/>
+                  <button name="%(era_seo_suite.action_era_gsc_query)d"
+                          type="action" string="Queries"
+                          class="btn-link" icon="fa-arrow-right"/>
+                </group>
+              </group>
+            </page>
+
+            <!-- ============================ BLOG GENERATION =================== -->
+            <page string="Blog Gen" name="blog_gen">
+              <div class="alert alert-light mb-3" role="status">
+                Trend-aware auto-publisher. Runs every 3 days when enabled —
+                pulls today's Google Trends for the configured geo, asks the
+                AI to write a full article on the most relevant one, publishes
+                it, and emails the SEO Manager group.
+              </div>
+
+              <group>
+                <group string="Auto-publish settings">
+                  <field name="setting_article_generator_active"
+                         widget="boolean_toggle"/>
+                  <field name="setting_article_interval_days"
+                         invisible="not setting_article_generator_active"/>
+                  <field name="setting_trends_geo"
+                         placeholder="US"
+                         invisible="not setting_article_generator_active"/>
+                  <field name="setting_article_lang"
+                         placeholder="en_US / ar_001 (blank = auto-detect)"
+                         invisible="not setting_article_generator_active"/>
+                </group>
+                <group string="AI writer &amp; image account"
+                       invisible="not setting_article_generator_active">
+                  <field name="setting_article_agent_id"
+                         options="{'no_create': True}"/>
+                  <field name="setting_image_account_id"
+                         options="{'no_create': True, 'no_open': True}"/>
+                  <field name="setting_image_model_id"
+                         invisible="not setting_image_account_id"
+                         options="{'no_create': True, 'no_open': True}"/>
+                  <div class="text-muted small" colspan="2">
+                    The <b>article writer</b> is an AI Agent (AI ▸ Agents) — it carries
+                    the system prompt, response style and model, and may route through
+                    an AI Account (e.g. Claude). The module ships and auto-creates a
+                    default <b>ERA Article Writer</b>; open it to tune the prompt or
+                    provider. The <b>image</b> account generates the cover (e.g. a
+                    Cloudflare Workers AI account — pick a <b>FLUX.2</b> image model for
+                    better quality than FLUX.1-schnell). Leave the image account empty
+                    to skip the cover (the Claude CLI cannot make images).
+                  </div>
+                </group>
+                <group string="Status">
+                  <field name="setting_ai_enabled" widget="boolean_toggle" readonly="1"/>
+                </group>
+              </group>
+
+              <div class="alert alert-warning" role="status"
+                   invisible="setting_ai_enabled">
+                AI Auto-Fix is currently off. Turn it on in the Settings tab
+                (or via the Setup Wizard) before enabling auto-publish — the
+                cron needs a configured AI agent to write articles.
+              </div>
+
+              <!-- Pulled outside any <group> so the textarea spans the
+                   full tab width (groups force a half-width column). -->
+              <div invisible="not setting_article_generator_active">
+                <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">
+                  Custom prompt guidance
+                </div>
+                <field name="setting_article_prompt_addendum"
+                       nolabel="1"
+                       class="w-100"
+                       widget="text"
+                       placeholder="Free-form admin guidance — appended to every prompt under an &quot;ADMIN GUIDANCE&quot; section. Use it to nudge tone, audiences, regional angles, brands to mention/avoid, etc. Leave blank for defaults."/>
+              </div>
+
+              <div class="mt-3 d-flex align-items-center gap-2 flex-wrap">
+                <!-- Self-contained control: the widget renders the "Generate"
+                     button when idle and a LIVE step banner while generating,
+                     flipping between them from the polled state WITHOUT any
+                     soft_reload (so the page never jumps/scrolls). On completion
+                     it refreshes just this record (the table below) in place. -->
+                <field name="is_article_pending"
+                       widget="era_auto_refresh_when_true"
+                       options="{'model': 'era.seo.suite.hub',
+                                 'method': 'get_article_pending_state',
+                                 'action': 'action_generate_blog_article_now',
+                                 'enabled_field': 'setting_ai_enabled',
+                                 'label': 'Generate article now',
+                                 'icon': 'fa-magic',
+                                 'preparing': 'Preparing…',
+                                 'confirm': 'Generate and publish a new article now? It runs in the background; the banner updates with each step and the table refreshes on its own when ready.'}"
+                       nolabel="1"/>
+              </div>
+
+              <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">
+                Recently generated
+              </div>
+              <field name="recent_ai_article_ids" nolabel="1" mode="list" readonly="1">
+                <list string="AI-generated articles" create="0" delete="0">
+                  <field name="era_ai_generated_at" string="Generated"/>
+                  <field name="name" string="Title"/>
+                  <field name="era_ai_trend_signal" string="Trend"/>
+                  <field name="era_ai_confidence" string="Confidence" widget="float" digits="[3,2]"/>
+                  <field name="is_published" string="Published" widget="boolean_toggle"/>
+                  <field name="website_url" widget="url" string="URL" optional="show"/>
+                  <button name="action_era_regenerate_image" type="object"
+                          string="Generate image" icon="fa-image"
+                          help="Generate (or replace) only the cover/hero image for this article. Retries up to 3 times; the text is left unchanged. Use it when an article was published without an image."/>
+                  <button name="action_era_ai_regenerate" type="object"
+                          string="Regenerate" icon="fa-refresh"
+                          help="Replace this article with a fresh AI proposal (same record)."
+                          confirm="Regenerate this article? Title, body, and SEO meta will be replaced."/>
+                  <button name="action_era_open_website" type="object"
+                          string="Open" icon="fa-external-link"
+                          help="Open the live URL of this article in a new tab."/>
+                </list>
+              </field>
+            </page>
+
+            <!-- ============================ SETTINGS ============================ -->
+            <page string="Settings" name="settings">
+              <div class="alert alert-light mb-3" role="status">
+                All settings live here. Changes save through the standard
+                <b>Save</b> button at the top — they round-trip through
+                <code>ir.config_parameter</code>, so the legacy
+                <i>Website → Configuration → Settings</i> panels stay in sync.
+              </div>
+
+              <group string="Organization (used in JSON-LD + OG)">
+                <group>
+                  <field name="setting_org_name"
+                         placeholder="ERA — Excellence Resources Arabia"/>
+                  <field name="setting_legal_name"/>
+                  <field name="setting_twitter_handle" placeholder="@era"/>
+                </group>
+                <group>
+                  <field name="setting_logo_url" placeholder="https://…/logo.png"/>
+                  <field name="setting_og_image_url" placeholder="https://…/og.png"/>
+                  <field name="setting_schema_engine" widget="boolean_toggle"/>
+                </group>
+              </group>
+
+              <group string="Social profiles">
+                <group>
+                  <field name="setting_social_facebook" placeholder="https://facebook.com/…"/>
+                  <field name="setting_social_twitter" placeholder="https://twitter.com/…"/>
+                  <field name="setting_social_linkedin" placeholder="https://linkedin.com/company/…"/>
+                </group>
+                <group>
+                  <field name="setting_social_instagram" placeholder="https://instagram.com/…"/>
+                  <field name="setting_social_youtube" placeholder="https://youtube.com/@…"/>
+                </group>
+              </group>
+
+              <group string="Search engine verification">
+                <group>
+                  <field name="setting_google_verify"
+                         placeholder="content of google-site-verification meta"/>
+                </group>
+                <group>
+                  <field name="setting_bing_verify"/>
+                </group>
+              </group>
+
+              <group string="AI Auto-Fix">
+                <group>
+                  <field name="setting_ai_enabled" widget="boolean_toggle"/>
+                  <field name="setting_ai_agent_id"
+                         invisible="not setting_ai_enabled"
+                         options="{'no_create': True}"/>
+                  <field name="setting_article_generator_active"
+                         widget="boolean_toggle"
+                         invisible="not setting_ai_enabled"/>
+                </group>
+                <group invisible="not setting_ai_enabled">
+                  <field name="setting_autopilot_active" widget="boolean_toggle"/>
+                  <field name="setting_autopilot_confidence_pct"
+                         invisible="not setting_autopilot_active"/>
+                  <field name="setting_autopilot_max_attempts"
+                         invisible="not setting_autopilot_active"/>
+                </group>
+              </group>
+              <div class="text-muted small mb-3" invisible="not setting_ai_enabled">
+                The agent carries the provider, model, and API key — all configured in the
+                <b>AI</b> app (Odoo Enterprise). Leave the picker empty to fall back to the
+                site's "Ask AI" agent. The SEO house-style rules are sent with every
+                request, so a generic agent works fine.
+              </div>
+              <div class="alert alert-info mb-3" role="status"
+                   invisible="not setting_ai_enabled or not setting_autopilot_active">
+                Autopilot applies high-confidence SEO titles, meta descriptions,
+                image alt text, OG images, and schema. Low-confidence proposals,
+                repeated failures, thin-content expansions, and slug changes stay
+                in the AI Review Queue.
+              </div>
+              <div class="text-muted small mb-3"
+                   invisible="not setting_article_generator_active">
+                Auto-publish runs every 3 days. The agent picks a current trend in
+                your domain, writes the article, publishes it, and emails the
+                SEO Manager group with the link.
+              </div>
+
+              <group string="Smart 404 — did-you-mean redirects">
+                <group>
+                  <field name="setting_smart_404_enabled" widget="boolean_toggle"/>
+                  <field name="setting_smart_404_home_fallback"
+                         widget="boolean_toggle"
+                         invisible="not setting_smart_404_enabled"/>
+                </group>
+              </group>
+              <div class="text-muted small mb-3" invisible="not setting_smart_404_enabled">
+                On a "page not found", the visitor is sent to the closest matching
+                existing URL (fuzzy match against the sitemap). When no close match
+                is found, the 404 is logged and — if <b>Send unmatched 404s home</b>
+                is on — the visitor goes to the home page; turn that off to keep a
+                real 404 for unmatched pages.
+              </div>
+
+              <group string="GEO — /llms.txt &amp; AI crawlers">
+                <group>
+                  <field name="setting_llms_enabled" widget="boolean_toggle"/>
+                  <field name="setting_llms_summary"
+                         invisible="not setting_llms_enabled"
+                         placeholder="One-line site description for AI engines"/>
+                </group>
+                <group invisible="not setting_llms_enabled">
+                  <field name="setting_llms_max_items"/>
+                  <field name="setting_llms_include_blog" widget="boolean_toggle"/>
+                </group>
+              </group>
+
+              <group string="GSC — Google Search Console">
+                <group>
+                  <field name="setting_gsc_redirect_uri" readonly="1"
+                         widget="CopyClipboardChar"/>
+                  <field name="setting_gsc_client_id"
+                         placeholder="xxxxxxxx.apps.googleusercontent.com"/>
+                  <field name="setting_gsc_client_secret" password="True"
+                         placeholder="••••••••••••••••"/>
+                  <field name="setting_gsc_pull_window"/>
+                </group>
+              </group>
+              <details class="mb-3">
+                <summary class="text-primary small" style="cursor: pointer;">
+                  Show GSC setup guide (one-time)
+                </summary>
+                <ol class="ps-3 mt-2 small text-muted">
+                  <li>Open <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> and create (or pick) a project.</li>
+                  <li>Under <b>APIs &amp; Services → Library</b>, enable <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com" target="_blank">Search Console API</a>.</li>
+                  <li>Configure the OAuth consent screen (Internal or External).</li>
+                  <li>Under <b>Credentials</b>, create an OAuth client ID — <b>Web application</b>.</li>
+                  <li>Add the <b>Authorized Redirect URI</b> shown above to the OAuth client — exact match, including https and no trailing slash.</li>
+                  <li>Paste the Client ID and Client Secret into the fields above and save.</li>
+                  <li>Open <i>ERA SEO Suite → GSC → Accounts → New</i>, then click <b>Connect with Google</b>.</li>
+                </ol>
+              </details>
+
+              <!-- ============================== AI BULK FILL ============================== -->
+              <group string="AI Bulk Fill">
+                <field name="bulk_ai_already_running" invisible="1"/>
+                <field name="bulk_ai_pending_count" invisible="1"/>
+                <div class="text-muted small mb-2" colspan="2">
+                  Have the AI agent walk every <b>page</b> and <b>blog post</b>
+                  on your site and fill the empty SEO fields (title,
+                  description, OG/Twitter, keywords) for each one. Runs in
+                  the background — 10 records every 2 minutes — so closing
+                  this page is safe; the cron keeps going until the queue is
+                  empty, then stops itself.
+                </div>
+                <div class="alert alert-info" role="status" colspan="2"
+                     invisible="not bulk_ai_pending_count">
+                  <b><field name="bulk_ai_pending_count" readonly="1" nolabel="1"/></b>
+                  record(s) currently have an empty <i>SEO title</i> and would
+                  be processed.
+                </div>
+                <div class="alert alert-success" role="status" colspan="2"
+                     invisible="bulk_ai_pending_count or bulk_ai_already_running">
+                  Nothing to do — every page and post already has an SEO title.
+                </div>
+                <div class="alert alert-warning" role="status" colspan="2"
+                     invisible="not bulk_ai_already_running">
+                  A bulk-fill run is <b>already in progress</b>. Click
+                  <b>Pause</b> to stop the cron sweep; the cursor is kept
+                  so a later restart resumes mid-queue.
+                </div>
+                <div class="d-flex gap-2 mb-2" colspan="2">
+                  <button name="action_start_bulk_ai_fill" type="object"
+                          string="Start AI Bulk Fill"
+                          icon="fa-play"
+                          class="btn btn-primary"
+                          invisible="bulk_ai_already_running or not bulk_ai_pending_count"
+                          confirm="Start the AI Bulk Fill cron now? Runs in the background — 10 records every 2 minutes — until the queue is empty."/>
+                  <button name="action_stop_bulk_ai_fill" type="object"
+                          string="Pause"
+                          icon="fa-pause"
+                          class="btn btn-warning"
+                          invisible="not bulk_ai_already_running"/>
+                </div>
+                <div class="text-muted small mb-3" colspan="2">
+                  Tip: budget-wise, the agent does 1 call per record per
+                  active language. Watch your provider dashboard if you
+                  have hundreds of pages.
+                </div>
+              </group>
+
+              <!-- ============================== BLOG SETUP ============================== -->
+              <group string="Blog Setup"
+                     invisible="not blog_post_count and not blog_category_count">
+                <field name="blog_post_count" invisible="1"/>
+                <field name="blog_uncategorized_count" invisible="1"/>
+                <field name="blog_category_count" invisible="1"/>
+                <field name="blog_series_count" invisible="1"/>
+                <div class="text-muted small mb-2" colspan="2">
+                  Lets the AI cron classify your existing blog posts into
+                  categories (and series, when the post is clearly part of
+                  a multi-part arc) at the same time it fills the SEO
+                  fields. Existing taxonomy is preferred over creating new
+                  rows.
+                </div>
+                <div class="alert alert-info" role="status" colspan="2"
+                     invisible="not blog_post_count">
+                  You have
+                  <b><field name="blog_post_count" readonly="1" nolabel="1"/></b>
+                  blog post(s),
+                  <b><field name="blog_category_count" readonly="1" nolabel="1"/></b>
+                  categor(ies),
+                  <b><field name="blog_series_count" readonly="1" nolabel="1"/></b>
+                  series.
+                  <b><field name="blog_uncategorized_count" readonly="1" nolabel="1"/></b>
+                  post(s) still have no category.
+                </div>
+                <field name="setting_blog_taxonomy_active" widget="boolean_toggle"/>
+                <div class="text-muted small mt-2" colspan="2"
+                     invisible="not setting_blog_taxonomy_active">
+                  The same cron that runs AI Bulk Fill also processes blog
+                  posts in batches of 10 every 2 minutes. If you haven't
+                  started the bulk fill yet, turning this on doesn't start
+                  it on its own — click <b>Start AI Bulk Fill</b> above.
+                </div>
+              </group>
+
+              <group string="Audit-run history">
+                <group>
+                  <field name="setting_run_retention_days"/>
+                  <field name="setting_run_retention_active" widget="boolean_toggle"/>
+                </group>
+                <group>
+                  <button name="action_cleanup_old_runs_now" type="object"
+                          string="Cleanup old runs now"
+                          icon="fa-trash"
+                          class="btn btn-secondary"
+                          confirm="Delete every audit-run row older than the configured retention. The findings they discovered (with their AI suggestions and resolution status) are kept. Continue?"/>
+                </group>
+              </group>
+              <div class="text-muted small mb-3">
+                Each scan creates a fresh row in <b>SEO Audits</b>. The
+                defects themselves persist as Findings across all runs —
+                deleting old runs only removes the per-run summary, never
+                the findings. Default retention: 90 days. Set to 0 to keep
+                everything.
+              </div>
+            </page>
+
+            <!-- ============================== GUIDE ============================== -->
+            <page string="Guide" name="guide">
+              <div class="alert alert-light mb-3" role="status">
+                On-page setup walkthroughs. Click a section to expand.
+                To re-run the guided setup, use the <b>Setup Wizard</b>
+                button in the header above.
+              </div>
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  AI Auto-Fix — first run
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>Install Odoo's AI app (Enterprise) and configure a provider with an API key.</li>
+                  <li>Settings → ERA SEO — AI Auto-Fix: tick Enable, pick the "ERA SEO Fixer" agent, click Test Agent.</li>
+                  <li>On any audit finding (or in batch), click Suggest Fix (AI) → review → Apply Fix.</li>
+                  <li>On pages / posts / content blocks, use AI: Fill SEO / AI: Rewrite SEO in the form header.</li>
+                </ol>
+              </details>
+
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  GEO — /llms.txt and AI crawlers
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>Toggle <i>Publish /llms.txt</i> above; set a one-line site summary.</li>
+                  <li>Open the GEO tab → Manage AI Crawlers; flip <i>Allowed</i> off on training-only bots if you want to block them from robots.txt.</li>
+                  <li>Verify the live output: <code>https://&lt;domain&gt;/llms.txt</code> and the AI section in <code>/robots.txt</code>.</li>
+                  <li>Run an SEO Audit; GEO checks (no answer summary, no headings, llms.txt off, answer-bots blocked) appear alongside SEO findings.</li>
+                </ol>
+              </details>
+
+              <details class="mb-3">
+                <summary class="h6 text-primary" style="cursor: pointer;">
+                  GSC — connect a Google account
+                </summary>
+                <ol class="ps-3 mt-2 small">
+                  <li>In Google Cloud Console: create a project; enable <b>Search Console API</b>.</li>
+                  <li>Create OAuth 2.0 Client (Web app); add Redirect URI <code>&lt;base&gt;/era_gsc/oauth/callback</code>.</li>
+                  <li>In Odoo: Settings → ERA SEO — Google Search Console; paste Client ID + Secret.</li>
+                  <li>Open the GSC tab → Accounts → New → Connect with Google; grant read access.</li>
+                  <li>Sites are auto-discovered; click Pull Now on a site to fill in queries.</li>
+                </ol>
+              </details>
+            </page>
+
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Server action that lands on the singleton hub record. -->
+  <record id="action_open_era_seo_suite_hub" model="ir.actions.server">
+    <field name="name">Open ERA SEO Suite</field>
+    <field name="model_id" ref="model_era_seo_suite_hub"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open_hub()</field>
+  </record>
+</odoo>

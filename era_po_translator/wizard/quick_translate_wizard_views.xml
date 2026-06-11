@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_quick_translate_wizard_form" model="ir.ui.view">
+        <field name="name">quick.translate.wizard.form</field>
+        <field name="model">quick.translate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Quick Translate">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Start a Translation Session</h2>
+                    </div>
+                    <group>
+                        <field name="module_id"
+                               options="{'no_create': True, 'no_quick_create': True}"
+                               placeholder="Select an installed module..."/>
+                        <field name="source_lang_id"
+                               options="{'no_create': True, 'no_quick_create': True}"
+                               placeholder="Select source language..."/>
+                        <field name="target_lang_id"
+                               options="{'no_create': True, 'no_quick_create': True}"
+                               placeholder="Select target language..."/>
+                        <field name="session_name" placeholder="Optional session name"/>
+                        <field name="auto_translate"
+                               string="Auto-Translate on Open (requires deep-translator)"/>
+                    </group>
+                    <div class="alert alert-info" role="alert" invisible="not auto_translate">
+                        <strong>Note:</strong> Auto-translate requires the
+                        <code>deep-translator</code> Python package.
+                        Install it with: <code>pip install deep-translator</code>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_open_session"
+                            string="Open Session"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_quick_translate_wizard" model="ir.actions.act_window">
+        <field name="name">Quick Translate</field>
+        <field name="res_model">quick.translate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

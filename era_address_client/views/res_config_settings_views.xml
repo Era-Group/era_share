@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_era_address_client" model="ir.ui.view">
+        <field name="name">res.config.settings.view.era.address.client</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <div id="era_address_client_settings">
+                    <block title="Address Lookup Services" name="era_address_client_block">
+
+                        <setting
+                            string="Address Lookup Server URL"
+                            help="URL of the server running the era_address_lookup module"
+                        >
+                            <field name="era_address_server_url" placeholder="https://service.era.net.sa"/>
+                        </setting>
+
+                    </block>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

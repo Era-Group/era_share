@@ -50,7 +50,7 @@ Notes
   (for responses and embeddings).
 - Defaults are OpenRouter-friendly, but any compatible provider can be used.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Tools",
     "author": "Era Group",
     "license": "LGPL-3",

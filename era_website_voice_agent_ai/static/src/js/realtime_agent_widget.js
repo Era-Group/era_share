@@ -183,16 +183,26 @@ function createClientCallId() {
   return `call_${Date.now().toString(36)}_${rand}`;
 }
 
+function isTruthyFlag(value, defaultValue = false) {
+  if (value === undefined || value === null || value === "") return defaultValue;
+  return ["1", "true", "yes", "y", "t", "on"].includes(String(value).trim().toLowerCase());
+}
+
 function getConfig() {
   const w = widgetEl();
   const rawVoice = w?.dataset?.voice || "";
   const voice = (!rawVoice || rawVoice === "marin") ? "marin" : rawVoice;
   const embedModeRaw = w?.dataset?.embedMode || "";
-  const embedMode = String(embedModeRaw).toLowerCase() === "1" || String(embedModeRaw).toLowerCase() === "true";
+  const embedMode = isTruthyFlag(embedModeRaw, false);
+  const autoGreetEnabled = isTruthyFlag(w?.dataset?.autoGreet, false);
+  const requirePtt = isTruthyFlag(w?.dataset?.requirePtt, true);
   return {
     promptId: w?.dataset?.promptId || "",
     model: w?.dataset?.model || "gpt-realtime-mini",
     voice: voice,
+    autoGreetEnabled: autoGreetEnabled,
+    autoGreetInstruction: w?.dataset?.autoGreetInstruction || "",
+    requirePtt: requirePtt,
     callerPhone: w?.dataset?.callerPhone || "",
     callerCompany: w?.dataset?.callerCompany || "",
     embedMode: embedMode,
@@ -306,6 +316,19 @@ function resetNavigationIntent() {
   state.navigationIntent = false;
 }
 
+function requiresPushToTalk() {
+  if (typeof state.sessionMeta?.requirePtt === "boolean") {
+    return state.sessionMeta.requirePtt;
+  }
+  return !!getConfig().requirePtt;
+}
+
+function connectedStatusText() {
+  return requiresPushToTalk()
+    ? "متصل 🎙️ اضغط مطولًا على زر التحدث"
+    : "متصل 🎙️ الميكروفون مفتوح";
+}
+
 function clearPttIdleTimer() {
   if (state.pttIdleTimer) {
     clearTimeout(state.pttIdleTimer);
@@ -323,6 +346,7 @@ function resolvePttIdleTimeoutSeconds() {
 
 function armPttIdleTimer() {
   clearPttIdleTimer();
+  if (!requiresPushToTalk()) return;
   if (!state.running || state.stopping || state.micEnabled) return;
   const timeoutSeconds = resolvePttIdleTimeoutSeconds();
   const timeoutMs = Math.max(1, Math.round(timeoutSeconds * 1000));
@@ -340,7 +364,9 @@ function touchPttActivity() {
 function updatePushToTalkButton() {
   const btn = qs("oai-agent-ptt");
   if (!btn) return;
+  const required = requiresPushToTalk();
   const active = !!(state.running && state.micEnabled);
+  btn.classList.toggle("d-none", !required);
   btn.disabled = !state.running;
   btn.setAttribute("aria-pressed", active ? "true" : "false");
   btn.classList.toggle("is-live", active);
@@ -363,6 +389,7 @@ function setMicEnabled(enabled) {
 
 function startPushToTalk(ev) {
   if (ev) ev.preventDefault();
+  if (!requiresPushToTalk()) return;
   if (!state.running) return;
   touchPttActivity();
   setMicEnabled(true);
@@ -370,6 +397,7 @@ function startPushToTalk(ev) {
 
 function stopPushToTalk(ev) {
   if (ev && (ev.type === "keydown" || ev.type === "keyup")) ev.preventDefault();
+  if (!requiresPushToTalk()) return;
   setMicEnabled(false);
   armPttIdleTimer();
 }
@@ -661,6 +689,26 @@ function sendUserText(text) {
   state.responseInFlight = true;
 }
 
+function triggerAutoGreeting(options = {}) {
+  if (options.resume) return;
+  if (!state.sessionMeta?.autoGreetEnabled) return;
+  if (state.responseInFlight) return;
+  const instruction = String(state.sessionMeta?.autoGreetInstruction || "").trim();
+  const response = {
+    modalities: ["audio", "text"],
+  };
+  if (instruction) {
+    response.instructions = instruction;
+  }
+  if (!safeSend({
+    type: "response.create",
+    response: response,
+  })) {
+    return;
+  }
+  state.responseInFlight = true;
+}
+
 async function startAgent(options = {}) {
   if (state.running || state.starting && state.pc) return;
   const resume = options.resume || null;
@@ -669,6 +717,9 @@ async function startAgent(options = {}) {
     promptId: cfg.promptId,
     model: cfg.model,
     voice: cfg.voice,
+    autoGreetEnabled: cfg.autoGreetEnabled,
+    autoGreetInstruction: cfg.autoGreetInstruction,
+    requirePtt: cfg.requirePtt,
     callerPhone: cfg.callerPhone,
     callerCompany: cfg.callerCompany,
     embedMode: cfg.embedMode,
@@ -764,8 +815,8 @@ async function startAgent(options = {}) {
   const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
   state.micStream = micStream;
   micStream.getTracks().forEach((t) => pc.addTrack(t, micStream));
-  // Push-to-talk: keep microphone muted until the user presses the PTT button.
-  setMicEnabled(false);
+  // Keep the microphone muted only when push-to-talk is required.
+  setMicEnabled(!cfg.requirePtt);
   initRecorder(micStream);
 
   const dc = pc.createDataChannel("oai-events");
@@ -851,14 +902,14 @@ async function startAgent(options = {}) {
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-  const modelUrl = cfg.model || "gpt-realtime-mini";
-  const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls?model=" + modelUrl, {
+  // GA WebRTC handshake: no ?model= query param and no OpenAI-Beta header.
+  // The model/voice/session config come from the minted ephemeral client secret.
+  const sdpResp = await fetch("https://api.openai.com/v1/realtime/calls", {
     method: "POST",
     body: offer.sdp,
     headers: {
       "Authorization": `Bearer ${EPHEMERAL_KEY.trim()}`,
       "Content-Type": "application/sdp",
-      "OpenAI-Beta": "realtime=v1",
     },
   });
   if (!sdpResp.ok) {
@@ -871,13 +922,19 @@ async function startAgent(options = {}) {
   await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
   dc.addEventListener("open", async () => {
-    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
+    setStatus(connectedStatusText());
 
+    // GA session.update shape: model is fixed at mint time and cannot be
+    // changed here; voice/transcription live under audio.{output,input}.
     const sessionUpdate = {
-      model: cfg.model,
-      voice: cfg.voice,
-      input_audio_transcription: {
-        model: "gpt-4o-mini-transcribe",
+      type: "realtime",
+      audio: {
+        input: {
+          transcription: { model: "gpt-4o-mini-transcribe" },
+        },
+        output: {
+          voice: cfg.voice,
+        },
       },
     };
 
@@ -885,6 +942,8 @@ async function startAgent(options = {}) {
       type: "session.update",
       session: sessionUpdate,
     });
+
+    triggerAutoGreeting({ resume: !!resume });
 
     if (state.pendingText) {
       sendUserText(state.pendingText);
@@ -1186,7 +1245,7 @@ async function tryResumeSession() {
   setStatus("جاري إعادة الاتصال...");
   try {
     await startAgent({ resume: continuity });
-    setStatus("متصل 🎙️ اضغط مطولًا على زر التحدث");
+    setStatus(connectedStatusText());
     showMobileStep(false);
     showCallActions(true);
     updatePushToTalkButton();

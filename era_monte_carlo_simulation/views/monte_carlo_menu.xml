@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_monte_carlo_root"
+              name="Monte Carlo"
+              web_icon="era_monte_carlo_simulation,static/description/icon.png"
+              sequence="90"/>
+
+    <menuitem id="menu_monte_carlo_dashboard"
+              name="Dashboard"
+              parent="menu_monte_carlo_root"
+              action="monte_carlo_dashboard_open_action"
+              sequence="5"/>
+
+    <menuitem id="menu_monte_carlo_models"
+              name="Simulation Models"
+              parent="menu_monte_carlo_root"
+              action="monte_carlo_model_action"
+              sequence="10"/>
+
+    <menuitem id="menu_monte_carlo_runs"
+              name="Simulation Runs"
+              parent="menu_monte_carlo_root"
+              action="monte_carlo_run_action"
+              sequence="20"/>
+
+    <menuitem id="menu_monte_carlo_results"
+              name="Simulation Results"
+              parent="menu_monte_carlo_root"
+              action="monte_carlo_result_action"
+              sequence="30"/>
+
+</odoo>

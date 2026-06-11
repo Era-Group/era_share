@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: AI bulk fill (onboarding companion)
+
+      Runs every 2 minutes but exits immediately unless the
+      `era_seo.bulk_ai_fill_active` ICP flag is True (the onboarding
+      wizard's "AI Bulk Fill" step flips it on; the orchestrator method
+      flips it off when the queue is drained).
+
+      Per tick the cron processes up to `era_seo.bulk_ai_fill_batch_size`
+      records (default 10) across website.page + blog.post combined,
+      keeping the AI provider call rate manageable.
+    -->
+    <record id="cron_bulk_ai_fill" model="ir.cron">
+      <field name="name">ERA SEO: AI bulk fill (onboarding)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_bulk_ai_fill()</field>
+      <field name="interval_number">2</field>
+      <field name="interval_type">minutes</field>
+      <field name="active" eval="True"/>
+      <field name="priority">7</field>
+    </record>
+
+    <!--
+      ERA SEO: background bulk Auto-Fix.
+
+      Drains the run-level "Auto-Fix (AI)" queue out of the HTTP request so a
+      run with many findings can't run past the worker's limit_time_real
+      (1200s). No-op unless `era_seo.bulk_fix_active` is True (the run button
+      flips it on; cron_bulk_ai_fix flips it off when the queue is drained).
+      The button also _trigger()s it immediately, and it self-triggers while a
+      tick's wall-clock budget still leaves work behind.
+    -->
+    <record id="cron_bulk_ai_fix" model="ir.cron">
+      <field name="name">ERA SEO: AI bulk audit fix (background)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_bulk_ai_fix()</field>
+      <field name="interval_number">2</field>
+      <field name="interval_type">minutes</field>
+      <field name="active" eval="True"/>
+      <field name="priority">8</field>
+    </record>
+
+  </data>
+</odoo>

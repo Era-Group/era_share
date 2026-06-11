@@ -19,14 +19,9 @@ msgstr ""
 #. module: era_spy_recruitment
 #: model:ir.actions.server,name:era_spy_recruitment.action_hr_applicant_eraspy_bulk
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
-msgid "EraSpy Enrich"
-msgstr "إثراء ارى"
-
-#. module: era_spy_recruitment
-#: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_hr_applicant_eraspy_form
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
-msgid "EraSpy"
-msgstr "إثراء إرى"
+msgid "Era Enrich"
+msgstr "Era Enrich"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_ai_match
@@ -35,50 +30,50 @@ msgstr "مطابقة التأهيل بالذكاء الاصطناعي"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_more_data
-msgid "EraSpy More Data"
+msgid "Era Enrich More Data"
 msgstr "بيانات إضافية من ارى"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_profile_url
-msgid "EraSpy Profile URL"
+msgid "Era Enrich Profile URL"
 msgstr "رابط الملف"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_request_id
-msgid "EraSpy Last Request ID"
+msgid "Era Enrich Last Request ID"
 msgstr "معرّف آخر"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_identifier
-msgid "EraSpy Last Identifier"
+msgid "Era Enrich Last Identifier"
 msgstr "آخر مُعرِّف"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_status
-msgid "Eraspy Last Status"
+msgid "Era Enrich Last Status"
 msgstr "آخر حالة"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_last_checked
-msgid "Eraspy Last Checked"
+msgid "Era Enrich Last Checked"
 msgstr "آخر تحقق"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_rating
-msgid "Eraspy Rating"
+msgid "Era Enrich Rating"
 msgstr "تقييم ارى"
 
 #. module: era_spy_recruitment
 #: model:ir.model.fields,field_description:era_spy_recruitment.field_hr_applicant__eraspy_debug_payload
-msgid "EraSpy Debug Payload"
-msgstr "EraSpy Debug Payload"
+msgid "Era Enrich Debug Payload"
+msgstr "حمولة تصحيح Era Enrich"
 
 #. module: era_spy_recruitment
 #: model:ir.model,name:era_spy_recruitment.model_eraspy_applicant_callback_queue
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_list
 #: model_terms:ir.ui.view,arch_db:era_spy_recruitment.view_eraspy_applicant_callback_queue_form
-msgid "EraSpy Applicant Callback Queue"
-msgstr "قائمة ردود EraSpy للمتقدمين"
+msgid "Era Enrich Applicant Callback Queue"
+msgstr "قائمة ردود Era Enrich للمتقدمين"
 
 #. module: era_spy_recruitment
 #: model:ir.actions.act_window,name:era_spy_recruitment.action_eraspy_applicant_callback_queue
@@ -94,13 +89,13 @@ msgstr "إعادة المحاولة"
 
 #. module: era_spy_recruitment
 #: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_applicant_process_queue
-msgid "EraSpy: Process Applicant Callback Queue"
-msgstr "EraSpy: معالجة قائمة تحديثات المتقدمين"
+msgid "Era Enrich: Process Applicant Callback Queue"
+msgstr "Era Enrich: معالجة قائمة تحديثات المتقدمين"
 
 #. module: era_spy_recruitment
 #: model:ir.cron,name:era_spy_recruitment.ir_cron_eraspy_auto_enrich_applicants
-msgid "EraSpy: Auto Enrich New Applicants"
-msgstr "EraSpy: إثراء تلقائي للمتقدمين الجدد"
+msgid "Era Enrich: Auto Enrich New Applicants"
+msgstr "Era Enrich: إثراء تلقائي للمتقدمين الجدد"
 
 #. module: era_spy_recruitment
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
@@ -124,8 +119,8 @@ msgstr "تم الإثراء"
 
 #. module: era_spy_recruitment
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
-msgid "EraSpy did not return any profile data."
-msgstr "لم تُرجع EraSpy أي بيانات للملف."
+msgid "Era Enrich did not return any profile data."
+msgstr "لم تُرجع Era Enrich أي بيانات للملف."
 
 #. module: era_spy_recruitment
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
@@ -139,8 +134,8 @@ msgstr "لم يتم تطبيق بيانات جديدة (موجودة مسبقً�
 
 #. module: era_spy_recruitment
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0
-msgid "%s applicant(s) enriched via EraSpy."
-msgstr "تم إثراء %s متقدم/متقدمين عبر EraSpy."
+msgid "%s applicant(s) enriched via Era Enrich."
+msgstr "تم إثراء %s متقدم/متقدمين عبر Era Enrich."
 
 #. module: era_spy_recruitment
 #: code:addons/era_spy_recruitment/models/hr_applicant.py:0

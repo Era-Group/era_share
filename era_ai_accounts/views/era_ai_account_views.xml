@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="era_ai_account_view_list" model="ir.ui.view">
+        <field name="name">era.ai.account.list</field>
+        <field name="model">era.ai.account</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="auth_mode"/>
+                <field name="scope"/>
+                <field name="owner_user_id" optional="show"/>
+                <field name="chat_model_count" string="Chat models"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'valid'"
+                       decoration-danger="state == 'error'"/>
+                <field name="kill_switch" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_ai_account_view_form" model="ir.ui.view">
+        <field name="name">era.ai.account.form</field>
+        <field name="model">era.ai.account</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_validate" type="object" string="Validate connection" class="btn-primary"/>
+                    <button name="action_sync_models" type="object" string="Sync models"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,valid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Claude (company)"/></h1>
+                    </div>
+                    <group>
+                        <group name="main">
+                            <field name="provider"/>
+                            <field name="auth_mode"/>
+                            <field name="active" invisible="1"/>
+                            <field name="kill_switch"/>
+                        </group>
+                        <group name="sharing">
+                            <field name="scope"/>
+                            <field name="owner_user_id"/>
+                            <field name="allowed_user_ids" widget="many2many_tags"
+                                   placeholder="Empty = everyone (shared)"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="CLI proxy" invisible="auth_mode != 'cli_proxy'">
+                        <field name="cli_oauth_linked" invisible="1"/>
+                        <div colspan="2">
+                            <div invisible="not cli_oauth_linked"
+                                 class="alert alert-success d-flex align-items-center mb-2" role="status">
+                                <i class="fa fa-check-circle me-2" title="Linked"/>
+                                <span><field name="cli_oauth_label" readonly="1" nolabel="1"/> — used by every user, no API key.</span>
+                            </div>
+                            <button name="action_ai_claude_login" type="object" class="btn-primary"
+                                    string="Login with Claude" icon="fa-sign-in"
+                                    invisible="cli_oauth_linked"/>
+                            <button name="action_ai_claude_login" type="object" class="btn-secondary"
+                                    string="Re-link account" icon="fa-refresh"
+                                    invisible="not cli_oauth_linked"/>
+                            <button name="action_ai_claude_logout" type="object" class="btn-secondary"
+                                    string="Disconnect" icon="fa-sign-out"
+                                    invisible="not cli_oauth_linked"
+                                    confirm="Disconnect this Claude account for all users?"/>
+                            <div class="text-muted mt-2">
+                                Link a Claude subscription here and <b>every user</b> in the system uses
+                                it — no API key, one shared login. If you don't link one, the CLI falls
+                                back to the server's own login under the HOME below.
+                            </div>
+                        </div>
+                        <field name="cli_path" placeholder="auto-detected from Claude Code extension"/>
+                        <field name="cli_home_dir" invisible="cli_oauth_linked"/>
+                        <field name="max_concurrency"/>
+                        <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
+                        <div class="text-muted" colspan="2">
+                            Routes calls through the locally-authenticated Claude CLI. No API key is used.
+                            Serving many users draws on that subscription's rate limits — use the kill
+                            switch / concurrency to control it.
+                        </div>
+                    </group>
+
+                    <group string="API key" invisible="auth_mode != 'api_key'">
+                        <field name="cf_account_id" invisible="provider != 'cloudflare'"
+                               placeholder="Cloudflare account ID (dashboard → Workers AI)"/>
+                        <field name="secret" password="True"
+                               placeholder="paste API key / token (write-only)"
+                               groups="era_ai_accounts.group_ai_account_manager"/>
+                        <field name="secret_masked" string="Stored key"
+                               groups="era_ai_accounts.group_ai_account_manager"/>
+                        <div class="text-muted" colspan="2" invisible="provider != 'cloudflare'">
+                            Cloudflare Workers AI: chat via the OpenAI-compatible endpoint and images via
+                            FLUX (1-schnell / 2). Billed in <b>Neurons</b> (a compute-usage unit, not money)
+                            with <b>10,000 free per day</b>; beyond that, <b>USD $0.011 per 1,000 Neurons</b>.
+                            Sync models to see each model's indicative rate.
+                        </div>
+                        <field name="base_url" invisible="provider != 'custom'"
+                               placeholder="https://openrouter.ai/api/v1"/>
+                        <field name="auth_header" invisible="provider != 'custom'"/>
+                        <field name="auth_prefix" invisible="provider != 'custom'"/>
+                        <field name="referer" invisible="provider != 'custom'"/>
+                        <field name="title" invisible="provider != 'custom'"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Models" name="models">
+                            <field name="model_ids">
+                                <list editable="bottom">
+                                    <field name="model_id"/>
+                                    <field name="label"/>
+                                    <field name="kind"/>
+                                    <field name="cost_info" string="Rate" optional="show"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Status" name="status">
+                            <group>
+                                <field name="last_validated"/>
+                                <field name="last_error" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Note" name="note">
+                            <field name="note" placeholder="What is this account for? Which key should be linked?"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_ai_account_view_search" model="ir.ui.view">
+        <field name="name">era.ai.account.search</field>
+        <field name="model">era.ai.account</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="owner_user_id"/>
+                <filter name="shared" string="Shared" domain="[('scope', '=', 'shared')]"/>
+                <filter name="personal" string="Personal" domain="[('scope', '=', 'personal')]"/>
+                <separator/>
+                <filter name="disabled" string="Disabled" domain="[('kill_switch', '=', True)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="by_provider" string="Provider" domain="[]" context="{'group_by': 'provider'}"/>
+                    <filter name="by_scope" string="Scope" domain="[]" context="{'group_by': 'scope'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_ai_account_action" model="ir.actions.act_window">
+        <field name="name">AI Accounts</field>
+        <field name="res_model">era.ai.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_ai_account_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Connect an AI provider account</p>
+            <p>Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via an API key,
+               then share the account with your users.</p>
+        </field>
+    </record>
+</odoo>

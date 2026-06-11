@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inline form view for lines (used inside session form) -->
+    <record id="view_translation_line_form_inline" model="ir.ui.view">
+        <field name="name">translation.session.line.form.inline</field>
+        <field name="model">translation.session.line</field>
+        <field name="arch" type="xml">
+            <form string="Translation Term">
+                <sheet>
+                    <group>
+                        <field name="msgid" string="Source Text" readonly="1"/>
+                        <field name="msgstr" string="Translation"/>
+                        <field name="comment" string="PO Comment" readonly="1"/>
+                        <field name="is_translated" string="Translated" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_suggest_translations"
+                                string="Get Suggestions"
+                                type="object"
+                                class="btn-secondary"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

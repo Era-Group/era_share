@@ -2,10 +2,12 @@
 import json
 import logging
 
-from odoo import fields, http
+from odoo import api, fields, http
 from odoo.http import request
 
 _logger = logging.getLogger(__name__)
+
+FAILURE_STATUSES = {"failed", "error", "not_found", "not found"}
 
 
 class EraSpyController(http.Controller):
@@ -43,12 +45,8 @@ class EraSpyController(http.Controller):
             if isinstance(payload, dict):
                 payload = [payload]
 
-        lead_model = request.env["crm.lead"].sudo()
-        updated = 0
-
-        queue = request.env["eraspy.callback.queue"].sudo()
-        lead_logs = {}
-        unmatched = []
+        processed = 0
+        unmatched = 0
 
         for item in payload or []:
             if not isinstance(item, dict):
@@ -68,176 +66,211 @@ class EraSpyController(http.Controller):
             candidate = item.get("candidate") or item.get("profile")
             if not candidate:
                 candidate = None
-            if status and status.lower() in ("failed", "not_found", "not found") and not error_message and not candidate:
+            candidate_dict = candidate if isinstance(candidate, dict) else None
+            status_lower = str(status or "").strip().lower()
+            if status_lower in ("failed", "error", "not_found", "not found") and not error_message and not candidate:
                 error_message = "No profile found"
 
-            debug_payload = json.dumps(item, ensure_ascii=True)
-            if isinstance(candidate, dict):
-                keys = sorted(list(candidate.keys()))
-                emails = candidate.get("emails") or []
-                phones = candidate.get("phones") or []
-                contacts = candidate.get("contacts") or []
-                _logger.info(
-                    "EraSpy candidate keys=%s emails=%s phones=%s contacts=%s",
-                    keys[:30],
-                    len(emails) if isinstance(emails, list) else 1,
-                    len(phones) if isinstance(phones, list) else 1,
-                    len(contacts) if isinstance(contacts, list) else 1,
-                )
+            is_failure = status_lower in FAILURE_STATUSES or bool(error_message)
+            is_duplicate = status_lower == "duplicate_query"
+            queue_state = "done"
+            queue_error = False
 
-            leads = lead_model.browse()
-            if request_id:
-                leads = lead_model.search([("eraspy_last_request_id", "=", str(request_id))], limit=50)
-            if not leads and identifier:
-                leads = lead_model.search([("eraspy_last_identifier", "ilike", identifier)], limit=50)
-            if not leads and identifier:
-                # Normalize identifier for matching; use digits for phone-like values.
-                normalized = identifier.strip()
-                digits = "".join(ch for ch in normalized if ch.isdigit())
-                phone_probe = digits or normalized
-                domain = [
-                    "|",
-                    "|",
-                    "|",
-                    ("email_from", "ilike", normalized),
-                    ("phone", "ilike", phone_probe),
-                    ("partner_id.phone", "ilike", phone_probe),
-                    ("website", "ilike", normalized),
-                ]
-                if "mobile" in lead_model._fields:
-                    domain = [
-                        "|",
-                        ("mobile", "ilike", phone_probe),
-                        domain,
-                    ]
-                if "partner_id" in lead_model._fields and "mobile" in self.env["res.partner"]._fields:
-                    domain = [
-                        "|",
-                        ("partner_id.mobile", "ilike", phone_probe),
-                        domain,
-                    ]
-                leads = lead_model.search(domain, limit=50)
+            # All DB work in a single separate cursor -- fast, atomic, no conflicts.
+            # Retry once on serialization failure (concurrent update from enrich action).
+            max_attempts = 2
+            for attempt in range(max_attempts):
+                try:
+                    with request.env.registry.cursor() as cr:
+                        env = api.Environment(cr, 1, {})  # uid=1 (superuser)
+                        lead_model = env["crm.lead"]
+                        lead = self._match_lead(lead_model, request_id, identifier, candidate_dict, status_lower)
 
-            if not leads and identifier:
-                normalized = identifier.replace(" ", "").replace("-", "")
-                digits = "".join(ch for ch in normalized if ch.isdigit())
-                if digits:
-                    leads = lead_model.search([("eraspy_last_identifier", "ilike", digits)], limit=50)
-                    if leads:
+                        if not request_id and lead and lead.eraspy_last_request_id:
+                            request_id = lead.eraspy_last_request_id
+                        if request_id and not item.get("requestId") and not item.get("request_id"):
+                            item["requestId"] = str(request_id)
+
+                        if not lead:
+                            unmatched += 1
+                            _logger.warning(
+                                "Era Enrich callback unmatched: request_id=%s status=%s identifier=%s",
+                                request_id, status, identifier,
+                            )
+                            env["eraspy.callback.queue"].log_callback(
+                                lead=None, item=item, candidate=candidate_dict,
+                                state="error", error="No lead match found",
+                            )
+                            break  # don't retry unmatched
+
+                        # duplicate_query: this identifier was already enriched before.
+                        # Try to find the existing enrichment data from another lead
+                        # or a previous callback log and copy it over.
+                        if is_duplicate:
+                            copied = False
+                            if identifier and not lead.eraspy_more_data:
+                                # Find another lead that has data for this identifier
+                                donor = lead_model.search([
+                                    ("eraspy_last_identifier", "ilike", identifier),
+                                    ("eraspy_more_data", "!=", False),
+                                    ("id", "!=", lead.id),
+                                ], limit=1)
+                                if not donor:
+                                    # Try from callback log
+                                    log_record = env["eraspy.callback.queue"].search([
+                                        ("identifier", "ilike", identifier),
+                                        ("candidate_json", "!=", False),
+                                        ("state", "=", "done"),
+                                    ], limit=1, order="create_date desc")
+                                    if log_record and log_record.candidate_json:
+                                        try:
+                                            prev_candidate = json.loads(log_record.candidate_json)
+                                            if isinstance(prev_candidate, dict) and prev_candidate:
+                                                write_vals = lead._prepare_eraspy_write_vals(
+                                                    prev_candidate, overwrite=False, skip_ai_match=True,
+                                                )
+                                                if write_vals:
+                                                    lead.write(write_vals)
+                                                    copied = True
+                                        except Exception:
+                                            pass
+                                if donor and not copied:
+                                    # Copy enrichment fields from the donor lead
+                                    copy_fields = {}
+                                    for fname in ("eraspy_more_data", "eraspy_profile_url",
+                                                  "eraspy_rating"):
+                                        val = donor[fname]
+                                        if val and not lead[fname]:
+                                            copy_fields[fname] = val
+                                    if copy_fields:
+                                        copy_fields["eraspy_last_status"] = "Enriched"
+                                        copy_fields["eraspy_last_checked"] = fields.Datetime.now()
+                                        lead.write(copy_fields)
+                                        copied = True
+
+                            if not copied:
+                                prev_status = lead.eraspy_last_status or ""
+                                if lead._is_eraspy_queue_status(prev_status):
+                                    lead.write({
+                                        "eraspy_last_status": lead.eraspy_more_data and "Enriched" or "Ready",
+                                        "eraspy_last_checked": fields.Datetime.now(),
+                                    })
+
+                            env["eraspy.callback.queue"].log_callback(
+                                lead=lead, item=item, candidate=candidate_dict,
+                                state="done", error=False,
+                            )
+                            processed += 1
+                            _logger.info(
+                                "Era Enrich duplicate_query for lead=%s copied=%s",
+                                lead.id, copied,
+                            )
+                            break
+
+                        # Build write values
+                        write_vals = {}
+                        if candidate_dict and not is_failure:
+                            write_vals = lead._prepare_eraspy_write_vals(
+                                candidate_dict, overwrite=False, skip_ai_match=True,
+                            )
+                        if status_lower in FAILURE_STATUSES and not error_message:
+                            error_message = "No profile found"
+                        if is_failure and not status:
+                            status = "failed"
+                        if status and is_failure:
+                            write_vals.update({
+                                "eraspy_last_status": f"{status}: {error_message}"[:255] if error_message else str(status)[:255],
+                                "eraspy_last_checked": fields.Datetime.now(),
+                            })
+
+                        write_vals["eraspy_debug_payload"] = json.dumps(item, ensure_ascii=False)[:4000]
+
+                        if write_vals:
+                            lead.write(write_vals)
+
+                        # Log to callback queue
+                        env["eraspy.callback.queue"].log_callback(
+                            lead=lead, item=item, candidate=candidate_dict,
+                            state="done", error=False,
+                        )
+                        processed += 1
+                    break  # success -- exit retry loop
+
+                except Exception as exc:
+                    if attempt < max_attempts - 1 and "serialize" in str(exc).lower():
+                        import time as _time
+                        _time.sleep(1)
+                        _logger.warning("EraSpy callback retry after serialization: request_id=%s", request_id)
+                        continue  # retry
+                    _logger.exception("EraSpy callback failed: request_id=%s identifier=%s", request_id, identifier)
+                    # Try to log the error
+                    try:
+                        with request.env.registry.cursor() as cr:
+                            env = api.Environment(cr, 1, {})
+                            env["eraspy.callback.queue"].log_callback(
+                                lead=None, item=item, candidate=candidate_dict,
+                                state="error", error=str(exc)[:2000],
+                            )
+                    except Exception:
                         pass
-                domain = [
-                    "|",
-                    ("phone", "ilike", normalized),
-                    ("partner_id.phone", "ilike", normalized),
-                ]
-                if "mobile" in lead_model._fields:
-                    domain = [
-                        "|",
-                        ("mobile", "ilike", normalized),
-                        domain,
-                    ]
-                if "partner_id" in lead_model._fields and "mobile" in self.env["res.partner"]._fields:
-                    domain = [
-                        "|",
-                        ("partner_id.mobile", "ilike", normalized),
-                        domain,
-                    ]
-                leads = lead_model.search(domain, limit=50)
-                if not leads:
-                    digits = "".join(ch for ch in normalized if ch.isdigit())
-                    if digits:
-                        domain = [
-                            "|",
-                            ("phone", "ilike", digits),
-                            ("partner_id.phone", "ilike", digits),
-                        ]
-                        if "mobile" in lead_model._fields:
-                            domain = [
-                                "|",
-                                ("mobile", "ilike", digits),
-                                domain,
-                            ]
-                        if "partner_id" in lead_model._fields and "mobile" in self.env["res.partner"]._fields:
-                            domain = [
-                                "|",
-                                ("partner_id.mobile", "ilike", digits),
-                                domain,
-                            ]
-                        leads = lead_model.search(domain, limit=50)
 
-            if not leads and isinstance(candidate, dict):
-                emails = [e.get("value") for e in candidate.get("emails", []) if isinstance(e, dict)] or []
-                phones = [p.get("value") for p in candidate.get("phones", []) if isinstance(p, dict)] or []
-                if emails or phones:
-                    domain = []
-                    if emails:
-                        domain = ["|", ("email_from", "in", emails), ("phone", "in", phones or ["__none__"])]
-                    else:
-                        domain = [("phone", "in", phones)]
-                    leads = lead_model.search(domain, limit=50)
-
-            if not request_id and leads and leads[0].eraspy_last_request_id:
-                request_id = leads[0].eraspy_last_request_id
-            if request_id and not item.get("requestId") and not item.get("request_id"):
-                item["requestId"] = str(request_id)
-
-            if not leads:
-                unmatched.append(
-                    {
-                        "identifier": identifier,
-                        "status": status,
-                        "request_id": request_id,
-                        "error": error_message,
-                    }
-                )
-                queue.enqueue(None, item, candidate if isinstance(candidate, dict) else {})
-                continue
-
-            if isinstance(candidate, dict):
-                candidate = dict(candidate)
-                if status:
-                    candidate.setdefault("status", status)
-                if error_message:
-                    candidate.setdefault("status_detail", error_message)
-            for lead in leads:
-                queue.enqueue(lead, item, candidate if isinstance(candidate, dict) else {})
-                updated += 1
-                entry = lead_logs.setdefault(
-                    lead.id,
-                    {
-                        "name": lead.display_name,
-                        "items": [],
-                    },
-                )
-                entry["items"].append(
-                    {
-                        "identifier": identifier,
-                        "status": status,
-                        "request_id": request_id,
-                        "has_candidate": bool(candidate),
-                        "error": error_message,
-                    }
-                )
-
-        for lead_id, info in lead_logs.items():
-            items = info["items"]
-            summary = "; ".join(
-                "[%s|%s|%s]" % (i.get("identifier"), i.get("status"), i.get("request_id")) for i in items
-            )
-            _logger.info(
-                "EraSpy callback lead=%s name=%s items=%s",
-                lead_id,
-                info.get("name"),
-                summary,
-            )
-        if unmatched:
-            preview = "; ".join(
-                "[%s|%s|%s]" % (i.get("identifier"), i.get("status"), i.get("request_id"))
-                for i in unmatched[:10]
-            )
-            _logger.warning("EraSpy callback unmatched items=%s total=%s", preview, len(unmatched))
-        _logger.info("EraSpy callback processed: %s leads updated", updated)
+        _logger.info("EraSpy callback done: processed=%s unmatched=%s", processed, unmatched)
         return request.make_response(
-            json.dumps({"ok": True, "updated": updated}),
+            json.dumps({"ok": True, "processed": processed, "unmatched": unmatched}),
             headers=[("Content-Type", "application/json")],
         )
+
+    @staticmethod
+    def _match_lead(lead_model, request_id, identifier, candidate_dict, status_lower):
+        """Try to match the callback to a lead using multiple strategies."""
+        lead = None
+
+        if request_id:
+            lead = lead_model.search(
+                [("eraspy_last_request_id", "=", str(request_id))], limit=1,
+            )
+        if not lead and identifier:
+            lead = lead_model.search(
+                [("eraspy_last_identifier", "ilike", identifier)], limit=1,
+            )
+        if not lead and identifier:
+            normalized = identifier.strip()
+            digits = "".join(ch for ch in normalized if ch.isdigit())
+            phone_probe = digits or normalized
+            clauses = [("email_from", "ilike", normalized)]
+            if "phone" in lead_model._fields:
+                clauses.append(("phone", "ilike", phone_probe))
+            if "mobile" in lead_model._fields:
+                clauses.append(("mobile", "ilike", phone_probe))
+            if "partner_id" in lead_model._fields and "phone" in lead_model.env["res.partner"]._fields:
+                clauses.append(("partner_id.phone", "ilike", phone_probe))
+            if "partner_id" in lead_model._fields and "mobile" in lead_model.env["res.partner"]._fields:
+                clauses.append(("partner_id.mobile", "ilike", phone_probe))
+            domain = ["|"] * (len(clauses) - 1) + clauses
+            lead = lead_model.search(domain, limit=1)
+
+        if not lead and isinstance(candidate_dict, dict):
+            emails = [e.get("value") for e in candidate_dict.get("emails", []) if isinstance(e, dict)] or []
+            phones = [p.get("value") for p in candidate_dict.get("phones", []) if isinstance(p, dict)] or []
+            clauses = []
+            if emails:
+                clauses.append(("email_from", "in", emails))
+            if phones and "phone" in lead_model._fields:
+                clauses.append(("phone", "in", phones))
+            if clauses:
+                domain = ["|"] * (len(clauses) - 1) + clauses
+                lead = lead_model.search(domain, limit=1)
+
+        # Last resort for failures: find queued lead by identifier
+        if not lead and identifier and status_lower in FAILURE_STATUSES:
+            lead = lead_model.search(
+                [("eraspy_last_status", "ilike", "queued"), ("eraspy_last_identifier", "ilike", identifier)],
+                limit=1,
+            )
+            if not lead:
+                lead = lead_model.search(
+                    [("eraspy_last_status", "ilike", "queued"), ("email_from", "ilike", identifier)],
+                    limit=1,
+                )
+
+        return lead

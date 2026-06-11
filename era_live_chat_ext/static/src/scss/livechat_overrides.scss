@@ -1,0 +1,127 @@
+// Fatoratec livechat — keep long Arabic AI replies inside the bubble so the
+// panel never grows a horizontal scrollbar. Targets the Odoo 19 mail/discuss
+// classes the livechat widget reuses (.o-mail-*) plus the older livechat
+// window wrappers in case a fallback template is rendered.
+
+// Pick up the same font the host website uses. The widget renders into the
+// main document, but Odoo sets an explicit font-family on .o-mail-* that
+// blocks normal inheritance. Re-route to Bootstrap's body-font CSS variable
+// (which is what every Odoo website theme writes into) with a final
+// fallback to `inherit`. The companion JS file also stamps the body's
+// computed font inline as a belt-and-braces backup for themes that don't
+// expose --bs-body-font-family.
+
+.o-mail-Thread,
+.o-mail-Message,
+.o-mail-Message-body,
+.o-mail-Message-content,
+.o-mail-Message-textContent,
+.o-livechat-Conversation,
+.o-livechat-root,
+.o_livechat_window,
+.o_livechat_window_content,
+.o_thread_window,
+.o_thread_window_content {
+    max-width: 100% !important;
+    // `min-width: 0` is the standard flexbox-overflow fix — without it,
+    // flex children fall back to min-content (their longest unbreakable
+    // word) and refuse to shrink, dragging the panel into h-scroll.
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    word-wrap: break-word !important;
+    box-sizing: border-box !important;
+    font-family: var(--bs-body-font-family, inherit) !important;
+}
+
+// Do NOT set `overflow-x: hidden` on these elements: per CSS spec, setting
+// only one axis to hidden while the other stays `visible` computes the
+// `visible` axis to `auto`, which paints a vertical scrollbar inside the
+// chat whenever bubble content barely overflows. The JS file targets the
+// outermost chat panel for horizontal clipping instead — that's the only
+// element that should clip, and it has no v-scroll worth preserving.
+
+// Catch every descendant — header titles, timestamps, composer input,
+// buttons. Excludes icon nodes (`<i>`, `.fa*`, `.oi`, `.material-icons`,
+// and any class containing fa-/oi-) because those use a dedicated glyph
+// font; overriding their font-family makes Font Awesome / Odoo Icons
+// render as empty squares.
+.o-livechat-root,
+.o-livechat-Conversation,
+.o_livechat_window,
+.o_thread_window {
+    &,
+    & *:not(i):not(.fa):not(.fas):not(.far):not(.fab):not(.fal):not(.oi):not(.material-icons):not(.material-icons-outlined):not([class*="fa-"]):not([class*="oi-"]),
+    & input,
+    & textarea,
+    & button {
+        font-family: var(--bs-body-font-family, inherit) !important;
+    }
+}
+
+.o-mail-Message-body,
+.o-mail-Message-content,
+.o-mail-Message-textContent {
+    white-space: pre-wrap !important;
+    hyphens: auto !important;
+    // A custom website font with taller line-height overflows Odoo's
+    // baked-in max-height on the bubble; let it grow to fit instead.
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+    overflow: visible !important;
+}
+
+// The bubble itself must never exceed its column. Some Odoo themes set a
+// min-width on .o-mail-Message-bubble — clamp it.
+.o-mail-Message .o-mail-Message-bubble,
+.o-livechat-Conversation .o-mail-Message > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+// Two stacked Odoo scrollers wrap the message list. They MUST keep their
+// h-100 + overflow-y:auto behavior — that's how the thread fills the chat
+// panel and scrolls long history while the composer stays pinned to the
+// bottom of the flex column. Stripping their height collapses the thread
+// to content size and lifts the composer up the panel.
+// Only kill horizontal overflow here — that's the actual bug.
+.d-flex.flex-column.h-100.overflow-auto.o-scrollbar-thin,
+.o-mail-Thread {
+    overflow-x: hidden !important;
+}
+
+// The bubble wrapper (`.o-discuss-text-body`) and the rich-body container
+// both ship with `overflow-x: auto`. That's what paints the thin scrollbar
+// inside each message bubble whenever content barely exceeds the bubble's
+// max-width. Force overflow visible so text just wraps to a new line.
+.o-discuss-text-body,
+.o-mail-Message-richBody,
+.o-mail-Message-body {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+// Aggressive wrap on the actual text node — even an unbreakable URL/token
+// splits before it can drag the bubble past the column.
+.o-mail-Message p,
+.o-mail-Message-richBody p,
+.o-mail-Message-body p {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+// Hide the 'Ask Human' fallback button via class match. The JS file applies a
+// `.era-hide-ask-human` marker too — both kept so either path wins.
+.o-livechat-AskHuman,
+[class*="AskHuman"],
+.era-hide-ask-human {
+    display: none !important;
+    visibility: hidden !important;
+}

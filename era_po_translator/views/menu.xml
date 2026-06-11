@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-level app menu -->
+    <menuitem id="menu_po_translator_root"
+              name="PO Translator"
+              sequence="99"
+              web_icon="era_po_translator,static/description/icon.png"
+              groups="base.group_erp_manager"/>
+
+    <!-- Translation Sessions list — first so it loads on app open -->
+    <menuitem id="menu_translation_sessions"
+              name="Translation Sessions"
+              parent="menu_po_translator_root"
+              action="era_po_translator.action_translation_session"
+              sequence="10"
+              groups="base.group_erp_manager"/>
+
+    <!-- Quick Translate wizard -->
+    <menuitem id="menu_quick_translate"
+              name="Quick Translate"
+              parent="menu_po_translator_root"
+              action="era_po_translator.action_quick_translate_wizard"
+              sequence="20"
+              groups="base.group_erp_manager"/>
+
+</odoo>

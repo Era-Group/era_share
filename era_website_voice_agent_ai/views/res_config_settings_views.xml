@@ -34,6 +34,10 @@
               <field name="openai_realtime_interrupt_response_enabled"/>
             </setting>
 
+            <setting string="Realtime VAD Threshold" help="0.0 to 1.0. Raise this to reduce false speech detection from room noise. Recommended noisy-room range: 0.8 to 0.95.">
+              <field name="openai_realtime_vad_threshold" placeholder="0.8"/>
+            </setting>
+
             <setting string="Realtime Idle Timeout (Seconds)" help="Silence timeout for visitor inactivity. Set 0 to disable.">
               <field name="openai_realtime_idle_timeout_seconds" placeholder="0"/>
             </setting>
@@ -49,6 +53,23 @@
 
             <setting string="Widget Button Label" help="Text shown on the floating website widget button.">
               <field name="openai_realtime_widget_label"/>
+            </setting>
+
+            <setting string="Auto-Start Assistant Greeting"
+                     help="If enabled, the assistant starts speaking automatically as soon as the Realtime connection is established.">
+              <field name="openai_realtime_auto_greet_enabled"/>
+            </setting>
+
+            <setting string="Auto Greeting Instruction"
+                     help="Instruction used for the assistant's first spoken reply after connection."
+                     invisible="not openai_realtime_auto_greet_enabled">
+              <field name="openai_realtime_auto_greet_instruction"
+                     widget="text"
+                     placeholder="ابدأ بالترحيب بالزائر باللغة العربية، عرّف بنفسك، ثم اسأله كيف يمكنك مساعدته."/>
+            </setting>
+
+            <setting string="Require Push-to-Talk" help="If enabled, visitors must hold the microphone button to speak. Disable to keep the microphone live during the call.">
+              <field name="openai_realtime_require_ptt"/>
             </setting>
 
             <setting string="Summary Prompt" help="System prompt used to analyze and summarize call recordings.">

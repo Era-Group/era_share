@@ -10,6 +10,17 @@ CUSTOM_LLM_EMBEDDING_KEY = "custom_llm/text-embedding-3-small"
 
 
 def _patch_providers():
+    # Surface OpenAI's gpt-5-nano in the LLM Model dropdown (idempotent). The
+    # selection is built dynamically from PROVIDERS, so appending here is enough.
+    # gpt-5-nano is a gpt-5-family reasoning model that rejects `temperature`;
+    # that param is stripped for it in llm_api_service_patch (the base only
+    # special-cases gpt-5 / gpt-5-mini).
+    for provider in PROVIDERS:
+        if provider.name == "openai" and not any(
+                m[0] == "gpt-5-nano" for m in provider.llms):
+            provider.llms.append(("gpt-5-nano", "GPT-5 Nano"))
+            break
+
     if any(provider.name == "custom_llm" for provider in PROVIDERS):
         return
 

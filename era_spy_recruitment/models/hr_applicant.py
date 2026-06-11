@@ -4,6 +4,7 @@ import logging
 import re
 from datetime import timedelta
 from email.utils import parseaddr
+from html import escape
 from urllib.parse import urlsplit
 
 
@@ -36,19 +37,36 @@ class HrApplicant(models.Model):
         )
         return records
 
-    eraspy_last_status = fields.Char(readonly=True)
-    eraspy_last_checked = fields.Datetime(readonly=True)
-    eraspy_profile_url = fields.Char(string="EraSpy Profile URL", readonly=True)
-    eraspy_rating = fields.Char(readonly=True)
+    eraspy_last_status = fields.Char(string="Era Enrich Last Status", readonly=True)
+    eraspy_last_checked = fields.Datetime(string="Era Enrich Last Checked", readonly=True)
+    eraspy_profile_url = fields.Char(string="Era Enrich Profile URL", readonly=True)
+    eraspy_rating = fields.Char(string="Era Enrich Rating", readonly=True)
     eraspy_debug_payload = fields.Text(
-        string="EraSpy Debug Payload",
+        string="Era Enrich Debug Payload",
         readonly=True,
     )
-    eraspy_more_data = fields.Html(string="EraSpy More Data", readonly=True)
-    eraspy_last_request_id = fields.Char(string="EraSpy Last Request ID", readonly=True)
-    eraspy_last_identifier = fields.Char(string="EraSpy Last Identifier", readonly=True)
+    eraspy_more_data = fields.Html(string="Era Enrich More Data", readonly=True)
+    eraspy_last_request_id = fields.Char(string="Era Enrich Last Request ID", readonly=True)
+    eraspy_last_identifier = fields.Char(string="Era Enrich Last Identifier", readonly=True)
     eraspy_ai_match = fields.Html(string="AI Qualification Match", readonly=True, sanitize=True)
-    eraspy_in_queue = fields.Boolean(compute="_compute_eraspy_in_queue")
+    eraspy_enrichment_state = fields.Selection(
+        [("queued", "Queued"), ("done", "Done"), ("failed", "Failed")],
+        compute="_compute_eraspy_enrichment_state",
+        store=True,
+    )
+
+    @api.depends("eraspy_last_status")
+    def _compute_eraspy_enrichment_state(self):
+        for applicant in self:
+            status = applicant.eraspy_last_status
+            if not status:
+                applicant.eraspy_enrichment_state = False
+            elif applicant._is_eraspy_queue_status(status):
+                applicant.eraspy_enrichment_state = "queued"
+            elif "failed" in status.lower() or "error" in status.lower() or "timed out" in status.lower() or "not_found" in status.lower() or "not found" in status.lower():
+                applicant.eraspy_enrichment_state = "failed"
+            else:
+                applicant.eraspy_enrichment_state = "done"
 
     @staticmethod
     def _is_eraspy_queue_status(status_value):
@@ -59,36 +77,30 @@ class HrApplicant(models.Model):
             return True
         return status_lower.startswith("queued:") or status_lower.startswith("queue:")
 
-    @api.depends("eraspy_last_status")
-    def _compute_eraspy_in_queue(self):
-        pending_ids = self._get_eraspy_pending_applicant_ids()
-        for applicant in self:
-            applicant.eraspy_in_queue = bool(
-                applicant.id in pending_ids or applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
-            )
-
-    def _get_eraspy_pending_applicant_ids(self):
-        if not self.ids:
-            return set()
-        pending_queue = self.env["eraspy.applicant.callback.queue"].sudo().search(
-            [("applicant_id", "in", self.ids), ("state", "=", "pending")],
-        )
-        return set(pending_queue.mapped("applicant_id").ids)
-
     def action_eraspy_enrich(self):
         applicant_ids = self.ids or self.env.context.get("active_ids") or []
         if not applicant_ids:
             raise UserError(_("Please select at least one applicant."))
         applicants = self.browse(applicant_ids)
-        pending_ids = applicants._get_eraspy_pending_applicant_ids()
+        # Auto-reset applicants stuck in Queued for over 2 minutes
+        cutoff = fields.Datetime.now() - timedelta(minutes=2)
+        for applicant in applicants:
+            if (applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
+                    and applicant.eraspy_last_checked
+                    and applicant.eraspy_last_checked < cutoff):
+                applicant.write({
+                    "eraspy_last_status": "failed: timed out",
+                    "eraspy_last_checked": fields.Datetime.now(),
+                })
+        # Re-check after auto-reset
         blocked = applicants.filtered(
-            lambda applicant: applicant.id in pending_ids or applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
+            lambda applicant: applicant._is_eraspy_queue_status(applicant.eraspy_last_status)
         )
         if blocked:
             names = ", ".join(blocked.mapped("display_name")[:5])
             more = len(blocked) - 5
             suffix = _(" and %s more") % more if more > 0 else ""
-            raise UserError(_("EraSpy enrichment is already queued for: %s%s") % (names, suffix))
+            raise UserError(_("Era Enrich enrichment is already queued for: %s%s") % (names, suffix))
         if len(applicant_ids) > 80:
             raise UserError(_("You can enrich at most 80 applicants at a time. Please split your selection."))
         client = self.env["eraspy.client"]
@@ -105,7 +117,7 @@ class HrApplicant(models.Model):
         response_debug = []
 
         _logger.info(
-            "EraSpy applicant enrich started: without_contacts=%s applicants=%s",
+            "Era Enrich applicant enrich started: without_contacts=%s applicants=%s",
             without_contacts,
             len(applicants),
         )
@@ -114,6 +126,12 @@ class HrApplicant(models.Model):
             identifiers = applicant._get_eraspy_identifiers()
             if not identifiers:
                 skipped.append(applicant.display_name)
+                continue
+
+            # Check if another applicant already has enrichment data for
+            # any of these identifiers — copy locally instead of calling API.
+            if self._try_copy_from_existing(applicant, identifiers):
+                enriched += 1
                 continue
 
             request_payload = {
@@ -154,6 +172,9 @@ class HrApplicant(models.Model):
                         "eraspy_last_request_id": str(request_id),
                         "eraspy_last_identifier": identifiers[0] if identifiers else False,
                         "eraspy_debug_payload": json.dumps(result, ensure_ascii=True)[:4000],
+                        # Clear any stale AI match (failure notice) so the callback
+                        # will regenerate it when the profile arrives.
+                        "eraspy_ai_match": False,
                     }
                 )
                 pending += 1
@@ -162,7 +183,7 @@ class HrApplicant(models.Model):
 
             skipped.append(applicant.display_name)
 
-        message = _("%s applicant(s) enriched via EraSpy.") % enriched
+        message = _("%s applicant(s) enriched via Era Enrich.") % enriched
         if pending:
             message += _(" %s applicant(s) queued; results will be applied on callback.") % pending
             if pending_requests:
@@ -173,21 +194,10 @@ class HrApplicant(models.Model):
             message += _(" Skipped: %s") % ", ".join(skipped)
 
         _logger.info(message)
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": _("EraSpy"),
-                "message": message,
-                "type": "success" if enriched else "warning",
-                "sticky": False,
-                "next": {
-                    "type": "ir.actions.client",
-                    "tag": "eraspy_console_log",
-                    "params": {"payload": request_debug, "responses": response_debug},
-                },
-            },
-        }
+
+        # Return False — no page reload. The JS widget polls and refreshes
+        # the form data automatically when the callback updates the status.
+        return False
 
     @api.model
     def _cron_eraspy_auto_enrich(self, limit=80):
@@ -354,24 +364,101 @@ class HrApplicant(models.Model):
             return f"{base_url}/eraspy/applicant/callback"
         return cfg_callback
 
+    def _try_copy_from_existing(self, applicant, identifiers):
+        """Try to copy enrichment data from another applicant or callback log."""
+        applicant_model = self.env["hr.applicant"].sudo()
+        queue_model = self.env["eraspy.applicant.callback.queue"].sudo()
+
+        for ident in identifiers:
+            # 1. Find a donor applicant with this identifier
+            donor = applicant_model.search([
+                ("eraspy_last_identifier", "ilike", ident),
+                ("eraspy_more_data", "!=", False),
+                ("id", "!=", applicant.id),
+            ], limit=1)
+            if donor:
+                copy_fields = {}
+                for fname in ("eraspy_more_data", "eraspy_profile_url",
+                              "eraspy_rating", "eraspy_ai_match",
+                              "eraspy_debug_payload"):
+                    val = donor[fname]
+                    if val:
+                        copy_fields[fname] = val
+                if copy_fields:
+                    copy_fields.update({
+                        "eraspy_last_status": "Enriched",
+                        "eraspy_last_checked": fields.Datetime.now(),
+                        "eraspy_last_identifier": ident,
+                    })
+                    applicant.write(copy_fields)
+                    _logger.info(
+                        "Era Enrich copied enrichment from applicant %s to %s (identifier=%s)",
+                        donor.id, applicant.id, ident,
+                    )
+                    return True
+
+            # 2. Find a callback log with candidate data for this identifier (last 20 days)
+            log_cutoff = fields.Datetime.now() - timedelta(days=20)
+            log_record = queue_model.search([
+                ("identifier", "ilike", ident),
+                ("candidate_json", "!=", False),
+                ("state", "=", "done"),
+                ("create_date", ">=", log_cutoff),
+            ], limit=1, order="create_date desc")
+            if log_record and log_record.candidate_json:
+                try:
+                    candidate = json.loads(log_record.candidate_json)
+                    if isinstance(candidate, dict) and candidate:
+                        write_vals = applicant._prepare_eraspy_write_vals(
+                            candidate, overwrite=False, skip_ai_match=True,
+                        )
+                        if write_vals:
+                            write_vals["eraspy_last_identifier"] = ident
+                            applicant.write(write_vals)
+                            applicant._write_eraspy_ai_match_safely(candidate)
+                            _logger.info(
+                                "Era Enrich copied enrichment from callback log %s to applicant %s (identifier=%s)",
+                                log_record.id, applicant.id, ident,
+                            )
+                            return True
+                except Exception:
+                    pass
+
+        return False
+
     def _apply_eraspy_profile(self, profile: dict, overwrite=False):
         self.ensure_one()
         if not profile:
-            raise UserError(_("EraSpy did not return any profile data."))
+            raise UserError(_("Era Enrich did not return any profile data."))
 
-        write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite)
-        if write_vals:
-            _logger.info("Applying EraSpy profile to applicant %s: %s", self.id, write_vals)
-            self.write(write_vals)
-        else:
-            _logger.info("EraSpy returned data but nothing new to write for applicant %s", self.id)
+        # Save profile data first (skip AI match so a slow/failing AI call
+        # never prevents the profile from being persisted).
+        write_vals = self._prepare_eraspy_write_vals(profile, overwrite=overwrite, skip_ai_match=True)
+        # Always clear any stale AI match (failure notice from a previous attempt)
+        # so it gets regenerated fresh below.
+        write_vals["eraspy_ai_match"] = False
+        _logger.info("Applying EraSpy profile to applicant %s: %s", self.id, write_vals)
+        self.write(write_vals)
 
-    def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False):
+        # Generate AI Qualification Match in a separate write so that a failure
+        # here does not roll back the profile data already saved above.
+        self._write_eraspy_ai_match_safely(profile)
+
+    def _write_eraspy_ai_match_safely(self, profile):
+        self.ensure_one()
+        try:
+            ai_match = self._build_eraspy_ai_match(profile)
+            if ai_match:
+                self.write({"eraspy_ai_match": ai_match})
+        except Exception:
+            _logger.exception("EraSpy AI match generation failed for applicant %s", self.id)
+
+    def _prepare_eraspy_write_vals(self, profile: dict, overwrite=False, skip_ai_match=False):
         self.ensure_one()
         if not profile:
             return {}
         _logger.info(
-            "EraSpy prepare write vals: applicant=%s profile_keys=%s",
+            "Era Enrich prepare write vals: applicant=%s profile_keys=%s",
             self.id,
             list(profile.keys())[:20],
         )
@@ -519,9 +606,10 @@ class HrApplicant(models.Model):
         if more_data:
             write_vals["eraspy_more_data"] = more_data
 
-        ai_match = self._build_eraspy_ai_match(profile)
-        if ai_match:
-            write_vals["eraspy_ai_match"] = ai_match
+        if not skip_ai_match:
+            ai_match = self._build_eraspy_ai_match(profile)
+            if ai_match:
+                write_vals["eraspy_ai_match"] = ai_match
 
         write_vals["eraspy_last_status"] = str(status)[:255]
         write_vals["eraspy_last_checked"] = fields.Datetime.now()
@@ -530,11 +618,8 @@ class HrApplicant(models.Model):
     def _build_eraspy_more_data(self, profile):
         if not isinstance(profile, dict):
             return ""
-
-        ai_html = self._format_more_data_with_ai(profile)
-        if ai_html:
-            return ai_html
-
+        # Use fallback formatter directly — AI formatting via _call_ai_agent
+        # has a 120s timeout that blocks the entire enrichment flow.
         return self._format_more_data_fallback(profile)
 
     def _format_more_data_with_ai(self, profile):
@@ -558,12 +643,14 @@ class HrApplicant(models.Model):
         job_title = self.job_id.name if getattr(self, "job_id", False) else ""
         if not job_description:
             if not job_title:
-                return ""
+                return self._build_eraspy_ai_match_notice(
+                    _("AI match was not generated because the applicant has no job position.")
+                )
             job_description = f"Job title only (no detailed description): {job_title}"
 
         trimmed = self._trim_eraspy_profile(profile)
         _logger.info(
-            "EraSpy AI match start: applicant=%s job_title=%s profile_keys=%s",
+            "Era Enrich AI match start: applicant=%s job_title=%s profile_keys=%s",
             self.id,
             job_title,
             list(trimmed.keys())[:20],
@@ -618,12 +705,45 @@ Output ONLY the HTML. Do not include explanations, comments, or metadata.
 """
         text = self.env["eraspy.client"]._call_ai_agent(prompt, payload)
         if not text:
-            _logger.warning("EraSpy AI match empty response: applicant=%s", self.id)
+            # AI service is temporarily unavailable (timeout/empty response).
+            # Return empty so _write_eraspy_ai_match_safely skips the write entirely —
+            # eraspy_ai_match stays blank and the next callback retry will attempt again.
+            _logger.warning("EraSpy AI match empty response (AI service unavailable): applicant=%s", self.id)
             return ""
         _logger.info("EraSpy AI match result: applicant=%s len=%s", self.id, len(text))
+        text = text.strip()
         if text.startswith("```"):
-            text = text.replace("```", "").strip()
-        return text
+            text = re.sub(r"^```[a-zA-Z0-9]*\s*", "", text)
+            text = text.rsplit("```", 1)[0].strip()
+        if "<" not in text:
+            return self._plain_text_to_eraspy_ai_match_html(text)
+        return text[:4000]
+
+    @staticmethod
+    def _plain_text_to_eraspy_ai_match_html(text):
+        cleaned = (text or "").strip()
+        if not cleaned:
+            return ""
+        lines = [line.strip() for line in cleaned.splitlines() if line.strip()]
+        if not lines:
+            return ""
+        html_lines = [
+            '<div class="o_eraspy_ai_match" style="line-height:1.5;">',
+            "<div><strong>AI Qualification Match</strong></div>",
+        ]
+        for line in lines:
+            html_lines.append(f"<div>{escape(line)}</div>")
+        html_lines.append("</div>")
+        return "\n".join(html_lines)[:4000]
+
+    @staticmethod
+    def _build_eraspy_ai_match_notice(reason):
+        return (
+            '<div class="o_eraspy_ai_match" style="line-height:1.5;">'
+            "<div><strong>AI Qualification Match</strong></div>"
+            f"<div>{escape(str(reason or 'AI match was not generated.'))}</div>"
+            "</div>"
+        )
 
     def _get_job_description(self):
         job = getattr(self, "job_id", False)

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: Monthly sitemap rebuild + link health.
+
+      Once a month: drops the cached sitemap attachments and regenerates a
+      FRESH sitemap (so deleted / unpublished pages fall out automatically),
+      GETs every URL in it to confirm it still resolves, unpublishes any page
+      that is gone (404/410) so it leaves the site and the next sitemap, and
+      reports broken internal links found in published page content.
+
+      Gates (ir.config_parameter, no restart needed to flip):
+        era_seo.sitemap_cron_active    default True  — master switch
+        era_seo.sitemap_prune_enabled  default True  — unpublish dead pages
+      Last-run results are stored in era_seo.sitemap_last_summary.
+    -->
+    <record id="cron_monthly_sitemap_rebuild" model="ir.cron">
+      <field name="name">ERA SEO: Monthly sitemap rebuild + link health</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_monthly_sitemap_rebuild()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">months</field>
+      <field name="active" eval="True"/>
+      <field name="priority">8</field>
+    </record>
+
+  </data>
+</odoo>

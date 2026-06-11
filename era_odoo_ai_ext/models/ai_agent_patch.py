@@ -3,6 +3,7 @@ import json
 import re
 
 from odoo import models
+from odoo.exceptions import UserError
 from odoo.tools import html2plaintext, html_sanitize, is_html_empty
 
 from odoo.addons.ai.models.ai_agent import markdown
@@ -12,6 +13,19 @@ _logger = logging.getLogger(__name__)
 
 class AIAgent(models.Model):
     _inherit = "ai.agent"
+
+    def _build_rag_context(self, prompt):
+        try:
+            return super()._build_rag_context(prompt)
+        except UserError as e:
+            if "embedding" in str(e).lower():
+                _logger.warning(
+                    "RAG context skipped for agent %s: no valid embedding model configured. "
+                    "Set 'ai.custom_llm_embedding_model' in system parameters. (%s)",
+                    self.id, e,
+                )
+                return []
+            raise
 
     def _retry_status_message(self, channel):
         """Return retry status text based on consecutive placeholder messages.

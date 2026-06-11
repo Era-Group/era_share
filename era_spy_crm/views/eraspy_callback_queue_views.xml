@@ -1,60 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_eraspy_callback_queue_list" model="ir.ui.view">
-        <field name="name">eraspy.callback.queue.list</field>
+    <!-- Search view -->
+    <record id="view_eraspy_callback_queue_search" model="ir.ui.view">
+        <field name="name">eraspy.callback.queue.search</field>
         <field name="model">eraspy.callback.queue</field>
         <field name="arch" type="xml">
-            <list string="EraSpy Callback Queue">
-                <button name="action_retry" type="object" string="Retry" class="btn-link"/>
-                <field name="create_date"/>
+            <search string="Callback Log">
                 <field name="lead_id"/>
                 <field name="request_id"/>
                 <field name="identifier"/>
                 <field name="status"/>
-                <field name="state"/>
-                <field name="attempts"/>
                 <field name="last_error"/>
+                <separator/>
+                <filter string="Done" name="filter_done" domain="[('state', '=', 'done')]"/>
+                <filter string="Error" name="filter_error" domain="[('state', '=', 'error')]"/>
+                <separator/>
+                <filter string="Today" name="filter_today" domain="[('create_date', '&gt;=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <group>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Lead" name="group_lead" context="{'group_by': 'lead_id'}"/>
+                    <filter string="Created" name="group_create_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- List view -->
+    <record id="view_eraspy_callback_queue_list" model="ir.ui.view">
+        <field name="name">eraspy.callback.queue.list</field>
+        <field name="model">eraspy.callback.queue</field>
+        <field name="arch" type="xml">
+            <list string="Era Enrich Callback Log"
+                  decoration-danger="state == 'error'"
+                  decoration-success="state == 'done'">
+                <field name="create_date" string="Created"/>
+                <field name="lead_id"/>
+                <field name="request_id" optional="hide"/>
+                <field name="identifier"/>
+                <field name="status"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-danger="state == 'error'"
+                       decoration-success="state == 'done'"/>
+                <field name="last_error" optional="show"/>
             </list>
         </field>
     </record>
 
+    <!-- Form view -->
     <record id="view_eraspy_callback_queue_form" model="ir.ui.view">
         <field name="name">eraspy.callback.queue.form</field>
         <field name="model">eraspy.callback.queue</field>
         <field name="arch" type="xml">
-            <form string="EraSpy Callback Queue">
+            <form string="Era Enrich Callback Record" create="0" edit="0">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
                 <sheet>
-                    <header>
-                        <button name="action_retry" type="object" string="Retry" class="btn-primary"/>
-                    </header>
-                    <group>
-                        <field name="lead_id"/>
-                        <field name="request_id"/>
-                        <field name="identifier"/>
-                        <field name="status"/>
-                        <field name="error_message"/>
-                        <field name="state"/>
-                        <field name="attempts"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="identifier" readonly="1" placeholder="Identifier"/>
+                        </h1>
+                    </div>
+                    <group col="2">
+                        <group string="Request">
+                            <field name="lead_id"/>
+                            <field name="request_id"/>
+                            <field name="identifier" invisible="1"/>
+                            <field name="status"/>
+                            <field name="error_message" invisible="not error_message"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="payload_json" widget="text"/>
-                        <field name="candidate_json" widget="text"/>
-                        <field name="last_error" widget="text"/>
-                    </group>
+                    <notebook>
+                        <page string="Error" name="error" invisible="not last_error">
+                            <field name="last_error" widget="text" readonly="1"/>
+                        </page>
+                        <page string="Payload" name="payload">
+                            <field name="payload_json" widget="text" readonly="1"/>
+                        </page>
+                        <page string="Candidate Data" name="candidate" invisible="not candidate_json">
+                            <field name="candidate_json" widget="text" readonly="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
 
     <record id="action_eraspy_callback_queue" model="ir.actions.act_window">
-        <field name="name">EraSpy Callback Queue</field>
+        <field name="name">Callback Log</field>
         <field name="res_model">eraspy.callback.queue</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_eraspy_callback_queue_search"/>
         <field name="context">{}</field>
     </record>
 
     <menuitem id="menu_eraspy_callback_queue"
-              name="CRM Callback Queue"
+              name="CRM Callback Log"
               parent="era_spy_base.menu_eraspy_technical_root"
               action="action_eraspy_callback_queue"
               sequence="20"/>

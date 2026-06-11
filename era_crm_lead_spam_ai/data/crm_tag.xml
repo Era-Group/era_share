@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="crm_tag_spam" model="crm.tag">
+            <field name="name">SPAM</field>
+            <field name="color">1</field>
+        </record>
+        <record id="crm_tag_pass" model="crm.tag">
+            <field name="name">pass</field>
+            <field name="color">10</field>
+        </record>
+    </data>
+</odoo>

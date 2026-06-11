@@ -1,0 +1,3205 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_monte_carlo_simulation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-11 10:03+0000\n"
+"PO-Revision-Date: 2026-06-11 10:03+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__negative_fraction
+msgid "% Negative"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "% negative"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "%(model)s - Run #%(num)s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"%(name)s is the biggest driver of the outcome (rank correlation %(corr).2f)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "%(name)s: %(old)s → %(new)s (%(why)s)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "%s confirmed orders (add products for a sharper estimate)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "%s confirmed orders of similar size (±50%%)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "%s confirmed orders with these products"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "%s scenarios"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.report,print_report_name:era_monte_carlo_simulation.action_report_monte_carlo_run
+msgid "'Monte Carlo - %s' % (object.name or object.id)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_mode
+msgid ""
+"'Sample a field' fits the distribution from a numeric field's values (e.g. "
+"average deal value). 'Count records per period' fits it from how many "
+"records occur each day/week/month (e.g. number of leads). 'Rate per period' "
+"fits it from a ratio each period — records matching the Numerator Filter "
+"divided by all records (e.g. a CRM conversion rate: won ÷ total)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "(±30% — not enough deal history)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "+%(pct).0f%% projected growth"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__p25
+msgid "25th percentile: 25% of scenarios fall below this value."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__p50
+msgid "50th percentile (median): half of the scenarios fall below this value."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__p05
+msgid ""
+"5th percentile: only 5% of scenarios fall below this value (a pessimistic / "
+"downside estimate)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__p75
+msgid "75th percentile: 75% of scenarios fall below this value."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__p95
+msgid ""
+"95th percentile: 95% of scenarios fall below this value (an optimistic / "
+"upside estimate)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.crm_lead_view_form_monte_carlo
+msgid ""
+"<i class=\"fa fa-cubes text-info\" title=\"Monte Carlo forecast\" "
+"role=\"img\" aria-label=\"Monte Carlo forecast\"/>"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"A constant exponent in the custom formula must be a single number between "
+"-1000 and 1000."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_correlation.py:0
+msgid "A correlation must be between -1 and 1 (got %s)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_correlation.py:0
+msgid "A correlation must link two DIFFERENT variables."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+msgid "A custom formula requires an expression."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_dashboard_view_form
+msgid ""
+"A portfolio view of every simulation model's latest run.\n"
+"                        The <b>heatmap</b> places each model by its success\n"
+"                        confidence (horizontal) and relative uncertainty\n"
+"                        (vertical) — the bottom-right corner is the healthy zone.\n"
+"                        The <b>table</b> lists models riskiest-first so the ones\n"
+"                        that need attention are on top. Use the filter to focus on\n"
+"                        one objective."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__name
+msgid "A readable label for this input (e.g. Number of Leads)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_run_action
+msgid ""
+"A run executes a simulation model over many scenarios and\n"
+"                stores the resulting outcome distribution."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"A run executes the model over many random scenarios. Set the\n"
+"                        number of <b>Iterations</b> and an optional <b>Success Threshold</b>,\n"
+"                        then click <b>Run Simulation</b>. When it finishes, read\n"
+"                        <b>What this means</b>, the summary statistics, the percentiles\n"
+"                        (P5…P95) and the probability of reaching your threshold. Use\n"
+"                        <b>Reset to Draft</b> to change inputs and run it again."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__name
+msgid ""
+"A short, recognisable name for this simulation model (e.g. Q3 Revenue "
+"Forecast)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid ""
+"A simulation model turns a business question into a formula over\n"
+"                        uncertain inputs. <b>1)</b> Choose an Objective and a Formula.\n"
+"                        <b>2)</b> In the Variables tab, add each uncertain input and its\n"
+"                        probability distribution (give each one the exact Code the formula\n"
+"                        expects). <b>3)</b> Click <b>New Run</b> to simulate thousands of\n"
+"                        scenarios and read the probable range of outcomes."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__success_threshold
+msgid ""
+"A target value to test against. The run reports the probability of the "
+"outcome reaching (>=) and of staying below (<) this value. For "
+"revenue/profit a higher result is better; for cost/duration a lower result "
+"is better."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid ""
+"A variable is an uncertain input. Choose the Distribution that\n"
+"                        matches what you know: <b>Fixed</b> (a constant), <b>Uniform</b>\n"
+"                        (any value in a range), <b>Normal</b> (mean ± standard deviation),\n"
+"                        <b>Triangular</b> (min / most likely / max) or <b>Discrete</b>\n"
+"                        (a list of values). The <b>Code</b> is the technical name the\n"
+"                        formula uses — keep it in English and unique within the model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__ai_attempts
+msgid "AI Attempts"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__ai_summary
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__ai_interpretation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "AI Summary"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__ai_pending
+msgid "AI Summary Pending"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__ai_summary_preview
+msgid "AI Summary Preview"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"AI narration is unavailable right now (the AI provider is not configured or "
+"could not be reached). The summary above still explains the results."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Achieved"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__active
+msgid "Active"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Add at least one variable before running the simulation."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Add completed runs to compare..."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__all
+msgid "All objectives"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_lookback__all
+msgid "All time"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+msgid "Archived"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Ask AI"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "Ask Odoo AI to estimate this variable"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Authored Models"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_list
+msgid "Average"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__mean_value
+msgid ""
+"Average (centre) of the Normal distribution. For Log-normal it is the "
+"average of the actual (positive) values you observe."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Average expected outcome across all %(n)s simulated scenarios is %(mean)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__cvar_95
+msgid ""
+"Average outcome across only the worst 5% of scenarios (conditional value at "
+"risk) - the typical severity when things go badly, which the percentile "
+"alone does not show."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__summary_mean
+msgid "Average output across all simulated scenarios."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Avg. success confidence"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Bar length = how strongly each input drives the outcome (rank correlation). "
+"Blue pushes the outcome up, orange pushes it down."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__distribution_data
+msgid ""
+"Binned histogram and cumulative curve of the outcomes. Stored compactly and "
+"reused to draw the chart (and later by exports and run comparisons)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Bitwise operators are not allowed in the custom formula."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__ai_interpretation
+msgid ""
+"Board-ready narrative written by your configured AI provider from the run's "
+"numbers. Click 'Explain with AI' to generate it."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid ""
+"Bottom-right (high confidence, low uncertainty) is the healthy zone; top-"
+"left needs attention."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Chained constant powers are not allowed in the custom formula."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Chance of reaching target"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Chance to reach"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Chance of reaching threshold"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Chance of staying within target"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Chance of staying within threshold"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Choose a Date Field to group by for the count."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Choose a Date Field to group by for the rate."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Choose a Source Field before refreshing."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Choose a Source Model before refreshing."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Close"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__code
+msgid "Code"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Code '%s' is already used by another variable in this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Code '%s' is invalid. Use letters, digits and underscores, and do not start "
+"with a digit."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_cv
+msgid ""
+"Coefficient of variation (std / |mean|) of the latest run — a scale-free "
+"measure of how uncertain the outcome is."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__distribution_summary
+msgid "Compact preview of this variable's distribution and its parameters."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__company_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__company_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__company_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__company_id
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Company"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_correlation__company_id
+msgid "Company that owns this correlation (taken from the model)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__company_id
+msgid "Company that owns this result."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__company_id
+msgid "Company that owns this run (taken from the model)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__company_id
+msgid "Company that owns this simulation model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Comparable deal value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.act_window,name:era_monte_carlo_simulation.monte_carlo_comparison_action
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Compare Scenarios"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid ""
+"Compare the probable outcomes of several runs at once.\n"
+"                        Pick the runs below; the cumulative-probability curves\n"
+"                        and the figures update automatically. A curve further to\n"
+"                        the <b>right</b> means generally higher outcomes (better\n"
+"                        for revenue/profit, but worse for cost/time goals); a\n"
+"                        <b>steeper</b> curve means less uncertainty."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.crm_lead_view_form_monte_carlo
+msgid "Compute the value forecast with Monte Carlo"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_risk
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+msgid "Confidence"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__sequence
+msgid ""
+"Controls the display order of variables. Drag the handle to reorder them."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__coefficient
+msgid "Correlation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__correlation_data
+msgid "Correlation Data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "Correlations"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__cost_estimation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__cost_estimation
+msgid "Cost Estimation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Could not evaluate the custom formula:\n"
+"%s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Could not parse the custom formula:\n"
+"%s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Count"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_mode__count
+msgid "Count records per period"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:res.groups,comment:era_monte_carlo_simulation.group_monte_carlo_user
+msgid "Create and run Monte Carlo simulations."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_model_action
+msgid "Create your first simulation model"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__create_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__create_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__create_date
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Created on"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Cumulative %"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__comparison_chart
+msgid "Cumulative Probability"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Cumulative Probability (CDF)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Cumulative probability"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__currency_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__currency_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__currency_id
+msgid "Currency of the output value."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__currency_id
+msgid "Currency used to display monetary results (taken from the model)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__currency_id
+msgid "Currency used to display the monetary results of this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__custom
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__custom
+msgid "Custom"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__formula_type__custom_python_limited
+msgid "Custom (Limited Expression)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__formula_expression
+msgid "Custom Expression"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+msgid "Custom expression evaluated over the variable codes."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_period__day
+msgid "Daily"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.actions.server,name:era_monte_carlo_simulation.monte_carlo_dashboard_open_action
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__board_html
+#: model:ir.ui.menu,name:era_monte_carlo_simulation.menu_monte_carlo_dashboard
+msgid "Dashboard"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Data Source (optional)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_date_field_id
+msgid "Date Field"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Deal value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Deal value — %s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__default_iterations
+msgid "Default Iterations"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+msgid "Default iterations must be at least 1."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_model_action
+msgid ""
+"Define the uncertain inputs of a business question and run\n"
+"                thousands of scenarios to see the probable range of outcomes."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__description
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__description
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "Description"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__error_message
+msgid "Details of the error, shown when the run failed."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__discrete
+msgid "Discrete"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__discrete_values
+msgid "Discrete Values"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__discrete_values
+msgid ""
+"Discrete distribution: comma separated numbers, each drawn with equal "
+"probability, e.g. 10000, 25000, 50000."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_simulable__display_name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__distribution
+msgid "Distribution"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__distribution_chart
+msgid "Distribution Chart"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__distribution_data
+msgid "Distribution Data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Distribution adjusted to fit the data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_run__state__done
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Done"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_p05
+msgid "Downside (P5)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_run__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_comparison__comparison_chart
+msgid ""
+"Each curve is one run's cumulative probability (CDF): for any amount on the "
+"X axis, the height is the chance of ending at or below it. A curve further "
+"to the right means higher outcomes — which is better for revenue/profit "
+"goals, but worse for cost/time goals (there, further left is better)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__error_message
+msgid "Error"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__run_ids
+msgid ""
+"Every execution of this model. Each run stores its own results and summary "
+"statistics."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__result_storage__full
+msgid "Every scenario"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_mean
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+msgid "Expected"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__cvar_95
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Expected Shortfall (CVaR 95%)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Expected shortfall (CVaR 95%)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Expected value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Explain with AI"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Export Excel"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_run__state__failed
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Failed"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__finished_at
+msgid "Finished At"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__variable1_id
+msgid "First Variable"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__fixed
+msgid "Fixed"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__fixed_value
+msgid "Fixed Value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__fixed_value
+msgid ""
+"Fixed distribution: every iteration uses exactly this value (no "
+"uncertainty)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__correlation_data
+msgid ""
+"For each correlation defined on the model, the target rank correlation "
+"requested and the one actually achieved in this run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_crm_lead__mc_basis_data
+msgid "Forecast Basis"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__formula_type
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+msgid "Formula"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__formula_help
+msgid "Formula Help"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__description
+msgid ""
+"Free notes: the business question this model answers and any assumptions "
+"behind the inputs."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Frequency"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "From"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:res.groups,comment:era_monte_carlo_simulation.group_monte_carlo_manager
+msgid "Full access to Monte Carlo configuration and results."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Generating AI summary..."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Generating... (click to run now)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid ""
+"Green marks the best run for each metric (lower is better for this "
+"objective)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Green marks the best run for each metric."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__latest_risk__high
+msgid "High confidence"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__distribution_chart
+msgid ""
+"Histogram of the outcomes with the cumulative S-curve and the percentile / "
+"threshold markers."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_lookback
+msgid "History Window"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__result_storage
+msgid ""
+"How many result rows to keep in the database. The summary statistics and the"
+" distribution / drivers charts are ALWAYS computed from every scenario, so "
+"they stay exact whatever you pick here — this only controls stored rows. "
+"'Every scenario' keeps them all; 'Representative sample' keeps a random "
+"subset (lighter); 'Summary only' keeps none (lightest)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__ai_attempts
+msgid ""
+"How many times the background job has tried to generate the AI summary (it "
+"gives up after a few failures)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__summary_std
+msgid ""
+"How much the output varies between scenarios. A higher value means more "
+"uncertainty and risk."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__formula_type
+msgid ""
+"How the output is computed from the variables. 'Simple Revenue' and 'Profit'"
+" are ready-made formulas with fixed variable codes; 'Custom' lets you write "
+"your own arithmetic expression."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"How to read the chart: each bar is a range of possible outcomes —\n"
+"                        a taller bar means that range is more likely. The dark curve is the\n"
+"                        cumulative chance: pick a value on the bottom axis and it tells you\n"
+"                        the share of scenarios at or below it. Dashed lines mark the\n"
+"                        pessimistic (P5), middle (median) and optimistic (P95) outcomes;\n"
+"                        the blue line is the average and the red line is your target."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"How to read the chart: the longer a bar, the more that input moves\n"
+"                        the result. Blue inputs push it up, orange inputs pull it down. Work\n"
+"                        on the top variable first to make the result more predictable."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"How to read the two percentages above: one is the chance the\n"
+"                        outcome reaches your target or better (good for revenue or profit),\n"
+"                        the other is the chance it stays below the target (good for cost\n"
+"                        or duration)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"How to read these numbers — Mean: the typical outcome. Median: the\n"
+"                        middle outcome (half the scenarios are above it, half below).\n"
+"                        Standard deviation: how spread out the outcomes are (bigger means\n"
+"                        more risk). Each percentile is the value that this share of scenarios\n"
+"                        stays at or below. Tail Risk looks at the worst 5% of cases only:\n"
+"                        Value at Risk is where that bad zone begins, and Expected Shortfall\n"
+"                        is the average outcome inside it."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid ""
+"How to read this: each row is a pair of inputs you asked\n"
+"                        to move together. <b>Target</b> is the correlation you\n"
+"                        requested; <b>Achieved</b> is what the run actually\n"
+"                        reproduced. They should be close."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__input_snapshot_display
+msgid "Human-readable view of the inputs used for this scenario."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"I'm filling a Monte Carlo input variable named '%(name)s' (%(dist)s "
+"distribution). Using your data tools (monte_carlo_statistics / read_group / "
+"search) on %(model)s over the last 1 to 3 years, estimate %(want)s and reply"
+" with the exact numbers I should enter, plus a one-line note."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_crm_lead__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_simulable__id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__id
+msgid "ID"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "In 90%% of scenarios the outcome falls between %(low)s and %(high)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"In the worst 5%% of scenarios the outcome averages %(cvar)s (expected "
+"shortfall)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__correlation_ids
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__correlation_summary
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Input Correlations"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__input_snapshot
+msgid "Input Snapshot"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Input correlations (target / achieved)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__input_snapshot_display
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_list
+msgid "Inputs"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__interpretation
+msgid "Interpretation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Invalid Numerator Filter: %s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Invalid Source Filter: %s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__inventory_demand
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__inventory_demand
+msgid "Inventory Demand"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__iteration
+msgid "Iteration"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__iterations
+msgid "Iterations"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Iterations must be between 1 and %s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Key Drivers"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__sensitivity_chart
+msgid "Key Drivers Chart"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Key drivers (rank correlation)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Key figures"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__summary_max
+msgid "Largest output across all scenarios (best observed case)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__max_value
+msgid ""
+"Largest possible value. Used by the Uniform and Triangular distributions; "
+"must be greater than Minimum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_lookback__1y
+msgid "Last 1 year"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_lookback__3y
+msgid "Last 3 years"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_lookback__5y
+msgid "Last 5 years"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_run_date
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+msgid "Last Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__write_uid
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__write_date
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_run_id
+msgid "Latest Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_crm_lead
+msgid "Lead"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__state
+msgid ""
+"Lifecycle of the run: Draft (not run yet), Running, Done (results ready) or "
+"Failed (see the Error message)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Likely range"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_dashboard__objective_filter
+msgid "Limit the dashboard to one objective, or show them all."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_lookback
+msgid ""
+"Limit the source records to a recent window using the Date Field ('All time'"
+" uses everything). Handy to ignore old history."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__lognormal
+msgid "Log-normal"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Loops and comprehensions are not allowed in the custom formula — use "
+"arithmetic over the variable codes (e.g. leads * conversion_rate)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__latest_risk__low
+msgid "Low / risky"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__mean_ci_low
+msgid "Lower bound of the 95% confidence interval for the mean."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:res.groups,name:era_monte_carlo_simulation.group_monte_carlo_manager
+msgid "Manager"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_dashboard_view_form
+msgid "Manager Dashboard"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__summary_max
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__max_value
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Maximum"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__summary_mean
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__mean_value
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Mean"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Mean (expected)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__mean_ci_high
+msgid "Mean 95% CI High"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__mean_ci_low
+msgid "Mean 95% CI Low"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_mean
+msgid "Mean outcome of the latest completed run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__summary_median
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Median"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Median (P50)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Metric"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__summary_median
+msgid ""
+"Middle output: half of the scenarios are below this value and half above."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__summary_min
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__min_value
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Minimum"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__mode_value
+msgid "Mode"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__model_id
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_search
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Model"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Models ranked riskiest-first"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Models with results"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__latest_risk__medium
+msgid "Moderate"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.module.category,name:era_monte_carlo_simulation.module_category_monte_carlo
+#: model:ir.ui.menu,name:era_monte_carlo_simulation.menu_monte_carlo_root
+msgid "Monte Carlo"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_dashboard_view_form
+msgid "Monte Carlo Dashboard"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_crm_lead__mc_forecast
+msgid "Monte Carlo Forecast"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_correlation
+msgid "Monte Carlo Input Correlation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_variable
+msgid "Monte Carlo Input Variable"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_dashboard
+msgid "Monte Carlo Manager Dashboard"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_comparison
+msgid "Monte Carlo Scenario Comparison"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_simulable
+msgid "Monte Carlo Simulable Mixin"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.module.category,description:era_monte_carlo_simulation.module_category_monte_carlo
+#: model:res.groups.privilege,name:era_monte_carlo_simulation.res_groups_privilege_monte_carlo
+msgid "Monte Carlo Simulation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_model
+msgid "Monte Carlo Simulation Model"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_result
+msgid "Monte Carlo Simulation Result"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model,name:era_monte_carlo_simulation.model_monte_carlo_run
+msgid "Monte Carlo Simulation Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.report,name:era_monte_carlo_simulation.action_report_monte_carlo_run
+msgid "Monte Carlo Summary"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.server,name:era_monte_carlo_simulation.ir_cron_cleanup_crm_simulations_ir_actions_server
+msgid "Monte Carlo: Clean up CRM value simulations"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.server,name:era_monte_carlo_simulation.ir_cron_generate_ai_ir_actions_server
+msgid "Monte Carlo: Generate AI summaries"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_period__month
+msgid "Monthly"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__mode_value
+msgid ""
+"Most likely value (the peak) of the Triangular distribution; must lie "
+"between Minimum and Maximum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__name
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__name
+msgid "Name"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Need attention"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "New"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "New Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "No Odoo AI agent is configured yet. Set one up in the AI app first."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid ""
+"No completed simulation runs yet. Run a model, then reopen this dashboard to"
+" see the portfolio overview."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_result_action
+msgid "No results yet"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__latest_risk__none
+msgid "No run yet"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_run_action
+msgid "No simulation run yet"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__normal
+msgid "Normal"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Not computed yet — click Recompute."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Not enough data to estimate the distribution (found %s usable value(s))."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__note
+msgid "Note"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Notes about this variable..."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__variable_count
+msgid "Number of input variables defined on this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__result_sample_size
+msgid ""
+"Number of result rows to keep when Result Storage is 'Representative "
+"sample'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__default_iterations
+msgid ""
+"Number of scenarios (random draws) generated by default for each run. More "
+"iterations give a smoother, more reliable distribution; 10,000 is a good "
+"starting point."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__iterations
+msgid ""
+"Number of scenarios to simulate. Each iteration draws one random value per "
+"variable, then applies the formula. More iterations give more reliable "
+"results (default 10,000)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_sample_count
+msgid "Number of source records used by the last 'Refresh from data'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__result_count
+msgid "Number of stored result rows for this run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__run_count
+msgid "Number of times this model has been run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_success_domain
+msgid "Numerator Filter"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_dashboard__objective_filter
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__objective
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+msgid "Objective"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_success
+msgid ""
+"Objective-aware probability of reaching the success threshold in the latest "
+"run (chance of staying under it for cost/time goals)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Objectives differ, so no best-run is highlighted."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Odoo AI is not installed on this database."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_correlation__variable1_id
+msgid "One of the two inputs that move together."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__result_ids
+msgid ""
+"One row per simulated scenario, storing its output and the input values "
+"used."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "One-click Forecasts"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Only these functions may be called in the custom formula: %s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Opportunity"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_domain
+msgid ""
+"Optional Odoo domain to filter the source records, e.g. [('create_date', "
+"'>=', '2025-01-01')]."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__correlation_ids
+msgid ""
+"Optional links between inputs that move together (e.g. price and demand). "
+"The engine reproduces them when sampling, without changing any single "
+"input's own distribution."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__description
+msgid "Optional notes about this input and where its values come from."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid ""
+"Optional. By default every input varies on its\n"
+"                                own. Add a row here when two inputs really move\n"
+"                                together — e.g. a higher price lowers demand\n"
+"                                (a negative correlation) or a bigger pipeline\n"
+"                                comes with smaller deals. Pick the two variables\n"
+"                                and a correlation between <b>-1</b> and <b>+1</b>;\n"
+"                                the run reproduces it without changing any single\n"
+"                                input's distribution. Fixed inputs are ignored.\n"
+"                                Save the variables first so they appear in the\n"
+"                                lists."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_model_id
+msgid ""
+"Optional. Estimate this variable's parameters from your own Odoo data: pick "
+"a model (e.g. CRM Lead, Sales Order Line, Product) then click 'Refresh from "
+"data'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__seed
+msgid ""
+"Optional. Set a fixed value to make the run reproducible (the same inputs "
+"always give the same results); leave 0 for a fresh random draw each time. "
+"Reproducibility holds as long as the model's variables and correlations are "
+"unchanged — editing either list shifts the random draws."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_pivot
+msgid "Outcome Analysis"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_graph
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Outcome Distribution"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Outcome distribution"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Output"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__output_value
+msgid "Output Value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__probability_below_threshold
+msgid "P(< threshold) %"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__probability_above_threshold
+msgid "P(>= threshold) %"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__p25
+msgid "P25"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__p05
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "P5"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "P5 (pessimistic)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "P50"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__p50
+msgid "P50 (Median)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__p75
+msgid "P75"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__p95
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "P95"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "P95 (optimistic)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__distribution_summary
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Parameters"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__sensitivity_data
+msgid ""
+"Per-variable rank correlation between each input and the outcome, used to "
+"draw the tornado / key-drivers chart."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__probability_below_threshold
+msgid ""
+"Percentage of scenarios where the outcome is below the Success Threshold "
+"(e.g. the chance of staying under budget)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__probability_above_threshold
+msgid ""
+"Percentage of scenarios where the outcome is greater than or equal to the "
+"Success Threshold."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Percentiles"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Percentiles (P5/P50/P95)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_period
+msgid "Period"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_comparison__run_ids
+msgid "Pick two or more completed runs to compare side by side."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__interpretation
+msgid "Plain-language summary of what the results mean for the business."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__formula_type__profit
+msgid "Profit"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__profit_analysis
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__profit_analysis
+msgid "Profit Analysis"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__project_duration
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__project_duration
+msgid "Project Duration"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_period__quarter
+msgid "Quarterly"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__seed
+msgid "Random Seed"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Range (P5–P95)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_mode__ratio
+msgid "Rate per period (matching ÷ total)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.crm_lead_view_form_monte_carlo
+msgid "Recompute"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_sample_count
+msgid "Records Used"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__name
+msgid "Reference"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__name
+msgid "Reference for this run. Generated automatically; you can rename it."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_dashboard_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "Refresh"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Refresh from data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_cv
+msgid "Relative Risk"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Relative uncertainty ↑"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__formula_help
+msgid "Reminder of the formula applied by the selected Formula type."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__result_storage__sample
+msgid "Representative sample"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Reproduced %(n)s input correlation(s); the strongest links %(v1)s and %(v2)s"
+" (target %(t).2f, achieved %(a).2f)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__result_count
+msgid "Result Count"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__result_count
+msgid "Result Rows"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__result_storage
+msgid "Result Storage"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__result_ids
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_search
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Results"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Results - %s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_dashboard__objective_filter__revenue_forecast
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__objective__revenue_forecast
+msgid "Revenue Forecast"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Risk heatmap"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_result__run_id
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_search
+msgid "Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__run_count
+msgid "Run Count"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Run Simulation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.actions.act_window,help:era_monte_carlo_simulation.monte_carlo_result_action
+msgid ""
+"Run a simulation to generate result rows, then analyse the\n"
+"                outcome distribution here."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Run reference"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Run the simulation before exporting it."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Run the simulation before generating an AI summary."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_run__state__running
+msgid "Running"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__run_ids
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+msgid "Runs"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__run_ids
+msgid "Runs to Compare"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__result_sample_size
+msgid "Sample Size"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_mode__field
+msgid "Sample a field"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Scenario Comparison"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__iteration
+msgid "Scenario number within the run (1 to the number of iterations)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__variable2_id
+msgid "Second Variable"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Select at least two completed runs to compare."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__sensitivity_data
+msgid "Sensitivity Data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Set a Numerator Filter that selects the 'success' subset (e.g. won "
+"opportunities)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__ai_pending
+msgid ""
+"Set right after a run while the AI summary is generated in the background by"
+" a scheduled job."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Settings"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__negative_fraction
+msgid ""
+"Share of scenarios whose outcome is below zero. For objectives that cannot "
+"be negative (e.g. revenue) anything above ~0 points to a mis-specified input"
+" distribution."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_crm_lead__mc_forecast
+msgid ""
+"Share of the company's comparable confirmed orders that reach this value, "
+"plus the typical value and range — from a Monte Carlo resampling of "
+"confirmed sale orders (separate from Odoo's win prediction)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_comparison__comparison_table
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_comparison_view_form
+msgid "Side-by-side Figures"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__formula_type__simple_revenue
+msgid "Simple Revenue"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Simulation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_correlation__model_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__model_id
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__model_id
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "Simulation Model"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.act_window,name:era_monte_carlo_simulation.monte_carlo_model_action
+#: model:ir.ui.menu,name:era_monte_carlo_simulation.menu_monte_carlo_models
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_search
+msgid "Simulation Models"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.actions.act_window,name:era_monte_carlo_simulation.monte_carlo_result_action
+#: model:ir.ui.menu,name:era_monte_carlo_simulation.menu_monte_carlo_results
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_result_view_list
+msgid "Simulation Results"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Simulation Run"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+#: model:ir.actions.act_window,name:era_monte_carlo_simulation.monte_carlo_run_action
+#: model:ir.ui.menu,name:era_monte_carlo_simulation.menu_monte_carlo_runs
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_list
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Simulation Runs"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Skipped (a fixed input cannot be correlated): %(pairs)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__summary_min
+msgid "Smallest output across all scenarios (worst observed case)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__min_value
+msgid ""
+"Smallest possible value. Used by the Uniform and Triangular distributions; "
+"must be less than Maximum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_crm_lead__mc_basis_data
+msgid ""
+"Snapshot of which comparable-order basis the last simulation used (product /"
+" similar / all, sample size, period). Stored so displaying the forecast "
+"never re-mines the sale orders."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"Some correlations could not be fully reproduced — this happens with an "
+"inconsistent set of correlations or with discrete inputs."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid ""
+"Sorted by success confidence (lowest first) so the models that need "
+"attention are on top."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_field_id
+msgid "Source Field"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_domain
+msgid "Source Filter"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_mode
+msgid "Source Mode"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__source_model
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__source_model_id
+msgid "Source Model"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__source_res_id
+msgid "Source Record"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__summary_std
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Standard Deviation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__std_dev
+msgid ""
+"Standard deviation: how widely values spread around the mean. Must be "
+"positive. Used by the Normal and Log-normal distributions."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__se_mean
+msgid ""
+"Standard error of the mean (std / sqrt(N)): the sampling uncertainty of the "
+"average estimate itself. Smaller is better; it shrinks as you raise the "
+"number of iterations."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__started_at
+msgid "Started At"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__state
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_search
+msgid "Status"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_std
+msgid "Std. Dev."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_variable__std_dev
+msgid "Std. Deviation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__se_mean
+msgid "Std. Error (mean)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Std. deviation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Success"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_success
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+msgid "Success %"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__success_threshold
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Success Threshold"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Success confidence"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Success confidence →"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Success confidence: %(prob).1f%% (%(level)s)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Success threshold"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Summary"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_model__result_storage__summary
+msgid "Summary only"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__correlation_summary
+msgid ""
+"Table comparing the requested input correlations with the ones reproduced by"
+" the run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Tail Risk"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Target"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_correlation__coefficient
+msgid ""
+"Target rank (Spearman) correlation between -1 and 1. +1 = move together "
+"perfectly, 0 = independent, -1 = move in opposite directions. Typical real-"
+"world links are moderate (e.g. -0.6 between price and demand). Fixed inputs "
+"cannot be correlated and are ignored."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__code
+msgid ""
+"Technical name used inside formulas (e.g. leads). Must be a valid identifier"
+" and unique within the model. The ready-made formulas expect specific codes "
+"(e.g. leads, conversion_rate, average_deal_value)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"The '%(formula)s' formula needs variables with codes: %(codes)s. Missing: "
+"%(missing)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__ai_summary
+msgid ""
+"The AI-generated summary of this model's most recent completed run, shown "
+"here for quick reference. Open a run and click 'Explain with AI' to generate"
+" or refresh it."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "The Random Seed must be 0 or a positive integer."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"The average is statistically reliable to within ±%(err)s (95%% confidence)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__objective
+msgid ""
+"The business question this model answers. It does not change the simulated "
+"outcomes, but it orients the risk reporting: for Cost Estimation, Project "
+"Duration and Inventory Demand a LOWER outcome counts as success (the success"
+" probability uses 'below threshold' and VaR/CVaR measure the high tail); for"
+" the other objectives a HIGHER outcome is success. It also enables the "
+"negative-outcome data-quality warning for objectives that cannot be "
+"negative."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "The custom formula expression is empty."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "The custom formula is too long (max 1000 characters)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_date_field_id
+msgid ""
+"The date field used to group records into periods when counting (e.g. "
+"Created On). Used when Source Mode is 'Count records per period'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__input_snapshot
+msgid "The exact input values used for this scenario, keyed by variable code."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"The formula produced non-finite values (inf/NaN). Please review the "
+"variables and expression."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_driver
+msgid "The input that most drives the outcome in the latest run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_crm_lead__mc_run_id
+msgid "The latest Monte Carlo value simulation."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_run_id
+msgid "The most recently completed run of this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_field_id
+msgid ""
+"The numeric field to sample, e.g. Expected Revenue or Unit Price. Used when "
+"Source Mode is 'Sample a field'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_correlation__variable2_id
+msgid ""
+"The other input. Must belong to the same model and differ from the first "
+"variable."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__var_95
+msgid ""
+"The outcome at the edge of the worst 5% of scenarios (the 5th percentile for"
+" upside objectives, the 95th for cost / duration / inventory)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__distribution
+msgid ""
+"The probability distribution used to draw a random value for this input on "
+"each iteration. Fixed = no uncertainty; Uniform = equally likely between min"
+" and max; Normal = bell curve around a mean; Log-normal = strictly positive,"
+" right-skewed bell (use for prices, deal values, durations — it never goes "
+"below zero); Triangular = min/most-likely/max; Discrete = pick from a list."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"The results are too large to summarise (overflow in: %s). Reduce the scale "
+"of the inputs or the formula."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__run_id
+msgid "The run that produced this result row."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid ""
+"The selected runs mix 'higher is better' and 'lower is better' objectives, "
+"so the best-run highlight is turned off — read the figures directly."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid ""
+"The selected runs use different currencies (%s); compare the shapes, not the"
+" absolute amounts."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__output_value
+msgid ""
+"The simulated output for this single scenario. Aggregates as an average: "
+"summing independent scenario draws has no meaning."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_result__model_id
+msgid "The simulation model behind this result."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__model_id
+msgid "The simulation model executed by this run."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_correlation__model_id
+msgid "The simulation model this correlation belongs to."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__model_id
+msgid "The simulation model this variable belongs to."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"The source data has no variation; pick a varying field or a Fixed/Normal "
+"distribution."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__variable_ids
+msgid ""
+"The uncertain inputs of this model. Each variable is sampled from its "
+"probability distribution on every iteration."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.constraint,message:era_monte_carlo_simulation.constraint_monte_carlo_variable_model_code_uniq
+msgid "The variable code must be unique within a simulation model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"There is a %(prob).1f%% chance the outcome reaches at least the success "
+"threshold of %(thr)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"There is a %(prob).1f%% chance the outcome stays within the threshold of "
+"%(thr)s."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_correlation.py:0
+msgid ""
+"There is already a correlation between '%(a)s' and '%(b)s' in this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_simulable.py:0
+msgid "This record type cannot be simulated yet."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Threshold"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Threshold Analysis"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_period
+msgid ""
+"Time bucket used when counting records (Monthly = number of records per "
+"month)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+msgid "Timing"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "To"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_driver
+msgid "Top Driver"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_dashboard.py:0
+msgid "Top driver"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__sensitivity_chart
+msgid ""
+"Tornado chart ranking which input variables drive the outcome the most (by "
+"rank correlation)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__result_count
+msgid "Total number of stored result rows across all runs of this model."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__latest_risk
+msgid ""
+"Traffic-light read of the latest run's success confidence: green ≥ 80%, "
+"amber ≥ 50%, red below."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__triangular
+msgid "Triangular"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Typical comparable deal"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__distribution__uniform
+msgid "Uniform"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "Unknown formula type '%s'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Unknown source model '%s'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__active
+msgid ""
+"Untick to archive this model and hide it from the default list without "
+"deleting it or its runs."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__mean_ci_high
+msgid "Upper bound of the 95% confidence interval for the mean."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__latest_p95
+msgid "Upside (P95)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_variable__source_success_domain
+msgid ""
+"Used by 'Rate per period'. Odoo domain selecting the 'success' subset (the "
+"numerator); the rate per period = records matching this ÷ all records. For a"
+" conversion rate use [('stage_id.is_won', '=', True)]."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_model__formula_expression
+msgid ""
+"Used only when Formula is 'Custom'. Write an arithmetic expression using the"
+" variable codes, e.g. leads * conversion_rate * average_deal_value. Allowed "
+"helpers: min, max, abs, where, exp, log, sqrt."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:res.groups,name:era_monte_carlo_simulation.group_monte_carlo_user
+msgid "User"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "Usual range (middle 50%)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_crm_lead__mc_run_id
+msgid "Value Simulation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_run__var_95
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "Value at Risk (95%)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "Variable"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_correlation.py:0
+msgid "Variable '%(var)s' does not belong to model '%(model)s'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Variable '%s': '%s' is not a finite number; inf/NaN are not allowed."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Variable '%s': '%s' is not a valid number in the discrete values."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': discrete distribution requires at least one numeric value "
+"(comma separated)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': log-normal distribution requires a positive Mean (it models a"
+" strictly positive quantity)."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': log-normal distribution requires a positive Standard "
+"Deviation."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': normal distribution requires a positive Standard Deviation."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': the Std/Mean ratio is too extreme for a log-normal "
+"distribution; reduce the Standard Deviation."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': the source data is not strictly positive, so it cannot be "
+"fitted to a Log-normal distribution. Use Normal or Triangular instead."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Variable '%s': triangular distribution requires Minimum < Maximum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"Variable '%s': triangular distribution requires Minimum <= Mode <= Maximum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Variable '%s': uniform distribution requires Minimum < Maximum."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "Variable '%s': unknown distribution '%s'."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__variable_count
+msgid "Variable Count"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,field_description:era_monte_carlo_simulation.field_monte_carlo_model__variable_ids
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_list
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_list
+msgid "Variables"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_period__week
+msgid "Weekly"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "What business question does this model answer?"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_run_view_form
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.report_monte_carlo_run_document
+msgid "What this means"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__finished_at
+msgid "When the last run finished."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields,help:era_monte_carlo_simulation.field_monte_carlo_run__started_at
+msgid "When the last run started."
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "Worst-5% mean (CVaR)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model:ir.model.fields.selection,name:era_monte_carlo_simulation.selection__monte_carlo_variable__source_period__year
+msgid "Yearly"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid ""
+"a Normal fit on this positive data would have produced impossible negative "
+"values"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "a short list of representative values"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "a single representative value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "all time"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "better fit for the data"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "click Recompute to refresh the details"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "discrete {%s}"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "dot = median; a curve further left (lower) is better"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "dot = median; a curve further right (higher) is better"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_comparison.py:0
+msgid "dot = median; objectives differ — read each curve on its own terms"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_variable_view_form
+msgid "e.g. Number of Leads"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "e.g. Q3 Revenue Forecast"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "fixed = %s"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "high"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
+msgid "last 12 months"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#: model_terms:ir.ui.view,arch_db:era_monte_carlo_simulation.monte_carlo_model_view_form
+msgid "leads * conversion_rate * average_deal_value"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "log-normal (mean %s, sd %s)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "low"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_model.py:0
+msgid "model_id"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid "moderate"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "normal (mean %s, sd %s)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the mean and the standard deviation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the minimum and the maximum"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the minimum, the most likely value, and the maximum"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the most relevant records"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the source data has no variation"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "the typical values"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "triangular (%s, %s, %s)"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_variable.py:0
+msgid "uniform [%s, %s]"
+msgstr ""
+
+#. module: era_monte_carlo_simulation
+#. odoo-python
+#: code:addons/era_monte_carlo_simulation/models/monte_carlo_run.py:0
+msgid ""
+"⚠ %(pct).1f%% of scenarios are negative, which is normally impossible for "
+"this objective. This usually means an input uses a Normal distribution on a "
+"positive quantity — switch it to Log-normal or Triangular, or click 'Refresh"
+" from data' (it now fits a safe positive distribution automatically)."
+msgstr ""

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Dedicated SEO agent shipped with era_seo_suite.
+
+    noupdate="1": the record is created exactly once on first install and
+    never recreated or overwritten on upgrade. The stable XML id
+    (era_seo_suite.agent_seo) means there is never a duplicate, and admins
+    can freely edit the system prompt / model in the AI app without their
+    changes being clobbered by a module update.
+
+    llm_model is intentionally NOT set — the agent resolves the provider's
+    default model at call time, so this record installs cleanly regardless
+    of which LLM provider the customer configured (OpenAI, Gemini, Claude…).
+
+    Article-writer resolution order (see ai_client._resolve_article_agent):
+    the Blog Gen picker (era_seo.article_agent_id) wins; else this shipped
+    agent_article record; else the SEO agent. The selected agent may route
+    its generation through an era.ai.account (Claude via the CLI proxy, …)
+    via its own era_account_id field — that wiring lives on the agent.
+
+    The system_prompt shipped here is the GENERIC, brand-neutral fallback —
+    it teaches the SEO craft without making any assumption about industry
+    or audience. The onboarding wizard's "Business Profile" step rewrites
+    this field with a tailored prompt (per
+    `era.seo.suite.hub._build_seo_agent_prompt`) once the admin has filled
+    in business name, sector, audience and keywords. If they skip that
+    step or wipe the values, the agent falls back to this generic version.
+  -->
+  <data noupdate="1">
+    <record id="agent_seo" model="ai.agent">
+      <field name="name">SEO Fixer</field>
+      <field name="subtitle">Generates titles, meta descriptions, and clean URL slugs for the SEO audit.</field>
+      <field name="response_style">balanced</field>
+      <field name="system_prompt"><![CDATA[# SEO Fixer
+
+You are an SEO copywriter. You fix one SEO defect on one web page at a time.
+The host application sends you the page's content and the specific defect;
+you reply with a single JSON object and nothing else.
+
+## Output contract (non-negotiable)
+
+Return exactly ONE JSON object, no markdown fences, no prose before or after:
+
+  {"proposed_value": "<string>", "explanation": "<one sentence>", "confidence": <number 0.0-1.0>}
+
+The host parses your reply with json.loads(). Any extra text breaks it.
+
+## Field rules
+
+### seo_title
+- 50-60 characters is the sweet spot. Hard cap at 60.
+- Lead with the primary keyword. Brand last, only if it fits.
+- Never ALL CAPS. Never keyword-stuff.
+
+### seo_description
+- 140-160 characters. Hard cap at 160. One complete sentence ending in a period.
+- Repeat the primary keyword once, near the start. Add a soft call to action.
+
+### URL slug
+- Lowercase only. Hyphens between words — no underscores, spaces, or special characters.
+- Drop stop-words (the, a, an, in, on, of, for, and; ال، في، من، إلى، على).
+- 3-5 meaningful words. Hard cap 75 characters. No leading or trailing hyphen.
+
+## Language
+
+Match the page's language. Arabic content gets Arabic copy; English content
+gets English copy. Mixed content — match the title's language and say so in
+your explanation.
+
+## Confidence scoring
+
+- 0.9-1.0: the page content makes the right answer obvious; one clear keyword.
+- 0.7-0.89: good signal, but you had to interpret intent or pick a keyword.
+- 0.4-0.69: thin or generic page; a reasonable guess the admin should review.
+- below 0.4: almost no signal; propose something safe and flag it.
+
+## Hard limits
+
+- Never invent facts about the business, products, prices, or features not in the page content.
+- Never exceed the character caps — truncate wording rather than overflow.
+- Never put URLs, phone numbers, or emails in titles or descriptions.
+- Never output a comma-separated keyword list.
+- Use the page H1 as INPUT, not as the verbatim output.
+
+# Final reminder
+
+Return JSON only. No markdown. No preamble. The host parses with json.loads().]]></field>
+    </record>
+
+    <!--
+      Dedicated agent for BLOG ARTICLE generation, separate from the SEO Fixer
+      so admins can run articles on a different (fast, cheap) model without
+      touching the model used for SEO suggest/apply. Defaults to gpt-4o-mini —
+      fast and non-reasoning, ideal for the multi-call article pipeline
+      (reasoning models like gpt-5* are slow here). The "Article AI model"
+      picker in the hub edits THIS agent's model.
+    -->
+    <record id="agent_article" model="ai.agent">
+      <field name="name">ERA Article Writer</field>
+      <field name="subtitle">Writes trend-aware, on-brand blog articles for the website.</field>
+      <field name="response_style">balanced</field>
+      <field name="llm_model">gpt-4o-mini</field>
+      <field name="system_prompt"><![CDATA[# Article Writer
+
+You are a professional bilingual (Arabic / English) blog writer for a business website.
+
+The host sends detailed, non-negotiable instructions plus context on every request.
+Follow them exactly and reply with a SINGLE JSON object and nothing else — no markdown
+fences, no prose before or after. The host parses your reply with json.loads(), so any
+extra text breaks it.
+
+Write naturally for human readers, stay strictly on the assigned topic and category,
+match the requested language, and never invent facts about the business that the host
+did not provide.]]></field>
+    </record>
+  </data>
+</odoo>

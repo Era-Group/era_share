@@ -1,0 +1,961 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_po_translator
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-13 12:05+0000\n"
+"PO-Revision-Date: 2026-05-13 12:05+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "%d new terms added from source code."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "%d terms loaded from %s"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "%d terms translated."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid ""
+"<strong>Note:</strong> Auto-translate requires the\n"
+"                        <code>deep-translator</code> Python package.\n"
+"                        Install it with: <code>pip install deep-translator</code>"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Apply"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Apply Translation"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Auto-Translate All"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Auto-Translate Complete"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__auto_translate
+msgid "Auto-Translate on Open"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Auto-Translate on Open (requires deep-translator)"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Auto-translate all untranslated terms using Google Translate?"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_quick_translate_wizard__auto_translate
+msgid ""
+"Automatically fill in all untranslated terms using Google Translate when the"
+" session opens."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__chosen_translation
+msgid "Chosen Translation"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.actions.act_window,help:era_po_translator.action_translation_session
+msgid ""
+"Click <b>Quick Translate</b> in the top menu to start a new\n"
+"                translation session for any installed module."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "Close"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Comment"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__create_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__create_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__create_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__create_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__create_date
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__create_date
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__create_date
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__create_date
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__display_name
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__display_name
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__display_name
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__display_name
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields.selection,name:era_po_translator.selection__translation_session__state__done
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Done"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields.selection,name:era_po_translator.selection__translation_session__state__draft
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Draft"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Fetch Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "Get Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Get Translation Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "Google Translate error: %s"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__id
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__id
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__id
+msgid "ID"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Import Complete"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields.selection,name:era_po_translator.selection__translation_session__state__in_progress
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "In Progress"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid ""
+"Language \"%s\" is not installed in Odoo.\n"
+"Go to Settings → Translations → Languages to add it first."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__source_lang_id
+msgid "Language of the original source text"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_quick_translate_wizard__source_lang_id
+msgid "Language of the original source text."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Last Updated"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__write_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__write_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__write_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__write_uid
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__write_date
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__write_date
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__write_date
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__write_date
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Load / Reload PO File"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__module_id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__module_id
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Module"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid ""
+"Module \"%s\" is a standard Odoo module — translations were applied directly"
+" to the database without modifying any files."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Module \"%s\" not found on this server."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Module & Languages"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__module_name
+msgid "Module Technical Name"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "New Session"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No new terms found — session is up to date."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No translatable terms found in module \"%s\"."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.actions.act_window,help:era_po_translator.action_translation_session
+msgid "No translation sessions yet."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Open Session"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Optional session name"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__comment
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "PO Comment"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "PO File Loaded"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.ui.menu,name:era_po_translator.menu_po_translator_root
+msgid "PO Translator"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "Please select or enter a translation."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Progress"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Progress %"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__progress
+msgid "Progress (%)"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.actions.act_window,name:era_po_translator.action_quick_translate_wizard
+#: model:ir.actions.server,name:era_po_translator.action_open_quick_translate_from_list
+#: model:ir.ui.menu,name:era_po_translator.menu_quick_translate
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Quick Translate"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_quick_translate_wizard
+msgid "Quick Translate Wizard"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Re-scan the module source code and add any new untranslated terms?"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Reload PO File"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Rescan Complete"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Rescan Module Source"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Save & Import into Odoo"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Save translations to file and import into Odoo?"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Select a suggestion above or type here..."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select an installed module..."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select source language..."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Select target language..."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_quick_translate_wizard__module_id
+msgid "Select the installed module whose translations you want to edit."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__session_id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__session_id
+msgid "Session"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__session_name
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__name
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Session Name"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__source_lang_id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__source_lang_id
+msgid "Source Language"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__source_lang
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__source_lang
+msgid "Source Language Code"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__source_text
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Source Text"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__msgid
+msgid "Source Text (msgid)"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Source code scanned but no translatable terms found in \"%s\"."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid "Source text is empty."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Start a Translation Session"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__state
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Status"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Suggest"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__suggestion
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Suggested Translation"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__suggestion_ids
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_quick_translate_wizard__target_lang_id
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__target_lang_id
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Target Language"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__target_lang_code
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__target_lang_code
+msgid "Target Language Code"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard__line_id
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Term"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Terms"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid ""
+"The deep_translator Python package is required for auto-translation.\n"
+"\n"
+"Install it with:\n"
+"  pip install deep-translator"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+msgid ""
+"The deep_translator Python package is required.\n"
+"\n"
+"Install it with:  pip install deep-translator"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_quick_translate_wizard__target_lang_id
+msgid "The language you are translating into."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__target_lang_code
+msgid "This field is used to set/get locales for user"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "This will reload all terms and discard current changes. Continue?"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid ""
+"This will reload all terms from the PO file and discard unsaved changes. "
+"Continue?"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Total"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__total_count
+msgid "Total Terms"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__translated_count
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__is_translated
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+msgid "Translated"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Translation"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session_line__msgstr
+msgid "Translation (msgstr)"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/wizard/quick_translate_wizard.py:0
+#: model:ir.model,name:era_po_translator.model_translation_session
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Translation Session"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_translation_session_line
+msgid "Translation Session Line"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.actions.act_window,name:era_po_translator.action_translation_session
+#: model:ir.ui.menu,name:era_po_translator.menu_translation_sessions
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_list
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_search
+msgid "Translation Sessions"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_suggest_translation_wizard_line
+msgid "Translation Suggestion"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_line.py:0
+#: code:addons/era_po_translator/wizard/suggest_translation_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Translation Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_suggest_translation_wizard
+msgid "Translation Suggestions Wizard"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_line_form_inline
+msgid "Translation Term"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__line_ids
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Translation Terms"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Translation to Apply"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Translations saved to %s and imported into Odoo."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,help:era_po_translator.field_translation_session__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__untranslated_count
+msgid "Untranslated"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Use This"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_suggest_translation_wizard_line__wizard_id
+msgid "Wizard"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "%d terms queued for background translation. The page will refresh automatically."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Auto-Translate"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Auto-translate requires the deep-translator Python package. Install it with: pip install deep-translator"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.action_translation_session
+msgid "Click Quick Translate in the top menu to start a new translation session for any installed module."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Language \"%s\" is not installed in Odoo.\nGo to Settings → Translations → Languages to add it first."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+#, python-format
+msgid "Module \"%s\" is a standard Odoo module — translations were applied directly to the database without modifying any files."
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__module_id
+msgid "Module"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No PO/POT file found. The i18n/ directory was created. You can add terms manually."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "No untranslated terms found."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_quick_translate_wizard_form
+msgid "Note:"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Rescan Source"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__name
+msgid "Session Name"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__target_lang_id
+msgid "Target Language"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "The deep_translator Python package is required for auto-translation.\n\nInstall it with:\n  pip install deep-translator"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "The deep_translator Python package is required.\n\nInstall it with:  pip install deep-translator"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "This will reload all terms from the PO file and discard unsaved changes. Continue?"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model.fields,field_description:era_po_translator.field_translation_session__translated_count
+msgid "Translated"
+msgstr ""
+
+#. module: era_po_translator
+#: model:ir.model,name:era_po_translator.model_translation_session
+msgid "Translation Session"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Translation Started"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_suggest_translation_wizard_form
+msgid "Translation Suggestions"
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.action_translation_session
+msgid "Use the Quick Translate button to start a new translation session for any installed module."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "⏳ Translating…"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Stopped"
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Background translation has been stopped."
+msgstr ""
+
+#. module: era_po_translator
+#. odoo-python
+#: code:addons/era_po_translator/models/translation_session.py:0
+msgid "Background translation stopped by user."
+msgstr ""
+
+#. module: era_po_translator
+#: model_terms:ir.ui.view,arch_db:era_po_translator.view_translation_session_form
+msgid "Stop Translation"
+msgstr ""

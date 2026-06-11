@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_cleanup_crm_simulations" model="ir.cron">
+            <field name="name">Monte Carlo: Clean up CRM value simulations</field>
+            <field name="model_id" ref="model_monte_carlo_model"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_cleanup_crm_simulations()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="priority">9</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Natural-growth uplift (%) applied to past deal values when
+             forecasting an opportunity's value. Editable here. -->
+        <record id="mc_growth_pct_param" model="ir.config_parameter">
+            <field name="key">era_monte_carlo_simulation.mc_growth_pct</field>
+            <field name="value">7</field>
+        </record>
+    </data>
+</odoo>

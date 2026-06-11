@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "ERA EraSpy Base",
+    "name": "ERA Era Enrich Base",
     "version": "19.0.1.0.0",
     "category": "Tools",
-    "summary": "Shared EraSpy client and settings",
+    "summary": "Shared Era Enrich client and settings",
     'images': ["static/description/icon.png"],
     "icon": "static/description/icon.png",
     "description": (
-        "EraSpy Base provides the shared API client, configuration settings, and backend assets "
-        "used by all EraSpy add-ons. It manages the proxy/base URL, rate-limit controls, and "
+        "Era Enrich Base provides the shared API client, configuration settings, and backend assets "
+        "used by all Era Enrich add-ons. It manages the proxy/base URL, rate-limit controls, and "
         "callback endpoints used to receive asynchronous results. Install this module first, "
         "then add CRM or Recruitment extensions as needed."
     ),

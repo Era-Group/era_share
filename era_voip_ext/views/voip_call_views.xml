@@ -4,18 +4,46 @@
         <field name="name">voip.call.form.recording.link</field>
         <field name="model">voip.call</field>
         <field name="inherit_id" ref="voip.voip_call_view_form"/>
+        <field name="priority" eval="20"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='transcript']" position="attributes">
                 <attribute name="widget">text</attribute>
                 <attribute name="style">white-space: pre-wrap;</attribute>
             </xpath>
             <xpath expr="//sheet" position="inside">
-                <group name="transcription_actions">
-                    <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
-                </group>
                 <group name="recording_link_group">
                     <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
                 </group>
+            </xpath>
+            <xpath expr="//page[@name='transcript']" position="inside">
+                <div class="oe_button_box">
+                    <button name="action_retranscript" type="object" string="Retranscript" class="btn-secondary"/>
+                </div>
+            </xpath>
+            <xpath expr="//notebook/page[1]" position="before">
+                <page string="تحليل المكالمة" name="call_analysis">
+                    <div class="oe_button_box">
+                        <button name="action_reanalyze_call" type="object" string="Re-analyze Call" class="btn-secondary"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="analysis_status"/>
+                            <field name="sales_evaluation"/>
+                        </group>
+                        <group>
+                            <field name="sales_evaluation_reason"/>
+                        </group>
+                    </group>
+                    <group string="ملخص المكالمة" col="1">
+                        <field name="call_summary_long" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
+                    </group>
+                    <group string="المعوقات" col="1">
+                        <field name="call_obstacles" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
+                    </group>
+                    <group string="التوصيات" col="1">
+                        <field name="call_recommendations" nolabel="1" colspan="2" widget="text" style="white-space: pre-wrap; width: 100%;"/>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>
@@ -27,7 +55,46 @@
         <field name="arch" type="xml">
             <xpath expr="//tree|//list" position="inside">
                 <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
+                <field name="sales_evaluation" string="تقييم" optional="show"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="view_voip_call_form_hr_applications_access_fix" model="ir.ui.view">
+        <field name="name">voip.call.form.hr.applications.access.fix</field>
+        <field name="model">voip.call</field>
+        <field name="inherit_id" ref="voip_hr_recruitment.voip_call_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='voip_action_view_applications']" position="attributes">
+                <attribute name="groups">hr_recruitment.group_hr_recruitment_interviewer</attribute>
+            </xpath>
+            <xpath expr="//button[@name='voip_action_view_applications']/field[@name='application_count']" position="attributes">
+                <attribute name="groups">hr_recruitment.group_hr_recruitment_interviewer</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_voip_call_bulk_retranscript" model="ir.actions.server">
+        <field name="name">Bulk Transcript Calls</field>
+        <field name="model_id" ref="voip.model_voip_call"/>
+        <field name="binding_model_id" ref="voip.model_voip_call"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_retranscript_bulk()
+        </field>
+    </record>
+
+    <record id="action_voip_call_bulk_reanalyze" model="ir.actions.server">
+        <field name="name">Bulk Analyze Calls</field>
+        <field name="model_id" ref="voip.model_voip_call"/>
+        <field name="binding_model_id" ref="voip.model_voip_call"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_reanalyze_bulk()
         </field>
     </record>
 

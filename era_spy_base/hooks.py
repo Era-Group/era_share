@@ -2,6 +2,7 @@
 import functools
 import inspect
 import logging
+import warnings
 
 
 _logger = logging.getLogger(__name__)
@@ -40,7 +41,14 @@ def _patch_ws_terminate(ws_class):
 
 
 def post_load():
-    """Monkey patch bus websocket terminate to tolerate presence update races."""
+    """Suppress known third-party DeprecationWarnings and patch bus websocket."""
+    # sadeem_waha_whatsapp uses type='json' routes (deprecated alias in Odoo 19.0).
+    # Suppress the noise since it's a vendor module we cannot modify.
+    warnings.filterwarnings(
+        'ignore',
+        message=r".*type='json'.*deprecated alias.*",
+        category=DeprecationWarning,
+    )
     try:
         from odoo.addons.bus import websocket as bus_websocket
     except Exception as exc:

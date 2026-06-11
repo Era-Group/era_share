@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="view_translation_session_form" model="ir.ui.view">
+        <field name="name">translation.session.form</field>
+        <field name="model">translation.session</field>
+        <field name="arch" type="xml">
+            <form string="Translation Session">
+                <header>
+                    <!-- Normal state buttons (hidden while translating) -->
+                    <button name="action_load_po"
+                            string="Load / Reload PO File"
+                            type="object"
+                            class="btn-primary"
+                            confirm="This will reload all terms from the PO file and discard unsaved changes. Continue?"
+                            invisible="state not in ('draft',) or is_translating"/>
+                    <button name="action_load_po"
+                            string="Reload PO File"
+                            type="object"
+                            invisible="state in ('draft',) or is_translating"
+                            confirm="This will reload all terms and discard current changes. Continue?"/>
+                    <button name="action_rescan_source"
+                            string="Rescan Source"
+                            type="object"
+                            invisible="state == 'draft' or is_translating"
+                            confirm="Re-scan the module source code and add any new untranslated terms?"/>
+                    <button name="action_auto_translate_all"
+                            string="Auto-Translate All"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'draft' or is_translating"
+                            confirm="Auto-translate all untranslated terms using Google Translate?"/>
+                    <button name="action_save_and_import"
+                            string="Save &amp; Import into Odoo"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'draft' or is_translating"
+                            confirm="Save translations to file and import into Odoo?"/>
+                    <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state == 'draft' or is_translating"/>
+                    <!-- Translating state buttons (shown only while translating) -->
+                    <button string="⏳ Translating…"
+                            type="object"
+                            class="btn-secondary"
+                            disabled="1"
+                            invisible="not is_translating"/>
+                    <button name="action_stop_translation"
+                            string="Stop Translation"
+                            type="object"
+                            class="btn-danger"
+                            invisible="not is_translating"
+                            confirm="Stop the background translation in progress?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,in_progress,done"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Session Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <field name="is_translating" invisible="1"/>
+                        <group string="Module &amp; Languages">
+                            <field name="module_id"
+                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                            <field name="module_name" invisible="1"/>
+                            <field name="source_lang_id"
+                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                            <field name="source_lang" invisible="1"/>
+                            <field name="target_lang_id"
+                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                            <field name="target_lang_code" invisible="1"/>
+                        </group>
+                        <group string="Progress">
+                            <field name="total_count"/>
+                            <field name="translated_count"/>
+                            <field name="untranslated_count"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Translation Terms" name="terms">
+                            <field name="line_ids" widget="one2many"
+                                   context="{'form_view_ref': 'era_po_translator.view_translation_line_form_inline'}"
+                                   options="{'no_create': True}">
+                                <list string="Terms" editable="bottom"
+                                      create="false"
+                                      decoration-success="is_translated"
+                                      decoration-muted="not msgid">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="msgid" string="Source Text"
+                                           optional="show" readonly="1"/>
+                                    <field name="msgstr" string="Translation"
+                                           optional="show"/>
+                                    <field name="is_translated" string="Done"
+                                           optional="show" readonly="1"/>
+                                    <field name="comment" string="Comment"
+                                           optional="hide" readonly="1"/>
+                                    <button name="action_suggest_translations"
+                                            string="Suggest"
+                                            type="object"
+                                            icon="fa-lightbulb-o"
+                                            title="Get Translation Suggestions"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List view -->
+    <record id="view_translation_session_list" model="ir.ui.view">
+        <field name="name">translation.session.list</field>
+        <field name="model">translation.session</field>
+        <field name="arch" type="xml">
+            <list string="Translation Sessions"
+                  decoration-success="state == 'done'"
+                  decoration-info="state == 'in_progress'">
+                <field name="name"/>
+                <field name="module_id" string="Module"/>
+                <field name="module_name" column_invisible="1"/>
+                <field name="target_lang_id"/>
+                <field name="total_count" string="Total"/>
+                <field name="translated_count" string="Translated"/>
+                <field name="progress" string="Progress %" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="write_date" string="Last Updated"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_translation_session_search" model="ir.ui.view">
+        <field name="name">translation.session.search</field>
+        <field name="model">translation.session</field>
+        <field name="arch" type="xml">
+            <search string="Translation Sessions">
+                <field name="name"/>
+                <field name="module_name"/>
+                <field name="target_lang_id"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state','=','in_progress')]"/>
+                <filter string="Done" name="done" domain="[('state','=','done')]"/>
+                <group>
+                    <filter string="Module" name="group_module" context="{'group_by': 'module_name'}"/>
+                    <filter string="Target Language" name="group_lang" context="{'group_by': 'target_lang_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_translation_session" model="ir.actions.act_window">
+        <field name="name">Translation Sessions</field>
+        <field name="res_model">translation.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_translation_session_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No translation sessions yet.
+            </p>
+            <p>
+                Click <b>Quick Translate</b> in the top menu to start a new
+                translation session for any installed module.
+            </p>
+        </field>
+    </record>
+
+    <!-- Server action: Quick Translate button in list toolbar -->
+    <record id="action_open_quick_translate_from_list" model="ir.actions.server">
+        <field name="name">Quick Translate</field>
+        <field name="model_id" ref="model_translation_session"/>
+        <field name="binding_model_id" ref="model_translation_session"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Quick Translate',
+    'res_model': 'quick.translate.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+}
+        </field>
+    </record>
+
+</odoo>

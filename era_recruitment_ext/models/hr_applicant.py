@@ -154,12 +154,29 @@ class HrApplicant(models.Model):
         return cv_text
 
     def _get_cv_attachments(self):
-        attachments = self.attachment_ids
-        if hasattr(self, 'message_main_attachment_id') and self.message_main_attachment_id:
-            attachments |= self.message_main_attachment_id
+        # 1. Use the designated main attachment when available — it's explicitly marked as primary.
+        main = (
+            self.message_main_attachment_id
+            if hasattr(self, 'message_main_attachment_id') and self.message_main_attachment_id
+            else self.env['ir.attachment']
+        )
+        if main and main.type == 'binary' and self._is_supported_text_attachment(main):
+            return main
+
+        # 2. Check direct record attachments (binary, CV-format files only).
+        direct = self.attachment_ids.filtered(
+            lambda a: a.type == 'binary' and self._is_supported_text_attachment(a)
+        )
+        if direct:
+            return direct
+
+        # 3. Last resort: search message attachments but restrict to CV-format files only
+        #    (PDF, DOCX, ODT, TXT) to avoid picking up emails or other unrelated files.
         if hasattr(self, 'message_ids'):
-            attachments |= self.message_ids.attachment_ids
-        return attachments.filtered(lambda attachment: attachment.type == 'binary')
+            return self.message_ids.attachment_ids.filtered(
+                lambda a: a.type == 'binary' and self._is_supported_text_attachment(a)
+            )
+        return self.env['ir.attachment']
 
     def _extract_text_from_attachment(self, attachment):
         content = None

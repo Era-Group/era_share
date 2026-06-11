@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_era_gsc_query_list" model="ir.ui.view">
+    <field name="name">era.gsc.query.list</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="date"/>
+        <field name="site_id"/>
+        <field name="query"/>
+        <field name="clicks" sum="Clicks"/>
+        <field name="impressions" sum="Impressions"/>
+        <field name="ctr" widget="percentage"/>
+        <field name="position" avg="Avg Position"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_query_pivot" model="ir.ui.view">
+    <field name="name">era.gsc.query.pivot</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <pivot string="GSC Queries">
+        <field name="query" type="row"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+        <field name="position" type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_query_graph" model="ir.ui.view">
+    <field name="name">era.gsc.query.graph</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <graph string="GSC Queries" type="line" sample="1">
+        <field name="date"/>
+        <field name="clicks" type="measure"/>
+        <field name="impressions" type="measure"/>
+      </graph>
+    </field>
+  </record>
+
+  <record id="view_era_gsc_query_search" model="ir.ui.view">
+    <field name="name">era.gsc.query.search</field>
+    <field name="model">era.gsc.query</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="query"/>
+        <field name="site_id"/>
+        <field name="account_id"/>
+        <filter name="last_7" string="Last 7 Days"
+                domain="[('date','&gt;=', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+        <filter name="last_28" string="Last 28 Days"
+                domain="[('date','&gt;=', (context_today() - relativedelta(days=28)).strftime('%Y-%m-%d'))]"/>
+        <group>
+          <filter name="group_query" string="Query" context="{'group_by': 'query'}"/>
+          <filter name="group_site" string="Site" context="{'group_by': 'site_id'}"/>
+          <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_era_gsc_query" model="ir.actions.act_window">
+    <field name="name">GSC Queries</field>
+    <field name="res_model">era.gsc.query</field>
+    <field name="view_mode">list,graph,pivot</field>
+    <field name="context">{'search_default_last_28': 1, 'search_default_group_query': 1}</field>
+  </record>
+</odoo>

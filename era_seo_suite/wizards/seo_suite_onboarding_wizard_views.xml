@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- ============================================================
+       Form view — single form with per-step blocks toggled by
+       `invisible="step != 'X'"`. Keeps everything in one place
+       so we don't have to juggle multiple records / views.
+       ============================================================ -->
+  <record id="view_era_seo_onboarding_wizard_form" model="ir.ui.view">
+    <field name="name">era.seo.onboarding.wizard.form</field>
+    <field name="model">era.seo.onboarding.wizard</field>
+    <field name="arch" type="xml">
+      <form string="ERA SEO Suite — Setup">
+        <field name="step" invisible="1"/>
+        <field name="ai_module_installed" invisible="1"/>
+        <field name="ai_agent_count" invisible="1"/>
+
+        <!-- Progress strip -->
+        <div class="alert alert-light mb-3" role="status">
+          <div class="o_horizontal_separator small text-muted mb-2">Setup progress</div>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-light" invisible="step == 'welcome'">Welcome</span>
+            <span class="badge text-bg-primary" invisible="step != 'welcome'">Welcome</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org']">1. Organization</span>
+            <span class="badge text-bg-primary" invisible="step != 'org'">1. Organization</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business']">2. Business</span>
+            <span class="badge text-bg-primary" invisible="step != 'business'">2. Business</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social']">3. Social</span>
+            <span class="badge text-bg-primary" invisible="step != 'social'">3. Social</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema']">4. Schema</span>
+            <span class="badge text-bg-primary" invisible="step != 'schema'">4. Schema</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots']">5. Robots</span>
+            <span class="badge text-bg-primary" invisible="step != 'robots'">5. Robots</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai']">6. AI</span>
+            <span class="badge text-bg-primary" invisible="step != 'ai'">6. AI</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo']">7. GEO</span>
+            <span class="badge text-bg-primary" invisible="step != 'geo'">7. GEO</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc']">8. GSC</span>
+            <span class="badge text-bg-primary" invisible="step != 'gsc'">8. GSC</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai']">9. AI Bulk Fill</span>
+            <span class="badge text-bg-primary" invisible="step != 'bulk_ai'">9. AI Bulk Fill</span>
+
+            <span class="badge text-bg-light" invisible="step in ['welcome', 'org', 'business', 'social', 'schema', 'robots', 'ai', 'geo', 'gsc', 'bulk_ai', 'blog']">10. Blog</span>
+            <span class="badge text-bg-primary" invisible="step != 'blog'">10. Blog</span>
+
+            <span class="badge text-bg-success" invisible="step != 'done'">Done</span>
+          </div>
+        </div>
+
+        <!-- ================================================ Welcome -->
+        <group invisible="step != 'welcome'">
+          <div class="o_form_label_empty">
+            <h2 class="mb-2">Welcome to ERA SEO Suite</h2>
+            <p class="text-muted mb-2">
+              This wizard walks you through every setting the suite needs
+              to do its job. About <b>2&#8211;3 minutes</b> total. You can
+              close it any time — the next launch picks up where you left off.
+            </p>
+            <p class="text-muted mb-0">We'll cover, in order:</p>
+            <ol class="text-muted small">
+              <li>Organization identity (logo, OG image, verifies)</li>
+              <li>Business profile (industry, voice, keywords — tailors the SEO AI agent)</li>
+              <li>Social profiles</li>
+              <li>Schema engine</li>
+              <li>Robots &amp; AI crawlers (robots.txt preview + bulk toggles)</li>
+              <li>AI Auto-Fix (optional, needs the AI app)</li>
+              <li>GEO — /llms.txt for AI engines</li>
+              <li>Google Search Console (optional)</li>
+              <li>AI Bulk Fill (optional)</li>
+              <li>Blog setup (optional)</li>
+            </ol>
+          </div>
+        </group>
+
+        <!-- ================================================ Organization -->
+        <group invisible="step != 'org'" string="1. Organization identity">
+          <div class="text-muted small mb-2" colspan="2">
+            Feeds Organization JSON-LD, OG/Twitter meta, and the
+            site-verification meta tags Google and Bing look for.
+          </div>
+          <field name="org_name" placeholder="Your brand or trading name"/>
+          <field name="org_legal_name" placeholder="Legal entity name (optional)"/>
+          <field name="org_logo_url" placeholder="https://example.com/logo.png" widget="url"/>
+          <field name="org_og_image_url" placeholder="https://example.com/og.png" widget="url"/>
+          <field name="org_twitter_handle" placeholder="@yourbrand"/>
+          <field name="org_google_verify" placeholder="Value of content=&quot;…&quot; from Google's HTML meta tag"/>
+          <field name="org_bing_verify" placeholder="Value of content=&quot;…&quot; from Bing's HTML meta tag"/>
+        </group>
+
+        <!-- ================================================ Business profile -->
+        <group invisible="step != 'business'" string="2. Business profile">
+          <div class="text-muted small mb-2" colspan="2">
+            Tells the SEO AI agent <b>who you are and how to write for you</b>.
+            The agent's system prompt is rebuilt on Save — every AI title,
+            meta description and slug it proposes from then on uses your
+            brand name, sector tone, and keyword list. You can re-open this
+            wizard any time to refine.
+          </div>
+          <group>
+            <field name="biz_name_en" placeholder="Acme Cloud Accounting"/>
+            <field name="biz_name_ar" placeholder="أكمي للمحاسبة السحابية"/>
+            <field name="biz_sector"/>
+            <field name="biz_voice"/>
+          </group>
+          <group>
+            <field name="biz_audience" placeholder="Saudi SMEs"/>
+            <field name="biz_region" placeholder="Saudi Arabia (KSA)"/>
+            <field name="biz_keywords" placeholder="cloud accounting, VAT, ZATCA, e-invoicing"/>
+            <field name="biz_avoid" placeholder="best, cheapest, competitor names"/>
+          </group>
+          <separator string="Live preview of the SEO Fixer's tailored prompt" colspan="2"/>
+          <field name="biz_prompt_preview" nolabel="1" colspan="2"
+                 widget="text"
+                 style="font-family:monospace;font-size:0.85em;white-space:pre-wrap;min-height:240px;"/>
+        </group>
+
+        <!-- ================================================ Social -->
+        <group invisible="step != 'social'" string="3. Social profiles">
+          <div class="text-muted small mb-2" colspan="2">
+            Joined into sameAs[] in Organization JSON-LD so search and AI
+            engines link your brand to its social presence. Leave any blank.
+          </div>
+          <field name="social_facebook" widget="url" placeholder="https://facebook.com/…"/>
+          <field name="social_twitter" widget="url" placeholder="https://twitter.com/…"/>
+          <field name="social_linkedin" widget="url" placeholder="https://linkedin.com/company/…"/>
+          <field name="social_instagram" widget="url" placeholder="https://instagram.com/…"/>
+          <field name="social_youtube" widget="url" placeholder="https://youtube.com/@…"/>
+        </group>
+
+        <!-- ================================================ Schema -->
+        <group invisible="step != 'schema'" string="4. Schema engine (JSON-LD)">
+          <div class="text-muted small mb-2" colspan="2">
+            Master switch for the JSON-LD engine that renders structured
+            data into every page. When off, no schema is emitted regardless
+            of per-page settings. <b>Keep it on</b> unless you have a
+            specific reason to disable it.
+          </div>
+          <field name="schema_enabled" widget="boolean_toggle"/>
+        </group>
+
+        <!-- ================================================ Robots -->
+        <group invisible="step != 'robots'" string="5. Robots &amp; AI Crawlers">
+          <field name="robots_url" readonly="1"/>
+          <field name="robots_count_total" invisible="1"/>
+          <field name="robots_count_allowed" invisible="1"/>
+          <field name="robots_count_blocked" invisible="1"/>
+          <field name="robots_count_training_allowed" invisible="1"/>
+          <field name="robots_count_search_allowed" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Your <code>robots.txt</code> is served automatically and already
+            allows search engines. The suite adds an AI-crawler block —
+            review and adjust who's allowed to read your site.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2">
+            <div>
+              <b>Crawlers seeded:</b>
+              <field name="robots_count_total" readonly="1" nolabel="1"/> total —
+              <field name="robots_count_allowed" readonly="1" nolabel="1"/> allowed,
+              <field name="robots_count_blocked" readonly="1" nolabel="1"/> blocked.
+            </div>
+            <div class="small mt-1">
+              Training-only bots currently allowed:
+              <b><field name="robots_count_training_allowed" readonly="1" nolabel="1"/></b>
+              · Search / answer bots currently allowed:
+              <b><field name="robots_count_search_allowed" readonly="1" nolabel="1"/></b>
+            </div>
+          </div>
+
+          <div colspan="2">
+            <button name="action_robots_allow_all" type="object"
+                    string="Allow all AI bots" class="btn btn-secondary btn-sm me-1"
+                    icon="fa-check"/>
+            <button name="action_robots_block_training" type="object"
+                    string="Block training-only bots" class="btn btn-warning btn-sm me-1"
+                    icon="fa-ban"
+                    confirm="Block every crawler whose purpose is training (or search+training)?"/>
+            <button name="action_robots_block_search" type="object"
+                    string="Block search/answer bots" class="btn btn-warning btn-sm me-1"
+                    icon="fa-ban"
+                    confirm="Block every crawler whose purpose is search/answer (or search+training)? — usually NOT what you want; SEO suffers."/>
+            <button name="action_robots_manage" type="object"
+                    string="Manage individually" class="btn btn-link btn-sm"
+                    icon="fa-cog"/>
+          </div>
+
+          <div class="o_horizontal_separator mt-3 mb-2 text-uppercase fw-bolder small" colspan="2">
+            Live robots.txt preview
+          </div>
+          <field name="robots_preview" nolabel="1" readonly="1"
+                 widget="text" class="w-100"
+                 style="font-family:monospace;white-space:pre;min-height:200px;"
+                 colspan="2"/>
+        </group>
+
+        <!-- ================================================ AI -->
+        <group invisible="step != 'ai'" string="6. AI Auto-Fix">
+          <div class="text-muted small mb-2" colspan="2">
+            Lets the suite use Odoo's AI app to <b>Suggest</b> and
+            <b>Apply</b> fixes on audit findings, and to <b>Fill SEO</b> on
+            pages and blog posts. The provider, model, and API key live on
+            the AI agent (configured in the AI app), not here.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="ai_module_installed">
+            The <b>AI</b> app isn't installed. Install it from the Apps
+            list, configure a provider with an API key, then re-open this
+            wizard.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not ai_module_installed or ai_agent_count != 0">
+            The AI app is installed but no agent is configured yet.
+            <button name="action_open_ai_config" type="object"
+                    string="Open the AI app" class="btn btn-link p-0"/>
+            to create one (or use Odoo's seeded "Ask AI" agent).
+          </div>
+
+          <field name="ai_enabled" widget="boolean_toggle"
+                 invisible="not ai_module_installed"/>
+          <field name="ai_agent_id"
+                 options="{'no_create': True}"
+                 invisible="not ai_enabled or not ai_module_installed"/>
+          <div class="text-muted small" colspan="2"
+               invisible="not ai_enabled or not ai_module_installed">
+            Leave the agent empty to fall back to the site's default "Ask AI" agent.
+          </div>
+        </group>
+
+        <!-- ================================================ GEO -->
+        <group invisible="step != 'geo'" string="7. GEO — Generative Engine Optimization">
+          <div class="text-muted small mb-2" colspan="2">
+            Serves a Markdown site map at <code>/llms.txt</code> so AI
+            answer engines (ChatGPT, Perplexity, Claude, Google AI
+            Overviews) can discover and cite your content.
+          </div>
+          <field name="llms_enabled" widget="boolean_toggle"/>
+          <field name="llms_summary"
+                 invisible="not llms_enabled"
+                 placeholder="One-line site description (falls back to the company name)"/>
+          <field name="llms_max_items" invisible="not llms_enabled"/>
+          <field name="llms_include_blog" invisible="not llms_enabled" widget="boolean_toggle"/>
+        </group>
+
+        <!-- ================================================ GSC -->
+        <group invisible="step != 'gsc'" string="8. Google Search Console (optional)">
+          <field name="gsc_connected_count" invisible="1"/>
+          <field name="gsc_can_connect" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Connect GSC to pull search analytics directly into Odoo.
+            <b>Optional</b> — skip if you don't have a Google Cloud OAuth
+            client yet. Create one at
+            <i>console.cloud.google.com → APIs &amp; Services →
+            Credentials</i>, add the Authorized Redirect URI below, and
+            paste the Client ID / Secret here.
+          </div>
+
+          <div class="alert alert-success" role="status" colspan="2"
+               invisible="not gsc_connected_count">
+            <b><field name="gsc_connected_count" readonly="1" nolabel="1"/></b>
+            account(s) already connected to Google Search Console. You can
+            re-connect or move on.
+          </div>
+
+          <field name="gsc_redirect_uri" readonly="1"/>
+          <field name="gsc_client_id" placeholder="…apps.googleusercontent.com"/>
+          <field name="gsc_client_secret" password="True"/>
+          <field name="gsc_pull_window"/>
+
+          <div class="mt-3" colspan="2">
+            <button name="action_connect_gsc" type="object"
+                    string="Connect to Google"
+                    class="btn btn-primary"
+                    icon="fa-google"
+                    invisible="not gsc_can_connect"
+                    confirm="Save these OAuth credentials and redirect to Google's consent screen?"/>
+            <span class="text-muted small ms-2" invisible="gsc_can_connect">
+              Paste both the Client ID and Client Secret above to enable the
+              connect button.
+            </span>
+          </div>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not gsc_can_connect">
+            Clicking <b>Connect to Google</b> saves your credentials and
+            takes you out of Odoo to Google's consent screen. After granting
+            access, you'll land back in Odoo with the connection live —
+            then re-open this wizard to finish the remaining steps.
+          </div>
+        </group>
+
+        <!-- ================================================ AI Bulk Fill -->
+        <group invisible="step != 'bulk_ai'" string="9. AI Bulk Fill (optional)">
+          <field name="bulk_ai_already_running" invisible="1"/>
+          <field name="bulk_ai_pending_count" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Have the AI agent walk every <b>page</b> and <b>blog post</b> on
+            your site and fill the empty SEO fields (title, description,
+            OG/Twitter, keywords) for each one. Runs in the background — 10
+            records every 2 minutes — so closing this wizard is safe; the
+            cron keeps going until the queue is empty, then stops itself.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not bulk_ai_pending_count">
+            <b><field name="bulk_ai_pending_count" readonly="1" nolabel="1"/></b>
+            record(s) currently have an empty <i>SEO title</i> and would
+            be processed.
+          </div>
+
+          <div class="alert alert-success" role="status" colspan="2"
+               invisible="bulk_ai_pending_count or bulk_ai_already_running">
+            Nothing to do — every page and post already has an SEO title.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="not bulk_ai_already_running">
+            A bulk-fill run is <b>already in progress</b>. Ticking again
+            restarts the cursor from the beginning of the queue.
+          </div>
+
+          <field name="bulk_ai_opt_in" widget="boolean_toggle"
+                 invisible="not bulk_ai_pending_count and not bulk_ai_already_running"/>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not bulk_ai_opt_in">
+            Tip: budget-wise, the agent does 1 call per record per active
+            language. Watch your provider dashboard if you have hundreds
+            of pages. The run can be paused any time from the hub's
+            Settings tab.
+          </div>
+        </group>
+
+        <!-- ================================================ Blog setup -->
+        <group invisible="step != 'blog'" string="10. Blog setup (optional)">
+          <field name="blog_post_count" invisible="1"/>
+          <field name="blog_uncategorized_count" invisible="1"/>
+          <field name="blog_category_count" invisible="1"/>
+          <field name="blog_series_count" invisible="1"/>
+
+          <div class="text-muted small mb-2" colspan="2">
+            Lets the AI cron classify your existing blog posts into
+            categories and (where the content clearly is multi-part) into
+            series — alongside the SEO fill from the previous step. Existing
+            taxonomy is preferred over creating duplicates.
+          </div>
+
+          <div class="alert alert-info" role="status" colspan="2"
+               invisible="not blog_post_count">
+            You have <b><field name="blog_post_count" readonly="1" nolabel="1"/></b>
+            blog post(s), <b><field name="blog_category_count" readonly="1" nolabel="1"/></b>
+            categor(ies), <b><field name="blog_series_count" readonly="1" nolabel="1"/></b>
+            series. <b><field name="blog_uncategorized_count" readonly="1" nolabel="1"/></b>
+            post(s) still have no category.
+          </div>
+
+          <div class="alert alert-warning" role="status" colspan="2"
+               invisible="blog_post_count">
+            No blog posts found. Skip this step — there's nothing to classify yet.
+          </div>
+
+          <field name="blog_taxonomy_opt_in" widget="boolean_toggle"
+                 invisible="not blog_post_count"/>
+
+          <div class="text-muted small mt-2" colspan="2"
+               invisible="not blog_taxonomy_opt_in">
+            The same cron processes blog posts in batches of 10 every 2
+            minutes. Each post triggers one extra AI call for taxonomy. If
+            you haven't ticked the bulk SEO fill on the previous step, the
+            cron is started here too so the work actually happens.
+          </div>
+        </group>
+
+        <!-- ================================================ Done -->
+        <group invisible="step != 'done'">
+          <div class="o_form_label_empty">
+            <h2 class="mb-2 text-success">You're set</h2>
+            <p class="text-muted">
+              Settings are saved. The suite is ready to audit your site
+              and start emitting schema, hreflang, and /llms.txt.
+            </p>
+            <p class="text-muted">
+              Next moves:
+            </p>
+            <ul class="text-muted">
+              <li><b>Run your first SEO audit</b> to see what's missing.</li>
+              <li>Open the <b>ERA SEO Suite hub</b> for the dashboard, KPIs, and quick links.</li>
+              <li>For OAuth setup or AI agent tuning, jump into the relevant section.</li>
+            </ul>
+          </div>
+        </group>
+
+        <!-- ================================================ Footer -->
+        <footer>
+          <button name="action_prev"  string="Back"    type="object" class="btn-secondary"
+                  invisible="step == 'welcome'"/>
+          <button name="action_skip"  string="Skip"    type="object" class="btn-secondary"
+                  invisible="step in ['welcome', 'done']"/>
+          <button name="action_next"  string="Next"    type="object" class="btn-primary"
+                  invisible="step == 'done'"/>
+          <button name="action_run_first_audit" string="Run first audit"
+                  type="object" class="btn-primary" invisible="step != 'done'"/>
+          <button name="action_open_hub" string="Open the hub"
+                  type="object" class="btn-secondary" invisible="step != 'done'"/>
+          <button special="cancel" string="Close" class="btn-secondary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- ============================================================
+       Action + menu — uses a server action so the menu always opens
+       a freshly-prepared wizard (pre-filled from ICP).
+       ============================================================ -->
+  <record id="action_era_seo_onboarding_wizard" model="ir.actions.server">
+    <field name="name">Setup Wizard</field>
+    <field name="model_id" ref="model_era_seo_onboarding_wizard"/>
+    <field name="state">code</field>
+    <field name="code">action = model.action_open()</field>
+  </record>
+
+  <menuitem
+    id="menu_era_seo_onboarding_wizard"
+    name="Setup Wizard"
+    parent="menu_website_seo_root"
+    action="action_era_seo_onboarding_wizard"
+    sequence="1"/>
+
+  <!-- ============================================================
+       Access rules. TransientModels need them just like regular ones;
+       wizard rows are short-lived but still get persisted to the
+       table during the session.
+       ============================================================ -->
+  <record id="access_era_seo_onboarding_wizard" model="ir.model.access">
+    <field name="name">era.seo.onboarding.wizard (manager)</field>
+    <field name="model_id" ref="model_era_seo_onboarding_wizard"/>
+    <field name="group_id" ref="group_era_seo_manager"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+
+</odoo>

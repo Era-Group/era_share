@@ -4,7 +4,7 @@
         <field name="name">eraspy.enrich.wizard.form</field>
         <field name="model">eraspy.enrich.wizard</field>
         <field name="arch" type="xml">
-            <form string="EraSpy Enrichment" create="false">
+            <form string="Era Enrich" create="false">
                 <sheet>
                     <group>
                         <field name="lead_ids" widget="many2many_tags"/>

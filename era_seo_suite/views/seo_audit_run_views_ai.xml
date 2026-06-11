@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Surface the AI workflow on the Audit Run form:
+      - Header buttons to suggest / auto-fix every AI-fixable finding in the
+        run at once.
+      - Inline Suggest / Apply buttons on each row of the embedded findings
+        list, plus the AI status badge.
+  -->
+  <record id="view_seo_audit_run_form_ai" model="ir.ui.view">
+    <field name="name">era.seo.audit.run.form.ai</field>
+    <field name="model">era.seo.audit.run</field>
+    <field name="inherit_id" ref="era_seo_suite.view_seo_audit_run_form"/>
+    <field name="arch" type="xml">
+
+      <!-- Header buttons -->
+      <xpath expr="//header" position="inside">
+        <field name="ai_fixable_count" invisible="1"/>
+        <field name="ai_failed_count" invisible="1"/>
+        <field name="ai_review_count" invisible="1"/>
+        <!-- Always shown after a run; the actions return a clean "no
+             AI-fixable findings" notification when there's nothing to do,
+             so the buttons stay discoverable. -->
+        <button name="action_ai_suggest_findings" type="object"
+                string="Suggest Fixes (AI)" class="btn-info"
+                invisible="state not in ('done', 'failed')"/>
+        <button name="action_ai_fix_findings" type="object"
+                string="Auto-Fix" class="btn-primary"
+                invisible="state not in ('done', 'failed')"
+                confirm="Generate AI suggestions for every AI-fixable finding and automatically apply the ones above the configured confidence threshold. Continue?"/>
+        <!-- Only visible when there's actually something to retry. -->
+        <button name="action_ai_retry_failed_findings" type="object"
+                string="Retry Failed"
+                class="btn-warning"
+                icon="fa-refresh"
+                invisible="state not in ('done', 'failed') or (ai_failed_count == 0 and ai_review_count == 0)"
+                help="Reset every finding currently marked failed or stopped by Autopilot back to none, including its attempt counter. Use this after fixing the AI provider configuration or deciding another paid attempt is worth it."/>
+      </xpath>
+
+      <!-- Inline buttons + status on the embedded findings list -->
+      <xpath expr="//field[@name='finding_ids']/list/field[@name='is_resolved']"
+             position="before">
+        <field name="ai_supported" column_invisible="1"/>
+        <field name="ai_status" widget="badge" optional="show"
+               decoration-success="ai_status == 'applied'"
+               decoration-info="ai_status == 'suggested'"
+               decoration-warning="ai_status in ('failed', 'manual_review')"
+               decoration-muted="ai_status in ('none', 'not_supported')"/>
+        <field name="ai_attempt_count" optional="show"/>
+        <field name="ai_needs_manual_review" widget="boolean_toggle" optional="show"/>
+      </xpath>
+
+      <xpath expr="//field[@name='finding_ids']/list/button[@name='action_open_target']"
+             position="before">
+        <button name="action_ai_suggest" type="object"
+                string="Suggest" icon="fa-magic"
+                invisible="not ai_supported or ai_status == 'applied'"/>
+        <button name="action_ai_apply" type="object"
+                string="Apply" icon="fa-check"
+                invisible="ai_status != 'suggested'"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

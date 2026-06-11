@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="param_era_address_server_url" model="ir.config_parameter">
+            <field name="key">era_address_client.server_url</field>
+            <field name="value">https://service.era.net.sa</field>
+        </record>
+    </data>
+</odoo>

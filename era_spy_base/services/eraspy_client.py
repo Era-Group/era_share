@@ -18,7 +18,7 @@ _PARAM_WARN_LAST_TS = {}
 
 class EraSpyClient(models.AbstractModel):
     _name = "eraspy.client"
-    _description = "EraSpy API Client"
+    _description = "Era Enrich API Client"
 
     _last_call_ts = 0.0
 
@@ -52,7 +52,7 @@ class EraSpyClient(models.AbstractModel):
             if remaining < 1:
                 remaining = 1
             raise UserError(
-                _("EraSpy rate limit reached. Please wait %s seconds and try again.") % remaining
+                _("Era Enrich rate limit reached. Please wait %s seconds and try again.") % remaining
             )
 
     def _get_config(self):
@@ -79,7 +79,7 @@ class EraSpyClient(models.AbstractModel):
                 system_base = ICP.get_param("web.base.url", default="").rstrip("/")
             if not system_base:
                 raise UserError(
-                    _("Set the system base URL in General Settings so EraSpy callbacks can reach Odoo.")
+                    _("Set the system base URL in General Settings so Era Enrich callbacks can reach Odoo.")
                 )
             callback_url = f"{system_base}/eraspy/callback"
         try:
@@ -120,7 +120,7 @@ class EraSpyClient(models.AbstractModel):
             _logger.info("EraSpy request payload: %s", payload_dump)
         if "items" in payload:
             _logger.info(
-                "EraSpy request %s %s items=%s",
+                "Era Enrich request %s %s items=%s",
                 method.upper(),
                 url,
                 len(payload.get("items") or []),
@@ -142,10 +142,10 @@ class EraSpyClient(models.AbstractModel):
             )
         except Exception as exc:
             _logger.exception("EraSpy request failed to %s", url)
-            raise UserError(_("EraSpy request failed: %s") % exc)
+            raise UserError(_("Era Enrich request failed: %s") % exc)
 
         if response.status_code == 401:
-            raise UserError(_("EraSpy authentication failed (401)."))
+            raise UserError(_("Era Enrich authentication failed (401)."))
         if response.status_code == 429:
             retry_after = response.headers.get("Retry-After")
             try:
@@ -154,11 +154,11 @@ class EraSpyClient(models.AbstractModel):
                 retry_after_seconds = 60
             self._set_rate_limit_block_until(retry_after_seconds)
             raise UserError(
-                _("EraSpy rate limit reached (429). Please wait %s seconds and try again.")
+                _("Era Enrich rate limit reached (429). Please wait %s seconds and try again.")
                 % retry_after_seconds
             )
         if response.status_code >= 500:
-            raise UserError(_("EraSpy service is temporarily unavailable (status %s).") % response.status_code)
+            raise UserError(_("Era Enrich service is temporarily unavailable (status %s).") % response.status_code)
 
         try:
             data = response.json()
@@ -166,15 +166,15 @@ class EraSpyClient(models.AbstractModel):
             _logger.error("EraSpy returned non-JSON response: %s", response.text[:2000])
             lowered = (response.text or "").lower()
             if "blocked" in lowered or "forbidden" in lowered or response.status_code in (401, 403):
-                raise UserError(_("Access to EraSpy is blocked. Contact info@era.net.sa to activate your account."))
-            raise UserError(_("EraSpy returned an unexpected response. Please try again later. Status: %s") % response.status_code)
+                raise UserError(_("Access to Era Enrich is blocked. Contact info@era.net.sa to activate your account."))
+            raise UserError(_("Era Enrich returned an unexpected response. Please try again later. Status: %s") % response.status_code)
 
         if data.get("error"):
-            raise UserError(_("EraSpy error: %s") % data.get("error"))
+            raise UserError(_("Era Enrich error: %s") % data.get("error"))
 
         if response.status_code >= 400:
             msg = data.get("message") or data
-            raise UserError(_("EraSpy error: %s") % msg)
+            raise UserError(_("Era Enrich error: %s") % msg)
 
         # Include the HTTP status for downstream context.
         data["status_code"] = response.status_code
@@ -217,14 +217,14 @@ class EraSpyClient(models.AbstractModel):
         if read_timeout < 120:
             self._warn_param_once(
                 "era_spy.ai_agent_read_timeout",
-                "EraSpy AI agent read timeout config is too low (%s). Using safe minimum of 120 seconds.",
+                "Era Enrich AI agent read timeout config is low (%s). Using 120 seconds minimum.",
                 read_timeout,
             )
             read_timeout = 120
         max_attempts = 1
         timeout_tuple = (connect_timeout, read_timeout)
         _logger.info(
-            "EraSpy AI agent request: url=%s timeout=%s attempts=%s body_len=%s",
+            "Era Enrich AI agent request: url=%s timeout=%s attempts=%s body_len=%s",
             url,
             timeout_tuple,
             max_attempts,
@@ -243,14 +243,14 @@ class EraSpyClient(models.AbstractModel):
             _logger.warning("EraSpy AI agent request failed: %s", exc)
             return ""
         _logger.info(
-            "EraSpy AI agent response: status=%s content_type=%s body_len=%s",
+            "Era Enrich AI agent response: status=%s content_type=%s body_len=%s",
             response.status_code,
             response.headers.get("Content-Type"),
             len(response.text or ""),
         )
         if response.status_code >= 400:
             _logger.warning(
-                "EraSpy AI agent response failed: status=%s body=%s",
+                "Era Enrich AI agent response failed: status=%s body=%s",
                 response.status_code,
                 (response.text or "")[:1000],
             )

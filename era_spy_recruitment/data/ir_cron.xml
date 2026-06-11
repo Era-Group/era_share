@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="ir_cron_eraspy_applicant_process_queue" model="ir.cron">
-            <field name="name">EraSpy: Process Applicant Callback Queue</field>
-            <field name="model_id" ref="model_eraspy_applicant_callback_queue"/>
-            <field name="state">code</field>
-            <field name="code">model.cron_process_queue()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="active">True</field>
-        </record>
         <record id="ir_cron_eraspy_auto_enrich_applicants" model="ir.cron">
-            <field name="name">EraSpy: Auto Enrich New Applicants</field>
+            <field name="name">Era Enrich: Auto Enrich New Applicants</field>
             <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
             <field name="state">code</field>
             <field name="code">model._cron_eraspy_auto_enrich()</field>
             <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+    <data>
+        <!-- Disable the old processing cron (no longer needed) -->
+        <record id="ir_cron_eraspy_applicant_process_queue" model="ir.cron">
+            <field name="name">Era Enrich: Process Applicant Callback Queue (disabled)</field>
+            <field name="model_id" ref="model_eraspy_applicant_callback_queue"/>
+            <field name="state">code</field>
+            <field name="code">pass</field>
+            <field name="active">False</field>
+        </record>
+        <record id="ir_cron_eraspy_cleanup_hanging_tasks" model="ir.cron">
+            <field name="name">Era Enrich: Cleanup Hanging Applicants</field>
+            <field name="model_id" ref="model_eraspy_applicant_callback_queue"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_cleanup_hanging_applicants()</field>
+            <field name="interval_number">15</field>
             <field name="interval_type">minutes</field>
             <field name="active">True</field>
         </record>

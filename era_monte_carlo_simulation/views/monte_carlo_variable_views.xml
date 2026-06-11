@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="monte_carlo_variable_view_list" model="ir.ui.view">
+        <field name="name">monte.carlo.variable.list</field>
+        <field name="model">monte.carlo.variable</field>
+        <field name="arch" type="xml">
+            <list string="Variables">
+                <field name="sequence" widget="handle"/>
+                <field name="model_id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="distribution"/>
+                <field name="distribution_summary"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="monte_carlo_variable_view_form" model="ir.ui.view">
+        <field name="name">monte.carlo.variable.form</field>
+        <field name="model">monte.carlo.variable</field>
+        <field name="arch" type="xml">
+            <form string="Variable">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Number of Leads"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        A variable is an uncertain input. Choose the Distribution that
+                        matches what you know: <b>Fixed</b> (a constant), <b>Uniform</b>
+                        (any value in a range), <b>Normal</b> (mean ± standard deviation),
+                        <b>Triangular</b> (min / most likely / max) or <b>Discrete</b>
+                        (a list of values). The <b>Code</b> is the technical name the
+                        formula uses — keep it in English and unique within the model.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="model_id"/>
+                            <field name="code"/>
+                            <field name="distribution"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Parameters">
+                            <field name="fixed_value"
+                                   invisible="distribution != 'fixed'"
+                                   required="distribution == 'fixed'"/>
+                            <field name="min_value"
+                                   invisible="distribution not in ('uniform','triangular')"
+                                   required="distribution in ('uniform','triangular')"/>
+                            <field name="mode_value"
+                                   invisible="distribution != 'triangular'"
+                                   required="distribution == 'triangular'"/>
+                            <field name="max_value"
+                                   invisible="distribution not in ('uniform','triangular')"
+                                   required="distribution in ('uniform','triangular')"/>
+                            <field name="mean_value"
+                                   invisible="distribution not in ('normal','lognormal')"
+                                   required="distribution in ('normal','lognormal')"/>
+                            <field name="std_dev"
+                                   invisible="distribution not in ('normal','lognormal')"
+                                   required="distribution in ('normal','lognormal')"/>
+                            <field name="discrete_values"
+                                   invisible="distribution != 'discrete'"
+                                   required="distribution == 'discrete'"/>
+                        </group>
+                    </group>
+                    <group string="Data Source (optional)">
+                        <field name="source_model_id" options="{'no_create': True}"/>
+                        <field name="source_mode" invisible="not source_model_id"/>
+                        <field name="source_field_id" options="{'no_create': True}"
+                               invisible="not source_model_id or source_mode != 'field'"
+                               required="source_model_id and source_mode == 'field'"/>
+                        <field name="source_date_field_id" options="{'no_create': True}"
+                               invisible="not source_model_id or (source_mode not in ('count','ratio') and source_lookback == 'all')"
+                               required="source_model_id and source_mode in ('count','ratio')"/>
+                        <field name="source_period"
+                               invisible="not source_model_id or source_mode not in ('count','ratio')"/>
+                        <field name="source_success_domain"
+                               invisible="not source_model_id or source_mode != 'ratio'"
+                               required="source_model_id and source_mode == 'ratio'"/>
+                        <field name="source_lookback"
+                               invisible="not source_model_id"/>
+                        <field name="source_domain"
+                               invisible="not source_model_id"/>
+                        <field name="source_sample_count"
+                               invisible="not source_sample_count"/>
+                        <button name="action_refresh_from_source" type="object"
+                                string="Refresh from data"
+                                icon="fa-cloud-download" class="btn-secondary"
+                                invisible="not source_model_id"/>
+                        <button name="action_ask_ai" type="object"
+                                string="Ask AI" icon="fa-comments"
+                                class="btn-secondary"/>
+                    </group>
+                    <field name="description" placeholder="Notes about this variable..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

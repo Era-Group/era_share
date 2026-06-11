@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Surface the AI SEO actions at the TOP of the blog post form. The stock
+    blog.post form has no <header>, so we add one before the <sheet> — that
+    puts the buttons in the conventional top action bar, visible from any
+    tab. Gated to the SEO Manager group (the server-side methods re-check).
+  -->
+  <record id="view_blog_post_form_era_seo_ai" model="ir.ui.view">
+    <field name="name">blog.post.form.era.seo.ai</field>
+    <field name="model">blog.post</field>
+    <field name="inherit_id" ref="era_seo_suite.view_blog_post_form_era_seo"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="before">
+        <header>
+          <button name="action_ai_fill_seo" type="object"
+                  string="AI: Fill SEO" class="btn-primary" icon="fa-magic"
+                  groups="era_seo_suite.group_era_seo_manager"/>
+          <button name="action_ai_rewrite_seo" type="object"
+                  string="AI: Rewrite SEO" class="btn-secondary" icon="fa-refresh"
+                  groups="era_seo_suite.group_era_seo_manager"
+                  confirm="Regenerate every SEO field from the post content, overwriting current values?"/>
+        </header>
+      </xpath>
+    </field>
+  </record>
+</odoo>

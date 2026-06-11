@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_translation_session_admin,translation.session admin,model_translation_session,base.group_erp_manager,1,1,1,1
+access_translation_session_line_admin,translation.session.line admin,model_translation_session_line,base.group_erp_manager,1,1,1,1
+access_quick_translate_wizard_admin,quick.translate.wizard admin,model_quick_translate_wizard,base.group_erp_manager,1,1,1,1
+access_suggest_translation_wizard_admin,suggest.translation.wizard admin,model_suggest_translation_wizard,base.group_erp_manager,1,1,1,1
+access_suggest_translation_wizard_line_admin,suggest.translation.wizard.line admin,model_suggest_translation_wizard_line,base.group_erp_manager,1,1,1,1

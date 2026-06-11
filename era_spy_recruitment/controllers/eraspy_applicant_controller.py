@@ -2,11 +2,12 @@
 import json
 import logging
 
-from odoo import http
-from odoo.exceptions import UserError
+from odoo import api, fields, http
 from odoo.http import request
 
 _logger = logging.getLogger(__name__)
+
+FAILURE_STATUSES = {"failed", "error", "not_found", "not found"}
 
 
 class EraSpyApplicantController(http.Controller):
@@ -44,9 +45,7 @@ class EraSpyApplicantController(http.Controller):
             if isinstance(payload, dict):
                 payload = [payload]
 
-        queue = request.env["eraspy.applicant.callback.queue"].sudo()
-        applicant_model = request.env["hr.applicant"].sudo()
-        queued = 0
+        processed = 0
         unmatched = 0
 
         for item in payload or []:
@@ -67,107 +66,260 @@ class EraSpyApplicantController(http.Controller):
             candidate = item.get("candidate") or item.get("profile")
             if not candidate:
                 candidate = None
+            candidate_dict = candidate if isinstance(candidate, dict) else None
             status_lower = str(status or "").strip().lower()
-            if status_lower == "duplicate_query" and not error_message:
-                error_message = "Duplicate query"
             if status_lower in ("failed", "error", "not_found", "not found") and not error_message and not candidate:
                 error_message = "No profile found"
 
-            applicant = None
-            if request_id:
-                applicant = applicant_model.search(
-                    [("eraspy_last_request_id", "=", str(request_id))],
-                    limit=1,
-                )
-            if not applicant and identifier:
-                applicant = applicant_model.search([("eraspy_last_identifier", "ilike", identifier)], limit=1)
-            if not applicant and identifier:
-                normalized = identifier.strip()
-                digits = "".join(ch for ch in normalized if ch.isdigit())
-                phone_probe = digits or normalized
-                clauses = [("email_from", "ilike", normalized)]
-                if "phone" in applicant_model._fields:
-                    clauses.append(("phone", "ilike", phone_probe))
-                if "mobile" in applicant_model._fields:
-                    clauses.append(("mobile", "ilike", phone_probe))
-                if "partner_id" in applicant_model._fields and "phone" in request.env["res.partner"]._fields:
-                    clauses.append(("partner_id.phone", "ilike", phone_probe))
-                if "partner_id" in applicant_model._fields and "mobile" in request.env["res.partner"]._fields:
-                    clauses.append(("partner_id.mobile", "ilike", phone_probe))
-                if clauses:
-                    domain = clauses[0]
-                    for clause in clauses[1:]:
-                        domain = ["|", domain, clause]
-                    applicant = applicant_model.search(domain, limit=1)
+            is_failure = status_lower in FAILURE_STATUSES or bool(error_message)
+            is_duplicate = status_lower == "duplicate_query"
+            queue_state = "done"
+            queue_error = False
 
-            if not applicant and isinstance(candidate, dict):
-                emails = [e.get("value") for e in candidate.get("emails", []) if isinstance(e, dict)] or []
-                phones = [p.get("value") for p in candidate.get("phones", []) if isinstance(p, dict)] or []
-                clauses = []
-                if emails:
-                    clauses.append(("email_from", "in", emails))
-                if phones and "phone" in applicant_model._fields:
-                    clauses.append(("phone", "in", phones))
-                if phones and "mobile" in applicant_model._fields:
-                    clauses.append(("mobile", "in", phones))
-                if clauses:
-                    domain = clauses[0]
-                    for clause in clauses[1:]:
-                        domain = ["|", domain, clause]
-                    applicant = applicant_model.search(domain, limit=1)
+            # All DB work in a single separate cursor — fast, atomic, no conflicts.
+            # Retry once on serialization failure (concurrent update from enrich action).
+            max_attempts = 2
+            matched_applicant_id = None      # set on success; used for AI match after cursor closes
+            matched_candidate_for_ai = None  # candidate data to pass to AI match generator
+            for attempt in range(max_attempts):
+                try:
+                    with request.env.registry.cursor() as cr:
+                        env = api.Environment(cr, 1, {})  # uid=1 (superuser)
+                        applicant_model = env["hr.applicant"]
+                        applicant = self._match_applicant(applicant_model, request_id, identifier, candidate_dict, status_lower)
 
-            if not request_id and applicant and applicant.eraspy_last_request_id:
-                request_id = applicant.eraspy_last_request_id
-            if request_id and not item.get("requestId") and not item.get("request_id"):
-                item["requestId"] = str(request_id)
+                        if not request_id and applicant and applicant.eraspy_last_request_id:
+                            request_id = applicant.eraspy_last_request_id
+                        if request_id and not item.get("requestId") and not item.get("request_id"):
+                            item["requestId"] = str(request_id)
 
-            _logger.info(
-                "EraSpy applicant callback item: request_id=%s status=%s identifier=%s has_candidate=%s error=%s",
-                request_id,
-                status,
-                identifier,
-                bool(candidate),
-                error_message,
-            )
+                        if not applicant:
+                            unmatched += 1
+                            _logger.warning(
+                                "Era Enrich applicant callback unmatched: request_id=%s status=%s identifier=%s",
+                                request_id, status, identifier,
+                            )
+                            env["eraspy.applicant.callback.queue"].log_callback(
+                                applicant=None, item=item, candidate=candidate_dict,
+                                state="error", error="No applicant match found",
+                            )
+                            break  # don't retry unmatched
 
-            if not applicant:
-                unmatched += 1
-                _logger.warning(
-                    "EraSpy applicant callback skipped (no applicant match): request_id=%s status=%s identifier=%s",
-                    request_id,
-                    status,
-                    identifier,
-                )
-                continue
+                        # duplicate_query: this identifier was already enriched before.
+                        # Try to find the existing enrichment data from another applicant
+                        # or a previous callback log and copy it over.
+                        if is_duplicate:
+                            copied = False
+                            if identifier and not applicant.eraspy_more_data:
+                                # Find another applicant that has data for this identifier
+                                donor = applicant_model.search([
+                                    ("eraspy_last_identifier", "ilike", identifier),
+                                    ("eraspy_more_data", "!=", False),
+                                    ("id", "!=", applicant.id),
+                                ], limit=1)
+                                if not donor:
+                                    # Try from callback log
+                                    log_record = env["eraspy.applicant.callback.queue"].search([
+                                        ("identifier", "ilike", identifier),
+                                        ("candidate_json", "!=", False),
+                                        ("state", "=", "done"),
+                                    ], limit=1, order="create_date desc")
+                                    if log_record and log_record.candidate_json:
+                                        try:
+                                            prev_candidate = json.loads(log_record.candidate_json)
+                                            if isinstance(prev_candidate, dict) and prev_candidate:
+                                                write_vals = applicant._prepare_eraspy_write_vals(
+                                                    prev_candidate, overwrite=False, skip_ai_match=True,
+                                                )
+                                                if write_vals:
+                                                    applicant.write(write_vals)
+                                                    matched_applicant_id = applicant.id
+                                                    matched_candidate_for_ai = prev_candidate
+                                                    copied = True
+                                        except Exception:
+                                            pass
+                                if donor and not copied:
+                                    # Copy enrichment fields from the donor applicant
+                                    copy_fields = {}
+                                    for fname in ("eraspy_more_data", "eraspy_profile_url",
+                                                  "eraspy_rating", "eraspy_ai_match"):
+                                        val = donor[fname]
+                                        if val and not applicant[fname]:
+                                            copy_fields[fname] = val
+                                    if copy_fields:
+                                        copy_fields["eraspy_last_status"] = "Enriched"
+                                        copy_fields["eraspy_last_checked"] = fields.Datetime.now()
+                                        applicant.write(copy_fields)
+                                        copied = True
 
-            queue_record = queue.enqueue(applicant, item, candidate if isinstance(candidate, dict) else {})
-            if queue_record:
-                queued += 1
+                            if not copied:
+                                prev_status = applicant.eraspy_last_status or ""
+                                if applicant._is_eraspy_queue_status(prev_status):
+                                    applicant.write({
+                                        "eraspy_last_status": applicant.eraspy_more_data and "Enriched" or "Ready",
+                                        "eraspy_last_checked": fields.Datetime.now(),
+                                    })
 
-        _logger.info("EraSpy applicant callback queued: %s items, skipped unmatched: %s", queued, unmatched)
-        if queued:
-            try:
-                # Ensure callback queue rows are persisted as pending before triggering processing.
-                request.env.cr.commit()
-                cron = request.env.ref(
-                    "era_spy_recruitment.ir_cron_eraspy_applicant_process_queue",
-                    raise_if_not_found=False,
-                )
-                if cron and hasattr(cron, "_trigger"):
-                    cron.sudo()._trigger()
-                elif cron and hasattr(cron, "method_direct_trigger"):
+                            env["eraspy.applicant.callback.queue"].log_callback(
+                                applicant=applicant, item=item, candidate=candidate_dict,
+                                state="done", error=False,
+                            )
+                            processed += 1
+                            _logger.info(
+                                "Era Enrich duplicate_query for applicant=%s copied=%s",
+                                applicant.id, copied,
+                            )
+                            break
+
+                        # Build write values
+                        write_vals = {}
+                        already_enriched = bool(applicant.eraspy_more_data)
+                        ai_match_done = bool(applicant.eraspy_ai_match)
+                        if candidate_dict and not is_failure:
+                            if already_enriched:
+                                # Applicant already has profile data — skip re-enrichment.
+                                # Only schedule AI match if it hasn't been generated yet.
+                                if not ai_match_done:
+                                    _logger.info(
+                                        "Era Enrich callback: applicant %s already enriched, skipping profile "
+                                        "re-write for identifier=%s; scheduling AI match retry.",
+                                        applicant.id, identifier,
+                                    )
+                                    matched_applicant_id = applicant.id
+                                    matched_candidate_for_ai = candidate_dict
+                                else:
+                                    _logger.info(
+                                        "Era Enrich callback: applicant %s already enriched and has AI match, "
+                                        "nothing to do for identifier=%s.",
+                                        applicant.id, identifier,
+                                    )
+                            else:
+                                write_vals = applicant._prepare_eraspy_write_vals(
+                                    candidate_dict, overwrite=False, skip_ai_match=True,
+                                )
+                        if status_lower in FAILURE_STATUSES and not error_message:
+                            error_message = "No profile found"
+                        if is_failure and not status:
+                            status = "failed"
+                        if status and is_failure:
+                            write_vals.update({
+                                "eraspy_last_status": f"{status}: {error_message}"[:255] if error_message else str(status)[:255],
+                                "eraspy_last_checked": fields.Datetime.now(),
+                            })
+
+                        write_vals["eraspy_debug_payload"] = json.dumps(item, ensure_ascii=False)[:4000]
+
+                        if write_vals:
+                            applicant.write(write_vals)
+                            if candidate_dict and not is_failure and not already_enriched:
+                                matched_applicant_id = applicant.id
+                                matched_candidate_for_ai = candidate_dict
+
+                        # Log to callback queue
+                        env["eraspy.applicant.callback.queue"].log_callback(
+                            applicant=applicant, item=item, candidate=candidate_dict,
+                            state="done", error=False,
+                        )
+                        processed += 1
+                    break  # success — exit retry loop
+
+                except Exception as exc:
+                    # Log INSIDE the except block so Python 3 exception context is preserved.
+                    _logger.exception("EraSpy callback failed: request_id=%s identifier=%s", request_id, identifier)
+                    if attempt < max_attempts - 1 and "serialize" in str(exc).lower():
+                        import time as _time
+                        _time.sleep(1)
+                        _logger.warning("EraSpy callback retry after serialization: request_id=%s", request_id)
+                        continue  # retry
+                    # Try to log the error to the queue
                     try:
-                        cron.sudo().method_direct_trigger()
-                    except UserError as exc:
-                        if "already executing" in str(exc).lower():
-                            _logger.info("EraSpy callback queue cron already executing; skipping direct trigger")
-                        else:
-                            raise
-                else:
-                    queue.cron_process_queue()
-            except Exception:
-                _logger.exception("EraSpy applicant callback trigger failed")
+                        with request.env.registry.cursor() as cr:
+                            env = api.Environment(cr, 1, {})
+                            env["eraspy.applicant.callback.queue"].log_callback(
+                                applicant=None, item=item, candidate=candidate_dict,
+                                state="error", error=str(exc)[:2000],
+                            )
+                    except Exception:
+                        pass
+
+            # Generate AI match in a fresh cursor AFTER the profile cursor has committed.
+            # Keeps the DB connection free during the slow AI HTTP call and ensures
+            # an AI failure never prevents profile data from being persisted.
+            if matched_applicant_id and matched_candidate_for_ai:
+                try:
+                    with request.env.registry.cursor() as cr:
+                        env = api.Environment(cr, 1, {})
+                        ai_applicant = env["hr.applicant"].browse(matched_applicant_id)
+                        ai_applicant._write_eraspy_ai_match_safely(matched_candidate_for_ai)
+                except Exception as exc:
+                    # Serialization errors are expected when concurrent callbacks update the
+                    # same applicant — log as warning, not error.
+                    msg = str(exc).lower()
+                    if "serialize" in msg or "concurrent" in msg:
+                        _logger.warning(
+                            "Era Enrich AI match skipped for applicant %s (concurrent update)", matched_applicant_id
+                        )
+                    else:
+                        _logger.exception(
+                            "Era Enrich AI match write failed for applicant %s", matched_applicant_id
+                        )
+
+        # AI match in background — completely decoupled, never blocks the response.
+        # Runs after the HTTP response is sent (best-effort).
+        _logger.info("EraSpy applicant callback done: processed=%s unmatched=%s", processed, unmatched)
         return request.make_response(
-            json.dumps({"ok": True, "queued": queued, "unmatched": unmatched}),
+            json.dumps({"ok": True, "processed": processed, "unmatched": unmatched}),
             headers=[("Content-Type", "application/json")],
         )
+
+    @staticmethod
+    def _match_applicant(applicant_model, request_id, identifier, candidate_dict, status_lower):
+        """Try to match the callback to an applicant using multiple strategies."""
+        applicant = None
+
+        if request_id:
+            applicant = applicant_model.search(
+                [("eraspy_last_request_id", "=", str(request_id))], limit=1,
+            )
+        if not applicant and identifier:
+            applicant = applicant_model.search(
+                [("eraspy_last_identifier", "ilike", identifier)], limit=1,
+            )
+        if not applicant and identifier:
+            normalized = identifier.strip()
+            digits = "".join(ch for ch in normalized if ch.isdigit())
+            phone_probe = digits or normalized
+            clauses = [("email_from", "ilike", normalized)]
+            if "phone" in applicant_model._fields:
+                clauses.append(("phone", "ilike", phone_probe))
+            if "mobile" in applicant_model._fields:
+                clauses.append(("mobile", "ilike", phone_probe))
+            # Build flat OR domain in Odoo prefix notation: ['|'] * (n-1) + clauses
+            domain = ["|"] * (len(clauses) - 1) + clauses
+            applicant = applicant_model.search(domain, limit=1)
+
+        if not applicant and isinstance(candidate_dict, dict):
+            emails = [e.get("value") for e in candidate_dict.get("emails", []) if isinstance(e, dict)] or []
+            phones = [p.get("value") for p in candidate_dict.get("phones", []) if isinstance(p, dict)] or []
+            clauses = []
+            if emails:
+                clauses.append(("email_from", "in", emails))
+            if phones and "phone" in applicant_model._fields:
+                clauses.append(("phone", "in", phones))
+            if clauses:
+                domain = ["|"] * (len(clauses) - 1) + clauses
+                applicant = applicant_model.search(domain, limit=1)
+
+        # Last resort for failures: find queued applicant by identifier
+        if not applicant and identifier and status_lower in FAILURE_STATUSES:
+            applicant = applicant_model.search(
+                [("eraspy_last_status", "ilike", "queued"), ("eraspy_last_identifier", "ilike", identifier)],
+                limit=1,
+            )
+            if not applicant:
+                applicant = applicant_model.search(
+                    [("eraspy_last_status", "ilike", "queued"), ("email_from", "ilike", identifier)],
+                    limit=1,
+                )
+
+        return applicant

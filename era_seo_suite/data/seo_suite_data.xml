@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+    <!-- Seed the singleton hub record so the menu has somewhere to land. -->
+    <record id="hub_main" model="era.seo.suite.hub">
+      <field name="name">ERA SEO Suite</field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!--
+      ERA SEO: Auto-publish a trend-aware blog article every 3 days.
+
+      Opt-in: gated by `era_seo.article_generator_active` (default False).
+      Flip it on from the Settings tab of the suite hub once an AI agent
+      is configured. Generated posts land as drafts (is_published=False)
+      so a human reviews before they go live.
+    -->
+    <record id="cron_generate_blog_article" model="ir.cron">
+      <field name="name">ERA SEO: Auto-publish blog article (trend-aware)</field>
+      <field name="model_id" ref="model_era_seo_suite_hub"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_generate_blog_article()</field>
+      <field name="interval_number">3</field>
+      <field name="interval_type">days</field>
+      <field name="active" eval="True"/>
+      <field name="priority">8</field>
+    </record>
+
+  </data>
+</odoo>

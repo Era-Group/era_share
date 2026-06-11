@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_seo_redirect_import_wizard_form" model="ir.ui.view">
+    <field name="name">era.seo.redirect.import.wizard.form</field>
+    <field name="model">era.seo.redirect.import.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Import Redirects">
+        <sheet>
+          <div class="alert alert-info" role="alert" invisible="state == 'done'">
+            <strong>CSV format:</strong>
+            Required columns <code>source</code> and <code>target</code>.
+            Optional: <code>type</code>, <code>website</code>, <code>lang</code>,
+            <code>notes</code>, <code>is_regex</code>.
+          </div>
+          <group invisible="state == 'done'">
+            <group string="File">
+              <field name="data_file" filename="filename"/>
+              <field name="filename" invisible="1"/>
+              <field name="delimiter"/>
+              <field name="has_header"/>
+            </group>
+            <group string="Defaults">
+              <field name="default_type"/>
+              <field name="default_website_id"
+                     options="{'no_create': True}"/>
+              <field name="dry_run"/>
+            </group>
+          </group>
+          <group invisible="state != 'done'" string="Result">
+            <group>
+              <field name="created_count" readonly="1"/>
+              <field name="updated_count" readonly="1"/>
+              <field name="error_count" readonly="1"/>
+            </group>
+          </group>
+          <group invisible="state != 'done'">
+            <field name="report" nolabel="1" readonly="1"
+                   widget="text"
+                   style="min-height:200px;font-family:monospace;white-space:pre-wrap"/>
+          </group>
+          <field name="state" invisible="1"/>
+        </sheet>
+        <footer>
+          <button string="Import" name="action_import" type="object"
+                  class="btn-primary"
+                  groups="era_seo_suite.group_era_seo_manager"
+                  invisible="state == 'done'"/>
+          <button string="Close" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_seo_redirect_import_wizard" model="ir.actions.act_window">
+    <field name="name">Import Redirects</field>
+    <field name="res_model">era.seo.redirect.import.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="group_ids" eval="[(4, ref('era_seo_suite.group_era_seo_manager'))]"/>
+  </record>
+</odoo>

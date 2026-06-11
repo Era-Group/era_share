@@ -43,10 +43,17 @@ class CrmRealtimeCallSummary(models.Model):
     is_active = fields.Boolean(default=False, copy=False, index=True)
     session_key = fields.Char(copy=False, index=True)
     client_call_id = fields.Char(copy=False, index=True)
+    last_seen = fields.Datetime(
+        string="آخر نشاط",
+        copy=False,
+        index=True,
+        help="آخر وقت أظهرت فيه الجلسة نشاطًا (نبضة). يُستخدم لتحديد الجلسات الخاملة.",
+    )
 
-    _sql_constraints = [
-        ("crm_realtime_call_summary_client_call_id_uniq", "unique(client_call_id)", "Client call id must be unique."),
-    ]
+    _client_call_id_uniq = models.Constraint(
+        "unique(client_call_id)",
+        "Client call id must be unique.",
+    )
 
     @api.depends("attachment_id", "attachment_name")
     def _compute_recording_link_html(self):

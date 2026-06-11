@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_lead_view_form_monte_carlo" model="ir.ui.view">
+        <field name="name">crm.lead.form.monte.carlo</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="key">era_monte_carlo_simulation.crm_lead_view_form_monte_carlo</field>
+        <field name="arch" type="xml">
+
+            <!-- Monte Carlo VALUE forecast beside Expected Revenue. -->
+            <xpath expr="//div[hasclass('oe_title')]/h2" position="after">
+                <!-- position-relative: anchor for the absolutely-positioned
+                     Recompute button pinned to the top-right corner. -->
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2 p-2 bg-light border rounded position-relative"
+                     groups="era_monte_carlo_simulation.group_monte_carlo_user"
+                     invisible="type == 'lead' or not expected_revenue">
+                    <field name="mc_run_id" invisible="1"/>
+                    <i class="fa fa-cubes text-info" title="Monte Carlo forecast" role="img" aria-label="Monte Carlo forecast"/>
+                    <!-- flex-grow-1 + min-w-0: let the field fill the row and
+                         shrink so its content wraps (no h-scroll). pe-5 reserves
+                         space on the right so content never slides under the
+                         corner button. -->
+                    <field name="mc_forecast" nolabel="1" readonly="1" class="flex-grow-1 min-w-0 pe-5"/>
+                    <!-- fa-refresh: fa-dice is FontAwesome 5; Odoo ships 4.7.
+                         Icon-only (text removed); floated to the top-right
+                         corner via position-absolute top-0 end-0. -->
+                    <button name="action_monte_carlo_simulate" type="object"
+                            icon="fa-refresh"
+                            class="btn btn-sm btn-info position-absolute top-0 end-0 m-2"
+                            aria-label="Recompute"
+                            title="Compute the value forecast with Monte Carlo"/>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

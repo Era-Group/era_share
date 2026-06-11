@@ -1,0 +1,58 @@
+# Monkey-patch first: registers gpt-5-nano under the OpenAI provider so the
+# blog agent (llm_model='gpt-5-nano') resolves instead of "No provider found".
+from . import ai_llm_patch  # noqa: F401
+
+from . import (
+    res_config_settings_mgr,
+    seo_audit_finding_mgr,
+    seo_audit_run_mgr,
+    seo_mixin_mgr,
+    res_config_settings_ai,
+    seo_audit_finding_ai,
+    seo_audit_run_ai,
+    seo_mixin_ai,
+    res_config_settings_geo,
+    seo_audit_run_geo,
+    seo_geo_ai_review,
+    seo_mixin_geo,
+    blog_post_blog,
+    blog_post_blogai,
+    res_config_settings_gsc,
+    ai_client,
+    ai_fix_log,
+    # Monkey-patches the EE AI app's hard-coded 30s timeout. Loaded after
+    # ai_client so any failure during the patch doesn't take ai_client
+    # down with it.
+    ai_llm_timeout_patch,
+    blog_author,
+    blog_category,
+    blog_faq,
+    blog_series,
+    content_block,
+    extensions,
+    geo_ai_crawler,
+    gsc_account,
+    gsc_client,
+    gsc_query,
+    gsc_site,
+    # gsc_keyword is a SQL view over era_gsc_query — import it AFTER gsc_query
+    # so the base table is created (model._auto_init) before our view's init()
+    # runs in the same install pass (Odoo interleaves _auto_init/init per model).
+    gsc_keyword,
+    ir_http,
+    ir_ui_view,
+    res_partner,
+    seo_hreflang,
+    seo_redirect,
+    seo_redirect_log,
+    seo_robots_rule,
+    seo_schema_engine,
+    seo_schema_instance,
+    seo_schema_template,
+    seo_sitemap_config,
+    seo_status,
+    seo_suite_hub,
+    website,
+    website_menu,
+    website_page,
+)

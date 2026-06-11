@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_era_ai_accounts" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.era.ai.accounts</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="ai_app.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='ai_app']/block[@name='ai_providers']/setting[@id='google_provider']" position="after">
+                <setting
+                    id="era_ai_accounts_link"
+                    string="AI Accounts"
+                    help="Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via API keys, and share them with users."
+                    groups="base.group_system">
+                    <button name="%(era_ai_accounts.era_ai_account_action)d" type="action"
+                            string="Open AI Accounts" class="btn-link"/>
+                </setting>
+                <setting
+                    id="era_cli_protection"
+                    string="Claude CLI rate protection"
+                    help="Keep the connected Claude account safe from concurrent or rapid-fire calls. Calls are serialized and paced; tune the limits below."
+                    groups="base.group_system">
+                    <field name="cli_gap_enabled"/>
+                    <group class="mt-2">
+                        <field name="cli_min_gap" invisible="not cli_gap_enabled"/>
+                        <field name="cli_gap_per_kb" invisible="not cli_gap_enabled"/>
+                        <field name="cli_max_gap" invisible="not cli_gap_enabled"/>
+                        <field name="cli_max_concurrency"/>
+                        <field name="cli_lock_wait"/>
+                        <field name="cli_timeout"/>
+                        <field name="cli_max_prompt_chars"/>
+                    </group>
+                </setting>
+                <setting
+                    id="custom_llm_provider"
+                    string="Use your own custom LLM provider"
+                    help="Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local gateways, etc.)."
+                    groups="base.group_system">
+                    <field name="custom_llm_key_enabled"/>
+                    <group invisible="not custom_llm_key_enabled">
+                        <div class="flex-grow-1 d-flex flex-column gap-2">
+                            <label for="custom_llm_provider_name"/>
+                            <field name="custom_llm_provider_name" placeholder="OpenRouter" class="w-100"/>
+                            <label for="custom_llm_key"/>
+                            <field name="custom_llm_key" placeholder="API key" password="True" class="w-100"/>
+                            <label for="custom_llm_base_url"/>
+                            <field name="custom_llm_base_url" placeholder="https://openrouter.ai/api/v1" class="w-100"/>
+                            <label for="custom_llm_auth_header"/>
+                            <field name="custom_llm_auth_header" placeholder="Authorization" class="w-100"/>
+                            <label for="custom_llm_auth_prefix"/>
+                            <field name="custom_llm_auth_prefix" placeholder="Bearer" class="w-100"/>
+                            <label for="custom_llm_model"/>
+                            <field name="custom_llm_model" placeholder="openrouter/free" class="w-100"/>
+                            <label for="custom_llm_model_2"/>
+                            <field name="custom_llm_model_2" placeholder="openai/gpt-4o-mini" class="w-100"/>
+                            <label for="custom_llm_model_3"/>
+                            <field name="custom_llm_model_3" placeholder="google/gemini-2.0-flash-exp:free" class="w-100"/>
+                            <label for="custom_llm_model_4"/>
+                            <field name="custom_llm_model_4" placeholder="meta-llama/llama-3.3-70b-instruct:free" class="w-100"/>
+                            <label for="custom_llm_embedding_model"/>
+                            <field name="custom_llm_embedding_model" placeholder="openai/text-embedding-3-small" class="w-100"/>
+                            <label for="custom_llm_referer"/>
+                            <field name="custom_llm_referer" placeholder="https://your-domain.example" class="w-100"/>
+                            <label for="custom_llm_title"/>
+                            <field name="custom_llm_title" placeholder="Your App Name" class="w-100"/>
+                        </div>
+                    </group>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

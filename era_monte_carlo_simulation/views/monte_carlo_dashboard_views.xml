@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="monte_carlo_dashboard_view_form" model="ir.ui.view">
+        <field name="name">monte.carlo.dashboard.form</field>
+        <field name="model">monte.carlo.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Manager Dashboard" create="false" delete="false"
+                  duplicate="false">
+                <header>
+                    <button name="action_refresh" type="object"
+                            string="Refresh" icon="fa-refresh"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Monte Carlo Dashboard</h1>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        A portfolio view of every simulation model's latest run.
+                        The <b>heatmap</b> places each model by its success
+                        confidence (horizontal) and relative uncertainty
+                        (vertical) — the bottom-right corner is the healthy zone.
+                        The <b>table</b> lists models riskiest-first so the ones
+                        that need attention are on top. Use the filter to focus on
+                        one objective.
+                    </div>
+                    <group>
+                        <field name="objective_filter"/>
+                    </group>
+                    <field name="board_html" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Open through a server action that pre-creates the transient record:
+         a bare act_window on a TransientModel opens a dirty 'New' form with
+         Save/Discard and unsaved-changes prompts on a read-only board. -->
+    <record id="monte_carlo_dashboard_open_action" model="ir.actions.server">
+        <field name="name">Dashboard</field>
+        <field name="model_id" ref="model_monte_carlo_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
+    </record>
+
+</odoo>

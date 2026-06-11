@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!--
+    Add a GEO tab to the content-block form so the new citation fields
+    (answer summary + key takeaways) are editable alongside the SEO tab.
+  -->
+  <record id="view_era_content_block_form_geo" model="ir.ui.view">
+    <field name="name">era.content.block.form.geo</field>
+    <field name="model">era.content.block</field>
+    <field name="inherit_id" ref="era_seo_suite.view_era_content_block_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//page[@name='seo']" position="after">
+        <page string="GEO" name="geo">
+          <group>
+            <field name="geo_answer_summary"
+                   placeholder="One or two short, quotable sentences answering the page question."/>
+          </group>
+          <separator string="Key Takeaways"/>
+          <field name="geo_key_takeaways"
+                 placeholder="A small &lt;ul&gt; with 3-5 short bullet takeaways."/>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

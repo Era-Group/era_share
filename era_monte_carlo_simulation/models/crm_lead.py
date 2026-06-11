@@ -208,12 +208,10 @@ class CrmLead(models.Model):
                 if growth:
                     parts.append(_("+%(pct).0f%% projected growth",
                                    pct=growth * 100))
-                # Fixed 20%-wide column beside the boxes, wrapping onto several
-                # lines within that width (white-space:normal). min-width:0 lets
-                # it actually hold 20% rather than being pushed wider by content.
-                # (20%% is escaped: this is a %-formatted string.)
+                # Auto-width column beside the boxes (sizes to its content);
+                # white-space:normal keeps wrapping enabled.
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex:0 0 20%%;min-width:0;white-space:normal;">'
+                        'flex:0 0 auto;white-space:normal;">'
                         '%s</span>' % " · ".join(p for p in parts if p))
             else:
                 boxes.append(lead._mc_box(
@@ -222,7 +220,7 @@ class CrmLead(models.Model):
                     _("Likely range"),
                     "%s – %s" % (fmt(run.p05), fmt(run.p95))))
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex:0 0 20%%;min-width:0;white-space:normal;">'
+                        'flex:0 0 auto;white-space:normal;">'
                         '%s</span>' % _("(±30% — not enough deal history)"))
             lead.mc_forecast = (
                 '<div style="display:flex;gap:8px;flex-wrap:nowrap;'

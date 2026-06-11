@@ -208,7 +208,11 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     # Disable all built-in tools so this behaves as a pure chat completion.
     args += ["--allowed-tools", ""]
     if cfg.get("extra_args"):
-        args += shlex.split(cfg["extra_args"])
+        try:
+            args += shlex.split(cfg["extra_args"])
+        except ValueError as exc:
+            raise UserError(_(
+                "Invalid 'CLI extra arguments' on this AI account: %s", exc))
 
     run_env = dict(os.environ)
     home = cfg.get("home_dir") or "/opt/odoo"

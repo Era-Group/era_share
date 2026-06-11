@@ -97,9 +97,10 @@ class ResConfigSettings(models.TransientModel):
     cli_max_concurrency = fields.Integer(
         string="Max concurrent calls", config_parameter="ai.cli_max_concurrency", default=1,
         readonly=False, groups="base.group_system",
-        help="How many CLI calls may run at the same time across ALL workers and "
-             "users, per provider pool. 1 = strictly one at a time (recommended; "
-             "for Codex it also prevents token-refresh races on auth.json).",
+        help="How many Claude CLI calls may run at the same time across ALL workers "
+             "and users. 1 = strictly one at a time (recommended). The Codex pool "
+             "is always exactly 1, regardless of this setting — its auth.json is "
+             "single-writer (tokens rotate on refresh).",
     )
     cli_lock_wait = fields.Integer(
         string="Max wait for a free slot (seconds)", config_parameter="ai.cli_lock_wait", default=300,

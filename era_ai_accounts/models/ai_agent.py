@@ -26,9 +26,9 @@ class AIAgent(models.Model):
         "era.ai.account",
         string="AI Account",
         help="When set, this agent's responses are generated through the selected "
-             "account (e.g. Claude via the local CLI proxy) instead of the global "
-             "provider keys. Knowledge-source embeddings still use the standard "
-             "provider from 'LLM Model'.",
+             "account (e.g. Claude or ChatGPT via the local CLI proxy) instead of "
+             "the global provider keys. Knowledge-source embeddings still use the "
+             "standard provider from 'LLM Model'.",
     )
     era_model_id = fields.Many2one(
         "era.ai.model",

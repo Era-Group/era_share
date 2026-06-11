@@ -13,17 +13,21 @@ semaphore + size-scaled gap) is shared with the Claude transport's helpers but
 uses its own lock-file namespace, so Claude and Codex calls never queue behind
 each other.
 
-Codex tokens rotate on refresh and ``auth.json`` is single-writer: keep
-``ai.cli_max_concurrency`` at 1 (the default) — the per-provider slot pool then
-guarantees at most one ``codex`` process per host, so a token refresh can never
-race another call on the same account.
+Codex tokens rotate on refresh and ``auth.json`` is single-writer, so this
+transport HARD-CLAMPS its slot pool to 1: at most one ``codex`` process per
+host, regardless of ``ai.cli_max_concurrency`` (which still sizes the Claude
+pool). Two concurrent refreshes would otherwise race last-writer-wins and
+persist an already-consumed refresh token, breaking the linked account for
+everyone until it is re-linked.
 """
 import glob
 import json
 import logging
 import os
+import re
 import shlex
 import shutil
+import signal
 import subprocess
 
 from odoo import _
@@ -104,6 +108,8 @@ def check_login(cfg, timeout=30):
 
     Exit code 0 means a usable login (verified on codex-cli 0.139: non-zero +
     'Not logged in' otherwise), making this a cheap, no-token liveness check.
+    Takes the same host-wide slot as cli_complete: even a status probe may
+    refresh-and-rewrite auth.json, which is single-writer.
     """
     binary = resolve_cli_binary(cfg.get("cli_path"))
     if not binary:
@@ -111,12 +117,14 @@ def check_login(cfg, timeout=30):
             "The Codex CLI was not found on this server. Install it (npm i -g "
             "@openai/codex), or set the account's 'CLI binary path' or the "
             "ERA_AI_CODEX_BIN environment variable."))
-    proc = subprocess.run(
-        [binary, "login", "status"],
-        capture_output=True, text=True, timeout=timeout,
-        env=_build_env(cfg),
-        preexec_fn=_preexec_unlimit_as if resource else None,
-    )
+    with _global_slot(1, min(float(cfg.get("lock_wait", 300.0)), 30.0),
+                      lock_name=_LOCK_SLOT):
+        proc = subprocess.run(
+            [binary, "login", "status"],
+            capture_output=True, text=True, timeout=timeout,
+            env=_build_env(cfg),
+            preexec_fn=_preexec_unlimit_as if resource else None,
+        )
     if proc.returncode != 0:
         detail = (proc.stderr or proc.stdout or "").strip()[:200]
         raise UserError(_(
@@ -124,6 +132,96 @@ def check_login(cfg, timeout=30):
             "Connect a ChatGPT account on the AI account form, or run "
             "'codex login' on the server.", detail or "not logged in"))
     return True
+
+
+# ---------------------------------------------------------- device-code login
+# `codex login --device-auth` prints a verification URL + one-time code, then
+# waits (~15 min) for the user to approve from any browser and writes auth.json
+# itself. We spawn it detached, stream its output to a file in the managed
+# config dir, and parse the URL/code out of that file for the wizard.
+_DEVICE_OUT_FILE = "device_login.out"
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+_DEVICE_URL_RE = re.compile(r"https://[^\s'\"<>]+")
+# One-time codes are short grouped tokens (e.g. "BLDQ-NRVF") or plain digits.
+_DEVICE_CODE_RE = re.compile(r"\b([A-Z0-9]{3,6}-[A-Z0-9]{3,6}|\d{6,9})\b")
+
+
+def device_login_start(cfg):
+    """Spawn ``codex login --device-auth`` for this account; return (pid, out_path).
+
+    ``cfg`` must carry a managed ``config_dir`` (the link target). The child is
+    detached into its own session so an Odoo worker recycle does not kill the
+    pending login; it exits by itself on approval, denial, or code expiry.
+    """
+    binary = resolve_cli_binary(cfg.get("cli_path"))
+    if not binary:
+        raise UserError(_(
+            "The Codex CLI was not found on this server. Install it (npm i -g "
+            "@openai/codex), or set the account's 'CLI binary path' or the "
+            "ERA_AI_CODEX_BIN environment variable."))
+    config_dir = cfg.get("config_dir")
+    if not config_dir:
+        raise UserError(_("Device login needs the account's managed credentials directory."))
+    out_path = os.path.join(config_dir, _DEVICE_OUT_FILE)
+    out_fd = os.open(out_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        proc = subprocess.Popen(
+            [binary, "login", "--device-auth"],
+            stdin=subprocess.DEVNULL, stdout=out_fd, stderr=subprocess.STDOUT,
+            env=_build_env(cfg),
+            cwd=cfg.get("home_dir") or "/opt/odoo",
+            start_new_session=True,
+            preexec_fn=_preexec_unlimit_as if resource else None,
+        )
+    except Exception as exc:  # noqa: BLE001
+        raise UserError(_("Failed to launch the Codex CLI: %s", exc))
+    finally:
+        os.close(out_fd)
+    _logger.info("era_ai_accounts: codex device login started (pid %s)", proc.pid)
+    return proc.pid, out_path
+
+
+def device_login_read(out_path):
+    """Raw output of a pending device login, ANSI-escape-stripped."""
+    try:
+        with open(out_path, "r", errors="replace") as fh:
+            raw = fh.read()
+    except OSError:
+        return ""
+    return _ANSI_RE.sub("", raw)
+
+
+def parse_device_login(raw):
+    """Best-effort (url, code) from codex's device-auth output."""
+    url = ""
+    m = _DEVICE_URL_RE.search(raw or "")
+    if m:
+        url = m.group(0).rstrip(").,;:")
+    # Don't let URL fragments (ports, ids) masquerade as the one-time code.
+    scrubbed = (raw or "").replace(url, "")
+    mc = _DEVICE_CODE_RE.search(scrubbed)
+    code = mc.group(0) if mc else ""
+    return url, code
+
+
+def pid_is_pending_login(pid):
+    """True while ``pid`` is alive and is a codex process (guards stale pids)."""
+    if not pid:
+        return False
+    try:
+        with open("/proc/%d/cmdline" % pid, "rb") as fh:
+            return b"codex" in fh.read()
+    except OSError:
+        return False
+
+
+def device_login_kill(pid):
+    """Terminate a pending device login if (and only if) it is still codex."""
+    if pid_is_pending_login(pid):
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
 
 
 def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
@@ -157,7 +255,11 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     if model:
         args += ["--model", model]
     if cfg.get("extra_args"):
-        args += shlex.split(cfg["extra_args"])
+        try:
+            args += shlex.split(cfg["extra_args"])
+        except ValueError as exc:
+            raise UserError(_(
+                "Invalid 'CLI extra arguments' on this AI account: %s", exc))
     args += ["-"]  # read the prompt from stdin
 
     # codex exec has no system-prompt flag; fold the system text into the stdin
@@ -173,7 +275,10 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     req_size = len(stdin_doc)
     gap = _compute_gap(cfg, req_size) if cfg.get("gap_enabled", True) else 0.0
     lock_wait = float(cfg.get("lock_wait", 300.0))
-    slots = int(cfg.get("concurrency", 1) or 1)
+    # auth.json is single-writer (tokens rotate on refresh): the Codex pool is
+    # always 1 slot, deliberately ignoring ai.cli_max_concurrency — raising
+    # that knob for Claude must not let two codex processes race a refresh.
+    slots = 1
     home = cfg.get("home_dir") or "/opt/odoo"
 
     with _global_slot(slots, lock_wait, lock_name=_LOCK_SLOT):

@@ -46,18 +46,25 @@ Pick provider **OpenAI** with auth mode **Local CLI proxy**. Requirements: the
 *CLI binary path* / `ERA_AI_CODEX_BIN`) and a ChatGPT plan with Codex access
 (Plus, Pro, Business, Edu or Enterprise).
 
-Linking the account (manager-only, click **Connect ChatGPT account**): OpenAI's
-OAuth client only redirects to `localhost:1455` (there is no hosted copy-code
-page like Claude's), so the in-app flow uses OpenAI's **officially documented
-server/CI pattern** instead — run `codex login` on your own computer (choose
-*Sign in with ChatGPT*), then paste the contents of `~/.codex/auth.json` into
-the dialog. The file is stored under an isolated per-account `CODEX_HOME`
+Linking the account (manager-only, click **Connect ChatGPT account**), two ways:
+
+1. **Device login (simplest, like signing in on a TV):** click *Start device
+   login* — the wizard runs `codex login --device-auth` on the server and shows
+   a link plus a one-time code. Open the link on any device, enter the code,
+   approve, then click *Check status*. Requires *device codes* to be enabled in
+   the ChatGPT account's security settings (the code expires in ~15 minutes).
+2. **Paste `auth.json` (fallback):** OpenAI's OAuth client only redirects to
+   `localhost:1455` (no hosted copy-code page like Claude's), so the manual
+   flow uses OpenAI's **officially documented server/CI pattern** — run
+   `codex login` on your own computer (choose *Sign in with ChatGPT*), then
+   paste the contents of `~/.codex/auth.json` into the dialog.
+
+Either way the credentials land in an isolated per-account `CODEX_HOME`
 (`<data_dir>/era_ai_accounts/cli/<id>/.codex/auth.json`, mode 0600), and the
 codex CLI refreshes/rotates the tokens in place during use. If no account is
 linked, the CLI falls back to the server's own `~/.codex` login under the
-account's *CLI HOME* (e.g. after running `codex login --device-auth` on the
-server). **Validate connection** runs `codex login status` — it confirms both
-the binary and the credentials without spending tokens.
+account's *CLI HOME*. **Validate connection** runs `codex login status` — it
+confirms both the binary and the credentials without spending tokens.
 
 Generation runs through `codex exec` locked down to **pure text**: read-only
 sandbox, shell tool disabled, web search disabled, user `config.toml` ignored,
@@ -65,9 +72,10 @@ no session files (`--ephemeral`). Tool-calling, embeddings and images are not
 available through this transport (same v1 limitation as the Claude proxy).
 Models are a curated catalog (`gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`) —
 ChatGPT-plan auth has no model-list endpoint; edit the rows if your plan serves
-different slugs. Keep `ai.cli_max_concurrency` at 1: codex rewrites `auth.json`
-when it refreshes tokens, and the per-provider one-at-a-time lock prevents two
-processes racing a refresh.
+different slugs. The Codex pool is **hard-clamped to one call at a time**
+(regardless of `ai.cli_max_concurrency`, which still sizes the Claude pool):
+codex rewrites `auth.json` when it refreshes tokens, and two concurrent
+refreshes would race last-writer-wins and break the linked account.
 
 **Heads-up (ToS):** OpenAI's own docs restrict ChatGPT-account auth to
 *trusted private infrastructure* and recommend API keys for most server/CI
@@ -166,8 +174,8 @@ CLI rate protection"** (no redeploy needed). They apply to both CLI providers.
 > `<data_dir>/era_ai_cli_proxy.codex.<n>.lock` (Codex) and auto-release if a worker dies.
 > When `ai.cli_gap_enabled` is on, consecutive calls are also separated by a gap that
 > **scales with the request body size** (`min_gap + gap_per_kb × KB`, capped at `max_gap`),
-> so large requests wait longer. For Codex, keep concurrency at 1 — `auth.json` is
-> single-writer (tokens rotate on refresh).
+> so large requests wait longer. The Codex pool is fixed at **1 slot** regardless of the
+> concurrency setting — `auth.json` is single-writer (tokens rotate on refresh).
 
 > **Note (memory):** Odoo applies a soft `RLIMIT_AS` (= `limit_memory_hard`) to its
 > workers; the CLI's JS runtime needs far more *virtual* address space than that and

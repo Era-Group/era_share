@@ -601,13 +601,18 @@ class TestEraAiAccounts(TransactionCase):
         self.assertIn("--model", args)
         self.assertIn("gpt-5.3-codex", args)
         self.assertEqual(args[-1], "-")  # prompt comes from stdin
-        # Locked down to pure text generation.
+        # Locked down to pure text generation — every flag is load-bearing:
+        # losing any of them silently re-enables capabilities on a customer
+        # ChatGPT account (shell, web search, permissive user config).
         self.assertIn("--sandbox", args)
         self.assertIn("read-only", args)
         self.assertIn("--disable", args)
         self.assertIn("shell_tool", args)
         self.assertIn("--ephemeral", args)
         self.assertIn("--skip-git-repo-check", args)
+        self.assertIn('web_search="disabled"', args)
+        self.assertIn("--ignore-user-config", args)
+        self.assertIn("never", args[args.index("--color") + 1])
         # System prompt folded into the stdin document ahead of the user turn.
         self.assertIn("system here", captured["input"])
         self.assertIn("user asks", captured["input"])
@@ -629,6 +634,90 @@ class TestEraAiAccounts(TransactionCase):
             codex_cli_transport._parse_codex_jsonl(stdout, 0, "")
         self.assertIn("401 Unauthorized", str(cm.exception))
         self.assertNotIn('{"type"', str(cm.exception))
+
+    def test_codex_jsonl_turn_failed_event(self):
+        stdout = "\n".join([
+            '{"type":"thread.started","thread_id":"t1"}',
+            '{"type":"turn.failed","error":{"message":"usage limit reached"}}',
+        ])
+        with self.assertRaises(UserError) as cm:
+            codex_cli_transport._parse_codex_jsonl(stdout, 0, "")
+        self.assertIn("usage limit reached", str(cm.exception))
+
+    def test_codex_validate_runs_login_status(self):
+        acc, tmp = self._linked_cli_account(name="CodexVal", provider="openai")
+        acc._codex_link_with_auth_json(json.dumps(self._codex_auth_json()))
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "Logged in using ChatGPT"
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        with patch.object(codex_cli_transport, "resolve_cli_binary", return_value="/usr/bin/codex"), \
+             patch.object(codex_cli_transport.subprocess, "run", side_effect=fake_run):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertEqual(captured["args"], ["/usr/bin/codex", "login", "status"])
+        self.assertEqual(captured["env"]["CODEX_HOME"], os.path.join(tmp, ".codex"))
+        self.assertEqual(captured["env"]["HOME"], tmp)
+        # Not signed in -> clean UserError carrying the CLI's detail.
+        _Proc.returncode = 1
+        _Proc.stderr = "Not logged in"
+        with patch.object(codex_cli_transport, "resolve_cli_binary", return_value="/usr/bin/codex"), \
+             patch.object(codex_cli_transport.subprocess, "run", side_effect=fake_run):
+            with self.assertRaises(UserError) as cm:
+                acc.action_validate()
+        self.assertIn("Not logged in", str(cm.exception))
+
+    def test_codex_wizard_dispatch_and_token_wipe(self):
+        acc, _tmp = self._linked_cli_account(name="CodexWiz", provider="openai")
+        wiz = self.env["era.ai.account.login"].with_context(
+            default_account_id=acc.id).create({})
+        # No Claude OAuth state is minted for an OpenAI account.
+        self.assertFalse(wiz.authorize_url)
+        wiz.auth_json = json.dumps(self._codex_auth_json())
+        wiz.action_complete()
+        self.assertTrue(acc._cli_is_linked())
+        # The pasted tokens must not survive in the transient table.
+        self.assertFalse(wiz.auth_json)
+
+    def test_sync_models_revives_archived_rows(self):
+        # Regression: archived rows must stay visible to the upsert, otherwise
+        # re-syncing trips the unique constraint and aborts the whole sync.
+        acc = self.Account.create({
+            "name": "CodexResync", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        first = era_ai_account.CODEX_CLI_MODELS[0][0]
+        row = acc.with_context(active_test=False).model_ids.filtered(
+            lambda m: m.model_id == first)
+        row.active = False
+        acc.action_sync_models()  # must not raise, and must reactivate the row
+        self.assertTrue(row.active)
+
+    def test_provider_switch_drops_old_credentials(self):
+        acc, tmp = self._linked_cli_account(name="SwitchCreds", provider="anthropic")
+        acc.sudo()._cli_write_credentials({"claudeAiOauth": {"accessToken": "tok"}})
+        self.assertTrue(acc._cli_is_linked())
+        claude_creds = os.path.join(tmp, ".claude", ".credentials.json")
+        self.assertTrue(os.path.exists(claude_creds))
+        acc.provider = "openai"
+        # The stale Claude tokens are gone, not stranded until a switch-back.
+        self.assertFalse(os.path.exists(claude_creds))
+        self.assertFalse(acc._cli_is_linked())
+
+    def test_cli_extra_args_validated_at_save(self):
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "BadArgs", "provider": "openai", "auth_mode": "cli_proxy",
+                "cli_extra_args": '--add-dir "/tmp',  # unbalanced quote
+            })
 
     def test_codex_jsonl_last_message_wins_and_fallbacks(self):
         stdout = "\n".join([
@@ -694,6 +783,75 @@ class TestEraAiAccounts(TransactionCase):
         claude_acc, _t = self._linked_cli_account(name="NotCodex", provider="anthropic")
         with self.assertRaises(UserError):
             claude_acc._codex_link_with_auth_json(json.dumps(self._codex_auth_json()))
+
+    def test_codex_parse_device_login_output(self):
+        raw = ("\x1b[1mCodex\x1b[0m device login\n"
+               "To sign in, visit https://chatgpt.com/codex/device and enter the code:\n"
+               "  BLDQ-NRVF\n"
+               "Waiting for approval (expires in 15 minutes)...\n")
+        url, code = codex_cli_transport.parse_device_login(
+            codex_cli_transport._ANSI_RE.sub("", raw))
+        self.assertEqual(url, "https://chatgpt.com/codex/device")
+        self.assertEqual(code, "BLDQ-NRVF")
+        # URL fragments must not be mistaken for the one-time code.
+        url2, code2 = codex_cli_transport.parse_device_login(
+            "go to https://example.com/device?x=ABCD-EFGH first")
+        self.assertEqual(url2, "https://example.com/device?x=ABCD-EFGH")
+        self.assertEqual(code2, "")
+
+    def test_codex_device_login_flow(self):
+        acc, tmp = self._linked_cli_account(name="CodexDevice", provider="openai")
+        out_path = os.path.join(tmp, ".codex", "device_login.out")
+
+        def fake_start(cfg):
+            self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".codex"))
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w") as fh:
+                fh.write("Visit https://chatgpt.com/codex/device and enter code BLDQ-NRVF\n")
+            return 12345, out_path
+
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True), \
+             patch.object(era_ai_account.time, "sleep"):
+            info = acc._codex_device_login_start()
+        self.assertEqual(info["url"], "https://chatgpt.com/codex/device")
+        self.assertEqual(info["code"], "BLDQ-NRVF")
+        self.assertTrue(acc._codex_device_state().get("pid"))
+
+        # Still pending while the codex process lives and no auth.json exists.
+        with patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True):
+            self.assertEqual(acc._codex_device_login_status(), "pending")
+        # Process gone without credentials -> failed, state cleared.
+        with patch.object(codex_cli_transport, "pid_is_pending_login", return_value=False):
+            self.assertTrue(acc._codex_device_login_status().startswith("failed:"))
+        self.assertFalse(acc._codex_device_state())
+
+        # Approval: codex wrote auth.json -> linked, state cleared.
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True), \
+             patch.object(era_ai_account.time, "sleep"):
+            acc._codex_device_login_start()
+        acc.sudo()._cli_write_credentials(self._codex_auth_json())
+        self.assertEqual(acc._codex_device_login_status(), "linked")
+        self.assertFalse(acc._codex_device_state())
+
+    def test_codex_device_login_failure_surfaces_output(self):
+        acc, tmp = self._linked_cli_account(name="CodexDevFail", provider="openai")
+        out_path = os.path.join(tmp, ".codex", "device_login.out")
+
+        def fake_start(cfg):
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w") as fh:
+                fh.write("error: device code authentication is not enabled\n")
+            return 12345, out_path
+
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=False), \
+             patch.object(era_ai_account.time, "sleep"):
+            with self.assertRaises(UserError) as cm:
+                acc._codex_device_login_start()
+        self.assertIn("not enabled", str(cm.exception))
+        self.assertFalse(acc._codex_device_state())
 
     def test_agent_routes_through_codex_account(self):
         acc = self.Account.create({

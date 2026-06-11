@@ -36,20 +36,59 @@
                     </group>
                 </div>
 
-                <!-- OpenAI: paste the Codex CLI's auth.json -->
+                <!-- OpenAI: device-code login (simple) or paste auth.json (fallback) -->
                 <div invisible="provider != 'openai'">
+                    <field name="device_url" invisible="1"/>
+                    <field name="device_code" invisible="1"/>
                     <div class="alert alert-info" role="status">
                         Connect a ChatGPT subscription once, for <b>all users</b> in this
-                        system — no API key and no per-user login. The credentials are stored
-                        on the server and the Codex CLI keeps the tokens refreshed.
+                        system — no API key and no per-user login (requires a ChatGPT Plus,
+                        Pro, Business, Edu or Enterprise plan). The credentials are stored on
+                        the server and the Codex CLI keeps the tokens refreshed.
                     </div>
+
+                    <!-- Step 1: start -->
+                    <div invisible="device_code">
+                        <b>Sign in with a code — like signing in on a TV</b>
+                        <div class="mt-1">
+                            <button name="action_device_start" type="object" class="btn-primary"
+                                    string="Start device login" icon="fa-mobile"/>
+                        </div>
+                        <div class="text-muted mt-1">
+                            You'll get a link and a short code: open the link on your phone or
+                            computer, enter the code, approve — done. (Device codes must be
+                            enabled in the ChatGPT account's security settings.)
+                        </div>
+                    </div>
+
+                    <!-- Step 2: approve + check -->
+                    <div invisible="not device_code" class="mb-2">
+                        <div class="alert alert-success" role="status">
+                            <div>1. Open
+                                <button name="action_device_open_url" type="object"
+                                        class="btn-link p-0 align-baseline"
+                                        string="the ChatGPT device page" icon="fa-external-link"/>
+                                on any device.</div>
+                            <div>2. Enter this one-time code:
+                                <span class="h3 ms-2"><field name="device_code" readonly="1" nolabel="1" class="fw-bold"/></span>
+                            </div>
+                            <div>3. Approve, then come back and click <b>Check status</b>.</div>
+                        </div>
+                        <button name="action_device_check" type="object" class="btn-primary"
+                                string="Check status" icon="fa-refresh"/>
+                    </div>
+                    <div class="text-muted mb-2" invisible="not device_status">
+                        <field name="device_status" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <hr/>
+                    <!-- Fallback: paste auth.json -->
                     <group>
                         <div colspan="2">
-                            <b>1. Sign in with ChatGPT on your own computer</b>
+                            <b>Alternative: paste auth.json from your own computer</b>
                             <div class="text-muted mt-1">
                                 Install the Codex CLI (<code>npm i -g @openai/codex</code>), run
-                                <code>codex login</code> and choose <i>Sign in with ChatGPT</i>
-                                (requires a ChatGPT Plus, Pro, Business, Edu or Enterprise plan).
+                                <code>codex login</code> and choose <i>Sign in with ChatGPT</i>.
                                 If <code>~/.codex/auth.json</code> is not created, add
                                 <code>cli_auth_credentials_store = "file"</code> to
                                 <code>~/.codex/config.toml</code> and log in again.
@@ -57,19 +96,19 @@
                         </div>
                     </group>
                     <group>
-                        <field name="auth_json" string="2. Paste the contents of ~/.codex/auth.json"
+                        <field name="auth_json" string="Paste the contents of ~/.codex/auth.json"
                                placeholder='{"OPENAI_API_KEY": null, "auth_mode": "chatgpt", "tokens": { ... }, "last_refresh": "..."}'/>
                     </group>
                     <div class="text-muted">
-                        The file is stored in an isolated server directory with restrictive
-                        permissions and is used only by the local Codex CLI — it is never sent
-                        to any other service. Treat its contents like a password.
+                        The credentials are stored in an isolated server directory with
+                        restrictive permissions and are used only by the local Codex CLI — they
+                        are never sent to any other service. Treat them like a password.
                     </div>
                 </div>
 
                 <footer>
                     <button name="action_complete" type="object" string="Complete login"
-                            class="btn-primary"/>
+                            class="btn-primary" invisible="provider == 'openai' and not auth_json"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

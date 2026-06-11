@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import secrets
+import shlex
 import shutil
 import subprocess
 import time
@@ -42,6 +43,9 @@ OAUTH_SCOPES = "org:create_api_key user:profile user:inference"
 # Transient PKCE state (verifier + state) stashed per account while a login is in
 # flight. Cleared once the code is exchanged.
 _PKCE_PARAM = "era_ai_accounts.oauth_pkce.%s"
+# Pending codex device-auth login per account: {pid, out, started_at}. Cleared
+# once the login completes, fails, or is superseded.
+_DEVICE_PARAM = "era_ai_accounts.codex_device.%s"
 
 # Providers that have a first-party local CLI we can proxy through (the
 # "connected account" path): Anthropic's `claude` and OpenAI's `codex`.
@@ -193,8 +197,9 @@ class EraAiAccount(models.Model):
     )
     max_concurrency = fields.Integer(
         default=1,
-        help="Legacy hint. CLI-proxy calls are now globally serialized (one at a "
-             "time across all workers/users), so concurrency is effectively 1.",
+        help="Legacy hint. CLI-proxy calls are serialized host-wide per provider: "
+             "Claude allows ai.cli_max_concurrency slots, Codex always exactly 1 "
+             "(its auth.json is single-writer).",
     )
 
     # --- Secret (encrypted, manager-only) ------------------------------------
@@ -348,6 +353,17 @@ class EraAiAccount(models.Model):
                     "The local CLI proxy is only available for the Anthropic "
                     "(Claude CLI) and OpenAI (Codex CLI) providers."
                 ))
+
+    @api.constrains("cli_extra_args")
+    def _check_cli_extra_args(self):
+        # The transports shlex-split this field on every call — catch an
+        # unbalanced quote at save time instead of failing every AI request.
+        for rec in self:
+            if rec.sudo().cli_extra_args:
+                try:
+                    shlex.split(rec.sudo().cli_extra_args)
+                except ValueError as exc:
+                    raise ValidationError(_("Invalid CLI extra arguments: %s", exc))
 
     @api.constrains("base_url")
     def _check_base_url(self):
@@ -632,10 +648,12 @@ class EraAiAccount(models.Model):
         if create:
             try:
                 os.makedirs(path, mode=0o700, exist_ok=True)
-                # makedirs masks mode by umask and only the leaf is guaranteed;
-                # force the account-private dirs to 0700 so a linked account's
+                # makedirs masks mode by umask and only sets it on the leaf;
+                # force the whole private chain (…/era_ai_accounts, …/cli,
+                # …/<id>, …/<subdir>) to 0700 so a linked account's
                 # presence/ids aren't world-listable (the token file is 0600).
-                for p in (home, path):
+                cli_root = os.path.dirname(home)
+                for p in (os.path.dirname(cli_root), cli_root, home, path):
                     try:
                         os.chmod(p, 0o700)
                     except OSError as exc:
@@ -811,16 +829,34 @@ class EraAiAccount(models.Model):
         ICP.set_param(_PKCE_PARAM % self.id, "")  # consume the PKCE state
         return True
 
-    def _oauth_logout(self):
-        """Remove the linked account's stored credentials (forces re-link)."""
+    def _cli_drop_linked_credentials(self):
+        """Remove this account's linked credential file + pending login state."""
         self.ensure_one()
-        self._assert_oauth_manager()
         try:
             os.remove(self.sudo()._cli_credentials_path())
         except OSError:
             pass
         self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % self.id, "")
+        self._codex_device_login_cancel()
+
+    def _oauth_logout(self):
+        """Remove the linked account's stored credentials (forces re-link)."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        self._cli_drop_linked_credentials()
         return True
+
+    def write(self, vals):
+        # Changing the provider re-keys the credential layout (_cli_profile):
+        # drop the OLD provider's linked credentials first, or they would be
+        # stranded on disk — invisible to 'Disconnect', yet silently picked up
+        # again if the provider is ever switched back. Manager-gated via ACL
+        # (only AI Account Managers can write era.ai.account).
+        if "provider" in vals:
+            for rec in self:
+                if rec.id and rec.provider != vals["provider"]:
+                    rec.sudo()._cli_drop_linked_credentials()
+        return super().write(vals)
 
     # ------------------------------------------- ChatGPT (Codex auth.json) link
     def _codex_link_with_auth_json(self, payload):
@@ -873,6 +909,89 @@ class EraAiAccount(models.Model):
         self.sudo()._cli_write_credentials(data)
         return True
 
+    # --------------------------------------- ChatGPT (Codex device-code) login
+    def _codex_device_state(self):
+        """The pending device login {pid, out, started_at}, or {}."""
+        self.ensure_one()
+        raw = self.env["ir.config_parameter"].sudo().get_param(_DEVICE_PARAM % self.id)
+        try:
+            data = json.loads(raw) if raw else {}
+        except ValueError:
+            data = {}
+        return data if isinstance(data, dict) else {}
+
+    def _codex_device_clear(self):
+        self.ensure_one()
+        self.env["ir.config_parameter"].sudo().set_param(_DEVICE_PARAM % self.id, "")
+
+    def _codex_device_login_start(self):
+        """Kick off ``codex login --device-auth``; return {url, code, raw}.
+
+        The simple path for linking a ChatGPT account: codex prints a
+        verification URL + one-time code (valid ~15 minutes), the manager
+        approves from any browser/phone, and codex writes auth.json into the
+        managed CODEX_HOME itself. Requires device codes to be enabled in the
+        ChatGPT account's security settings.
+        """
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if self.auth_mode != "cli_proxy" or self.provider != "openai":
+            raise UserError(_(
+                "Device login only applies to OpenAI CLI-proxy accounts."))
+        # Supersede any previous attempt (its one-time code dies with it).
+        self._codex_device_login_cancel()
+        cfg = {
+            "cli_path": self.cli_path or False,
+            "home_dir": self._cli_managed_home(),
+            "config_dir": self._cli_managed_config_dir(create=True),
+        }
+        pid, out_path = codex_cli_transport.device_login_start(cfg)
+        self.env["ir.config_parameter"].sudo().set_param(
+            _DEVICE_PARAM % self.id,
+            json.dumps({"pid": pid, "out": out_path, "started_at": time.time()}))
+        # codex contacts the auth server before printing the URL/code — poll its
+        # output briefly (worst case ~10s) instead of making the user reopen.
+        url = code = raw = ""
+        for _attempt in range(40):
+            time.sleep(0.25)
+            raw = codex_cli_transport.device_login_read(out_path)
+            url, code = codex_cli_transport.parse_device_login(raw)
+            if url and code:
+                break
+            if not codex_cli_transport.pid_is_pending_login(pid):
+                break
+        if url and code:
+            return {"url": url, "code": code, "raw": raw}
+        self._codex_device_clear()
+        detail = (raw or "").strip()[-300:] or _("no output from the codex CLI")
+        raise UserError(_(
+            "Could not start the device login: %s\n\nMake sure device codes are "
+            "enabled in the ChatGPT account's security settings, or paste "
+            "auth.json below instead.", detail))
+
+    def _codex_device_login_status(self):
+        """Poll a pending device login: 'linked' | 'pending' | 'failed:<detail>'."""
+        self.ensure_one()
+        if self._cli_is_linked():
+            self._codex_device_clear()
+            return "linked"
+        state = self._codex_device_state()
+        if not state:
+            return "failed:%s" % _("No device login in progress — start one first.")
+        if codex_cli_transport.pid_is_pending_login(state.get("pid")):
+            return "pending"
+        # Process ended without writing auth.json: denied, expired, or errored.
+        raw = codex_cli_transport.device_login_read(state.get("out") or "")
+        self._codex_device_clear()
+        return "failed:%s" % ((raw or "").strip()[-300:] or _("the login attempt ended"))
+
+    def _codex_device_login_cancel(self):
+        self.ensure_one()
+        state = self._codex_device_state()
+        if state.get("pid"):
+            codex_cli_transport.device_login_kill(state["pid"])
+        self._codex_device_clear()
+
     def action_ai_claude_login(self):
         """Button: open the link-account wizard (Claude OAuth / ChatGPT auth.json)."""
         self.ensure_one()
@@ -896,7 +1015,7 @@ class EraAiAccount(models.Model):
         return self._notify(_("Subscription account disconnected."))
 
     def unlink(self):
-        # Remove any linked-Claude credential dir so deleting an account leaves no
+        # Remove any linked-account credential dir so deleting an account leaves no
         # orphaned tokens on disk (best-effort; never blocks the delete).
         for rec in self:
             try:
@@ -904,6 +1023,7 @@ class EraAiAccount(models.Model):
             except Exception:  # noqa: BLE001
                 pass
             self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % rec.id, "")
+            rec._codex_device_login_cancel()
         return super().unlink()
 
     def _cli_cfg(self):
@@ -1004,7 +1124,16 @@ class EraAiAccount(models.Model):
                     "last_error": False,
                 })
             except Exception as exc:  # noqa: BLE001
-                rec.write({"state": "error", "last_error": str(exc)[:2000]})
+                # The raise below rolls back this transaction — persist the
+                # error state through a separate cursor so the Status tab still
+                # shows what failed.
+                detail = str(exc)[:2000]
+                try:
+                    with self.pool.cursor() as cr:
+                        rec.with_env(rec.env(cr=cr)).write(
+                            {"state": "error", "last_error": detail})
+                except Exception:  # noqa: BLE001 - never mask the real error
+                    _logger.exception("era_ai_accounts: could not persist validation error")
                 raise UserError(_("Validation failed: %s", exc))
         return self._notify(_("Connection validated."))
 
@@ -1060,7 +1189,12 @@ class EraAiAccount(models.Model):
             rows += list(OPENAI_IMAGE_MODELS)
         else:
             rows = [(mid, label, kind, "") for mid, label, kind in self._http_list_models()]
-        existing = {(m.model_id, m.kind): m for m in self.model_ids}
+        # active_test=False: archived rows must stay in the upsert map, or
+        # re-creating a model that was previously deactivated (provider switch,
+        # curated-list churn, admin unchecking a row) trips the SQL unique
+        # constraint and aborts the whole sync.
+        existing = {(m.model_id, m.kind): m
+                    for m in self.with_context(active_test=False).model_ids}
         seen = set()
         for model_id, label, kind, cost in rows:
             seen.add((model_id, kind))

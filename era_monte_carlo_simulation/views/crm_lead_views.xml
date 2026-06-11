@@ -5,6 +5,7 @@
         <field name="name">crm.lead.form.monte.carlo</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="key">era_monte_carlo_simulation.crm_lead_view_form_monte_carlo</field>
         <field name="arch" type="xml">
 
             <!-- Monte Carlo VALUE forecast beside Expected Revenue. -->

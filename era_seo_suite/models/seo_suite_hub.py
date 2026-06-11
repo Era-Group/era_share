@@ -3113,9 +3113,12 @@ class EraSeoSuiteHub(models.Model):
     setting_image_account_id = fields.Many2one(
         'era.ai.account', string='Image generation account',
         compute='_compute_ai_accounts', inverse='_inverse_image_account',
+        domain="[('auth_mode', '=', 'api_key'), ('provider', 'in', ('openai', 'cloudflare'))]",
         help="AI account used to generate the article COVER image (e.g. a "
-             "Cloudflare Workers AI account for free FLUX images). Leave empty to "
-             "publish without a cover — the Claude CLI proxy cannot make images.")
+             "Cloudflare Workers AI account for free FLUX images, or OpenAI with "
+             "an API key for gpt-image-1). Leave empty to publish without a cover. "
+             "CLI-proxy accounts (Claude / ChatGPT subscriptions) are text-only "
+             "and cannot make images, so they are not offered here.")
     setting_image_model_id = fields.Many2one(
         'era.ai.model', string='Image model',
         compute='_compute_ai_accounts', inverse='_inverse_image_model',
@@ -3172,7 +3175,19 @@ class EraSeoSuiteHub(models.Model):
         return acc if acc.exists() else Acc.browse()
 
     def _resolve_image_account(self):
-        return self._resolve_ai_account('era_seo.image_account_id')
+        acc = self._resolve_ai_account('era_seo.image_account_id')
+        # The picker's domain keeps image-capable accounts only, but the ICP
+        # value can be stale (e.g. an account later switched to a CLI proxy,
+        # which is text-only) — treat such a config as "no image account" with
+        # a clear log instead of failing on every article.
+        if acc and (acc.auth_mode != 'api_key' or acc.provider not in ('openai', 'cloudflare')):
+            _logger.warning(
+                'image-gen: configured account %s (%s) is %s/%s, which cannot '
+                'generate images — pick an API-key OpenAI or Cloudflare account '
+                'in Blog Gen; publishing without a cover.',
+                acc.id, acc.name, acc.provider, acc.auth_mode)
+            return acc.browse()
+        return acc
 
     def _resolve_image_model_record(self):
         """The era.ai.model picked for images, only if it belongs to the current

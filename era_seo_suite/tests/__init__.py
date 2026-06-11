@@ -17,6 +17,7 @@ from . import (
     test_geo_ai_review,
     test_geo_content_checks,
     test_hreflang,
+    test_image_account_guard,
     test_page_faq_schema,
     test_redirects,
     test_rich_fixes,

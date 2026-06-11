@@ -8,7 +8,7 @@
             <list string="Simulation Results" create="false" edit="false">
                 <field name="run_id"/>
                 <field name="iteration"/>
-                <field name="output_value" sum="Total"/>
+                <field name="output_value" avg="Average"/>
                 <field name="input_snapshot_display" string="Inputs"/>
             </list>
         </field>

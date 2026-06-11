@@ -8,7 +8,7 @@ import re
 import time
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
 
 import numpy as np
@@ -268,7 +268,8 @@ class MonteCarloRun(models.Model):
                  "p05", "p95", "success_threshold", "mean_ci_high", "cvar_95",
                  "negative_fraction", "probability_above_threshold",
                  "probability_below_threshold", "sensitivity_data",
-                 "correlation_data", "model_id.objective")
+                 "correlation_data", "model_id.objective", "se_mean",
+                 "iterations", "result_ids")
     def _compute_interpretation(self):
         for run in self:
             if run.state != "done":
@@ -319,6 +320,9 @@ class MonteCarloRun(models.Model):
 
     def _build_interpretation(self):
         self.ensure_one()
+        # Amounts embed the currency symbol (user-editable data) and the text
+        # is rendered as unsanitised Html, so escape every formatted amount.
+        fmt = lambda value: self._svg_escape(self._format_amount(value))  # noqa: E731
         prob, below_good = self._success_metric()
         # Colour-coded risk verdict driven by the success confidence.
         if prob >= 80.0:
@@ -353,14 +357,14 @@ class MonteCarloRun(models.Model):
             _("Average expected outcome across all %(n)s simulated scenarios "
               "is %(mean)s.",
               n="{:,}".format(self.result_count or self.iterations),
-              mean=self._format_amount(self.summary_mean)),
+              mean=fmt(self.summary_mean)),
             _("The average is statistically reliable to within ±%(err)s "
               "(95%% confidence).",
-              err=self._format_amount(1.96 * self.se_mean)),
+              err=fmt(1.96 * self.se_mean)),
             _("In 90%% of scenarios the outcome falls between %(low)s and "
               "%(high)s.",
-              low=self._format_amount(self.p05),
-              high=self._format_amount(self.p95)),
+              low=fmt(self.p05),
+              high=fmt(self.p95)),
         ]
         # A threshold of exactly 0 (e.g. profit >= 0) is a valid threshold.
         if below_good:
@@ -368,17 +372,17 @@ class MonteCarloRun(models.Model):
                 "There is a %(prob).1f%% chance the outcome stays within the "
                 "threshold of %(thr)s.",
                 prob=self.probability_below_threshold,
-                thr=self._format_amount(self.success_threshold)))
+                thr=fmt(self.success_threshold)))
         else:
             lines.append(_(
                 "There is a %(prob).1f%% chance the outcome reaches at least "
                 "the success threshold of %(thr)s.",
                 prob=self.probability_above_threshold,
-                thr=self._format_amount(self.success_threshold)))
+                thr=fmt(self.success_threshold)))
         lines.append(_(
             "In the worst 5%% of scenarios the outcome averages %(cvar)s "
             "(expected shortfall).",
-            cvar=self._format_amount(self.cvar_95)))
+            cvar=fmt(self.cvar_95)))
         drivers = (self.sensitivity_data or {}).get("drivers") or []
         if drivers and abs(drivers[0]["corr"]) >= 0.05:
             top = drivers[0]
@@ -399,6 +403,15 @@ class MonteCarloRun(models.Model):
                 t=strongest["target"], a=strongest["achieved"]))
         return banner + "<ul>%s</ul>" % "".join(
             "<li>%s</li>" % line for line in lines)
+
+    @api.constrains("seed")
+    def _check_seed(self):
+        # numpy's Generator rejects negative seeds with a cryptic ValueError;
+        # validate here so the user gets a clear message instead of a failed run.
+        for run in self:
+            if run.seed < 0:
+                raise ValidationError(_(
+                    "The Random Seed must be 0 or a positive integer."))
 
     # ------------------------------------------------------------------
     # Create
@@ -442,46 +455,56 @@ class MonteCarloRun(models.Model):
             "error_message": False,
         })
         try:
-            # Pre-flight checks live INSIDE the try so a mis-configured run is
-            # marked 'failed' (and a batch keeps going) instead of aborting the
-            # whole loop with an uncaught error.
-            if self.iterations < 1 or self.iterations > MAX_ITERATIONS:
-                raise UserError(_(
-                    "Iterations must be between 1 and %s.", MAX_ITERATIONS))
-            if not self.model_id.variable_ids:
-                raise UserError(_(
-                    "Add at least one variable before running the simulation."))
-            samples = self._generate_samples()
-            outputs = self._calculate_output(samples)
-            outputs = np.asarray(outputs, dtype=float).reshape(-1)
-            if outputs.shape[0] != self.iterations:
-                # A constant expression broadcasts to a single value.
-                outputs = np.broadcast_to(
-                    outputs, (self.iterations,)).astype(float)
-            if not np.all(np.isfinite(outputs)):
-                raise UserError(_(
-                    "The formula produced non-finite values (inf/NaN). "
-                    "Please review the variables and expression."))
+            # The whole engine body runs inside a savepoint: a database-level
+            # error (statement timeout, insert failure, ...) rolls back to a
+            # healthy transaction — including any result rows already stored —
+            # so _mark_failed below can record a clean 'failed' state instead
+            # of raising 'current transaction is aborted'.
+            with self.env.cr.savepoint():
+                # Pre-flight checks live INSIDE the try so a mis-configured run
+                # is marked 'failed' (and a batch keeps going) instead of
+                # aborting the whole loop with an uncaught error.
+                if self.iterations < 1 or self.iterations > MAX_ITERATIONS:
+                    raise UserError(_(
+                        "Iterations must be between 1 and %s.", MAX_ITERATIONS))
+                if not self.model_id.variable_ids:
+                    raise UserError(_(
+                        "Add at least one variable before running the "
+                        "simulation."))
+                samples = self._generate_samples()
+                outputs = self._calculate_output(samples)
+                outputs = np.asarray(outputs, dtype=float).reshape(-1)
+                if outputs.shape[0] != self.iterations:
+                    # A constant expression broadcasts to a single value.
+                    outputs = np.broadcast_to(
+                        outputs, (self.iterations,)).astype(float)
+                if not np.all(np.isfinite(outputs)):
+                    raise UserError(_(
+                        "The formula produced non-finite values (inf/NaN). "
+                        "Please review the variables and expression."))
 
-            self._store_results(outputs, samples)
-            summary = self._calculate_summary(outputs)
-            # Outputs can each be finite yet their variance/sum overflow to inf
-            # (e.g. magnitudes near 1e154). Don't persist non-finite stats.
-            bad = [k for k, v in summary.items()
-                   if isinstance(v, float) and not math.isfinite(v)]
-            if bad:
-                raise UserError(_(
-                    "The results are too large to summarise (overflow in: "
-                    "%s). Reduce the scale of the inputs or the formula.",
-                    ", ".join(sorted(bad))))
-            summary["sensitivity_data"] = self._calculate_sensitivity(
-                samples, outputs)
-            summary["correlation_data"] = self._correlation_report(samples)
-            summary.update({
-                "state": "done",
-                "finished_at": fields.Datetime.now(),
-            })
-            self.write(summary)
+                summary = self._calculate_summary(outputs)
+                # Outputs can each be finite yet their variance/sum overflow to
+                # inf (e.g. magnitudes near 1e154). Don't persist non-finite
+                # stats.
+                bad = [k for k, v in summary.items()
+                       if isinstance(v, float) and not math.isfinite(v)]
+                if bad:
+                    raise UserError(_(
+                        "The results are too large to summarise (overflow in: "
+                        "%s). Reduce the scale of the inputs or the formula.",
+                        ", ".join(sorted(bad))))
+                summary["sensitivity_data"] = self._calculate_sensitivity(
+                    samples, outputs)
+                summary["correlation_data"] = self._correlation_report(samples)
+                # Store the (potentially very many) result rows only after the
+                # summary validated, so a failed run never keeps partial data.
+                self._store_results(outputs, samples)
+                summary.update({
+                    "state": "done",
+                    "finished_at": fields.Datetime.now(),
+                })
+                self.write(summary)
         except UserError as error:
             # Keep the partial transaction but record the failure clearly.
             self._mark_failed(str(error))
@@ -494,6 +517,11 @@ class MonteCarloRun(models.Model):
 
     def _mark_failed(self, message):
         self.ensure_one()
+        # A failed run must never expose partial result rows (the savepoint in
+        # _run_one already rolled back rows stored in the same attempt; this
+        # also covers any failure path outside it).
+        if self.result_ids:
+            self.result_ids.sudo().unlink()
         self.write({
             "state": "failed",
             "error_message": message,
@@ -543,6 +571,7 @@ class MonteCarloRun(models.Model):
 
         objective = dict(self.model_id._fields["objective"]._description_selection(
             self.env)).get(self.model_id.objective, self.model_id.objective)
+        success_prob, below_good = self._success_metric()
 
         # --- Summary ---
         ws = sheet(_("Summary"))
@@ -572,8 +601,11 @@ class MonteCarloRun(models.Model):
             (_("Value at Risk (95%)"), self.var_95, f_money),
             (_("Expected shortfall (CVaR 95%)"), self.cvar_95, f_money),
             (_("Success threshold"), self.success_threshold, f_money),
-            (_("Chance of reaching threshold"),
-             (self.probability_above_threshold or 0.0) / 100.0, f_pct),
+            # Orientation-aware, like the on-screen banner: for cost/duration/
+            # inventory objectives success means staying BELOW the threshold.
+            (_("Chance of staying within threshold") if below_good
+             else _("Chance of reaching threshold"),
+             (success_prob or 0.0) / 100.0, f_pct),
             (_("% negative"), (self.negative_fraction or 0.0) / 100.0, f_pct),
         ]
         for key, val, fmt in figures:
@@ -627,7 +659,10 @@ class MonteCarloRun(models.Model):
             wsd.insert_chart("F2", chart, {"x_scale": 1.7, "y_scale": 1.4})
 
         # --- Results sample (capped; empty in summary-storage mode) ---
-        rows = self.result_ids[:10000]
+        # Fetch only the exported rows: reading result_ids would first load the
+        # ids of every stored row (up to MAX_ITERATIONS in full mode).
+        rows = self.env["monte.carlo.result"].search(
+            [("run_id", "=", self.id)], order="iteration", limit=10000)
         if rows:
             wsr = sheet(_("Results"))
             codes = list((rows[0].input_snapshot or {}).keys())
@@ -675,10 +710,15 @@ class MonteCarloRun(models.Model):
                 "ai_pending": False, "ai_attempts": 0,
             })
         else:
-            self.ai_interpretation = '<p class="text-muted">%s</p>' % _(
-                "AI narration is unavailable right now (the AI provider is not "
-                "configured or could not be reached). The summary above still "
-                "explains the results.")
+            self.write({
+                # Clear the pending flag too: a failed manual attempt must not
+                # strand the form on the disabled 'Generating...' spinner.
+                "ai_pending": False,
+                "ai_interpretation": '<p class="text-muted">%s</p>' % _(
+                    "AI narration is unavailable right now (the AI provider is "
+                    "not configured or could not be reached). The summary above "
+                    "still explains the results."),
+            })
         return True
 
     def _schedule_ai_summary(self):
@@ -694,15 +734,17 @@ class MonteCarloRun(models.Model):
                 return
             if not self._ai_available():
                 return  # no provider configured -> nothing to generate
-            self.write({"ai_pending": True, "ai_attempts": 0})
             cron = self.env.ref(
                 "era_monte_carlo_simulation.ir_cron_generate_ai",
                 raise_if_not_found=False)
-            if cron:
-                cron.sudo()._trigger()
+            if not cron:
+                return  # no job to pick it up -> don't strand ai_pending=True
+            self.write({"ai_pending": True, "ai_attempts": 0})
+            cron.sudo()._trigger()
         except Exception:  # noqa: BLE001 - never break a successful run
             _logger.warning(
-                "Could not schedule AI summary for run %s", self.id)
+                "Could not schedule AI summary for run %s", self.id,
+                exc_info=True)
 
     @api.model
     def _cron_generate_ai_summaries(self, limit=20):
@@ -710,11 +752,14 @@ class MonteCarloRun(models.Model):
         runs = self.search(
             [("ai_pending", "=", True), ("state", "=", "done")], limit=limit)
         for run in runs:
-            lang = run.create_uid.lang or self.env.user.lang or "en"
+            lang = run.create_uid.lang or self.env.user.lang or "en_US"
             run_lang = run.with_context(lang=lang)
             try:
                 content = run_lang._call_ai_provider(run_lang._build_ai_prompt())
             except Exception:  # noqa: BLE001
+                _logger.warning(
+                    "AI summary generation failed for run %s", run.id,
+                    exc_info=True)
                 content = None
             if content:
                 run.write({
@@ -864,6 +909,7 @@ class MonteCarloRun(models.Model):
             return False
         agent = self._mc_narrator_agent()
         if agent:
+            self._mc_register_narrator_xmlids(agent)
             return agent
         Account = self.env["era.ai.account"].sudo()
         account = (Account._resolve_for_user(self.env.user)
@@ -876,24 +922,25 @@ class MonteCarloRun(models.Model):
             Agent._fields["llm_model"]._description_selection(self.env))
         llm_model = ("custom_llm/custom" if "custom_llm/custom" in selection
                      else next(iter(selection), False))
-        vals = {
-            "name": MC_NARRATOR_AGENT,
-            "response_style": "analytical",
-            "llm_model": llm_model,
-            "source_id": self.env["utm.source"].sudo().create(
-                {"name": MC_NARRATOR_AGENT}).id,
-            "era_account_id": account.id,
-        }
-        record = account._default_chat_model_record()
-        if record:
-            vals["era_model_id"] = record.id
         try:
-            # Wrap in a savepoint so a failed insert rolls back cleanly instead
+            # Wrap in a savepoint so a failed insert rolls back cleanly —
+            # including the utm.source, which must not be orphaned — instead
             # of leaving the -u transaction aborted (which kills the whole
             # registry load). The explicit context defaults guard against a
             # required res.partner field (purchase_stock's group_rfq / group_on)
             # not getting its default in the agent->partner creation path.
             with self.env.cr.savepoint():
+                vals = {
+                    "name": MC_NARRATOR_AGENT,
+                    "response_style": "analytical",
+                    "llm_model": llm_model,
+                    "source_id": self.env["utm.source"].sudo().create(
+                        {"name": MC_NARRATOR_AGENT}).id,
+                    "era_account_id": account.id,
+                }
+                record = account._default_chat_model_record()
+                if record:
+                    vals["era_model_id"] = record.id
                 agent = Agent.with_context(
                     default_group_rfq="default", default_group_on="default",
                 ).create(vals)
@@ -903,7 +950,29 @@ class MonteCarloRun(models.Model):
             return False
         self.env["ir.config_parameter"].sudo().set_param(
             "era_monte_carlo_simulation.narrator_agent_id", agent.id)
+        self._mc_register_narrator_xmlids(agent)
         return agent
+
+    @api.model
+    def _mc_register_narrator_xmlids(self, agent):
+        """Give the narrator agent (and its utm.source) module xml ids so a
+        module uninstall cleans them up like any other module data. Idempotent;
+        also backfills agents created before this was added."""
+        try:
+            entries = [{
+                "xml_id": "era_monte_carlo_simulation.mc_narrator_agent",
+                "record": agent, "noupdate": True,
+            }]
+            if agent.source_id:
+                entries.append({
+                    "xml_id": "era_monte_carlo_simulation.mc_narrator_source",
+                    "record": agent.source_id, "noupdate": True,
+                })
+            self.env["ir.model.data"]._update_xmlids(entries)
+        except Exception:  # noqa: BLE001 - cosmetic; never break install
+            _logger.warning(
+                "Could not register xml ids for the narrator agent",
+                exc_info=True)
 
     def _mc_ai_target(self):
         """Resolve ``(account, model)`` for narration.
@@ -1003,7 +1072,7 @@ class MonteCarloRun(models.Model):
         except Exception:  # noqa: BLE001 - fall back to the HTTP provider
             _logger.warning(
                 "MC AI narration via era.ai.account failed for run %s; falling "
-                "back to the HTTP provider", self.id)
+                "back to the HTTP provider", self.id, exc_info=True)
             return None
 
     def _call_ai_provider_http(self, messages, deadline=60.0):
@@ -1048,7 +1117,8 @@ class MonteCarloRun(models.Model):
                 if content and content.strip():
                     return content.strip()
             except Exception:  # noqa: BLE001 - never break the UI on provider issues
-                _logger.warning("AI narration: model %s failed", model)
+                _logger.warning(
+                    "AI narration: model %s failed", model, exc_info=True)
                 continue
         return None
 
@@ -1127,7 +1197,7 @@ class MonteCarloRun(models.Model):
             self.result_ids.sudo().unlink()
         self.write({
             "summary_min": 0.0, "summary_max": 0.0, "summary_mean": 0.0,
-            "summary_median": 0.0, "summary_std": 0.0,
+            "summary_median": 0.0, "summary_std": 0.0, "negative_fraction": 0.0,
             "p05": 0.0, "p25": 0.0, "p50": 0.0, "p75": 0.0, "p95": 0.0,
             "probability_above_threshold": 0.0,
             "probability_below_threshold": 0.0,
@@ -1209,6 +1279,51 @@ class MonteCarloRun(models.Model):
                 raise UserError(_(
                     "Only these functions may be called in the custom formula: "
                     "%s.", ", ".join(sorted(allowed))))
+            if isinstance(node, ast.BinOp):
+                # Bit operations have no business meaning here, and a shift by
+                # a large constant builds an arbitrarily large Python integer.
+                if isinstance(node.op, (ast.LShift, ast.RShift, ast.BitOr,
+                                        ast.BitAnd, ast.BitXor)):
+                    raise UserError(_(
+                        "Bitwise operators are not allowed in the custom "
+                        "formula."))
+                if isinstance(node.op, ast.Pow):
+                    MonteCarloRun._check_pow_exponent(node.right)
+                    # Chained constant powers ((2**1000)**1000)**1000 multiply
+                    # exponents past any single-node bound — reject them too.
+                    if (not any(isinstance(sub, ast.Name)
+                                for sub in ast.walk(node.left))
+                            and any(isinstance(sub, ast.BinOp)
+                                    and isinstance(sub.op, ast.Pow)
+                                    for sub in ast.walk(node.left))):
+                        raise UserError(_(
+                            "Chained constant powers are not allowed in the "
+                            "custom formula."))
+
+    @staticmethod
+    def _check_pow_exponent(exponent):
+        """Reject power expressions that would build a huge Python integer.
+
+        An exponent that references a variable evaluates with numpy float
+        semantics (overflow becomes inf — harmless). A constant-only exponent
+        evaluates with unbounded Python int semantics, so e.g. ``9**9**9`` or
+        ``2**(999*999*999)`` would hang the worker on a billion-digit integer.
+        Constant-only exponents are therefore limited to a single plain number
+        (optionally signed) no larger than 1000."""
+        has_name = any(isinstance(sub, ast.Name)
+                       for sub in ast.walk(exponent))
+        if has_name:
+            return  # float/array semantics: no big-int blow-up possible
+        node = exponent
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+            node = node.operand
+        if (isinstance(node, ast.Constant)
+                and isinstance(node.value, (int, float))
+                and abs(node.value) <= 1000):
+            return
+        raise UserError(_(
+            "A constant exponent in the custom formula must be a single "
+            "number between -1000 and 1000."))
 
     def _eval_custom_formula(self, samples):
         self.ensure_one()
@@ -1251,17 +1366,28 @@ class MonteCarloRun(models.Model):
         codes = list(samples.keys())
         currency_id = self.currency_id.id
         company_id = self.company_id.id
-        vals_list = [{
-            "run_id": self.id,
-            "iteration": int(index) + 1,
-            "output_value": float(outputs[index]),
-            "input_snapshot": {
-                code: float(samples[code][index]) for code in codes},
-            "currency_id": currency_id,
-            "company_id": company_id,
-        } for index in indices]
-        # Results are read-only for plain users; created via sudo by the engine.
-        self.env["monte.carlo.result"].sudo().create(vals_list)
+        # Create in chunks, building each chunk's values lazily: materialising
+        # one vals dict per iteration (up to MAX_ITERATIONS) in a single list —
+        # and one ORM cache entry per new record — would exhaust the worker's
+        # memory long before the iteration cap protects it.
+        Result = self.env["monte.carlo.result"].sudo()
+        chunk_size = 10000
+        for start in range(0, len(indices), chunk_size):
+            chunk = indices[start:start + chunk_size]
+            # Results are read-only for plain users; created via sudo by the
+            # engine.
+            Result.create([{
+                "run_id": self.id,
+                "iteration": int(index) + 1,
+                "output_value": float(outputs[index]),
+                "input_snapshot": {
+                    code: float(samples[code][index]) for code in codes},
+                "currency_id": currency_id,
+                "company_id": company_id,
+            } for index in chunk])
+            # Push the rows to the database and drop them from the record
+            # cache before the next chunk (invalidate_all flushes first).
+            self.env.invalidate_all()
 
     def _calculate_summary(self, outputs):
         """Return a dict of summary statistics for the output array."""
@@ -1281,19 +1407,22 @@ class MonteCarloRun(models.Model):
             var = float(np.percentile(outputs, 5))
             tail = outputs[outputs <= var]
         cvar = float(tail.mean()) if tail.size else var
+        # One pass for all five percentiles instead of five full sorts.
+        p05, p25, p50, p75, p95 = (
+            float(p) for p in np.percentile(outputs, [5, 25, 50, 75, 95]))
         return {
             "summary_min": float(np.min(outputs)),
             "summary_max": float(np.max(outputs)),
             "negative_fraction": (float(np.count_nonzero(outputs < 0)) / total
                                   * 100.0 if total else 0.0),
             "summary_mean": mean,
-            "summary_median": float(np.median(outputs)),
+            "summary_median": p50,
             "summary_std": std,
-            "p05": float(np.percentile(outputs, 5)),
-            "p25": float(np.percentile(outputs, 25)),
-            "p50": float(np.percentile(outputs, 50)),
-            "p75": float(np.percentile(outputs, 75)),
-            "p95": float(np.percentile(outputs, 95)),
+            "p05": p05,
+            "p25": p25,
+            "p50": p50,
+            "p75": p75,
+            "p95": p95,
             "probability_above_threshold": above,
             "probability_below_threshold": 100.0 - above,
             "se_mean": se,
@@ -1330,10 +1459,20 @@ class MonteCarloRun(models.Model):
 
     @staticmethod
     def _rankdata(values):
-        """Ordinal ranks (0..n-1); ties unaveraged - fine for continuous draws."""
+        """Fractional ranks (0..n-1): tied values share the mean of their
+        ordinal ranks — the standard Spearman tie treatment. Without it, two
+        independent discrete inputs report a spurious correlation (~+0.17 at
+        n=10k) because stable sorting breaks ties by the shared iteration
+        index. A no-op for continuous draws (no ties)."""
+        values = np.asarray(values)
         order = np.argsort(values, kind="mergesort")
         ranks = np.empty(len(values), dtype=float)
         ranks[order] = np.arange(len(values), dtype=float)
+        uniq, inverse, counts = np.unique(
+            values, return_inverse=True, return_counts=True)
+        if uniq.size != values.size:  # has ties: average each group's ranks
+            sums = np.bincount(inverse, weights=ranks)
+            ranks = (sums / counts)[inverse]
         return ranks
 
     # ------------------------------------------------------------------
@@ -1409,8 +1548,11 @@ class MonteCarloRun(models.Model):
 
         # Reorder each input so its rank pattern matches the transformed scores.
         for j, code in enumerate(codes):
-            target_ranks = np.argsort(np.argsort(
-                transformed[:, j], kind="mergesort"), kind="mergesort")
+            # Ordinal ranks via a single argsort (equivalent to the classic
+            # argsort-of-argsort, one O(n log n) pass instead of two).
+            target_ranks = np.empty(n, dtype=int)
+            target_ranks[np.argsort(transformed[:, j], kind="mergesort")] = (
+                np.arange(n))
             samples[code] = np.sort(samples[code])[target_ranks]
         return samples
 
@@ -1593,15 +1735,17 @@ class MonteCarloRun(models.Model):
             # Constant / unbinnable output: one bin holds every scenario.
             bins = [{"x0": lo, "x1": hi, "count": int(outputs.shape[0]),
                      "cdf": 1.0}]
+        p05, p50, p95 = (
+            float(p) for p in np.percentile(outputs, [5, 50, 95]))
         return {
             "bins": bins,
             "n": int(outputs.shape[0]),
-            "min": float(np.min(outputs)),
-            "max": float(np.max(outputs)),
+            "min": lo,
+            "max": hi,
             "mean": float(np.mean(outputs)),
-            "p05": float(np.percentile(outputs, 5)),
-            "p50": float(np.percentile(outputs, 50)),
-            "p95": float(np.percentile(outputs, 95)),
+            "p05": p05,
+            "p50": p50,
+            "p95": p95,
             "threshold": float(self.success_threshold),
         }
 
@@ -1616,6 +1760,14 @@ class MonteCarloRun(models.Model):
         self.ensure_one()
         return _("%s scenarios") % "{:,}".format(
             self.result_count or self.iterations)
+
+    def _report_success_label(self):
+        """Orientation-aware caption for the success probability, so the PDF
+        matches the on-screen banner for 'lower is better' objectives."""
+        self.ensure_one()
+        if self._success_metric()[1]:
+            return _("Chance of staying within target")
+        return _("Chance of reaching target")
 
     def _report_distribution_bars(self):
         """Return histogram bars (height in px) for the QWeb report."""

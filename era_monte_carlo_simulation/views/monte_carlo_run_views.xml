@@ -16,6 +16,8 @@
                 <field name="p05" optional="hide"/>
                 <field name="p95" optional="show"/>
                 <field name="create_date" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       optional="hide"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'done'"
                        decoration-danger="state == 'failed'"
@@ -42,10 +44,13 @@
                     <button name="action_explain_with_ai" type="object"
                             string="Explain with AI" icon="fa-magic"
                             invisible="state != 'done' or ai_pending"/>
+                    <!-- Clickable while pending: if the background job never
+                         runs (e.g. crons disabled), the user can still
+                         generate the summary manually. -->
                     <button name="action_explain_with_ai" type="object"
-                            string="Generating AI summary..."
+                            string="Generating... (click to run now)"
                             icon="fa-circle-o-notch fa-spin"
-                            invisible="not ai_pending" disabled="1"/>
+                            invisible="not ai_pending"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,running,done"/>
                 </header>
@@ -87,8 +92,12 @@
                             <field name="ai_pending" invisible="1"/>
                         </group>
                         <group string="Threshold Analysis">
+                            <!-- Readonly once done: the stored probabilities,
+                                 chart marker and narrative were computed for
+                                 the threshold at run time and would silently
+                                 go stale. Reset to Draft to change it. -->
                             <field name="success_threshold"
-                                   readonly="state == 'running'"/>
+                                   readonly="state in ('running', 'done')"/>
                             <field name="probability_above_threshold" widget="float"
                                    invisible="state != 'done'"/>
                             <field name="probability_below_threshold" widget="float"
@@ -194,11 +203,24 @@
                 <field name="model_id"/>
                 <filter name="done" string="Done" domain="[('state','=','done')]"/>
                 <filter name="failed" string="Failed" domain="[('state','=','failed')]"/>
+                <separator/>
+                <filter name="standalone" string="Authored Models"
+                        domain="[('model_id.source_model','=',False)]"/>
+                <filter name="generated" string="One-click Forecasts"
+                        domain="[('model_id.source_model','!=',False)]"/>
+                <separator/>
+                <filter name="filter_create_date" string="Created on"
+                        date="create_date"/>
                 <group>
                     <filter name="group_model" string="Model"
                             context="{'group_by': 'model_id'}"/>
                     <filter name="group_state" string="Status"
                             context="{'group_by': 'state'}"/>
+                    <filter name="group_create_date" string="Created on"
+                            context="{'group_by': 'create_date'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
                 </group>
             </search>
         </field>
@@ -209,6 +231,10 @@
         <field name="res_model">monte.carlo.run</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="monte_carlo_run_view_search"/>
+        <!-- Hide the per-opportunity one-click forecasts by default: an
+             active CRM creates one run per opportunity and they would drown
+             the authored portfolio runs (clear the filter to see them). -->
+        <field name="context">{'search_default_standalone': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No simulation run yet

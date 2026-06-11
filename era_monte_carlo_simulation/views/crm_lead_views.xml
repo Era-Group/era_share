@@ -15,8 +15,9 @@
                     <field name="mc_run_id" invisible="1"/>
                     <i class="fa fa-cubes text-info" title="Monte Carlo forecast" role="img" aria-label="Monte Carlo forecast"/>
                     <field name="mc_forecast" nolabel="1" readonly="1" class="oe_inline"/>
+                    <!-- fa-refresh: fa-dice is FontAwesome 5; Odoo ships 4.7. -->
                     <button name="action_monte_carlo_simulate" type="object"
-                            string="Recompute" icon="fa-dice"
+                            string="Recompute" icon="fa-refresh"
                             class="btn btn-sm btn-info ms-auto"
                             title="Compute the value forecast with Monte Carlo"/>
                 </div>

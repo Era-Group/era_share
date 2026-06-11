@@ -36,6 +36,12 @@
                     <field name="comparison_table" nolabel="1"
                            invisible="not comparison_table"/>
                 </sheet>
+                <!-- Explicit footer: without it the dialog shows the generic
+                     Save/Discard pair, confusing on a throwaway analysis board. -->
+                <footer>
+                    <button string="Close" special="cancel"
+                            class="btn-primary" data-hotkey="x"/>
+                </footer>
             </form>
         </field>
     </record>

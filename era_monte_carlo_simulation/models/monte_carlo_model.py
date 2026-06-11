@@ -40,7 +40,7 @@ class MonteCarloModel(models.Model):
              "without deleting it or its runs.")
 
     variable_ids = fields.One2many(
-        "monte.carlo.variable", "model_id", string="Variables",
+        "monte.carlo.variable", "model_id", string="Variables", copy=True,
         help="The uncertain inputs of this model. Each variable is sampled "
              "from its probability distribution on every iteration.")
     run_ids = fields.One2many(
@@ -97,8 +97,13 @@ class MonteCarloModel(models.Model):
             ("custom", "Custom"),
         ],
         string="Objective", default="revenue_forecast", required=True,
-        help="The business question this model answers. It is a label used for "
-             "filtering and reporting and does not change the calculation.")
+        help="The business question this model answers. It does not change the "
+             "simulated outcomes, but it orients the risk reporting: for Cost "
+             "Estimation, Project Duration and Inventory Demand a LOWER outcome "
+             "counts as success (the success probability uses 'below threshold' "
+             "and VaR/CVaR measure the high tail); for the other objectives a "
+             "HIGHER outcome is success. It also enables the negative-outcome "
+             "data-quality warning for objectives that cannot be negative.")
 
     formula_type = fields.Selection(
         selection=[
@@ -172,17 +177,39 @@ class MonteCarloModel(models.Model):
         string="Top Driver", compute="_compute_latest_run",
         help="The input that most drives the outcome in the latest run.")
 
-    @api.depends("run_ids.state", "run_ids.finished_at", "run_ids.summary_mean",
-                 "run_ids.summary_std", "run_ids.p05", "run_ids.p95",
+    def _latest_done_runs(self, extra_domain=None, fields_to_fetch=None):
+        """Return ``{model_id: newest done run}`` for the models in ``self``.
+
+        One search_fetch limited to the listed columns: reading ``run_ids``
+        and sorting in Python would prefetch every stored field (including the
+        AI summary Html) of every historical run of every model in the batch.
+        """
+        domain = [("model_id", "in", self.ids), ("state", "=", "done")]
+        if extra_domain:
+            domain += extra_domain
+        runs = self.env["monte.carlo.run"].search_fetch(
+            domain, ["model_id", "finished_at", "create_date"]
+            + list(fields_to_fetch or []),
+            order="finished_at desc, create_date desc, id desc")
+        latest = {}
+        for run in runs:
+            latest.setdefault(run.model_id.id, run)
+        return latest
+
+    @api.depends("objective", "run_ids.state", "run_ids.finished_at",
+                 "run_ids.summary_mean", "run_ids.summary_std",
+                 "run_ids.p05", "run_ids.p95",
                  "run_ids.probability_above_threshold",
                  "run_ids.probability_below_threshold",
                  "run_ids.sensitivity_data")
     def _compute_latest_run(self):
+        latest_by_model = self._latest_done_runs(fields_to_fetch=[
+            "summary_mean", "summary_std", "p05", "p95",
+            "probability_above_threshold", "probability_below_threshold",
+            "sensitivity_data"])
         for model in self:
-            done = model.run_ids.filtered(lambda r: r.state == "done")
-            latest = done.sorted(
-                key=lambda r: r.finished_at or r.create_date, reverse=True)[:1]
-            if not latest:
+            run = latest_by_model.get(model.id)
+            if not run:
                 model.latest_run_id = False
                 model.latest_run_date = False
                 model.latest_mean = model.latest_p05 = model.latest_p95 = 0.0
@@ -190,7 +217,6 @@ class MonteCarloModel(models.Model):
                 model.latest_risk = "none"
                 model.latest_driver = False
                 continue
-            run = latest[0]
             prob = run._success_metric()[0]
             mean = run.summary_mean
             model.latest_run_id = run.id
@@ -281,10 +307,18 @@ class MonteCarloModel(models.Model):
         stale = crm_models.filtered(lambda m: m.result_storage != "summary")
         if stale:
             stale.write({"result_storage": "summary"})
-        runs = self.env["monte.carlo.run"].search(
-            [("model_id", "in", crm_models.ids)])
         leads = self.env["crm.lead"].browse(
             crm_models.mapped("source_res_id")).exists()
+        # Drop models whose opportunity was deleted: they can never be reused
+        # by _mc_sync_from_recipe and would pile up as dead 'Deal value — ...'
+        # entries forever (cascade clears their variables/correlations/runs).
+        alive_ids = set(leads.ids)
+        dead = crm_models.filtered(lambda m: m.source_res_id not in alive_ids)
+        if dead:
+            dead.unlink()
+            crm_models -= dead
+        runs = self.env["monte.carlo.run"].search(
+            [("model_id", "in", crm_models.ids)])
         keep = leads.mapped("mc_run_id")
         # Delete older runs (ondelete=cascade also clears their result rows)...
         (runs - keep).unlink()
@@ -327,17 +361,13 @@ class MonteCarloModel(models.Model):
                  "run_ids.finished_at")
     def _compute_ai_summary(self):
         """Mirror the AI summary of the most recent completed run."""
+        latest_by_model = self._latest_done_runs(
+            extra_domain=[("ai_interpretation", "!=", False)],
+            fields_to_fetch=["ai_interpretation"])
         for record in self:
-            runs = record.run_ids.filtered(
-                lambda r: r.state == "done" and r.ai_interpretation)
-            latest = runs.sorted(
-                key=lambda r: r.finished_at or r.create_date,
-                reverse=True)[:1]
-            if latest:
-                html = self.env["monte.carlo.run"]._format_ai_html(
-                    latest.ai_interpretation)
-            else:
-                html = False
+            run = latest_by_model.get(record.id)
+            html = (self.env["monte.carlo.run"]._format_ai_html(
+                run.ai_interpretation) if run else False)
             record.ai_summary = html
             record.ai_summary_preview = self._html_to_multiline(html)
 
@@ -395,3 +425,29 @@ class MonteCarloModel(models.Model):
             "domain": [("model_id", "=", self.id)],
             "context": {"default_model_id": self.id},
         }
+
+    def action_view_results(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Results - %s", self.name),
+            "res_model": "monte.carlo.result",
+            "view_mode": "list,graph,pivot",
+            "domain": [("model_id", "=", self.id)],
+        }
+
+    def copy(self, default=None):
+        """Duplicate the variables (copy=True on the One2many) AND the input
+        correlations, remapping each correlation onto the freshly copied
+        variables by code — a plain copy would point at the source model's
+        variables and fail the same-model constraint."""
+        new_models = super().copy(default)
+        for old, new in zip(self, new_models):
+            code_to_id = {v.code: v.id for v in new.variable_ids}
+            for corr in old.correlation_ids:
+                v1 = code_to_id.get(corr.variable1_id.code)
+                v2 = code_to_id.get(corr.variable2_id.code)
+                if v1 and v2 and v1 != v2:
+                    corr.copy({"model_id": new.id,
+                               "variable1_id": v1, "variable2_id": v2})
+        return new_models

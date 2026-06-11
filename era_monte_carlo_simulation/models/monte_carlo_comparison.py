@@ -35,6 +35,10 @@ class MonteCarloComparison(models.TransientModel):
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
+        # Only consume active_ids when they really are runs: the wizard could
+        # be opened from another model's context (e.g. a server action).
+        if self.env.context.get("active_model") not in (None, "monte.carlo.run"):
+            return res
         active_ids = self.env.context.get("active_ids") or []
         if active_ids and "run_ids" in fields_list:
             runs = self.env["monte.carlo.run"].browse(active_ids).filtered(

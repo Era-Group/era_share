@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, _lt
 
 # Traffic-light colours shared by the heatmap dots, the badges and the legend.
 RISK_COLOR = {"high": "#38a169", "medium": "#d69e2e", "low": "#e05b49"}
-RISK_LABEL = {"high": "High confidence", "medium": "Moderate",
-              "low": "Low / risky"}
+# Lazy translations: a literal _() at module load has no user language yet,
+# and _(variable) is invisible to the translation exporter.
+RISK_LABEL = {"high": _lt("High confidence"), "medium": _lt("Moderate"),
+              "low": _lt("Low / risky")}
 # Relative-risk (coefficient of variation) shown on the heatmap's Y axis is
 # capped here so one near-break-even model can't flatten everything else.
 CV_CAP = 1.5
@@ -173,7 +175,7 @@ class MonteCarloDashboard(models.TransientModel):
                     '<span style="display:inline-block;width:11px;height:11px;'
                     'background:%s;border-radius:50%%;vertical-align:middle;'
                     'margin-inline-end:4px;"></span>%s</span>'
-                    % (RISK_COLOR[level], _(RISK_LABEL[level])))
+                    % (RISK_COLOR[level], RISK_LABEL[level]))
         legend = (
             '<div style="margin:2px 0 12px;font-size:12px;color:#5b6b7b;">'
             + chip("high") + chip("medium") + chip("low")
@@ -205,7 +207,7 @@ class MonteCarloDashboard(models.TransientModel):
             color = RISK_COLOR.get(model.latest_risk, "#5b6b7b")
             badge = ('<span style="background:%s;color:#fff;border-radius:10px;'
                      'padding:1px 9px;font-size:11px;">%s</span>'
-                     % (color, _(RISK_LABEL.get(model.latest_risk, ""))))
+                     % (color, RISK_LABEL.get(model.latest_risk, "")))
             rng = "%s – %s" % (self._fmt_money(model, model.latest_p05),
                                self._fmt_money(model, model.latest_p95))
             cells = [
@@ -231,6 +233,24 @@ class MonteCarloDashboard(models.TransientModel):
             % (_("Models ranked riskiest-first"), head, "".join(body),
                _("Sorted by success confidence (lowest first) so the models "
                  "that need attention are on top.")))
+
+    @api.model
+    def action_open(self):
+        """Open the dashboard on a pre-created record.
+
+        Going through a saved record (instead of a bare act_window on the
+        transient model) avoids the 'New' breadcrumb, the dirty-form indicator
+        and the unsaved-changes prompt on a purely read-only board.
+        """
+        dashboard = self.create({})
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Dashboard"),
+            "res_model": self._name,
+            "res_id": dashboard.id,
+            "view_mode": "form",
+            "target": "current",
+        }
 
     def action_refresh(self):
         """Force a recompute (the board reads live data each time it opens)."""

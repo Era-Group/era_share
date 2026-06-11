@@ -1,1 +1,2 @@
 numpy
+xlsxwriter  # Excel export (Odoo 19 core already pins XlsxWriter)

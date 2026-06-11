@@ -16,6 +16,11 @@ class CrmLead(models.Model):
     mc_run_id = fields.Many2one(
         "monte.carlo.run", string="Value Simulation", copy=False,
         readonly=True, help="The latest Monte Carlo value simulation.")
+    mc_basis_data = fields.Json(
+        string="Forecast Basis", copy=False, readonly=True,
+        help="Snapshot of which comparable-order basis the last simulation "
+             "used (product / similar / all, sample size, period). Stored so "
+             "displaying the forecast never re-mines the sale orders.")
     mc_forecast = fields.Html(
         string="Monte Carlo Forecast", compute="_compute_mc_forecast",
         sanitize=False,
@@ -50,8 +55,12 @@ class CrmLead(models.Model):
         """
         self.ensure_one()
         company = self.company_id or self.env.company
+        currency = self.company_currency or company.currency_id
         quote = self.expected_revenue or 0.0
-        base = [("state", "in", ("sale", "done")), ("amount_total", ">", 0),
+        # Untaxed amounts: expected_revenue is untaxed by convention, so taxed
+        # totals would bias the comparison upward by the VAT rate. (sale.order
+        # has no 'done' state since Odoo 17 — confirmed means state='sale'.)
+        base = [("state", "=", "sale"), ("amount_untaxed", ">", 0),
                 ("company_id", "in", [False, company.id])]
         cutoff = fields.Datetime.to_string(
             fields.Datetime.now() - relativedelta(months=12))
@@ -59,16 +68,29 @@ class CrmLead(models.Model):
         # Project past values to today with an assumed natural-growth rate.
         scale = 1.0 + self._mc_growth_factor()
 
+        def convert(orders):
+            # Express every order in the lead's currency: face values from
+            # different currencies cannot be compared or resampled together.
+            vals = []
+            for order in orders:
+                value = order.currency_id._convert(
+                    order.amount_untaxed, currency,
+                    order.company_id or company,
+                    order.date_order or fields.Date.context_today(self))
+                if value > 0:
+                    vals.append(value * scale)
+            return vals
+
         def fetch(extra):
             # Prefer confirmed orders from the last 12 months (by date_order);
             # fall back to all-time for this basis when too few.
             recent = SO.search(base + extra + [("date_order", ">=", cutoff)],
                                limit=500)
-            vals = [v * scale for v in recent.mapped("amount_total") if v > 0]
+            vals = convert(recent)
             if len(vals) >= 5:
                 return vals, True
             allt = SO.search(base + extra, limit=500)
-            return [v * scale for v in allt.mapped("amount_total") if v > 0], False
+            return convert(allt), False
 
         products = self.order_ids.order_line.product_id
         if products:
@@ -77,8 +99,11 @@ class CrmLead(models.Model):
             if len(vals) >= 5:
                 return vals, "product", len(vals), recent
         if quote > 0:
-            vals, recent = fetch([("amount_total", ">=", quote * 0.5),
-                                  ("amount_total", "<=", quote * 1.5)])
+            # The size band is an SQL filter, so it can only compare amounts
+            # in one currency: restrict this basis to same-currency orders.
+            vals, recent = fetch([("currency_id", "=", currency.id),
+                                  ("amount_untaxed", ">=", quote * 0.5),
+                                  ("amount_untaxed", "<=", quote * 1.5)])
             if len(vals) >= 5:
                 return vals, "similar", len(vals), recent
         vals, recent = fetch([])
@@ -89,7 +114,10 @@ class CrmLead(models.Model):
         quote = self.expected_revenue or 0.0
         company = self.company_id or self.env.company
         currency = self.company_currency or company.currency_id
-        values = self._mc_comparable_values()[0]
+        values, basis, count, recent = self._mc_comparable_values()
+        # Snapshot the basis for the forecast note: _compute_mc_forecast must
+        # only format stored data, never re-mine the sale orders on render.
+        self.mc_basis_data = {"basis": basis, "n": count, "recent": recent}
         if len(values) >= 5:
             # Bootstrap: resample the actual comparable deal sizes, so
             # P(value ≥ quote) is the real share of comparable deals reaching it.
@@ -129,7 +157,7 @@ class CrmLead(models.Model):
 
     @api.depends("mc_run_id", "mc_run_id.state", "mc_run_id.summary_mean",
                  "mc_run_id.p25", "mc_run_id.p50", "mc_run_id.p75",
-                 "mc_run_id.probability_above_threshold")
+                 "mc_run_id.probability_above_threshold", "mc_basis_data")
     def _compute_mc_forecast(self):
         for lead in self:
             run = lead.mc_run_id
@@ -139,9 +167,19 @@ class CrmLead(models.Model):
                     % _("Not computed yet — click Recompute."))
                 continue
             fmt = run._format_amount
-            values, basis, n, recent = lead._mc_comparable_values()
+            # Read the stored basis snapshot — re-mining the comparable orders
+            # here would run several sale.order searches on every form render.
+            data = lead.mc_basis_data or {}
+            basis, n = data.get("basis"), data.get("n", 0)
+            recent = data.get("recent")
+            if not data:
+                # Run from before the snapshot existed: infer the branch from
+                # the run itself (discrete variable = history-based forecast).
+                history = run.model_id.variable_ids.filtered(
+                    lambda v: v.distribution == "discrete")
+                n = 5 if history else 0
             boxes = []
-            if len(values) >= 5:
+            if n >= 5:
                 pct = run.probability_above_threshold
                 color = ("#1e7e44" if pct >= 50 else
                          "#b54708" if pct >= 20 else "#b42318")
@@ -161,8 +199,9 @@ class CrmLead(models.Model):
                     "similar": _("%s confirmed orders of similar size (±50%%)", n),
                     "all": _("%s confirmed orders (add products for a sharper "
                              "estimate)", n),
-                }.get(basis, "")
-                period = _("last 12 months") if recent else _("all time")
+                }.get(basis, _("click Recompute to refresh the details"))
+                period = ("" if recent is None
+                          else _("last 12 months") if recent else _("all time"))
                 parts = [basis_text, period]
                 growth = lead._mc_growth_factor()
                 if growth:

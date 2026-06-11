@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Monte Carlo Simulation",
-    "version": "19.0.1.27.5",
+    "version": "19.0.1.27.6",
     "category": "Productivity",
     "summary": "Model uncertainty and run Monte Carlo simulations for "
                "revenue, cost, profit and project risk analysis.",

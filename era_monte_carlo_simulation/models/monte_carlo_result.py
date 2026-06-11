@@ -17,11 +17,12 @@ class MonteCarloResult(models.Model):
         related="run_id.model_id", string="Model", store=True, index=True,
         help="The simulation model behind this result.")
     iteration = fields.Integer(
-        string="Iteration", index=True,
+        string="Iteration",
         help="Scenario number within the run (1 to the number of iterations).")
     output_value = fields.Float(
-        string="Output Value",
-        help="The simulated output for this single scenario.")
+        string="Output Value", aggregator="avg",
+        help="The simulated output for this single scenario. Aggregates as an "
+             "average: summing independent scenario draws has no meaning.")
     input_snapshot = fields.Json(
         string="Input Snapshot",
         help="The exact input values used for this scenario, keyed by variable "
@@ -34,7 +35,7 @@ class MonteCarloResult(models.Model):
         "res.currency", string="Currency",
         help="Currency of the output value.")
     company_id = fields.Many2one(
-        "res.company", string="Company",
+        "res.company", string="Company", index=True,
         default=lambda self: self.env.company,
         help="Company that owns this result.")
 

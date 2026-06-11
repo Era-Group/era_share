@@ -22,6 +22,13 @@ class MonteCarloVariable(models.Model):
     _description = "Monte Carlo Input Variable"
     _order = "model_id, sequence, id"
 
+    # The engine builds {code: samples}: a duplicate code would silently drop
+    # one variable's draws. The Python constraint gives the friendly message;
+    # this guarantees uniqueness under concurrency.
+    _model_code_uniq = models.Constraint(
+        "unique(model_id, code)",
+        "The variable code must be unique within a simulation model.")
+
     name = fields.Char(
         string="Name", required=True,
         help="A readable label for this input (e.g. Number of Leads).")
@@ -187,24 +194,35 @@ class MonteCarloVariable(models.Model):
 
     def action_refresh_from_source(self):
         """Fit this variable's parameters from live Odoo data."""
-        upgraded = self.env["monte.carlo.variable"]
+        changes = []
         for variable in self:
             before = variable.distribution
             variable._refresh_from_source()
             if variable.distribution != before:
-                upgraded |= variable
-        if upgraded:
+                changes.append((variable, before, variable.distribution))
+        if changes:
+            labels = dict(self._fields["distribution"]
+                          ._description_selection(self.env))
+            reasons = {
+                "lognormal": _("a Normal fit on this positive data would have "
+                               "produced impossible negative values"),
+                "fixed": _("the source data has no variation"),
+            }
+            parts = []
+            for variable, before, after in changes:
+                parts.append(_(
+                    "%(name)s: %(old)s → %(new)s (%(why)s)",
+                    name=variable.name, old=labels.get(before, before),
+                    new=labels.get(after, after),
+                    why=reasons.get(after, _("better fit for the data"))))
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
                     "type": "warning",
                     "sticky": False,
-                    "title": _("Distribution adjusted for safety"),
-                    "message": _(
-                        "%(names)s switched to Log-normal: a Normal fit on this "
-                        "positive data would have produced impossible negative "
-                        "values.", names=", ".join(upgraded.mapped("name"))),
+                    "title": _("Distribution adjusted to fit the data"),
+                    "message": "; ".join(parts),
                 },
             }
         return True
@@ -217,7 +235,20 @@ class MonteCarloVariable(models.Model):
         if "ai.agent" not in self.env:
             raise UserError(_(
                 "Odoo AI is not installed on this database."))
-        agent = self.env["ai.agent"].search([], limit=1)
+        # Pick a deliberate agent that carries the information-retrieval topic
+        # (where the statistics tool is registered), not just the lowest id —
+        # an arbitrary agent may not be able to call the data tools at all.
+        Agent = self.env["ai.agent"]
+        agent = self.env.ref(
+            "ai.ai_agent_natural_language_search", raise_if_not_found=False)
+        if not agent or not agent.exists():
+            topic = self.env.ref("ai.ai_topic_information_retrieval_query",
+                                 raise_if_not_found=False)
+            if topic:
+                agent = Agent.search(
+                    [("topic_ids", "in", topic.ids)], limit=1)
+        if not agent:
+            agent = Agent.search([], limit=1)
         if not agent:
             raise UserError(_(
                 "No Odoo AI agent is configured yet. Set one up in the AI app "
@@ -280,6 +311,46 @@ class MonteCarloVariable(models.Model):
             raise ValueError("Invalid domain (not valid JSON/Odoo domain): %s"
                              % (value,))
 
+    # Cap on records fetched by the AI statistics tool in field mode: plenty
+    # for a stable estimate, bounded so a broad domain cannot pull a whole
+    # production table through one tool call.
+    _AI_STATS_RECORD_CAP = 100000
+
+    # -- shared statistics helpers (used by the AI tool AND the source
+    # refresh, so the two paths cannot drift apart). All of them fetch ONLY
+    # the needed column via search_fetch: a plain search().mapped() would
+    # prefetch every stored field of every matching record.
+    @api.model
+    def _stats_field_values(self, records_model, domain, field_name, cap=None):
+        """Finite numeric values of ``field_name`` for the matching records."""
+        records = records_model.search_fetch(domain, [field_name], limit=cap)
+        values = np.array(
+            [v for v in records.mapped(field_name)
+             if isinstance(v, (int, float)) and not isinstance(v, bool)],
+            dtype=float)
+        return values[np.isfinite(values)]
+
+    @api.model
+    def _stats_period_counts(self, records_model, domain, date_field, period):
+        """Counter {period_key: number of records} over the matching records."""
+        records = records_model.search_fetch(
+            list(domain) + [(date_field, "!=", False)], [date_field])
+        return Counter(self._period_key(d, period)
+                       for d in records.mapped(date_field) if d)
+
+    @api.model
+    def _stats_period_ratios(self, records_model, domain, date_field, period,
+                             success_domain):
+        """Per-period matching/total ratios (e.g. a conversion rate)."""
+        total = self._stats_period_counts(
+            records_model, domain, date_field, period)
+        won = self._stats_period_counts(
+            records_model, list(domain) + list(success_domain),
+            date_field, period)
+        return np.array([won.get(key, 0) / count
+                         for key, count in total.items() if count],
+                        dtype=float)
+
     @api.model
     def _ai_tool_statistics(self, model_name, field_name=None, domain=None,
                             mode=None, date_field=None, period=None,
@@ -295,40 +366,34 @@ class MonteCarloVariable(models.Model):
             dom = self._ai_parse_domain(domain)
         except ValueError as error:
             return {"error": str(error)}
+        capped = False
         try:
             if mode == "count":
                 if not date_field:
                     return {"error": "date_field is required for mode 'count'."}
-                counts = Counter(
-                    self._period_key(d, period)
-                    for d in Model.search(dom + [(date_field, "!=", False)])
-                    .mapped(date_field) if d)
+                counts = self._stats_period_counts(
+                    Model, dom, date_field, period)
                 values = np.array(list(counts.values()), dtype=float)
             elif mode == "ratio":
                 if not date_field:
                     return {"error": "date_field is required for mode 'ratio'."}
-                base = dom + [(date_field, "!=", False)]
                 success = self._ai_parse_domain(success_domain)
-                total = Counter(self._period_key(d, period) for d in
-                                Model.search(base).mapped(date_field) if d)
-                won = Counter(self._period_key(d, period) for d in
-                              Model.search(base + list(success)).mapped(date_field) if d)
-                values = np.array([won.get(k, 0) / t
-                                   for k, t in total.items() if t], dtype=float)
+                if not success:
+                    return {"error": "success_domain is required for mode "
+                                     "'ratio' (it selects the numerator)."}
+                values = self._stats_period_ratios(
+                    Model, dom, date_field, period, success)
             else:
                 if not field_name:
                     return {"error": "field_name is required for mode 'field'."}
-                raw = Model.search(dom).mapped(field_name)
-                values = np.array(
-                    [v for v in raw
-                     if isinstance(v, (int, float)) and not isinstance(v, bool)],
-                    dtype=float)
-                values = values[np.isfinite(values)]
+                values = self._stats_field_values(
+                    Model, dom, field_name, cap=self._AI_STATS_RECORD_CAP)
+                capped = values.size >= self._AI_STATS_RECORD_CAP
         except Exception as error:  # noqa: BLE001
             return {"error": str(error)}
         if values.size == 0:
             return {"n": 0, "note": "No matching data."}
-        return {
+        result = {
             "n": int(values.size),
             "mean": round(float(values.mean()), 4),
             "std": round(float(values.std()), 4),
@@ -339,6 +404,10 @@ class MonteCarloVariable(models.Model):
             "max": round(float(values.max()), 4),
             "mode": mode,
         }
+        if capped:
+            result["note"] = ("Computed on the first %s matching records."
+                              % self._AI_STATS_RECORD_CAP)
+        return result
 
     _AI_TOOL_NAME = "AI: Monte Carlo statistics"
 
@@ -433,13 +502,8 @@ class MonteCarloVariable(models.Model):
             if not self.source_field_id:
                 raise UserError(_("Choose a Source Field before refreshing."))
             # Read under the user's own rights (no sudo): respect access rules.
-            raw = self.env[model_name].search(domain).mapped(
-                self.source_field_id.name)
-            values = np.array(
-                [v for v in raw
-                 if isinstance(v, (int, float)) and not isinstance(v, bool)],
-                dtype=float)
-            values = values[np.isfinite(values)]
+            values = self._stats_field_values(
+                self.env[model_name], domain, self.source_field_id.name)
         if values.size < 2:
             raise UserError(_(
                 "Not enough data to estimate the distribution "
@@ -477,12 +541,9 @@ class MonteCarloVariable(models.Model):
     def _count_by_period(self, model_name, domain):
         """Return a Counter {period_key: number of records}."""
         self.ensure_one()
-        date_field = self.source_date_field_id.name
-        period = self.source_period or "month"
-        records = self.env[model_name].search(
-            domain + [(date_field, "!=", False)])
-        return Counter(self._period_key(d, period)
-                       for d in records.mapped(date_field) if d)
+        return self._stats_period_counts(
+            self.env[model_name], domain, self.source_date_field_id.name,
+            self.source_period or "month")
 
     def _fetch_period_counts(self, model_name, domain):
         """Return the number of records per time bucket (e.g. leads/month)."""
@@ -508,11 +569,9 @@ class MonteCarloVariable(models.Model):
             raise UserError(_(
                 "Set a Numerator Filter that selects the 'success' subset "
                 "(e.g. won opportunities)."))
-        total_by = self._count_by_period(model_name, domain)
-        won_by = self._count_by_period(model_name, list(domain) + list(success))
-        ratios = [won_by.get(key, 0) / total
-                  for key, total in total_by.items() if total]
-        return np.array(ratios, dtype=float)
+        return self._stats_period_ratios(
+            self.env[model_name], domain, self.source_date_field_id.name,
+            self.source_period or "month", success)
 
     def _fit_distribution(self, values):
         """Map an empirical sample to this variable's distribution params.
@@ -531,9 +590,16 @@ class MonteCarloVariable(models.Model):
         vals = {"source_sample_count": int(values.size)}
         dist = self.distribution
         mean = float(values.mean())
-        std = float(values.std()) or 1.0
+        # Sample std (ddof=1): the conventional estimator for an empirical fit.
+        std = float(values.std(ddof=1)) if values.size > 1 else 0.0
         nonneg = float(values.min()) >= 0.0
-        if dist == "normal":
+        if dist in ("normal", "lognormal") and std <= 0.0:
+            # Constant source data: a Normal/Log-normal with an invented spread
+            # would misrepresent it — represent it exactly as a Fixed value
+            # (action_refresh_from_source notifies about the switch).
+            vals["distribution"] = "fixed"
+            vals["fixed_value"] = mean
+        elif dist == "normal":
             if nonneg and mean > 0.0 and (mean - 2.0 * std) < 0.0:
                 vals["distribution"] = "lognormal"
             vals["mean_value"] = mean
@@ -580,7 +646,7 @@ class MonteCarloVariable(models.Model):
             slug = "var_" + slug
         return slug
 
-    @api.constrains("code")
+    @api.constrains("code", "model_id")
     def _check_code(self):
         for record in self:
             if not record.code or not _CODE_RE.match(record.code):

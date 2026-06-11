@@ -5,7 +5,12 @@
         <field name="name">monte.carlo.dashboard.form</field>
         <field name="model">monte.carlo.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Manager Dashboard">
+            <form string="Manager Dashboard" create="false" delete="false"
+                  duplicate="false">
+                <header>
+                    <button name="action_refresh" type="object"
+                            string="Refresh" icon="fa-refresh"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>Monte Carlo Dashboard</h1>
@@ -28,11 +33,14 @@
         </field>
     </record>
 
-    <record id="monte_carlo_dashboard_action" model="ir.actions.act_window">
+    <!-- Open through a server action that pre-creates the transient record:
+         a bare act_window on a TransientModel opens a dirty 'New' form with
+         Save/Discard and unsaved-changes prompts on a read-only board. -->
+    <record id="monte_carlo_dashboard_open_action" model="ir.actions.server">
         <field name="name">Dashboard</field>
-        <field name="res_model">monte.carlo.dashboard</field>
-        <field name="view_mode">form</field>
-        <field name="target">current</field>
+        <field name="model_id" ref="model_monte_carlo_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
     </record>
 
 </odoo>

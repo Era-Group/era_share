@@ -39,7 +39,7 @@
                                 class="oe_stat_button" icon="fa-play">
                             <field name="run_count" widget="statinfo" string="Runs"/>
                         </button>
-                        <button name="action_view_runs" type="object"
+                        <button name="action_view_results" type="object"
                                 class="oe_stat_button" icon="fa-list-ol">
                             <field name="result_count" widget="statinfo" string="Results"/>
                         </button>
@@ -182,12 +182,20 @@
         <field name="arch" type="xml">
             <search string="Simulation Models">
                 <field name="name"/>
+                <filter name="standalone" string="Authored Models"
+                        domain="[('source_model','=',False)]"/>
+                <filter name="generated" string="One-click Forecasts"
+                        domain="[('source_model','!=',False)]"/>
+                <separator/>
                 <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
                 <group>
                     <filter name="group_objective" string="Objective"
                             context="{'group_by': 'objective'}"/>
                     <filter name="group_formula" string="Formula"
                             context="{'group_by': 'formula_type'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
                 </group>
             </search>
         </field>
@@ -198,6 +206,10 @@
         <field name="res_model">monte.carlo.model</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="monte_carlo_model_view_search"/>
+        <!-- Hide the per-opportunity one-click forecast models by default:
+             an active CRM creates one per opportunity and they would drown
+             the authored portfolio models (clear the filter to see them). -->
+        <field name="context">{'search_default_standalone': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first simulation model

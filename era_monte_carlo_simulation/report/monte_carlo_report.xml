@@ -49,8 +49,10 @@
                     <tr>
                         <th>Value at Risk (95%)</th><td t-esc="o._report_amount(o.var_95)"/>
                         <th>Expected Shortfall (CVaR 95%)</th><td t-esc="o._report_amount(o.cvar_95)"/>
-                        <th>Chance of reaching target</th>
-                        <td><span t-esc="'%.1f' % o.probability_above_threshold"/>%</td>
+                        <!-- Orientation-aware: 'staying within' for cost/time
+                             objectives, matching the on-screen banner. -->
+                        <th><t t-out="o._report_success_label()"/></th>
+                        <td><span t-esc="'%.1f' % o._success_metric()[0]"/>%</td>
                     </tr>
                 </table>
 

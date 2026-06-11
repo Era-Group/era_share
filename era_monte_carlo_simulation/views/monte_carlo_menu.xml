@@ -9,7 +9,7 @@
     <menuitem id="menu_monte_carlo_dashboard"
               name="Dashboard"
               parent="menu_monte_carlo_root"
-              action="monte_carlo_dashboard_action"
+              action="monte_carlo_dashboard_open_action"
               sequence="5"/>
 
     <menuitem id="menu_monte_carlo_models"

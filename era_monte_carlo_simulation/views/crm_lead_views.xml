@@ -15,7 +15,10 @@
                      invisible="type == 'lead' or not expected_revenue">
                     <field name="mc_run_id" invisible="1"/>
                     <i class="fa fa-cubes text-info" title="Monte Carlo forecast" role="img" aria-label="Monte Carlo forecast"/>
-                    <field name="mc_forecast" nolabel="1" readonly="1" class="oe_inline"/>
+                    <!-- flex-grow-1 + min-w-0: bound the field width so the
+                         forecast's single-row content can scroll horizontally
+                         (overflow-x:auto) instead of overflowing the card. -->
+                    <field name="mc_forecast" nolabel="1" readonly="1" class="flex-grow-1 min-w-0"/>
                     <!-- fa-refresh: fa-dice is FontAwesome 5; Odoo ships 4.7. -->
                     <button name="action_monte_carlo_simulate" type="object"
                             string="Recompute" icon="fa-refresh"

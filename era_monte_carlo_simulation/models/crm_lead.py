@@ -149,7 +149,8 @@ class CrmLead(models.Model):
         esc = lambda t: (str(t or "").replace("&", "&amp;").replace("<", "&lt;")
                          .replace(">", "&gt;"))
         return ('<div style="border:1px solid #d3dce6;border-radius:6px;'
-                'padding:3px 12px;background:#fff;text-align:center;">'
+                'padding:3px 12px;background:#fff;text-align:center;'
+                'flex:0 0 auto;">'
                 '<div style="font-size:11px;color:#8b97a3;white-space:nowrap;">'
                 '%s</div><div style="font-size:14px;font-weight:600;color:%s;'
                 'white-space:nowrap;">%s</div></div>'
@@ -207,12 +208,11 @@ class CrmLead(models.Model):
                 if growth:
                     parts.append(_("+%(pct).0f%% projected growth",
                                    pct=growth * 100))
-                # Full-width row of its own, free to wrap onto several lines:
-                # flex-basis:100% drops it below the boxes, white-space:normal
-                # lets a long basis ("similar size (±50%) · …") wrap instead of
-                # overflowing the card.
+                # Stays inline with the boxes on a single row (white-space:nowrap
+                # + flex:0 0 auto so it neither wraps nor shrinks); the row's
+                # overflow-x:auto scrolls sideways when it is wider than the card.
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex-basis:100%%;width:100%%;white-space:normal;">'
+                        'white-space:nowrap;flex:0 0 auto;">'
                         '%s</span>' % " · ".join(p for p in parts if p))
             else:
                 boxes.append(lead._mc_box(
@@ -221,8 +221,9 @@ class CrmLead(models.Model):
                     _("Likely range"),
                     "%s – %s" % (fmt(run.p05), fmt(run.p95))))
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex-basis:100%%;width:100%%;white-space:normal;">'
+                        'white-space:nowrap;flex:0 0 auto;">'
                         '%s</span>' % _("(±30% — not enough deal history)"))
             lead.mc_forecast = (
-                '<div style="display:flex;gap:8px;flex-wrap:wrap;'
-                'align-items:center;">%s%s</div>' % ("".join(boxes), note))
+                '<div style="display:flex;gap:8px;flex-wrap:nowrap;'
+                'align-items:center;overflow-x:auto;">%s%s</div>'
+                % ("".join(boxes), note))

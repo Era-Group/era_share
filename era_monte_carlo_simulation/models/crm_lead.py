@@ -208,12 +208,14 @@ class CrmLead(models.Model):
                 if growth:
                     parts.append(_("+%(pct).0f%% projected growth",
                                    pct=growth * 100))
-                # Auto-width column beside the boxes; the row wraps (never
-                # h-scrolls), so the note drops below the boxes when there is no
-                # room, and min-width:0 + white-space:normal let its own text
-                # wrap within the available width.
+                # flex-basis:0px keeps the note ON THE SAME LINE as the boxes:
+                # with basis auto, flex line-breaking uses the note's full
+                # unwrapped text width and pushes it to a second line before
+                # text-wrapping can kick in. With basis 0 it just fills the
+                # leftover space and wraps its text inside it, dropping below
+                # the boxes only when less than min-width (120px) remains.
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex:0 1 auto;min-width:0;white-space:normal;">'
+                        'flex:1 1 0px;min-width:120px;white-space:normal;">'
                         '%s</span>' % " · ".join(p for p in parts if p))
             else:
                 boxes.append(lead._mc_box(
@@ -222,7 +224,7 @@ class CrmLead(models.Model):
                     _("Likely range"),
                     "%s – %s" % (fmt(run.p05), fmt(run.p95))))
                 note = ('<span style="font-size:11px;color:#8b97a3;'
-                        'flex:0 1 auto;min-width:0;white-space:normal;">'
+                        'flex:1 1 0px;min-width:120px;white-space:normal;">'
                         '%s</span>' % _("(±30% — not enough deal history)"))
             lead.mc_forecast = (
                 '<div style="display:flex;gap:8px;flex-wrap:wrap;'

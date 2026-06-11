@@ -20,9 +20,12 @@
                          (overflow-x:auto) instead of overflowing the card. -->
                     <field name="mc_forecast" nolabel="1" readonly="1" class="flex-grow-1 min-w-0"/>
                     <!-- fa-refresh: fa-dice is FontAwesome 5; Odoo ships 4.7. -->
+                    <!-- Icon-only: text removed per request; title gives the
+                         hover tooltip / accessible name in place of a label. -->
                     <button name="action_monte_carlo_simulate" type="object"
-                            string="Recompute" icon="fa-refresh"
+                            icon="fa-refresh"
                             class="btn btn-sm btn-info ms-auto"
+                            aria-label="Recompute"
                             title="Compute the value forecast with Monte Carlo"/>
                 </div>
             </xpath>

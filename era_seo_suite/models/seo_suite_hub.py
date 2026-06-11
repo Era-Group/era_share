@@ -2975,7 +2975,15 @@ class EraSeoSuiteHub(models.Model):
             })
 
         if vals:
-            post.write(vals)
+            # CRITICAL: this write sets `content` (it injects the cover <img>).
+            # Without _era_ai_no_rebuild, blog_post_blogai.write() treats that as
+            # a human content edit and kicks off a full AI SEO rebuild
+            # (_ai_fill_seo) mid-call — an extra AI round-trip whose translatable
+            # jsonb writes were observed to abort the cron transaction (the
+            # follow-on commit then died recomputing is_seo_optimized). The cover
+            # image must never trigger an SEO rebuild, so suppress it here. The
+            # SEO meta was already set when the post was created.
+            post.with_context(_era_ai_no_rebuild=True).write(vals)
 
     def _notify_managers_about_new_article(self, post, article):
         """Send a one-shot notification email to every member of the SEO

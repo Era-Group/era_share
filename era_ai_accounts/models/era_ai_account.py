@@ -4,8 +4,10 @@ import json
 import logging
 import os
 import secrets
+import shutil
+import subprocess
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import requests
 
@@ -157,10 +159,12 @@ class EraAiAccount(models.Model):
         help="Provider API key. Stored encrypted; only AI Account Managers can set it.",
     )
     secret_is_set = fields.Boolean(
-        string="Secret stored", compute="_compute_secret_is_set", store=True, compute_sudo=True,
+        string="Secret stored", compute="_compute_secret_is_set", store=True,
+        compute_sudo=True, groups=MANAGER_GROUP,
     )
     secret_masked = fields.Char(
         string="Stored key", compute="_compute_secret_masked", compute_sudo=True,
+        groups=MANAGER_GROUP,
     )
 
     # --- API-key transport config -------------------------------------------
@@ -191,7 +195,11 @@ class EraAiAccount(models.Model):
              "Ignored once you link a Claude account below (the linked credentials "
              "take over).",
     )
-    cli_extra_args = fields.Char(string="CLI extra arguments")
+    cli_extra_args = fields.Char(
+        string="CLI extra arguments", groups=MANAGER_GROUP,
+        help="Appended verbatim to the CLI invocation (shlex-split). Manager-only: "
+             "these flags shape what the subprocess may do.",
+    )
 
     # --- Linked Claude account ("Login with Claude", system-wide) ------------
     cli_oauth_linked = fields.Boolean(
@@ -258,7 +266,11 @@ class EraAiAccount(models.Model):
         # documents that and silences the framework's "missing depends" warning.
         # Recomputed on each fresh read (e.g. a form reload after linking).
         for rec in self:
-            info = rec.sudo()._cli_oauth_info() if rec.id else {}
+            # Only cli_proxy accounts can be linked — skip the disk read otherwise.
+            if rec.id and rec.auth_mode == "cli_proxy":
+                info = rec.sudo()._cli_oauth_info()
+            else:
+                info = {}
             rec.cli_oauth_linked = bool(info.get("linked"))
             if info.get("linked"):
                 sub = info.get("subscription") or "subscription"
@@ -282,6 +294,19 @@ class EraAiAccount(models.Model):
                     "The local CLI proxy is currently only available for the "
                     "Anthropic (Claude) provider."
                 ))
+
+    @api.constrains("base_url")
+    def _check_base_url(self):
+        # Keys/tokens are attached to whatever this URL is — restrict it to real
+        # http(s) endpoints so a typo (or worse, file:///...) can't ship them off.
+        for rec in self:
+            if not rec.base_url:
+                continue
+            parsed = urlparse(rec.base_url.strip())
+            if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                raise ValidationError(_(
+                    "The base URL must be an absolute http(s) URL, e.g. "
+                    "https://openrouter.ai/api/v1 (got '%s').", rec.base_url))
 
     # ------------------------------------------------------------------- secrets
     def _get_secret(self):
@@ -408,13 +433,11 @@ class EraAiAccount(models.Model):
             b64 = (data.get("result") or {}).get("image") or data.get("image")
             if not b64:
                 raise UserError(_("Cloudflare returned no image data."))
-            import base64  # local import; only used here
             return base64.b64decode(b64)
         return resp.content
 
     def _generate_image_openai(self, prompt, model, width, height):
         """OpenAI image generation (gpt-image-1 / DALL·E 3). High quality, paid."""
-        import base64  # local import; only used here
         key = self._get_secret()
         if not key:
             raise UserError(_("Set the OpenAI API key on account '%s'.", self.name))
@@ -449,7 +472,9 @@ class EraAiAccount(models.Model):
             return base64.b64decode(item["b64_json"])
         if item.get("url"):
             try:
-                dl = requests.get(item["url"], timeout=60)
+                # (connect, read) tuple: fail fast on a stalled connection while
+                # still tolerating a slow CDN transfer.
+                dl = requests.get(item["url"], timeout=(5, 60))
                 dl.raise_for_status()
                 return dl.content
             except requests.exceptions.RequestException as exc:
@@ -542,8 +567,9 @@ class EraAiAccount(models.Model):
                 for p in (home, path):
                     try:
                         os.chmod(p, 0o700)
-                    except OSError:
-                        pass
+                    except OSError as exc:
+                        _logger.warning(
+                            "era_ai_accounts: cannot restrict permissions on %s: %s", p, exc)
             except OSError as e:
                 raise UserError(_("Cannot create Claude config dir %s: %s", path, e))
         return path
@@ -625,15 +651,23 @@ class EraAiAccount(models.Model):
         raw = ICP.get_param(_PKCE_PARAM % self.id)
         if not raw:
             raise UserError(_("No login in progress. Click “Login with Claude” first."))
-        pkce = json.loads(raw)
-        # The console callback returns "<code>#<state>".
+        try:
+            pkce = json.loads(raw)
+        except ValueError:
+            ICP.set_param(_PKCE_PARAM % self.id, "")
+            raise UserError(_("The login session is corrupted. Please log in again."))
+        # The console callback returns "<code>#<state>". Require the state and an
+        # exact match (strict OAuth CSRF check) — Claude always includes it, so a
+        # missing state means a truncated paste.
         code, _sep, state = pasted_code.partition("#")
-        if state and pkce.get("state") and state != pkce["state"]:
-            raise UserError(_("Authorization state mismatch. Please log in again."))
+        if not state or state != pkce.get("state"):
+            raise UserError(_(
+                "Authorization state missing or mismatched — paste the complete "
+                "code exactly as Claude shows it, or log in again."))
         payload = {
             "grant_type": "authorization_code",
             "code": code,
-            "state": state or pkce.get("state"),
+            "state": state,
             "client_id": OAUTH_CLIENT_ID,
             "redirect_uri": OAUTH_REDIRECT_URI,
             "code_verifier": pkce["verifier"],
@@ -645,8 +679,15 @@ class EraAiAccount(models.Model):
         except requests.RequestException as e:
             raise UserError(_("Could not reach Claude to exchange the code: %s", e))
         if resp.status_code != 200:
-            _logger.warning("Claude OAuth exchange failed (%s): %s",
-                            resp.status_code, resp.text[:500])
+            # Log only the structured error type/message, not the raw body (it may
+            # carry request ids / account metadata we don't need in the log).
+            try:
+                err = (resp.json() or {}).get("error") or {}
+                detail = "%s: %s" % (err.get("type", "unknown"), err.get("message", "unknown"))
+            except ValueError:
+                detail = (resp.text or "")[:200]
+            _logger.warning("Claude OAuth exchange failed (HTTP %s): %s",
+                            resp.status_code, detail)
             raise UserError(_(
                 "Claude rejected the authorization code (HTTP %s). The code may have "
                 "expired — please log in again.", resp.status_code))
@@ -705,7 +746,6 @@ class EraAiAccount(models.Model):
     def unlink(self):
         # Remove any linked-Claude credential dir so deleting an account leaves no
         # orphaned tokens on disk (best-effort; never blocks the delete).
-        import shutil
         for rec in self:
             try:
                 shutil.rmtree(rec._cli_managed_home(), ignore_errors=True)
@@ -730,10 +770,13 @@ class EraAiAccount(models.Model):
                 return default
             return str(v).strip().lower() in ("1", "true", "yes", "on")
 
-        try:
-            concurrency = max(1, int(float(param.get_param("ai.cli_max_concurrency", "1"))))
-        except (TypeError, ValueError):
-            concurrency = 1
+        def _i(key, default):
+            try:
+                return int(float(param.get_param(key, default)))
+            except (TypeError, ValueError):
+                return int(default)
+
+        concurrency = max(1, _i("ai.cli_max_concurrency", 1))
 
         # A linked ("Login with Claude") account routes through its own isolated
         # credentials dir; otherwise fall back to the ambient HOME-based login.
@@ -751,7 +794,9 @@ class EraAiAccount(models.Model):
             "cli_path": self.cli_path or False,
             "home_dir": home_dir,
             "config_dir": config_dir,
-            "extra_args": self.cli_extra_args or False,
+            # sudo: the field is manager-restricted, but any allowed user's AI
+            # call must still be able to build the transport config.
+            "extra_args": self.sudo().cli_extra_args or False,
             # Throttle (configurable in Settings > AI): up to `concurrency` CLI calls
             # at a time across the whole host, separated by a size-scaled gap.
             "gap_enabled": _b("ai.cli_gap_enabled", True),
@@ -817,7 +862,6 @@ class EraAiAccount(models.Model):
             if not binary:
                 raise UserError(_("Claude CLI binary not found on this server."))
             # Cheap liveness check: the CLI prints its version without any model call.
-            import subprocess  # local import; only used here
             out = subprocess.run([binary, "--version"], capture_output=True, text=True, timeout=30)
             if out.returncode != 0:
                 raise UserError(_("Claude CLI not runnable: %s", (out.stderr or "").strip()))

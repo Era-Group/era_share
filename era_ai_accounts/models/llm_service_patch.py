@@ -28,6 +28,14 @@ def _cfg(env, key, default=None):
     return env["ir.config_parameter"].sudo().get_param(key, default)
 
 
+def _cfg_int(env, key, default):
+    """Integer config parameter with a safe fallback on unset/garbage values."""
+    try:
+        return int(float(_cfg(env, key, default)))
+    except (TypeError, ValueError):
+        return int(default)
+
+
 def _flatten(system_prompts, user_prompts, inputs):
     """Collapse Odoo's (system, user, inputs) into (system_with_history, last_user)."""
     system_parts = [p for p in (system_prompts or []) if p]
@@ -104,15 +112,21 @@ def _patch():
                 "anthropic-version": _ANTHROPIC_VERSION,
             }
         if self.provider == "custom_llm" and acc:
-            header = acc.auth_header or "Authorization"
-            prefix = acc.auth_prefix or "Bearer"
-            token = self._get_api_token()
+            # Strip CR/LF from the account-sourced header parts: requests rejects
+            # them anyway, and this turns a sneaky header-injection attempt into a
+            # plain (harmless) value instead of a crash.
+            def _h(value):
+                return (value or "").replace("\r", "").replace("\n", "").strip()
+
+            header = _h(acc.auth_header) or "Authorization"
+            prefix = _h(acc.auth_prefix) or "Bearer"
+            token = _h(self._get_api_token())
             value = f"{prefix} {token}".strip() if prefix else token
             headers = {"Content-Type": "application/json", header: value}
             if acc.referer:
-                headers["HTTP-Referer"] = acc.referer
+                headers["HTTP-Referer"] = _h(acc.referer)
             if acc.title:
-                headers["X-Title"] = acc.title
+                headers["X-Title"] = _h(acc.title)
             return headers
         if self.provider == "cloudflare":
             return {
@@ -141,10 +155,7 @@ def _patch():
         # Guard against the tool-driven "Ask AI" navigation agent, whose system
         # context (full models/menus CSV) is hundreds of KB and makes the CLI/API
         # run out of memory. The CLI proxy is for chat/RAG agents only (v1).
-        try:
-            max_chars = int(_cfg(self.env, "ai.cli_max_prompt_chars", "400000"))
-        except (TypeError, ValueError):
-            max_chars = 400000
+        max_chars = _cfg_int(self.env, "ai.cli_max_prompt_chars", 400000)
         total = len(system_full) + len(user_text)
         if max_chars and total > max_chars:
             raise UserError(_(
@@ -154,10 +165,7 @@ def _patch():
                 "Assign an API-key Anthropic account to that agent, or point this "
                 "account at a simpler chat agent. (Raise ai.cli_max_prompt_chars to override.)",
                 n=total, max=max_chars))
-        try:
-            timeout = int(_cfg(self.env, "ai.cli_timeout", "180"))
-        except (TypeError, ValueError):
-            timeout = 180
+        timeout = _cfg_int(self.env, "ai.cli_timeout", 180)
         text = llm_cli_transport.cli_complete(
             acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout)
         if not (text and text.strip()):
@@ -167,10 +175,7 @@ def _patch():
     def _request_llm_anthropic(self, llm_model, system_prompts, user_prompts, tools=None,
                                files=None, schema=None, temperature=0.2, inputs=(), web_grounding=False):
         system_full, user_text = _flatten(system_prompts, user_prompts, inputs)
-        try:
-            max_tokens = int(_cfg(self.env, "ai.anthropic_max_tokens", "4096"))
-        except (TypeError, ValueError):
-            max_tokens = 4096
+        max_tokens = _cfg_int(self.env, "ai.anthropic_max_tokens", 4096)
         body = {
             "model": llm_model,
             "max_tokens": max_tokens,

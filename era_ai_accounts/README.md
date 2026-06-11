@@ -27,8 +27,9 @@ Any module can drive a configured account directly — no `ai.agent` needed:
 
 - `account.generate_text(prompt, system="", model=None)` → `str` — chat/content
   through the account's provider (CLI proxy, OpenAI, Cloudflare, …).
-- `account.generate_image(prompt, model=None, steps=4)` → image **bytes** —
-  currently Cloudflare Workers AI (FLUX.1-schnell / SDXL).
+- `account.generate_image(prompt, model=None, steps=None)` → image **bytes** —
+  Cloudflare Workers AI (FLUX.1-schnell, FLUX.2 dev/klein, SDXL) or OpenAI
+  (`gpt-image-1`, `dall-e-3`). Sync models to pick a specific image model.
 
 This is how other ERA modules (e.g. `era_seo_suite`) let an admin pick *one
 account for content* and *one account for images* instead of re-entering
@@ -51,7 +52,11 @@ images through `/ai/run/@cf/black-forest-labs/flux-1-schnell`.
 1. **AI ▸ AI Accounts ▸ New** (managers only).
 2. Pick a **provider** and **auth mode**:
    - *Local CLI proxy* (Anthropic): optionally set the CLI binary path / `HOME`;
-     no key needed.
+     no key needed. **Or click "Login with Claude"** to link a Claude
+     subscription in-app (OAuth, manual copy-code flow): the credentials are
+     stored once on the server — in an isolated directory, never touching the
+     server's own `~/.claude` login — and **every user** runs through that one
+     account. *Re-link* / *Disconnect* buttons manage it; managers only.
    - *API key*: paste the provider key (write-only, stored encrypted). For a
      *custom* provider also set base URL / auth header.
 3. **Validate connection**, then **Sync models**.
@@ -76,10 +81,10 @@ blocked by Anthropic and violates the ToS.
   agent's *LLM Model* on OpenAI/Gemini (used only for embeddings); generation
   still goes through the account.
 - Claude has **no image generation**: the CLI proxy produces text only. For
-  blog/article cover images, create an **OpenAI** account (`api_key`) and paste
-  an OpenAI key — `era_seo_suite`'s image generator reads the key from the first
-  active OpenAI `api_key` account (then set *ERA SEO → Image provider = OpenAI*).
-  Use the account's **Note** field to record what it is linked for.
+  blog/article cover images, create a **Cloudflare** or **OpenAI** (`api_key`)
+  account and sync its models — `era_seo_suite`'s *Blog Gen* tab then lets you
+  pick that account (and a specific image model) directly. Use the account's
+  **Note** field to record what it is linked for.
 - `codex` / `gemini` CLIs are not installed here, so OpenAI/Gemini use API keys.
 
 ## Security
@@ -104,6 +109,7 @@ blocked by Anthropic and violates the ToS.
 | `ai.cli_lock_wait` | 300 | Max time (s) a request waits for a free slot before erroring |
 | `ai.http_timeout` | 120 | Anthropic HTTP timeout (s) |
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |
+| `ai.openai_image_timeout` | 300 | OpenAI image-generation HTTP timeout (s) — high-quality `gpt-image-1` renders can take minutes |
 
 All of the `ai.cli_*` settings above are editable in the UI: **Settings ▸ AI ▸ "Claude
 CLI rate protection"** (no redeploy needed).

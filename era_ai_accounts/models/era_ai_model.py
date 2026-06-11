@@ -25,11 +25,12 @@ class EraAiModel(models.Model):
     )
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        ("uniq_model_per_account",
-         "unique(account_id, model_id, kind)",
-         "This model already exists for the account."),
-    ]
+    # New-style table constraint (Odoo 19); resolves to the same SQL constraint
+    # name as the legacy _sql_constraints entry, so upgrades are a no-op.
+    _uniq_model_per_account = models.Constraint(
+        "unique(account_id, model_id, kind)",
+        "This model already exists for the account.",
+    )
 
     @api.depends("label", "model_id")
     def _compute_display_name(self):

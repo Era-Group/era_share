@@ -14,6 +14,8 @@ stack with first-class **AI accounts**:
   already authenticated on this server (the "connected account"), so AI works
   without per-token API billing. The first-party ``claude`` binary makes the call
   itself under its own auth; we never replay its OAuth token to the raw API.
+* **Login with Claude** — link a Claude subscription in-app (OAuth, no API key),
+  stored once on the server and used by every user in the system.
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API) and any
   OpenAI-compatible custom provider, with credentials stored per account
   (encrypted at rest, restricted to AI Account Managers).
@@ -25,7 +27,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.7.0",
+    "version": "19.0.1.7.1",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

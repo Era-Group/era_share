@@ -680,8 +680,11 @@ def _patch_llm_api_service():
             for model in models_to_try:
                 tried_models.append(model)
                 try:
-                    # In model-fallback mode, switch model per attempt
-                    # instead of retrying the same model repeatedly.
+                    # In model-fallback mode, switch model per attempt instead of
+                    # retrying the same model repeatedly. Deliberate trade-off:
+                    # each model gets exactly ONE shot (retry_count forced to 0),
+                    # so a transient 429/500 moves on to the next model rather
+                    # than stalling the user behind per-model retry backoffs.
                     self._era_http_retry_override = 0
                     if args:
                         new_args = list(args)

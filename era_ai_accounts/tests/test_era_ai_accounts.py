@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 from odoo.addons.era_ai_accounts.utils import crypto, llm_cli_transport
@@ -444,6 +444,13 @@ class TestEraAiAccounts(TransactionCase):
         with self.assertRaises(UserError):
             acc._oauth_complete("code#totally-wrong-state")
 
+    def test_oauth_complete_rejects_missing_state(self):
+        # Strict CSRF check: pasting only the code (no #state) must be refused.
+        acc, _tmp = self._linked_cli_account()
+        acc._oauth_start()
+        with self.assertRaises(UserError):
+            acc._oauth_complete("just-the-code-no-state")
+
     def test_oauth_complete_needs_login_in_progress(self):
         acc, _tmp = self._linked_cli_account()
         with self.assertRaises(UserError):
@@ -505,6 +512,50 @@ class TestEraAiAccounts(TransactionCase):
                           return_value=self._oauth_token_response()):
             wiz.action_complete()
         self.assertTrue(acc._cli_is_linked())
+
+    # ------------------------------------------------------------ best practices
+    def test_base_url_scheme_constraint(self):
+        # http(s) endpoints only — file:// or scheme-less values are refused.
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "bad", "provider": "custom", "auth_mode": "api_key",
+                "secret": "k", "base_url": "file:///etc/passwd",
+            })
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "bad2", "provider": "custom", "auth_mode": "api_key",
+                "secret": "k", "base_url": "openrouter.ai/api/v1",
+            })
+        ok = self.Account.create({
+            "name": "good", "provider": "custom", "auth_mode": "api_key",
+            "secret": "k", "base_url": "https://openrouter.ai/api/v1",
+        })
+        self.assertTrue(ok)
+
+    def test_sensitive_fields_hidden_from_regular_user(self):
+        user = new_test_user(self.env, login="era_lowpriv", groups="base.group_user")
+        acc = self.Account.create({
+            "name": "Shared3", "provider": "openai", "auth_mode": "api_key",
+            "scope": "shared", "secret": "sk-zzz",
+        })
+        for field in ("secret_is_set", "secret_masked", "cli_extra_args"):
+            with self.assertRaises(AccessError, msg=field):
+                acc.with_user(user).read([field])
+
+    def test_custom_header_values_sanitized(self):
+        # CR/LF in account-sourced header parts must never reach the wire.
+        acc = self.Account.create({
+            "name": "Hdr", "provider": "custom", "auth_mode": "api_key",
+            "secret": "sk-h", "base_url": "https://example.com/v1",
+            "auth_header": "Authorization\r\nX-Evil: 1", "referer": "https://r\n.example",
+        })
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env, provider="custom_llm")
+        headers = service._get_base_headers()
+        for key, value in headers.items():
+            self.assertNotIn("\n", key + value)
+            self.assertNotIn("\r", key + value)
+        self.assertIn("AuthorizationX-Evil: 1", headers)  # collapsed, not split
 
     def test_account_generate_text(self):
         # Provider-agnostic content helper any module can call (no ai.agent needed).

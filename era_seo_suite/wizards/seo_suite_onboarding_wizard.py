@@ -486,7 +486,89 @@ class EraSeoOnboardingWizard(models.TransientModel):
                     vals['ai_agent_id'] = agent.id
             except (TypeError, ValueError):
                 pass
+        # Seed still-blank Organization/Social fields from the current company
+        # and website so a first-time wizard isn't all-empty placeholders.
+        self._prefill_from_company(vals)
         self.write(vals)
+
+    @staticmethod
+    def _social_handle(value):
+        """Return '@handle' from a twitter/x profile URL or a bare handle, or ''.
+
+        Accepts 'https://twitter.com/era_net_sa', 'https://x.com/era_net_sa/',
+        '@era_net_sa' or 'era_net_sa'; rejects anything that still looks like a
+        domain (a real handle has no dot or space)."""
+        s = (value or '').strip()
+        if not s:
+            return ''
+        if s.startswith('@'):
+            s = s[1:]
+        elif '/' in s:
+            s = s.rstrip('/').split('/')[-1]
+        s = s.split('?')[0].split('#')[0].strip()
+        if not s or '.' in s or ' ' in s:
+            return ''
+        return '@' + s
+
+    def _prefill_from_company(self, vals):
+        """Fill still-blank Organization + Social wizard fields from the active
+        company and its website. Only touches fields that are empty after the
+        ICP load, so values the admin already saved (or is resuming) win, and
+        a prefill hiccup never blocks the wizard from opening."""
+        try:
+            company = self.env.company
+            base = (self.env['ir.config_parameter'].sudo()
+                    .get_param('web.base.url') or '').rstrip('/')
+            website = None
+            if 'website' in self.env:
+                Website = self.env['website'].sudo()
+                website = (Website.search([('company_id', '=', company.id)],
+                                          limit=1)
+                           or Website.search([], limit=1))
+
+            def blank(fname):
+                return not (vals.get(fname) or '').strip()
+
+            def social_of(name):
+                # Website social link first (that's where the site's sameAs
+                # links live), then the company's own.
+                src = getattr(website, 'social_' + name, '') if website else ''
+                return src or getattr(company, 'social_' + name, '') or ''
+
+            # --- Organization identity ----------------------------------
+            if blank('org_name') and company.name:
+                vals['org_name'] = company.name
+            # Logo: point at the website's logo endpoint rather than the
+            # company's. /web/image/website/<id>/logo always renders the site's
+            # header logo (the admin's upload, else Odoo's fallback), so the
+            # link resolves even before a dedicated brand logo is set.
+            if blank('org_logo_url') and base.startswith('http') and website:
+                vals['org_logo_url'] = '%s/web/image/website/%s/logo' % (
+                    base, website.id)
+            if (blank('org_og_image_url') and base.startswith('http')
+                    and website and getattr(website, 'social_default_image', False)):
+                vals['org_og_image_url'] = (
+                    '%s/web/image/website/%s/social_default_image' % (
+                        base, website.id))
+            if blank('org_twitter_handle'):
+                handle = self._social_handle(social_of('twitter'))
+                if handle:
+                    vals['org_twitter_handle'] = handle
+            if blank('org_google_verify') and website:
+                vals['org_google_verify'] = getattr(
+                    website, 'google_search_console', '') or ''
+
+            # --- Social profiles (sameAs[]) -----------------------------
+            for name in ('facebook', 'twitter', 'linkedin', 'instagram',
+                         'youtube'):
+                fname = 'social_' + name
+                if blank(fname):
+                    vals[fname] = social_of(name)
+        except Exception:  # noqa: BLE001 — prefill is cosmetic, never fatal
+            import logging
+            logging.getLogger(__name__).warning(
+                'onboarding wizard: company prefill skipped', exc_info=True)
+        return vals
 
     def _save_current_step(self):
         """Persist whichever fields this step owns to ir.config_parameter."""

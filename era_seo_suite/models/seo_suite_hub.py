@@ -2693,11 +2693,10 @@ class EraSeoSuiteHub(models.Model):
             'name': article['title'],
             'blog_id': blog.id,
             'content': article['content_html'],
-            # Land as a DRAFT for a human to review before it goes live (the
-            # cron's documented intent). website_blog's own default is already
-            # False; we keep it explicit. A reviewer publishes from the Blog Gen
-            # tab. (Drafts also skip website_blog's "published post" subtype.)
-            'is_published': False,
+            # Auto-publish on creation (admin preference). The cover image is
+            # still attached shortly after by cron_finalize_articles; a brief
+            # window without a cover is acceptable for a trend-timely post.
+            'is_published': True,
         }
         # Provenance fields — surfaced in the hub's Blog Generation tab so
         # admins can review AI output and the trends it followed.
@@ -3043,8 +3042,7 @@ class EraSeoSuiteHub(models.Model):
 
     def _notify_managers_about_new_article(self, post, article):
         """Send a one-shot notification email to every member of the SEO
-        Manager group with the draft article's URL + the AI's reasoning, so a
-        human can review and publish it.
+        Manager group with the published article's URL + the AI's reasoning.
         """
         Mail = self.env['mail.mail'].sudo()
         group = self.env.ref('era_seo_suite.group_era_seo_manager',
@@ -3068,7 +3066,7 @@ class EraSeoSuiteHub(models.Model):
         body_html = self._build_article_notification_body(post, article, full_url)
         for user in recipients:
             Mail.create({
-                'subject': _('New draft article ready for review: %s', article['title'][:120]),
+                'subject': _('New article auto-published: %s', article['title'][:120]),
                 'body_html': body_html,
                 'email_to': user.email,
                 'email_from': self.env.user.email_formatted or
@@ -3082,18 +3080,17 @@ class EraSeoSuiteHub(models.Model):
         return (
             '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;'
             'line-height:1.5;color:#333;">'
-            '<p>The ERA SEO Suite just generated a new blog article '
-            '<strong>draft</strong> for your review.</p>'
+            '<p>The ERA SEO Suite just auto-published a new blog article.</p>'
             '<p><strong>Title:</strong> {title}<br/>'
             '<strong>Trend signal:</strong> {trend}<br/>'
             '<strong>AI confidence:</strong> {conf:.2f}</p>'
             '<p>'
             '<a href="{url}" style="display:inline-block;padding:8px 16px;'
             'background:#7c4cff;color:#fff;text-decoration:none;border-radius:4px;">'
-            'Review the draft</a>'
+            'Open the article</a>'
             '</p>'
             '<p style="color:#888;font-size:12px;">Reason for the pick: {reason}<br/>'
-            'You can pause article generation any time from the suite hub '
+            'You can pause auto-publishing any time from the suite hub '
             '(Settings tab → Auto-publish toggle).</p>'
             '</div>'
         ).format(

@@ -884,161 +884,188 @@ msgid "Authorization code"
 msgstr "رمز التفويض"
 
 #. module: era_ai_accounts
-#: model:ir.actions.act_window,name + button
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid "Login with Claude"
 msgstr "تسجيل الدخول عبر Claude"
 
 #. module: era_ai_accounts
-#: button in era_ai_account_view_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid "Re-link account"
 msgstr "إعادة ربط الحساب"
 
 #. module: era_ai_accounts
-#: button in era_ai_account_view_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid "Disconnect"
 msgstr "فصل الحساب"
 
 #. module: era_ai_accounts
-#: button in era_ai_account_login_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
 msgid "Open Claude login page"
 msgstr "فتح صفحة تسجيل الدخول إلى Claude"
 
 #. module: era_ai_accounts
-#: button in era_ai_account_login_form
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
 msgid "Complete login"
 msgstr "إتمام تسجيل الدخول"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Claude %s linked"
 msgstr "تم ربط حساب Claude ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Only AI Account Managers can link or unlink a Claude account."
 msgstr "مديرو حسابات الذكاء الاصطناعي وحدهم يمكنهم ربط حساب Claude أو فصله."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Linking a Claude account only applies to CLI-proxy accounts."
 msgstr "ربط حساب Claude متاح فقط لحسابات وكيل واجهة الأوامر (CLI proxy)."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Paste the authorization code from Claude."
 msgstr "الصق رمز التفويض من Claude."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "No login in progress. Click “Login with Claude” first."
 msgstr "لا توجد عملية تسجيل دخول جارية. اضغط أولاً على «تسجيل الدخول عبر Claude»."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "The login session is corrupted. Please log in again."
 msgstr "جلسة تسجيل الدخول تالفة. الرجاء تسجيل الدخول من جديد."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Authorization state missing or mismatched — paste the complete code exactly as Claude shows it, or log in again."
 msgstr "حالة التفويض مفقودة أو غير مطابقة — الصق الرمز كاملاً كما يعرضه Claude تمامًا، أو سجّل الدخول من جديد."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Could not reach Claude to exchange the code: %s"
 msgstr "تعذّر الوصول إلى Claude لاستبدال الرمز: %s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Claude rejected the authorization code (HTTP %s). The code may have expired — please log in again."
 msgstr "رفض Claude رمز التفويض (HTTP ‏%s). ربما انتهت صلاحية الرمز — الرجاء تسجيل الدخول من جديد."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Claude did not return an access token."
 msgstr "لم يُرجع Claude رمز وصول."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Claude account disconnected."
 msgstr "تم فصل حساب Claude."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Save the account first, then link a Claude subscription."
 msgstr "احفظ الحساب أولاً، ثم اربط اشتراك Claude."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Cannot create Claude config dir %s: %s"
 msgstr "تعذّر إنشاء مجلد إعدادات Claude ‏%s: ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "The base URL must be an absolute http(s) URL, e.g. https://openrouter.ai/api/v1 (got '%s')."
 msgstr "يجب أن يكون عنوان URL الأساسي عنوان http(s)‎ كاملاً، مثل https://openrouter.ai/api/v1 (المُدخل: '%s')."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
 msgid "AI account not found — reopen the dialog."
 msgstr "حساب الذكاء الاصطناعي غير موجود — أعد فتح النافذة."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
 msgid "No authorization URL — reopen the dialog."
 msgstr "لا يوجد عنوان تفويض — أعد فتح النافذة."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Set the Cloudflare Account ID on account '%s'."
 msgstr "حدّد معرّف حساب Cloudflare في الحساب '%s'."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Set the Cloudflare API token before validating."
 msgstr "حدّد رمز Cloudflare API قبل التحقق."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Cloudflare image request failed: %s"
 msgstr "فشل طلب الصورة من Cloudflare: ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Cloudflare image error (%(code)s): %(detail)s"
 msgstr "خطأ صورة Cloudflare ‏(%(code)s): ‏%(detail)s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Cloudflare image error: %s"
 msgstr "خطأ صورة Cloudflare: ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Cloudflare returned no image data."
 msgstr "لم يُرجع Cloudflare أي بيانات صورة."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Set the OpenAI API key on account '%s'."
 msgstr "حدّد مفتاح OpenAI API في الحساب '%s'."
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "OpenAI image request failed: %s"
 msgstr "فشل طلب الصورة من OpenAI: ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "OpenAI returned an unexpected image response: %s"
 msgstr "أرجع OpenAI استجابة صورة غير متوقعة: %s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "OpenAI image download failed: %s"
 msgstr "فشل تنزيل الصورة من OpenAI: ‏%s"
 
 #. module: era_ai_accounts
-#: code:addons/era_ai_accounts/models/era_ai_account.py
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "OpenAI returned no image."
 msgstr "لم يُرجع OpenAI أي صورة."

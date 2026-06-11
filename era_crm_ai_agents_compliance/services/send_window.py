@@ -43,6 +43,7 @@ class SendWindow:
     def __init__(self, env=None):
         self.env = env
         self.cfg = ComplianceConfig(env)
+        self._prayer = None  # lazy PrayerTimes provider (api source)
 
     # ------------------------------------------------------------------
     # Public API
@@ -56,7 +57,12 @@ class SendWindow:
         t = local.time()
 
         if cfg.b("prayer_enabled"):
-            prayer = self._prayer_block(t, local, city, country)
+            times, available = self._prayer_times_for(local, city, country)
+            if not available:
+                # Fail-safe: no cached data for this city and the API is down.
+                # Never send blind — block (the guard will defer/retry).
+                return False, "prayer-time data unavailable"
+            prayer = self._prayer_block_in(t, times)
             if prayer:
                 return False, "prayer time (%s)" % prayer
 
@@ -92,12 +98,28 @@ class SendWindow:
     # Prayer-times seam (1.10 replaces the body with API + cache + fail-safe)
     # ------------------------------------------------------------------
     def _prayer_times_for(self, local_dt, city, country):
-        """Return {name: time} for the given local date/city. Fixed configured
-        times for now; the live API is wired in by task 1.10."""
-        return self.cfg.fixed_prayer_times()
+        """Return ``(times: {name: time} | None, available: bool)``.
 
-    def _prayer_block(self, t, local_dt, city, country):
-        times = self._prayer_times_for(local_dt, city, country)
+        - source 'fixed' (or no env): the configured fixed times — always
+          available.
+        - source 'api': real per-city times via the cache/API layer with the
+          hybrid fail-safe. ``available`` is False only when there is no cached
+          data for the city AND the live API is down — the caller then blocks.
+        """
+        if self.env is None or self.cfg.s("prayer_source") != "api":
+            return self.cfg.fixed_prayer_times(), True
+        times = self._prayer_provider().get_times(city, country, local_dt.date())
+        if times is None:
+            return None, False
+        return times, True
+
+    def _prayer_provider(self):
+        if self._prayer is None:
+            from .prayer_times import PrayerTimes
+            self._prayer = PrayerTimes(self.env)
+        return self._prayer
+
+    def _prayer_block_in(self, t, times):
         block = self.cfg.i("prayer_block_minutes", 30)
         tmin = t.hour * 60 + t.minute
         for name, ptime in times.items():

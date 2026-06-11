@@ -24,6 +24,13 @@
               sequence="60"
               groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
 
+    <menuitem id="menu_crm_ai_compliance_norms"
+              name="Norm Vocabulary"
+              parent="era_crm_ai_agents_base.menu_crm_ai_config"
+              action="action_crm_ai_norm_term"
+              sequence="65"
+              groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
+
     <menuitem id="menu_crm_ai_compliance_settings"
               name="Compliance Settings"
               parent="era_crm_ai_agents_base.menu_crm_ai_config"

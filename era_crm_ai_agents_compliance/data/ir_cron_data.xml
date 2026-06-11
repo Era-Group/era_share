@@ -20,5 +20,21 @@
             <field name="active" eval="True"/>
         </record>
 
+        <!-- Warm the prayer-time cache daily (today + tomorrow) for active
+             cities, so send-time lookups are fast and resilient. Runs as root.
+             Sends only city + date to the API — never PII (egress registry). -->
+        <record id="ir_cron_crm_ai_warm_prayer_cache" model="ir.cron">
+            <field name="name">CRM AI Compliance: Warm prayer-time cache</field>
+            <field name="model_id" ref="model_crm_ai_prayer_cache"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_warm_prayer_cache()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 01:00:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
     </data>
 </odoo>

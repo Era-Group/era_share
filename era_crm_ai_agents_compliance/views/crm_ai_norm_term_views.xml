@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_norm_term_list" model="ir.ui.view">
+        <field name="name">crm.ai.norm.term.list</field>
+        <field name="model">crm.ai.norm.term</field>
+        <field name="arch" type="xml">
+            <list string="Norm Vocabulary" editable="bottom">
+                <field name="category"/>
+                <field name="text"/>
+                <field name="lang"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_norm_term_search" model="ir.ui.view">
+        <field name="name">crm.ai.norm.term.search</field>
+        <field name="model">crm.ai.norm.term</field>
+        <field name="arch" type="xml">
+            <search string="Norm Vocabulary">
+                <field name="text"/>
+                <filter name="greetings" string="Greetings" domain="[('category', '=', 'greeting')]"/>
+                <filter name="informal" string="Informal openers" domain="[('category', '=', 'informal_opener')]"/>
+                <filter name="honorifics" string="Honorifics" domain="[('category', '=', 'honorific')]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_category" string="Category" context="{'group_by': 'category'}"/>
+                    <filter name="group_lang" string="Language" context="{'group_by': 'lang'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_norm_term" model="ir.actions.act_window">
+        <field name="name">Norm Vocabulary</field>
+        <field name="res_model">crm.ai.norm.term</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_crm_ai_norm_term_search"/>
+        <field name="context">{'search_default_group_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add greetings, honorifics and informal openers</p>
+            <p>The cultural-norms engine checks outbound messages against these terms.</p>
+        </field>
+    </record>
+
+</odoo>

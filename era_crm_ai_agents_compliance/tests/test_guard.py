@@ -44,6 +44,10 @@ class TestComplianceGuard(TransactionCase):
         })
         self.Consent = self.env["crm.ai.consent"]
         self.Audit = self.env["crm.ai.audit.log"]
+        # Keep these integration tests deterministic/offline: use fixed prayer
+        # times (the live-API path is exercised separately in test_prayer.py).
+        self.env["ir.config_parameter"].set_param(
+            "era_crm_ai_agents_compliance.prayer_source", "fixed")
 
     # -- helpers --------------------------------------------------------
     def _grant(self):

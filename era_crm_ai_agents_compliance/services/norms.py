@@ -74,9 +74,30 @@ class CulturalNorms:
     def __init__(self, env=None):
         self.env = env
         self.cfg = ComplianceConfig(env)
-        self._greetings = [_normalize(g) for g in self.GREETINGS]
-        self._informal = [_normalize(g) for g in self.INFORMAL_OPENERS]
-        self._honorifics = [_normalize(h) for h in self.HONORIFICS]
+        greetings, informal, honorifics = self._load_vocab(env)
+        self._greetings = [_normalize(g) for g in greetings]
+        self._informal = [_normalize(g) for g in informal]
+        self._honorifics = [_normalize(h) for h in honorifics]
+
+    def _load_vocab(self, env):
+        """Load the editable vocabulary from crm.ai.norm.term; fall back to the
+        in-code defaults per category when the table is empty or there is no env
+        (unit tests). Read runs as the caller — no sudo (users have read ACL)."""
+        defaults = {
+            "greeting": self.GREETINGS,
+            "informal_opener": self.INFORMAL_OPENERS,
+            "honorific": self.HONORIFICS,
+        }
+        if env is None or "crm.ai.norm.term" not in env:
+            return defaults["greeting"], defaults["informal_opener"], defaults["honorific"]
+        loaded = {"greeting": [], "informal_opener": [], "honorific": []}
+        for term in env["crm.ai.norm.term"].search([("active", "=", True)]):
+            loaded.setdefault(term.category, []).append(term.text)
+        # Per-category fallback: if a category has no rows, use its defaults.
+        for cat in loaded:
+            if not loaded[cat]:
+                loaded[cat] = defaults[cat]
+        return loaded["greeting"], loaded["informal_opener"], loaded["honorific"]
 
     # ------------------------------------------------------------------
     def check_norms(self, text):

@@ -4,3 +4,9 @@ access_crm_ai_consent_manager,crm.ai.consent manager,model_crm_ai_consent,era_cr
 access_crm_ai_consent_system,crm.ai.consent system,model_crm_ai_consent,base.group_system,1,1,1,1
 access_crm_ai_dsar_wizard_manager,crm.ai.dsar.wizard manager,model_crm_ai_dsar_wizard,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
 access_crm_ai_dsar_wizard_system,crm.ai.dsar.wizard system,model_crm_ai_dsar_wizard,base.group_system,1,1,1,1
+access_crm_ai_norm_term_user,crm.ai.norm.term user,model_crm_ai_norm_term,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_norm_term_manager,crm.ai.norm.term manager,model_crm_ai_norm_term,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_norm_term_system,crm.ai.norm.term system,model_crm_ai_norm_term,base.group_system,1,1,1,1
+access_crm_ai_prayer_cache_user,crm.ai.prayer.cache user,model_crm_ai_prayer_cache,era_crm_ai_agents_base.group_crm_ai_user,1,1,1,0
+access_crm_ai_prayer_cache_manager,crm.ai.prayer.cache manager,model_crm_ai_prayer_cache,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_prayer_cache_system,crm.ai.prayer.cache system,model_crm_ai_prayer_cache,base.group_system,1,1,1,1

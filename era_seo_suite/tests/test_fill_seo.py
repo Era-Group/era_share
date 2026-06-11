@@ -14,12 +14,33 @@ def _mock_agent(reply_json):
     return agent
 
 
-_FULL_REPLY = (
-    '{"seo_title": "Cloud Accounting for Saudi SMEs | ERA", '
+# Multi-language fill contract (39af6d2): per-language field dicts keyed
+# under "by_lang", one explanation/confidence for the whole response.
+_FIELDS_EN = (
+    '"seo_title": "Cloud Accounting for Saudi SMEs | ERA", '
     '"seo_description": "ZATCA-ready, VAT-compliant cloud accounting for Saudi SMEs. Start your free trial today.", '
     '"seo_og_title": "Cloud Accounting for Saudi SMEs", '
     '"seo_og_description": "Books, VAT invoicing, ZATCA compliance — built for Saudi SMEs.", '
-    '"seo_keywords": "cloud accounting, saudi, zatca, vat", '
+    '"seo_keywords": "cloud accounting, saudi, zatca, vat"'
+)
+
+_FIELDS_FR = (
+    '"seo_title": "Comptabilité cloud pour les PME saoudiennes | ERA", '
+    '"seo_description": "Comptabilité cloud conforme TVA et ZATCA pour les PME saoudiennes. Essai gratuit.", '
+    '"seo_og_title": "Comptabilité cloud pour les PME saoudiennes", '
+    '"seo_og_description": "Facturation TVA et conformité ZATCA pour les PME saoudiennes.", '
+    '"seo_keywords": "comptabilité cloud, saoudite, zatca, tva"'
+)
+
+_FULL_REPLY = (
+    '{"by_lang": {"en_US": {' + _FIELDS_EN + '}}, '
+    '"explanation": "Derived from the page H1 and body.", "confidence": 0.9}'
+)
+
+# Reply covering both website languages used by the multilang tests.
+_FULL_REPLY_ML = (
+    '{"by_lang": {"en_US": {' + _FIELDS_EN + '}, '
+    '"fr_FR": {' + _FIELDS_FR + '}}, '
     '"explanation": "Derived from the page H1 and body.", "confidence": 0.9}'
 )
 
@@ -116,7 +137,7 @@ class TestFillSeo(TransactionCase):
         website.language_ids = [(4, en.id), (4, fr.id)]
         page = self._make_page(url='/multilang', website_id=website.id)
 
-        agent = _mock_agent(_FULL_REPLY)
+        agent = _mock_agent(_FULL_REPLY_ML)
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             page.action_ai_fill_seo()
 
@@ -125,8 +146,8 @@ class TestFillSeo(TransactionCase):
                         'English translation must be filled.')
         self.assertTrue(page.with_context(lang='fr_FR').seo_title,
                         'French translation must be filled.')
-        # One agent call per language.
-        self.assertGreaterEqual(agent.get_direct_response.call_count, 2)
+        # ONE consolidated agent call covers every website language (39af6d2).
+        self.assertEqual(agent.get_direct_response.call_count, 1)
 
     def test_fill_generates_own_translation_not_fallback(self):
         """Fill-missing must fill a language that only falls back to the source.
@@ -145,7 +166,7 @@ class TestFillSeo(TransactionCase):
         page.with_context(lang='en_US').write({'seo_title': 'Hand EN Title'})
 
         with patch.object(AIClient, '_resolve_agent',
-                          return_value=_mock_agent(_FULL_REPLY)):
+                          return_value=_mock_agent(_FULL_REPLY_ML)):
             page.action_ai_fill_seo()
         page.invalidate_recordset()
 

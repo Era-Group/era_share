@@ -127,6 +127,7 @@ class EraSeoMixin(models.AbstractModel):
             else:
                 rec.seo_og_image_url = False
 
+    @api.depends()
     def _compute_schema_instances(self):
         Schema = self.env['era.seo.schema.instance']
         for rec in self:

@@ -43,6 +43,7 @@
         <footer>
           <button string="Import" name="action_import" type="object"
                   class="btn-primary"
+                  groups="era_seo_suite.group_era_seo_manager"
                   invisible="state == 'done'"/>
           <button string="Close" class="btn-secondary" special="cancel"/>
         </footer>
@@ -55,5 +56,6 @@
     <field name="res_model">era.seo.redirect.import.wizard</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
+    <field name="group_ids" eval="[(4, ref('era_seo_suite.group_era_seo_manager'))]"/>
   </record>
 </odoo>

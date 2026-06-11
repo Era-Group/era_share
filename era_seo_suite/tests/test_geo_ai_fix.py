@@ -14,8 +14,12 @@ def _mock_agent(reply_json):
     return agent
 
 
+# geo_answer_summary is translate=True, so the suggest flow uses the
+# consolidated multi-language contract (one AI call for all languages):
+#   {"by_lang": {code: value, ...}, "explanation": ..., "confidence": ...}
 _REPLY = (
-    '{"proposed_value": "ERA delivers bilingual SEO and GEO for Saudi SMEs.", '
+    '{"by_lang": {"en_US": '
+    '"ERA delivers bilingual SEO and GEO for Saudi SMEs."}, '
     '"explanation": "Quotable one-liner.", "confidence": 0.92}'
 )
 
@@ -31,7 +35,7 @@ class TestGeoAiFix(TransactionCase):
         cls.Page = cls.env['website.page']
         cls.env['ir.config_parameter'].sudo().set_param(
             'era_seo.ai_enabled', 'True')
-        cls.env.user.write({'groups_id': [(4, cls.env.ref(
+        cls.env.user.write({'group_ids': [(4, cls.env.ref(
             'era_seo_suite.group_era_seo_manager').id)]})
 
     def _make_page(self, url='/geo-ai-test'):

@@ -93,8 +93,10 @@ class TestAIWorkflow(TransactionCase):
     def test_suggest_writes_proposal_and_log(self):
         page = self._make_page(url='/suggest-test')
         f = self._make_finding(page, 'missing_seo_title')
+        # Multi-language contract (39af6d2): per-language values keyed
+        # under "by_lang", one explanation/confidence for the whole set.
         agent = _mock_agent(
-            '{"proposed_value": "New AI Title", '
+            '{"by_lang": {"en_US": "New AI Title"}, '
             '"explanation": "Keyword first.", "confidence": 0.91}'
         )
         before = self.Log.search_count([])
@@ -106,14 +108,15 @@ class TestAIWorkflow(TransactionCase):
         self.assertEqual(f.ai_proposed_field, 'seo_title')
         self.assertAlmostEqual(f.ai_confidence, 0.91, places=2)
         self.assertEqual(self.Log.search_count([]), before + 1)
-        # Called at least once (once per installed website language).
-        agent.get_direct_response.assert_called()
+        # ONE consolidated call covers every installed website language.
+        agent.get_direct_response.assert_called_once()
 
     def test_suggest_tolerates_code_fences(self):
         page = self._make_page(url='/fence-test')
         f = self._make_finding(page, 'missing_seo_title')
         agent = _mock_agent(
-            '```json\n{"proposed_value": "Fenced", "explanation": "x", "confidence": 0.8}\n```'
+            '```json\n{"by_lang": {"en_US": "Fenced"}, '
+            '"explanation": "x", "confidence": 0.8}\n```'
         )
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.action_ai_suggest()
@@ -125,7 +128,7 @@ class TestAIWorkflow(TransactionCase):
         f = self._make_finding(page, 'missing_seo_title')
         agent = _mock_agent(
             'Sure! Here is the result: '
-            '{"proposed_value": "Prose", "explanation": "x", "confidence": 0.7} '
+            '{"by_lang": {"en_US": "Prose"}, "explanation": "x", "confidence": 0.7} '
             'Hope that helps.'
         )
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
@@ -137,7 +140,8 @@ class TestAIWorkflow(TransactionCase):
         page = self._make_page(url='/apply-test')
         f = self._make_finding(page, 'missing_seo_title')
         agent = _mock_agent(
-            '{"proposed_value": "Applied Title", "explanation": "x", "confidence": 0.9}'
+            '{"by_lang": {"en_US": "Applied Title"}, '
+            '"explanation": "x", "confidence": 0.9}'
         )
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.action_ai_suggest()
@@ -158,7 +162,8 @@ class TestAIWorkflow(TransactionCase):
         page.website_id = website.id
         f = self._make_finding(page, 'missing_seo_title')
         agent = _mock_agent(
-            '{"proposed_value": "ML Title", "explanation": "x", "confidence": 0.9}')
+            '{"by_lang": {"en_US": "ML Title", "fr_FR": "Titre ML"}, '
+            '"explanation": "x", "confidence": 0.9}')
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.action_ai_suggest()
         f.invalidate_recordset()
@@ -175,7 +180,7 @@ class TestAIWorkflow(TransactionCase):
         f_lo = self._make_finding(page_lo, 'missing_seo_title')
 
         with patch.object(AIClient, '_resolve_agent', return_value=_mock_agent(
-            '{"proposed_value": "High", "explanation": "x", "confidence": 0.9}')):
+            '{"by_lang": {"en_US": "High"}, "explanation": "x", "confidence": 0.9}')):
             f_hi.action_ai_suggest_and_apply()
         f_hi.invalidate_recordset()
         page_hi.invalidate_recordset()
@@ -183,7 +188,7 @@ class TestAIWorkflow(TransactionCase):
         self.assertEqual(page_hi.seo_title, 'High')
 
         with patch.object(AIClient, '_resolve_agent', return_value=_mock_agent(
-            '{"proposed_value": "Low", "explanation": "x", "confidence": 0.5}')):
+            '{"by_lang": {"en_US": "Low"}, "explanation": "x", "confidence": 0.5}')):
             f_lo.action_ai_suggest_and_apply()
         f_lo.invalidate_recordset()
         page_lo.invalidate_recordset()
@@ -197,7 +202,8 @@ class TestAIWorkflow(TransactionCase):
         page = self._make_page(url='/attempt-count')
         f = self._make_finding(page, 'missing_seo_title')
         agent = _mock_agent(
-            '{"proposed_value": "Attempted", "explanation": "x", "confidence": 0.9}'
+            '{"by_lang": {"en_US": "Attempted"}, '
+            '"explanation": "x", "confidence": 0.9}'
         )
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.action_ai_suggest()
@@ -212,7 +218,8 @@ class TestAIWorkflow(TransactionCase):
         f = self._make_finding(page, 'missing_seo_title')
         f.write({'ai_attempt_count': 1})
         agent = _mock_agent(
-            '{"proposed_value": "Should Not Call", "explanation": "x", "confidence": 0.9}'
+            '{"by_lang": {"en_US": "Should Not Call"}, '
+            '"explanation": "x", "confidence": 0.9}'
         )
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.with_context(_era_ai_system=True).action_ai_suggest()

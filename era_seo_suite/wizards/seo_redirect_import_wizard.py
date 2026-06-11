@@ -15,7 +15,7 @@ import io
 import logging
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -69,6 +69,13 @@ class EraSeoRedirectImportWizard(models.TransientModel):
     def action_import(self):
         """Parse, validate, optionally upsert. Re-open self with the report."""
         self.ensure_one()
+        # Server-side gate: `_process_rows` writes era.seo.redirect via
+        # sudo(), which bypasses the model ACL — so the group must be
+        # re-checked here, not only on the button/menu in the views.
+        if not self.env.user.has_group('era_seo_suite.group_era_seo_manager'):
+            raise AccessError(
+                _('Importing redirects requires the SEO Manager group.')
+            )
         if not self.data_file:
             raise UserError(_('Please upload a CSV file first.'))
 

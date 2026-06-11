@@ -55,7 +55,7 @@
           <div class="alert alert-info py-2 d-flex align-items-center gap-2"
                role="status"
                invisible="not is_pending">
-            <i class="fa fa-spinner fa-spin"/>
+            <i class="fa fa-spinner fa-spin" role="img" aria-label="In progress"/>
             <span>
               Scanning your site in the background — this page refreshes
               on its own when the audit finishes.

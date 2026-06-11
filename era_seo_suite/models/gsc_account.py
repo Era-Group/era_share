@@ -16,7 +16,7 @@ import logging
 import uuid
 from datetime import timedelta
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from .gsc_client import GscClient
@@ -51,10 +51,12 @@ class EraGscAccount(models.Model):
         default='draft', required=True, readonly=True, index=True,
     )
     last_error = fields.Text(string='Last Error', readonly=True)
+    oauth_state_nonce = fields.Char(readonly=True, groups='base.group_system')
     site_ids = fields.One2many('era.gsc.site', 'account_id', string='Sites')
     site_count = fields.Integer(compute='_compute_site_count')
     active = fields.Boolean(default=True)
 
+    @api.depends('site_ids')
     def _compute_site_count(self):
         for rec in self:
             rec.site_count = len(rec.site_ids)
@@ -73,8 +75,10 @@ class EraGscAccount(models.Model):
                 'Settings → ERA SEO — GSC.'))
         redirect_uri = self._oauth_redirect_uri()
         # The state ties the callback back to this record AND defends against
-        # CSRF: include a random opaque token.
-        state = '%s:%s' % (self.id, uuid.uuid4().hex)
+        # CSRF: include a random single-use nonce that the callback verifies.
+        nonce = uuid.uuid4().hex
+        self.sudo().write({'oauth_state_nonce': nonce})
+        state = '%s:%s' % (self.id, nonce)
         url = GscClient.authorize_url(client_id, redirect_uri, state)
         return {
             'type': 'ir.actions.act_url',

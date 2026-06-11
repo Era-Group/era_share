@@ -80,6 +80,9 @@ class EraSeoRedirectLog(models.Model):
         # COALESCE on website_id mirrors the unique index expression so a NULL
         # and a 0 website map to the same log row. A new referer/UA only
         # overwrites when present (keeps the last known value otherwise).
+        # Raw SQL bypasses the ORM: flush pending writes on this model first
+        # so the UPDATE sees them (e.g. a row created earlier in this tx).
+        self.flush_model()
         self.env.cr.execute(
             """
             UPDATE era_seo_redirect_log
@@ -95,6 +98,13 @@ class EraSeoRedirectLog(models.Model):
              path, website_id or None),
         )
         if self.env.cr.rowcount:
+            # The raw UPDATE bypassed the ORM cache: drop the touched columns
+            # so in-transaction readers (tests, action_create_redirect) see
+            # the incremented counters instead of stale cached values.
+            self.invalidate_model([
+                'hit_count', 'last_seen', 'last_referer',
+                'last_user_agent', 'write_uid', 'write_date',
+            ])
             return
         # No row yet — create via the ORM so the audit columns are populated.
         # A concurrent creator racing us trips the unique index; that raises,

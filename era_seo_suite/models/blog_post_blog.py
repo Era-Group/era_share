@@ -201,7 +201,11 @@ class BlogPost(models.Model):
         field = self._fields['content']
         try:
             stored = field._get_stored_translations(self)
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                'era_seo: reading stored translations of blog.post content '
+                'failed: %s', exc,
+            )
             stored = None
         if stored:
             # Skip the '_<lang>' source-snapshot keys used for staleness checks.

@@ -66,14 +66,14 @@ class EraSeoAdviceWizard(models.TransientModel):
         self.ensure_one()
         if 'ai.agent' not in self.env:
             self.advice_html = (
-                '<div class="alert alert-warning mb-0">The Odoo <b>AI</b> app is '
+                '<div class="alert alert-warning mb-0" role="status">The Odoo <b>AI</b> app is '
                 'not installed. Install it (Apps) and configure a provider, then '
                 'try again.</div>')
             return
         agent = AIClient(self.env)._resolve_agent()
         if not agent:
             self.advice_html = (
-                '<div class="alert alert-warning mb-0">No AI agent is configured. '
+                '<div class="alert alert-warning mb-0" role="status">No AI agent is configured. '
                 'Pick one in Settings → ERA SEO → AI Auto-Fix, or create an agent '
                 'in the AI app.</div>')
             return
@@ -100,7 +100,7 @@ class EraSeoAdviceWizard(models.TransientModel):
 
         if not raw:
             self.advice_html = (
-                '<div class="alert alert-light mb-0">The AI agent did not return '
+                '<div class="alert alert-light mb-0" role="status">The AI agent did not return '
                 'a tip this time — click <b>Get another tip</b> to retry.</div>')
         else:
             self.advice_html = self._format_advice_html(raw)

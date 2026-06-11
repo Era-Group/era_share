@@ -234,14 +234,29 @@ class TestAuditRunner(TransactionCase):
         self.Run.create({})._run_audit()
         all_f = self.Finding.search([
             ('res_id', '=', page.id), ('check_code', '=', 'missing_seo_title')])
-        # Manually resolve all per-language findings.
-        all_f.action_mark_resolved()
-        self.assertTrue(all(r.is_resolved for r in all_f))
-        # Issue still present on next run -> reopen.
+        self.assertTrue(all_f)
+        self.assertTrue(all(not r.is_resolved for r in all_f))
+        # Fix the issue -> the next run AUTO-resolves every per-language finding.
+        page.write({'seo_title': 'A perfectly reasonable SEO title'})
+        self.Run.create({})._run_audit()
+        all_f.invalidate_recordset()
+        self.assertTrue(all(r.is_resolved for r in all_f),
+                        'Fixed issue must be auto-resolved by the next run.')
+        self.assertTrue(all(not r.resolved_manually for r in all_f),
+                        'Audit auto-resolution must not count as manual dismissal.')
+        # Issue reappears -> the next run reopens the auto-resolved findings.
+        page.write({'seo_title': False})
         self.Run.create({})._run_audit()
         all_f.invalidate_recordset()
         self.assertTrue(all(not r.is_resolved for r in all_f),
-                        'Still-present issue must reopen.')
+                        'Reappearing issue must reopen auto-resolved findings.')
+        # But a MANUAL dismissal is sticky (since .67): re-running the audit
+        # while the issue is still present must NOT undo the user's decision.
+        all_f.action_mark_resolved()
+        self.Run.create({})._run_audit()
+        all_f.invalidate_recordset()
+        self.assertTrue(all(r.is_resolved for r in all_f),
+                        'Manually dismissed findings must stay resolved.')
 
     def test_counts_compute(self):
         page = self._make_page(url='/audit-counts-test')

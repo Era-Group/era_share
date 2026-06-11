@@ -98,10 +98,18 @@ class EraSeoRedirect(models.Model):
     # --- SQL constraints / indexes -------------------------------------------
 
     def init(self):
-        """Composite index supporting the per-request lookup query."""
+        """Composite index supporting the per-request lookup query.
+
+        The DROP is mandatory: ``CREATE INDEX IF NOT EXISTS`` with the same
+        name would silently keep the old 4-column (no ``is_regex``)
+        definition on existing databases.
+        """
+        self.env.cr.execute(
+            "DROP INDEX IF EXISTS era_seo_redirect_lookup_idx"
+        )
         self.env.cr.execute("""
             CREATE INDEX IF NOT EXISTS era_seo_redirect_lookup_idx
-            ON era_seo_redirect (is_active, source_url, website_id, lang_id)
+            ON era_seo_redirect (is_active, is_regex, source_url, website_id, lang_id)
         """)
 
     # --- Constraints ---------------------------------------------------------

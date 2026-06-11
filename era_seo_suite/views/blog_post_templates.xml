@@ -32,7 +32,7 @@
       </div>
       <div class="o_wblog_post_meta_extra small text-muted mt-2"
            t-if="blog_post.era_reading_time_minutes">
-        <i class="fa fa-clock-o me-1"/>
+        <i class="fa fa-clock-o me-1" role="img" aria-label="Reading time"/>
         <span><t t-esc="blog_post.era_reading_time_minutes"/>
               <t t-translation="off"> </t>
               <span t-translation="off">min read</span></span>
@@ -55,7 +55,7 @@
       <t t-if="blog_post.era_show_toc and blog_post.era_toc_html">
         <details class="o_era_blog_toc_container card my-3" open="open">
           <summary class="card-header h6 m-0">
-            <i class="fa fa-list-ul me-2"/>
+            <i class="fa fa-list-ul me-2" role="img" aria-label="Table of contents"/>
             <span t-translation="off">Contents</span>
           </summary>
           <div class="card-body">
@@ -159,7 +159,7 @@
                     </h6>
                     <div t-if="related.era_reading_time_minutes"
                          class="text-muted small">
-                      <i class="fa fa-clock-o me-1"/>
+                      <i class="fa fa-clock-o me-1" role="img" aria-label="Reading time"/>
                       <t t-esc="related.era_reading_time_minutes"/>
                       <span t-translation="off"> min</span>
                     </div>
@@ -187,7 +187,7 @@
             <a t-if="blog_post.era_series_prev_id"
                t-att-href="blog_post.era_series_prev_id.website_url"
                class="btn btn-outline-secondary">
-              <i class="fa fa-arrow-left me-2"/>
+              <i class="fa fa-arrow-left me-2" role="img" aria-label="Previous post"/>
               <span t-translation="off">Previous</span>
               <span class="d-none d-md-inline ms-1">·</span>
               <span class="d-none d-md-inline">
@@ -209,7 +209,7 @@
               </span>
               <span class="d-none d-md-inline mx-1">·</span>
               <span t-translation="off">Next</span>
-              <i class="fa fa-arrow-right ms-2"/>
+              <i class="fa fa-arrow-right ms-2" role="img" aria-label="Next post"/>
             </a>
           </div>
         </nav>
@@ -237,22 +237,22 @@
           <a class="btn btn-sm btn-outline-secondary me-1"
              t-att-href="'https://twitter.com/intent/tweet?url=%s&amp;text=%s' % (post_url, blog_post.name or '')"
              target="_blank" rel="noopener">
-            <i class="fa fa-twitter"/>
+            <i class="fa fa-twitter" role="img" aria-label="Share on Twitter"/>
           </a>
           <a class="btn btn-sm btn-outline-secondary me-1"
              t-att-href="'https://www.linkedin.com/sharing/share-offsite/?url=%s' % post_url"
              target="_blank" rel="noopener">
-            <i class="fa fa-linkedin"/>
+            <i class="fa fa-linkedin" role="img" aria-label="Share on LinkedIn"/>
           </a>
           <a class="btn btn-sm btn-outline-secondary me-1"
              t-att-href="'https://www.facebook.com/sharer/sharer.php?u=%s' % post_url"
              target="_blank" rel="noopener">
-            <i class="fa fa-facebook"/>
+            <i class="fa fa-facebook" role="img" aria-label="Share on Facebook"/>
           </a>
           <a class="btn btn-sm btn-outline-secondary"
              t-att-href="'https://api.whatsapp.com/send?text=%s %s' % (blog_post.name or '', post_url)"
              target="_blank" rel="noopener">
-            <i class="fa fa-whatsapp"/>
+            <i class="fa fa-whatsapp" role="img" aria-label="Share on WhatsApp"/>
           </a>
         </div>
       </t>

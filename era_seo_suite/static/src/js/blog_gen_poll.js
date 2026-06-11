@@ -53,6 +53,10 @@ const DEFAULT_METHOD = "get_article_pending_state";
 // Keep the banner up briefly after a click so a slow server/cron round-trip
 // can't flicker the button back before the pending flag is observed.
 const TRIGGER_GRACE_MS = 8000;
+// In-memory fallback for the legacy-mode marks when sessionStorage is
+// unavailable (disabled storage, quota, private-mode quirks). Keyed exactly
+// like sessionStorage entries.
+const _memoryMarks = {};
 
 class EraAutoRefreshWhenTrue extends Component {
     static template = xml`
@@ -106,8 +110,9 @@ class EraAutoRefreshWhenTrue extends Component {
         this._ticking = false;
         this._wasPending = false;
         this._graceUntil = 0;
-        // Legacy-mode reload bookkeeping (kept per record id + field name so
-        // multiple spinners / tabs don't trip over each other).
+        // Legacy-mode reload bookkeeping (sessionStorage key scoped per
+        // model + record id + field name so multiple spinners / tabs don't
+        // trip over each other).
         this._lastSeenKey = null;
 
         onMounted(() => {
@@ -147,11 +152,34 @@ class EraAutoRefreshWhenTrue extends Component {
         }
     }
     _getMark() {
-        const v = window[this._lastSeenKey];
+        // Marks live in sessionStorage (JSON values) so they survive widget
+        // remounts but auto-clear when the tab closes; fall back to an
+        // in-memory object when storage is disabled.
+        let v = null;
+        try {
+            const raw = window.sessionStorage.getItem(this._lastSeenKey);
+            if (raw) {
+                v = JSON.parse(raw);
+            }
+        } catch (_) {
+            /* storage disabled or corrupt value — use the in-memory fallback */
+        }
+        if (!v) {
+            v = _memoryMarks[this._lastSeenKey];
+        }
         return v && typeof v === "object" ? v : {};
     }
     _setMark(obj) {
-        window[this._lastSeenKey] = obj;
+        try {
+            window.sessionStorage.setItem(
+                this._lastSeenKey,
+                JSON.stringify(obj),
+            );
+            return;
+        } catch (_) {
+            /* storage disabled/full — fall back to in-memory */
+        }
+        _memoryMarks[this._lastSeenKey] = obj;
     }
 
     onGenerate() {

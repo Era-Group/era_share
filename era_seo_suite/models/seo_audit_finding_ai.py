@@ -16,7 +16,7 @@ crash silently otherwise).
 import json
 import logging
 
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, modules
 from odoo.exceptions import AccessError, UserError
 
 from .ai_client import AIClient, AIUnavailable
@@ -312,7 +312,10 @@ class EraSeoAuditFinding(models.Model):
             # web/proxy timeout; without an incremental commit the whole batch
             # — every AI call already paid for — would roll back. Committing
             # per record makes the work durable and lets a re-run resume.
-            self.env.cr.commit()
+            # Never commit inside a test transaction (forbidden by the test
+            # framework — same guard core uses, e.g. mail_mail).
+            if not modules.module.current_test:
+                self.env.cr.commit()
 
         if errors:
             return self._notify(
@@ -379,8 +382,10 @@ class EraSeoAuditFinding(models.Model):
             applied += 1
             # Commit each applied fix on its own (same rationale as
             # action_ai_suggest): a timeout mid-batch can't undo the fixes
-            # already written to their target records.
-            self.env.cr.commit()
+            # already written to their target records. Never commit inside
+            # a test transaction (forbidden by the test framework).
+            if not modules.module.current_test:
+                self.env.cr.commit()
 
         if errors:
             return self._notify(
@@ -589,7 +594,24 @@ class EraSeoAuditFinding(models.Model):
             raise UserError(_('No proposed value to apply.'))
         translations = {}
         if self.ai_proposed_translations:
-            translations = json.loads(self.ai_proposed_translations)
+            try:
+                translations = json.loads(self.ai_proposed_translations)
+            except (json.JSONDecodeError, TypeError):
+                raise UserError(_(
+                    'Stored AI translations are corrupt; '
+                    're-run the suggestion.'))
+        if translations:
+            # Only write languages that are actually installed — the AI can
+            # hallucinate lang codes, and with_context(lang=<bogus>) would
+            # write into a non-existent translation context.
+            installed = {code for code, _name
+                         in self.env['res.lang'].get_installed()}
+            for lang_code in list(translations):
+                if lang_code not in installed:
+                    _logger.warning(
+                        'finding %d: skipping AI translation for '
+                        'non-installed language %r', self.id, lang_code)
+                    translations.pop(lang_code)
         if translations:
             for lang_code, value in translations.items():
                 target.sudo().with_context(lang=lang_code).write(

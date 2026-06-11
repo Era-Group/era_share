@@ -63,7 +63,7 @@
                           <t t-esc="post.published_date" t-options="{'widget': 'date'}"/>
                         </span>
                         <span t-if="post.era_reading_time_minutes" class="ms-2">
-                          <i class="fa fa-clock-o me-1"/>
+                          <i class="fa fa-clock-o me-1" role="img" aria-label="Reading time"/>
                           <t t-esc="post.era_reading_time_minutes"/>
                           <span t-translation="off"> min</span>
                         </span>

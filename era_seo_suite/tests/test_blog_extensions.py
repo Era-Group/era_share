@@ -3,6 +3,7 @@ import logging
 
 from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase, tagged
+from odoo.tools import mute_logger
 
 _logger = logging.getLogger(__name__)
 
@@ -148,19 +149,36 @@ class TestBlogSeries(TransactionCase):
 
     def test_slug_required(self):
         Series = self.env['era.blog.series']
+        # New contract (38a24d2): create() resolves any caller-supplied slug
+        # to a non-empty URL-safe value, so cron/import callers never crash
+        # on a messy slug — it is normalized instead of rejected.
+        rec = Series.create({'name': 'Bad', 'slug': 'Has Caps and Spaces'})
+        self.assertEqual(rec.slug, 'has-caps-and-spaces')
+        # A slug is still mandatory: it is auto-derived from the name when
+        # the caller omits it (onchange only covers the UI).
+        rec2 = Series.create({'name': 'Era Slug Required Probe'})
+        self.assertEqual(rec2.slug, 'era-slug-required-probe')
+        # Direct writes do NOT auto-normalize: the format constraint still
+        # rejects a malformed slug.
         with self.assertRaises(ValidationError):
-            Series.create({'name': 'Bad', 'slug': 'Has Caps and Spaces'})
+            rec.write({'slug': 'Has Caps and Spaces'})
 
     def test_slug_unique(self):
         Series = self.env['era.blog.series']
-        Series.create({'name': 'A', 'slug': 'unique-slug-test'})
-        # Duplicate slug must raise — either IntegrityError from the DB or
-        # ValidationError from the model constraint. Odoo's assertRaises
-        # only accepts a single exception class.
+        a = Series.create({'name': 'A', 'slug': 'unique-slug-test'})
+        self.assertEqual(a.slug, 'unique-slug-test')
+        # New contract (38a24d2): create() de-duplicates with a numeric
+        # suffix instead of raising, so the auto-publish cron never aborts
+        # on a slug collision. Two records may never share a slug.
+        b = Series.create({'name': 'B', 'slug': 'unique-slug-test'})
+        self.assertEqual(b.slug, 'unique-slug-test-2')
+        # The DB-level UNIQUE(slug) constraint still rejects an explicit
+        # duplicate via write(); IntegrityError surfaces at flush time.
         raised = False
         try:
-            with self.env.cr.savepoint():
-                Series.create({'name': 'B', 'slug': 'unique-slug-test'})
+            with self.env.cr.savepoint(), mute_logger('odoo.sql_db'):
+                b.write({'slug': 'unique-slug-test'})
+                b.flush_recordset(['slug'])
         except Exception:
             raised = True
         self.assertTrue(raised, 'Duplicate slug must be rejected.')

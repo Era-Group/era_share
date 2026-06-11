@@ -122,7 +122,9 @@ class TestHreflangSync(TransactionCase):
 
     def test_path_with_lang_prefix(self):
         """_era_hreflang_path_for prepends url_code for non-default langs."""
-        from odoo.addons.era_seo_suite.models import seo_mixin
+        # NOTE: the helper lives in models/seo_mixin_mgr.py since the 7-module
+        # merge (1164203); no direct module import needed — it is exercised
+        # through a real era.seo.mixin record below.
         Lang = self.env['res.lang']
         ar = Lang.new({'code': 'ar_001', 'url_code': 'ar'})
         en = Lang.new({'code': 'en_US', 'url_code': ''})

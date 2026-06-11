@@ -9,6 +9,7 @@ Per SPEC §13.
 import logging
 import re
 import threading
+import time
 from collections import Counter, defaultdict
 
 from lxml import html as lxml_html
@@ -49,6 +50,14 @@ _RENDER_FETCH_TIMEOUT_S = 8
 # Redirect chain depth.
 _REDIRECT_CHAIN_MAX = 3
 
+# Wall-clock budget (seconds) for one audit run. The per-page DOM checks do
+# live HTTP GETs (8s timeout each), so a large site can genuinely blow past
+# the cron worker's limit_time_real=1200s and get SIGKILLed mid-run, leaving
+# the run stranded in 'running'. 900s keeps a comfortable margin: once the
+# budget is spent the run stops launching new checks and finalises as a
+# partial-but-done scan instead.
+_AUDIT_RUN_BUDGET_S = 900
+
 
 class EraSeoAuditRun(models.Model):
     _name = 'era.seo.audit.run'
@@ -87,6 +96,7 @@ class EraSeoAuditRun(models.Model):
     is_pending = fields.Boolean(
         compute='_compute_is_pending', string='Audit pending')
 
+    @api.depends()
     def _compute_is_pending(self):
         ICP = self.env['ir.config_parameter'].sudo()
         active = ICP.get_param('era_seo.audit_pending') in _TRUE
@@ -396,12 +406,29 @@ class EraSeoAuditRun(models.Model):
         _run_local.seen_finding_keys = set()
         _run_local.audit_languages = None  # recomputed per run
         _run_local.rendered_cache = {}  # {page_id: rendered #wrap doc or None}
+        _run_local.active_lang_codes = None  # lazily filled by _content_doc
+        # (active recordset, {source_url: redirect}) — lazily filled by
+        # _get_active_redirects_by_source for the chain/loop checks.
+        _run_local.active_redirects = None
+
+        # Wall-clock deadline: stop launching new checks once spent, so the
+        # cron worker is never SIGKILLed (limit_time_real) mid-run, which
+        # would strand the run in state='running' forever.
+        deadline = time.monotonic() + _AUDIT_RUN_BUDGET_S
 
         try:
             pages = self._scope_pages()
             self.write({'pages_scanned': len(pages)})
             from psycopg2 import errors as _pg_errors
+            partial = False
             for check_method in self._get_check_methods():
+                if time.monotonic() > deadline:
+                    partial = True
+                    _logger.warning(
+                        'audit.run %d: time budget (%ds) exceeded — stopping '
+                        'before %s; finalising as a partial scan.',
+                        self.id, _AUDIT_RUN_BUDGET_S, check_method.__name__)
+                    break
                 # Per-check retry loop for SerializationFailure: postgres
                 # rejects one of any two concurrent transactions touching
                 # the same rows, and an audit running alongside an AI
@@ -437,11 +464,22 @@ class EraSeoAuditRun(models.Model):
                             self.id, check_method.__name__, exc,
                         )
                         break
-            self._auto_resolve_fixed(pages)
-            self.write({
+            if not partial:
+                # Only a complete scan may auto-resolve: skipped checks never
+                # re-emit their finding keys, so resolving against a partial
+                # 'seen' set would wrongly close still-present defects.
+                self._auto_resolve_fixed(pages)
+            done_vals = {
                 'state': 'done',
                 'date_finished': fields.Datetime.now(),
-            })
+            }
+            if partial:
+                done_vals['error_message'] = _(
+                    'Partial scan — time budget exceeded after %(budget)d '
+                    'seconds; %(pages)d page(s) were scanned before the run '
+                    'stopped launching new checks.',
+                    budget=_AUDIT_RUN_BUDGET_S, pages=len(pages))
+            self.write(done_vals)
         except Exception as exc:  # noqa: BLE001
             _logger.exception('audit.run %d: aborted with error', self.id)
             self.write({
@@ -910,13 +948,15 @@ class EraSeoAuditRun(models.Model):
         if 'era.seo.schema.instance' not in self.env:
             return
         Instance = self.env['era.seo.schema.instance'].sudo()
+        # One prefetch instead of one search_count per page (the
+        # (res_model, res_id, active) index makes this a single cheap query).
+        have = set(Instance.search([
+            ('res_model', '=', pages._name),
+            ('res_id', 'in', pages.ids),
+            ('active', '=', True),
+        ]).mapped('res_id'))
         for p in pages:
-            n = Instance.search_count([
-                ('res_model', '=', p._name),
-                ('res_id', '=', p.id),
-                ('active', '=', True),
-            ])
-            if n == 0:
+            if p.id not in have:
                 self._add_finding(
                     p, 'warning', 'missing_schema', 'No JSON-LD Schema Attached',
                     suggested='Attach an Article / Service / Product schema instance '
@@ -951,12 +991,24 @@ class EraSeoAuditRun(models.Model):
                               'content block so crawlers can discover it.',
                 )
 
+    def _get_active_redirects_by_source(self):
+        """(active non-regex redirects, {source_url: redirect}) — shared by
+        the chain and loop checks, which run back-to-back in the same run on
+        stable data. Cached on ``_run_local`` for the duration of the run."""
+        cached = getattr(_run_local, 'active_redirects', None)
+        if cached is not None:
+            return cached
+        Redirect = self.env['era.seo.redirect'].sudo()
+        active = Redirect.search(
+            [('is_active', '=', True), ('is_regex', '=', False)])
+        cached = (active, {r.source_url: r for r in active})
+        _run_local.active_redirects = cached
+        return cached
+
     def _check_redirect_chain(self, pages):
         if 'era.seo.redirect' not in self.env:
             return
-        Redirect = self.env['era.seo.redirect'].sudo()
-        active = Redirect.search([('is_active', '=', True), ('is_regex', '=', False)])
-        by_source = {r.source_url: r for r in active}
+        active, by_source = self._get_active_redirects_by_source()
         for r in active:
             chain = [r.source_url]
             current = r
@@ -983,9 +1035,7 @@ class EraSeoAuditRun(models.Model):
     def _check_redirect_loop(self, pages):
         if 'era.seo.redirect' not in self.env:
             return
-        Redirect = self.env['era.seo.redirect'].sudo()
-        active = Redirect.search([('is_active', '=', True), ('is_regex', '=', False)])
-        by_source = {r.source_url: r for r in active}
+        active, by_source = self._get_active_redirects_by_source()
         for r in active:
             seen = {r.source_url}
             current = r
@@ -1085,9 +1135,18 @@ class EraSeoAuditRun(models.Model):
         web = getattr(page, 'website_id', False)
         if web and web.default_lang_id:
             codes.append(web.default_lang_id.code)
-        for lang in page.env['res.lang'].sudo().search([]):
-            if lang.code not in codes:
-                codes.append(lang.code)
+        # Active language codes are identical for every page of a run; cache
+        # them on _run_local (reset per run in _run_audit, mirroring
+        # _audit_languages) instead of re-searching res.lang on every page x
+        # every DOM check.
+        active_codes = getattr(_run_local, 'active_lang_codes', None)
+        if active_codes is None:
+            active_codes = [
+                lang.code for lang in page.env['res.lang'].sudo().search([])]
+            _run_local.active_lang_codes = active_codes
+        for code in active_codes:
+            if code not in codes:
+                codes.append(code)
         ctx_lang = page.env.context.get('lang')
         if ctx_lang and ctx_lang not in codes:
             codes.append(ctx_lang)

@@ -62,6 +62,7 @@ class EraSeoAuditFinding(models.Model):
     is_resolved = fields.Boolean(
         string='Resolved',
         default=False,
+        index=True,
         help='Tick when this finding has been addressed. Resolved findings '
              'are hidden from the default dashboard view.',
     )

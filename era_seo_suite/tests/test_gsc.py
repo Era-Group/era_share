@@ -9,13 +9,28 @@ from unittest.mock import patch
 from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.era_seo_suite.models.gsc_client import GscClient
+from odoo.addons.era_seo_suite.models.gsc_site import EraGscSite
 
+# Per-day pull contract: each request covers exactly ONE day with
+# dimensions=('query',), so 'keys' holds just the query string.
 _ROWS = [
-    {'keys': ['2026-05-26', 'cloud accounting saudi'],
+    {'keys': ['cloud accounting saudi'],
      'clicks': 12, 'impressions': 240, 'ctr': 0.05, 'position': 3.2},
-    {'keys': ['2026-05-26', 'zatca odoo'],
+    {'keys': ['zatca odoo'],
      'clicks': 8, 'impressions': 120, 'ctr': 0.066, 'position': 5.5},
 ]
+
+
+def _fake_search_analytics(token, site_url, start_date, end_date, **kwargs):
+    """Honors the day-by-day pull contract: every request must span exactly
+    one day; data exists for the freshest reliable day (today - lag) only,
+    like a site that ranked on a single day of the window."""
+    assert start_date == end_date, \
+        'per-day pull contract violated: %s..%s' % (start_date, end_date)
+    anchor = date.today() - timedelta(days=EraGscSite._GSC_LAG_DAYS)
+    if start_date == anchor.isoformat() and not kwargs.get('start_row'):
+        return list(_ROWS)
+    return []
 
 
 @tagged('post_install', '-at_install')
@@ -85,7 +100,8 @@ class TestGsc(TransactionCase):
             'account_id': a.id,
             'name': 'https://era.net.sa/',
         })
-        with patch.object(GscClient, 'search_analytics', return_value=_ROWS):
+        with patch.object(GscClient, 'search_analytics',
+                          side_effect=_fake_search_analytics):
             site.action_pull_now()
         rows = self.Query.search([('site_id', '=', site.id)])
         self.assertEqual(len(rows), 2)
@@ -102,7 +118,8 @@ class TestGsc(TransactionCase):
             'account_id': a.id,
             'name': 'https://era.net.sa/',
         })
-        with patch.object(GscClient, 'search_analytics', return_value=_ROWS):
+        with patch.object(GscClient, 'search_analytics',
+                          side_effect=_fake_search_analytics):
             site.action_pull_now()
             site.action_pull_now()
         rows = self.Query.search([('site_id', '=', site.id)])
@@ -115,10 +132,18 @@ class TestGsc(TransactionCase):
             'name': 'https://era.net.sa/',
         })
         from odoo.exceptions import UserError
+        # Plain try/except, NOT self.assertRaises: Odoo's assertRaises wraps
+        # the block in a savepoint and rolls it back when the exception
+        # fires, which would undo the very state='error' write we assert on.
+        raised = None
         with patch.object(GscClient, 'search_analytics',
                           side_effect=RuntimeError('boom')):
-            with self.assertRaises(UserError):
+            try:
                 site.action_pull_now()
+            except UserError as exc:
+                raised = exc
+        self.assertIsNotNone(raised, 'pull failure must raise UserError')
+        self.assertIn('boom', str(raised))
         a.invalidate_recordset()
         self.assertEqual(a.state, 'error')
         self.assertIn('boom', a.last_error or '')

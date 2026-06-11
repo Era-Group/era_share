@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 import requests
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import config
 
@@ -46,6 +46,7 @@ class EraGscSite(models.Model):
         'A site URL can only exist once per account.',
     )
 
+    @api.depends('query_ids')
     def _compute_query_count(self):
         for rec in self:
             rec.query_count = len(rec.query_ids)
@@ -117,10 +118,23 @@ class EraGscSite(models.Model):
                     token, self.name, iso, iso,
                     dimensions=('query',), row_limit=page, start_row=start_row)
             except requests.HTTPError as exc:
+                # 4xx from the Google API is a user-config problem (revoked
+                # token, site not in the property, lacking permission).
+                # Surface it without a traceback — `last_error` has the detail.
                 self.account_id.sudo().write(
                     {'state': 'error', 'last_error': str(exc)[:1000]})
                 _logger.warning('GSC search_analytics %s %s: %s',
                                 self.name, iso, exc)
+                raise UserError(
+                    _('GSC pull failed for %s: %s', self.name, exc)) from exc
+            except Exception as exc:  # noqa: BLE001
+                # Network errors (ConnectionError/Timeout are NOT HTTPError)
+                # and anything unexpected must still mark the account so the
+                # admin sees the failure instead of a silent stale pull.
+                self.account_id.sudo().write(
+                    {'state': 'error', 'last_error': str(exc)[:1000]})
+                _logger.exception('GSC search_analytics failed for %s %s',
+                                  self.name, iso)
                 raise UserError(
                     _('GSC pull failed for %s: %s', self.name, exc)) from exc
             if not rows:

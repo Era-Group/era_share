@@ -18,6 +18,7 @@ right away — so closing mid-wizard and reopening picks up exactly
 where the user left off, since the next launch pre-fills from ICP.
 """
 from odoo import _, api, fields, models
+from odoo.exceptions import AccessError
 
 
 _TRUE = ('True', '1', 'true', 'yes', 'on')
@@ -551,6 +552,20 @@ class EraSeoOnboardingWizard(models.TransientModel):
     # Navigation actions
     # =======================================================================
 
+    def _check_manager(self):
+        """Server-side gate: ACLs on a TransientModel do not stop method
+        invocation over RPC, so every action that persists ICP keys (or
+        launches privileged flows) re-checks the group here.
+
+        Unlike ``seo_audit_finding_ai._check_manager`` there is NO
+        ``_era_ai_system`` bypass — no cron ever calls the onboarding
+        wizard, only interactive users do.
+        """
+        if not self.env.user.has_group('era_seo_suite.group_era_seo_manager'):
+            raise AccessError(
+                _('The SEO onboarding wizard requires the SEO Manager group.')
+            )
+
     def _go_step(self, target):
         self.step = target
         return {
@@ -564,12 +579,14 @@ class EraSeoOnboardingWizard(models.TransientModel):
 
     def action_next(self):
         self.ensure_one()
+        self._check_manager()
         self._save_current_step()
         idx = _STEPS.index(self.step)
         return self._go_step(_STEPS[min(idx + 1, len(_STEPS) - 1)])
 
     def action_prev(self):
         self.ensure_one()
+        self._check_manager()
         idx = _STEPS.index(self.step)
         return self._go_step(_STEPS[max(idx - 1, 0)])
 
@@ -589,6 +606,7 @@ class EraSeoOnboardingWizard(models.TransientModel):
         afterwards to continue.
         """
         self.ensure_one()
+        self._check_manager()
         # Persist whatever's in the GSC form first, so action_authorize
         # finds the client_id when it looks it up via ICP.
         self._save_current_step()
@@ -622,6 +640,7 @@ class EraSeoOnboardingWizard(models.TransientModel):
     def action_run_first_audit(self):
         """Launch the audit wizard from the Done step."""
         self.ensure_one()
+        self._check_manager()
         return self.env['ir.actions.actions']._for_xml_id(
             'era_seo_suite.action_seo_audit_wizard'
         )

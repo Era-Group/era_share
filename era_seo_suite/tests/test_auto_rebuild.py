@@ -18,24 +18,28 @@ def _mock_agent(reply_json):
     return agent
 
 
+# Multi-language fill contract (39af6d2): per-language field dicts keyed
+# under "by_lang", one explanation/confidence for the whole response.
 _FULL_REPLY = (
-    '{"seo_title": "AI Generated Title", '
+    '{"by_lang": {"en_US": {'
+    '"seo_title": "AI Generated Title", '
     '"seo_description": "An AI generated meta description for the blog post body.", '
     '"seo_og_title": "AI OG Title", '
     '"seo_og_description": "AI OG description.", '
-    '"seo_keywords": "blog, seo, ai", '
+    '"seo_keywords": "blog, seo, ai"}}, '
     '"explanation": "Derived from the post body.", "confidence": 0.9}'
 )
 
 # Reply that also carries the blog-specific fields the bridge adds.
 _FULL_REPLY_BLOG = (
-    '{"seo_title": "AI Generated Title", '
+    '{"by_lang": {"en_US": {'
+    '"seo_title": "AI Generated Title", '
     '"seo_description": "An AI generated meta description.", '
     '"seo_og_title": "AI OG Title", '
     '"seo_og_description": "AI OG description.", '
     '"seo_keywords": "blog, seo, ai", '
     '"era_subtitle": "An AI written subtitle", '
-    '"era_excerpt": "An AI written excerpt for feeds and list cards.", '
+    '"era_excerpt": "An AI written excerpt for feeds and list cards."}}, '
     '"explanation": "Derived from the post body.", "confidence": 0.9}'
 )
 

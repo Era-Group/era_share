@@ -286,6 +286,10 @@ class TestRedirectImportWizard(TransactionCase):
         super().setUpClass()
         cls.Wizard = cls.env['era.seo.redirect.import.wizard']
         cls.Redirect = cls.env['era.seo.redirect']
+        # action_import enforces the SEO Manager group server-side;
+        # grant it the same way real import users get it.
+        cls.env.user.write({'group_ids': [(4, cls.env.ref(
+            'era_seo_suite.group_era_seo_manager').id)]})
 
     @staticmethod
     def _encode(csv_text):

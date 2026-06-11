@@ -10,6 +10,9 @@ leaving the screen.
 """
 import logging
 
+import psycopg2
+import psycopg2.errors
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -207,7 +210,10 @@ class EraSeoSuiteHub(models.Model):
         # Image generation
         'setting_image_provider':           ('era_seo.image_provider',           'char', 'openai'),
         'setting_image_api_key':            ('era_seo.image_api_key',            'char', ''),
-        'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-2'),
+        # gpt-image-1 (NOT -2): OpenAI's images endpoint accepts "gpt-image-2"
+        # but never answers — every call burns the full read timeout (the
+        # June 2026 "stuck article" incident). gpt-image-1 returns normally.
+        'setting_image_model':              ('era_seo.image_model',              'char', 'gpt-image-1'),
         'setting_image_size':               ('era_seo.image_size',               'char', '1024x1024'),
         # Quality tier for OpenAI's gpt-image-1. 'low' is the cheap "mini"
         # tier (~$0.005/image), 'medium' is the default tier (~$0.04),
@@ -547,7 +553,7 @@ class EraSeoSuiteHub(models.Model):
     # --- Image generation
     setting_image_provider = fields.Selection(
         [('none',       'None (skip image)'),
-         ('openai',     'OpenAI (gpt-image-2)'),
+         ('openai',     'OpenAI (gpt-image-1)'),
          ('openrouter', 'OpenRouter (any image-capable model)')],
         string='Image provider',
         compute='_compute_settings', inverse='_inverse_settings',
@@ -566,12 +572,12 @@ class EraSeoSuiteHub(models.Model):
         help='OPTIONAL. Used only when "Image provider" is set to '
              '"OpenRouter". Get a key at https://openrouter.ai/keys.')
     setting_image_model = fields.Char(
-        string='Image model',
+        string='Image model (direct provider)',
         compute='_compute_settings', inverse='_inverse_settings',
-        help='Model identifier. OpenAI: gpt-image-2 / gpt-image-1 / dall-e-3. '
-             'OpenRouter: e.g. google/gemini-2.5-flash-image-preview, '
-             'openai/gpt-image-2 or any image-capable model from '
-             'openrouter.ai/models.')
+        help='Model identifier for the direct-provider path. OpenAI: '
+             'gpt-image-1 / dall-e-3 (avoid gpt-image-2 — the endpoint '
+             'accepts it but hangs until the read timeout). OpenRouter: any '
+             'image-capable model from openrouter.ai/models.')
     setting_image_size = fields.Char(
         string='Image size',
         compute='_compute_settings', inverse='_inverse_settings',
@@ -664,33 +670,35 @@ class EraSeoSuiteHub(models.Model):
         d7_dt = datetime.combine(d7, datetime.min.time())
         d30_dt = datetime.combine(d30, datetime.min.time())
 
-        # Coverage figures are per-published-page. Pre-search the set once
-        # so the four percentages share one query rather than four.
-        published_pages = Page.search([('website_published', '=', True)])
-        n_published = len(published_pages)
+        # Coverage figures are per-published-page. Aggregate queries instead
+        # of loading the full recordset — on a 10k-page site the old version
+        # browsed every page and made 4 Python passes over it.
+        published_domain = [('website_published', '=', True)]
+        n_published = Page.search_count(published_domain)
         # Helper — returns int(percent) safely when n_published == 0.
         def _pct(numerator):
             if not n_published:
                 return 0
             return int(round(100 * numerator / n_published))
 
-        # Coverage. seo_title / seo_description are translatable JSONB
-        # so an empty dict / missing key reads as falsy via the ORM. The
-        # `bool(x)` filter is enough here.
-        with_title = sum(1 for p in published_pages if p.seo_title) \
-            if n_published else 0
-        with_meta = sum(1 for p in published_pages if p.seo_description) \
-            if n_published else 0
-        with_og = sum(1 for p in published_pages if p.seo_og_image_url) \
-            if n_published else 0
+        # Coverage. seo_title / seo_description are translatable JSONB, so
+        # '' and False are DISTINCT stored values (see the needs-fill domain
+        # below) — both clauses are required to match Python truthiness.
+        def _filled(field):
+            return Page.search_count(
+                published_domain + [(field, '!=', False), (field, '!=', '')])
+        with_title = _filled('seo_title') if n_published else 0
+        with_meta = _filled('seo_description') if n_published else 0
+        with_og = _filled('seo_og_image_url') if n_published else 0
         if n_published and Instance is not None:
             # Schema instances are linked back to a page via res_model+res_id.
             inst_page_ids = set(Instance.sudo().search([
                 ('active', '=', True),
                 ('res_model', '=', 'website.page'),
             ]).mapped('res_id'))
-            with_schema = sum(1 for p in published_pages
-                              if p.id in inst_page_ids)
+            with_schema = Page.search_count(
+                published_domain + [('id', 'in', list(inst_page_ids))]
+            ) if inst_page_ids else 0
         else:
             with_schema = 0
 
@@ -1057,7 +1065,12 @@ class EraSeoSuiteHub(models.Model):
         ICP = self.env['ir.config_parameter'].sudo()
         for rec in self:
             for fname, (key, kind, default) in self._SETTING_MAP.items():
-                raw = ICP.get_param(key)
+                # default=None is load-bearing: get_param's own default is
+                # False, which the bool/int branches below would treat as a
+                # PERSISTED falsy value ('False' in _TRUE => False, int(False)
+                # => 0), silently overriding the _SETTING_MAP defaults for
+                # keys that were never saved.
+                raw = ICP.get_param(key, None)
                 if kind == 'bool':
                     rec[fname] = (raw in _TRUE) if raw not in ('', None) else default
                 elif kind == 'int':
@@ -1333,27 +1346,49 @@ class EraSeoSuiteHub(models.Model):
                         'stopping early; the next tick will resume from id %s',
                         self._BULK_AI_TICK_BUDGET_S, last_id)
                     break
-                try:
-                    # `_era_ai_system=True` bypasses the per-user SEO Manager
-                    # group check in `_ai_check_manager`. The admin opted into
-                    # the unattended bulk run by flipping the ICP flag, so the
-                    # cron user (often the technical user, not a SEO Manager)
-                    # is allowed to run the fill.
-                    #
-                    # Each record runs in its OWN savepoint so a DB error on one
-                    # record (e.g. a transient serialization conflict) rolls back
-                    # only that record and can't poison the cursor for the rest
-                    # of the tick. The field writes stay on the main cron cursor
-                    # (committed by the cron framework at end-of-tick) — we do
-                    # NOT call cr.commit() here, since this method runs as a
-                    # framework-managed `state=code` server action that owns the
-                    # transaction boundary.
-                    with self.env.cr.savepoint():
-                        rec.with_context(_era_ai_system=True).action_ai_fill_seo()
-                except Exception:  # noqa: BLE001
-                    _logger.exception(
-                        'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
-                        model_name, rec.id)
+                # `_era_ai_system=True` bypasses the per-user SEO Manager
+                # group check in `_ai_check_manager`. The admin opted into
+                # the unattended bulk run by flipping the ICP flag, so the
+                # cron user (often the technical user, not a SEO Manager)
+                # is allowed to run the fill.
+                #
+                # Each record runs in its OWN savepoint so a DB error on one
+                # record (e.g. a transient serialization conflict) rolls back
+                # only that record and can't poison the cursor for the rest
+                # of the tick. The field writes stay on the main cron cursor
+                # (committed by the cron framework at end-of-tick) — we do
+                # NOT call cr.commit() here, since this method runs as a
+                # framework-managed `state=code` server action that owns the
+                # transaction boundary.
+                #
+                # SerializationFailure (40001) gets its own retry loop BEFORE
+                # the high-water advance below: a concurrent audit/fill losing
+                # the serialization race used to still advance the cursor,
+                # permanently skipping the record. The fill is idempotent
+                # (overwrite=False), so retrying is safe.
+                attempt = 0
+                while True:
+                    attempt += 1
+                    try:
+                        with self.env.cr.savepoint():
+                            rec.with_context(
+                                _era_ai_system=True).action_ai_fill_seo()
+                        break
+                    except psycopg2.errors.SerializationFailure:
+                        if attempt < 3:
+                            _time.sleep(0.2 * attempt)
+                            continue
+                        _logger.warning(
+                            'bulk_ai_fill: %s#%s abandoned after %d '
+                            'serialization retries — concurrent writes on '
+                            'the same rows; keeping the cursor moving',
+                            model_name, rec.id, attempt)
+                        break
+                    except Exception:  # noqa: BLE001
+                        _logger.exception(
+                            'bulk_ai_fill: %s#%s failed — keeping the cursor moving',
+                            model_name, rec.id)
+                        break
                 # Blog posts also get the optional taxonomy classification
                 # in the same tick, so the user only needs one flag flipped.
                 if model_name == 'blog.post' and \
@@ -1412,13 +1447,32 @@ class EraSeoSuiteHub(models.Model):
         cat_name = pick['category'].strip()
         cat = Category.search([('name', '=ilike', cat_name)], limit=1)
         if not cat:
-            cat = Category.create({'name': cat_name, 'slug': slugify(cat_name)})
+            # Two concurrent cron ticks can both miss the search above and
+            # race on the UNIQUE(slug) constraint. The savepoint keeps the
+            # loser's IntegrityError from poisoning the outer transaction;
+            # the re-search picks up the winner's record.
+            try:
+                with self.env.cr.savepoint():
+                    cat = Category.create(
+                        {'name': cat_name, 'slug': slugify(cat_name)})
+            except psycopg2.IntegrityError:
+                cat = Category.search([('name', '=ilike', cat_name)], limit=1)
+                if not cat:
+                    raise
         vals = {'era_category_id': cat.id}
         if pick['series']:
             ser_name = pick['series'].strip()
             ser = Series.search([('name', '=ilike', ser_name)], limit=1)
             if not ser:
-                ser = Series.create({'name': ser_name, 'slug': slugify(ser_name)})
+                try:
+                    with self.env.cr.savepoint():
+                        ser = Series.create(
+                            {'name': ser_name, 'slug': slugify(ser_name)})
+                except psycopg2.IntegrityError:
+                    ser = Series.search(
+                        [('name', '=ilike', ser_name)], limit=1)
+                    if not ser:
+                        raise
             vals['era_series_id'] = ser.id
         post.write(vals)
 
@@ -1629,19 +1683,45 @@ class EraSeoSuiteHub(models.Model):
             if not chunk:
                 drained = True
                 break
-            try:
-                # System context bypasses the per-user SEO-Manager gate (the
-                # admin opted in by clicking Auto-Fix); the method commits each
-                # finding as it's suggested+applied.
-                chunk.with_context(
-                    _era_ai_system=True).action_ai_suggest_and_apply()
-            except Exception:  # noqa: BLE001
-                # Clear any aborted-transaction state; the per-record commits
-                # already persisted the good work, so we only lose the (failed)
-                # tail of this chunk.
-                self.env.cr.rollback()
-                _logger.exception(
-                    'bulk_ai_fix: chunk failed (ids %s)', chunk.ids)
+            attempt = 0
+            while True:
+                attempt += 1
+                try:
+                    # System context bypasses the per-user SEO-Manager gate
+                    # (the admin opted in by clicking Auto-Fix); the method
+                    # commits each finding as it's suggested+applied — which
+                    # is also why the retry below clears state via
+                    # cr.rollback() rather than a savepoint: an inner commit
+                    # destroys any enclosing savepoint, so its RELEASE on
+                    # exit would crash every successful chunk.
+                    chunk.with_context(
+                        _era_ai_system=True).action_ai_suggest_and_apply()
+                    break
+                except psycopg2.errors.SerializationFailure:
+                    # Retry transient 40001 conflicts BEFORE the high-water
+                    # advances below — a concurrent audit/fill losing the
+                    # serialization race used to skip these findings forever.
+                    # Re-running the chunk is safe: findings already
+                    # committed by the inner per-record commits are no
+                    # longer in ai_status 'none'.
+                    self.env.cr.rollback()
+                    if attempt < 3:
+                        _time.sleep(0.2 * attempt)
+                        continue
+                    _logger.warning(
+                        'bulk_ai_fix: chunk (ids %s) abandoned after %d '
+                        'serialization retries — concurrent writes on the '
+                        'same rows; keeping the cursor moving',
+                        chunk.ids, attempt)
+                    break
+                except Exception:  # noqa: BLE001
+                    # Clear any aborted-transaction state; the per-record
+                    # commits already persisted the good work, so we only
+                    # lose the (failed) tail of this chunk.
+                    self.env.cr.rollback()
+                    _logger.exception(
+                        'bulk_ai_fix: chunk failed (ids %s)', chunk.ids)
+                    break
             # Advance the high-water past the whole chunk on a side cursor
             # (same shared-row 40001 hazard as bulk_ai_fill), whether or not
             # each record succeeded, so one bad record can't stall the queue.
@@ -1815,8 +1895,11 @@ class EraSeoSuiteHub(models.Model):
     # ------------------------------------------------------------------
 
     _SITEMAP_FETCH_TIMEOUT_S = 10
-    _SITEMAP_MAX_URLS = 5000
-    _SITEMAP_BUDGET_S = 1500   # wall-clock cap for the whole validation pass
+    _SITEMAP_MAX_URLS = 1000
+    # Wall-clock cap for the whole pass (collection + validation + missed
+    # links). MUST stay well under limit_time_real (1200s) — the previous
+    # 1500s guaranteed a SIGKILL on slow runs instead of a clean partial.
+    _SITEMAP_BUDGET_S = 900
 
     def cron_monthly_sitemap_rebuild(self):
         """MONTHLY: rebuild the sitemap, verify every link still resolves, prune
@@ -1848,11 +1931,11 @@ class EraSeoSuiteHub(models.Model):
         deadline = _time.monotonic() + self._SITEMAP_BUDGET_S
 
         self._sitemap_clear_cache()
-        urls = self._sitemap_collect_urls(base)            # regenerates + caches
+        urls = self._sitemap_collect_urls(base, deadline)  # regenerates + caches
         summary = self._sitemap_validate_and_prune(base, urls, deadline)
         if summary.get('pruned'):
             self._sitemap_clear_cache()                    # drop pruned pages
-            self._sitemap_collect_urls(base)
+            self._sitemap_collect_urls(base, deadline)
         summary['missed_links'] = self._sitemap_missed_links(base, urls, deadline)
 
         ICP = self.env['ir.config_parameter'].sudo()
@@ -1874,10 +1957,16 @@ class EraSeoSuiteHub(models.Model):
         _logger.info('ERA SEO sitemap: cleared %d cached attachment(s).', n)
         return n
 
-    def _sitemap_collect_urls(self, base):
+    def _sitemap_collect_urls(self, base, deadline=None):
         """Fetch the sitemap fresh over HTTP (regenerating + re-caching it) and
-        return every page path in it, following the index to child sitemaps."""
+        return every page path in it, following the index to child sitemaps.
+
+        ``deadline`` (a ``time.monotonic()`` instant) bounds the recursion:
+        once exceeded we stop issuing child-sitemap fetches and return the
+        (possibly partial) list collected so far, keeping the whole cron tick
+        inside its wall-clock budget."""
         import re as _re
+        import time as _time
         import requests as _requests
         from urllib.parse import urlparse as _urlparse
         out, seen = [], set()
@@ -1885,6 +1974,11 @@ class EraSeoSuiteHub(models.Model):
 
         def _fetch(url, depth=0):
             if depth > 3 or url in seen:
+                return
+            if deadline is not None and _time.monotonic() > deadline:
+                _logger.warning(
+                    'ERA SEO sitemap: collection budget hit — returning a '
+                    'partial URL list (%d so far).', len(out))
                 return
             seen.add(url)
             try:
@@ -1899,6 +1993,8 @@ class EraSeoSuiteHub(models.Model):
             for loc in _re.findall(r'<loc>\s*([^<\s]+)\s*</loc>', text):
                 path = _urlparse(loc).path or loc
                 if path.endswith('.xml') and 'sitemap' in path:
+                    if deadline is not None and _time.monotonic() > deadline:
+                        break
                     _fetch(loc, depth + 1)          # child sitemap
                 elif path.startswith('/'):
                     out.append(path)
@@ -2393,6 +2489,15 @@ class EraSeoSuiteHub(models.Model):
         # the trigger re-fired). The image below is pure best-effort.
         self.env.cr.commit()
 
+        # Release the UI now that the deliverable is durable. If the worker
+        # is SIGKILLed during the image step below (past limit_time_real),
+        # the end-of-cron finally never runs — clearing here keeps the
+        # pending flag from staying stranded True until the TTL sweeps it
+        # (observed in prod: "stuck True for 1210s"). The Blog Gen form's
+        # next poll flips to idle and refreshes the Recently-generated list.
+        self._set_article_pending(False)
+        self._set_article_progress('')
+
         # ── STAGE 2 (best-effort): hero image, retried up to 3×. The article
         # already exists; if every attempt fails it simply has no cover (the
         # admin can re-request it from the Recently-generated table).
@@ -2539,9 +2644,17 @@ class EraSeoSuiteHub(models.Model):
             item.pop('_score', None)
         return opportunities[:limit]
 
+    # Wall-clock budget for the whole hero-image stage (all retries). Sized so
+    # text-gen (≤540s, ai_client._ARTICLE_GEN_BUDGET_S) + this budget + one
+    # in-flight provider timeout (≤300s, ai.openai_image_timeout) stays under
+    # the worker's limit_time_real (1200s) with headroom.
+    _IMAGE_STAGE_BUDGET_S = 300
+
     def _era_generate_post_image(self, post, image_prompt, article,
                                  attempts=3, progress_msg=None):
         """Best-effort hero image for ``post``, retried up to ``attempts`` times.
+        See the budget note below — the stage never exceeds
+        ``_IMAGE_STAGE_BUDGET_S`` plus one provider timeout.
 
         Generates via the configured provider and attaches on success. It NEVER
         raises and NEVER rolls the post back — the article stands on its own if
@@ -2551,12 +2664,30 @@ class EraSeoSuiteHub(models.Model):
 
         Shared by the generator cron (Stage 2) and the per-article
         "Generate image" button.
+
+        The whole stage is wall-clock bounded: a hanging provider (e.g. a
+        model id the endpoint accepts but never answers — each call then
+        burns the full provider timeout, 300s by default) must not stack
+        ``attempts`` full timeouts and push the cron past limit_time_real
+        (1200s), where the worker is SIGKILLed. We stop entering new
+        attempts once the budget is spent; one in-flight call can still
+        overshoot by at most the provider timeout, which keeps the worst
+        case at budget + 300s — safely inside the worker limit even after
+        a full 540s text-generation stage.
         """
+        import time
         image_prompt = (image_prompt or '').strip()
         if not image_prompt:
             return False
         attempts = attempts or 1
+        deadline = time.monotonic() + self._IMAGE_STAGE_BUDGET_S
         for n in range(1, attempts + 1):
+            if n > 1 and time.monotonic() > deadline:
+                _logger.warning(
+                    'image stage budget (%ds) spent after %d attempt(s); '
+                    'skipping the remaining retries — post#%s keeps no cover.',
+                    self._IMAGE_STAGE_BUDGET_S, n - 1, getattr(post, 'id', '?'))
+                break
             if progress_msg:
                 self._set_article_progress(
                     progress_msg if n == 1
@@ -2975,7 +3106,7 @@ class EraSeoSuiteHub(models.Model):
                 'image-gen openai: no API key configured (Blog Gen tab '
                 '→ Image API key); skipping')
             return None
-        model = (ICP.get_param('era_seo.image_model', 'gpt-image-2') or 'gpt-image-2').strip()
+        model = (ICP.get_param('era_seo.image_model', 'gpt-image-1') or 'gpt-image-1').strip()
         # Normalize the size string. Admins copy/paste from docs and end up
         # with the Unicode multiplication sign U+00D7 ('×') instead of the
         # ASCII 'x' OpenAI requires. Also fix the fullwidth variants for

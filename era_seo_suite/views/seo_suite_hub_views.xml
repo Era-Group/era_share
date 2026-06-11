@@ -391,7 +391,7 @@
                       </span>
                       <span class="badge rounded-pill bg-danger"
                             invisible="not kpi_attention_items">
-                        <i class="fa fa-exclamation-triangle me-1"/>
+                        <i class="fa fa-exclamation-triangle me-1" title="Needs attention"/>
                         <field name="kpi_attention_items" readonly="1" nolabel="1"/>
                         needs attention
                       </span>
@@ -486,7 +486,7 @@
                   <div class="col-lg-4 col-md-6">
                     <div class="o_era_work_tile o_era_work_tile_danger h-100"
                          invisible="not kpi_audit_critical and not kpi_audit_warning">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-flag"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-flag" title="Audit priorities"/></div>
                       <div>
                         <div class="o_era_work_tile_title">Audit priorities</div>
                         <div class="o_era_work_tile_value">
@@ -502,7 +502,7 @@
                     </div>
                     <div class="o_era_work_tile h-100"
                          invisible="kpi_audit_critical or kpi_audit_warning">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-check"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
                       <div>
                         <div class="o_era_work_tile_title">Audit priorities</div>
                         <div class="o_era_work_tile_value">No critical or warning findings</div>
@@ -512,7 +512,7 @@
                   <div class="col-lg-4 col-md-6">
                     <div class="o_era_work_tile o_era_work_tile_info h-100"
                          invisible="not kpi_ai_fill_remaining and not kpi_ai_findings_suggested and not kpi_ai_findings_review">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-magic"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-magic" title="AI workload"/></div>
                       <div>
                         <div class="o_era_work_tile_title">AI workload</div>
                         <div class="o_era_work_tile_value">
@@ -542,7 +542,7 @@
                     </div>
                     <div class="o_era_work_tile h-100"
                          invisible="kpi_ai_fill_remaining or kpi_ai_findings_suggested or kpi_ai_findings_review">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-check"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
                       <div>
                         <div class="o_era_work_tile_title">AI workload</div>
                         <div class="o_era_work_tile_value">No pending AI queue</div>
@@ -552,7 +552,7 @@
                   <div class="col-lg-4 col-md-6">
                     <div class="o_era_work_tile o_era_work_tile_warning h-100"
                          invisible="kpi_gsc_accounts_connected and kpi_gsc_sites and not kpi_geo_crawlers_blocked">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-signal"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-signal" title="Discovery signals"/></div>
                       <div>
                         <div class="o_era_work_tile_title">Discovery signals</div>
                         <div class="o_era_work_tile_value">
@@ -582,7 +582,7 @@
                     </div>
                     <div class="o_era_work_tile h-100"
                          invisible="not kpi_gsc_accounts_connected or not kpi_gsc_sites or kpi_geo_crawlers_blocked">
-                      <div class="o_era_work_tile_icon"><i class="fa fa-check"/></div>
+                      <div class="o_era_work_tile_icon"><i class="fa fa-check" title="All clear"/></div>
                       <div>
                         <div class="o_era_work_tile_title">Discovery signals</div>
                         <div class="o_era_work_tile_value">GSC and GEO are connected</div>
@@ -1037,7 +1037,7 @@
                 site's "Ask AI" agent. The SEO house-style rules are sent with every
                 request, so a generic agent works fine.
               </div>
-              <div class="alert alert-info mb-3"
+              <div class="alert alert-info mb-3" role="status"
                    invisible="not setting_ai_enabled or not setting_autopilot_active">
                 Autopilot applies high-confidence SEO titles, meta descriptions,
                 image alt text, OG images, and schema. Low-confidence proposals,

@@ -235,6 +235,7 @@
             name="Import Redirects"
             parent="menu_website_seo_root"
             action="action_seo_redirect_import_wizard"
+            groups="era_seo_suite.group_era_seo_manager"
             sequence="22"/>
 
   <menuitem id="menu_seo_redirect_log"

@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class EraAiModel(models.Model):
@@ -31,6 +32,20 @@ class EraAiModel(models.Model):
         "unique(account_id, model_id, kind)",
         "This model already exists for the account.",
     )
+
+    @api.constrains("kind", "account_id")
+    def _check_kind_for_cli_proxy(self):
+        # The CLI proxies (claude / codex) are text-only. An image/embedding row
+        # on such an account is a trap: it shows up in other modules' model
+        # pickers (e.g. era_seo_suite's cover-image picker) but every call is
+        # refused at runtime — block it at the source instead.
+        for rec in self:
+            if rec.kind != "chat" and rec.account_id.auth_mode == "cli_proxy":
+                raise ValidationError(_(
+                    "The local CLI proxy is text-only — %(kind)s models cannot be "
+                    "added to CLI-proxy account '%(account)s'. For images, use an "
+                    "OpenAI account with an API key or Cloudflare Workers AI.",
+                    kind=rec.kind, account=rec.account_id.name))
 
     @api.depends("label", "model_id")
     def _compute_display_name(self):

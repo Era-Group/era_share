@@ -70,9 +70,10 @@ Generation runs through `codex exec` locked down to **pure text**: read-only
 sandbox, shell tool disabled, web search disabled, user `config.toml` ignored,
 no session files (`--ephemeral`). Tool-calling, embeddings and images are not
 available through this transport (same v1 limitation as the Claude proxy).
-Models are a curated catalog (`gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`) —
-ChatGPT-plan auth has no model-list endpoint; edit the rows if your plan serves
-different slugs. The Codex pool is **hard-clamped to one call at a time**
+Models are a curated catalog (`gpt-5.4`, `gpt-5.4-mini`) — ChatGPT-plan auth
+has no model-list endpoint, and the codex-tuned slugs (`gpt-5.x-codex`) are
+**rejected** when passed explicitly under ChatGPT-account auth (verified live);
+edit the rows if your plan serves different slugs. The Codex pool is **hard-clamped to one call at a time**
 (regardless of `ai.cli_max_concurrency`, which still sizes the Claude pool):
 codex rewrites `auth.json` when it refreshes tokens, and two concurrent
 refreshes would race last-writer-wins and break the linked account.
@@ -124,11 +125,22 @@ keep this controllable. Replaying the CLIs' OAuth tokens directly against
 binaries make every call under their own auth, and direct replay is blocked
 and violates the providers' ToS.
 
-## Limitations (v1)
+## Agent tools through the CLI proxy ("Ask AI" data extraction)
 
-- The CLI proxies (Claude and Codex) support **chat / RAG answers** only —
-  Odoo's tool-calling "Ask-AI navigation" tools are not bridged through the
-  CLIs (use an API-key account for tool-using agents).
+CLI-proxy accounts run Odoo's **agent tools** (e.g. the standard Ask AI agent's
+database lookups) through a JSON tool-call loop: the tools are described in the
+prompt, the model replies with a strict
+`{"tool_calls": [{"name": ..., "arguments": {...}}]}` envelope, Odoo executes
+the tool **in-process with the requesting user's own access rights** (the same
+upstream execution path as API-key providers — same caps,
+`ai.max_successive_calls`), feeds the result back, and repeats until the model
+answers in plain text. The CLI subprocess only ever sees serialized text; no
+credentials or ORM access cross the boundary. Each tool round is one extra CLI
+call (serialized + paced as usual), so multi-step questions take longer than
+API-key accounts. Per-account switch: **Allow agent tools** (on by default; turn
+off to keep an account strictly single-shot chat).
+
+## Limitations (v1)
 - No CLI embeddings: for agents with **knowledge sources**, keep the agent's
   *LLM Model* on OpenAI/Gemini (used only for embeddings); generation still
   goes through the account.

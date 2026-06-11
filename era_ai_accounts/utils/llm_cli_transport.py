@@ -207,6 +207,11 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
         args += ["--model", model]
     # Disable all built-in tools so this behaves as a pure chat completion.
     args += ["--allowed-tools", ""]
+    # Keep the run hermetic: without these, `-p` loads the HOME's settings,
+    # CLAUDE.md project context and any claude.ai-hosted MCP servers linked to
+    # the connected account (observed live: Canva/Notion/... burning thousands
+    # of context tokens per call and exposing unintended tools).
+    args += ["--strict-mcp-config", "--setting-sources", ""]
     if cfg.get("extra_args"):
         try:
             args += shlex.split(cfg["extra_args"])

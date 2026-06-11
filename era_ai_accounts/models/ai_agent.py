@@ -66,7 +66,13 @@ class AIAgent(models.Model):
         if rag_context:
             system_messages.extend(rag_context)
 
-        supports_tools = acc.auth_mode == "api_key" and acc.provider in ("openai", "google", "custom")
+        # api_key: upstream native tool calling. cli_proxy: the JSON-envelope
+        # tool loop in llm_service_patch (works for both claude and codex),
+        # gated by the account's "Allow agent tools" switch.
+        supports_tools = (
+            (acc.auth_mode == "cli_proxy" and acc.cli_tools_enabled)
+            or (acc.auth_mode == "api_key" and acc.provider in ("openai", "google", "custom"))
+        )
         service = LLMApiService(
             env=self.with_context(era_ai_account_id=acc.id).env,
             provider=acc._service_provider(),

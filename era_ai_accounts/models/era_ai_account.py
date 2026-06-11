@@ -72,12 +72,14 @@ CLAUDE_CLI_MODELS = [
 ]
 
 # Curated chat models for the Codex CLI-proxy (ChatGPT-plan auth has no model
-# list endpoint either). Unlike Claude there are no version-proof aliases, so
-# these are concrete slugs (valid for codex-cli 0.139 / June 2026) — re-verify
-# with `codex exec -m <slug>` after CLI upgrades; the catalog rows are editable
-# per account if a plan serves different models.
+# list endpoint either). Unlike Claude there are no version-proof aliases, and
+# the codex-tuned slugs (gpt-5.x-codex, incl. the unversioned gpt-5-codex) are
+# REJECTED when passed explicitly under ChatGPT-account auth ("model is not
+# supported when using Codex with a ChatGPT account" — verified live 2026-06 on
+# codex-cli 0.139). Only the general gpt-5.x slugs work; re-verify with
+# `codex exec -m <slug>` after CLI upgrades — the catalog rows are editable per
+# account if a plan serves different models.
 CODEX_CLI_MODELS = [
-    ("gpt-5.3-codex", "GPT-5.3 Codex"),
     ("gpt-5.4", "GPT-5.4"),
     ("gpt-5.4-mini", "GPT-5.4 Mini"),
 ]
@@ -253,6 +255,15 @@ class EraAiAccount(models.Model):
         string="CLI extra arguments", groups=MANAGER_GROUP,
         help="Appended verbatim to the CLI invocation (shlex-split). Manager-only: "
              "these flags shape what the subprocess may do.",
+    )
+    cli_tools_enabled = fields.Boolean(
+        string="Allow agent tools",
+        default=True,
+        help="Let agents run their Odoo tools (e.g. Ask AI's database lookups) "
+             "through this CLI account, via a JSON tool-call loop. Each tool "
+             "round is one extra CLI call — disable to keep the account strictly "
+             "single-shot chat. Tools always execute in Odoo with the requesting "
+             "user's own access rights; the CLI only sees text.",
     )
 
     # --- Linked subscription account (Claude or ChatGPT, system-wide) --------
@@ -856,7 +867,19 @@ class EraAiAccount(models.Model):
             for rec in self:
                 if rec.id and rec.provider != vals["provider"]:
                     rec.sudo()._cli_drop_linked_credentials()
-        return super().write(vals)
+        res = super().write(vals)
+        # The CLI proxies are text-only: flipping an account to cli_proxy must
+        # not leave earlier image/embedding rows (e.g. synced gpt-image-1)
+        # selectable in other modules' pickers — archive them, like a sync would.
+        if vals.get("auth_mode") == "cli_proxy":
+            stale = self.with_context(active_test=False).model_ids.filtered(
+                lambda m: m.kind != "chat" and m.active)
+            if stale:
+                _logger.info(
+                    "era_ai_accounts: archiving %d non-chat model row(s) on "
+                    "CLI-proxy switch: %s", len(stale), stale.mapped("model_id"))
+                stale.active = False
+        return res
 
     # ------------------------------------------- ChatGPT (Codex auth.json) link
     def _codex_link_with_auth_json(self, payload):

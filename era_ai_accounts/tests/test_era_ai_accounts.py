@@ -712,6 +712,36 @@ class TestEraAiAccounts(TransactionCase):
         self.assertFalse(os.path.exists(claude_creds))
         self.assertFalse(acc._cli_is_linked())
 
+    def test_cli_proxy_accounts_refuse_non_chat_models(self):
+        # The CLI proxies are text-only: image/embedding rows must be refused at
+        # save time (they would show up in other modules' image pickers but fail
+        # on every call — the era_seo_suite missing-cover trap).
+        cli = self.Account.create({
+            "name": "CodexNoImg", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        with self.assertRaises(ValidationError):
+            self.env["era.ai.model"].create({
+                "account_id": cli.id, "model_id": "gpt-image-2", "kind": "image",
+            })
+        with self.assertRaises(ValidationError):
+            self.env["era.ai.model"].create({
+                "account_id": cli.id, "model_id": "text-embedding-3-small", "kind": "embedding",
+            })
+        # Chat rows are fine on CLI accounts; image rows are fine on key accounts.
+        self.env["era.ai.model"].create({
+            "account_id": cli.id, "model_id": "gpt-5.4", "kind": "chat",
+        })
+        key = self.Account.create({
+            "name": "KeyImg", "provider": "openai", "auth_mode": "api_key", "secret": "sk",
+        })
+        img = self.env["era.ai.model"].create({
+            "account_id": key.id, "model_id": "gpt-image-1", "kind": "image",
+        })
+        # Flipping the key account to cli_proxy archives its non-chat rows
+        # (mirrors what a model sync would do) instead of leaving a trap.
+        key.auth_mode = "cli_proxy"
+        self.assertFalse(img.active)
+
     def test_cli_extra_args_validated_at_save(self):
         with self.assertRaises(ValidationError):
             self.Account.create({
@@ -885,6 +915,164 @@ class TestEraAiAccounts(TransactionCase):
             with llm_cli_transport._global_slot(
                     1, 0, lock_name=codex_cli_transport._LOCK_SLOT):
                 pass
+
+    # --------------------------------------------- tool calling over CLI proxy
+    @staticmethod
+    def _fake_tools(record):
+        """Upstream-shaped tools dict: {name: (desc, allow_end, callable, schema)}."""
+        def run(arguments=None):
+            record.append(arguments)
+            return "result:%s" % (arguments or {}).get("q"), None
+        return {
+            "get_data": (
+                "Fetch data from the database", False, run,
+                {"type": "object", "properties": {"q": {"type": "integer"}},
+                 "required": ["q"]},
+            ),
+        }
+
+    def test_cli_tool_loop_roundtrip(self):
+        # Round 1: the model calls a tool via the JSON envelope; the upstream
+        # request_llm loop executes it; round 2 sees the result and answers.
+        acc = self.Account.create({
+            "name": "ToolLoop", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append((system_prompt, user_prompt))
+            if len(prompts) == 1:
+                return '{"tool_calls": [{"name": "get_data", "arguments": {"q": 7}}]}'
+            return "final answer using the data"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(llm_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "opus", ["be helpful"], [],
+                inputs=[{"role": "user", "content": "how many?"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["final answer using the data"])
+        self.assertEqual(calls, [{"q": 7}])
+        # Round 1 advertised the tool protocol; round 2 carried the result.
+        self.assertIn("# Tool protocol", prompts[0][0])
+        self.assertIn("get_data", prompts[0][0])
+        self.assertIn("result:7", prompts[1][0] + prompts[1][1])
+
+    def test_cli_tool_loop_codex_and_unknown_tool(self):
+        # Codex transport path + upstream's unknown-tool feedback loop.
+        acc = self.Account.create({
+            "name": "ToolLoopCx", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append((system_prompt, user_prompt))
+            if len(prompts) == 1:
+                return '{"tool_call": {"name": "nope", "arguments": {}}}'
+            return "ok"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(codex_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "gpt-5.3-codex", [], [],
+                inputs=[{"role": "user", "content": "hi"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["ok"])
+        self.assertFalse(calls)  # the unknown tool never executed
+        self.assertIn("unknown tool", prompts[1][0] + prompts[1][1])
+
+    def test_cli_tool_envelope_parser(self):
+        from odoo.addons.era_ai_accounts.models import llm_service_patch as p
+        # Batched form, single form, fenced form.
+        self.assertEqual(
+            p._parse_cli_tool_calls('{"tool_calls": [{"name": "a", "arguments": {"x": 1}}]}'),
+            [("a", {"x": 1})])
+        self.assertEqual(
+            p._parse_cli_tool_calls('{"tool_call": {"name": "b"}}'), [("b", {})])
+        self.assertEqual(
+            p._parse_cli_tool_calls('```json\n{"tool_calls": [{"name": "c", "arguments": {}}]}\n```'),
+            [("c", {})])
+        # Plain answers pass through; malformed envelopes ask for a retry.
+        self.assertIsNone(p._parse_cli_tool_calls("just a normal answer"))
+        self.assertEqual(p._parse_cli_tool_calls('{"tool_calls": [{"broken": '), "retry")
+
+    def test_cli_tool_malformed_envelope_gets_one_retry(self):
+        acc = self.Account.create({
+            "name": "ToolRetry", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append(user_prompt)
+            if len(prompts) == 1:
+                return '{"tool_calls": [{"name": "get_data", '  # truncated JSON
+            return "recovered plain answer"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(llm_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "opus", [], [], inputs=[{"role": "user", "content": "q"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["recovered plain answer"])
+        self.assertEqual(len(prompts), 2)
+        self.assertIn("not a valid tool-call envelope", prompts[1])
+
+    def test_cli_tools_enabled_gate(self):
+        # The account-level switch controls whether agents pass tools at all.
+        acc = self.Account.create({
+            "name": "ToolGate", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Gated", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        seen = {}
+
+        def fake_request_llm(self2, model, sys_p, user_p, tools=None, **kw):
+            seen["tools"] = tools
+            return ["answer"]
+
+        with patch.object(LLMApiService, "request_llm", fake_request_llm):
+            agent._generate_response("hello")
+        self.assertIsNotNone(seen["tools"], "tools must flow for CLI accounts by default")
+        acc.cli_tools_enabled = False
+        with patch.object(LLMApiService, "request_llm", fake_request_llm):
+            agent._generate_response("hello")
+        self.assertIsNone(seen["tools"])
+
+    def test_cli_build_tool_call_response(self):
+        # Upstream raises NotImplementedError for unknown providers — the CLI
+        # tokens must return the OpenAI-style envelope _flatten understands.
+        acc = self.Account.create({
+            "name": "ToolEnv", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider="anthropic_cli")
+        out = service._build_tool_call_response("id1", "value")
+        self.assertEqual(out, {"type": "function_call_output",
+                               "call_id": "id1", "output": "value"})
+
+    def test_flatten_renders_tool_items(self):
+        from odoo.addons.era_ai_accounts.models.llm_service_patch import _flatten
+        system, user = _flatten(
+            ["sys"], [],
+            [
+                {"role": "user", "content": "question"},
+                {"type": "function_call", "name": "get_data",
+                 "call_id": "c1", "arguments": '{"q": 7}'},
+                {"type": "function_call_output", "call_id": "c1", "output": "42"},
+            ])
+        self.assertIn("tool call get_data", system)
+        self.assertIn("Result of tool call c1", user)
+        self.assertIn("42", user)
 
     # ------------------------------------------------------------ best practices
     def test_base_url_scheme_constraint(self):

@@ -1593,3 +1593,19 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid "— used by every user, no API key."
 msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_tools_enabled
+msgid "Allow agent tools"
+msgstr "السماح بأدوات الوكيل"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_tools_enabled
+msgid "Let agents run their Odoo tools (e.g. Ask AI's database lookups) through this CLI account, via a JSON tool-call loop. Each tool round is one extra CLI call — disable to keep the account strictly single-shot chat. Tools always execute in Odoo with the requesting user's own access rights; the CLI only sees text."
+msgstr "اسمح للوكلاء بتشغيل أدوات أودو الخاصة بهم (مثل استعلامات قاعدة البيانات في «اسأل الذكاء الاصطناعي») عبر حساب واجهة الأوامر هذا من خلال حلقة استدعاء أدوات بصيغة JSON. كل جولة أدوات تعني استدعاء CLI إضافيًا — عطّل الخيار لإبقاء الحساب محادثة من طلقة واحدة فقط. تُنفَّذ الأدوات دائمًا داخل أودو بصلاحيات المستخدم الطالب نفسه؛ ولا ترى واجهة الأوامر سوى النص."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "The CLI proxy does not support structured output together with tools."
+msgstr "لا يدعم وكيل واجهة الأوامر المخرجات المهيكلة مع الأدوات في الوقت نفسه."

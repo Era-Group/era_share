@@ -87,6 +87,7 @@
                         </div>
                         <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
+                        <field name="cli_tools_enabled"/>
                         <field name="max_concurrency"/>
                         <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
                         <div class="text-muted" colspan="2">

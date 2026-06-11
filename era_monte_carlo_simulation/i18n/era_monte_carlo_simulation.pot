@@ -409,7 +409,7 @@ msgstr ""
 #. module: era_monte_carlo_simulation
 #. odoo-python
 #: code:addons/era_monte_carlo_simulation/models/crm_lead.py:0
-msgid "Chance of reaching this value"
+msgid "Chance to reach"
 msgstr ""
 
 #. module: era_monte_carlo_simulation

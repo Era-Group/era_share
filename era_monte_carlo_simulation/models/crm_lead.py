@@ -185,7 +185,7 @@ class CrmLead(models.Model):
                 color = ("#1e7e44" if pct >= 50 else
                          "#b54708" if pct >= 20 else "#b42318")
                 boxes.append(lead._mc_box(
-                    _("Chance of reaching this value"), "%.0f%%" % pct, color))
+                    _("Chance to reach"), "%.0f%%" % pct, color))
                 # Median, not mean: deal sizes are right-skewed, so the mean is
                 # inflated by a few big deals and is NOT the typical deal.
                 boxes.append(lead._mc_box(

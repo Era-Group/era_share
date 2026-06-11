@@ -207,16 +207,22 @@ class CrmLead(models.Model):
                 if growth:
                     parts.append(_("+%(pct).0f%% projected growth",
                                    pct=growth * 100))
-                note = ('<span style="font-size:11px;color:#8b97a3;">%s</span>'
-                        % " · ".join(p for p in parts if p))
+                # Full-width row of its own, free to wrap onto several lines:
+                # flex-basis:100% drops it below the boxes, white-space:normal
+                # lets a long basis ("similar size (±50%) · …") wrap instead of
+                # overflowing the card.
+                note = ('<span style="font-size:11px;color:#8b97a3;'
+                        'flex-basis:100%;width:100%;white-space:normal;">'
+                        '%s</span>' % " · ".join(p for p in parts if p))
             else:
                 boxes.append(lead._mc_box(
                     _("Expected value"), fmt(run.summary_mean)))
                 boxes.append(lead._mc_box(
                     _("Likely range"),
                     "%s – %s" % (fmt(run.p05), fmt(run.p95))))
-                note = ('<span style="font-size:11px;color:#8b97a3;">%s</span>'
-                        % _("(±30% — not enough deal history)"))
+                note = ('<span style="font-size:11px;color:#8b97a3;'
+                        'flex-basis:100%;width:100%;white-space:normal;">'
+                        '%s</span>' % _("(±30% — not enough deal history)"))
             lead.mc_forecast = (
                 '<div style="display:flex;gap:8px;flex-wrap:wrap;'
                 'align-items:center;">%s%s</div>' % ("".join(boxes), note))

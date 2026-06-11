@@ -36,6 +36,10 @@ from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 from ..utils import codex_cli_transport
 from ..utils import llm_cli_transport
+from .custom_llm_service_patch import (
+    _autofill_required_tool_arguments,
+    _coerce_tool_arguments_for_schema,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -141,6 +145,33 @@ def _cli_tool_instructions(env, tools):
         lines.append("- %s: %s\n  parameters (JSON Schema): %s"
                      % (name, description, json.dumps(schema)))
     return "\n".join(lines)
+
+
+def _fill_null_array_arguments(arguments, tool_schema):
+    """Missing/null array parameters become [] — mirroring what strict-mode
+    OpenAI models send. Upstream fills omitted optional params with None and
+    some tool implementations iterate them unguarded (observed live: Ask AI's
+    read_group crashing on groupby=None, where groupby=[] is a valid
+    'no grouping')."""
+    if not isinstance(arguments, dict) or not isinstance(tool_schema, dict):
+        return arguments
+    for key, prop in (tool_schema.get("properties") or {}).items():
+        declared = (prop or {}).get("type")
+        types = declared if isinstance(declared, list) else [declared]
+        if "array" in types and arguments.get(key) is None:
+            arguments[key] = []
+    return arguments
+
+
+def _normalize_cli_tool_arguments(env, tools, tool_name, arguments):
+    """Schema-normalize one parsed CLI tool call (same helpers as custom_llm)."""
+    spec = tools.get(tool_name)
+    if not spec:
+        return arguments  # unknown tool: upstream replies with its error text
+    schema = spec[3]
+    arguments = _autofill_required_tool_arguments(arguments, schema, env.context)
+    arguments = _coerce_tool_arguments_for_schema(arguments, schema)
+    return _fill_null_array_arguments(arguments, schema)
 
 
 _FENCE_RE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.S)
@@ -337,6 +368,8 @@ def _patch():
                 # function_call_output back into our next round via `inputs`.
                 to_call = []
                 for tool_name, arguments in parsed:
+                    arguments = _normalize_cli_tool_arguments(
+                        self.env, tools, tool_name, arguments)
                     call_id = "clicall-%s" % uuid.uuid4().hex[:12]
                     to_call.append((tool_name, call_id, arguments))
                     next_inputs.append({

@@ -1023,6 +1023,53 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(len(prompts), 2)
         self.assertIn("not a valid tool-call envelope", prompts[1])
 
+    def test_cli_tool_arguments_normalized_to_schema(self):
+        # Live regression: Ask AI's read_group crashed on groupby=None because
+        # the model omitted the optional array param. Missing/null array params
+        # must become [] (what strict-mode OpenAI models send), and loosely
+        # typed values must be coerced to the declared type.
+        acc = self.Account.create({
+            "name": "ToolNorm", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        seen = []
+
+        def run(arguments=None):
+            seen.append(arguments)
+            return "ok", None
+
+        tools = {
+            "read_group": (
+                "Group records", False, run,
+                {"type": "object",
+                 "properties": {
+                     "model_name": {"type": "string"},
+                     "groupby": {"type": "array"},
+                     "domain": {"type": "array"},
+                     "limit": {"type": "integer"},
+                 },
+                 "required": ["model_name"]},
+            ),
+        }
+        replies = iter([
+            '{"tool_calls": [{"name": "read_group", "arguments":'
+            ' {"model_name": "res.partner", "limit": "5", "domain": null}}]}',
+            "done",
+        ])
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider="anthropic_cli")
+        with patch.object(llm_cli_transport, "cli_complete",
+                          side_effect=lambda *a, **k: next(replies)):
+            out = service.request_llm(
+                "opus", [], [], inputs=[{"role": "user", "content": "q"}], tools=tools)
+        self.assertEqual(out, ["done"])
+        self.assertEqual(seen, [{
+            "model_name": "res.partner",
+            "groupby": [],   # omitted array -> []
+            "domain": [],    # explicit null array -> []
+            "limit": 5,      # string -> integer
+        }])
+
     def test_cli_tools_enabled_gate(self):
         # The account-level switch controls whether agents pass tools at all.
         acc = self.Account.create({

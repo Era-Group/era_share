@@ -9,6 +9,7 @@ so the hub is the canonical place to flip the most-used flags without
 leaving the screen.
 """
 import logging
+from datetime import timedelta
 
 import psycopg2
 import psycopg2.errors
@@ -2173,6 +2174,146 @@ class EraSeoSuiteHub(models.Model):
             self._set_article_pending(False)
             self._set_article_progress('')
 
+    # Wall-clock budget for ONE cron_finalize_articles tick. The image stage
+    # per post is itself bounded (_IMAGE_STAGE_BUDGET_S = 300s + at most one
+    # provider-timeout overshoot); we stop entering NEW posts once this budget
+    # is spent and chain a fresh trigger, so a tick stays well under the
+    # worker's limit_time_real_cron (1200s) even on a slow image provider.
+    _FINALIZE_TICK_BUDGET_S = 600
+
+    def _trigger_finalize_articles(self):
+        """Fire cron_finalize_articles ASAP (Odoo 17+ _trigger), best-effort."""
+        cron = self.env.ref('era_seo_suite.cron_finalize_articles',
+                            raise_if_not_found=False)
+        if cron:
+            try:
+                cron.sudo()._trigger()
+            except Exception:  # noqa: BLE001
+                _logger.exception('finalize: cron _trigger failed')
+
+    @api.model
+    def cron_finalize_articles(self):
+        """Drain the post-processing queue for auto-generated articles.
+
+        Each generated article is created as a DRAFT with
+        ``era_ai_needs_finalize = True`` and its slow, best-effort
+        post-processing — the hero/cover image and the SEO-Manager
+        notification email — is done HERE, deliberately OUTSIDE the
+        generator cron's transaction.
+
+        Why a separate cron: in Odoo 19 a cron's due trigger is cleared by
+        ``ir.cron._clear_schedule()`` on a separate cursor and only made
+        durable AFTER the whole job returns. If the generator ran the image
+        stage inline and was SIGKILLed by ``limit_time_real_cron``, that
+        trigger-clear rolled back, the trigger re-fired, and — because the
+        article was already committed — another article was generated, forever.
+        Moving the slow work here keeps the generator run short (so it is never
+        killed) and makes this work idempotent and re-fire-safe: a killed
+        finalize tick only RETRIES a post's image/email, it never creates
+        articles.
+        """
+        import time as _time
+        BlogPost = self.env.get('blog.post')
+        if BlogPost is None or 'era_ai_needs_finalize' not in BlogPost._fields:
+            return
+        BlogPost = BlogPost.sudo()
+        deadline = _time.monotonic() + self._FINALIZE_TICK_BUDGET_S
+        seen = set()       # posts tried THIS tick — guarantees forward progress
+        done = 0
+        while _time.monotonic() <= deadline:
+            domain = [('era_ai_needs_finalize', '=', True)]
+            if seen:
+                domain.append(('id', 'not in', list(seen)))
+            post = BlogPost.search(domain, order='id', limit=1)
+            if not post:
+                break
+            seen.add(post.id)
+            self._finalize_one_article(post)
+            done += 1
+
+        # Chain immediately if FRESH (not-yet-tried) work remains, instead of
+        # waiting for the periodic interval. Odoo serialises a given cron
+        # (FOR UPDATE) so ticks can't overlap; a queue-empty tick is a fast
+        # no-op that consumes the trigger cleanly. We exclude posts already
+        # tried this tick so a single un-clearable "poison" post can't spin a
+        # hot re-trigger loop — it waits for the next periodic run instead.
+        fresh_domain = [('era_ai_needs_finalize', '=', True)]
+        if seen:
+            fresh_domain.append(('id', 'not in', list(seen)))
+        if BlogPost.search_count(fresh_domain):
+            _logger.info('finalize: %d done this tick, more remain — chaining',
+                         done)
+            self._trigger_finalize_articles()
+        elif done:
+            _logger.info('finalize: %d post(s) finalized this tick', done)
+
+    def _finalize_one_article(self, post):
+        """Best-effort cover image + one-shot manager email for a single draft,
+        then clear ``era_ai_needs_finalize``. Ordered so it is re-fire-safe:
+
+          1. generate + attach the cover image (idempotent — overwrites);
+          2. clear the flag and COMMIT (so a later kill never reprocesses or
+             re-emails this post);
+          3. send the manager email exactly once (best-effort).
+
+        Step 2 before step 3 trades a (rare) missed email on a mid-send kill
+        for a guarantee of no DUPLICATE emails — matching the original
+        send-once-best-effort semantics. If the flag-clear itself fails
+        (transient 40001), we DON'T email and leave the flag set so the next
+        tick retries cleanly — still no duplicate email.
+        """
+        post = post.sudo()
+        title = (post.name or '').strip()
+        image_prompt = (getattr(post, 'era_ai_image_prompt', '') or '').strip()
+        if not image_prompt:
+            # Older/orphaned posts with no stored prompt: rebuild one from the
+            # post itself, the same way the per-article Generate-image button does.
+            subtitle = (getattr(post, 'era_subtitle', '') or '').strip()
+            image_prompt = (
+                'A professional, modern editorial hero image for a blog '
+                'article titled "%s".%s Clean and high-quality, no text '
+                'overlay.' % (title, (' Theme: %s.' % subtitle) if subtitle else ''))
+        article_like = {
+            'title': title,
+            'image_prompt': image_prompt,
+            'trend_signal': getattr(post, 'era_ai_trend_signal', '') or '',
+            'confidence': getattr(post, 'era_ai_confidence', 0.0) or 0.0,
+            'reason': getattr(post, 'era_ai_reason', '') or '',
+            'subtitle': getattr(post, 'era_subtitle', '') or '',
+        }
+        try:
+            attached = self._era_generate_post_image(
+                post, image_prompt, article_like, attempts=3)
+            if not attached:
+                acc = self._resolve_image_account()
+                _logger.info(
+                    'finalize: no image after 3 attempts for post#%s '
+                    '(image account: %s) — kept without a cover.',
+                    post.id, acc.name if acc else 'none set')
+        except Exception:  # noqa: BLE001
+            _logger.exception('finalize: image stage raised for post#%s', post.id)
+
+        # Mark done (with the attached image) BEFORE the non-idempotent email
+        # so a kill mid-send can never re-send. If this commit fails, the post
+        # stays queued and we skip the email — the next tick retries; still once.
+        try:
+            post.era_ai_needs_finalize = False
+            self.env.cr.commit()
+        except Exception:  # noqa: BLE001
+            self.env.cr.rollback()
+            _logger.exception(
+                'finalize: could not clear needs_finalize on post#%s — '
+                'leaving it queued for the next tick', post.id)
+            return
+
+        try:
+            self._notify_managers_about_new_article(post, article_like)
+        except Exception:  # noqa: BLE001
+            _logger.exception(
+                'finalize: notification email failed for post#%s '
+                '(post still finalized)', post.id)
+        self.env.cr.commit()
+
     @api.model
     def _set_article_pending(self, pending):
         """Write the article-pending flag via a short-lived cursor that
@@ -2340,7 +2481,53 @@ class EraSeoSuiteHub(models.Model):
                 'cron_generate_blog_article: blog modules not installed — '
                 'feature requires website_blog')
             return False
-        ICP = self.env['ir.config_parameter'].sudo()
+
+        # ── RE-FIRE GUARD ───────────────────────────────────────────────────
+        # Breaks the "generates an article forever" loop. In Odoo 19 a cron's
+        # due trigger is cleared by ir.cron._clear_schedule() on the SEPARATE
+        # `cron_cr` cursor and is made durable ONLY by the cron runner's commit
+        # AFTER _process_job returns — committing our own cursor (the
+        # `self.env.cr.commit()` after Stage 1 below) does NOT consume it. So a
+        # run SIGKILLed by limit_time_real_cron leaves its trigger behind; Odoo
+        # re-fires the job and, because the previous article was already
+        # committed, generates ANOTHER one. We gate AUTOMATIC runs on the
+        # timestamp of the last successful generation: a run landing within the
+        # interval is a re-fire (or a duplicate scheduled tick), so we no-op
+        # *fast* — which lets _process_job finish and finally consume the
+        # trigger. Manual "Generate Now" is exempt: the admin asked for one.
+        if not manual:
+            last_raw = ICP.get_param('era_seo.article_last_generated_at', '')
+            last_dt = None
+            if last_raw:
+                try:
+                    last_dt = fields.Datetime.to_datetime(last_raw)
+                except (ValueError, TypeError):
+                    last_dt = None
+            if last_dt:
+                try:
+                    interval_days = int(
+                        ICP.get_param('era_seo.article_interval_days', '3') or '3')
+                except (TypeError, ValueError):
+                    interval_days = 3
+                # 90% of the interval (≥6h floor) covers the minutes-apart
+                # re-fire storm without blocking the next real scheduled tick.
+                guard = max(timedelta(hours=6),
+                            timedelta(days=max(interval_days, 0)) * 0.9)
+                age = fields.Datetime.now() - last_dt
+                # `age < guard` (NOT `0 <= age < guard`) so a NEGATIVE age —
+                # last_dt in the future after a backward clock step — is also
+                # treated as "just generated" and skipped, rather than slipping
+                # past the guard and producing a duplicate. Manual runs bypass
+                # this entirely, so a corrupt future stamp can't permanently
+                # block on-demand generation.
+                if age < guard:
+                    _logger.warning(
+                        'cron_generate_blog_article: last article was generated '
+                        '%s ago (< %s guard) — skipping to break a cron re-fire '
+                        'loop (a killed run leaves its trigger to re-fire).',
+                        age, guard)
+                    return False
+
         from .ai_client import AIClient, AIUnavailable
         client = AIClient(self.env)
         ok, reason = client.is_available_for_article()
@@ -2450,7 +2637,11 @@ class EraSeoSuiteHub(models.Model):
             'name': article['title'],
             'blog_id': blog.id,
             'content': article['content_html'],
-            'is_published': True,  # Auto-publish per admin preference.
+            # Land as a DRAFT for a human to review before it goes live (the
+            # cron's documented intent). website_blog's own default is already
+            # False; we keep it explicit. A reviewer publishes from the Blog Gen
+            # tab. (Drafts also skip website_blog's "published post" subtype.)
+            'is_published': False,
         }
         # Provenance fields — surfaced in the hub's Blog Generation tab so
         # admins can review AI output and the trends it followed.
@@ -2460,6 +2651,17 @@ class EraSeoSuiteHub(models.Model):
             post_vals['era_ai_trend_signal'] = article.get('trend_signal') or ''
         if 'era_ai_confidence' in BlogPost._fields:
             post_vals['era_ai_confidence'] = float(article.get('confidence') or 0.0)
+        if 'era_ai_reason' in BlogPost._fields:
+            post_vals['era_ai_reason'] = (article.get('reason') or '')[:512]
+        # Stash the AI's tailored cover-image prompt and flag the post for
+        # DEFERRED finalize (cover image + manager email). That slow best-effort
+        # work is done by cron_finalize_articles OUTSIDE this generator run, so
+        # this run stays short and is never SIGKILLed mid-flight (which would
+        # strand its cron trigger and re-fire — the duplicate-article loop).
+        if 'era_ai_image_prompt' in BlogPost._fields:
+            post_vals['era_ai_image_prompt'] = (article.get('image_prompt') or '')[:1024]
+        if 'era_ai_needs_finalize' in BlogPost._fields:
+            post_vals['era_ai_needs_finalize'] = True
         # SEO meta — set only when the post model carries the field, since
         # the mixin's field set varies a touch across installations.
         seo_map = [
@@ -2481,49 +2683,47 @@ class EraSeoSuiteHub(models.Model):
         self._set_article_progress(steps['publish'])
         post = BlogPost.sudo().create(post_vals)
 
-        # ── STAGE 1 DONE: the article is written. COMMIT it now so it is
-        # durable and its cron trigger is consumed BEFORE the optional image
-        # step. A slow or failing image must never roll the article back or
-        # leave the trigger to re-fire — that was the "trends → writing" loop
-        # (the image step hung, the worker was killed, everything rolled back,
-        # the trigger re-fired). The image below is pure best-effort.
+        # ── STAGE 1 DONE: the draft article is written. Commit it so it is
+        # DURABLE before we hand the slow best-effort work to a separate cron.
+        #
+        # NOTE: committing THIS (the job) cursor does NOT consume the cron
+        # trigger — in Odoo 19 the trigger is cleared by ir.cron._clear_schedule
+        # on a SEPARATE cursor and only made durable by the cron runner's commit
+        # AFTER the whole job returns. The real protection against the re-fire
+        # loop is that this run is now SHORT (text-gen only): the cover image and
+        # the manager email — the parts that used to push past limit_time_real
+        # and get the worker SIGKILLed mid-run — are DEFERRED to
+        # cron_finalize_articles. So this run returns long before the wall-clock
+        # limit, the runner consumes the trigger normally, and no duplicate
+        # article is ever generated.
+        #
+        # Stamp the durable "last generated" marker in the SAME transaction as
+        # the article so the RE-FIRE GUARD at the top of this method still sees
+        # it even if a future change reintroduces a kill window here.
+        ICP.set_param(
+            'era_seo.article_last_generated_at',
+            fields.Datetime.to_string(fields.Datetime.now()))
         self.env.cr.commit()
 
-        # Release the UI now that the deliverable is durable. If the worker
-        # is SIGKILLed during the image step below (past limit_time_real),
-        # the end-of-cron finally never runs — clearing here keeps the
-        # pending flag from staying stranded True until the TTL sweeps it
-        # (observed in prod: "stuck True for 1210s"). The Blog Gen form's
-        # next poll flips to idle and refreshes the Recently-generated list.
+        # Release the UI: the deliverable (the draft) is durable. The cover
+        # image arrives shortly after via cron_finalize_articles; the Blog Gen
+        # form's Recently-generated list refreshes on its next poll.
         self._set_article_pending(False)
         self._set_article_progress('')
 
-        # ── STAGE 2 (best-effort): hero image, retried up to 3×. The article
-        # already exists; if every attempt fails it simply has no cover (the
-        # admin can re-request it from the Recently-generated table).
-        attached = self._era_generate_post_image(
-            post, article.get('image_prompt'), article,
-            attempts=3, progress_msg=steps.get('image'))
-        if not attached:
-            acc = self._resolve_image_account()
-            _logger.info(
-                'cron_generate_blog_article: no image after 3 attempts '
-                '(image account: %s) — post kept without a cover. Pick an Image '
-                'generation account under Blog Gen → AI accounts to enable.',
-                acc.name if acc else 'none set')
-        self.env.cr.commit()  # persist the cover if one was attached
-
-        # Notify the SEO Manager group with the live URL.
-        try:
-            self._notify_managers_about_new_article(post, article)
-        except Exception:  # noqa: BLE001
-            _logger.exception(
-                'cron_generate_blog_article: notification email failed '
-                '(post still created)')
+        # ── STAGE 2 DEFERRED: hand the cover image + manager notification to
+        # cron_finalize_articles (gated by the era_ai_needs_finalize flag set on
+        # the post above). Keeping that slow, best-effort work OUT of this
+        # transaction is what stops this run from ever being killed by
+        # limit_time_real_cron. Fire the finalize cron now so the image lands
+        # promptly; it also runs on a periodic safety interval to drain anything
+        # a crash left behind.
+        self._trigger_finalize_articles()
 
         _logger.info(
-            'cron_generate_blog_article: created blog.post#%d "%s" '
-            '(trend: %s, confidence %.2f)',
+            'cron_generate_blog_article: created draft blog.post#%d "%s" '
+            '(trend: %s, confidence %.2f); image + notification deferred to '
+            'cron_finalize_articles',
             post.id, article['title'][:80], article['trend_signal'][:80],
             article['confidence'])
         return post.id
@@ -2775,11 +2975,20 @@ class EraSeoSuiteHub(models.Model):
             })
 
         if vals:
-            post.write(vals)
+            # CRITICAL: this write sets `content` (it injects the cover <img>).
+            # Without _era_ai_no_rebuild, blog_post_blogai.write() treats that as
+            # a human content edit and kicks off a full AI SEO rebuild
+            # (_ai_fill_seo) mid-call — an extra AI round-trip whose translatable
+            # jsonb writes were observed to abort the cron transaction (the
+            # follow-on commit then died recomputing is_seo_optimized). The cover
+            # image must never trigger an SEO rebuild, so suppress it here. The
+            # SEO meta was already set when the post was created.
+            post.with_context(_era_ai_no_rebuild=True).write(vals)
 
     def _notify_managers_about_new_article(self, post, article):
         """Send a one-shot notification email to every member of the SEO
-        Manager group with the published article's URL + the AI's reasoning.
+        Manager group with the draft article's URL + the AI's reasoning, so a
+        human can review and publish it.
         """
         Mail = self.env['mail.mail'].sudo()
         group = self.env.ref('era_seo_suite.group_era_seo_manager',
@@ -2803,7 +3012,7 @@ class EraSeoSuiteHub(models.Model):
         body_html = self._build_article_notification_body(post, article, full_url)
         for user in recipients:
             Mail.create({
-                'subject': _('New article auto-published: %s', article['title'][:120]),
+                'subject': _('New draft article ready for review: %s', article['title'][:120]),
                 'body_html': body_html,
                 'email_to': user.email,
                 'email_from': self.env.user.email_formatted or
@@ -2817,17 +3026,18 @@ class EraSeoSuiteHub(models.Model):
         return (
             '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;'
             'line-height:1.5;color:#333;">'
-            '<p>The ERA SEO Suite just auto-published a new blog article.</p>'
+            '<p>The ERA SEO Suite just generated a new blog article '
+            '<strong>draft</strong> for your review.</p>'
             '<p><strong>Title:</strong> {title}<br/>'
             '<strong>Trend signal:</strong> {trend}<br/>'
             '<strong>AI confidence:</strong> {conf:.2f}</p>'
             '<p>'
             '<a href="{url}" style="display:inline-block;padding:8px 16px;'
             'background:#7c4cff;color:#fff;text-decoration:none;border-radius:4px;">'
-            'Open the article</a>'
+            'Review the draft</a>'
             '</p>'
             '<p style="color:#888;font-size:12px;">Reason for the pick: {reason}<br/>'
-            'You can pause auto-publishing any time from the suite hub '
+            'You can pause article generation any time from the suite hub '
             '(Settings tab → Auto-publish toggle).</p>'
             '</div>'
         ).format(

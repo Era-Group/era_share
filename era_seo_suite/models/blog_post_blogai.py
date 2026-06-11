@@ -42,6 +42,25 @@ class BlogPost(models.Model):
         string='AI Confidence', readonly=True, digits=(3, 2),
         help='Self-reported confidence (0.0-1.0) when the agent proposed '
              'this article.')
+    era_ai_reason = fields.Char(
+        string='AI Reason', readonly=True,
+        help="The agent's one-line reason for picking this topic. Stored so "
+             "the deferred finalize cron can include it in the manager "
+             "notification email (the original article dict is gone by then).")
+    era_ai_image_prompt = fields.Char(
+        string='AI Image Prompt', readonly=True,
+        help="The cover-image prompt the agent returned, stored so the "
+             "deferred finalize cron (and the Generate-image button) can "
+             "reuse the AI's tailored prompt instead of a generic fallback.")
+    era_ai_needs_finalize = fields.Boolean(
+        string='Needs Finalize', default=False, index=True, copy=False,
+        help="True while the auto-publish cron has created the article but its "
+             "best-effort post-processing — the cover image and the manager "
+             "notification — is still pending. Drained by cron_finalize_articles "
+             "so that slow image/email work runs OUTSIDE the generator cron's "
+             "transaction, keeping the generator run short enough to never be "
+             "killed by limit_time_real_cron (a kill would strand the cron "
+             "trigger and re-fire it, generating duplicate articles).")
 
     def action_era_ai_regenerate(self):
         """Replace this post's title / subtitle / content / SEO meta with a

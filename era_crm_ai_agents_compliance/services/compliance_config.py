@@ -22,28 +22,31 @@ from datetime import time
 PREFIX = "era_crm_ai_agents_compliance."
 
 # key (without prefix) -> default string. Defaults == original KSA behavior.
+# Booleans use 'True'/'False' to match res.config.settings (str(bool)) and the
+# base module's seed representation — seed file, DEFAULTS and the settings page
+# must all agree byte-for-byte.
 DEFAULTS = {
     # Send-window
-    "send_window_enabled": "1",
-    "working_hours_enabled": "1",
+    "send_window_enabled": "True",
+    "working_hours_enabled": "True",
     "working_start": "09:00",
     "working_end": "21:00",
     "default_tz": "Asia/Riyadh",
-    "weekend_enabled": "1",
+    "weekend_enabled": "True",
     "weekend_days": "4,5",           # Mon=0 … Sun=6  → Fri,Sat (KSA)
-    "prayer_enabled": "1",
+    "prayer_enabled": "True",
     "prayer_block_minutes": "30",
-    "jumuah_enabled": "1",
+    "jumuah_enabled": "True",
     "jumuah_start": "11:30",
     "jumuah_end": "13:30",
-    "ramadan_enabled": "1",
+    "ramadan_enabled": "True",
     "ramadan_start": "16:30",
     "ramadan_end": "21:00",
     # Norms
-    "norms_enabled": "1",
-    "norms_check_greeting": "1",
-    "norms_check_honorific": "1",
-    "norms_check_tone": "1",
+    "norms_enabled": "True",
+    "norms_check_greeting": "True",
+    "norms_check_honorific": "True",
+    "norms_check_tone": "True",
     # Consent / opt-out / DSAR
     "required_consent_type": "marketing",
     "opt_out_window_hours": "72",

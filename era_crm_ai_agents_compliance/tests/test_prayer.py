@@ -10,6 +10,7 @@ recorded Aladhan response — so the suite is deterministic and offline.
 import json
 from datetime import datetime, date
 from unittest.mock import patch
+from urllib.parse import urlparse, parse_qs
 
 import pytz
 
@@ -183,3 +184,42 @@ class TestPrayerTimes(TransactionCase):
                 _jeddah_utc(10, 0), _TZ, city="Nowhereville", country="SA")
         self.assertFalse(ok)
         self.assertEqual(reason, "prayer-time data unavailable")
+
+    # -- egress carries ONLY city+country+date+method (no PII) ----------
+    def test_api_url_carries_only_city_date_no_pii(self):
+        captured = {}
+
+        def fake_urlopen(url, timeout=None):
+            captured["url"] = url
+            return _FakeResp(_JEDDAH_PAYLOAD)
+
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
+            PrayerTimes(self.env).get_times("Jeddah", "SA", date(2026, 6, 15))
+        params = parse_qs(urlparse(captured["url"]).query)
+        # Exactly these four keys — no partner name/phone/email/id ever sent.
+        self.assertEqual(set(params), {"city", "country", "date", "method"})
+        self.assertEqual(params["city"], ["Jeddah"])
+        self.assertEqual(params["date"], ["15-06-2026"])
+        self.assertEqual(params["method"], ["4"])
+
+    # -- source toggle: 'fixed' makes ZERO API calls -------------------
+    def test_source_fixed_makes_no_api_call(self):
+        self.env["ir.config_parameter"].set_param(
+            "era_crm_ai_agents_compliance.prayer_source", "fixed")
+        with patch("urllib.request.urlopen",
+                   side_effect=AssertionError("API must not be called when source=fixed")):
+            ok, reason = SendWindow(self.env).is_send_allowed(
+                _riyadh_utc(12, 5), _TZ, city="Jeddah", country="SA")
+        # Fixed Dhuhr 12:00 (+30m block) → 12:05 blocked, with no network hit.
+        self.assertFalse(ok)
+        self.assertEqual(reason, "prayer time (Dhuhr)")
+
+    # -- warm-cron populates the cache ---------------------------------
+    def test_warm_cron_populates_cache(self):
+        self.env["res.partner"].create({
+            "name": "Jeddah Customer", "city": "Jeddah",
+            "country_id": self.env.ref("base.sa").id})
+        with patch("urllib.request.urlopen", return_value=_FakeResp(_JEDDAH_PAYLOAD)):
+            n = self.env["crm.ai.prayer.cache"].cron_warm_prayer_cache()
+        self.assertGreater(n, 0)
+        self.assertTrue(self.Cache.search_count([("city", "=ilike", "Jeddah")]))

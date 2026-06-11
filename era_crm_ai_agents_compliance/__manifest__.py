@@ -35,6 +35,7 @@
         "security/ir.model.access.csv",
         "security/crm_ai_consent_rules.xml",
         # Data
+        "data/ir_config_parameter_data.xml",
         "data/ir_cron_data.xml",
         # Views
         "views/crm_ai_consent_views.xml",

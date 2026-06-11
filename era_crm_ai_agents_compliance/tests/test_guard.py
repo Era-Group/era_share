@@ -117,6 +117,33 @@ class TestComplianceGuard(TransactionCase):
         self.env["res.partner"].cron_enforce_72h()
         self.assertFalse(self.partner.crm_ai_intl_processing_consent)
 
+    def test_opt_out_window_is_configurable(self):
+        # A 2h-old request: with the default 72h window it is NOT an SLA breach;
+        # with a configured 1h window it IS. Proves the window setting drives it.
+        self.partner.write({
+            "crm_ai_intl_processing_consent": True,
+            "crm_ai_opt_out_requested_on": fields.Datetime.now() - timedelta(hours=2),
+        })
+        self.env["ir.config_parameter"].set_param(
+            "era_crm_ai_agents_compliance.opt_out_window_hours", "1")
+        self.env["res.partner"].cron_enforce_72h()
+        self.assertFalse(self.partner.crm_ai_intl_processing_consent)  # enforced
+        breach = self.Audit.sudo().search_count([
+            ("model_ref", "=", "res.partner,%d" % self.partner.id),
+            ("value_after", "ilike", "opt_out_sla_breach")])
+        self.assertTrue(breach, "1h window should flag a 2h-old request as a breach")
+
+    def test_dsar_erasure_delete_mode(self):
+        self.env["ir.config_parameter"].set_param(
+            "era_crm_ai_agents_compliance.dsar_erasure_mode", "delete")
+        self._grant()
+        count = self.Consent.handle_dsar(self.partner, "erasure")
+        self.assertGreater(count, 0)
+        # Hard delete: rows are gone entirely (no anonymized residue).
+        self.assertFalse(self.Consent.sudo().search(
+            [("partner_id", "=", self.partner.id)]))
+        self.assertFalse(self.Consent.sudo().search([("erased", "=", True)]))
+
     # -- DSAR -----------------------------------------------------------
     def test_dsar_access_returns_history(self):
         self._grant()

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed every compliance setting so the param always EXISTS. Without this,
+         res.config.settings skips writing a boolean that is toggled OFF on a
+         fresh install (current_value False == value False → no write), so the
+         OFF choice would silently not persist. Values are byte-identical to
+         services/compliance_config.DEFAULTS and use the base module's
+         'True'/'False' boolean representation. noupdate="1" so manager edits
+         survive module upgrades. -->
+    <data noupdate="1">
+
+        <!-- Send-window -->
+        <record id="cfg_send_window_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.send_window_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_working_hours_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.working_hours_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_working_start" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.working_start</field>
+            <field name="value">09:00</field>
+        </record>
+        <record id="cfg_working_end" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.working_end</field>
+            <field name="value">21:00</field>
+        </record>
+        <record id="cfg_default_tz" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.default_tz</field>
+            <field name="value">Asia/Riyadh</field>
+        </record>
+        <record id="cfg_weekend_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.weekend_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_weekend_days" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.weekend_days</field>
+            <field name="value">4,5</field>
+        </record>
+        <record id="cfg_prayer_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_prayer_block_minutes" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_block_minutes</field>
+            <field name="value">30</field>
+        </record>
+        <record id="cfg_jumuah_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.jumuah_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_jumuah_start" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.jumuah_start</field>
+            <field name="value">11:30</field>
+        </record>
+        <record id="cfg_jumuah_end" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.jumuah_end</field>
+            <field name="value">13:30</field>
+        </record>
+        <record id="cfg_ramadan_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.ramadan_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_ramadan_start" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.ramadan_start</field>
+            <field name="value">16:30</field>
+        </record>
+        <record id="cfg_ramadan_end" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.ramadan_end</field>
+            <field name="value">21:00</field>
+        </record>
+
+        <!-- Cultural norms -->
+        <record id="cfg_norms_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.norms_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_norms_check_greeting" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.norms_check_greeting</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_norms_check_honorific" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.norms_check_honorific</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_norms_check_tone" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.norms_check_tone</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- Consent / opt-out / DSAR -->
+        <record id="cfg_required_consent_type" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.required_consent_type</field>
+            <field name="value">marketing</field>
+        </record>
+        <record id="cfg_opt_out_window_hours" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.opt_out_window_hours</field>
+            <field name="value">72</field>
+        </record>
+        <record id="cfg_dsar_erasure_mode" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.dsar_erasure_mode</field>
+            <field name="value">anonymize</field>
+        </record>
+
+        <!-- Prayer-time source -->
+        <record id="cfg_prayer_source" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_source</field>
+            <field name="value">api</field>
+        </record>
+        <record id="cfg_prayer_provider" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_provider</field>
+            <field name="value">aladhan</field>
+        </record>
+        <record id="cfg_prayer_method" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_method</field>
+            <field name="value">4</field>
+        </record>
+        <record id="cfg_default_city" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.default_city</field>
+            <field name="value">Riyadh</field>
+        </record>
+        <record id="cfg_default_country" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.default_country</field>
+            <field name="value">SA</field>
+        </record>
+        <record id="cfg_prayer_fixed_times" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_compliance.prayer_fixed_times</field>
+            <field name="value">05:00,12:00,15:30,18:15,19:45</field>
+        </record>
+
+    </data>
+</odoo>

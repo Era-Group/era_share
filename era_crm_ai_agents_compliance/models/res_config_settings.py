@@ -112,3 +112,24 @@ class ResConfigSettings(models.TransientModel):
         string="Fixed prayer times (Fajr,Dhuhr,Asr,Maghrib,Isha)",
         default="05:00,12:00,15:30,18:15,19:45",
         config_parameter="era_crm_ai_agents_compliance.prayer_fixed_times")
+
+    def set_values(self):
+        """Persist our boolean/integer toggles as explicit STRINGS.
+
+        ``ir.config_parameter.set_param`` UNLINKS a param when handed a Python
+        ``False`` (or a falsy int via the bool path), so the stock
+        ``res.config.settings`` flow would silently drop a toggle turned OFF and
+        the engine would fall back to its default-ON value. Writing 'True' /
+        'False' (and str(int)) keeps the value stored and unambiguous —
+        byte-identical to compliance_config.DEFAULTS.
+        """
+        super().set_values()
+        icp = self.env["ir.config_parameter"]
+        for name, field in self._fields.items():
+            param = getattr(field, "config_parameter", None)
+            if not param or not param.startswith("era_crm_ai_agents_compliance."):
+                continue
+            if field.type == "boolean":
+                icp.set_param(param, "True" if self[name] else "False")
+            elif field.type == "integer":
+                icp.set_param(param, str(self[name]))

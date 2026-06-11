@@ -101,6 +101,42 @@ Every **sending** agent calls `guard()` **before any message goes out**. `guard(
 
 ---
 
+## No Hardcoded Policy (project-wide, non-negotiable)
+
+**No behavioral value may be hardcoded as a constant in code.** Every rule,
+threshold, timing, list, toggle, or limit that a manager or business owner might
+reasonably want to change MUST be:
+
+- **Configurable** via a manager-facing `res.config.settings` page
+  (`group_crm_ai_manager`), backed by `ir.config_parameter` — or, for editable
+  lists, a small manager-editable model.
+- **Toggleable** with an enable/disable switch where the rule is optional —
+  **toggle OFF = the rule is skipped entirely**, not merely set to a neutral value.
+- **Safely defaulted** — defaults preserve the intended behavior (KSA-correct,
+  all protections ON), so an untouched install behaves exactly as designed.
+- **Documented** — what it does, its default, and where to change it.
+
+**The test:** *"Would a manager / business owner reasonably want to change this?"*
+If yes → it is a setting.
+
+**Counts as policy (must be configurable):** timings (working hours, send
+windows, prayer-block minutes, opt-out window), thresholds (lead-score cutoffs,
+dormancy days, cap limits), feature toggles (weekend no-send, Ramadan quiet, each
+protection layer), editable lists (greetings, honorifics, loss-reason buckets),
+and any "magic number" encoding a business or cultural policy.
+
+**Does NOT count (leave in code):** genuine technical internals — token-mask
+format, monkeypatch seams, API wire formats, ORM field names. Do not over-expose
+internals as settings.
+
+**Enforcement:** a hardcoded behavioral constant is a **defect**, flagged by
+`/review-logic` under the dimension *"Any hardcoded policy value that should be a
+setting?"* — never an acceptable shortcut. Every agent builds configurability in
+from the start; none ships policy constants to be retrofitted later. This rule
+governs all 16 modules, retroactively including the module-1 compliance engines.
+
+---
+
 ## Approved `sudo` Elevations (exhaustive)
 
 The mixin (`crm.ai.agent.mixin`) and all agent business logic run under the calling user — **never** `sudo` (Rule 09 / 19). The ONLY permitted superuser elevations are these narrow, single-purpose helpers. Elevations 1–5 live on the base models; each does exactly one thing; nothing else may ride on them:
@@ -114,8 +150,41 @@ The mixin (`crm.ai.agent.mixin`) and all agent business logic run under the call
 Module-specific elevations (approved per module, same single-purpose discipline):
 
 6. **Public opt-out controller** (`era_crm_ai_agents_compliance`, module 1) — the public unsubscribe endpoint (`controllers/opt_out_controller.py`) runs `auth='public'` because the opting-out recipient is, by definition, not logged in (PDPL-mandated). It uses one narrow sudo solely to: validate a signed token → resolve the partner → call `process_opt_out` (withdraw marketing consent + clear `crm_ai_intl_processing_consent` + audit). The token is signed with Odoo's instance secret (`database.secret`); no new stored secret. It writes nothing else under sudo. (The 72h enforcement cron runs as `base.user_root`, the normal cron context, not an ad-hoc sudo.)
+7. **Compliance config read** (`era_crm_ai_agents_compliance`, module 1) — a read-only helper (`_compliance_config`) sudo-reads ONLY `ir.config_parameter` keys under the `era_crm_ai_agents_compliance.*` namespace, so the send-window / norms / opt-out engines can load manager settings while running as a salesperson. Read-only; writes nothing; touches no other namespace and no secret. Same narrow category as elevation #1 (cap read).
 
 **Any new `sudo` elevation must be flagged and approved before use — never assumed.** This list is the registry of what has been approved; extend it (with the same single-purpose discipline) when a new elevation is approved.
+
+---
+
+## External Network Egress Registry (non-LLM)
+
+All LLM traffic flows through Odoo native AI / the Claude CLI behind the base AI
+Compliance Guard (see above). Any **direct** outbound network call that is NOT on
+that LLM path is forbidden by default and MUST be registered here before use,
+stating: caller, endpoint, data sent (PII-free unless explicitly justified),
+auth, and fail-safe.
+
+1. **Prayer-times API** (`era_crm_ai_agents_compliance`, module 1) — the
+   project's FIRST direct external (non-LLM) egress.
+   - **Caller:** `services/send_window.py` prayer-time lookup, through the
+     `crm.ai.prayer.cache` layer (live calls only on a cache miss; a daily
+     warm-cron pre-fetches).
+   - **Endpoint:** Aladhan `GET https://api.aladhan.com/v1/timingsByCity`.
+   - **Data sent:** ONLY city + country code + date + calculation method.
+     **NEVER** any partner name, phone, email, national ID, or other PII.
+   - **Auth:** none — no API key (Rule 03 satisfied by construction). If a
+     key-based provider is ever configured, the key is env-only (a system
+     `ir.config_parameter`), never stored in the DB.
+   - **Fail-safe:** cache-today → live API → last-known-day cached times for that
+     city (+ audit warning) → hard block only if nothing exists for the city and
+     the API is down (never send blind).
+   - **Anti-bypass CI:** when the "no direct egress / no `requests`/`openai`
+     import in agent modules" test is built, it MUST allowlist **exactly this one
+     call** (this module's prayer-times fetch) and nothing else — narrow scope:
+     this endpoint only, no PII, no key.
+
+Any further direct egress must be added here AND allowlisted in the anti-bypass
+test before use.
 
 ---
 
@@ -157,6 +226,11 @@ Module-specific elevations (approved per module, same single-purpose discipline)
 - ❌ Wrong: assuming `-u <module>` alone picks up new client actions / assets / crons / menus.
 - ✅ Correct: full server **RESTART** (not just `-u`) **+ browser hard-refresh** (Ctrl+F5) after those changes.
 - Note: new `ir.cron` records especially need a restart to register. See "Dev Environment Notes".
+
+### 6. `ir.actions.act_window` target
+- ❌ Wrong: `<field name="target">inline</field>` → `ValueError: Wrong value for ir.actions.act_window.target: 'inline'` (registry fails to load).
+- ✅ Correct: use `current` (open in the main content area) for a settings/config action, or `new` for a dialog. `inline` was removed from the target Selection in 19.
+- Note: to open a `res.config.settings` page from a menu, use `target="current"`. Verified building `era_crm_ai_agents_compliance` Compliance Settings.
 
 ---
 

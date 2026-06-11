@@ -20,6 +20,8 @@ alef/ya/ta-marbuta unified) so spelling variants still match.
 """
 import re
 
+from .compliance_config import ComplianceConfig
+
 # --- Arabic normalization -------------------------------------------------
 # Tashkeel (harakat) + superscript alef + tatweel.
 _TASHKEEL = re.compile(r"[ؐ-ًؚ-ٰٟۖ-ۭـ]")
@@ -71,6 +73,7 @@ class CulturalNorms:
 
     def __init__(self, env=None):
         self.env = env
+        self.cfg = ComplianceConfig(env)
         self._greetings = [_normalize(g) for g in self.GREETINGS]
         self._informal = [_normalize(g) for g in self.INFORMAL_OPENERS]
         self._honorifics = [_normalize(h) for h in self.HONORIFICS]
@@ -78,7 +81,12 @@ class CulturalNorms:
     # ------------------------------------------------------------------
     def check_norms(self, text):
         """Return ``(ok: bool, issues: list[str])``. ``ok`` is False when any
-        issue is found (a missing greeting/honorific counts as a violation)."""
+        issue is found. Honors the master toggle and each per-check toggle —
+        a toggle OFF skips that check entirely."""
+        cfg = self.cfg
+        if not cfg.b("norms_enabled"):
+            return True, []
+
         issues = []
         raw = text or ""
         if not raw.strip():
@@ -87,21 +95,22 @@ class CulturalNorms:
         norm = _normalize(raw)
 
         # --- greeting --------------------------------------------------
-        has_greeting = any(g.strip() and g.strip() in norm for g in self._greetings)
-        if not has_greeting:
-            # Distinguish "informal opener used" from "no greeting at all".
-            opener = norm.lstrip()[:24]
-            if any(inf and opener.startswith(inf) for inf in self._informal):
-                issues.append("informal/incorrect greeting")
-            else:
-                issues.append("missing greeting")
+        if cfg.b("norms_check_greeting"):
+            has_greeting = any(g.strip() and g.strip() in norm for g in self._greetings)
+            if not has_greeting:
+                opener = norm.lstrip()[:24]
+                if any(inf and opener.startswith(inf) for inf in self._informal):
+                    issues.append("informal/incorrect greeting")
+                else:
+                    issues.append("missing greeting")
 
         # --- honorific -------------------------------------------------
-        if not self._has_honorific(norm):
+        if cfg.b("norms_check_honorific") and not self._has_honorific(norm):
             issues.append("missing honorific")
 
         # --- tone ------------------------------------------------------
-        if self._SHOUT_PUNCT.search(raw) or self._SHOUT_CAPS.search(raw):
+        if cfg.b("norms_check_tone") and \
+                (self._SHOUT_PUNCT.search(raw) or self._SHOUT_CAPS.search(raw)):
             issues.append("harsh tone (shouting/excessive punctuation)")
 
         return (not issues), issues

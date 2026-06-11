@@ -22,6 +22,7 @@ from odoo import fields
 
 from .send_window import SendWindow
 from .norms import CulturalNorms
+from .compliance_config import ComplianceConfig
 
 _logger = logging.getLogger(__name__)
 
@@ -31,9 +32,10 @@ class ComplianceGuard:
 
     def __init__(self, env):
         self.env = env
+        self.cfg = ComplianceConfig(env)
 
     # ------------------------------------------------------------------
-    def guard(self, partner, text, channel=None, consent_type="marketing"):
+    def guard(self, partner, text, channel=None, consent_type=None):
         """Return the compliance decision for sending *text* to *partner* over
         *channel*.
 
@@ -42,6 +44,7 @@ class ComplianceGuard:
             is purely a timing one (so the caller can reschedule).
         """
         partner_rec = self._as_partner(partner)
+        consent_type = consent_type or self.cfg.s("required_consent_type") or "marketing"
         decision = {"allowed": True, "reason": "allowed", "deferred_until": None}
 
         # 1. PDPL consent — absolute stop, no defer.
@@ -55,13 +58,15 @@ class ComplianceGuard:
             # 2. Send-window — a timing block; offer the next allowed slot.
             now = fields.Datetime.now()
             partner_tz = partner_rec.tz or None
+            city = partner_rec.city or None
+            country = partner_rec.country_id.code if partner_rec.country_id else None
             window = SendWindow(self.env)
-            allowed, reason = window.is_send_allowed(now, partner_tz)
+            allowed, reason = window.is_send_allowed(now, partner_tz, city, country)
             if not allowed:
                 decision = {
                     "allowed": False,
                     "reason": "send window: %s" % reason,
-                    "deferred_until": window.next_allowed_slot(now, partner_tz),
+                    "deferred_until": window.next_allowed_slot(now, partner_tz, city, country),
                 }
             else:
                 # 3. Cultural norms — content block, routes to human edit.

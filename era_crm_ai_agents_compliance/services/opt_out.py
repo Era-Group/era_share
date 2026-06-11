@@ -26,8 +26,11 @@ import logging
 
 from odoo import fields
 
+from .compliance_config import ComplianceConfig
+
 _logger = logging.getLogger(__name__)
 
+# Fallback only; the live value is the configurable opt_out_window_hours setting.
 SLA_HOURS = 72
 
 
@@ -84,6 +87,7 @@ def cron_enforce_72h(env):
     number of contacts enforced."""
     Partner = env["res.partner"]
     Consent = env["crm.ai.consent"]
+    window_hours = ComplianceConfig(env).i("opt_out_window_hours", SLA_HOURS)
     pending = Partner.search([("crm_ai_opt_out_requested_on", "!=", False)])
     now = fields.Datetime.now()
     enforced = 0
@@ -95,7 +99,7 @@ def cron_enforce_72h(env):
         if not still_consented:
             continue
         age_hours = (now - partner.crm_ai_opt_out_requested_on).total_seconds() / 3600.0
-        if age_hours > SLA_HOURS:
+        if age_hours > window_hours:
             env["crm.ai.audit.log"].log(
                 "other", record=partner,
                 after={"event": "opt_out_sla_breach", "age_hours": round(age_hours, 1)},

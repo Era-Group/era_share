@@ -1,120 +1,110 @@
 # -*- coding: utf-8 -*-
 """Send-window engine — decides whether *now* is an allowed time to contact a
-recipient, honouring Saudi cultural / religious norms (Rule: prayer-time and
-Hijri-aware send windows).
+recipient, honouring Saudi cultural / religious norms.
 
-Pure Python, evaluated entirely against the recipient's LOCAL wall-clock:
-  - business hours,
-  - the five daily prayers (each blocks a short window),
-  - Friday Jumu'ah (a longer midday block),
-  - Ramadan-quiet hours (afternoon → Iftar/Taraweeh), Ramadan detected from the
-    Hijri calendar via the ``hijridate`` library.
+Fully manager-configurable (No-Hardcoded-Policy rule): every rule reads its
+setting from ``ComplianceConfig`` and has an enable/disable toggle — **a toggle
+OFF means the rule is skipped entirely**. Defaults preserve the original KSA
+behavior. Rules evaluated (in order) against the recipient's LOCAL wall-clock:
+prayer times → Friday Jumu'ah → Ramadan-quiet → weekend → working hours.
 
-No external calls, no DB writes, no sudo — so it is safe to call from any
-salesperson-scoped agent. Prayer clock-times are approximate KSA defaults held
-as overridable class constants; a later task can wire them to a precise per-day
-source via the manager Settings page without changing this engine's shape.
+Prayer clock-times come from ``_prayer_times_for`` — fixed configured times here;
+task 1.10 swaps in the live per-city API + cache behind the same seam.
 
-Times in / out follow Odoo's convention: a naive datetime is treated as UTC, and
-``next_allowed_slot`` returns a naive UTC datetime.
+No DB writes, no sudo of its own (the only sudo is the read-only config read in
+ComplianceConfig — approved elevation #7). Naive datetimes are treated as UTC;
+``next_allowed_slot`` returns naive UTC.
 """
 import logging
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 import pytz
 
+from .compliance_config import ComplianceConfig
+
 _logger = logging.getLogger(__name__)
 
-# Ramadan detection is best-effort: if hijridate is unavailable we simply skip
-# the Ramadan-quiet rule rather than fail the whole send-window check.
 try:
     from hijridate import Gregorian as _Gregorian
     _HIJRI_OK = True
-except Exception:  # pragma: no cover - depends on host packages
+except Exception:  # pragma: no cover
     _Gregorian = None
     _HIJRI_OK = False
 
+_SCAN_STEP = timedelta(minutes=5)
+_SCAN_LIMIT = timedelta(days=8)
+
 
 class SendWindow:
-    """Stateless send-window evaluator. ``env`` is accepted for forward
-    compatibility (future config-driven overrides) but is not required, so the
-    engine can be unit-tested in isolation: ``SendWindow().is_send_allowed(...)``.
-    """
-
-    # --- Overridable KSA defaults (Asia/Riyadh) --------------------------
-    DEFAULT_TZ = "Asia/Riyadh"
-    BUSINESS_START = time(9, 0)
-    BUSINESS_END = time(21, 0)
-    # Approximate daily prayer clock-times (local). Each blocks a window of
-    # PRAYER_BLOCK_MINUTES starting at the time below.
-    PRAYER_TIMES = {
-        "Fajr": time(5, 0),
-        "Dhuhr": time(12, 0),
-        "Asr": time(15, 30),
-        "Maghrib": time(18, 15),
-        "Isha": time(19, 45),
-    }
-    PRAYER_BLOCK_MINUTES = 30
-    # Friday Jumu'ah — a longer midday block (weekday() == 4 is Friday).
-    FRIDAY_JUMUAH = (time(11, 30), time(13, 30))
-    # Ramadan sensitivity: avoid the afternoon → Iftar/Taraweeh stretch.
-    RAMADAN_QUIET = (time(16, 30), time(21, 0))
-
-    # Step size used when scanning forward for the next allowed slot, and the
-    # safety cap on how far ahead we will scan.
-    _SCAN_STEP = timedelta(minutes=5)
-    _SCAN_LIMIT = timedelta(days=8)
+    """Stateless evaluator. ``env`` lets it read manager settings (and, in 1.10,
+    the prayer cache/API); without env it falls back to KSA defaults so it stays
+    unit-testable in isolation."""
 
     def __init__(self, env=None):
         self.env = env
+        self.cfg = ComplianceConfig(env)
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-    def is_send_allowed(self, now, partner_tz=None):
-        """Return ``(allowed: bool, reason: str)`` for the moment *now* as seen
-        in the recipient's local timezone.
+    def is_send_allowed(self, now, partner_tz=None, city=None, country=None):
+        cfg = self.cfg
+        if not cfg.b("send_window_enabled"):
+            return True, "allowed"
 
-        :param now: datetime; naive is treated as UTC. None → current UTC time.
-        :param partner_tz: IANA tz name of the recipient; falls back to the
-            business default (Asia/Riyadh) when missing/invalid.
-        """
         local = self._to_local(now, partner_tz)
         t = local.time()
 
-        # Most specific religious reasons first, then the general business window.
-        prayer = self._prayer_block(t)
-        if prayer:
-            return False, "prayer time (%s)" % prayer
+        if cfg.b("prayer_enabled"):
+            prayer = self._prayer_block(t, local, city, country)
+            if prayer:
+                return False, "prayer time (%s)" % prayer
 
-        if local.weekday() == 4 and self._in_window(t, *self.FRIDAY_JUMUAH):
+        if cfg.b("jumuah_enabled") and local.weekday() == 4 and \
+                self._in_window(t, cfg.time("jumuah_start"), cfg.time("jumuah_end")):
             return False, "Friday prayer (Jumu'ah)"
 
-        if self._is_ramadan(local) and self._in_window(t, *self.RAMADAN_QUIET):
+        if cfg.b("ramadan_enabled") and self._is_ramadan(local) and \
+                self._in_window(t, cfg.time("ramadan_start"), cfg.time("ramadan_end")):
             return False, "Ramadan quiet hours"
 
-        if not self._in_window(t, self.BUSINESS_START, self.BUSINESS_END):
+        if cfg.b("weekend_enabled") and local.weekday() in cfg.weekend_days():
+            return False, "weekend"
+
+        if cfg.b("working_hours_enabled") and not \
+                self._in_window(t, cfg.time("working_start"), cfg.time("working_end")):
             return False, "outside business hours"
 
         return True, "allowed"
 
-    def next_allowed_slot(self, now, partner_tz=None):
-        """Return the first allowed moment at/after *now* as a naive UTC
-        datetime (seconds zeroed). Scans forward in small steps up to a safety
-        cap; returns that cap if nothing is found (degenerate config)."""
+    def next_allowed_slot(self, now, partner_tz=None, city=None, country=None):
         start = self._to_utc_aware(now).replace(second=0, microsecond=0)
         candidate = start
-        deadline = start + self._SCAN_LIMIT
+        deadline = start + _SCAN_LIMIT
         while candidate <= deadline:
-            allowed, _reason = self.is_send_allowed(candidate, partner_tz)
-            if allowed:
+            if self.is_send_allowed(candidate, partner_tz, city, country)[0]:
                 return candidate.astimezone(pytz.utc).replace(tzinfo=None)
-            candidate += self._SCAN_STEP
-        _logger.warning(
-            "send_window: no allowed slot within %s of %s (check config)",
-            self._SCAN_LIMIT, start,
-        )
+            candidate += _SCAN_STEP
+        _logger.warning("send_window: no allowed slot within %s of %s", _SCAN_LIMIT, start)
         return deadline.astimezone(pytz.utc).replace(tzinfo=None)
+
+    # ------------------------------------------------------------------
+    # Prayer-times seam (1.10 replaces the body with API + cache + fail-safe)
+    # ------------------------------------------------------------------
+    def _prayer_times_for(self, local_dt, city, country):
+        """Return {name: time} for the given local date/city. Fixed configured
+        times for now; the live API is wired in by task 1.10."""
+        return self.cfg.fixed_prayer_times()
+
+    def _prayer_block(self, t, local_dt, city, country):
+        times = self._prayer_times_for(local_dt, city, country)
+        block = self.cfg.i("prayer_block_minutes", 30)
+        tmin = t.hour * 60 + t.minute
+        for name, ptime in times.items():
+            start = ptime.hour * 60 + ptime.minute
+            if start <= tmin < start + block:
+                return name
+        return None
 
     # ------------------------------------------------------------------
     # Internals
@@ -128,33 +118,22 @@ class SendWindow:
         return now.astimezone(pytz.utc)
 
     def _to_local(self, now, partner_tz):
+        tzname = partner_tz or self.cfg.s("default_tz") or "Asia/Riyadh"
         try:
-            tz = pytz.timezone(partner_tz) if partner_tz else pytz.timezone(self.DEFAULT_TZ)
+            tz = pytz.timezone(tzname)
         except Exception:
-            tz = pytz.timezone(self.DEFAULT_TZ)
+            tz = pytz.timezone("Asia/Riyadh")
         return self._to_utc_aware(now).astimezone(tz)
 
     @staticmethod
     def _in_window(t, start, end):
-        """True if start <= t < end (windows never cross midnight here)."""
         return start <= t < end
-
-    def _prayer_block(self, t):
-        """Return the name of the prayer whose block contains *t*, else None."""
-        for name, ptime in self.PRAYER_TIMES.items():
-            start_min = ptime.hour * 60 + ptime.minute
-            end_min = start_min + self.PRAYER_BLOCK_MINUTES
-            tmin = t.hour * 60 + t.minute
-            if start_min <= tmin < end_min:
-                return name
-        return None
 
     @staticmethod
     def _is_ramadan(local_dt):
         if not _HIJRI_OK:
             return False
         try:
-            hijri = _Gregorian(local_dt.year, local_dt.month, local_dt.day).to_hijri()
-            return hijri.month == 9  # Ramadan is the 9th Hijri month
+            return _Gregorian(local_dt.year, local_dt.month, local_dt.day).to_hijri().month == 9
         except Exception:  # pragma: no cover
             return False

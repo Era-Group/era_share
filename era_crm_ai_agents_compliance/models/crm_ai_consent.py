@@ -177,16 +177,22 @@ class CrmAiConsent(models.Model):
             return export
 
         # kind == "erasure": log first (while we still have the link), then
-        # anonymize in place.
+        # apply the configured erasure mode (anonymize by default, or hard delete).
+        from ..services.compliance_config import ComplianceConfig
+        mode = ComplianceConfig(self.env).s("dsar_erasure_mode") or "anonymize"
+        count = len(records)
         self.env["crm.ai.audit.log"].log(
             "delete",
             record=partner_rec,
-            before={"event": "dsar_erasure", "records": len(records)},
-            after={"event": "dsar_erasure_done", "records": len(records)},
+            before={"event": "dsar_erasure", "mode": mode, "records": count},
+            after={"event": "dsar_erasure_done", "mode": mode, "records": count},
         )
-        records.write({
-            "partner_id": False,
-            "source": False,
-            "erased": True,
-        })
-        return len(records)
+        if mode == "delete":
+            records.unlink()
+        else:
+            records.write({
+                "partner_id": False,
+                "source": False,
+                "erased": True,
+            })
+        return count

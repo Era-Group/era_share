@@ -40,6 +40,7 @@
         "views/crm_ai_consent_views.xml",
         "views/crm_ai_dsar_wizard_views.xml",
         "views/res_partner_views.xml",
+        "views/res_config_settings_views.xml",
         # Menus last — all actions must be defined before they are referenced.
         "views/menus.xml",
     ],

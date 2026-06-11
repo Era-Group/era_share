@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add Compliance policy blocks into the existing "CRM AI Agents" settings
+         app (defined by the base). Manager-only by virtue of that app's group. -->
+    <record id="res_config_settings_view_form_compliance" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crm.ai.compliance</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id"
+               ref="era_crm_ai_agents_base.res_config_settings_view_form_crm_ai"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='era_crm_ai_agents_base']" position="inside">
+
+                <block title="Send Window" name="crm_ai_send_window">
+                    <setting string="Enforce send window"
+                             help="Master switch. OFF = timing never blocks a send.">
+                        <field name="crm_ai_send_window_enabled"/>
+                    </setting>
+                    <setting string="Working hours"
+                             help="Block sends outside working hours.">
+                        <field name="crm_ai_working_hours_enabled"/>
+                        <div class="content-group mt-2"
+                             invisible="not crm_ai_working_hours_enabled">
+                            <div class="row">
+                                <label for="crm_ai_working_start" class="col-lg-4"/>
+                                <field name="crm_ai_working_start"/>
+                            </div>
+                            <div class="row">
+                                <label for="crm_ai_working_end" class="col-lg-4"/>
+                                <field name="crm_ai_working_end"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Default timezone"
+                             help="Used when a contact has no timezone set.">
+                        <field name="crm_ai_default_tz"/>
+                    </setting>
+                    <setting string="Weekend"
+                             help="Block on weekend days.">
+                        <field name="crm_ai_weekend_enabled"/>
+                        <div class="content-group mt-2"
+                             invisible="not crm_ai_weekend_enabled">
+                            <field name="crm_ai_weekend_days"/>
+                        </div>
+                    </setting>
+                    <setting string="Prayer times"
+                             help="Block during the five daily prayers.">
+                        <field name="crm_ai_prayer_enabled"/>
+                        <div class="content-group mt-2"
+                             invisible="not crm_ai_prayer_enabled">
+                            <label for="crm_ai_prayer_block_minutes"/>
+                            <field name="crm_ai_prayer_block_minutes"/>
+                        </div>
+                    </setting>
+                    <setting string="Friday Jumu'ah"
+                             help="Longer midday block on Fridays.">
+                        <field name="crm_ai_jumuah_enabled"/>
+                        <div class="content-group mt-2"
+                             invisible="not crm_ai_jumuah_enabled">
+                            <div class="row">
+                                <label for="crm_ai_jumuah_start" class="col-lg-4"/>
+                                <field name="crm_ai_jumuah_start"/>
+                            </div>
+                            <div class="row">
+                                <label for="crm_ai_jumuah_end" class="col-lg-4"/>
+                                <field name="crm_ai_jumuah_end"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Ramadan quiet hours"
+                             help="Quieter window during Ramadan (Hijri-detected).">
+                        <field name="crm_ai_ramadan_enabled"/>
+                        <div class="content-group mt-2"
+                             invisible="not crm_ai_ramadan_enabled">
+                            <div class="row">
+                                <label for="crm_ai_ramadan_start" class="col-lg-4"/>
+                                <field name="crm_ai_ramadan_start"/>
+                            </div>
+                            <div class="row">
+                                <label for="crm_ai_ramadan_end" class="col-lg-4"/>
+                                <field name="crm_ai_ramadan_end"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+
+                <block title="Prayer-time Source" name="crm_ai_prayer_source">
+                    <setting string="Source"
+                             help="Live API (real per-city times) or fixed times.">
+                        <field name="crm_ai_prayer_source"/>
+                    </setting>
+                    <setting string="Calculation method"
+                             help="Aladhan method id. 4 = Umm al-Qura (KSA)."
+                             invisible="crm_ai_prayer_source != 'api'">
+                        <field name="crm_ai_prayer_method"/>
+                    </setting>
+                    <setting string="Default city / country"
+                             help="Fallback when a contact has no city."
+                             invisible="crm_ai_prayer_source != 'api'">
+                        <field name="crm_ai_default_city"/>
+                        <field name="crm_ai_default_country"/>
+                    </setting>
+                    <setting string="Fixed prayer times"
+                             help="Used when source is Fixed (Fajr,Dhuhr,Asr,Maghrib,Isha)."
+                             invisible="crm_ai_prayer_source != 'fixed'">
+                        <field name="crm_ai_prayer_fixed_times"/>
+                    </setting>
+                </block>
+
+                <block title="Cultural Norms" name="crm_ai_norms">
+                    <setting string="Enforce cultural norms"
+                             help="Master switch. OFF = norms never block.">
+                        <field name="crm_ai_norms_enabled"/>
+                    </setting>
+                    <setting string="Require greeting">
+                        <field name="crm_ai_norms_check_greeting"/>
+                    </setting>
+                    <setting string="Require honorific">
+                        <field name="crm_ai_norms_check_honorific"/>
+                    </setting>
+                    <setting string="Check tone">
+                        <field name="crm_ai_norms_check_tone"/>
+                    </setting>
+                    <div class="text-muted mt-2">
+                        Edit the greeting / honorific vocabulary under
+                        Configuration → Norm Vocabulary.
+                    </div>
+                </block>
+
+                <block title="Consent, Opt-out &amp; DSAR" name="crm_ai_consent">
+                    <setting string="Required consent type"
+                             help="Consent type guard() requires before a send.">
+                        <field name="crm_ai_required_consent_type"/>
+                    </setting>
+                    <setting string="Opt-out enforcement window (hours)"
+                             help="PDPL window; the safety-net cron enforces within it.">
+                        <field name="crm_ai_opt_out_window_hours"/>
+                    </setting>
+                    <setting string="DSAR erasure mode"
+                             help="Anonymize (keep an erased trail) or hard delete.">
+                        <field name="crm_ai_dsar_erasure_mode"/>
+                    </setting>
+                </block>
+
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Direct menu: CRM AI Agent Base → Configuration → Compliance Settings -->
+    <record id="action_crm_ai_compliance_settings" model="ir.actions.act_window">
+        <field name="name">Compliance Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'era_crm_ai_agents_base'}</field>
+    </record>
+
+</odoo>

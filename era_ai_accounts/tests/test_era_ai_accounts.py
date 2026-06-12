@@ -352,6 +352,33 @@ class TestEraAiAccounts(TransactionCase):
         with self.assertRaises(Exception):
             acc.generate_image("anything")
 
+    def test_cloudflare_coerces_non_string_content(self):
+        # Live crash: Cloudflare returned message.content as a dict and
+        # _request_llm_cloudflare did content.strip() -> 'dict' has no 'strip'.
+        from odoo.addons.era_ai_accounts.models.llm_service_patch import _coerce_message_text
+        self.assertEqual(_coerce_message_text("hi"), "hi")
+        self.assertEqual(_coerce_message_text(None), "")
+        self.assertEqual(_coerce_message_text({"type": "text", "text": "blk"}), "blk")
+        self.assertEqual(
+            _coerce_message_text([{"text": "a"}, {"text": "b"}, "c"]), "abc")
+        # End-to-end: a dict-content response must not crash the transport.
+        acc = self.Account.create({
+            "name": "CFdict", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "CFdict agent", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            return {"choices": [{"message": {"content": {"type": "text", "text": "ok"}}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["ok"])
+
     def test_cloudflare_content_via_agent(self):
         acc = self.Account.create({
             "name": "CFchat", "provider": "cloudflare", "auth_mode": "api_key",

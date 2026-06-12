@@ -30,7 +30,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.10.1",
+    "version": "19.0.1.10.2",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

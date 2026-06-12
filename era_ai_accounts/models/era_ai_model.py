@@ -6,6 +6,9 @@ class EraAiModel(models.Model):
     _name = "era.ai.model"
     _description = "AI Account Model"
     _order = "kind, label, model_id"
+    # display_name is computed (label or model_id); without this, a name search
+    # on the relation logs "Cannot search on display_name, no _rec_name…".
+    _rec_names_search = ["label", "model_id"]
 
     account_id = fields.Many2one(
         "era.ai.account", required=True, ondelete="cascade", index=True,

@@ -99,6 +99,31 @@ def _flatten(system_prompts, user_prompts, inputs):
     return "\n\n".join(system_parts), last_user
 
 
+def _coerce_message_text(content):
+    """Flatten an OpenAI-style ``message.content`` into a plain string.
+
+    Cloudflare's OpenAI-compatible endpoint usually returns a string, but some
+    models/gateways return a content-block list (``[{"type":"text","text":...}]``)
+    or a single block dict — calling ``.strip()`` on those crashed live
+    ('dict' object has no attribute 'strip'). Normalize all shapes to text.
+    """
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, dict):
+        return content.get("text") or content.get("content") or ""
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, dict):
+                parts.append(block.get("text") or block.get("content") or "")
+            elif isinstance(block, str):
+                parts.append(block)
+        return "".join(parts)
+    return str(content)
+
+
 def _cli_tool_instructions(env, tools):
     """System-prompt block describing the available tools and the call protocol.
 
@@ -420,9 +445,7 @@ def _patch():
             headers=self._get_base_headers(), body=body)
         choices = response.get("choices") or []
         message = choices[0].get("message") if choices else {}
-        text = (message or {}).get("content") or ""
-        if isinstance(text, list):  # some gateways return content blocks
-            text = "".join(b.get("text", "") for b in text if isinstance(b, dict))
+        text = _coerce_message_text((message or {}).get("content"))
         if not text.strip():
             raise UserError(_("Cloudflare Workers AI returned no text."))
         return [text], [], list(inputs or ())

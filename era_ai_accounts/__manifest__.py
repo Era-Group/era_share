@@ -1,8 +1,9 @@
 # Part of the ERA Group custom addon layer. License: LGPL-3.
 {
     "name": "ERA AI Accounts",
-    "summary": "Link AI provider accounts (Claude via local CLI proxy, OpenAI/Gemini/Cloudflare/custom via key), "
-               "share them with users, generate text or images, and pick models dynamically per account.",
+    "summary": "Link AI provider accounts (Claude/ChatGPT via local CLI proxy — no API key — "
+               "or OpenAI/Gemini/Cloudflare/custom via key), share them with users, "
+               "generate text or images, and pick models dynamically per account.",
     "description": """
 ERA AI Accounts
 ===============
@@ -10,12 +11,14 @@ ERA AI Accounts
 Supersedes ``era_odoo_ai_ext`` and extends Odoo 19's standard ``ai`` / ``ai_app``
 stack with first-class **AI accounts**:
 
-* **Local CLI proxy** transport — route Claude through the Claude Code CLI that is
-  already authenticated on this server (the "connected account"), so AI works
-  without per-token API billing. The first-party ``claude`` binary makes the call
-  itself under its own auth; we never replay its OAuth token to the raw API.
-* **Login with Claude** — link a Claude subscription in-app (OAuth, no API key),
-  stored once on the server and used by every user in the system.
+* **Local CLI proxy** transport — route Claude through the Claude Code CLI, or
+  OpenAI through the Codex CLI, already authenticated on this server (the
+  "connected account"), so AI works without per-token API billing. The
+  first-party ``claude`` / ``codex`` binary makes the call itself under its own
+  auth; we never replay its OAuth tokens to the raw API.
+* **Login with Claude / Connect ChatGPT** — link a Claude subscription in-app
+  (OAuth, no API key) or a ChatGPT subscription (paste the Codex CLI's
+  ``auth.json``), stored once on the server and used by every user in the system.
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API) and any
   OpenAI-compatible custom provider, with credentials stored per account
   (encrypted at rest, restricted to AI Account Managers).
@@ -27,7 +30,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.7.1",
+    "version": "19.0.1.10.2",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

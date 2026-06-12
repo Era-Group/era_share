@@ -17,6 +17,46 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "1. Open"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "2. Enter this one-time code:"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "2. Paste the code Claude shows"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "3. Approve, then come back and click <b>Check status</b>."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "<b>1. Authorize</b>"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "<b>Alternative: paste auth.json from your own computer</b>"
+msgstr "<b>بديل: الصق auth.json من جهازك الخاص</b>"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "<b>Sign in with a code — like signing in on a TV</b>"
+msgstr "<b>سجّل الدخول برمز — تمامًا مثل تسجيل الدخول على التلفاز</b>"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "<i class=\"fa fa-check-circle me-2\" title=\"Linked\"/>"
+msgstr ""
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__era_account_id
 msgid "AI Account"
 msgstr "حساب الذكاء الاصطناعي"
@@ -50,6 +90,11 @@ msgid "AI CLI error: %s"
 msgstr "خطأ في واجهة الذكاء الاصطناعي: %s"
 
 #. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "AI CLI rate protection"
+msgstr "حماية معدل استدعاءات واجهة أوامر الذكاء الاصطناعي"
+
+#. module: era_ai_accounts
 #: model:ir.model,name:era_ai_accounts.model_era_ai_account
 msgid "AI Provider Account"
 msgstr "حساب مزوّد الذكاء الاصطناعي"
@@ -65,6 +110,12 @@ msgstr "حساب الذكاء الاصطناعي '%s' مؤرشف."
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "AI account '%s' is disabled (kill switch)."
 msgstr "حساب الذكاء الاصطناعي '%s' معطّل (مفتاح الإيقاف)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "AI account not found — reopen the dialog."
+msgstr "حساب الذكاء الاصطناعي غير موجود — أعد فتح النافذة."
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -85,6 +136,7 @@ msgid "API key"
 msgstr "مفتاح API"
 
 #. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__account_id
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__account_id
 msgid "Account"
 msgstr "الحساب"
@@ -99,6 +151,11 @@ msgstr "نموذج الحساب"
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__active
 msgid "Active"
 msgstr "نشط"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_gap_per_kb
+msgid "Added to the gap for each KB of request body — bigger requests wait longer."
+msgstr ""
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -126,6 +183,16 @@ msgstr "لم تُرجع Anthropic أي نص (stop_reason=%s)."
 #: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_title
 msgid "App Name"
 msgstr "اسم التطبيق"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_extra_args
+msgid "Appended verbatim to the CLI invocation (shlex-split). Manager-only: these flags shape what the subprocess may do."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_model__cost_info
+msgid "Approximate provider rate for this model. NOTE: Cloudflare bills in 'Neurons' — a compute-usage unit, not money — with 10,000 free per day; beyond that they cost USD $0.011 per 1,000 Neurons. Indicative, captured at sync time — always confirm on the provider's live pricing page."
+msgstr ""
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
@@ -164,6 +231,22 @@ msgid "Authorization Prefix"
 msgstr "بادئة التفويض"
 
 #. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__code
+msgid "Authorization code"
+msgstr "رمز التفويض"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Authorization state missing or mismatched — paste the complete code exactly as Claude shows it, or log in again."
+msgstr "حالة التفويض مفقودة أو غير مطابقة — الصق الرمز كاملاً كما يعرضه Claude تمامًا، أو سجّل الدخول من جديد."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__authorize_url
+msgid "Authorize Url"
+msgstr ""
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__base_url
 msgid "Base URL for an OpenAI-compatible endpoint (custom provider)."
 msgstr "العنوان الأساسي (URL) لنقطة نهاية متوافقة مع OpenAI (مزوّد مخصّص)."
@@ -172,6 +255,11 @@ msgstr "العنوان الأساسي (URL) لنقطة نهاية متوافقة
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__base_url
 msgid "Base Url"
 msgstr "العنوان الأساسي (URL)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_min_gap
+msgid "Base gap (seconds)"
+msgstr ""
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
@@ -200,10 +288,24 @@ msgstr "وكيل واجهة الأوامر"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__auth_mode
-msgid ""
-"CLI proxy routes calls through the locally-authenticated Claude CLI (no API "
-"key, no per-token billing). API key calls the provider over HTTP."
-msgstr "يوجّه وكيل واجهة الأوامر الطلبات عبر واجهة Claude المُصادَق عليها محليًا (بدون مفتاح API وبدون فوترة لكل رمز). أما مفتاح API فيستدعي المزوّد عبر HTTP."
+msgid "CLI proxy routes calls through a locally-authenticated first-party CLI — Claude Code for Anthropic, Codex for OpenAI — using the connected account (no API key, no per-token billing). API key calls the provider over HTTP."
+msgstr "يوجّه وكيل واجهة الأوامر الطلبات عبر أداة سطر أوامر رسمية مسجّلة الدخول محليًا — ‏Claude Code لمزوّد Anthropic و‏Codex لمزوّد OpenAI — باستخدام الحساب المرتبط (دون مفتاح API ودون فوترة لكل رمز). أما وضع مفتاح API فيستدعي المزوّد عبر HTTP."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_timeout
+msgid "Call timeout (seconds)"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Cancel"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Cannot create the CLI config dir %s: %s"
+msgstr "تعذّر إنشاء مجلد إعدادات واجهة الأوامر %s: ‏%s"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_model__kind__chat
@@ -243,6 +345,29 @@ msgstr "نماذج المحادثة"
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "ChatGPT %s linked"
+msgstr "تم ربط حساب ChatGPT ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "ChatGPT account linked"
+msgstr "تم ربط حساب ChatGPT"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Check status"
+msgstr "التحقق من الحالة"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Claude %s linked"
+msgstr "تم ربط حساب Claude ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "Claude CLI binary not found on this server."
 msgstr "تعذّر العثور على ملف واجهة Claude التنفيذي على هذا الخادم."
 
@@ -253,9 +378,86 @@ msgid "Claude CLI not runnable: %s"
 msgstr "تعذّر تشغيل واجهة Claude: %s"
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Claude did not return an access token."
+msgstr "لم يُرجع Claude رمز وصول."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Claude rejected the authorization code (HTTP %s). The code may have expired — please log in again."
+msgstr "رفض Claude رمز التفويض (HTTP ‏%s). ربما انتهت صلاحية الرمز — الرجاء تسجيل الدخول من جديد."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cf_account_id
+msgid "Cloudflare Account ID"
+msgstr "معرّف حساب Cloudflare"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__cloudflare
+msgid "Cloudflare Workers AI"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "Cloudflare Workers AI returned no text."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid ""
+"Cloudflare Workers AI: chat via the OpenAI-compatible endpoint and images via\n"
+"                            FLUX (1-schnell / 2). Billed in <b>Neurons</b> (a compute-usage unit, not money)\n"
+"                            with <b>10,000 free per day</b>; beyond that, <b>USD $0.011 per 1,000 Neurons</b>.\n"
+"                            Sync models to see each model's indicative rate."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Cloudflare account ID (dashboard → Workers AI)"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Cloudflare image error (%(code)s): %(detail)s"
+msgstr "خطأ صورة Cloudflare ‏(%(code)s): ‏%(detail)s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Cloudflare image error: %s"
+msgstr "خطأ صورة Cloudflare: ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Cloudflare image request failed: %s"
+msgstr "فشل طلب الصورة من Cloudflare: ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Cloudflare returned no image data."
+msgstr "لم يُرجع Cloudflare أي بيانات صورة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "Codex CLI error: %s"
+msgstr "خطأ في Codex CLI: ‏%s"
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__company_id
 msgid "Company"
 msgstr "الشركة"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Complete login"
+msgstr "إتمام تسجيل الدخول"
 
 #. module: era_ai_accounts
 #: model:ir.model,name:era_ai_accounts.model_res_config_settings
@@ -264,10 +466,34 @@ msgstr "إعدادات التهيئة"
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
-msgid ""
-"Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local "
-"gateways, etc.)."
+msgid "Configure any OpenAI-compatible provider (OpenRouter, Groq, Together, local gateways, etc.)."
 msgstr "هيّئ أي مزوّد متوافق مع OpenAI (OpenRouter وGroq وTogether والبوابات المحلية وغيرها)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Connect ChatGPT account"
+msgstr "ربط حساب ChatGPT"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid ""
+"Connect a ChatGPT subscription here (paste the auth.json from\n"
+"                                <code>codex login</code>) and <b>every user</b> in the system uses it —\n"
+"                                no API key, one shared login. If you don't link one, the CLI falls back\n"
+"                                to the server's own <code>~/.codex</code> login under the HOME below."
+msgstr "اربط اشتراك ChatGPT هنا (الصق ملف auth.json الناتج عن <code>codex login</code>) وسيستخدمه <b>كل مستخدم</b> في النظام — دون مفتاح API، بتسجيل دخول واحد مشترك. إن لم تربط حسابًا، تعود واجهة الأوامر إلى تسجيل دخول الخادم نفسه في <code>‎~/.codex</code> ضمن مجلد HOME أدناه."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid ""
+"Connect a ChatGPT subscription once, for <b>all users</b> in this\n"
+"                        system — no API key and no per-user login (requires a ChatGPT Plus,\n"
+"                        Pro, Business, Edu or Enterprise plan). The credentials are stored on\n"
+"                        the server and the Codex CLI keeps the tokens refreshed."
+msgstr "اربط اشتراك ChatGPT مرة واحدة لـ<b>جميع المستخدمين</b> في هذا النظام — دون مفتاح API ودون تسجيل دخول لكل مستخدم (يتطلب خطة ChatGPT ‏Plus أو Pro أو Business أو Edu أو Enterprise). تُخزَّن بيانات الاعتماد على الخادم ويتولى Codex CLI تحديث الرموز."
 
 #. module: era_ai_accounts
 #: model_terms:ir.actions.act_window,help:era_ai_accounts.era_ai_account_action
@@ -287,13 +513,33 @@ msgid "Could not parse the AI CLI response."
 msgstr "تعذّر تحليل استجابة واجهة الذكاء الاصطناعي."
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Could not reach Claude to exchange the code: %s"
+msgstr "تعذّر الوصول إلى Claude لاستبدال الرمز: %s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid ""
+"Could not start the device login: %s\n"
+"\n"
+"Make sure device codes are enabled in the ChatGPT account's security settings, or paste auth.json below instead."
+msgstr ""
+"تعذّر بدء تسجيل الدخول عبر رمز الجهاز: %s\n"
+"\n"
+"تأكد من تفعيل رموز الأجهزة في إعدادات أمان حساب ChatGPT، أو الصق ملف auth.json أدناه بدلاً من ذلك."
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__create_uid
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__create_uid
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__create_date
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__create_date
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__create_date
 msgid "Created on"
 msgstr "أنشئ في"
@@ -302,6 +548,39 @@ msgstr "أنشئ في"
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__custom
 msgid "Custom (OpenAI-compatible)"
 msgstr "مخصّص (متوافق مع OpenAI)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__device_code
+msgid "Device Code"
+msgstr "رمز الجهاز"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__device_status
+msgid "Device Status"
+msgstr "حالة الجهاز"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__device_url
+msgid "Device Url"
+msgstr "رابط الجهاز"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "Device login did not complete (%s). Start again, or paste auth.json below."
+msgstr "لم يكتمل تسجيل الدخول عبر رمز الجهاز (%s). ابدأ من جديد، أو الصق ملف auth.json أدناه."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "Device login needs the account's managed credentials directory."
+msgstr "يتطلب تسجيل الدخول عبر رمز الجهاز مجلد بيانات الاعتماد المُدار الخاص بالحساب."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Device login only applies to OpenAI CLI-proxy accounts."
+msgstr "تسجيل الدخول عبر رمز الجهاز متاح فقط لحسابات OpenAI عبر وكيل واجهة الأوامر."
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
@@ -314,8 +593,19 @@ msgid "Disabled (kill switch)"
 msgstr "معطّل (مفتاح الإيقاف)"
 
 #. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Disconnect"
+msgstr "فصل الحساب"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Disconnect this subscription account for all users?"
+msgstr ""
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__display_name
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__display_name
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__display_name
 #: model:ir.model.fields,field_description:era_ai_accounts.field_ir_actions_server__display_name
 #: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__display_name
@@ -353,10 +643,26 @@ msgid "Error"
 msgstr "خطأ"
 
 #. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_gap_per_kb
+msgid "Extra gap per KB (seconds)"
+msgstr ""
+
+#. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
 msgid "Failed to launch the AI CLI: %s"
 msgstr "تعذّر تشغيل واجهة الذكاء الاصطناعي: %s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "Failed to launch the Codex CLI: %s"
+msgstr "تعذّر تشغيل Codex CLI: ‏%s"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__note
+msgid "Free-form note for administrators (what this account is for, which key to link, etc.). Never sent to any provider."
+msgstr ""
 
 #. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__google
@@ -365,17 +671,84 @@ msgstr ""
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_home_dir
-msgid "HOME directory whose connected-account auth the CLI should use."
-msgstr "مجلد HOME الذي ستستخدم واجهة الأوامر بيانات اعتماد الحساب المرتبط به."
+msgid "HOME directory whose connected-account auth the CLI should use (~/.claude for Claude, ~/.codex for Codex). Ignored once you link an account below (the linked credentials take over)."
+msgstr "مجلد HOME الذي تستخدم أداة سطر الأوامر تسجيلَ دخوله (‏~/.claude لـ Claude و‏~/.codex لـ Codex). يُتجاهل بعد ربط حساب أدناه (تتولى بيانات الاعتماد المرتبطة الأمر)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_lock_wait
+msgid "How long a request waits for a free slot before returning a 'busy' error."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_max_concurrency
+msgid "How many Claude CLI calls may run at the same time across ALL workers and users. 1 = strictly one at a time (recommended). The Codex pool is always exactly 1, regardless of this setting — its auth.json is single-writer (tokens rotate on refresh)."
+msgstr "عدد استدعاءات Claude CLI التي يمكن تشغيلها في الوقت نفسه عبر جميع العمال والمستخدمين. ‏1 = استدعاء واحد فقط في كل مرة (مُوصى به). أما مجموعة Codex فهي دائمًا 1 بغض النظر عن هذا الإعداد — لأن auth.json أحادي الكاتب (تتبدل الرموز عند التحديث)."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_ai_agent__id
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__id
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__id
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__id
 #: model:ir.model.fields,field_description:era_ai_accounts.field_ir_actions_server__id
 #: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__id
 msgid "ID"
 msgstr "المعرّف"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_model__kind__image
+msgid "Image"
+msgstr "صورة"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Image generation is not available through the Codex CLI proxy (account '%s') — use an OpenAI API-key account for images."
+msgstr "توليد الصور غير متاح عبر وكيل Codex CLI (الحساب '%s') — استخدم حساب OpenAI بمفتاح API للصور."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Image generation is supported for Cloudflare Workers AI and OpenAI accounts (account '%s' is '%s')."
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "In-app OAuth login is only available for Anthropic (Claude). For OpenAI, run 'codex login' on your own computer and paste the auth.json contents in the connect dialog."
+msgstr "تسجيل الدخول عبر OAuth داخل التطبيق متاح فقط لـ Anthropic ‏(Claude). بالنسبة لـ OpenAI، نفّذ الأمر 'codex login' على جهازك ثم الصق محتويات auth.json في نافذة الربط."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_gap_enabled
+msgid "Insert a delay between consecutive AI CLI calls so the connected account is not hit by rapid-fire requests. Turn off to disable the gap (the one-at-a-time limit still applies unless you raise concurrency)."
+msgstr "أدرج مهلة بين استدعاءات واجهة الأوامر المتتالية حتى لا يتعرض الحساب المرتبط لطلبات متسارعة. أوقف الخيار لتعطيل المباعدة (يظل حد استدعاء واحد في كل مرة ساريًا ما لم ترفع التزامن)."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid ""
+"Install the Codex CLI (<code>npm i -g @openai/codex</code>), run\n"
+"                                <code>codex login</code> and choose <i>Sign in with ChatGPT</i>.\n"
+"                                If <code>~/.codex/auth.json</code> is not created, add\n"
+"                                <code>cli_auth_credentials_store = \"file\"</code> to\n"
+"                                <code>~/.codex/config.toml</code> and log in again."
+msgstr "ثبّت Codex CLI ‏(<code>npm i -g @openai/codex</code>) ثم نفّذ <code>codex login</code> واختر <i>Sign in with ChatGPT</i>. إذا لم يُنشأ الملف <code>‎~/.codex/auth.json</code> فأضف <code>cli_auth_credentials_store = \"file\"</code> إلى <code>‎~/.codex/config.toml</code> وسجّل الدخول من جديد."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "Invalid 'CLI extra arguments' on this AI account: %s"
+msgstr "وسائط «CLI extra arguments» غير صالحة في حساب الذكاء الاصطناعي هذا: %s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Invalid CLI extra arguments: %s"
+msgstr "وسائط سطر أوامر إضافية غير صالحة: %s"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Keep the connected Claude/ChatGPT accounts safe from concurrent or rapid-fire calls. Calls are serialized and paced per provider; tune the limits below."
+msgstr "حافظ على حسابات Claude/ChatGPT المرتبطة من الاستدعاءات المتزامنة أو المتسارعة. تُسلسل الاستدعاءات وتُباعد زمنيًا لكل مزوّد؛ اضبط الحدود أدناه."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__kind
@@ -406,12 +779,14 @@ msgstr "آخر خطأ"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__write_uid
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__write_uid
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__write_date
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__write_date
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
@@ -422,23 +797,66 @@ msgid "Last Validated"
 msgstr "آخر تحقّق"
 
 #. module: era_ai_accounts
-#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
-msgid ""
-"Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via"
-" API keys, and share them with users."
-msgstr "اربط Claude عبر وكيل واجهة الأوامر المحلي (بدون مفتاح API) أو OpenAI/Gemini/مخصّص عبر مفاتيح API، وشاركها مع المستخدمين."
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__max_concurrency
+msgid "Legacy hint. CLI-proxy calls are serialized host-wide per provider: Claude allows ai.cli_max_concurrency slots, Codex always exactly 1 (its auth.json is single-writer)."
+msgstr "إعداد قديم. تُسلسل استدعاءات وكيل واجهة الأوامر على مستوى الخادم لكل مزوّد: يسمح Claude بعدد ai.cli_max_concurrency من الفتحات، بينما Codex يستخدم فتحة واحدة دائمًا (ملف auth.json أحادي الكاتب)."
 
 #. module: era_ai_accounts
 #: model_terms:ir.actions.act_window,help:era_ai_accounts.era_ai_account_action
 msgid ""
-"Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via an API key,\n"
-"               then share the account with your users."
-msgstr "اربط Claude عبر وكيل واجهة الأوامر المحلي (بدون مفتاح API) أو OpenAI/Gemini/مخصّص عبر مفتاح API، ثم شارك الحساب مع المستخدمين."
+"Link Claude or ChatGPT via the local CLI proxy (no API key) or\n"
+"               OpenAI/Gemini/custom via an API key, then share the account with your users."
+msgstr "اربط Claude أو ChatGPT عبر وكيل واجهة الأوامر المحلي (دون مفتاح API) أو OpenAI/Gemini/مخصص عبر مفتاح API، ثم شارك الحساب مع مستخدميك."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
+msgid "Link Claude or ChatGPT via the local CLI proxy (no API key) or OpenAI/Gemini/custom via API keys, and share them with users."
+msgstr "اربط Claude أو ChatGPT عبر وكيل واجهة الأوامر المحلي (دون مفتاح API) أو OpenAI/Gemini/مخصص عبر مفاتيح API، وشاركها مع المستخدمين."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid ""
+"Link a Claude subscription here and <b>every user</b> in the system uses\n"
+"                                it — no API key, one shared login. If you don't link one, the CLI falls\n"
+"                                back to the server's own login under the HOME below."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid ""
+"Link a Claude subscription once, for <b>all users</b> in this system —\n"
+"                        no API key and no per-user login. The credentials are stored on the\n"
+"                        server and the Claude CLI keeps the token refreshed."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model,name:era_ai_accounts.model_era_ai_account_login
+msgid "Link a subscription AI account (Claude / ChatGPT)"
+msgstr "ربط حساب اشتراك ذكاء اصطناعي (Claude / ChatGPT)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_label
+msgid "Linked account"
+msgstr "الحساب المرتبط"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Linking a Claude account only applies to CLI-proxy accounts."
+msgstr "ربط حساب Claude متاح فقط لحسابات وكيل واجهة الأوامر (CLI proxy)."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__auth_mode__cli_proxy
 msgid "Local CLI proxy (connected account)"
 msgstr "وكيل واجهة الأوامر المحلي (حساب مرتبط)"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Login with Claude"
+msgstr "تسجيل الدخول عبر Claude"
 
 #. module: era_ai_accounts
 #: model:res.groups,comment:era_ai_accounts.group_ai_account_manager
@@ -451,9 +869,34 @@ msgid "Max Concurrency"
 msgstr "الحد الأقصى للتزامن"
 
 #. module: era_ai_accounts
-#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__max_concurrency
-msgid "Max simultaneous CLI-proxy calls per worker for this account."
-msgstr "الحد الأقصى لعدد طلبات وكيل واجهة الأوامر المتزامنة لكل عامل لهذا الحساب."
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_max_concurrency
+msgid "Max concurrent calls"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_max_prompt_chars
+msgid "Max prompt size (characters)"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_lock_wait
+msgid "Max wait for a free slot (seconds)"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_timeout
+msgid "Maximum duration of a single AI CLI call."
+msgstr "المدة القصوى لاستدعاء واحد لواجهة أوامر الذكاء الاصطناعي."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_max_gap
+msgid "Maximum gap (seconds)"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_min_gap
+msgid "Minimum delay applied before every CLI call."
+msgstr ""
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__model_id
@@ -497,6 +940,12 @@ msgstr "لم يتم تعيين مفتاح API للمزوّد '%s'"
 
 #. module: era_ai_accounts
 #. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "No authorization URL — reopen the dialog."
+msgstr "لا يوجد عنوان تفويض — أعد فتح النافذة."
+
+#. module: era_ai_accounts
+#. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
 msgid "No chat model configured for account '%s'. Sync models first."
 msgstr "لا يوجد نموذج محادثة مُهيّأ للحساب '%s'. قم بمزامنة النماذج أولًا."
@@ -508,9 +957,39 @@ msgid "No custom LLM model is configured."
 msgstr "لم تتم تهيئة أي نموذج لغوي مخصّص."
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "No device login in progress — start one first."
+msgstr "لا توجد عملية تسجيل دخول عبر رمز الجهاز جارية — ابدأ واحدة أولاً."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "No login in progress. Click “Login with Claude” first."
+msgstr "لا توجد عملية تسجيل دخول جارية. اضغط أولاً على «تسجيل الدخول عبر Claude»."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "Not approved yet — finish on your other device, then click 'Check status' again."
+msgstr "لم تتم الموافقة بعد — أكمل العملية على جهازك الآخر ثم اضغط «التحقق من الحالة» مرة أخرى."
+
+#. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__state__draft
 msgid "Not validated"
 msgstr "غير مُتحقَّق منه"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__note
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Only AI Account Managers can link or unlink a subscription account."
+msgstr "مديرو حسابات الذكاء الاصطناعي وحدهم يمكنهم ربط حساب الاشتراك أو فصله."
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
@@ -518,13 +997,55 @@ msgid "Open AI Accounts"
 msgstr "فتح حسابات الذكاء الاصطناعي"
 
 #. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Open Claude login page"
+msgstr "فتح صفحة تسجيل الدخول إلى Claude"
+
+#. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__provider__openai
 msgid "OpenAI"
 msgstr ""
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "OpenAI image download failed: %s"
+msgstr "فشل تنزيل الصورة من OpenAI: ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "OpenAI image error (%(code)s): %(detail)s"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "OpenAI image request failed: %s"
+msgstr "فشل طلب الصورة من OpenAI: ‏%s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "OpenAI returned an unexpected image response: %s"
+msgstr "أرجع OpenAI استجابة صورة غير متوقعة: %s"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "OpenAI returned no image."
+msgstr "لم يُرجع OpenAI أي صورة."
+
+#. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
 msgid "OpenRouter"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid ""
+"Opens in a new tab. Sign in to the Claude account you want the\n"
+"                                whole system to use, approve access, then copy the code it shows."
 msgstr ""
 
 #. module: era_ai_accounts
@@ -539,15 +1060,41 @@ msgstr "ترويسة X-Title اختيارية (مخصّص/OpenRouter)."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_path
-msgid ""
-"Optional override for the AI CLI binary. Auto-detected from the Claude Code "
-"extension when empty."
-msgstr "تجاوز اختياري لملف واجهة الذكاء الاصطناعي التنفيذي. يُكتشف تلقائيًا من امتداد Claude Code عند تركه فارغًا."
+msgid "Optional override for the AI CLI binary. Auto-detected when empty: the Claude Code extension binary for Anthropic, `codex` on PATH (or ERA_AI_CODEX_BIN) for OpenAI."
+msgstr "مسار اختياري لبرنامج سطر الأوامر. يُكتشف تلقائيًا عند تركه فارغًا: برنامج امتداد Claude Code لمزوّد Anthropic، و‏codex على PATH (أو ERA_AI_CODEX_BIN) لمزوّد OpenAI."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__owner_user_id
 msgid "Owner"
 msgstr "المالك"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__cli_gap_enabled
+msgid "Pace calls (gap between requests)"
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Paste the authorization code from Claude."
+msgstr "الصق رمز التفويض من Claude."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Paste the contents of your ~/.codex/auth.json file."
+msgstr "الصق محتويات ملف ‎~/.codex/auth.json الخاص بك."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Paste the contents of ~/.codex/auth.json"
+msgstr "الصق محتويات ‎~/.codex/auth.json"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Pasting a Codex auth.json only applies to OpenAI CLI-proxy accounts."
+msgstr "لصق ملف auth.json الخاص بـ Codex متاح فقط لحسابات OpenAI عبر وكيل واجهة الأوامر."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__scope__personal
@@ -557,6 +1104,7 @@ msgstr "شخصي"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__provider
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__provider
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__provider
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
 msgid "Provider"
@@ -569,8 +1117,7 @@ msgstr "مفتاح API للمزوّد"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__secret
-msgid ""
-"Provider API key. Stored encrypted; only AI Account Managers can set it."
+msgid "Provider API key. Stored encrypted; only AI Account Managers can set it."
 msgstr "مفتاح API للمزوّد. يُخزَّن مُشفَّرًا؛ ولا يمكن تعيينه إلا لمديري حسابات الذكاء الاصطناعي."
 
 #. module: era_ai_accounts
@@ -595,10 +1142,26 @@ msgid "Provider request failed: %s %s"
 msgstr "فشل طلب المزوّد: %s %s"
 
 #. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__cost_info
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Rate"
+msgstr "التكلفة التقريبية"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "Re-link account"
+msgstr "إعادة ربط الحساب"
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__referer
 #: model:ir.model.fields,field_description:era_ai_accounts.field_res_config_settings__custom_llm_referer
 msgid "Referer"
 msgstr "المُحيل (Referer)"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_max_prompt_chars
+msgid "Reject CLI-proxy requests whose prompt exceeds this size with a clear message (very large tool-driven 'Ask AI' contexts should use an API-key account)."
+msgstr ""
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.ai_agent_view_form_era_account
@@ -611,10 +1174,17 @@ msgstr "تُولَّد الردود من خلال هذا الحساب. ويُس�
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid ""
-"Routes calls through the locally-authenticated Claude CLI (the connected\n"
-"                            account). No API key is used. Serving many users draws on that\n"
-"                            subscription's rate limits — use the kill switch / concurrency to control it."
-msgstr "يوجّه الطلبات عبر واجهة Claude المُصادَق عليها محليًا (الحساب المرتبط). لا يُستخدم أي مفتاح API. خدمة عدد كبير من المستخدمين تستهلك حدود معدّل ذلك الاشتراك — استخدم مفتاح الإيقاف/التزامن للتحكّم بذلك."
+"Routes calls through the locally-authenticated first-party CLI\n"
+"                            (Claude Code for Anthropic, Codex for OpenAI). No API key is used.\n"
+"                            Serving many users draws on that subscription's rate limits — use the kill\n"
+"                            switch / concurrency to control it."
+msgstr "يوجّه الاستدعاءات عبر أداة سطر الأوامر الرسمية المسجّلة الدخول محليًا (Claude Code لمزوّد Anthropic و‏Codex لمزوّد OpenAI). لا يُستخدم أي مفتاح API. خدمةُ عدد كبير من المستخدمين تستهلك حدودَ معدل ذلك الاشتراك — استخدم مفتاح الإيقاف / التزامن للتحكم به."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Save the account first, then link a subscription."
+msgstr "احفظ الحساب أولاً، ثم اربط الاشتراك."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__scope
@@ -639,6 +1209,30 @@ msgid "Set an API key before syncing models."
 msgstr "عيّن مفتاح API قبل مزامنة النماذج."
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Set the Cloudflare API token before validating."
+msgstr "حدّد رمز Cloudflare API قبل التحقق."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Set the Cloudflare API token on account '%s'."
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Set the Cloudflare Account ID on account '%s'."
+msgstr "حدّد معرّف حساب Cloudflare في الحساب '%s'."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Set the OpenAI API key on account '%s'."
+msgstr "حدّد مفتاح OpenAI API في الحساب '%s'."
+
+#. module: era_ai_accounts
 #: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_account__scope__shared
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_search
 msgid "Shared"
@@ -646,10 +1240,19 @@ msgstr "مشترك"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__scope
-msgid ""
-"Shared: usable by every allowed user in the company. Personal: usable only "
-"by the owner and explicitly allowed users."
+msgid "Shared: usable by every allowed user in the company. Personal: usable only by the owner and explicitly allowed users."
 msgstr "مشترك: قابل للاستخدام من قِبل كل مستخدم مسموح له في الشركة. شخصي: قابل للاستخدام فقط من قِبل المالك والمستخدمين المسموح لهم صراحةً."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "Start device login"
+msgstr "بدء تسجيل الدخول عبر رمز الجهاز"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "Start the device login first."
+msgstr "ابدأ تسجيل الدخول عبر رمز الجهاز أولاً."
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__state
@@ -668,15 +1271,32 @@ msgid "Stored key"
 msgstr "المفتاح المُخزَّن"
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Subscription account disconnected."
+msgstr "تم فصل حساب الاشتراك."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_linked
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__linked
+msgid "Subscription account linked"
+msgstr "حساب اشتراك مرتبط"
+
+#. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
 msgid "Sync models"
 msgstr "مزامنة النماذج"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__kill_switch
-msgid ""
-"Temporarily block all AI calls through this account without archiving it."
+msgid "Temporarily block all AI calls through this account without archiving it."
 msgstr "حظر جميع طلبات الذكاء الاصطناعي عبر هذا الحساب مؤقتًا دون أرشفته."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "That is not valid JSON. Paste the complete, unmodified contents of ~/.codex/auth.json."
+msgstr "هذا ليس نص JSON صالحًا. الصق المحتويات الكاملة وغير المعدّلة لملف ‎~/.codex/auth.json."
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -692,12 +1312,7 @@ msgstr "أرجعت واجهة الذكاء الاصطناعي استجابة ف�
 
 #. module: era_ai_accounts
 #. odoo-python
-#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
-msgid "The AI account is busy (max concurrency reached). Please retry."
-msgstr "حساب الذكاء الاصطناعي مشغول (تم بلوغ الحد الأقصى للتزامن). يرجى إعادة المحاولة."
-
-#. module: era_ai_accounts
-#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
 #: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
 msgid "The AI request timed out after %ss."
 msgstr "انتهت مهلة طلب الذكاء الاصطناعي بعد %s ثانية."
@@ -705,18 +1320,58 @@ msgstr "انتهت مهلة طلب الذكاء الاصطناعي بعد %s ث�
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
-msgid ""
-"The Claude CLI was not found on this server. Set the account's 'CLI binary "
-"path' or the ERA_AI_CLAUDE_BIN environment variable."
+msgid "The AI service is busy (all %s slot(s) in use). Please retry in a moment."
+msgstr ""
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/llm_cli_transport.py:0
+msgid "The Claude CLI was not found on this server. Set the account's 'CLI binary path' or the ERA_AI_CLAUDE_BIN environment variable."
 msgstr "تعذّر العثور على واجهة Claude على هذا الخادم. عيّن 'مسار ملف واجهة الأوامر التنفيذي' للحساب أو متغيّر البيئة ERA_AI_CLAUDE_BIN."
 
 #. module: era_ai_accounts
 #. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI is installed but not signed in for this account (%s). Connect a ChatGPT account on the AI account form, or run 'codex login' on the server."
+msgstr "‏Codex CLI مثبّت لكنه غير مسجّل الدخول لهذا الحساب (%s). اربط حساب ChatGPT من نموذج حساب الذكاء الاصطناعي، أو نفّذ 'codex login' على الخادم."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI returned an empty response."
+msgstr "أعاد Codex CLI استجابة فارغة."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/utils/codex_cli_transport.py:0
+msgid "The Codex CLI was not found on this server. Install it (npm i -g @openai/codex), or set the account's 'CLI binary path' or the ERA_AI_CODEX_BIN environment variable."
+msgstr "لم يُعثر على Codex CLI في هذا الخادم. ثبّته (npm i -g @openai/codex)، أو حدد 'مسار برنامج CLI' في الحساب أو متغير البيئة ERA_AI_CODEX_BIN."
+
+#. module: era_ai_accounts
+#. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "The base URL must be an absolute http(s) URL, e.g. https://openrouter.ai/api/v1 (got '%s')."
+msgstr "يجب أن يكون عنوان URL الأساسي عنوان http(s)‎ كاملاً، مثل https://openrouter.ai/api/v1 (المُدخل: '%s')."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
 msgid ""
-"The local CLI proxy is currently only available for the Anthropic (Claude) "
-"provider."
-msgstr "وكيل واجهة الأوامر المحلي متاح حاليًا فقط لمزوّد Anthropic (Claude)."
+"The credentials are stored in an isolated server directory with\n"
+"                        restrictive permissions and are used only by the local Codex CLI — they\n"
+"                        are never sent to any other service. Treat them like a password."
+msgstr "تُخزَّن بيانات الاعتماد في مجلد معزول على الخادم بصلاحيات مقيّدة، ولا يستخدمها سوى Codex CLI المحلي — ولا تُرسل أبدًا إلى أي خدمة أخرى. تعامل معها كما تتعامل مع كلمة مرور."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "The local CLI proxy is only available for the Anthropic (Claude CLI) and OpenAI (Codex CLI) providers."
+msgstr "وكيل واجهة الأوامر المحلي متاح فقط لمزوّدي Anthropic ‏(Claude CLI) وOpenAI ‏(Codex CLI)."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "The login session is corrupted. Please log in again."
+msgstr "جلسة تسجيل الدخول تالفة. الرجاء تسجيل الدخول من جديد."
 
 #. module: era_ai_accounts
 #. odoo-python
@@ -733,13 +1388,26 @@ msgstr "طلب الأداة تنقصه معلومات مطلوبة."
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/llm_service_patch.py:0
-msgid ""
-"This agent's prompt is too large for the Claude CLI proxy (%(n)s characters,"
-" limit %(max)s). This usually means a tool-driven 'Ask AI' navigation agent "
-"— the CLI proxy supports chat/RAG only. Assign an API-key Anthropic account "
-"to that agent, or point this account at a simpler chat agent. (Raise "
-"ai.cli_max_prompt_chars to override.)"
-msgstr "موجّه هذا الوكيل أكبر من أن يتعامل معه وكيل واجهة Claude (%(n)s حرفًا، الحد الأقصى %(max)s). يعني هذا عادةً وكيل تنقّل 'اسأل الذكاء الاصطناعي' المعتمِد على الأدوات — إذ يدعم وكيل واجهة الأوامر المحادثة/استرجاع المعرفة فقط. عيّن حساب Anthropic بمفتاح API لذلك الوكيل، أو وجّه هذا الحساب إلى وكيل محادثة أبسط. (ارفع القيمة ai.cli_max_prompt_chars للتجاوز.)"
+msgid "This agent's prompt is too large for the local CLI proxy (%(n)s characters, limit %(max)s). This usually means a tool-driven 'Ask AI' navigation agent — the CLI proxy supports chat/RAG only. Assign an API-key account to that agent, or point this account at a simpler chat agent. (Raise ai.cli_max_prompt_chars to override.)"
+msgstr "حجم موجّه هذا الوكيل أكبر من حد وكيل واجهة الأوامر المحلي (%(n)s حرفًا، والحد %(max)s). يعني هذا غالبًا وكيل تنقّل «اسأل الذكاء الاصطناعي» المعتمد على الأدوات — وكيل واجهة الأوامر يدعم المحادثة/RAG فقط. عيّن حسابًا بمفتاح API لذلك الوكيل، أو وجّه هذا الحساب إلى وكيل محادثة أبسط. (ارفع ai.cli_max_prompt_chars للتجاوز.)"
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json contains an API key, not a ChatGPT login. Sign in with 'codex login' (choose 'Sign in with ChatGPT') and paste the resulting auth.json — or use an API-key account instead."
+msgstr "يحتوي ملف auth.json هذا على مفتاح API وليس تسجيل دخول ChatGPT. سجّل الدخول عبر 'codex login' (اختر 'Sign in with ChatGPT') ثم الصق ملف auth.json الناتج — أو استخدم حسابًا بمفتاح API بدلاً من ذلك."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json has no ChatGPT tokens (tokens.access_token / refresh_token). Run 'codex login' on your computer first; if your auth.json looks empty, set cli_auth_credentials_store = \"file\" in ~/.codex/config.toml and log in again."
+msgstr "لا يحتوي ملف auth.json هذا على رموز ChatGPT ‏(tokens.access_token / refresh_token). نفّذ 'codex login' على جهازك أولاً؛ وإذا بدا الملف فارغًا فأضف cli_auth_credentials_store = \"file\" إلى ‎~/.codex/config.toml وسجّل الدخول من جديد."
+
+#. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "This auth.json is not a ChatGPT-account login (auth_mode=%s)."
+msgstr "ملف auth.json هذا ليس تسجيل دخول بحساب ChatGPT ‏(auth_mode=%s)."
 
 #. module: era_ai_accounts
 #: model:ir.model.constraint,message:era_ai_accounts.constraint_era_ai_model_uniq_model_per_account
@@ -752,15 +1420,24 @@ msgid "Title"
 msgstr "العنوان"
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "Unexpected auth.json structure (expected a JSON object)."
+msgstr "بنية auth.json غير متوقعة (المتوقع كائن JSON)."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_res_config_settings__cli_max_gap
+msgid "Upper bound on the inter-call gap."
+msgstr ""
+
+#. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
 msgid "Use your own custom LLM provider"
 msgstr "استخدم مزوّد النموذج اللغوي المخصّص الخاص بك"
 
 #. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__allowed_user_ids
-msgid ""
-"Users who may use this account. For shared accounts, leave empty to allow "
-"everyone in the company."
+msgid "Users who may use this account. For shared accounts, leave empty to allow everyone in the company."
 msgstr "المستخدمون الذين يمكنهم استخدام هذا الحساب. بالنسبة إلى الحسابات المشتركة، اتركه فارغًا للسماح للجميع في الشركة."
 
 #. module: era_ai_accounts
@@ -780,13 +1457,34 @@ msgid "Validation failed: %s"
 msgstr "فشل التحقق: %s"
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
+msgid "Waiting for approval — open the link, enter the code, then click 'Check status'. The code expires in about 15 minutes."
+msgstr "بانتظار الموافقة — افتح الرابط وأدخل الرمز ثم اضغط «التحقق من الحالة». تنتهي صلاحية الرمز خلال 15 دقيقة تقريبًا."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "What is this account for? Which key should be linked?"
+msgstr ""
+
+#. module: era_ai_accounts
 #: model:ir.model.fields,help:era_ai_accounts.field_ai_agent__era_account_id
+msgid "When set, this agent's responses are generated through the selected account (e.g. Claude or ChatGPT via the local CLI proxy) instead of the global provider keys. Knowledge-source embeddings still use the standard provider from 'LLM Model'."
+msgstr "عند تعيينه، تُولَّد ردود هذا الوكيل عبر الحساب المحدد (مثل Claude أو ChatGPT عبر وكيل واجهة الأوامر المحلي) بدلاً من مفاتيح المزوّد العامة. وتظل تضمينات مصادر المعرفة تستخدم المزوّد القياسي من «نموذج LLM»."
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_oauth_linked
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account_login__linked
+msgid "Whether a Claude or ChatGPT subscription has been linked to this account. The credentials are stored once, on the server, and used by every user — there is no per-user login."
+msgstr "ما إذا كان اشتراك Claude أو ChatGPT مرتبطًا بهذا الحساب. تُخزَّن بيانات الاعتماد مرة واحدة على الخادم ويستخدمها جميع المستخدمين — لا يوجد تسجيل دخول لكل مستخدم."
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
 msgid ""
-"When set, this agent's responses are generated through the selected account "
-"(e.g. Claude via the local CLI proxy) instead of the global provider keys. "
-"Knowledge-source embeddings still use the standard provider from 'LLM "
-"Model'."
-msgstr "عند تعيينه، تُولَّد ردود هذا الوكيل من خلال الحساب المحدد (مثل Claude عبر وكيل واجهة الأوامر المحلي) بدلًا من مفاتيح المزوّد العامة. أما تضمين مصادر المعرفة فيستمر في استخدام المزوّد القياسي من 'النموذج اللغوي'."
+"You'll get a link and a short code: open the link on your phone or\n"
+"                            computer, enter the code, approve — done. (Device codes must be\n"
+"                            enabled in the ChatGPT account's security settings.)"
+msgstr "ستحصل على رابط ورمز قصير: افتح الرابط على هاتفك أو حاسوبك، وأدخل الرمز، ثم وافق — وانتهيت. (يجب تفعيل رموز الأجهزة في إعدادات أمان حساب ChatGPT.)"
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
@@ -794,8 +1492,18 @@ msgid "Your App Name"
 msgstr "اسم تطبيقك"
 
 #. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cf_account_id
+msgid "Your Cloudflare account ID — it goes in the Workers AI URL path (api.cloudflare.com/.../accounts/<ID>/ai/...). Find it in the Cloudflare dashboard. The API token goes in the 'API Key' field (Bearer auth)."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__auth_json
+msgid "auth.json contents"
+msgstr "محتويات auth.json"
+
+#. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "auto-detected from Claude Code extension"
+msgid "auto-detected (Claude Code extension / codex on PATH)"
 msgstr "يُكتشف تلقائيًا من امتداد Claude Code"
 
 #. module: era_ai_accounts
@@ -825,6 +1533,17 @@ msgid "meta-llama/llama-3.3-70b-instruct:free"
 msgstr ""
 
 #. module: era_ai_accounts
+#. odoo-python
+#: code:addons/era_ai_accounts/models/era_ai_account.py:0
+msgid "no output from the codex CLI"
+msgstr "لا يوجد أي مخرجات من codex CLI"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "on any device."
+msgstr "على أي جهاز."
+
+#. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.res_config_settings_view_form_era_ai_accounts
 msgid "openai/gpt-4o-mini"
 msgstr ""
@@ -846,226 +1565,47 @@ msgstr "اختياري، مثل ‎--add-dir /tmp"
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "paste API key (write-only)"
-msgstr "الصق مفتاح API (للكتابة فقط)"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_linked
-msgid "Claude account linked"
-msgstr "حساب Claude مرتبط"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_oauth_label
-msgid "Linked account"
-msgstr "الحساب المرتبط"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cf_account_id
-msgid "Cloudflare Account ID"
-msgstr "معرّف حساب Cloudflare"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_model__cost_info
-msgid "Rate"
-msgstr "التكلفة التقريبية"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__note
-msgid "Note"
-msgstr "ملاحظة"
-
-#. module: era_ai_accounts
-#: model:ir.model.fields.selection,name:era_ai_accounts.selection__era_ai_model__kind__image
-msgid "Image"
-msgstr "صورة"
-#. module: era_ai_accounts
-#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account_login__code
-msgid "Authorization code"
-msgstr "رمز التفويض"
-
-#. module: era_ai_accounts
-#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "Login with Claude"
-msgstr "تسجيل الدخول عبر Claude"
-
-#. module: era_ai_accounts
-#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "Re-link account"
-msgstr "إعادة ربط الحساب"
-
-#. module: era_ai_accounts
-#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
-msgid "Disconnect"
-msgstr "فصل الحساب"
+msgid "paste API key / token (write-only)"
+msgstr ""
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
-msgid "Open Claude login page"
-msgstr "فتح صفحة تسجيل الدخول إلى Claude"
+msgid "paste the code#state value from Claude"
+msgstr ""
 
 #. module: era_ai_accounts
 #: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
-msgid "Complete login"
-msgstr "إتمام تسجيل الدخول"
+msgid "the ChatGPT device page"
+msgstr "صفحة أجهزة ChatGPT"
 
 #. module: era_ai_accounts
 #. odoo-python
 #: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Claude %s linked"
-msgstr "تم ربط حساب Claude ‏%s"
+msgid "the login attempt ended"
+msgstr "انتهت محاولة تسجيل الدخول"
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_login_form
+msgid "{\"OPENAI_API_KEY\": null, \"auth_mode\": \"chatgpt\", \"tokens\": { ... }, \"last_refresh\": \"...\"}"
+msgstr ""
+
+#. module: era_ai_accounts
+#: model_terms:ir.ui.view,arch_db:era_ai_accounts.era_ai_account_view_form
+msgid "— used by every user, no API key."
+msgstr ""
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,field_description:era_ai_accounts.field_era_ai_account__cli_tools_enabled
+msgid "Allow agent tools"
+msgstr "السماح بأدوات الوكيل"
+
+#. module: era_ai_accounts
+#: model:ir.model.fields,help:era_ai_accounts.field_era_ai_account__cli_tools_enabled
+msgid "Let agents run their Odoo tools (e.g. Ask AI's database lookups) through this CLI account, via a JSON tool-call loop. Each tool round is one extra CLI call — disable to keep the account strictly single-shot chat. Tools always execute in Odoo with the requesting user's own access rights; the CLI only sees text."
+msgstr "اسمح للوكلاء بتشغيل أدوات أودو الخاصة بهم (مثل استعلامات قاعدة البيانات في «اسأل الذكاء الاصطناعي») عبر حساب واجهة الأوامر هذا من خلال حلقة استدعاء أدوات بصيغة JSON. كل جولة أدوات تعني استدعاء CLI إضافيًا — عطّل الخيار لإبقاء الحساب محادثة من طلقة واحدة فقط. تُنفَّذ الأدوات دائمًا داخل أودو بصلاحيات المستخدم الطالب نفسه؛ ولا ترى واجهة الأوامر سوى النص."
 
 #. module: era_ai_accounts
 #. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Only AI Account Managers can link or unlink a Claude account."
-msgstr "مديرو حسابات الذكاء الاصطناعي وحدهم يمكنهم ربط حساب Claude أو فصله."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Linking a Claude account only applies to CLI-proxy accounts."
-msgstr "ربط حساب Claude متاح فقط لحسابات وكيل واجهة الأوامر (CLI proxy)."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Paste the authorization code from Claude."
-msgstr "الصق رمز التفويض من Claude."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "No login in progress. Click “Login with Claude” first."
-msgstr "لا توجد عملية تسجيل دخول جارية. اضغط أولاً على «تسجيل الدخول عبر Claude»."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "The login session is corrupted. Please log in again."
-msgstr "جلسة تسجيل الدخول تالفة. الرجاء تسجيل الدخول من جديد."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Authorization state missing or mismatched — paste the complete code exactly as Claude shows it, or log in again."
-msgstr "حالة التفويض مفقودة أو غير مطابقة — الصق الرمز كاملاً كما يعرضه Claude تمامًا، أو سجّل الدخول من جديد."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Could not reach Claude to exchange the code: %s"
-msgstr "تعذّر الوصول إلى Claude لاستبدال الرمز: %s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Claude rejected the authorization code (HTTP %s). The code may have expired — please log in again."
-msgstr "رفض Claude رمز التفويض (HTTP ‏%s). ربما انتهت صلاحية الرمز — الرجاء تسجيل الدخول من جديد."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Claude did not return an access token."
-msgstr "لم يُرجع Claude رمز وصول."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Claude account disconnected."
-msgstr "تم فصل حساب Claude."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Save the account first, then link a Claude subscription."
-msgstr "احفظ الحساب أولاً، ثم اربط اشتراك Claude."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cannot create Claude config dir %s: %s"
-msgstr "تعذّر إنشاء مجلد إعدادات Claude ‏%s: ‏%s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "The base URL must be an absolute http(s) URL, e.g. https://openrouter.ai/api/v1 (got '%s')."
-msgstr "يجب أن يكون عنوان URL الأساسي عنوان http(s)‎ كاملاً، مثل https://openrouter.ai/api/v1 (المُدخل: '%s')."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
-msgid "AI account not found — reopen the dialog."
-msgstr "حساب الذكاء الاصطناعي غير موجود — أعد فتح النافذة."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/wizards/era_ai_account_login.py:0
-msgid "No authorization URL — reopen the dialog."
-msgstr "لا يوجد عنوان تفويض — أعد فتح النافذة."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Set the Cloudflare Account ID on account '%s'."
-msgstr "حدّد معرّف حساب Cloudflare في الحساب '%s'."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Set the Cloudflare API token before validating."
-msgstr "حدّد رمز Cloudflare API قبل التحقق."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cloudflare image request failed: %s"
-msgstr "فشل طلب الصورة من Cloudflare: ‏%s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cloudflare image error (%(code)s): %(detail)s"
-msgstr "خطأ صورة Cloudflare ‏(%(code)s): ‏%(detail)s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cloudflare image error: %s"
-msgstr "خطأ صورة Cloudflare: ‏%s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Cloudflare returned no image data."
-msgstr "لم يُرجع Cloudflare أي بيانات صورة."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "Set the OpenAI API key on account '%s'."
-msgstr "حدّد مفتاح OpenAI API في الحساب '%s'."
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "OpenAI image request failed: %s"
-msgstr "فشل طلب الصورة من OpenAI: ‏%s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "OpenAI returned an unexpected image response: %s"
-msgstr "أرجع OpenAI استجابة صورة غير متوقعة: %s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "OpenAI image download failed: %s"
-msgstr "فشل تنزيل الصورة من OpenAI: ‏%s"
-
-#. module: era_ai_accounts
-#. odoo-python
-#: code:addons/era_ai_accounts/models/era_ai_account.py:0
-msgid "OpenAI returned no image."
-msgstr "لم يُرجع OpenAI أي صورة."
+#: code:addons/era_ai_accounts/models/llm_service_patch.py:0
+msgid "The CLI proxy does not support structured output together with tools."
+msgstr "لا يدعم وكيل واجهة الأوامر المخرجات المهيكلة مع الأدوات في الوقت نفسه."

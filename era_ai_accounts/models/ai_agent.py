@@ -26,9 +26,9 @@ class AIAgent(models.Model):
         "era.ai.account",
         string="AI Account",
         help="When set, this agent's responses are generated through the selected "
-             "account (e.g. Claude via the local CLI proxy) instead of the global "
-             "provider keys. Knowledge-source embeddings still use the standard "
-             "provider from 'LLM Model'.",
+             "account (e.g. Claude or ChatGPT via the local CLI proxy) instead of "
+             "the global provider keys. Knowledge-source embeddings still use the "
+             "standard provider from 'LLM Model'.",
     )
     era_model_id = fields.Many2one(
         "era.ai.model",
@@ -66,7 +66,13 @@ class AIAgent(models.Model):
         if rag_context:
             system_messages.extend(rag_context)
 
-        supports_tools = acc.auth_mode == "api_key" and acc.provider in ("openai", "google", "custom")
+        # api_key: upstream native tool calling. cli_proxy: the JSON-envelope
+        # tool loop in llm_service_patch (works for both claude and codex),
+        # gated by the account's "Allow agent tools" switch.
+        supports_tools = (
+            (acc.auth_mode == "cli_proxy" and acc.cli_tools_enabled)
+            or (acc.auth_mode == "api_key" and acc.provider in ("openai", "google", "custom"))
+        )
         service = LLMApiService(
             env=self.with_context(era_ai_account_id=acc.id).env,
             provider=acc._service_provider(),

@@ -6,20 +6,44 @@ preserved untouched. This layer only adds:
 
 * binding of the request's ``era.ai.account`` (from ``env.context['era_ai_account_id']``);
 * per-account credential resolution for api_key accounts (openai/google/anthropic/custom);
-* the ``anthropic`` (Messages API) and ``anthropic_cli`` (local CLI) transports.
+* the ``anthropic`` (Messages API) and ``anthropic_cli`` / ``openai_cli``
+  (local Claude / Codex CLI) transports.
+
+Tool calling over the CLI transports
+------------------------------------
+Upstream's ``request_llm`` loop (``_request_llm_silent``) owns tool execution:
+it repeatedly calls ``_request_llm`` and runs whatever ``next_actions`` it
+returns, appending each result via ``_build_tool_call_response``. The CLI
+transports plug into that loop with a text protocol: the available tools are
+described in the system prompt, the model calls one by replying with a strict
+JSON envelope (``{"tool_call": {"name": ..., "arguments": {...}}}``) which we
+parse into ``next_actions``; tool results come back through ``inputs`` as
+OpenAI-style ``function_call_output`` entries that ``_flatten`` renders into
+the next round's prompt. Execution, permission checks, and the
+``ai.max_successive_calls`` cap all stay upstream.
 
 Everything else is delegated to the captured "original" methods.
 """
+import json
 import logging
+import re
+import uuid
 
 from odoo import _
 from odoo.exceptions import UserError
 
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
+from ..utils import codex_cli_transport
 from ..utils import llm_cli_transport
+from .custom_llm_service_patch import (
+    _autofill_required_tool_arguments,
+    _coerce_tool_arguments_for_schema,
+)
 
 _logger = logging.getLogger(__name__)
+
+_CLI_PROVIDERS = ("anthropic_cli", "openai_cli")
 
 _ANTHROPIC_VERSION = "2023-06-01"
 
@@ -37,11 +61,27 @@ def _cfg_int(env, key, default):
 
 
 def _flatten(system_prompts, user_prompts, inputs):
-    """Collapse Odoo's (system, user, inputs) into (system_with_history, last_user)."""
+    """Collapse Odoo's (system, user, inputs) into (system_with_history, last_user).
+
+    Besides plain role/content messages, ``inputs`` may carry the OpenAI-style
+    tool entries our CLI tool loop appends: ``function_call`` (the assistant's
+    own call, kept so the model remembers what it asked for) and
+    ``function_call_output`` (the executed result, fed back as the next user
+    turn so the model can continue).
+    """
     system_parts = [p for p in (system_prompts or []) if p]
     turns = []
     seq = list(inputs or []) + [{"role": "user", "content": p} for p in (user_prompts or [])]
     for item in seq:
+        itype = item.get("type")
+        if itype == "function_call":
+            turns.append(("Assistant", "[tool call %s, id %s, arguments: %s]" % (
+                item.get("name"), item.get("call_id"), item.get("arguments") or "{}")))
+            continue
+        if itype == "function_call_output":
+            turns.append(("Tool", "Result of tool call %s:\n%s" % (
+                item.get("call_id"), item.get("output") or "")))
+            continue
         role = item.get("role", "user")
         content = item.get("content", "")
         if isinstance(content, list):
@@ -49,7 +89,7 @@ def _flatten(system_prompts, user_prompts, inputs):
         turns.append(("User" if role == "user" else "Assistant", content or ""))
     last_user = ""
     ctx = turns
-    if turns and turns[-1][0] == "User":
+    if turns and turns[-1][0] in ("User", "Tool"):
         last_user = turns[-1][1]
         ctx = turns[:-1]
     elif turns:
@@ -57,6 +97,149 @@ def _flatten(system_prompts, user_prompts, inputs):
     if ctx:
         system_parts.append("Conversation so far:\n" + "\n".join(f"{r}: {c}" for r, c in ctx))
     return "\n\n".join(system_parts), last_user
+
+
+def _coerce_message_text(content):
+    """Flatten an OpenAI-style ``message.content`` into a plain string.
+
+    Cloudflare's OpenAI-compatible endpoint usually returns a string, but some
+    models/gateways return a content-block list (``[{"type":"text","text":...}]``)
+    or a single block dict — calling ``.strip()`` on those crashed live
+    ('dict' object has no attribute 'strip'). Normalize all shapes to text.
+    """
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, dict):
+        return content.get("text") or content.get("content") or ""
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, dict):
+                parts.append(block.get("text") or block.get("content") or "")
+            elif isinstance(block, str):
+                parts.append(block)
+        return "".join(parts)
+    return str(content)
+
+
+def _cli_tool_instructions(env, tools):
+    """System-prompt block describing the available tools and the call protocol.
+
+    ``tools`` is upstream's dict: {name: (description, allow_end_message,
+    callable, parameter_json_schema)} — the schema already carries the
+    ``__end_message`` property when early termination is allowed (the loop
+    injects it before calling us).
+    """
+    max_rounds = _cfg_int(env, "ai.max_successive_calls", 20)
+    lines = [
+        "# Tool protocol — IMPORTANT",
+        # The CLI's own agent persona believes it has no tools (its native ones
+        # are disabled), so be explicit that Odoo executes these for it —
+        # without this, the model answers "I can't access that tool" instead of
+        # emitting the envelope (observed live on codex/gpt-5.4).
+        "The calling system (Odoo) executes tools FOR you, outside this "
+        "session. You request a tool by replying with a JSON envelope; Odoo "
+        "runs it and sends you the result as the next message. This always "
+        "works in this conversation — never claim you lack access to these "
+        "tools, and never ask the user to enable them.",
+        "To request tools, reply with ONLY this JSON object — no prose before "
+        "or after, no code fences:",
+        '{"tool_calls": [{"name": "<tool name>", "arguments": {<parameters per the schema>}}]}',
+        "Rules:",
+        "- Batch all independent calls of a step into the one tool_calls array.",
+        "- Each result comes back as a 'Result of tool call <id>' message; then "
+        "either request more tools the same way, or finish by writing the final "
+        "answer as plain text (never as JSON).",
+        "- Where a tool's schema has an __end_message parameter: if that call "
+        "completes the user's request, put your final user-facing answer in "
+        "__end_message — it ends the conversation immediately.",
+        "- Never invent tool names. You have at most %d rounds; prefer few, "
+        "well-batched calls." % max_rounds,
+        "",
+        "Example:",
+        "User: how many products do we sell?",
+        'You: {"tool_calls": [{"name": "count_products", "arguments": {}}]}',
+        "(next message) Result of tool call clicall-abc123: 42",
+        "You: We sell 42 products.",
+        "",
+        "Available tools:",
+    ]
+    for name, (description, _allow_end, _fn, schema) in tools.items():
+        lines.append("- %s: %s\n  parameters (JSON Schema): %s"
+                     % (name, description, json.dumps(schema)))
+    return "\n".join(lines)
+
+
+def _fill_null_array_arguments(arguments, tool_schema):
+    """Missing/null array parameters become [] — mirroring what strict-mode
+    OpenAI models send. Upstream fills omitted optional params with None and
+    some tool implementations iterate them unguarded (observed live: Ask AI's
+    read_group crashing on groupby=None, where groupby=[] is a valid
+    'no grouping')."""
+    if not isinstance(arguments, dict) or not isinstance(tool_schema, dict):
+        return arguments
+    for key, prop in (tool_schema.get("properties") or {}).items():
+        declared = (prop or {}).get("type")
+        types = declared if isinstance(declared, list) else [declared]
+        if "array" in types and arguments.get(key) is None:
+            arguments[key] = []
+    return arguments
+
+
+def _normalize_cli_tool_arguments(env, tools, tool_name, arguments):
+    """Schema-normalize one parsed CLI tool call (same helpers as custom_llm)."""
+    spec = tools.get(tool_name)
+    if not spec:
+        return arguments  # unknown tool: upstream replies with its error text
+    schema = spec[3]
+    arguments = _autofill_required_tool_arguments(arguments, schema, env.context)
+    arguments = _coerce_tool_arguments_for_schema(arguments, schema)
+    return _fill_null_array_arguments(arguments, schema)
+
+
+_FENCE_RE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.S)
+
+
+def _parse_cli_tool_calls(text):
+    """Return [(tool_name, arguments_dict), ...] if the reply is a tool-call
+    envelope, None for a plain answer, or "retry" for a malformed envelope
+    (looks like a tool attempt but does not parse — worth one corrective round).
+
+    Accepts the batched ``{"tool_calls": [...]}`` form we ask for plus the
+    single ``{"tool_call": {...}}`` variant models sometimes produce, tolerates
+    a fenced block, and salvages a leading JSON object from surrounding prose.
+    """
+    raw = (text or "").strip()
+    fenced = _FENCE_RE.match(raw)
+    if fenced:
+        raw = fenced.group(1).strip()
+    if '"tool_call' not in raw:  # covers both "tool_call" and "tool_calls"
+        return None
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        try:
+            data, _end = json.JSONDecoder().raw_decode(raw[raw.index("{"):])
+        except (ValueError, json.JSONDecodeError):
+            _logger.warning(
+                "era_ai_accounts: unparsable CLI tool-call envelope: %s", raw[:200])
+            return "retry"
+    if not isinstance(data, dict):
+        return "retry"
+    calls = data.get("tool_calls")
+    if calls is None and isinstance(data.get("tool_call"), dict):
+        calls = [data["tool_call"]]
+    if not isinstance(calls, list):
+        return "retry"
+    parsed = []
+    for call in calls:
+        if isinstance(call, dict) and call.get("name"):
+            arguments = call.get("arguments")
+            parsed.append((str(call["name"]),
+                           arguments if isinstance(arguments, dict) else {}))
+    return parsed or "retry"
 
 
 def _patch():
@@ -67,14 +250,15 @@ def _patch():
     original_get_api_token = LLMApiService._get_api_token
     original_get_base_headers = LLMApiService._get_base_headers
     original_request_llm = LLMApiService._request_llm
+    original_build_tool_call_response = LLMApiService._build_tool_call_response
 
     def __init__(self, env, provider="openai"):
         account_id = env.context.get("era_ai_account_id")
         self._era_account = (
             env["era.ai.account"].sudo().browse(account_id) if account_id else None
         )
-        if provider == "anthropic_cli":
-            self.provider, self.env, self.base_url = "anthropic_cli", env, None
+        if provider in ("anthropic_cli", "openai_cli"):
+            self.provider, self.env, self.base_url = provider, env, None
             return
         if provider == "anthropic":
             self.provider, self.env = "anthropic", env
@@ -136,13 +320,24 @@ def _patch():
         return original_get_base_headers(self)
 
     def _request_llm(self, *args, **kwargs):
-        if self.provider == "anthropic_cli":
+        if self.provider in _CLI_PROVIDERS:
             return _request_llm_cli(self, *args, **kwargs)
         if self.provider == "anthropic":
             return _request_llm_anthropic(self, *args, **kwargs)
         if self.provider == "cloudflare":
             return _request_llm_cloudflare(self, *args, **kwargs)
         return original_request_llm(self, *args, **kwargs)
+
+    def _build_tool_call_response(self, tool_call_id, return_value):
+        # Upstream raises NotImplementedError for unknown providers; the CLI
+        # tool loop reuses the OpenAI envelope (rendered by _flatten).
+        if self.provider in _CLI_PROVIDERS:
+            return {
+                "type": "function_call_output",
+                "call_id": tool_call_id,
+                "output": str(return_value),
+            }
+        return original_build_tool_call_response(self, tool_call_id, return_value)
 
     # ----------------------------------------------------------- new transports
     def _request_llm_cli(self, llm_model, system_prompts, user_prompts, tools=None,
@@ -151,6 +346,13 @@ def _patch():
         if not acc:
             raise UserError(_("No AI account bound to this CLI request."))
         acc._assert_usable()
+        if tools and schema:
+            # Same stance as upstream's Gemini branch (NotImplementedError).
+            raise UserError(_(
+                "The CLI proxy does not support structured output together with tools."))
+        system_prompts = list(system_prompts or [])
+        if tools:
+            system_prompts.append(_cli_tool_instructions(self.env, tools))
         system_full, user_text = _flatten(system_prompts, user_prompts, inputs)
         # Guard against the tool-driven "Ask AI" navigation agent, whose system
         # context (full models/menus CSV) is hundreds of KB and makes the CLI/API
@@ -159,18 +361,52 @@ def _patch():
         total = len(system_full) + len(user_text)
         if max_chars and total > max_chars:
             raise UserError(_(
-                "This agent's prompt is too large for the Claude CLI proxy "
+                "This agent's prompt is too large for the local CLI proxy "
                 "(%(n)s characters, limit %(max)s). This usually means a tool-driven "
                 "'Ask AI' navigation agent — the CLI proxy supports chat/RAG only. "
-                "Assign an API-key Anthropic account to that agent, or point this "
+                "Assign an API-key account to that agent, or point this "
                 "account at a simpler chat agent. (Raise ai.cli_max_prompt_chars to override.)",
                 n=total, max=max_chars))
         timeout = _cfg_int(self.env, "ai.cli_timeout", 180)
-        text = llm_cli_transport.cli_complete(
+        transport = codex_cli_transport if acc.provider == "openai" else llm_cli_transport
+        text = transport.cli_complete(
             acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout)
+        next_inputs = list(inputs or ())
+        if tools:
+            parsed = _parse_cli_tool_calls(text)
+            if parsed == "retry":
+                # Looked like a tool attempt but didn't parse: one corrective
+                # round, then fall through (a JSON-ish final answer is still
+                # masked by ai_agent._is_internal_tool_payload downstream).
+                correction = (
+                    "Your previous reply was not a valid tool-call envelope. "
+                    "Reply again with exactly one JSON object of the form "
+                    '{"tool_calls": [{"name": ..., "arguments": {...}}]} — or '
+                    "answer the user in plain text."
+                )
+                text = transport.cli_complete(
+                    acc._cli_cfg(), llm_model, system_full,
+                    "%s\n\n%s" % (user_text, correction), timeout=timeout)
+                parsed = _parse_cli_tool_calls(text)
+            if isinstance(parsed, list):
+                # Upstream's request_llm loop executes the tools and feeds each
+                # function_call_output back into our next round via `inputs`.
+                to_call = []
+                for tool_name, arguments in parsed:
+                    arguments = _normalize_cli_tool_arguments(
+                        self.env, tools, tool_name, arguments)
+                    call_id = "clicall-%s" % uuid.uuid4().hex[:12]
+                    to_call.append((tool_name, call_id, arguments))
+                    next_inputs.append({
+                        "type": "function_call",
+                        "name": tool_name,
+                        "call_id": call_id,
+                        "arguments": json.dumps(arguments),
+                    })
+                return [], to_call, next_inputs
         if not (text and text.strip()):
             raise UserError(_("The AI CLI returned an empty answer."))
-        return [text], [], list(inputs or ())
+        return [text], [], next_inputs
 
     def _request_llm_anthropic(self, llm_model, system_prompts, user_prompts, tools=None,
                                files=None, schema=None, temperature=0.2, inputs=(), web_grounding=False):
@@ -209,9 +445,7 @@ def _patch():
             headers=self._get_base_headers(), body=body)
         choices = response.get("choices") or []
         message = choices[0].get("message") if choices else {}
-        text = (message or {}).get("content") or ""
-        if isinstance(text, list):  # some gateways return content blocks
-            text = "".join(b.get("text", "") for b in text if isinstance(b, dict))
+        text = _coerce_message_text((message or {}).get("content"))
         if not text.strip():
             raise UserError(_("Cloudflare Workers AI returned no text."))
         return [text], [], list(inputs or ())
@@ -220,11 +454,14 @@ def _patch():
     LLMApiService._get_api_token = _get_api_token
     LLMApiService._get_base_headers = _get_base_headers
     LLMApiService._request_llm = _request_llm
+    LLMApiService._build_tool_call_response = _build_tool_call_response
     LLMApiService._request_llm_cli = _request_llm_cli
     LLMApiService._request_llm_anthropic = _request_llm_anthropic
     LLMApiService._request_llm_cloudflare = _request_llm_cloudflare
     LLMApiService._era_ai_accounts_patched = True
-    _logger.info("era_ai_accounts: account-aware LLMApiService layer active (CLI + Anthropic)")
+    _logger.info(
+        "era_ai_accounts: account-aware LLMApiService layer active "
+        "(Claude/Codex CLI + Anthropic)")
 
 
 _patch()

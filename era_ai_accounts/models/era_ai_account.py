@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import secrets
+import shlex
 import shutil
 import subprocess
 import time
@@ -17,6 +18,7 @@ from odoo.tools import config
 
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
+from ..utils import codex_cli_transport
 from ..utils import crypto
 from ..utils import llm_cli_transport
 
@@ -41,6 +43,23 @@ OAUTH_SCOPES = "org:create_api_key user:profile user:inference"
 # Transient PKCE state (verifier + state) stashed per account while a login is in
 # flight. Cleared once the code is exchanged.
 _PKCE_PARAM = "era_ai_accounts.oauth_pkce.%s"
+# Pending codex device-auth login per account: {pid, out, started_at}. Cleared
+# once the login completes, fails, or is superseded.
+_DEVICE_PARAM = "era_ai_accounts.codex_device.%s"
+
+# Providers that have a first-party local CLI we can proxy through (the
+# "connected account" path): Anthropic's `claude` and OpenAI's `codex`.
+CLI_PROXY_PROVIDERS = ("anthropic", "openai")
+
+# Per-provider layout of the linked-account credential store, mirroring what
+# each first-party CLI expects:
+#  - claude reads `$CLAUDE_CONFIG_DIR/.credentials.json`;
+#  - codex reads `$CODEX_HOME/auth.json` (CODEX_HOME *is* the config dir).
+# The matching env var is exported by each transport, not stored here.
+_CLI_PROFILES = {
+    "anthropic": {"subdir": ".claude", "cred_file": ".credentials.json"},
+    "openai": {"subdir": ".codex", "cred_file": "auth.json"},
+}
 
 # Curated chat models for the Claude CLI-proxy (the CLI has no list endpoint).
 # Use the CLI's *aliases*: `claude --model` resolves them to the latest model of
@@ -50,6 +69,19 @@ CLAUDE_CLI_MODELS = [
     ("opus", "Claude Opus (latest)"),
     ("sonnet", "Claude Sonnet (latest)"),
     ("haiku", "Claude Haiku (latest)"),
+]
+
+# Curated chat models for the Codex CLI-proxy (ChatGPT-plan auth has no model
+# list endpoint either). Unlike Claude there are no version-proof aliases, and
+# the codex-tuned slugs (gpt-5.x-codex, incl. the unversioned gpt-5-codex) are
+# REJECTED when passed explicitly under ChatGPT-account auth ("model is not
+# supported when using Codex with a ChatGPT account" — verified live 2026-06 on
+# codex-cli 0.139). Only the general gpt-5.x slugs work; re-verify with
+# `codex exec -m <slug>` after CLI upgrades — the catalog rows are editable per
+# account if a plan serves different models.
+CODEX_CLI_MODELS = [
+    ("gpt-5.4", "GPT-5.4"),
+    ("gpt-5.4-mini", "GPT-5.4 Mini"),
 ]
 
 # Curated Cloudflare Workers AI models — (model_id, label, kind, rate).
@@ -88,6 +120,26 @@ OPENAI_IMAGE_MODELS = [
 ]
 
 
+def _codex_plan_from_id_token(id_token):
+    """Best-effort ChatGPT plan name ('plus', 'pro', …) from a Codex id_token.
+
+    The id_token is a JWT whose payload carries the plan under OpenAI's auth
+    claim. Decoded without signature verification — it is only used for a
+    display label, never for authorization decisions.
+    """
+    try:
+        payload = id_token.split(".")[1]
+        payload += "=" * (-len(payload) % 4)
+        claims = json.loads(base64.urlsafe_b64decode(payload.encode()))
+    except (IndexError, ValueError, AttributeError):
+        return ""
+    if not isinstance(claims, dict):
+        return ""
+    auth_claim = claims.get("https://api.openai.com/auth")
+    plan = auth_claim.get("chatgpt_plan_type") if isinstance(auth_claim, dict) else ""
+    return str(plan or claims.get("chatgpt_plan_type") or "")
+
+
 class EraAiAccount(models.Model):
     _name = "era.ai.account"
     _description = "AI Provider Account"
@@ -113,8 +165,10 @@ class EraAiAccount(models.Model):
         ],
         required=True,
         default="cli_proxy",
-        help="CLI proxy routes calls through the locally-authenticated Claude CLI "
-             "(no API key, no per-token billing). API key calls the provider over HTTP.",
+        help="CLI proxy routes calls through a locally-authenticated first-party "
+             "CLI — Claude Code for Anthropic, Codex for OpenAI — using the "
+             "connected account (no API key, no per-token billing). API key calls "
+             "the provider over HTTP.",
     )
 
     # --- Sharing / ownership -------------------------------------------------
@@ -145,8 +199,9 @@ class EraAiAccount(models.Model):
     )
     max_concurrency = fields.Integer(
         default=1,
-        help="Legacy hint. CLI-proxy calls are now globally serialized (one at a "
-             "time across all workers/users), so concurrency is effectively 1.",
+        help="Legacy hint. CLI-proxy calls are serialized host-wide per provider: "
+             "Claude allows ai.cli_max_concurrency slots, Codex always exactly 1 "
+             "(its auth.json is single-writer).",
     )
 
     # --- Secret (encrypted, manager-only) ------------------------------------
@@ -185,29 +240,39 @@ class EraAiAccount(models.Model):
     # --- CLI-proxy transport config -----------------------------------------
     cli_path = fields.Char(
         string="CLI binary path",
-        help="Optional override for the AI CLI binary. Auto-detected from the "
-             "Claude Code extension when empty.",
+        help="Optional override for the AI CLI binary. Auto-detected when empty: "
+             "the Claude Code extension binary for Anthropic, `codex` on PATH "
+             "(or ERA_AI_CODEX_BIN) for OpenAI.",
     )
     cli_home_dir = fields.Char(
         string="CLI HOME",
         default="/opt/odoo",
-        help="HOME directory whose connected-account auth the CLI should use. "
-             "Ignored once you link a Claude account below (the linked credentials "
-             "take over).",
+        help="HOME directory whose connected-account auth the CLI should use "
+             "(~/.claude for Claude, ~/.codex for Codex). Ignored once you link "
+             "an account below (the linked credentials take over).",
     )
     cli_extra_args = fields.Char(
         string="CLI extra arguments", groups=MANAGER_GROUP,
         help="Appended verbatim to the CLI invocation (shlex-split). Manager-only: "
              "these flags shape what the subprocess may do.",
     )
+    cli_tools_enabled = fields.Boolean(
+        string="Allow agent tools",
+        default=True,
+        help="Let agents run their Odoo tools (e.g. Ask AI's database lookups) "
+             "through this CLI account, via a JSON tool-call loop. Each tool "
+             "round is one extra CLI call — disable to keep the account strictly "
+             "single-shot chat. Tools always execute in Odoo with the requesting "
+             "user's own access rights; the CLI only sees text.",
+    )
 
-    # --- Linked Claude account ("Login with Claude", system-wide) ------------
+    # --- Linked subscription account (Claude or ChatGPT, system-wide) --------
     cli_oauth_linked = fields.Boolean(
-        string="Claude account linked",
+        string="Subscription account linked",
         compute="_compute_cli_oauth_linked",
-        help="Whether a Claude subscription has been linked to this account via "
-             "'Login with Claude'. The credentials are stored once, on the server, "
-             "and used by every user — there is no per-user Claude login.",
+        help="Whether a Claude or ChatGPT subscription has been linked to this "
+             "account. The credentials are stored once, on the server, and used "
+             "by every user — there is no per-user login.",
     )
     cli_oauth_label = fields.Char(
         string="Linked account", compute="_compute_cli_oauth_linked",
@@ -272,28 +337,44 @@ class EraAiAccount(models.Model):
             else:
                 info = {}
             rec.cli_oauth_linked = bool(info.get("linked"))
-            if info.get("linked"):
+            if not info.get("linked"):
+                rec.cli_oauth_label = ""
+            elif rec.provider == "openai":
+                plan = info.get("subscription") or ""
+                rec.cli_oauth_label = (
+                    _("ChatGPT %s linked", plan) if plan else _("ChatGPT account linked"))
+            else:
                 sub = info.get("subscription") or "subscription"
                 rec.cli_oauth_label = _("Claude %s linked", sub)
-            else:
-                rec.cli_oauth_label = ""
 
     # ----------------------------------------------------------------- onchange
     @api.onchange("provider")
     def _onchange_provider(self):
-        # Only Anthropic has a local CLI proxy; everything else needs an API key.
-        if self.provider != "anthropic" and self.auth_mode == "cli_proxy":
+        # Only Anthropic (claude) and OpenAI (codex) have a local CLI proxy;
+        # everything else needs an API key.
+        if self.provider not in CLI_PROXY_PROVIDERS and self.auth_mode == "cli_proxy":
             self.auth_mode = "api_key"
 
     # ---------------------------------------------------------------- constraints
     @api.constrains("auth_mode", "provider")
     def _check_auth_mode(self):
         for rec in self:
-            if rec.auth_mode == "cli_proxy" and rec.provider != "anthropic":
+            if rec.auth_mode == "cli_proxy" and rec.provider not in CLI_PROXY_PROVIDERS:
                 raise ValidationError(_(
-                    "The local CLI proxy is currently only available for the "
-                    "Anthropic (Claude) provider."
+                    "The local CLI proxy is only available for the Anthropic "
+                    "(Claude CLI) and OpenAI (Codex CLI) providers."
                 ))
+
+    @api.constrains("cli_extra_args")
+    def _check_cli_extra_args(self):
+        # The transports shlex-split this field on every call — catch an
+        # unbalanced quote at save time instead of failing every AI request.
+        for rec in self:
+            if rec.sudo().cli_extra_args:
+                try:
+                    shlex.split(rec.sudo().cli_extra_args)
+                except ValueError as exc:
+                    raise ValidationError(_("Invalid CLI extra arguments: %s", exc))
 
     @api.constrains("base_url")
     def _check_base_url(self):
@@ -318,7 +399,7 @@ class EraAiAccount(models.Model):
         """Provider token used to build a LLMApiService for this account."""
         self.ensure_one()
         if self.auth_mode == "cli_proxy":
-            return "anthropic_cli"
+            return "openai_cli" if self.provider == "openai" else "anthropic_cli"
         if self.provider == "custom":
             return "custom_llm"
         return self.provider  # openai / google / anthropic / cloudflare
@@ -381,6 +462,11 @@ class EraAiAccount(models.Model):
         if self.provider == "cloudflare":
             return self._generate_image_cloudflare(prompt, model, steps, width, height)
         if self.provider == "openai":
+            if self.auth_mode == "cli_proxy":
+                raise UserError(_(
+                    "Image generation is not available through the Codex CLI proxy "
+                    "(account '%s') — use an OpenAI API-key account for images.",
+                    self.name))
             return self._generate_image_openai(prompt, model, width, height)
         raise UserError(_(
             "Image generation is supported for Cloudflare Workers AI and OpenAI "
@@ -509,11 +595,16 @@ class EraAiAccount(models.Model):
     def _preferred_chat_model(self):
         """Preferred default model id for this account, by provider + auth mode.
 
-        The CLI proxy uses the version-proof alias 'opus'; the Anthropic HTTP API
-        needs a full id (aliases are a CLI-only convenience)."""
+        The Claude CLI proxy uses the version-proof alias 'opus'; the Codex CLI
+        has no aliases, so its default is a concrete slug. HTTP-API accounts use
+        the provider defaults (e.g. the ChatGPT plan's gpt-5.x slugs are not
+        valid API-key models and vice versa)."""
         self.ensure_one()
-        if self.auth_mode == "cli_proxy" and self.provider == "anthropic":
-            return "opus"
+        if self.auth_mode == "cli_proxy":
+            if self.provider == "anthropic":
+                return "opus"
+            if self.provider == "openai":
+                return CODEX_CLI_MODELS[0][0]
         return self._PROVIDER_DEFAULT_MODEL.get(self.provider)
 
     def _default_chat_model(self):
@@ -540,58 +631,88 @@ class EraAiAccount(models.Model):
         return self.model_ids.filtered(
             lambda m: m.kind == "chat" and m.active and m.model_id == target)[:1]
 
-    # ----------------------------------------------- linked-Claude config dir
+    # -------------------------------------------- linked-account config dir
+    def _cli_profile(self):
+        """Credential layout of this account's first-party CLI (see _CLI_PROFILES)."""
+        self.ensure_one()
+        return _CLI_PROFILES.get(self.provider) or _CLI_PROFILES["anthropic"]
+
     def _cli_managed_home(self):
-        """HOME for a linked Claude account — isolated, under the Odoo data dir.
+        """HOME for a linked account — isolated, under the Odoo data dir.
 
         Deliberately NOT the server's own HOME (/opt/odoo): linking here must
-        never overwrite the server operator's `~/.claude` Claude Code login. One
-        directory per account record; in practice the business links a single
-        shared account that every user routes through.
+        never overwrite the server operator's own `~/.claude` / `~/.codex`
+        login. One directory per account record; in practice the business links
+        a single shared account that every user routes through.
         """
         self.ensure_one()
         data_dir = config.get("data_dir") or "/var/lib/odoo"
         return os.path.join(data_dir, "era_ai_accounts", "cli", str(self.id or "new"))
 
     def _cli_managed_config_dir(self, create=False):
-        """The linked account's private CLAUDE_CONFIG_DIR (holds .credentials.json)."""
+        """The linked account's private CLI config dir, in each CLI's native
+        layout: `<home>/.claude` (CLAUDE_CONFIG_DIR, holds .credentials.json)
+        for Claude, `<home>/.codex` (CODEX_HOME, holds auth.json) for Codex."""
         self.ensure_one()
         home = self._cli_managed_home()
-        path = os.path.join(home, ".claude")
+        path = os.path.join(home, self._cli_profile()["subdir"])
         if create:
             try:
                 os.makedirs(path, mode=0o700, exist_ok=True)
-                # makedirs masks mode by umask and only the leaf is guaranteed;
-                # force the account-private dirs to 0700 so a linked account's
+                # makedirs masks mode by umask and only sets it on the leaf;
+                # force the whole private chain (…/era_ai_accounts, …/cli,
+                # …/<id>, …/<subdir>) to 0700 so a linked account's
                 # presence/ids aren't world-listable (the token file is 0600).
-                for p in (home, path):
+                cli_root = os.path.dirname(home)
+                for p in (os.path.dirname(cli_root), cli_root, home, path):
                     try:
                         os.chmod(p, 0o700)
                     except OSError as exc:
                         _logger.warning(
                             "era_ai_accounts: cannot restrict permissions on %s: %s", p, exc)
             except OSError as e:
-                raise UserError(_("Cannot create Claude config dir %s: %s", path, e))
+                raise UserError(_("Cannot create the CLI config dir %s: %s", path, e))
         return path
 
     def _cli_credentials_path(self):
         self.ensure_one()
-        return os.path.join(self._cli_managed_config_dir(), ".credentials.json")
+        return os.path.join(self._cli_managed_config_dir(), self._cli_profile()["cred_file"])
 
     def _cli_oauth_info(self):
         """Read the linked credentials; return {linked, subscription, expires_at}."""
         self.ensure_one()
         try:
             with open(self._cli_credentials_path(), "r") as f:
-                oauth = (json.load(f).get("claudeAiOauth") or {})
+                data = json.load(f)
         except (OSError, ValueError):
             return {"linked": False}
+        if not isinstance(data, dict):
+            return {"linked": False}
+        if self.provider == "openai":
+            return self._codex_oauth_info(data)
+        oauth = data.get("claudeAiOauth") or {}
         if not oauth.get("accessToken"):
             return {"linked": False}
         return {
             "linked": True,
             "subscription": oauth.get("subscriptionType") or "",
             "expires_at": oauth.get("expiresAt") or 0,
+        }
+
+    @staticmethod
+    def _codex_oauth_info(data):
+        """Interpret a Codex ``auth.json``: ChatGPT-mode tokens => linked."""
+        tokens = data.get("tokens") or {}
+        if not isinstance(tokens, dict) or not tokens.get("access_token"):
+            return {"linked": False}
+        # auth_mode is "chatgpt" for subscription auth; absent on some older
+        # files — only an explicit API-key mode disqualifies.
+        if (data.get("auth_mode") or "chatgpt") != "chatgpt":
+            return {"linked": False}
+        return {
+            "linked": True,
+            "subscription": _codex_plan_from_id_token(tokens.get("id_token") or ""),
+            "expires_at": 0,  # codex tracks freshness itself via last_refresh
         }
 
     def _cli_is_linked(self):
@@ -611,10 +732,10 @@ class EraAiAccount(models.Model):
 
     # ----------------------------------------------------- OAuth (PKCE) login
     def _assert_oauth_manager(self):
-        """Linking a Claude account is a system-wide credential change: managers only."""
+        """Linking an account is a system-wide credential change: managers only."""
         self.ensure_one()
         if not (self.env.su or self.env.user.has_group(MANAGER_GROUP)):
-            raise UserError(_("Only AI Account Managers can link or unlink a Claude account."))
+            raise UserError(_("Only AI Account Managers can link or unlink a subscription account."))
 
     def _oauth_start(self):
         """Begin a login: mint a PKCE pair, stash it, return the authorize URL."""
@@ -622,6 +743,14 @@ class EraAiAccount(models.Model):
         self._assert_oauth_manager()
         if self.auth_mode != "cli_proxy":
             raise UserError(_("Linking a Claude account only applies to CLI-proxy accounts."))
+        if self.provider != "anthropic":
+            # OpenAI's OAuth client only redirects to localhost:1455 (no hosted
+            # copy-code page), so there is no in-app OAuth for it — ChatGPT
+            # accounts are linked by pasting codex's auth.json instead.
+            raise UserError(_(
+                "In-app OAuth login is only available for Anthropic (Claude). "
+                "For OpenAI, run 'codex login' on your own computer and paste "
+                "the auth.json contents in the connect dialog."))
         verifier = secrets.token_urlsafe(64)
         challenge = base64.urlsafe_b64encode(
             hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
@@ -711,26 +840,191 @@ class EraAiAccount(models.Model):
         ICP.set_param(_PKCE_PARAM % self.id, "")  # consume the PKCE state
         return True
 
-    def _oauth_logout(self):
-        """Remove the linked account's stored credentials (forces re-link)."""
+    def _cli_drop_linked_credentials(self):
+        """Remove this account's linked credential file + pending login state."""
         self.ensure_one()
-        self._assert_oauth_manager()
         try:
             os.remove(self.sudo()._cli_credentials_path())
         except OSError:
             pass
         self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % self.id, "")
+        self._codex_device_login_cancel()
+
+    def _oauth_logout(self):
+        """Remove the linked account's stored credentials (forces re-link)."""
+        self.ensure_one()
+        self._assert_oauth_manager()
+        self._cli_drop_linked_credentials()
         return True
 
+    def write(self, vals):
+        # Changing the provider re-keys the credential layout (_cli_profile):
+        # drop the OLD provider's linked credentials first, or they would be
+        # stranded on disk — invisible to 'Disconnect', yet silently picked up
+        # again if the provider is ever switched back. Manager-gated via ACL
+        # (only AI Account Managers can write era.ai.account).
+        if "provider" in vals:
+            for rec in self:
+                if rec.id and rec.provider != vals["provider"]:
+                    rec.sudo()._cli_drop_linked_credentials()
+        res = super().write(vals)
+        # The CLI proxies are text-only: flipping an account to cli_proxy must
+        # not leave earlier image/embedding rows (e.g. synced gpt-image-1)
+        # selectable in other modules' pickers — archive them, like a sync would.
+        if vals.get("auth_mode") == "cli_proxy":
+            stale = self.with_context(active_test=False).model_ids.filtered(
+                lambda m: m.kind != "chat" and m.active)
+            if stale:
+                _logger.info(
+                    "era_ai_accounts: archiving %d non-chat model row(s) on "
+                    "CLI-proxy switch: %s", len(stale), stale.mapped("model_id"))
+                stale.active = False
+        return res
+
+    # ------------------------------------------- ChatGPT (Codex auth.json) link
+    def _codex_link_with_auth_json(self, payload):
+        """Link a ChatGPT account by storing a pasted Codex ``auth.json``.
+
+        This is OpenAI's officially documented pattern for servers/CI: the
+        manager runs ``codex login`` on their own machine (browser OAuth) and
+        copies ``~/.codex/auth.json`` here. Codex then refreshes and rewrites
+        the file itself during use; we never call OpenAI's OAuth endpoints.
+        """
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if self.auth_mode != "cli_proxy" or self.provider != "openai":
+            raise UserError(_(
+                "Pasting a Codex auth.json only applies to OpenAI CLI-proxy accounts."))
+        payload = (payload or "").strip()
+        if not payload:
+            raise UserError(_("Paste the contents of your ~/.codex/auth.json file."))
+        try:
+            data = json.loads(payload)
+        except ValueError:
+            raise UserError(_(
+                "That is not valid JSON. Paste the complete, unmodified contents "
+                "of ~/.codex/auth.json."))
+        if not isinstance(data, dict):
+            raise UserError(_("Unexpected auth.json structure (expected a JSON object)."))
+        tokens = data.get("tokens") or {}
+        if (
+            not isinstance(tokens, dict)
+            or not tokens.get("access_token")
+            or not tokens.get("refresh_token")
+        ):
+            if data.get("OPENAI_API_KEY"):
+                raise UserError(_(
+                    "This auth.json contains an API key, not a ChatGPT login. "
+                    "Sign in with 'codex login' (choose 'Sign in with ChatGPT') "
+                    "and paste the resulting auth.json — or use an API-key "
+                    "account instead."))
+            raise UserError(_(
+                "This auth.json has no ChatGPT tokens (tokens.access_token / "
+                "refresh_token). Run 'codex login' on your computer first; if "
+                "your auth.json looks empty, set cli_auth_credentials_store = "
+                "\"file\" in ~/.codex/config.toml and log in again."))
+        if (data.get("auth_mode") or "chatgpt") != "chatgpt":
+            raise UserError(_(
+                "This auth.json is not a ChatGPT-account login (auth_mode=%s).",
+                data.get("auth_mode")))
+        # Store the file verbatim (normalized JSON): codex needs last_refresh,
+        # account_id, etc. intact, and will rotate the tokens in place later.
+        self.sudo()._cli_write_credentials(data)
+        return True
+
+    # --------------------------------------- ChatGPT (Codex device-code) login
+    def _codex_device_state(self):
+        """The pending device login {pid, out, started_at}, or {}."""
+        self.ensure_one()
+        raw = self.env["ir.config_parameter"].sudo().get_param(_DEVICE_PARAM % self.id)
+        try:
+            data = json.loads(raw) if raw else {}
+        except ValueError:
+            data = {}
+        return data if isinstance(data, dict) else {}
+
+    def _codex_device_clear(self):
+        self.ensure_one()
+        self.env["ir.config_parameter"].sudo().set_param(_DEVICE_PARAM % self.id, "")
+
+    def _codex_device_login_start(self):
+        """Kick off ``codex login --device-auth``; return {url, code, raw}.
+
+        The simple path for linking a ChatGPT account: codex prints a
+        verification URL + one-time code (valid ~15 minutes), the manager
+        approves from any browser/phone, and codex writes auth.json into the
+        managed CODEX_HOME itself. Requires device codes to be enabled in the
+        ChatGPT account's security settings.
+        """
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if self.auth_mode != "cli_proxy" or self.provider != "openai":
+            raise UserError(_(
+                "Device login only applies to OpenAI CLI-proxy accounts."))
+        # Supersede any previous attempt (its one-time code dies with it).
+        self._codex_device_login_cancel()
+        cfg = {
+            "cli_path": self.cli_path or False,
+            "home_dir": self._cli_managed_home(),
+            "config_dir": self._cli_managed_config_dir(create=True),
+        }
+        pid, out_path = codex_cli_transport.device_login_start(cfg)
+        self.env["ir.config_parameter"].sudo().set_param(
+            _DEVICE_PARAM % self.id,
+            json.dumps({"pid": pid, "out": out_path, "started_at": time.time()}))
+        # codex contacts the auth server before printing the URL/code — poll its
+        # output briefly (worst case ~10s) instead of making the user reopen.
+        url = code = raw = ""
+        for _attempt in range(40):
+            time.sleep(0.25)
+            raw = codex_cli_transport.device_login_read(out_path)
+            url, code = codex_cli_transport.parse_device_login(raw)
+            if url and code:
+                break
+            if not codex_cli_transport.pid_is_pending_login(pid):
+                break
+        if url and code:
+            return {"url": url, "code": code, "raw": raw}
+        self._codex_device_clear()
+        detail = (raw or "").strip()[-300:] or _("no output from the codex CLI")
+        raise UserError(_(
+            "Could not start the device login: %s\n\nMake sure device codes are "
+            "enabled in the ChatGPT account's security settings, or paste "
+            "auth.json below instead.", detail))
+
+    def _codex_device_login_status(self):
+        """Poll a pending device login: 'linked' | 'pending' | 'failed:<detail>'."""
+        self.ensure_one()
+        if self._cli_is_linked():
+            self._codex_device_clear()
+            return "linked"
+        state = self._codex_device_state()
+        if not state:
+            return "failed:%s" % _("No device login in progress — start one first.")
+        if codex_cli_transport.pid_is_pending_login(state.get("pid")):
+            return "pending"
+        # Process ended without writing auth.json: denied, expired, or errored.
+        raw = codex_cli_transport.device_login_read(state.get("out") or "")
+        self._codex_device_clear()
+        return "failed:%s" % ((raw or "").strip()[-300:] or _("the login attempt ended"))
+
+    def _codex_device_login_cancel(self):
+        self.ensure_one()
+        state = self._codex_device_state()
+        if state.get("pid"):
+            codex_cli_transport.device_login_kill(state["pid"])
+        self._codex_device_clear()
+
     def action_ai_claude_login(self):
-        """Button: open the 'Login with Claude' wizard for this account."""
+        """Button: open the link-account wizard (Claude OAuth / ChatGPT auth.json)."""
         self.ensure_one()
         self._assert_oauth_manager()
         if not self.id:
-            raise UserError(_("Save the account first, then link a Claude subscription."))
+            raise UserError(_("Save the account first, then link a subscription."))
         return {
             "type": "ir.actions.act_window",
-            "name": _("Login with Claude"),
+            "name": _("Connect ChatGPT account") if self.provider == "openai"
+                    else _("Login with Claude"),
             "res_model": "era.ai.account.login",
             "view_mode": "form",
             "target": "new",
@@ -738,13 +1032,13 @@ class EraAiAccount(models.Model):
         }
 
     def action_ai_claude_logout(self):
-        """Button: disconnect the linked Claude account."""
+        """Button: disconnect the linked subscription account."""
         for rec in self:
             rec._oauth_logout()
-        return self._notify(_("Claude account disconnected."))
+        return self._notify(_("Subscription account disconnected."))
 
     def unlink(self):
-        # Remove any linked-Claude credential dir so deleting an account leaves no
+        # Remove any linked-account credential dir so deleting an account leaves no
         # orphaned tokens on disk (best-effort; never blocks the delete).
         for rec in self:
             try:
@@ -752,6 +1046,7 @@ class EraAiAccount(models.Model):
             except Exception:  # noqa: BLE001
                 pass
             self.env["ir.config_parameter"].sudo().set_param(_PKCE_PARAM % rec.id, "")
+            rec._codex_device_login_cancel()
         return super().unlink()
 
     def _cli_cfg(self):
@@ -778,12 +1073,13 @@ class EraAiAccount(models.Model):
 
         concurrency = max(1, _i("ai.cli_max_concurrency", 1))
 
-        # A linked ("Login with Claude") account routes through its own isolated
+        # A linked subscription account routes through its own isolated
         # credentials dir; otherwise fall back to the ambient HOME-based login.
         if self._cli_is_linked():
             home_dir = self._cli_managed_home()
-            # create=True: guarantee the dir exists for CLAUDE_CONFIG_DIR even if
-            # it was removed out from under us between the link check and the call.
+            # create=True: guarantee the dir exists for CLAUDE_CONFIG_DIR /
+            # CODEX_HOME even if it was removed out from under us between the
+            # link check and the call.
             config_dir = self._cli_managed_config_dir(create=True)
         else:
             home_dir = self.cli_home_dir or "/opt/odoo"
@@ -791,6 +1087,7 @@ class EraAiAccount(models.Model):
 
         return {
             "account_id": self.id,
+            "provider": self.provider,
             "cli_path": self.cli_path or False,
             "home_dir": home_dir,
             "config_dir": config_dir,
@@ -850,7 +1147,16 @@ class EraAiAccount(models.Model):
                     "last_error": False,
                 })
             except Exception as exc:  # noqa: BLE001
-                rec.write({"state": "error", "last_error": str(exc)[:2000]})
+                # The raise below rolls back this transaction — persist the
+                # error state through a separate cursor so the Status tab still
+                # shows what failed.
+                detail = str(exc)[:2000]
+                try:
+                    with self.pool.cursor() as cr:
+                        rec.with_env(rec.env(cr=cr)).write(
+                            {"state": "error", "last_error": detail})
+                except Exception:  # noqa: BLE001 - never mask the real error
+                    _logger.exception("era_ai_accounts: could not persist validation error")
                 raise UserError(_("Validation failed: %s", exc))
         return self._notify(_("Connection validated."))
 
@@ -858,6 +1164,10 @@ class EraAiAccount(models.Model):
         self.ensure_one()
         self._assert_usable()
         if self.auth_mode == "cli_proxy":
+            if self.provider == "openai":
+                # `codex login status` proves both that the binary runs and that
+                # the account's credentials (linked or ambient) are accepted.
+                return codex_cli_transport.check_login(self._cli_cfg())
             binary = llm_cli_transport.resolve_cli_binary(self.cli_path or None)
             if not binary:
                 raise UserError(_("Claude CLI binary not found on this server."))
@@ -889,7 +1199,8 @@ class EraAiAccount(models.Model):
         Model = self.env["era.ai.model"]
         # rows: (model_id, label, kind, cost_info)
         if self.auth_mode == "cli_proxy":
-            rows = [(mid, label, "chat", "") for mid, label in CLAUDE_CLI_MODELS]
+            cli_models = CODEX_CLI_MODELS if self.provider == "openai" else CLAUDE_CLI_MODELS
+            rows = [(mid, label, "chat", "") for mid, label in cli_models]
         elif self.provider == "cloudflare":
             # Cloudflare has no per-model price API, so use the curated catalog with
             # the published Neuron rates baked in (see CLOUDFLARE_MODELS).
@@ -901,7 +1212,12 @@ class EraAiAccount(models.Model):
             rows += list(OPENAI_IMAGE_MODELS)
         else:
             rows = [(mid, label, kind, "") for mid, label, kind in self._http_list_models()]
-        existing = {(m.model_id, m.kind): m for m in self.model_ids}
+        # active_test=False: archived rows must stay in the upsert map, or
+        # re-creating a model that was previously deactivated (provider switch,
+        # curated-list churn, admin unchecking a row) trips the SQL unique
+        # constraint and aborts the whole sync.
+        existing = {(m.model_id, m.kind): m
+                    for m in self.with_context(active_test=False).model_ids}
         seen = set()
         for model_id, label, kind, cost in rows:
             seen.add((model_id, kind))

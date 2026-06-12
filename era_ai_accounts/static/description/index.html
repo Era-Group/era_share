@@ -6,9 +6,9 @@
     <h1 style="font-size:40px;margin:0 0 10px;font-weight:800;color:#fff;">ERA AI Accounts</h1>
     <p style="font-size:20px;margin:0 auto;max-width:720px;opacity:.95;line-height:1.5;">
       Power Odoo&nbsp;19 AI with <b>linked provider accounts</b> — run Claude through the
-      Claude&nbsp;Code CLI already signed in on your server (<b>no API key, no per-token billing</b>),
-      or connect OpenAI / Gemini / Anthropic / any OpenAI-compatible provider by key — and
-      <b>share each account with the right users</b>.
+      Claude&nbsp;Code CLI or ChatGPT through the Codex&nbsp;CLI already signed in on your server
+      (<b>no API key, no per-token billing</b>), or connect OpenAI / Gemini / Anthropic / any
+      OpenAI-compatible provider by key — and <b>share each account with the right users</b>.
     </p>
   </div>
 
@@ -17,10 +17,13 @@
     <h2 style="margin:0 0 8px;color:#5b21b6;font-size:22px;">حسابات الذكاء الاصطناعي من ERA</h2>
     <p style="margin:0;color:#374151;">
       شغّل ميزات الذكاء الاصطناعي في أودو 19 عبر <b>حسابات مزوّدين مرتبطة</b>: استخدم Claude من خلال
-      واجهة Claude&nbsp;Code المُسجَّل دخولها على الخادم <b>دون مفتاح API ودون فوترة لكل رمز</b>، أو اربط
+      واجهة Claude&nbsp;Code أو ChatGPT من خلال واجهة Codex المُسجَّل دخولها على الخادم
+      <b>دون مفتاح API ودون فوترة لكل رمز</b>، أو اربط
       حسابات OpenAI و Gemini و Anthropic أو أي مزوّد متوافق مع OpenAI عبر مفتاح، ثم <b>شارك كل حساب مع
-      المستخدمين المناسبين</b>. الأسرار مُشفَّرة، والوصول محكوم بصلاحيات دقيقة. ويُستدعى Claude
-      <b>باستدعاء واحد في كل مرة على مستوى الخادم</b> مع <b>مباعدة زمنية تتناسب مع حجم الطلب</b>،
+      المستخدمين المناسبين</b>. اربط ChatGPT برمز جهاز — تمامًا مثل تسجيل الدخول على التلفاز — وتعمل
+      <b>أدوات الوكلاء</b> (مثل استخراج البيانات في «اسأل الذكاء الاصطناعي») عبر حسابات واجهة الأوامر
+      بصلاحيات المستخدم الطالب نفسه. الأسرار مُشفَّرة، والوصول محكوم بصلاحيات دقيقة. وتُستدعى واجهة الأوامر
+      <b>باستدعاء واحد في كل مرة على مستوى الخادم لكل مزوّد</b> مع <b>مباعدة زمنية تتناسب مع حجم الطلب</b>،
       حفاظًا على الاشتراك من الاستدعاءات المتزامنة أو المتسارعة.
     </p>
   </div>
@@ -30,8 +33,8 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
       <div style="font-size:26px;">🔌</div>
-      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Claude with no API billing</h3>
-      <p style="margin:0;color:#4b5563;line-height:1.6;">Routes chat through the locally-authenticated <code>claude</code> CLI (the connected account). The first-party tool makes the call under its own auth — credentials are never read or replayed.</p>
+      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Claude &amp; ChatGPT with no API billing</h3>
+      <p style="margin:0;color:#4b5563;line-height:1.6;">Routes chat through the locally-authenticated <code>claude</code> or <code>codex</code> CLI (the connected account). The first-party tool makes the call under its own auth — credentials are never read or replayed.</p>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
@@ -48,8 +51,14 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
       <div style="font-size:26px;">🔗</div>
-      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Login with Claude</h3>
-      <p style="margin:0;color:#4b5563;line-height:1.6;">Link a Claude subscription <b>once, in-app</b> (OAuth, no API key): every user in the system runs through that one connected account — no per-user logins to manage.</p>
+      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Login with Claude / Connect ChatGPT</h3>
+      <p style="margin:0;color:#4b5563;line-height:1.6;">Link a Claude subscription (OAuth) or a ChatGPT subscription — <b>device code</b>, like signing in on a TV: open a link, type a short code, approve (or paste the Codex CLI's <code>auth.json</code>) — <b>once, in-app</b>, no API key: every user runs through that one connected account.</p>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+      <div style="font-size:26px;">🛠️</div>
+      <h3 style="margin:8px 0 6px;color:#4338ca;font-size:18px;">Agent tools — "Ask AI" works</h3>
+      <p style="margin:0;color:#4b5563;line-height:1.6;">CLI accounts run Odoo's agent tools (Ask&nbsp;AI database lookups, read_group, search…) through a strict JSON tool-call loop. Tools execute <b>in Odoo with the asking user's own access rights</b> — the CLI only ever sees text. Per-account on/off switch.</p>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1px solid #eef2ff;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
@@ -97,7 +106,7 @@
       <!-- English -->
       <div style="flex:1 1 360px;">
         <ul style="margin:0;padding-left:20px;line-height:1.8;color:#374151;font-size:16px;">
-          <li><b>One call at a time, host-wide.</b> A global lock guarantees at most one Claude CLI call runs at any instant across <i>every</i> Odoo worker and user — the connected subscription never receives concurrent requests.</li>
+          <li><b>One call at a time, host-wide.</b> A global lock (one pool per provider) guarantees at most one CLI call runs at any instant across <i>every</i> Odoo worker and user — the connected subscription never receives concurrent requests.</li>
           <li><b>Size-aware pacing.</b> Consecutive calls are separated by a gap that scales with the request body size (small chats ≈ 1&nbsp;s, large contexts up to 30&nbsp;s) — <b>bigger requests wait longer</b>.</li>
           <li><b>Crash-safe &amp; tunable.</b> The lock auto-releases if a worker dies (no deadlocks), and every threshold is a live <code>ir.config_parameter</code> (<code>ai.cli_min_gap</code>, <code>ai.cli_gap_per_kb</code>, <code>ai.cli_max_gap</code>, <code>ai.cli_lock_wait</code>).</li>
         </ul>
@@ -122,8 +131,8 @@
       <p style="margin:0;color:#78350f;line-height:1.6;">The CLI proxy invokes the sanctioned first-party tool; it never replays OAuth tokens to the raw API. Serving many users from one subscription draws on its rate limits — so calls are globally serialized (one at a time) and paced by request size, with an instant kill switch.</p>
     </div>
     <div style="flex:1 1 320px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:20px 24px;">
-      <h3 style="margin:0 0 8px;color:#1e40af;font-size:17px;">ℹ️ Good to know (v1)</h3>
-      <p style="margin:0;color:#1e3a8a;line-height:1.6;">The CLI proxy is for chat / RAG agents; tool-driven "Ask&nbsp;AI" navigation needs an API-key account. Claude has no embeddings, so RAG keeps using the agent's standard embedding provider.</p>
+      <h3 style="margin:0 0 8px;color:#1e40af;font-size:17px;">ℹ️ Good to know</h3>
+      <p style="margin:0;color:#1e3a8a;line-height:1.6;">CLI accounts handle chat, RAG and agent tools ("Ask&nbsp;AI" data extraction) — each tool round is one extra CLI call. They are <b>text-only</b>: no embeddings (RAG keeps the agent's standard embedding provider) and no images — pick a Cloudflare or API-key OpenAI account for covers.</p>
     </div>
   </div>
 

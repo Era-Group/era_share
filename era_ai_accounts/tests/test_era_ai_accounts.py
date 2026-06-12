@@ -8,7 +8,7 @@ from unittest.mock import patch
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
-from odoo.addons.era_ai_accounts.utils import crypto, llm_cli_transport
+from odoo.addons.era_ai_accounts.utils import codex_cli_transport, crypto, llm_cli_transport
 from odoo.addons.era_ai_accounts.models import era_ai_account
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
@@ -60,6 +60,8 @@ class TestEraAiAccounts(TransactionCase):
     def test_service_provider_token(self):
         cli = self.Account.create({"name": "c", "provider": "anthropic", "auth_mode": "cli_proxy"})
         self.assertEqual(cli._service_provider(), "anthropic_cli")
+        codex = self.Account.create({"name": "cx", "provider": "openai", "auth_mode": "cli_proxy"})
+        self.assertEqual(codex._service_provider(), "openai_cli")
         key = self.Account.create({"name": "k", "provider": "anthropic", "auth_mode": "api_key"})
         self.assertEqual(key._service_provider(), "anthropic")
         custom = self.Account.create({"name": "x", "provider": "custom", "auth_mode": "api_key"})
@@ -350,6 +352,33 @@ class TestEraAiAccounts(TransactionCase):
         with self.assertRaises(Exception):
             acc.generate_image("anything")
 
+    def test_cloudflare_coerces_non_string_content(self):
+        # Live crash: Cloudflare returned message.content as a dict and
+        # _request_llm_cloudflare did content.strip() -> 'dict' has no 'strip'.
+        from odoo.addons.era_ai_accounts.models.llm_service_patch import _coerce_message_text
+        self.assertEqual(_coerce_message_text("hi"), "hi")
+        self.assertEqual(_coerce_message_text(None), "")
+        self.assertEqual(_coerce_message_text({"type": "text", "text": "blk"}), "blk")
+        self.assertEqual(
+            _coerce_message_text([{"text": "a"}, {"text": "b"}, "c"]), "abc")
+        # End-to-end: a dict-content response must not crash the transport.
+        acc = self.Account.create({
+            "name": "CFdict", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "acct", "secret": "tok",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "CFdict agent", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            return {"choices": [{"message": {"content": {"type": "text", "text": "ok"}}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["ok"])
+
     def test_cloudflare_content_via_agent(self):
         acc = self.Account.create({
             "name": "CFchat", "provider": "cloudflare", "auth_mode": "api_key",
@@ -376,10 +405,10 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(captured["headers"]["Authorization"], "Bearer tok")
 
     # ------------------------------------------------- Login with Claude (OAuth)
-    def _linked_cli_account(self, name="ClaudeLink"):
+    def _linked_cli_account(self, name="ClaudeLink", provider="anthropic"):
         """A cli_proxy account whose managed credential dir is a throwaway tmpdir."""
         acc = self.Account.create({
-            "name": name, "provider": "anthropic", "auth_mode": "cli_proxy",
+            "name": name, "provider": provider, "auth_mode": "cli_proxy",
         })
         tmp = tempfile.mkdtemp(prefix="era_ai_test_")
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
@@ -512,6 +541,612 @@ class TestEraAiAccounts(TransactionCase):
                           return_value=self._oauth_token_response()):
             wiz.action_complete()
         self.assertTrue(acc._cli_is_linked())
+
+    # ------------------------------------------- OpenAI via Codex CLI (no API key)
+    @staticmethod
+    def _codex_auth_json(plan="pro", **over):
+        """A ChatGPT-mode auth.json payload, with a decodable id_token plan claim."""
+        claims = base64.urlsafe_b64encode(
+            json.dumps({"https://api.openai.com/auth": {"chatgpt_plan_type": plan}}).encode()
+        ).rstrip(b"=").decode()
+        data = {
+            "OPENAI_API_KEY": None,
+            "auth_mode": "chatgpt",
+            "tokens": {
+                "id_token": "eyJoZWFkZXIifQ.%s.sig" % claims,
+                "access_token": "at-123",
+                "refresh_token": "v1.M-rt-456",
+                "account_id": "acct-789",
+            },
+            "last_refresh": "2026-06-11T00:00:00Z",
+        }
+        data.update(over)
+        return data
+
+    def test_openai_cli_proxy_gate(self):
+        # OpenAI may now use the CLI proxy; other non-Anthropic providers still can't.
+        acc = self.Account.create({
+            "name": "Codex", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        self.assertTrue(acc)
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "bad", "provider": "google", "auth_mode": "cli_proxy",
+            })
+        # The onchange keeps cli_proxy when switching anthropic -> openai ...
+        draft = self.Account.new({"provider": "anthropic", "auth_mode": "cli_proxy"})
+        draft.provider = "openai"
+        draft._onchange_provider()
+        self.assertEqual(draft.auth_mode, "cli_proxy")
+        # ... and still flips it for providers without a CLI.
+        draft.provider = "google"
+        draft._onchange_provider()
+        self.assertEqual(draft.auth_mode, "api_key")
+
+    def test_sync_codex_models_and_default(self):
+        acc = self.Account.create({
+            "name": "Codex2", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        self.assertEqual(set(acc.model_ids.mapped("model_id")),
+                         {m[0] for m in era_ai_account.CODEX_CLI_MODELS})
+        self.assertEqual(acc._default_chat_model(), era_ai_account.CODEX_CLI_MODELS[0][0])
+        # All curated Codex models are chat models (no images through the CLI).
+        self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
+
+    def test_codex_complete_builds_args_and_parses(self):
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "\n".join([
+                '{"type":"thread.started","thread_id":"t1"}',
+                '{"type":"turn.started"}',
+                '{"type":"item.completed","item":{"type":"agent_message","text":"codex says hi"}}',
+                '{"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":5}}',
+            ])
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["input"] = kwargs.get("input")
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        with patch.object(codex_cli_transport, "resolve_cli_binary", return_value="/usr/bin/codex"), \
+             patch.object(codex_cli_transport.subprocess, "run", side_effect=fake_run), \
+             patch.dict(codex_cli_transport.os.environ,
+                        {"OPENAI_API_KEY": "sk-leak", "CODEX_API_KEY": "ck-leak"}):
+            text = codex_cli_transport.cli_complete(
+                {"account_id": 1, "home_dir": "/opt/odoo", "config_dir": "/tmp/x/.codex",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                "gpt-5.3-codex", "system here", "user asks", timeout=30)
+        self.assertEqual(text, "codex says hi")
+        args = captured["args"]
+        self.assertIn("exec", args)
+        self.assertIn("--json", args)
+        self.assertIn("--model", args)
+        self.assertIn("gpt-5.3-codex", args)
+        self.assertEqual(args[-1], "-")  # prompt comes from stdin
+        # Locked down to pure text generation — every flag is load-bearing:
+        # losing any of them silently re-enables capabilities on a customer
+        # ChatGPT account (shell, web search, permissive user config).
+        self.assertIn("--sandbox", args)
+        self.assertIn("read-only", args)
+        self.assertIn("--disable", args)
+        self.assertIn("shell_tool", args)
+        self.assertIn("--ephemeral", args)
+        self.assertIn("--skip-git-repo-check", args)
+        self.assertIn('web_search="disabled"', args)
+        self.assertIn("--ignore-user-config", args)
+        self.assertIn("never", args[args.index("--color") + 1])
+        # System prompt folded into the stdin document ahead of the user turn.
+        self.assertIn("system here", captured["input"])
+        self.assertIn("user asks", captured["input"])
+        self.assertLess(captured["input"].index("system here"),
+                        captured["input"].index("user asks"))
+        # Env: account credentials dir exported, API keys never inherited.
+        self.assertEqual(captured["env"]["CODEX_HOME"], "/tmp/x/.codex")
+        self.assertEqual(captured["env"]["HOME"], "/opt/odoo")
+        self.assertNotIn("OPENAI_API_KEY", captured["env"])
+        self.assertNotIn("CODEX_API_KEY", captured["env"])
+
+    def test_codex_jsonl_error_event_surfaces_clean_message(self):
+        # Codex can exit 0 on error paths — the events are authoritative.
+        stdout = "\n".join([
+            '{"type":"thread.started","thread_id":"t1"}',
+            '{"type":"error","message":"stream disconnected: 401 Unauthorized"}',
+        ])
+        with self.assertRaises(UserError) as cm:
+            codex_cli_transport._parse_codex_jsonl(stdout, 0, "")
+        self.assertIn("401 Unauthorized", str(cm.exception))
+        self.assertNotIn('{"type"', str(cm.exception))
+
+    def test_codex_jsonl_turn_failed_event(self):
+        stdout = "\n".join([
+            '{"type":"thread.started","thread_id":"t1"}',
+            '{"type":"turn.failed","error":{"message":"usage limit reached"}}',
+        ])
+        with self.assertRaises(UserError) as cm:
+            codex_cli_transport._parse_codex_jsonl(stdout, 0, "")
+        self.assertIn("usage limit reached", str(cm.exception))
+
+    def test_codex_validate_runs_login_status(self):
+        acc, tmp = self._linked_cli_account(name="CodexVal", provider="openai")
+        acc._codex_link_with_auth_json(json.dumps(self._codex_auth_json()))
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "Logged in using ChatGPT"
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        with patch.object(codex_cli_transport, "resolve_cli_binary", return_value="/usr/bin/codex"), \
+             patch.object(codex_cli_transport.subprocess, "run", side_effect=fake_run):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertEqual(captured["args"], ["/usr/bin/codex", "login", "status"])
+        self.assertEqual(captured["env"]["CODEX_HOME"], os.path.join(tmp, ".codex"))
+        self.assertEqual(captured["env"]["HOME"], tmp)
+        # Not signed in -> clean UserError carrying the CLI's detail.
+        _Proc.returncode = 1
+        _Proc.stderr = "Not logged in"
+        with patch.object(codex_cli_transport, "resolve_cli_binary", return_value="/usr/bin/codex"), \
+             patch.object(codex_cli_transport.subprocess, "run", side_effect=fake_run):
+            with self.assertRaises(UserError) as cm:
+                acc.action_validate()
+        self.assertIn("Not logged in", str(cm.exception))
+
+    def test_codex_wizard_dispatch_and_token_wipe(self):
+        acc, _tmp = self._linked_cli_account(name="CodexWiz", provider="openai")
+        wiz = self.env["era.ai.account.login"].with_context(
+            default_account_id=acc.id).create({})
+        # No Claude OAuth state is minted for an OpenAI account.
+        self.assertFalse(wiz.authorize_url)
+        wiz.auth_json = json.dumps(self._codex_auth_json())
+        wiz.action_complete()
+        self.assertTrue(acc._cli_is_linked())
+        # The pasted tokens must not survive in the transient table.
+        self.assertFalse(wiz.auth_json)
+
+    def test_sync_models_revives_archived_rows(self):
+        # Regression: archived rows must stay visible to the upsert, otherwise
+        # re-syncing trips the unique constraint and aborts the whole sync.
+        acc = self.Account.create({
+            "name": "CodexResync", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        first = era_ai_account.CODEX_CLI_MODELS[0][0]
+        row = acc.with_context(active_test=False).model_ids.filtered(
+            lambda m: m.model_id == first)
+        row.active = False
+        acc.action_sync_models()  # must not raise, and must reactivate the row
+        self.assertTrue(row.active)
+
+    def test_provider_switch_drops_old_credentials(self):
+        acc, tmp = self._linked_cli_account(name="SwitchCreds", provider="anthropic")
+        acc.sudo()._cli_write_credentials({"claudeAiOauth": {"accessToken": "tok"}})
+        self.assertTrue(acc._cli_is_linked())
+        claude_creds = os.path.join(tmp, ".claude", ".credentials.json")
+        self.assertTrue(os.path.exists(claude_creds))
+        acc.provider = "openai"
+        # The stale Claude tokens are gone, not stranded until a switch-back.
+        self.assertFalse(os.path.exists(claude_creds))
+        self.assertFalse(acc._cli_is_linked())
+
+    def test_cli_proxy_accounts_refuse_non_chat_models(self):
+        # The CLI proxies are text-only: image/embedding rows must be refused at
+        # save time (they would show up in other modules' image pickers but fail
+        # on every call — the era_seo_suite missing-cover trap).
+        cli = self.Account.create({
+            "name": "CodexNoImg", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        with self.assertRaises(ValidationError):
+            self.env["era.ai.model"].create({
+                "account_id": cli.id, "model_id": "gpt-image-2", "kind": "image",
+            })
+        with self.assertRaises(ValidationError):
+            self.env["era.ai.model"].create({
+                "account_id": cli.id, "model_id": "text-embedding-3-small", "kind": "embedding",
+            })
+        # Chat rows are fine on CLI accounts; image rows are fine on key accounts.
+        self.env["era.ai.model"].create({
+            "account_id": cli.id, "model_id": "gpt-5.4", "kind": "chat",
+        })
+        key = self.Account.create({
+            "name": "KeyImg", "provider": "openai", "auth_mode": "api_key", "secret": "sk",
+        })
+        img = self.env["era.ai.model"].create({
+            "account_id": key.id, "model_id": "gpt-image-1", "kind": "image",
+        })
+        # Flipping the key account to cli_proxy archives its non-chat rows
+        # (mirrors what a model sync would do) instead of leaving a trap.
+        key.auth_mode = "cli_proxy"
+        self.assertFalse(img.active)
+
+    def test_cli_extra_args_validated_at_save(self):
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "BadArgs", "provider": "openai", "auth_mode": "cli_proxy",
+                "cli_extra_args": '--add-dir "/tmp',  # unbalanced quote
+            })
+
+    def test_codex_jsonl_last_message_wins_and_fallbacks(self):
+        stdout = "\n".join([
+            '{"type":"item.completed","item":{"type":"agent_message","text":"draft"}}',
+            '{"type":"item.completed","item":{"type":"agent_message","text":"final"}}',
+        ])
+        self.assertEqual(codex_cli_transport._parse_codex_jsonl(stdout, 0, ""), "final")
+        # Plain-text stdout from a hypothetical non-JSON version is still an answer.
+        self.assertEqual(codex_cli_transport._parse_codex_jsonl("plain answer", 0, ""),
+                         "plain answer")
+        # Empty output -> clear error.
+        with self.assertRaises(UserError):
+            codex_cli_transport._parse_codex_jsonl("", 0, "")
+        # Non-zero exit with no events -> stderr detail surfaced.
+        with self.assertRaises(UserError) as cm:
+            codex_cli_transport._parse_codex_jsonl("", 2, "boom from stderr")
+        self.assertIn("boom from stderr", str(cm.exception))
+
+    def test_codex_link_with_auth_json(self):
+        acc, tmp = self._linked_cli_account(name="CodexLink", provider="openai")
+        acc._codex_link_with_auth_json(json.dumps(self._codex_auth_json(plan="pro")))
+        creds_path = os.path.join(tmp, ".codex", "auth.json")
+        self.assertTrue(os.path.exists(creds_path))
+        with open(creds_path) as f:
+            stored = json.load(f)
+        self.assertEqual(stored["tokens"]["refresh_token"], "v1.M-rt-456")
+        acc.invalidate_recordset(["cli_oauth_linked", "cli_oauth_label"])
+        self.assertTrue(acc.cli_oauth_linked)
+        self.assertIn("ChatGPT", acc.cli_oauth_label)
+        self.assertIn("pro", acc.cli_oauth_label)
+        # The transport config now routes through the managed CODEX_HOME.
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["provider"], "openai")
+        self.assertEqual(cfg["home_dir"], tmp)
+        self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".codex"))
+        # Disconnect removes the stored file.
+        acc.action_ai_claude_logout()
+        self.assertFalse(acc._cli_is_linked())
+        self.assertFalse(os.path.exists(creds_path))
+
+    def test_codex_link_rejects_bad_payloads(self):
+        acc, _tmp = self._linked_cli_account(name="CodexBad", provider="openai")
+        with self.assertRaises(UserError):  # empty
+            acc._codex_link_with_auth_json("")
+        with self.assertRaises(UserError):  # not JSON
+            acc._codex_link_with_auth_json("not json at all")
+        with self.assertRaises(UserError):  # API-key file, not a ChatGPT login
+            acc._codex_link_with_auth_json(json.dumps({"OPENAI_API_KEY": "sk-x"}))
+        with self.assertRaises(UserError):  # explicit non-chatgpt auth mode
+            acc._codex_link_with_auth_json(json.dumps(
+                self._codex_auth_json(auth_mode="apikey")))
+        with self.assertRaises(UserError):  # missing refresh token
+            bad = self._codex_auth_json()
+            del bad["tokens"]["refresh_token"]
+            acc._codex_link_with_auth_json(json.dumps(bad))
+        self.assertFalse(acc._cli_is_linked())
+        # Linking is manager-only, like the Claude OAuth flow.
+        user = new_test_user(self.env, login="era_codex_nomgr", groups="base.group_user")
+        with self.assertRaises(UserError):
+            acc.with_user(user)._codex_link_with_auth_json(
+                json.dumps(self._codex_auth_json()))
+        # And only applies to OpenAI CLI-proxy accounts.
+        claude_acc, _t = self._linked_cli_account(name="NotCodex", provider="anthropic")
+        with self.assertRaises(UserError):
+            claude_acc._codex_link_with_auth_json(json.dumps(self._codex_auth_json()))
+
+    def test_codex_parse_device_login_output(self):
+        raw = ("\x1b[1mCodex\x1b[0m device login\n"
+               "To sign in, visit https://chatgpt.com/codex/device and enter the code:\n"
+               "  BLDQ-NRVF\n"
+               "Waiting for approval (expires in 15 minutes)...\n")
+        url, code = codex_cli_transport.parse_device_login(
+            codex_cli_transport._ANSI_RE.sub("", raw))
+        self.assertEqual(url, "https://chatgpt.com/codex/device")
+        self.assertEqual(code, "BLDQ-NRVF")
+        # URL fragments must not be mistaken for the one-time code.
+        url2, code2 = codex_cli_transport.parse_device_login(
+            "go to https://example.com/device?x=ABCD-EFGH first")
+        self.assertEqual(url2, "https://example.com/device?x=ABCD-EFGH")
+        self.assertEqual(code2, "")
+
+    def test_codex_device_login_flow(self):
+        acc, tmp = self._linked_cli_account(name="CodexDevice", provider="openai")
+        out_path = os.path.join(tmp, ".codex", "device_login.out")
+
+        def fake_start(cfg):
+            self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".codex"))
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w") as fh:
+                fh.write("Visit https://chatgpt.com/codex/device and enter code BLDQ-NRVF\n")
+            return 12345, out_path
+
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True), \
+             patch.object(era_ai_account.time, "sleep"):
+            info = acc._codex_device_login_start()
+        self.assertEqual(info["url"], "https://chatgpt.com/codex/device")
+        self.assertEqual(info["code"], "BLDQ-NRVF")
+        self.assertTrue(acc._codex_device_state().get("pid"))
+
+        # Still pending while the codex process lives and no auth.json exists.
+        with patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True):
+            self.assertEqual(acc._codex_device_login_status(), "pending")
+        # Process gone without credentials -> failed, state cleared.
+        with patch.object(codex_cli_transport, "pid_is_pending_login", return_value=False):
+            self.assertTrue(acc._codex_device_login_status().startswith("failed:"))
+        self.assertFalse(acc._codex_device_state())
+
+        # Approval: codex wrote auth.json -> linked, state cleared.
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=True), \
+             patch.object(era_ai_account.time, "sleep"):
+            acc._codex_device_login_start()
+        acc.sudo()._cli_write_credentials(self._codex_auth_json())
+        self.assertEqual(acc._codex_device_login_status(), "linked")
+        self.assertFalse(acc._codex_device_state())
+
+    def test_codex_device_login_failure_surfaces_output(self):
+        acc, tmp = self._linked_cli_account(name="CodexDevFail", provider="openai")
+        out_path = os.path.join(tmp, ".codex", "device_login.out")
+
+        def fake_start(cfg):
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w") as fh:
+                fh.write("error: device code authentication is not enabled\n")
+            return 12345, out_path
+
+        with patch.object(codex_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(codex_cli_transport, "pid_is_pending_login", return_value=False), \
+             patch.object(era_ai_account.time, "sleep"):
+            with self.assertRaises(UserError) as cm:
+                acc._codex_device_login_start()
+        self.assertIn("not enabled", str(cm.exception))
+        self.assertFalse(acc._codex_device_state())
+
+    def test_agent_routes_through_codex_account(self):
+        acc = self.Account.create({
+            "name": "Codex route", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Codex routed", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        with patch.object(codex_cli_transport, "cli_complete", return_value="codex answer") as mocked:
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["codex answer"])
+        self.assertTrue(mocked.called)
+        self.assertEqual(mocked.call_args.args[0]["provider"], "openai")
+        self.assertEqual(mocked.call_args.args[1], era_ai_account.CODEX_CLI_MODELS[0][0])
+
+    def test_codex_cli_proxy_refuses_images(self):
+        acc = self.Account.create({
+            "name": "Codex img", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        with self.assertRaises(UserError):
+            acc.generate_image("a cat")
+
+    def test_codex_lock_pool_independent_from_claude(self):
+        if llm_cli_transport.fcntl is None:
+            self.skipTest("fcntl unavailable")
+        # Holding the (only) Claude slot must not block a Codex call: each
+        # provider has its own lock-file namespace.
+        with llm_cli_transport._global_slot(1, 5):
+            with llm_cli_transport._global_slot(
+                    1, 0, lock_name=codex_cli_transport._LOCK_SLOT):
+                pass
+
+    # --------------------------------------------- tool calling over CLI proxy
+    @staticmethod
+    def _fake_tools(record):
+        """Upstream-shaped tools dict: {name: (desc, allow_end, callable, schema)}."""
+        def run(arguments=None):
+            record.append(arguments)
+            return "result:%s" % (arguments or {}).get("q"), None
+        return {
+            "get_data": (
+                "Fetch data from the database", False, run,
+                {"type": "object", "properties": {"q": {"type": "integer"}},
+                 "required": ["q"]},
+            ),
+        }
+
+    def test_cli_tool_loop_roundtrip(self):
+        # Round 1: the model calls a tool via the JSON envelope; the upstream
+        # request_llm loop executes it; round 2 sees the result and answers.
+        acc = self.Account.create({
+            "name": "ToolLoop", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append((system_prompt, user_prompt))
+            if len(prompts) == 1:
+                return '{"tool_calls": [{"name": "get_data", "arguments": {"q": 7}}]}'
+            return "final answer using the data"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(llm_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "opus", ["be helpful"], [],
+                inputs=[{"role": "user", "content": "how many?"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["final answer using the data"])
+        self.assertEqual(calls, [{"q": 7}])
+        # Round 1 advertised the tool protocol; round 2 carried the result.
+        self.assertIn("# Tool protocol", prompts[0][0])
+        self.assertIn("get_data", prompts[0][0])
+        self.assertIn("result:7", prompts[1][0] + prompts[1][1])
+
+    def test_cli_tool_loop_codex_and_unknown_tool(self):
+        # Codex transport path + upstream's unknown-tool feedback loop.
+        acc = self.Account.create({
+            "name": "ToolLoopCx", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append((system_prompt, user_prompt))
+            if len(prompts) == 1:
+                return '{"tool_call": {"name": "nope", "arguments": {}}}'
+            return "ok"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(codex_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "gpt-5.3-codex", [], [],
+                inputs=[{"role": "user", "content": "hi"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["ok"])
+        self.assertFalse(calls)  # the unknown tool never executed
+        self.assertIn("unknown tool", prompts[1][0] + prompts[1][1])
+
+    def test_cli_tool_envelope_parser(self):
+        from odoo.addons.era_ai_accounts.models import llm_service_patch as p
+        # Batched form, single form, fenced form.
+        self.assertEqual(
+            p._parse_cli_tool_calls('{"tool_calls": [{"name": "a", "arguments": {"x": 1}}]}'),
+            [("a", {"x": 1})])
+        self.assertEqual(
+            p._parse_cli_tool_calls('{"tool_call": {"name": "b"}}'), [("b", {})])
+        self.assertEqual(
+            p._parse_cli_tool_calls('```json\n{"tool_calls": [{"name": "c", "arguments": {}}]}\n```'),
+            [("c", {})])
+        # Plain answers pass through; malformed envelopes ask for a retry.
+        self.assertIsNone(p._parse_cli_tool_calls("just a normal answer"))
+        self.assertEqual(p._parse_cli_tool_calls('{"tool_calls": [{"broken": '), "retry")
+
+    def test_cli_tool_malformed_envelope_gets_one_retry(self):
+        acc = self.Account.create({
+            "name": "ToolRetry", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        calls, prompts = [], []
+
+        def fake_cli(cfg, model, system_prompt, user_prompt, timeout=180):
+            prompts.append(user_prompt)
+            if len(prompts) == 1:
+                return '{"tool_calls": [{"name": "get_data", '  # truncated JSON
+            return "recovered plain answer"
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider=acc._service_provider())
+        with patch.object(llm_cli_transport, "cli_complete", side_effect=fake_cli):
+            out = service.request_llm(
+                "opus", [], [], inputs=[{"role": "user", "content": "q"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["recovered plain answer"])
+        self.assertEqual(len(prompts), 2)
+        self.assertIn("not a valid tool-call envelope", prompts[1])
+
+    def test_cli_tool_arguments_normalized_to_schema(self):
+        # Live regression: Ask AI's read_group crashed on groupby=None because
+        # the model omitted the optional array param. Missing/null array params
+        # must become [] (what strict-mode OpenAI models send), and loosely
+        # typed values must be coerced to the declared type.
+        acc = self.Account.create({
+            "name": "ToolNorm", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        seen = []
+
+        def run(arguments=None):
+            seen.append(arguments)
+            return "ok", None
+
+        tools = {
+            "read_group": (
+                "Group records", False, run,
+                {"type": "object",
+                 "properties": {
+                     "model_name": {"type": "string"},
+                     "groupby": {"type": "array"},
+                     "domain": {"type": "array"},
+                     "limit": {"type": "integer"},
+                 },
+                 "required": ["model_name"]},
+            ),
+        }
+        replies = iter([
+            '{"tool_calls": [{"name": "read_group", "arguments":'
+            ' {"model_name": "res.partner", "limit": "5", "domain": null}}]}',
+            "done",
+        ])
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider="anthropic_cli")
+        with patch.object(llm_cli_transport, "cli_complete",
+                          side_effect=lambda *a, **k: next(replies)):
+            out = service.request_llm(
+                "opus", [], [], inputs=[{"role": "user", "content": "q"}], tools=tools)
+        self.assertEqual(out, ["done"])
+        self.assertEqual(seen, [{
+            "model_name": "res.partner",
+            "groupby": [],   # omitted array -> []
+            "domain": [],    # explicit null array -> []
+            "limit": 5,      # string -> integer
+        }])
+
+    def test_cli_tools_enabled_gate(self):
+        # The account-level switch controls whether agents pass tools at all.
+        acc = self.Account.create({
+            "name": "ToolGate", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Gated", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        seen = {}
+
+        def fake_request_llm(self2, model, sys_p, user_p, tools=None, **kw):
+            seen["tools"] = tools
+            return ["answer"]
+
+        with patch.object(LLMApiService, "request_llm", fake_request_llm):
+            agent._generate_response("hello")
+        self.assertIsNotNone(seen["tools"], "tools must flow for CLI accounts by default")
+        acc.cli_tools_enabled = False
+        with patch.object(LLMApiService, "request_llm", fake_request_llm):
+            agent._generate_response("hello")
+        self.assertIsNone(seen["tools"])
+
+    def test_cli_build_tool_call_response(self):
+        # Upstream raises NotImplementedError for unknown providers — the CLI
+        # tokens must return the OpenAI-style envelope _flatten understands.
+        acc = self.Account.create({
+            "name": "ToolEnv", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env,
+            provider="anthropic_cli")
+        out = service._build_tool_call_response("id1", "value")
+        self.assertEqual(out, {"type": "function_call_output",
+                               "call_id": "id1", "output": "value"})
+
+    def test_flatten_renders_tool_items(self):
+        from odoo.addons.era_ai_accounts.models.llm_service_patch import _flatten
+        system, user = _flatten(
+            ["sys"], [],
+            [
+                {"role": "user", "content": "question"},
+                {"type": "function_call", "name": "get_data",
+                 "call_id": "c1", "arguments": '{"q": 7}'},
+                {"type": "function_call_output", "call_id": "c1", "output": "42"},
+            ])
+        self.assertIn("tool call get_data", system)
+        self.assertIn("Result of tool call c1", user)
+        self.assertIn("42", user)
 
     # ------------------------------------------------------------ best practices
     def test_base_url_scheme_constraint(self):

@@ -62,26 +62,37 @@
                             </div>
                             <button name="action_ai_claude_login" type="object" class="btn-primary"
                                     string="Login with Claude" icon="fa-sign-in"
-                                    invisible="cli_oauth_linked"/>
+                                    invisible="cli_oauth_linked or provider != 'anthropic'"/>
+                            <button name="action_ai_claude_login" type="object" class="btn-primary"
+                                    string="Connect ChatGPT account" icon="fa-sign-in"
+                                    invisible="cli_oauth_linked or provider != 'openai'"/>
                             <button name="action_ai_claude_login" type="object" class="btn-secondary"
                                     string="Re-link account" icon="fa-refresh"
                                     invisible="not cli_oauth_linked"/>
                             <button name="action_ai_claude_logout" type="object" class="btn-secondary"
                                     string="Disconnect" icon="fa-sign-out"
                                     invisible="not cli_oauth_linked"
-                                    confirm="Disconnect this Claude account for all users?"/>
-                            <div class="text-muted mt-2">
+                                    confirm="Disconnect this subscription account for all users?"/>
+                            <div class="text-muted mt-2" invisible="provider != 'anthropic'">
                                 Link a Claude subscription here and <b>every user</b> in the system uses
                                 it — no API key, one shared login. If you don't link one, the CLI falls
                                 back to the server's own login under the HOME below.
                             </div>
+                            <div class="text-muted mt-2" invisible="provider != 'openai'">
+                                Connect a ChatGPT subscription here (paste the auth.json from
+                                <code>codex login</code>) and <b>every user</b> in the system uses it —
+                                no API key, one shared login. If you don't link one, the CLI falls back
+                                to the server's own <code>~/.codex</code> login under the HOME below.
+                            </div>
                         </div>
-                        <field name="cli_path" placeholder="auto-detected from Claude Code extension"/>
+                        <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
+                        <field name="cli_tools_enabled"/>
                         <field name="max_concurrency"/>
                         <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
                         <div class="text-muted" colspan="2">
-                            Routes calls through the locally-authenticated Claude CLI. No API key is used.
+                            Routes calls through the locally-authenticated first-party CLI
+                            (Claude Code for Anthropic, Codex for OpenAI). No API key is used.
                             Serving many users draws on that subscription's rate limits — use the kill
                             switch / concurrency to control it.
                         </div>
@@ -163,8 +174,8 @@
         <field name="search_view_id" ref="era_ai_account_view_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Connect an AI provider account</p>
-            <p>Link Claude via the local CLI proxy (no API key) or OpenAI/Gemini/custom via an API key,
-               then share the account with your users.</p>
+            <p>Link Claude or ChatGPT via the local CLI proxy (no API key) or
+               OpenAI/Gemini/custom via an API key, then share the account with your users.</p>
         </field>
     </record>
 </odoo>

@@ -29,8 +29,8 @@
                            decoration-danger="study_state == 'rejected'"
                            decoration-muted="study_state == 'converted'"/>
                     <field name="lead_id" optional="hide"/>
-                    <field name="ai_match_score" string="Match %" optional="show"/>
-                    <field name="ai_match" widget="badge" string="Business Match"
+                    <field name="ai_match" column_invisible="1"/>
+                    <field name="ai_match_score" string="Business Match" widget="badge"
                            decoration-success="ai_match == 'high'"
                            decoration-info="ai_match == 'medium'"
                            decoration-muted="ai_match == 'low'"/>

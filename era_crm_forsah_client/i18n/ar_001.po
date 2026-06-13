@@ -348,6 +348,8 @@ msgstr "التعميد"
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
 msgid "Business Match"
 msgstr "مطابقة النشاط"
 

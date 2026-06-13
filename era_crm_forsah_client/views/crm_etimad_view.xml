@@ -26,8 +26,8 @@
                     <field name="limit"/>
                     <field name="publish"/>
                     <field name="tag_ids" widget="many2many_tags"/>
-                    <field name="ai_match_score" string="Match %" optional="show"/>
-                    <field name="ai_match" widget="badge" string="Business Match"
+                    <field name="ai_match" column_invisible="1"/>
+                    <field name="ai_match_score" string="Business Match" widget="badge"
                            decoration-success="ai_match == 'high'"
                            decoration-info="ai_match == 'medium'"
                            decoration-muted="ai_match == 'low'"/>

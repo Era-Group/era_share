@@ -193,22 +193,40 @@ class TenderAiMatchMixin(models.AbstractModel):
     # Actions
     # ------------------------------------------------------------------
     def action_ai_match(self):
-        """Score the selected tenders (or the next batch of candidates when none
-        are selected) against the company business.
+        """Score tenders against the company business.
 
-        The synchronous run is capped at ``AI_MATCH_INLINE_CAP`` so a button click
-        can never tie up a web worker on the full open backlog; the scheduled job
-        drains whatever is left.
+        - With an explicit selection: reset ALL selected tenders (even past the
+          inline cap) so the overflow leaves the scored state and the scheduler
+          re-scores it, then score the first ``AI_MATCH_INLINE_CAP`` now.
+        - With no selection: score the next batch of not-yet-analyzed candidates.
+
+        Capping the synchronous run keeps a click from tying up a worker.
         """
-        records = self or self.search(self._ai_match_candidates_domain())
-        total = len(records)
-        records = records[:AI_MATCH_INLINE_CAP]
-        scored = records._run_ai_match()
-        message = _("Analyzed %(n)s tender(s) against the company business.", n=len(scored))
-        if total > len(records):
-            message += " " + _(
-                "The remaining %(r)s open tender(s) are scored automatically by "
-                "the scheduler (every 2 hours).", r=total - len(records))
+        if self:
+            # Reset the whole selection up-front so anything past the inline cap
+            # leaves the scored state and is picked up by the cron.
+            self.write({
+                'ai_match_date': False,
+                'ai_match_score': 0,
+                'ai_match': False,
+                'ai_match_reason': False,
+            })
+            targets = self
+        else:
+            targets = self.search(
+                self._ai_match_candidates_domain() + [('ai_match_date', '=', False)])
+        total = len(targets)
+        batch = targets[:AI_MATCH_INLINE_CAP]
+        scored = batch._run_ai_match()
+        if not total:
+            message = _("All candidate tenders are already analyzed. "
+                        "Use 'Re-analyze All' to re-score them.")
+        else:
+            message = _("Analyzed %(n)s tender(s) against the company business.", n=len(scored))
+            if total > len(batch):
+                message += " " + _(
+                    "The remaining %(r)s are scored automatically by the scheduler "
+                    "(every 2 hours).", r=total - len(batch))
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -224,21 +242,11 @@ class TenderAiMatchMixin(models.AbstractModel):
         }
 
     def action_ai_rematch_all(self):
-        """Reset AI scores on every candidate tender and re-score them.
-
-        Clears the analysis stamp on all candidates (so already-scored tenders
-        re-enter the pipeline), scores a first capped batch right away, and lets
-        the scheduled job drain the rest over its next runs. Ignores the current
-        selection — it always targets the full candidate set.
+        """Reset and re-score ALL candidate tenders, ignoring the current
+        selection: ``action_ai_match`` on the full candidate set resets them all,
+        scores the first batch now, and the scheduler drains the rest.
         """
-        candidates = self.search(self._ai_match_candidates_domain())
-        candidates.write({
-            'ai_match_date': False,
-            'ai_match_score': 0,
-            'ai_match': False,
-            'ai_match_reason': False,
-        })
-        return candidates.action_ai_match()
+        return self.search(self._ai_match_candidates_domain()).action_ai_match()
 
     def _run_ai_match(self, batch_size=30):
         business = self._business_description()

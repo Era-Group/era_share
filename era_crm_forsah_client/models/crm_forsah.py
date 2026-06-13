@@ -118,9 +118,13 @@ class CrmForsah(models.Model):
         seen_refs = []
         for data in payload.get('data') or []:
             name = data.get('name')
-            if not name:
-                continue
             ref = data.get('id')
+            if not name or not ref:
+                # The feed always carries an id; skip malformed items rather than
+                # creating an undeduplicated record on every run.
+                if name and not ref:
+                    _logger.warning("Forsah feed item without id skipped: %s", name)
+                continue
             feed_vals = {
                 'name': name,
                 'link': data.get('link'),
@@ -129,7 +133,7 @@ class CrmForsah(models.Model):
                 'days': data.get('days'),
                 'city': data.get('city'),
             }
-            record = Tender.search([('forsah_id', '=', ref)], limit=1) if ref else self.browse()
+            record = Tender.search([('forsah_id', '=', ref)], limit=1)
             if record:
                 # Refresh only feed-sourced fields; reactivate if it had been
                 # archived for falling out of a previous feed.
@@ -137,8 +141,7 @@ class CrmForsah(models.Model):
             else:
                 record = self.create({**feed_vals, 'forsah_id': ref})
             touched |= record
-            if ref:
-                seen_refs.append(ref)
+            seen_refs.append(ref)
 
         touched._sync_category_tags()
 
@@ -172,11 +175,6 @@ class CrmForsah(models.Model):
                 tag_ids.append(tag_id)
             record.tag_ids = [(6, 0, tag_ids)]
 
-    @api.model
-    def process_categories_to_tags(self):
-        """Backwards-compatible entry point: (re)build tags for every record."""
-        self.search([])._sync_category_tags()
-
     # ------------------------------------------------------------------
     # Actions
     # ------------------------------------------------------------------
@@ -195,9 +193,6 @@ class CrmForsah(models.Model):
 
     def action_mark_rejected(self):
         self.write({'study_state': 'rejected'})
-
-    def action_reset_to_review(self):
-        self.write({'study_state': 'to_review'})
 
     def _get_source(self):
         return self.env['utm.source'].search([('name', '=', 'Forsah')], limit=1)

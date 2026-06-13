@@ -24,9 +24,6 @@ AI_MATCH_SYSTEM = (
 # button click can never block a web worker; the scheduled job drains the rest.
 AI_MATCH_INLINE_CAP = 30
 
-# Name of the dedicated, tools-free scoring agent this module manages.
-AI_MATCH_AGENT_NAME = "Tender Business Match"
-
 
 class TenderAiMatchMixin(models.AbstractModel):
     """Shared AI business-relevance scoring for the tender models.
@@ -82,10 +79,13 @@ class TenderAiMatchMixin(models.AbstractModel):
         """Resolve the standard ``ai.agent`` to use for scoring.
 
         Preference: an agent pinned via the
-        ``era_crm_forsah_client.ai_match_agent_id`` config parameter, then the
-        natural-language "Ask AI" agent, then any configured agent. Returns an
-        empty value when the `ai` app is absent or no agent is configured, so the
-        feature degrades cleanly instead of hard-depending on the AI stack.
+        ``era_crm_forsah_client.ai_match_agent_id`` config parameter, then any
+        tools-free agent, then any agent. A tools-free agent (no topics) matters:
+        with topics the model is handed menu/search tools and may emit tool-calls
+        instead of returning the plain JSON we ask for. Returns an empty value
+        when the `ai` app is absent or no agent is configured, so the feature
+        degrades cleanly. The agent's provider/model is configured by the admin in
+        the AI app — this module relies only on the standard ai.agent framework.
         """
         if "ai.agent" not in self.env:
             return False
@@ -99,92 +99,8 @@ class TenderAiMatchMixin(models.AbstractModel):
                 agent = Agent.browse()
             if agent:
                 return agent
-        # Otherwise use this module's own dedicated tools-free agent (create it on
-        # first use). A tools-free agent matters: with topics the model is handed
-        # menu/search tools and may emit tool-calls — which also bus-spam OdooBot
-        # from the cron — instead of returning the plain JSON we ask for.
-        agent = self._ai_match_ensure_agent()
-        if agent:
-            return agent
-        # Last resort if the agent could not be created: any tools-free agent,
-        # then any agent at all.
-        return Agent.search([("topic_ids", "=", False)], limit=1) or Agent.search([], limit=1) or False
-
-    @api.model
-    def _ai_match_ensure_agent(self):
-        """Find-or-create the dedicated tools-free scoring agent and pin it.
-
-        Idempotent and self-contained (no install hook needed): the first scoring
-        run creates a ``Tender Business Match`` ``ai.agent`` carrying this module's
-        scoring system prompt, picks a model available on this DB (preferring the
-        connected provider, else a standard default), and stores its id in a config
-        parameter. Returns the agent, or an empty recordset if it cannot be made.
-        """
-        if "ai.agent" not in self.env:
-            return False
-        Agent = self.env["ai.agent"].sudo()
-        icp = self.env["ir.config_parameter"].sudo()
-        existing = Agent.search([("name", "=", AI_MATCH_AGENT_NAME)], limit=1)
-        if existing:
-            icp.set_param("era_crm_forsah_client.ai_match_agent_id", str(existing.id))
-            return existing
-        try:
-            selection = dict(Agent._fields["llm_model"]._description_selection(self.env))
-        except Exception:  # pragma: no cover - defensive
-            selection = {}
-        vals = {
-            "name": AI_MATCH_AGENT_NAME,
-            "subtitle": "Scores tender relevance to the company business",
-            "response_style": "analytical",
-            "system_prompt": AI_MATCH_SYSTEM,
-        }
-        # The era custom-LLM model has no standalone API key; it needs an account
-        # binding. So only choose it when a usable account is available, and wire
-        # the binding. Otherwise fall back to a standard model whose provider the
-        # admin configures in the AI app. This keeps the agent fully standard and
-        # only *optionally* leans on the era_ai_accounts stack when it is present.
-        account = self._ai_match_era_account()
-        if account and "custom_llm/custom" in selection and "era_account_id" in Agent._fields:
-            vals["llm_model"] = "custom_llm/custom"
-            vals["era_account_id"] = account.id
-            record = (account._default_chat_model_record()
-                      if hasattr(account, "_default_chat_model_record") else False)
-            if record and "era_model_id" in Agent._fields:
-                vals["era_model_id"] = record.id
-        else:
-            vals["llm_model"] = next((m for m in ("gpt-4o", "gpt-4.1") if m in selection),
-                                     next(iter(selection), False))
-        if not vals.get("llm_model"):
-            return Agent.browse()
-        try:
-            with self.env.cr.savepoint():
-                agent = Agent.with_context(
-                    default_group_rfq="default", default_group_on="default",
-                ).create(vals)
-            icp.set_param("era_crm_forsah_client.ai_match_agent_id", str(agent.id))
-            return agent
-        except Exception:  # never break scoring on agent provisioning
-            _logger.warning("Could not create the %s agent", AI_MATCH_AGENT_NAME, exc_info=True)
-            return Agent.browse()
-
-    @api.model
-    def _ai_match_era_account(self):
-        """Optional: a usable ``era.ai.account`` to back the custom-LLM provider,
-        when the era_ai_accounts stack is installed. Empty otherwise — the feature
-        never hard-depends on it."""
-        if "era.ai.account" not in self.env:
-            return False
-        Account = self.env["era.ai.account"].sudo()
-        account = False
-        if hasattr(Account, "_resolve_for_user"):
-            try:
-                account = Account._resolve_for_user(self.env.user)
-            except Exception:  # pragma: no cover - defensive
-                account = False
-        if not account:
-            account = Account.search(
-                [("active", "=", True), ("state", "=", "valid")], limit=1)
-        return account or False
+        return (Agent.search([("topic_ids", "=", False)], limit=1)
+                or Agent.search([], limit=1) or False)
 
     def _business_description(self):
         return (self.env.company.forsah_business_description or "").strip()
@@ -249,7 +165,7 @@ class TenderAiMatchMixin(models.AbstractModel):
         if not business:
             raise UserError(_(
                 "Set the company's business description in Settings "
-                "(Settings → Studyable Tenders) before running the AI match."))
+                "(Settings → CRM) before running the AI match."))
         agent = self._ai_match_agent()
         if not agent:
             raise UserError(_(

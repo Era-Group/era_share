@@ -1,62 +1,181 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* era_crm_forsah_client
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0+e\n"
+"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 12:53+0000\n"
-"PO-Revision-Date: 2024-06-26 12:53+0000\n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-msgid "Caption"
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_etimad_client__ai_match_score
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_forsah_client__ai_match_score
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_tender_ai_match_mixin__ai_match_score
+msgid "0-100 AI-estimated relevance of this tender to the company business."
 msgstr ""
+"تقدير الذكاء الاصطناعي لمدى صلة هذه المناقصة بنشاط الشركة من 0 إلى 100."
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "<span class=\"o_stat_text\">Opportunity</span>"
+msgstr "<span class=\"o_stat_text\">الفرصة</span>"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid "AI Business Match"
+msgstr "مطابقة النشاط بالذكاء الاصطناعي"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "AI Match"
+msgstr "تحليل بالذكاء"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid "AI scoring failed: %s"
+msgstr "فشل التقييم بالذكاء الاصطناعي: %s"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid ""
+"All candidate tenders are already analyzed. Select tenders and run AI Match "
+"to re-analyze them."
+msgstr ""
+"تم تحليل جميع المناقصات المرشّحة مسبقاً. حدّد مناقصات واضغط «تحليل بالذكاء» "
+"لإعادة تحليلها."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "An opportunity has already been created for this tender."
+msgstr "تم إنشاء فرصة لهذه المناقصة مسبقاً."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid "Analyzed %(n)s tender(s) against the company business."
+msgstr "تم تحليل %(n)s مناقصة مقابل نشاط الشركة."
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_date
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_date
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_tender_ai_match_mixin__ai_match_date
+msgid "Analyzed On"
+msgstr "تاريخ التحليل"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Best for Our Business"
+msgstr "الأقرب لنشاطنا"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
+msgid "Business Activity"
+msgstr "نشاط الشركة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_res_company__forsah_business_description
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_res_config_settings__forsah_business_description
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
+msgid "Business Activity Description"
+msgstr "وصف نشاط الشركة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_tender_ai_match_mixin__ai_match
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Business Match"
+msgstr "مطابقة النشاط"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Business Match (AI)"
+msgstr "مطابقة النشاط (ذكاء اصطناعي)"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__category
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__category
 msgid "Category"
-msgstr "التصنيفات"
+msgstr "التصنيف"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "Category: %(category)s | Days: %(days)s | Size: %(size)s"
+msgstr "التصنيف: %(category)s | الأيام: %(days)s | الحجم: %(size)s"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__city
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
 msgid "City"
 msgstr "المدينة"
 
 #. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Closing in 3 Days"
+msgstr "تنتهي خلال 3 أيام"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Closing in a Week"
+msgstr "تنتهي خلال أسبوع"
+
+#. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__company
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__company_id
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "Company"
 msgstr "الشركة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__create_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__create_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__create_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__create_uid
-msgid "Created by"
-msgstr ""
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__converted
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__converted
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Converted"
+msgstr "تم التحويل"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__create_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__create_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__create_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__create_date
-msgid "Created on"
-msgstr ""
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__cost
+msgid "Cost"
+msgstr "كراسة الشروط"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Create Opportunity"
+msgstr "إنشاء فرصة"
 
 #. module: era_crm_forsah_client
 #: model:ir.actions.act_window,name:era_crm_forsah_client.crm_etimad_form_client_act_window
 msgid "Crm Etimad"
-msgstr " منصة اعتماد"
+msgstr "منصة اعتماد"
 
 #. module: era_crm_forsah_client
 #: model:ir.actions.act_window,name:era_crm_forsah_client.crm_etimad_tag_form_act_window_client
@@ -64,50 +183,111 @@ msgid "Crm Etimad Tag"
 msgstr "تصنيفات اعتماد"
 
 #. module: era_crm_forsah_client
-#: model:ir.actions.act_window,name:era_crm_forsah_client.crm_forsah_tree_act_window
-msgid "Crm Forsah"
-msgstr " منصة فرصة"
-
-#. module: era_crm_forsah_client
 #: model:ir.actions.act_window,name:era_crm_forsah_client.crm_forsah_tag_form_act_window_client
 msgid "Crm forsah Tag"
 msgstr "تصنيفات فرصة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__days
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__days
 msgid "Days"
-msgstr "الايام"
-
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__field
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__field
-msgid "field"
-msgstr "النشاط الرئيسي"
+msgstr "الأيام"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__display_name
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__display_name
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__display_name
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__display_name
-msgid "Display Name"
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Days Left"
+msgstr "الأيام المتبقية"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__days_remaining
+msgid "Days Remaining"
+msgstr "الأيام المتبقية"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Deadline"
+msgstr "آخر موعد للتقديم"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
+msgid ""
+"Describe the company's business. The AI uses this text to score how relevant"
+" each Forsah/Etimad tender is."
 msgstr ""
+"صف نشاط الشركة. يستخدم الذكاء الاصطناعي هذا النص لتقييم مدى صلة كل مناقصة "
+"فرصة/اعتماد."
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.server,name:era_crm_forsah_client.ir_cron_etimad_ai_match_ir_actions_server
+msgid "Etimad AI Business Match"
+msgstr "مطابقة نشاط اعتماد بالذكاء الاصطناعي"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+msgid "Etimad API request failed: %s"
+msgstr "فشل طلب واجهة اعتماد: %s"
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.server,name:era_crm_forsah_client.ir_cron_etimad_archive_old_records_ir_actions_server
+msgid "Etimad Archive Old Records"
+msgstr "أرشفة سجلات اعتماد القديمة"
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.server,name:era_crm_forsah_client.ir_cron_category_to_tag_ir_actions_server
+msgid "Etimad Category To Tag"
+msgstr "تحويل تصنيف اعتماد إلى وسم"
 
 #. module: era_crm_forsah_client
 #: model:ir.actions.server,name:era_crm_forsah_client.etimad_cron_ir_actions_server
 msgid "Etimad Cron Job"
-msgstr "جلب البيانات منصة اعتماد"
+msgstr "جلب بيانات منصة اعتماد"
 
 #. module: era_crm_forsah_client
 #: model:ir.ui.menu,name:era_crm_forsah_client.crm_etimad_tag_menu_id_client
 msgid "Etimad Tags"
-msgstr " تصنيفات اعتماد"
+msgstr "تصنيفات اعتماد"
+
+#. module: era_crm_forsah_client
+#: model:ir.model,name:era_crm_forsah_client.model_crm_etimad_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+msgid "Etimad Tender"
+msgstr "مناقصة اعتماد"
+
+#. module: era_crm_forsah_client
+#: model:ir.model,name:era_crm_forsah_client.model_crm_etimad_tag_client
+msgid "Etimad Tender Tag"
+msgstr "وسم مناقصة اعتماد"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+msgid "Etimad Tenders"
+msgstr "مناقصات اعتماد"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Expired"
+msgstr "منتهية"
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.server,name:era_crm_forsah_client.ir_cron_forsah_ai_match_ir_actions_server
+msgid "Forsah AI Business Match"
+msgstr "مطابقة نشاط فرصة بالذكاء الاصطناعي"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "Forsah API request failed: %s"
+msgstr "فشل طلب واجهة فرصة: %s"
 
 #. module: era_crm_forsah_client
 #: model:ir.actions.server,name:era_crm_forsah_client.forsah_cron_ir_actions_server
 msgid "Forsah Cron Job"
-msgstr "جلب البيانات منصة فرصة"
+msgstr "جلب بيانات منصة فرصة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model,name:era_crm_forsah_client.model_crm_forsah_client
+msgid "Forsah Studyable Tender"
+msgstr "مناقصة فرصة قابلة للدراسة"
 
 #. module: era_crm_forsah_client
 #: model:ir.ui.menu,name:era_crm_forsah_client.crm_forsah_tag_menu_id_client
@@ -115,30 +295,59 @@ msgid "Forsah Tags"
 msgstr "تصنيفات فرصة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__etimad_id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__forsah_id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__id
-msgid "ID"
-msgstr ""
+#: model:ir.model,name:era_crm_forsah_client.model_crm_forsah_tag_client
+msgid "Forsah Tender Tag"
+msgstr "وسم مناقصة فرصة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__write_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__write_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__write_uid
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__write_uid
-msgid "Last Updated by"
+#: model_terms:ir.actions.act_window,help:era_crm_forsah_client.crm_forsah_tree_act_window
+msgid ""
+"Forsah tenders are imported automatically. Triage them here as studyable or "
+"not suitable, then convert the promising ones into opportunities."
 msgstr ""
+"تُستورد مناقصات فرصة تلقائياً. صنّفها هنا كقابلة للدراسة أو غير مناسبة، ثم "
+"حوّل الواعدة منها إلى فرص."
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__write_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__write_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__write_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__write_date
-msgid "Last Updated on"
+#: model:ir.model.fields,help:era_crm_forsah_client.field_res_config_settings__forsah_business_description
+msgid ""
+"Free-text description of the company's business, used by the AI to score "
+"tender relevance."
 msgstr ""
+"وصف نصّي حر لنشاط الشركة، يستخدمه الذكاء الاصطناعي لتقييم صلة المناقصات."
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,help:era_crm_forsah_client.field_res_company__forsah_business_description
+msgid ""
+"Free-text description of this company's business. Used by the AI to score "
+"how relevant each Forsah/Etimad tender is to the company."
+msgstr ""
+"وصف نصّي حر لنشاط هذه الشركة. يستخدمه الذكاء الاصطناعي لتقييم مدى صلة كل "
+"مناقصة فرصة/اعتماد بالشركة."
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__ai_match__high
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__high
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_tender_ai_match_mixin__ai_match__high
+msgid "High"
+msgstr "عالٍ"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+msgid "Invalid JSON returned by the Etimad API: %s"
+msgstr "استجابة JSON غير صالحة من واجهة اعتماد: %s"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "Invalid JSON returned by the Forsah API: %s"
+msgstr "استجابة JSON غير صالحة من واجهة فرصة: %s"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Late Activities"
+msgstr "أنشطة متأخرة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__limit
@@ -152,12 +361,165 @@ msgid "Link"
 msgstr "رابط"
 
 #. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__ai_match__low
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__low
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_tender_ai_match_mixin__ai_match__low
+msgid "Low"
+msgstr "منخفض"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Mark Studyable"
+msgstr "تحديد كقابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Mark not suitable"
+msgstr "تحديد كغير مناسبة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Mark studyable"
+msgstr "تحديد كقابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_reason
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_reason
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_tender_ai_match_mixin__ai_match_reason
+msgid "Match Reason"
+msgstr "سبب المطابقة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_score
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_score
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_tender_ai_match_mixin__ai_match_score
+msgid "Match Score"
+msgstr "درجة المطابقة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__ai_match__medium
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__medium
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_tender_ai_match_mixin__ai_match__medium
+msgid "Medium"
+msgstr "متوسط"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__method
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Method"
+msgstr "التعميد"
+
+#. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__name
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_tag_client__name
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__name
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_tag_client__name
 msgid "Name"
 msgstr "الاسم"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+msgid "New Etimad opportunity requires review within 3 days."
+msgstr "فرصة جديدة من منصة اعتماد تتطلب المراجعة خلال 3 أيام."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "New Forsah opportunity requires review within 3 days."
+msgstr "فرصة جديدة من منصة فرصة تتطلب المراجعة خلال 3 أيام."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid ""
+"No AI agent is configured. Create or select one in the AI app, then it will "
+"be used to score tenders."
+msgstr ""
+"لم يتم تكوين وكيل ذكاء اصطناعي. أنشئ أو اختر واحداً في تطبيق الذكاء "
+"الاصطناعي ليُستخدم في تحليل المناقصات."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "No opportunity is linked to this tender yet."
+msgstr "لا توجد فرصة مرتبطة بهذه المناقصة بعد."
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.actions.act_window,help:era_crm_forsah_client.crm_forsah_tree_act_window
+msgid "No studyable tenders yet"
+msgstr "لا توجد مناقصات قابلة للدراسة بعد"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Not Analyzed"
+msgstr "غير محللة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Not Converted"
+msgstr "غير محولة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__rejected
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__rejected
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Not Suitable"
+msgstr "غير مناسبة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_forsah_client__days_remaining
+msgid ""
+"Number of days left to submit, parsed from the feed's days value. Used for "
+"sorting and filtering."
+msgstr ""
+"عدد الأيام المتبقية للتقديم، مستخرجة من قيمة الأيام في التغذية. تُستخدم "
+"للترتيب والتصفية."
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Open"
+msgstr "مفتوحة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Open Lead"
+msgstr "فتح الفرصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Open Tender"
+msgstr "فتح المناقصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Open tender link"
+msgstr "فتح رابط المناقصة"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__lead_id
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__lead_id
+msgid "Opportunity"
+msgstr "الفرصة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_etimad_client__lead_id
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_forsah_client__lead_id
+msgid "Opportunity created from this tender, if any."
+msgstr "الفرصة المُنشأة من هذه المناقصة، إن وُجدت."
 
 #. module: era_crm_forsah_client
 #: model:ir.ui.menu,name:era_crm_forsah_client.crm_etimad_menu_id_client
@@ -175,9 +537,24 @@ msgid "Publish"
 msgstr "تاريخ النشر"
 
 #. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Publish Date"
+msgstr "تاريخ النشر"
+
+#. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__questions
 msgid "Questions"
 msgstr "حد الاستفسارات"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid ""
+"Re-analyze the selected tenders (first 30 now, the rest by the scheduler); "
+"scores a new batch if none selected"
+msgstr ""
+"إعادة تحليل المناقصات المحدّدة (أول 30 الآن، والباقي عبر المجدول)؛ يحلّل "
+"دفعة جديدة إن لم يوجد تحديد"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ref
@@ -185,274 +562,174 @@ msgid "Ref"
 msgstr "مرجع"
 
 #. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__etimad_id
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__forsah_id
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Ref ID"
+msgstr "المعرّف المرجعي"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Relevant (Medium+)"
+msgstr "ذات صلة (متوسط فأعلى)"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "Review Opportunity"
+msgstr "مراجعة الفرصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid ""
+"Run AI matching? Selected tenders are re-analyzed — the first 30 now, the "
+"rest by the scheduler. With no selection, the next batch of un-analyzed "
+"tenders is scored."
+msgstr ""
+"تشغيل التحليل بالذكاء؟ تُعاد المناقصات المحدّدة للتحليل — أول 30 الآن "
+"والباقي عبر المجدول. وبدون تحديد، تُحلَّل الدفعة التالية من غير المحلَّلة."
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Search Etimad Tenders"
+msgstr "البحث في مناقصات اعتماد"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Search Studyable Tenders"
+msgstr "البحث في المناقصات القابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid ""
+"Set the company's business description in Settings (Settings → CRM) before "
+"running the AI match."
+msgstr ""
+"حدّد وصف نشاط الشركة في الإعدادات (الإعدادات ← CRM) قبل تشغيل التحليل."
+
+#. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__size
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
 msgid "Size"
 msgstr "الحجم"
 
 #. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__study_state
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__study_state
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Study Status"
+msgstr "حالة الدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__studyable
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__studyable
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Studyable"
+msgstr "قابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Studyable Tender"
+msgstr "مناقصة قابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.act_window,name:era_crm_forsah_client.crm_forsah_tree_act_window
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Studyable Tenders"
+msgstr "مناقصات قابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Tag"
+msgstr "الوسم"
+
+#. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__tag_ids
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__tag_ids
-msgid "Tag"
-msgstr "تصنيفات فرصة"
+msgid "Tags"
+msgstr "الوسوم"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Tender"
+msgstr "مناقصة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model,name:era_crm_forsah_client.model_crm_tender_ai_match_mixin
+msgid "Tender AI Business-Match Mixin"
+msgstr "وحدة مطابقة المناقصات بالذكاء الاصطناعي"
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/ai_match.py:0
+msgid ""
+"The remaining %(r)s are scored automatically by the scheduler (every 2 "
+"hours)."
+msgstr "تُحلَّل المتبقية %(r)s تلقائياً عبر المجدول (كل ساعتين)."
+
+#. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "This tender has no link to open."
+msgstr "لا يوجد رابط لفتح هذه المناقصة."
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
 msgid "To Lead"
-msgstr "انشاء فرصة"
+msgstr "إنشاء فرصة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__cost
-msgid "cost"
-msgstr "الكراس"
-
-#. module: era_crm_forsah_client
-#: model:ir.model,name:era_crm_forsah_client.model_crm_etimad_client
-msgid "crm_etimad"
-msgstr "منصة اعتماد"
-
-#. module: era_crm_forsah_client
-#: model:ir.model,name:era_crm_forsah_client.model_crm_etimad_tag_client
-msgid "crm_etimad_tag"
-msgstr "تصنيفات اعتماد"
-
-#. module: era_crm_forsah_client
-#: model:ir.model,name:era_crm_forsah_client.model_crm_forsah_client
-msgid "crm_forsah_client"
-msgstr "منصة فرصة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model,name:era_crm_forsah_client.model_crm_forsah_tag_client
-msgid "crm_forsah_tag"
-msgstr "تصنيفات فرصة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__method
-msgid "method"
-msgstr "التعميد"
-
-#. module: era_crm_forsah_client
-#: model:ir.actions.act_window,name:era_crm_forsah_client.crm_forsah_tree_act_window
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-msgid "Studyable Tenders"
-msgstr "مناقصات قابلة للدراسة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__study_state
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__study_state
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Study Status"
-msgstr "حالة الدراسة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__to_review
 #: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__to_review
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__to_review
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
 msgid "To Review"
 msgstr "بحاجة لمراجعة"
 
 #. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__studyable
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__studyable
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Studyable"
-msgstr "قابلة للدراسة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__rejected
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__rejected
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Not Suitable"
-msgstr "غير مناسبة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__converted
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__converted
-msgid "Converted"
-msgstr "تم التحويل"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__days_remaining
-msgid "Days Remaining"
-msgstr "الأيام المتبقية"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-msgid "Days Left"
-msgstr "الأيام المتبقية"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__lead_id
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__lead_id
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Opportunity"
-msgstr "الفرصة"
-
-#. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "To Study"
 msgstr "للدراسة"
 
 #. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-msgid "Closing in 3 Days"
-msgstr "تنتهي خلال 3 أيام"
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_etimad_client__study_state
+#: model:ir.model.fields,help:era_crm_forsah_client.field_crm_forsah_client__study_state
+msgid "Triage status of the tender within the studyable-tenders pipeline."
+msgstr "حالة فرز المناقصة ضمن مسار المناقصات القابلة للدراسة."
 
 #. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-msgid "Closing in a Week"
-msgstr "تنتهي خلال أسبوع"
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_etimad.py:0
+msgid "Unexpected response code from Etimad API: %s"
+msgstr "رمز استجابة غير متوقع من واجهة اعتماد: %s"
 
 #. module: era_crm_forsah_client
+#. odoo-python
+#: code:addons/era_crm_forsah_client/models/crm_forsah.py:0
+msgid "Unexpected response code from Forsah API: %s"
+msgstr "رمز استجابة غير متوقع من واجهة فرصة: %s"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
 msgid "Untagged"
 msgstr "بدون تصنيف"
 
 #. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Mark Studyable"
-msgstr "تحديد كقابلة للدراسة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Create Opportunity"
-msgstr "إنشاء فرصة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Open Tender"
-msgstr "فتح المناقصة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Open Lead"
-msgstr "فتح الفرصة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-msgid "Etimad Tenders"
-msgstr "مناقصات اعتماد"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Not Converted"
-msgstr "غير محولة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Expired"
-msgstr "منتهية"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Deadline"
-msgstr "آخر موعد للتقديم"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Method"
-msgstr "التعميد"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-msgid "Business Match"
-msgstr "مطابقة النشاط"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_score
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_score
-msgid "Match Score"
-msgstr "درجة المطابقة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-msgid "Match %"
-msgstr "نسبة المطابقة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_reason
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_reason
-msgid "Match Reason"
-msgstr "سبب المطابقة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__ai_match_date
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__ai_match_date
-msgid "Analyzed On"
-msgstr "تاريخ التحليل"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__high
-msgid "High"
-msgstr "عالٍ"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__medium
-msgid "Medium"
-msgstr "متوسط"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__ai_match__low
-msgid "Low"
-msgstr "منخفض"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "AI Match"
-msgstr "تحليل بالذكاء"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Business Match (AI)"
-msgstr "مطابقة النشاط (ذكاء اصطناعي)"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Best for Our Business"
-msgstr "الأقرب لنشاطنا"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Relevant (Medium+)"
-msgstr "ذات صلة (متوسط فأعلى)"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
-msgid "Not Analyzed"
-msgstr "غير محللة"
-
-#. module: era_crm_forsah_client
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_res_company__forsah_business_description
-#: model:ir.model.fields,field_description:era_crm_forsah_client.field_res_config_settings__forsah_business_description
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
-msgid "Business Activity Description"
-msgstr "وصف نشاط الشركة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
-msgid "Business Activity"
-msgstr "نشاط الشركة"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
-msgid "Etimad Tender"
-msgstr "مناقصة اعتماد"
+msgid ""
+"e.g. IT services, software development, enterprise systems integration, "
+"networking and infrastructure..."
+msgstr ""
+"مثال: خدمات تقنية المعلومات، تطوير البرمجيات، تكامل أنظمة المؤسسات، الشبكات "
+"والبنية التحتية..."

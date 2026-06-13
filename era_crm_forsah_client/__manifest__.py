@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Era Crm Forsah & Etimad For Clients",
-    'version': '19.0.1.5.5',
+    'version': '19.0.1.6.0',
     'category': 'CRM',
     'summary': 'Forsah studyable tenders & Etimad tenders pipeline for CRM',
     'description': """
@@ -31,11 +31,6 @@ them as a triage pipeline of studyable tenders:
         'views/res_config_settings_view.xml',
         'data/cronjob.xml',
     ],
-    'assets': {
-        'web.assets_backend': [
-            'era_crm_forsah_client/static/src/css/styles.css',
-        ],
-    },
     'installable': True,
     'application': True,
 }

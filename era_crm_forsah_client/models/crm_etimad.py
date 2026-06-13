@@ -61,12 +61,6 @@ class CrmEtimad(models.Model):
     def action_mark_rejected(self):
         self.write({'study_state': 'rejected'})
 
-    def action_reset_to_review(self):
-        self.write({'study_state': 'to_review'})
-
-    def _get_domain(self):
-        return [('limit', '>=', fields.Date.today())]
-
     def get_etimad_data(self):
         """Fetch the Etimad feed and create any tenders not already present."""
         try:

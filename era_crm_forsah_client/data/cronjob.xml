@@ -7,23 +7,19 @@
         <field name="state">code</field>
         <field name="code">model.get_forsah_data()</field>
         <field name="user_id" ref="base.user_root"/>
-        <field name='interval_number'>1</field>
-        <field name='interval_type'>days</field>
-        <!-- <field name="numbercall">-1</field> -->
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
         <field name="active">True</field>
-        <!-- <field name="doall" eval="False"/> -->
-   </record>
-   <record id="etimad_cron" model="ir.cron">
+    </record>
+    <record id="etimad_cron" model="ir.cron">
         <field name="name">Etimad Cron Job</field>
         <field name="model_id" ref="model_crm_etimad_client"/>
         <field name="state">code</field>
         <field name="code">model.get_etimad_data()</field>
         <field name="user_id" ref="base.user_root"/>
-        <field name='interval_number'>1</field>
-        <field name='interval_type'>hours</field>
-        <!-- <field name="numbercall">-1</field> -->
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
         <field name="active">True</field>
-        <!-- <field name="doall" eval="False"/> -->
     </record>
     <record id="ir_cron_category_to_tag" model="ir.cron">
         <field name="name">Etimad Category To Tag</field>
@@ -33,8 +29,7 @@
         <field name="user_id" ref="base.user_root"/>
         <field name="interval_type">hours</field>
         <field name="interval_number">1</field>
-        <!-- <field name="numbercall">-1</field> -->
-        <!-- <field name="doall">False</field> -->
+        <field name="active">True</field>
     </record>
     <record id="ir_cron_etimad_archive_old_records" model="ir.cron">
         <field name="name">Etimad Archive Old Records</field>
@@ -44,8 +39,7 @@
         <field name="user_id" ref="base.user_root"/>
         <field name="interval_type">days</field>
         <field name="interval_number">1</field>
-        <!-- <field name="numbercall">-1</field> -->
-        <!-- <field name="doall">False</field> -->
+        <field name="active">True</field>
     </record>
     <record id="ir_cron_forsah_ai_match" model="ir.cron">
         <field name="name">Forsah AI Business Match</field>

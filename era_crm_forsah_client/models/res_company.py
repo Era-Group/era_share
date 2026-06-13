@@ -24,7 +24,9 @@ class ResCompany(models.Model):
     def _reset_tender_ai_match(self):
         """Clear AI match scores so the scheduler re-scores tenders against the
         new business description. Bounded to the open candidate set so the large
-        expired backlog is never touched.
+        expired backlog is never touched, and to the changed company's own
+        tenders where the model is company-scoped (so editing one company's
+        description does not wipe another company's scores).
         """
         reset_vals = {
             "ai_match_date": False,
@@ -34,6 +36,9 @@ class ResCompany(models.Model):
         }
         for model_name in ("crm.forsah.client", "crm.etimad.client"):
             Model = self.env[model_name].sudo()
-            candidates = Model.search(Model._ai_match_candidates_domain())
+            domain = Model._ai_match_candidates_domain()
+            if "company_id" in Model._fields:
+                domain = domain + [("company_id", "in", self.ids)]
+            candidates = Model.search(domain)
             if candidates:
                 candidates.write(reset_vals)

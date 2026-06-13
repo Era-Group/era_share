@@ -48,17 +48,6 @@ class TenderAiMatchMixin(models.AbstractModel):
         string="Business Match", readonly=True, copy=False)
     ai_match_reason = fields.Char(string="Match Reason", readonly=True, copy=False)
     ai_match_date = fields.Datetime(string="Analyzed On", readonly=True, copy=False)
-    # Text rendering of the score for the list badge: the badge widget hides a
-    # falsy value, so a real score of 0 would show blank. Render it as a string
-    # ("0".."100") once analyzed, and empty while unanalyzed (so the ~388k
-    # never-scored Etimad rows stay blank rather than all showing a "0").
-    ai_match_display = fields.Char(
-        string="Business Match", compute="_compute_ai_match_display")
-
-    @api.depends("ai_match_score", "ai_match_date")
-    def _compute_ai_match_display(self):
-        for record in self:
-            record.ai_match_display = str(record.ai_match_score) if record.ai_match_date else ""
 
     # ------------------------------------------------------------------
     # Hooks overridable per concrete model

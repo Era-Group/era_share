@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Era Crm Forsah & Etimad For Clients",
-    'version': '19.0.1.5.4',
+    'version': '19.0.1.5.5',
     'category': 'CRM',
     'summary': 'Forsah studyable tenders & Etimad tenders pipeline for CRM',
     'description': """

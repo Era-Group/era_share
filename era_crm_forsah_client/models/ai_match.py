@@ -228,6 +228,9 @@ class TenderAiMatchMixin(models.AbstractModel):
                 'message': message,
                 'type': 'success',
                 'sticky': False,
+                # Refresh the current form/list once scoring finishes so the new
+                # scores show without a manual reload.
+                'next': {'type': 'ir.actions.client', 'tag': 'soft_reload'},
             },
         }
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Era Crm Forsah & Etimad For Clients",
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.3.0',
     'category': 'CRM',
     'summary': 'Forsah studyable tenders & Etimad tenders pipeline for CRM',
     'description': """
@@ -17,7 +17,7 @@ them as a triage pipeline of studyable tenders:
 * One-click conversion of a tender into a CRM opportunity.
 * AI business-match: scores each open tender's relevance to the company's
   business description (set in Settings) and surfaces the best-fitting tenders.
-  Uses a connected era.ai.account when present (soft dependency).
+  Uses Odoo's standard AI agent (ai.agent) — soft dependency on the `ai` app.
     """,
     'author': 'Era group',
     'email': 'aqlan@era.net.sa',

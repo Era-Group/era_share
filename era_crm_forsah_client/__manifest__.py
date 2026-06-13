@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Era Crm Forsah & Etimad For Clients",
-    'version': '19.0.1.6.0',
+    'version': '19.0.1.6.1',
     'category': 'CRM',
     'summary': 'Forsah studyable tenders & Etimad tenders pipeline for CRM',
     'description': """
@@ -24,6 +24,7 @@ them as a triage pipeline of studyable tenders:
     'website': 'https://era.net.sa',
     'license': 'AGPL-3',
     'depends': ['base', 'contacts', 'crm', 'mail', 'utm'],
+    'images': ['static/description/banner.png'],
     'data': [
         'security/ir.model.access.csv',
         'views/crm_forsah_view.xml',

@@ -223,6 +223,23 @@ class TenderAiMatchMixin(models.AbstractModel):
             },
         }
 
+    def action_ai_rematch_all(self):
+        """Reset AI scores on every candidate tender and re-score them.
+
+        Clears the analysis stamp on all candidates (so already-scored tenders
+        re-enter the pipeline), scores a first capped batch right away, and lets
+        the scheduled job drain the rest over its next runs. Ignores the current
+        selection — it always targets the full candidate set.
+        """
+        candidates = self.search(self._ai_match_candidates_domain())
+        candidates.write({
+            'ai_match_date': False,
+            'ai_match_score': 0,
+            'ai_match': False,
+            'ai_match_reason': False,
+        })
+        return candidates.action_ai_match()
+
     def _run_ai_match(self, batch_size=30):
         business = self._business_description()
         if not business:

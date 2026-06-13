@@ -39,12 +39,30 @@ class CrmEtimad(models.Model):
     lead_id = fields.Many2one(
         'crm.lead', string="Opportunity", readonly=True, copy=False,
         help="Opportunity created from this tender, if any.")
+    study_state = fields.Selection(
+        selection=[
+            ('to_review', 'To Review'),
+            ('studyable', 'Studyable'),
+            ('rejected', 'Not Suitable'),
+            ('converted', 'Converted'),
+        ],
+        string="Study Status", default='to_review', required=True,
+        help="Triage status of the tender within the studyable-tenders pipeline.")
     active = fields.Boolean("Active", default=True)
 
     def action_archive_old(self):
         """Archive tenders whose submission deadline has passed."""
         today = fields.Date.today()
         self.search([('limit', '<', today), ('active', '=', True)]).write({'active': False})
+
+    def action_mark_studyable(self):
+        self.write({'study_state': 'studyable'})
+
+    def action_mark_rejected(self):
+        self.write({'study_state': 'rejected'})
+
+    def action_reset_to_review(self):
+        self.write({'study_state': 'to_review'})
 
     def _get_domain(self):
         return [('limit', '>=', fields.Date.today())]
@@ -147,7 +165,7 @@ class CrmEtimad(models.Model):
             note=_('New Etimad opportunity requires review within 3 days.'),
             user_id=self.env.user.id,
         )
-        self.lead_id = lead.id
+        self.write({'lead_id': lead.id, 'study_state': 'converted'})
         _logger.info("Created opportunity %s from Etimad tender %s", lead.id, self.name)
         return self.action_open_lead()
 

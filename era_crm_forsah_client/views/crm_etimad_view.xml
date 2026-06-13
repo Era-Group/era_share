@@ -32,6 +32,11 @@
                            decoration-info="ai_match == 'medium'"
                            decoration-muted="ai_match == 'low'"/>
                     <field name="ai_match_reason" optional="hide"/>
+                    <field name="study_state" widget="badge"
+                           decoration-info="study_state == 'to_review'"
+                           decoration-success="study_state == 'studyable'"
+                           decoration-danger="study_state == 'rejected'"
+                           decoration-muted="study_state == 'converted'"/>
                     <field name="lead_id" optional="hide"/>
                     <button name="etimad_open_link" type="object" string=""
                             class="fa fa-external-link btn-link" title="Open tender link"/>
@@ -50,6 +55,10 @@
             <field name="arch" type="xml">
                 <form string="Etimad Tender">
                     <header>
+                        <button name="action_mark_studyable" type="object" string="Mark Studyable"
+                                class="btn-success" invisible="study_state in ('studyable','converted')"/>
+                        <button name="action_mark_rejected" type="object" string="Not Suitable"
+                                invisible="study_state in ('rejected','converted')"/>
                         <button name="action_create_lead" type="object" string="Create Opportunity"
                                 class="btn-primary" invisible="lead_id"/>
                         <button name="action_open_lead" type="object" string="Open Lead"
@@ -58,6 +67,8 @@
                                 class="btn-secondary" invisible="not link"/>
                         <button name="action_ai_match" type="object" string="AI Match"
                                 class="btn-secondary" icon="fa-magic"/>
+                        <field name="study_state" widget="statusbar"
+                               statusbar_visible="to_review,studyable,converted"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -126,6 +137,13 @@
                     <filter name="converted" string="Converted"
                             domain="[('lead_id', '!=', False)]"/>
                     <separator/>
+                    <filter name="to_study" string="To Study"
+                            domain="[('study_state', 'in', ['to_review', 'studyable'])]"/>
+                    <filter name="studyable" string="Studyable"
+                            domain="[('study_state', '=', 'studyable')]"/>
+                    <filter name="rejected" string="Not Suitable"
+                            domain="[('study_state', '=', 'rejected')]"/>
+                    <separator/>
                     <filter name="best_match" string="Best for Our Business"
                             domain="[('ai_match', '=', 'high')]"/>
                     <filter name="match_medium_up" string="Relevant (Medium+)"
@@ -139,6 +157,7 @@
                     <filter name="publish_date" string="Publish Date" date="publish"/>
                     <filter name="limit_date" string="Deadline" date="limit"/>
                     <group>
+                        <filter name="group_study" string="Study Status" context="{'group_by': 'study_state'}"/>
                         <filter name="group_match" string="Business Match" context="{'group_by': 'ai_match'}"/>
                         <filter name="group_company" string="Company" context="{'group_by': 'company'}"/>
                         <filter name="group_method" string="Method" context="{'group_by': 'method'}"/>

@@ -240,26 +240,35 @@ msgstr "مناقصات قابلة للدراسة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__study_state
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__study_state
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "Study Status"
 msgstr "حالة الدراسة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__to_review
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__to_review
 msgid "To Review"
 msgstr "بحاجة لمراجعة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__studyable
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__studyable
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "Studyable"
 msgstr "قابلة للدراسة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__rejected
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__rejected
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "Not Suitable"
 msgstr "غير مناسبة"
 
 #. module: era_crm_forsah_client
 #: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__converted
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_etimad_client__study_state__converted
 msgid "Converted"
 msgstr "تم التحويل"
 
@@ -283,6 +292,7 @@ msgstr "الفرصة"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
 msgid "To Study"
 msgstr "للدراسة"
 
@@ -303,6 +313,7 @@ msgstr "بدون تصنيف"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Mark Studyable"
 msgstr "تحديد كقابلة للدراسة"
 

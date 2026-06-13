@@ -195,23 +195,26 @@ class TenderAiMatchMixin(models.AbstractModel):
     def action_ai_match(self):
         """Score tenders against the company business.
 
-        - With an explicit selection: reset ALL selected tenders (even past the
-          inline cap) so the overflow leaves the scored state and the scheduler
-          re-scores it, then score the first ``AI_MATCH_INLINE_CAP`` now.
+        - With an explicit selection: score the first ``AI_MATCH_INLINE_CAP``
+          selected tenders now (overwriting their scores) and reset only the
+          overflow beyond the cap, which the scheduler then re-scores. Records
+          outside the selection are never touched.
         - With no selection: score the next batch of not-yet-analyzed candidates.
 
         Capping the synchronous run keeps a click from tying up a worker.
         """
         if self:
-            # Reset the whole selection up-front so anything past the inline cap
-            # leaves the scored state and is picked up by the cron.
-            self.write({
+            targets = self
+            # Re-scoring overwrites the inline batch, so only the overflow beyond
+            # the cap needs resetting — that's what the scheduler re-scores. This
+            # avoids clearing scores we are about to refresh, and avoids touching
+            # anything outside the actual targets.
+            targets[AI_MATCH_INLINE_CAP:].write({
                 'ai_match_date': False,
                 'ai_match_score': 0,
                 'ai_match': False,
                 'ai_match_reason': False,
             })
-            targets = self
         else:
             targets = self.search(
                 self._ai_match_candidates_domain() + [('ai_match_date', '=', False)])

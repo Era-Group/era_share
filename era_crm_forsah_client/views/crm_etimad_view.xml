@@ -1,43 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-            <record id="crm_etimad_form_client" model="ir.ui.view">
-                <field name="name">crm.etimad.client</field>
-                <field name="model">crm.etimad.client</field>
-                <field name="arch" type="xml">
-                    <list string="Caption" create="true" delete="true" edit="true" editable="bottom" default_order="limit asc"> 
-                        <field name="name"></field>
-                        <field name="ref"></field>
-                        <field name="company"></field>
-                        <field name="cost"></field>
-                        <field name="method"></field>
-                        <field name="questions"></field>
-                        <field name="limit"></field>
-                        <field name="publish"></field>
-                        <!-- <field name="active" invisible="1"></field> -->
-                        <field name="tag_ids" widget="many2many_tags"></field>
-                        <button name="etimad_open_link" string="" type="object" class="fa fa-external-link btn-link" />
-                        <button name="action_create_lead" string="To Lead" type="object" class="btn-primary"/>  
-                    </list>
-                </field>
-            </record> 
-            
-            <record id="crm_etimad_form_client_act_window" model="ir.actions.act_window">
-                <field name="type">ir.actions.act_window</field>
-                <field name="name">Crm Etimad</field>
-                <field name="res_model">crm.etimad.client</field>
-                <field name="view_mode">list</field>
-            </record>
-            <menuitem id="crm_etimad_menu_id_client" parent="crm.crm_menu_root" name="Portal Etimad"  action="crm_etimad_form_client_act_window" sequence="3"/>
 
-<!-- ##################### Tags #########################-->
+        <!-- ##################### List ######################### -->
+        <record id="crm_etimad_form_client" model="ir.ui.view">
+            <field name="name">crm.etimad.client.list</field>
+            <field name="model">crm.etimad.client</field>
+            <field name="arch" type="xml">
+                <list string="Etimad Tenders" create="false" delete="false" edit="false"
+                      default_order="limit asc"
+                      decoration-danger="limit and limit &lt; current_date"
+                      decoration-muted="lead_id">
+                    <field name="name"/>
+                    <field name="ref"/>
+                    <field name="company"/>
+                    <field name="cost"/>
+                    <field name="method"/>
+                    <field name="questions"/>
+                    <field name="limit"/>
+                    <field name="publish"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="lead_id" optional="hide"/>
+                    <button name="etimad_open_link" type="object" string=""
+                            class="fa fa-external-link btn-link" title="Open tender link"/>
+                    <button name="action_create_lead" type="object" string="To Lead"
+                            class="btn-primary" invisible="lead_id"/>
+                    <button name="action_open_lead" type="object" string="Open Lead"
+                            class="btn-secondary" invisible="not lead_id"/>
+                </list>
+            </field>
+        </record>
 
-            <record id="crm_etimad_tag_form_act_window_client" model="ir.actions.act_window">
-                <field name="type">ir.actions.act_window</field>
-                <field name="name">Crm Etimad Tag</field>
-                <field name="res_model">crm.etimad.tag.client</field>
-                <field name="view_mode">list</field>
-            </record>
-            <menuitem id="crm_etimad_tag_menu_id_client" parent="crm.crm_menu_config" name="Etimad Tags"  action="crm_etimad_tag_form_act_window_client"  sequence="4"/>
+        <!-- ##################### Search ######################### -->
+        <record id="crm_etimad_search" model="ir.ui.view">
+            <field name="name">crm.etimad.client.search</field>
+            <field name="model">crm.etimad.client</field>
+            <field name="arch" type="xml">
+                <search string="Search Etimad Tenders">
+                    <field name="name" string="Tender"
+                           filter_domain="['|', '|', ('name', 'ilike', self), ('company', 'ilike', self), ('ref', 'ilike', self)]"/>
+                    <field name="company"/>
+                    <field name="method"/>
+                    <field name="tag_ids"/>
+                    <separator/>
+                    <filter name="open_tenders" string="Open"
+                            domain="[('limit', '&gt;=', 'today')]"/>
+                    <filter name="expired" string="Expired"
+                            domain="[('limit', '&lt;', 'today')]"/>
+                    <filter name="not_converted" string="Not Converted"
+                            domain="[('lead_id', '=', False)]"/>
+                    <filter name="converted" string="Converted"
+                            domain="[('lead_id', '!=', False)]"/>
+                    <separator/>
+                    <filter name="untagged" string="Untagged" domain="[('tag_ids', '=', False)]"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="publish_date" string="Publish Date" date="publish"/>
+                    <filter name="limit_date" string="Deadline" date="limit"/>
+                    <group>
+                        <filter name="group_company" string="Company" context="{'group_by': 'company'}"/>
+                        <filter name="group_method" string="Method" context="{'group_by': 'method'}"/>
+                        <filter name="group_tags" string="Tag" context="{'group_by': 'tag_ids'}"/>
+                        <filter name="group_limit" string="Deadline" context="{'group_by': 'limit'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="crm_etimad_form_client_act_window" model="ir.actions.act_window">
+            <field name="type">ir.actions.act_window</field>
+            <field name="name">Crm Etimad</field>
+            <field name="res_model">crm.etimad.client</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="crm_etimad_search"/>
+            <field name="context">{'search_default_open_tenders': 1}</field>
+        </record>
+        <menuitem id="crm_etimad_menu_id_client" parent="crm.crm_menu_root" name="Portal Etimad"
+                  action="crm_etimad_form_client_act_window" sequence="3"/>
+
+        <!-- ##################### Tags ######################### -->
+        <record id="crm_etimad_tag_form_act_window_client" model="ir.actions.act_window">
+            <field name="type">ir.actions.act_window</field>
+            <field name="name">Crm Etimad Tag</field>
+            <field name="res_model">crm.etimad.tag.client</field>
+            <field name="view_mode">list</field>
+        </record>
+        <menuitem id="crm_etimad_tag_menu_id_client" parent="crm.crm_menu_config" name="Etimad Tags"
+                  action="crm_etimad_tag_form_act_window_client" sequence="4"/>
     </data>
 </odoo>

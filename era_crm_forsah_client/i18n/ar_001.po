@@ -230,3 +230,117 @@ msgstr "تصنيفات فرصة"
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__method
 msgid "method"
 msgstr "التعميد"
+
+#. module: era_crm_forsah_client
+#: model:ir.actions.act_window,name:era_crm_forsah_client.crm_forsah_tree_act_window
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Studyable Tenders"
+msgstr "مناقصات قابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__study_state
+msgid "Study Status"
+msgstr "حالة الدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__to_review
+msgid "To Review"
+msgstr "بحاجة لمراجعة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__studyable
+msgid "Studyable"
+msgstr "قابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__rejected
+msgid "Not Suitable"
+msgstr "غير مناسبة"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields.selection,name:era_crm_forsah_client.selection__crm_forsah_client__study_state__converted
+msgid "Converted"
+msgstr "تم التحويل"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__days_remaining
+msgid "Days Remaining"
+msgstr "الأيام المتبقية"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+msgid "Days Left"
+msgstr "الأيام المتبقية"
+
+#. module: era_crm_forsah_client
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__lead_id
+#: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__lead_id
+msgid "Opportunity"
+msgstr "الفرصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "To Study"
+msgstr "للدراسة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Closing in 3 Days"
+msgstr "تنتهي خلال 3 أيام"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Closing in a Week"
+msgstr "تنتهي خلال أسبوع"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_search
+msgid "Untagged"
+msgstr "بدون تصنيف"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Mark Studyable"
+msgstr "تحديد كقابلة للدراسة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Create Opportunity"
+msgstr "إنشاء فرصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+msgid "Open Tender"
+msgstr "فتح المناقصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+msgid "Open Lead"
+msgstr "فتح الفرصة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+msgid "Etimad Tenders"
+msgstr "مناقصات اعتماد"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Not Converted"
+msgstr "غير محولة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Expired"
+msgstr "منتهية"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Deadline"
+msgstr "آخر موعد للتقديم"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_search
+msgid "Method"
+msgstr "التعميد"

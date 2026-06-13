@@ -1,39 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+        <!-- ##################### List ######################### -->
         <record id="crm_forsah_tree" model="ir.ui.view">
+            <field name="name">crm.forsah.client.list</field>
+            <field name="model">crm.forsah.client</field>
+            <field name="arch" type="xml">
+                <list string="Studyable Tenders" create="false" delete="false" edit="false"
+                      decoration-danger="days_remaining &gt; 0 and days_remaining &lt;= 3 and study_state not in ('rejected','converted')"
+                      decoration-muted="study_state in ('rejected','converted')"
+                      decoration-bf="study_state == 'studyable'">
+                    <field name="name"/>
+                    <field name="city"/>
+                    <field name="size"/>
+                    <field name="days_remaining" string="Days Left"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="study_state" widget="badge"
+                           decoration-info="study_state == 'to_review'"
+                           decoration-success="study_state == 'studyable'"
+                           decoration-danger="study_state == 'rejected'"
+                           decoration-muted="study_state == 'converted'"/>
+                    <field name="lead_id" optional="hide"/>
+                    <field name="active" column_invisible="1"/>
+                    <button name="forsah_open_link" type="object" string=""
+                            class="fa fa-external-link btn-link" title="Open tender link"/>
+                    <button name="action_mark_studyable" type="object" string=""
+                            class="fa fa-check text-success" title="Mark studyable"
+                            invisible="study_state in ('studyable','converted')"/>
+                    <button name="action_mark_rejected" type="object" string=""
+                            class="fa fa-ban text-danger" title="Mark not suitable"
+                            invisible="study_state in ('rejected','converted')"/>
+                    <button name="action_create_lead" type="object" string="To Lead"
+                            class="btn-primary" invisible="study_state == 'converted'"/>
+                    <button name="action_open_lead" type="object" string="Open Lead"
+                            class="btn-secondary" invisible="not lead_id"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ##################### Form ######################### -->
+        <record id="crm_forsah_form" model="ir.ui.view">
             <field name="name">crm.forsah.client.form</field>
             <field name="model">crm.forsah.client</field>
             <field name="arch" type="xml">
-                <list string="Caption" create="true" delete="true" edit="true" editable="bottom" default_order="id asc">
-                    <field name="name"></field>
-                    <field name="size"></field>
-                    <field name="city"></field>
-                    <field name="days"></field>
-                    <field name="active" invisible="1"></field>
-                    <field name="tag_ids" widget="many2many_tags"></field>
-                    <button name="forsah_open_link" string="" type="object" class="fa fa-external-link btn-link" title="forsah_open_link"/>
-                    <button name="action_create_lead" string="To Lead" type="object" class="btn-primary hide_button"/> 
-                </list>
+                <form string="Studyable Tender">
+                    <header>
+                        <button name="action_mark_studyable" type="object" string="Mark Studyable"
+                                class="btn-success" invisible="study_state in ('studyable','converted')"/>
+                        <button name="action_mark_rejected" type="object" string="Not Suitable"
+                                invisible="study_state in ('rejected','converted')"/>
+                        <button name="action_create_lead" type="object" string="Create Opportunity"
+                                class="btn-primary" invisible="study_state == 'converted'"/>
+                        <button name="forsah_open_link" type="object" string="Open Tender"
+                                class="btn-secondary" invisible="not link"/>
+                        <field name="study_state" widget="statusbar"
+                               statusbar_visible="to_review,studyable,converted"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_lead" type="object" class="oe_stat_button"
+                                    icon="fa-star" invisible="not lead_id">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Opportunity</span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                                invisible="active"/>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="city"/>
+                                <field name="size"/>
+                                <field name="days"/>
+                                <field name="days_remaining"/>
+                            </group>
+                            <group>
+                                <field name="category"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="link" widget="url"/>
+                                <field name="forsah_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter reload_on_post="True"/>
+                </form>
             </field>
-        </record> 
- 
-        <record id="crm_forsah_tree_act_window" model="ir.actions.act_window">
-                <field name="type">ir.actions.act_window</field>
-                <field name="name">Crm Forsah</field>
-                <field name="res_model">crm.forsah.client</field>
-                <field name="view_mode">list</field>
         </record>
-        <menuitem id="crm_forsah_menu_id" parent="crm.crm_menu_root" name="Portal Forsah"  action="crm_forsah_tree_act_window"  sequence="2"/>
-    
-<!-- ##################### Tags #########################-->
 
+        <!-- ##################### Search ######################### -->
+        <record id="crm_forsah_search" model="ir.ui.view">
+            <field name="name">crm.forsah.client.search</field>
+            <field name="model">crm.forsah.client</field>
+            <field name="arch" type="xml">
+                <search string="Search Studyable Tenders">
+                    <field name="name" string="Tender"
+                           filter_domain="['|', ('name', 'ilike', self), ('category', 'ilike', self)]"/>
+                    <field name="city"/>
+                    <field name="tag_ids"/>
+                    <field name="forsah_id" string="Ref ID"/>
+                    <separator/>
+                    <filter name="to_study" string="To Study"
+                            domain="[('study_state', 'in', ['to_review', 'studyable'])]"/>
+                    <filter name="to_review" string="To Review"
+                            domain="[('study_state', '=', 'to_review')]"/>
+                    <filter name="studyable" string="Studyable"
+                            domain="[('study_state', '=', 'studyable')]"/>
+                    <filter name="rejected" string="Not Suitable"
+                            domain="[('study_state', '=', 'rejected')]"/>
+                    <filter name="converted" string="Converted"
+                            domain="[('study_state', '=', 'converted')]"/>
+                    <separator/>
+                    <filter name="closing_soon" string="Closing in 3 Days"
+                            domain="[('days_remaining', '&gt;', 0), ('days_remaining', '&lt;=', 3)]"/>
+                    <filter name="closing_week" string="Closing in a Week"
+                            domain="[('days_remaining', '&gt;', 0), ('days_remaining', '&lt;=', 7)]"/>
+                    <separator/>
+                    <filter name="untagged" string="Untagged"
+                            domain="[('tag_ids', '=', False)]"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="late_activities" string="Late Activities"
+                            domain="[('activity_date_deadline', '&lt;', 'today')]"/>
+                    <group>
+                        <filter name="group_state" string="Study Status"
+                                context="{'group_by': 'study_state'}"/>
+                        <filter name="group_city" string="City" context="{'group_by': 'city'}"/>
+                        <filter name="group_tags" string="Tag" context="{'group_by': 'tag_ids'}"/>
+                        <filter name="group_size" string="Size" context="{'group_by': 'size'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="crm_forsah_tree_act_window" model="ir.actions.act_window">
+            <field name="type">ir.actions.act_window</field>
+            <field name="name">Studyable Tenders</field>
+            <field name="res_model">crm.forsah.client</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="crm_forsah_search"/>
+            <field name="context">{'search_default_to_study': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No studyable tenders yet</p>
+                <p>Forsah tenders are imported automatically. Triage them here as studyable or not suitable, then convert the promising ones into opportunities.</p>
+            </field>
+        </record>
+
+        <menuitem id="crm_forsah_menu_id" parent="crm.crm_menu_root" name="Portal Forsah"
+                  action="crm_forsah_tree_act_window" sequence="2"/>
+
+        <!-- ##################### Tags ######################### -->
         <record id="crm_forsah_tag_form_act_window_client" model="ir.actions.act_window">
             <field name="type">ir.actions.act_window</field>
             <field name="name">Crm forsah Tag</field>
             <field name="res_model">crm.forsah.tag.client</field>
             <field name="view_mode">list</field>
         </record>
-        <menuitem id="crm_forsah_tag_menu_id_client" parent="crm.crm_menu_config" name="Forsah Tags"  action="crm_forsah_tag_form_act_window_client"  sequence="4"/>
-</data>
+        <menuitem id="crm_forsah_tag_menu_id_client" parent="crm.crm_menu_config" name="Forsah Tags"
+                  action="crm_forsah_tag_form_act_window_client" sequence="4"/>
+    </data>
 </odoo>

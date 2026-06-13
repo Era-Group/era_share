@@ -1,176 +1,241 @@
 # -*- coding: utf-8 -*-
-from odoo import api, models, fields, _
-from odoo.exceptions import UserError, ValidationError
-from dateutil.relativedelta import relativedelta
-import requests
 import logging
+import re
+
+import requests
+
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+FORSAH_DATA_URL = 'https://service.era.net.sa/forsah/data'
+# Map Arabic-Indic / Eastern-Arabic digits onto ASCII so numeric parsing works
+# regardless of how the upstream feed renders the "days remaining" value.
+_DIGIT_TRANS = str.maketrans('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', '01234567890123456789')
+
+
 class CrmForsah(models.Model):
     _name = "crm.forsah.client"
-    _description = "CRM Forsah Client"
+    _description = "Forsah Studyable Tender"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    name = fields.Char(string="Name", required=True, readonly=True, tracking=True)
+    _order = "days_remaining asc, id desc"
+
+    name = fields.Char(string="Name", required=True, readonly=True, tracking=True, index=True)
     category = fields.Char(string="Category", readonly=True, tracking=True)
     link = fields.Char(string="Link", readonly=True)
     size = fields.Char(string="Size", readonly=True, tracking=True)
     days = fields.Char(string="Days", readonly=True, tracking=True)
+    days_remaining = fields.Integer(
+        string="Days Remaining",
+        compute="_compute_days_remaining",
+        store=True,
+        help="Number of days left to submit, parsed from the feed's days value. Used for sorting and filtering.",
+    )
     city = fields.Char(string="City", readonly=True, tracking=True)
     tag_ids = fields.Many2many(
         'crm.forsah.tag.client',
         'crm_forsah_tag_rel',
         'forsah_id',
         'tag_id',
-        string='Tags'
+        string='Tags',
     )
-    forsah_id = fields.Char(string="Ref ID", readonly=True, tracking=True)
+    forsah_id = fields.Char(string="Ref ID", readonly=True, tracking=True, index=True)
+
+    study_state = fields.Selection(
+        selection=[
+            ('to_review', 'To Review'),
+            ('studyable', 'Studyable'),
+            ('rejected', 'Not Suitable'),
+            ('converted', 'Converted'),
+        ],
+        string="Study Status",
+        default='to_review',
+        required=True,
+        tracking=True,
+        index=True,
+        help="Triage status of the tender within the studyable-tenders pipeline.",
+    )
+    lead_id = fields.Many2one(
+        'crm.lead', string="Opportunity", readonly=True, copy=False, tracking=True,
+        help="Opportunity created from this tender, if any.",
+    )
+
     active = fields.Boolean(string="Active", default=True, tracking=True)
-    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    company_id = fields.Many2one(
+        'res.company', string='Company', default=lambda self: self.env.company)
 
+    # ------------------------------------------------------------------
+    # Computed fields
+    # ------------------------------------------------------------------
+    @api.depends('days')
+    def _compute_days_remaining(self):
+        for record in self:
+            record.days_remaining = self._extract_int(record.days)
+
+    @staticmethod
+    def _extract_int(value):
+        """Return the first integer found in *value* (0 if none)."""
+        if not value:
+            return 0
+        digits = re.findall(r'\d+', str(value).translate(_DIGIT_TRANS))
+        return int(digits[0]) if digits else 0
+
+    # ------------------------------------------------------------------
+    # Feed synchronisation
+    # ------------------------------------------------------------------
     def get_forsah_data(self):
-        """Fetch and process Forsah data from the API."""
-        url = 'https://service.era.net.sa/forsah/data'
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-            data_list = response.json()
-            
-            if data_list.get('code') != '200':
-                error_msg = _(f"Unexpected response code: {data_list.get('code')}")
-                _logger.error(error_msg)
-                raise UserError(error_msg)
-                
-            # Delete existing records in a transaction
-            with self.env.cr.savepoint():
-                self._delete_all_records()
-                
-                for data in data_list.get('data', []):
-                    try:
-                        vals = {
-                            'forsah_id': data.get('id'),
-                            'name': data.get('name'),
-                            'link': data.get('link'),
-                            'size': data.get('size'),
-                            'category': data.get('category'),
-                            'days': data.get('days'),
-                            'city': data.get('city'),
-                        }
-                        new_record = self.create(vals)
-                        self.process_categories_to_tags()
-                        _logger.info(f"Created Forsah record: {new_record.name}")
-                    except Exception as e:
-                        _logger.error(f"Error processing record: {e}")
-                        continue
+        """Fetch the Forsah feed and upsert it into ``crm.forsah.client``.
 
-        except requests.exceptions.RequestException as e:
-            error_msg = _(f"API Request Error: {str(e)}")
-            _logger.error(error_msg)
-            raise UserError(error_msg)
-        except ValueError as e:
-            error_msg = _("Invalid JSON response from API")
-            _logger.error(f"{error_msg}: {str(e)}")
-            raise UserError(error_msg)
-        except Exception as e:
-            error_msg = _(f"Unexpected error: {str(e)}")
-            _logger.error(error_msg)
-            raise UserError(error_msg)
-        
-        
+        Records are matched on ``forsah_id`` so that triage decisions
+        (``study_state``), tags and any linked opportunity survive a refresh.
+        Tenders that disappear from the feed are archived rather than deleted,
+        preserving their history and any opportunities created from them.
+        """
+        try:
+            response = requests.get(FORSAH_DATA_URL, timeout=30)
+            response.raise_for_status()
+            payload = response.json()
+        except requests.exceptions.RequestException as error:
+            _logger.exception("Forsah API request failed")
+            raise UserError(_("Forsah API request failed: %s", error))
+        except ValueError as error:
+            _logger.exception("Forsah API returned invalid JSON")
+            raise UserError(_("Invalid JSON returned by the Forsah API: %s", error))
+
+        if str(payload.get('code')) != '200':
+            raise UserError(
+                _("Unexpected response code from Forsah API: %s", payload.get('code')))
+
+        Tender = self.with_context(active_test=False)
+        touched = self.browse()
+        seen_refs = []
+        for data in payload.get('data') or []:
+            name = data.get('name')
+            if not name:
+                continue
+            ref = data.get('id')
+            feed_vals = {
+                'name': name,
+                'link': data.get('link'),
+                'size': data.get('size'),
+                'category': data.get('category'),
+                'days': data.get('days'),
+                'city': data.get('city'),
+            }
+            record = Tender.search([('forsah_id', '=', ref)], limit=1) if ref else self.browse()
+            if record:
+                # Refresh only feed-sourced fields; reactivate if it had been
+                # archived for falling out of a previous feed.
+                record.write({**feed_vals, 'active': True})
+            else:
+                record = self.create({**feed_vals, 'forsah_id': ref})
+            touched |= record
+            if ref:
+                seen_refs.append(ref)
+
+        touched._sync_category_tags()
+
+        if seen_refs:
+            stale = Tender.search([
+                ('forsah_id', '!=', False),
+                ('forsah_id', 'not in', seen_refs),
+                ('active', '=', True),
+            ])
+            if stale:
+                stale.write({'active': False})
+        _logger.info("Forsah sync: %s tenders upserted.", len(touched))
+        return True
+
+    def _sync_category_tags(self):
+        """Create/attach tags from each record's comma-separated category."""
+        Tag = self.env['crm.forsah.tag.client'].sudo()
+        cache = {tag.name: tag.id for tag in Tag.search([])}
+        for record in self:
+            if not record.category:
+                continue
+            tag_ids = []
+            for raw in record.category.split(','):
+                name = raw.strip()
+                if not name:
+                    continue
+                tag_id = cache.get(name)
+                if not tag_id:
+                    tag_id = Tag.create({'name': name}).id
+                    cache[name] = tag_id
+                tag_ids.append(tag_id)
+            record.tag_ids = [(6, 0, tag_ids)]
+
     @api.model
     def process_categories_to_tags(self):
-        for record in self.search([]):
-            if record.category:
-                categories = record.category.split(',')
-                ids = []
-                for category in categories:
-                    category = category.strip()
-                    if category:
-                        tag = self.env['crm.forsah.tag.client'].sudo().search([('name', '=', category)], limit=1)
-                        if not tag:
-                            tag = self.env['crm.forsah.tag.client'].sudo().create({'name': category})
-                        ids.append(tag.id)
-                        record.tag_ids = [(6, 0, ids)]
+        """Backwards-compatible entry point: (re)build tags for every record."""
+        self.search([])._sync_category_tags()
 
-    @api.constrains('name')
-    def _check_name(self):
-        for record in self:
-            if not record.name:
-                raise ValidationError("The Name field cannot be empty.")
-    @api.model
-    def _delete_all_records(self):
-        records = self.search([])
-        records.unlink()
-       
+    # ------------------------------------------------------------------
+    # Actions
+    # ------------------------------------------------------------------
     def forsah_open_link(self):
-            for record in self:
-                dynamic_url = f"{record.link}"  
-                return {
-                        'type': 'ir.actions.act_url',
-                        'url': dynamic_url,
-                        'target': 'new',}
+        self.ensure_one()
+        if not self.link:
+            raise UserError(_("This tender has no link to open."))
+        return {
+            'type': 'ir.actions.act_url',
+            'url': self.link,
+            'target': 'new',
+        }
+
+    def action_mark_studyable(self):
+        self.write({'study_state': 'studyable'})
+
+    def action_mark_rejected(self):
+        self.write({'study_state': 'rejected'})
+
+    def action_reset_to_review(self):
+        self.write({'study_state': 'to_review'})
 
     def _get_source(self):
-            source =self.env['utm.source'].search([('name','=','Forsah')])
-            if len(source)==0:
-                return False   
-            else:
-                return source.id  
-                             
-    def action_create_lead(self):
-        """Create a CRM lead from Forsah data."""
-        self.ensure_one()
-        Lead = self.env['crm.lead']
-        
-        # Check for existing lead
-        existing_lead = Lead.search([
-            ('name', '=', self.name),
-            ('description', 'ilike', self.category)
-        ], limit=1)
-        
-        if existing_lead:
-            raise ValidationError(_("A lead has already been created for this opportunity."))
-            
-        try:
-            # Get or create UTM source
-            source_id = self._get_source() or self.env['utm.source'].create({
-                'name': "Forsah"
-            }).id
-            
-            # Prepare lead data
-            description = f"{self.category} | Days {self.days} | Size {self.size}"
-            lead_data = {
-                'name': self.name,
-                'description': description,
-                'type': 'opportunity',
-                'team_id': self.env['crm.team'].search([], limit=1).id,
-                'city': self.city,
-                'website': self.link,
-                'source_id': source_id,
-                'company_id': self.company_id.id,
-            }
-            
-            # Create lead with activity in a transaction
-            with self.env.cr.savepoint():
-                lead = Lead.create(lead_data)
-                
-                # Create activity
-                activity = self.env['mail.activity'].create({
-                    'display_name': lead.name,
-                    'summary': _('Review Opportunity'),
-                    'note': _('New Forsah opportunity requires review within 3 days.'),
-                    'user_id': self.env.user.id,
-                    'res_id': lead.id,
-                    'res_model_id': self.env['ir.model']._get('crm.lead').id,
-                    'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id,
-                    'date_deadline': fields.Date.context_today(self) + relativedelta(days=3),
-                })
-                
-                _logger.info(f"Created lead and activity for Forsah: {self.name}")
-                return activity
-                
-        except Exception as e:
-            error_msg = _(f"Failed to create lead: {str(e)}")
-            _logger.error(error_msg)
-            raise UserError(error_msg)
+        return self.env['utm.source'].search([('name', '=', 'Forsah')], limit=1)
 
+    def action_create_lead(self):
+        """Create a CRM opportunity from this tender and link it back."""
+        self.ensure_one()
+        if self.lead_id:
+            raise UserError(_("An opportunity has already been created for this tender."))
+
+        Lead = self.env['crm.lead']
+        source = self._get_source() or self.env['utm.source'].create({'name': 'Forsah'})
+        description = _("Category: %(category)s | Days: %(days)s | Size: %(size)s",
+                        category=self.category or '-', days=self.days or '-', size=self.size or '-')
+        lead = Lead.create({
+            'name': self.name,
+            'description': description,
+            'type': 'opportunity',
+            'city': self.city,
+            'website': self.link,
+            'source_id': source.id,
+            'company_id': self.company_id.id,
+        })
+        lead.activity_schedule(
+            'mail.mail_activity_data_todo',
+            summary=_('Review Opportunity'),
+            note=_('New Forsah opportunity requires review within 3 days.'),
+            date_deadline=fields.Date.context_today(self) + relativedelta(days=3),
+            user_id=self.env.user.id,
+        )
+        self.write({'lead_id': lead.id, 'study_state': 'converted'})
+        _logger.info("Created opportunity %s from Forsah tender %s", lead.id, self.name)
+        return self.action_open_lead()
+
+    def action_open_lead(self):
+        self.ensure_one()
+        if not self.lead_id:
+            raise UserError(_("No opportunity is linked to this tender yet."))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _("Opportunity"),
+            'res_model': 'crm.lead',
+            'res_id': self.lead_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

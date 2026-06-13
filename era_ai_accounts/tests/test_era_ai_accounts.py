@@ -352,6 +352,53 @@ class TestEraAiAccounts(TransactionCase):
         with self.assertRaises(Exception):
             acc.generate_image("anything")
 
+    def test_openai_transcribe(self):
+        acc = self.Account.create({
+            "name": "GPTaudio", "provider": "openai", "auth_mode": "api_key", "secret": "sk-a",
+        })
+        captured = {}
+
+        class _Resp:
+            status_code = 200
+            headers = {"Content-Type": "application/json"}
+            text = '{"text": "hello world"}'
+
+            def json(self):
+                return {"text": "hello world"}
+
+        def fake_post(url, **kwargs):
+            captured["url"] = url
+            captured["data"] = kwargs.get("data")
+            captured["files"] = kwargs.get("files")
+            captured["headers"] = kwargs.get("headers")
+            return _Resp()
+
+        with patch.object(era_ai_account.requests, "post", side_effect=fake_post):
+            text = acc.transcribe(b"RIFF-fake-audio", filename="memo.mp3", language="en")
+        self.assertEqual(text, "hello world")
+        self.assertIn("/audio/transcriptions", captured["url"])
+        self.assertEqual(captured["data"]["model"], "gpt-4o-transcribe")
+        self.assertEqual(captured["data"]["language"], "en")
+        # Multipart upload: the audio rides in files=, not JSON, and we must NOT
+        # force a Content-Type (requests sets it with the boundary).
+        self.assertIn("file", captured["files"])
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer sk-a")
+        self.assertNotIn("Content-Type", captured["headers"])
+
+    def test_transcribe_unsupported_provider(self):
+        acc = self.Account.create({
+            "name": "tg", "provider": "google", "auth_mode": "api_key", "secret": "x",
+        })
+        with self.assertRaises(UserError):
+            acc.transcribe(b"audio")
+
+    def test_codex_cli_proxy_refuses_transcribe(self):
+        acc = self.Account.create({
+            "name": "Codex audio", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        with self.assertRaises(UserError):
+            acc.transcribe(b"audio")
+
     def test_cloudflare_coerces_non_string_content(self):
         # Live crash: Cloudflare returned message.content as a dict and
         # _request_llm_cloudflare did content.strip() -> 'dict' has no 'strip'.

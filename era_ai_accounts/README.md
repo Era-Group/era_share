@@ -34,6 +34,11 @@ Any module can drive a configured account directly — no `ai.agent` needed:
 - `account.generate_image(prompt, model=None, steps=None)` → image **bytes** —
   Cloudflare Workers AI (FLUX.1-schnell, FLUX.2 dev/klein, SDXL) or OpenAI
   (`gpt-image-1`, `dall-e-3`). Sync models to pick a specific image model.
+- `account.transcribe(audio, model=None, language=None)` → transcript **str** —
+  speech-to-text for **OpenAI** API-key accounts (`gpt-4o-transcribe`,
+  `gpt-4o-mini-transcribe`, `whisper-1`). `audio` is the raw file bytes;
+  `language` is an optional ISO-639-1 hint. The Claude/Codex CLI proxies are
+  text-only and have no speech endpoint, so transcription is OpenAI-only.
 
 This is how other ERA modules (e.g. `era_seo_suite`) let an admin pick *one
 account for content* and *one account for images* instead of re-entering
@@ -174,6 +179,7 @@ off to keep an account strictly single-shot chat).
 | `ai.http_timeout` | 120 | Anthropic HTTP timeout (s) |
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |
 | `ai.openai_image_timeout` | 300 | OpenAI image-generation HTTP timeout (s) — high-quality `gpt-image-1` renders can take minutes |
+| `ai.openai_transcribe_timeout` | 120 | OpenAI speech-to-text HTTP timeout (s) for `account.transcribe()` — raise it for long recordings |
 
 All of the `ai.cli_*` settings above are editable in the UI: **Settings ▸ AI ▸ "AI
 CLI rate protection"** (no redeploy needed). They apply to both CLI providers.

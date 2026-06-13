@@ -472,6 +472,29 @@ class EraAiAccount(models.Model):
             "Image generation is supported for Cloudflare Workers AI and OpenAI "
             "accounts (account '%s' is '%s').", self.name, self.provider))
 
+    def transcribe(self, audio, model=None, language=None, filename="audio.mp3", prompt=None):
+        """Transcribe speech audio to text and return the transcript string, or raise.
+
+        OpenAI (Whisper / gpt-4o-transcribe) only — the Claude/Codex CLI proxies
+        are text-in/text-out and have no speech endpoint. ``audio`` is the raw
+        file bytes; ``language`` is an optional ISO-639-1 hint and ``prompt`` an
+        optional context string to steer spelling/vocabulary.
+        """
+        self.ensure_one()
+        self._assert_usable()
+        if not audio:
+            raise UserError(_("No audio was supplied to transcribe."))
+        if self.provider == "openai":
+            if self.auth_mode == "cli_proxy":
+                raise UserError(_(
+                    "Transcription is not available through the Codex CLI proxy "
+                    "(account '%s') — use an OpenAI API-key account for audio.",
+                    self.name))
+            return self._transcribe_openai(audio, model, language, filename, prompt)
+        raise UserError(_(
+            "Audio transcription is supported for OpenAI accounts "
+            "(account '%s' is '%s').", self.name, self.provider))
+
     def _generate_image_cloudflare(self, prompt, model, steps, width, height):
         """Cloudflare Workers AI image gen. Two request shapes that are NOT
         interchangeable: FLUX.1-schnell / SDXL take JSON ``{"prompt","steps"}``,
@@ -566,6 +589,50 @@ class EraAiAccount(models.Model):
             except requests.exceptions.RequestException as exc:
                 raise UserError(_("OpenAI image download failed: %s", exc))
         raise UserError(_("OpenAI returned no image."))
+
+    def _transcribe_openai(self, audio, model, language, filename, prompt):
+        """OpenAI speech-to-text (gpt-4o-transcribe / gpt-4o-mini-transcribe /
+        whisper-1) via the multipart ``/audio/transcriptions`` endpoint."""
+        key = self._get_secret()
+        if not key:
+            raise UserError(_("Set the OpenAI API key on account '%s'.", self.name))
+        model = model or "gpt-4o-transcribe"
+        base = (self.base_url or "https://api.openai.com/v1").rstrip("/")
+        # Default response_format is JSON ({"text": ...}) for every model, incl.
+        # gpt-4o-transcribe which ONLY supports json — so we never override it.
+        data = {"model": model}
+        if language:
+            data["language"] = language
+        if prompt:
+            data["prompt"] = prompt[:2000]
+        # Multipart: pass the file via files= and let requests set the
+        # Content-Type (with boundary). Never force application/json here.
+        files = {"file": (filename or "audio.mp3", audio)}
+        try:
+            timeout = int(self.env["ir.config_parameter"].sudo().get_param(
+                "ai.openai_transcribe_timeout", "120"))
+        except (TypeError, ValueError):
+            timeout = 120
+        try:
+            resp = requests.post(
+                base + "/audio/transcriptions",
+                headers={"Authorization": "Bearer %s" % key},
+                data=data, files=files, timeout=timeout)
+        except requests.exceptions.RequestException as exc:
+            raise UserError(_("OpenAI transcription request failed: %s", exc))
+        if resp.status_code >= 400:
+            raise UserError(_("OpenAI transcription error (%(code)s): %(detail)s",
+                              code=resp.status_code, detail=(resp.text or "")[:400]))
+        if "application/json" in (resp.headers.get("Content-Type") or ""):
+            try:
+                text = resp.json().get("text")
+            except ValueError as exc:
+                raise UserError(_("OpenAI returned an unexpected transcript response: %s", exc))
+        else:
+            text = resp.text  # whisper-1 with response_format=text (not requested here)
+        if not text:
+            raise UserError(_("OpenAI returned an empty transcript."))
+        return text
 
     # --------------------------------------------------------------- public API
     def generate_text(self, prompt, system="", model=None, temperature=0.2):

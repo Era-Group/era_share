@@ -22,6 +22,9 @@ stack with first-class **AI accounts**:
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API) and any
   OpenAI-compatible custom provider, with credentials stored per account
   (encrypted at rest, restricted to AI Account Managers).
+* **Speech-to-text** — transcribe audio through an OpenAI API-key account
+  (Whisper / ``gpt-4o-transcribe``) via ``account.transcribe()``; the CLI proxies
+  are text-only.
 * **Shared vs personal accounts** — one account for everyone or per-user accounts,
   with admin-controlled sharing (``owner`` + ``allowed users`` + record rules).
 * **Dynamic model catalog** — models are synced per account (curated set for the
@@ -30,7 +33,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.10.2",
+    "version": "19.0.1.11.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

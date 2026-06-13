@@ -11,6 +11,12 @@
                       default_order="limit asc"
                       decoration-danger="limit and limit &lt; current_date"
                       decoration-muted="lead_id">
+                    <header>
+                        <button name="action_ai_match" type="object" string="AI Match"
+                                class="btn-secondary" icon="fa-magic"
+                                confirm="Score these tenders' relevance to the company business with AI? If none are selected, the next batch of open tenders is scored."
+                                title="Score relevance of the selected tenders to the company business (a capped batch if none selected)"/>
+                    </header>
                     <field name="name"/>
                     <field name="ref"/>
                     <field name="company"/>
@@ -20,6 +26,12 @@
                     <field name="limit"/>
                     <field name="publish"/>
                     <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="ai_match_score" string="Match %" optional="show"/>
+                    <field name="ai_match" widget="badge" string="Business Match"
+                           decoration-success="ai_match == 'high'"
+                           decoration-info="ai_match == 'medium'"
+                           decoration-muted="ai_match == 'low'"/>
+                    <field name="ai_match_reason" optional="hide"/>
                     <field name="lead_id" optional="hide"/>
                     <button name="etimad_open_link" type="object" string=""
                             class="fa fa-external-link btn-link" title="Open tender link"/>
@@ -52,12 +64,20 @@
                     <filter name="converted" string="Converted"
                             domain="[('lead_id', '!=', False)]"/>
                     <separator/>
+                    <filter name="best_match" string="Best for Our Business"
+                            domain="[('ai_match', '=', 'high')]"/>
+                    <filter name="match_medium_up" string="Relevant (Medium+)"
+                            domain="[('ai_match', 'in', ['high', 'medium'])]"/>
+                    <filter name="not_analyzed" string="Not Analyzed"
+                            domain="[('ai_match_date', '=', False)]"/>
+                    <separator/>
                     <filter name="untagged" string="Untagged" domain="[('tag_ids', '=', False)]"/>
                     <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                     <separator/>
                     <filter name="publish_date" string="Publish Date" date="publish"/>
                     <filter name="limit_date" string="Deadline" date="limit"/>
                     <group>
+                        <filter name="group_match" string="Business Match" context="{'group_by': 'ai_match'}"/>
                         <filter name="group_company" string="Company" context="{'group_by': 'company'}"/>
                         <filter name="group_method" string="Method" context="{'group_by': 'method'}"/>
                         <filter name="group_tags" string="Tag" context="{'group_by': 'tag_ids'}"/>

@@ -10,7 +10,14 @@
                 <list string="Studyable Tenders" create="false" delete="false" edit="false"
                       decoration-danger="days_remaining &gt; 0 and days_remaining &lt;= 3 and study_state not in ('rejected','converted')"
                       decoration-muted="study_state in ('rejected','converted')"
-                      decoration-bf="study_state == 'studyable'">
+                      decoration-bf="study_state == 'studyable'"
+                      default_order="ai_match_score desc, days_remaining asc">
+                    <header>
+                        <button name="action_ai_match" type="object" string="AI Match"
+                                class="btn-secondary" icon="fa-magic"
+                                confirm="Score these tenders' relevance to the company business with AI? If none are selected, the next batch of open tenders is scored."
+                                title="Score relevance of the selected tenders to the company business (a capped batch if none selected)"/>
+                    </header>
                     <field name="name"/>
                     <field name="city"/>
                     <field name="size"/>
@@ -22,6 +29,12 @@
                            decoration-danger="study_state == 'rejected'"
                            decoration-muted="study_state == 'converted'"/>
                     <field name="lead_id" optional="hide"/>
+                    <field name="ai_match_score" string="Match %" optional="show"/>
+                    <field name="ai_match" widget="badge" string="Business Match"
+                           decoration-success="ai_match == 'high'"
+                           decoration-info="ai_match == 'medium'"
+                           decoration-muted="ai_match == 'low'"/>
+                    <field name="ai_match_reason" optional="hide"/>
                     <field name="active" column_invisible="1"/>
                     <button name="forsah_open_link" type="object" string=""
                             class="fa fa-external-link btn-link" title="Open tender link"/>
@@ -54,6 +67,8 @@
                                 class="btn-primary" invisible="study_state == 'converted'"/>
                         <button name="forsah_open_link" type="object" string="Open Tender"
                                 class="btn-secondary" invisible="not link"/>
+                        <button name="action_ai_match" type="object" string="AI Match"
+                                class="btn-secondary" icon="fa-magic"/>
                         <field name="study_state" widget="statusbar"
                                statusbar_visible="to_review,studyable,converted"/>
                     </header>
@@ -86,6 +101,15 @@
                                 <field name="company_id" groups="base.group_multi_company"/>
                                 <field name="active" invisible="1"/>
                             </group>
+                        </group>
+                        <group string="Business Match (AI)" name="ai_match_group">
+                            <field name="ai_match" widget="badge"
+                                   decoration-success="ai_match == 'high'"
+                                   decoration-info="ai_match == 'medium'"
+                                   decoration-muted="ai_match == 'low'"/>
+                            <field name="ai_match_score"/>
+                            <field name="ai_match_reason"/>
+                            <field name="ai_match_date"/>
                         </group>
                     </sheet>
                     <chatter reload_on_post="True"/>
@@ -127,7 +151,16 @@
                     <separator/>
                     <filter name="late_activities" string="Late Activities"
                             domain="[('activity_date_deadline', '&lt;', 'today')]"/>
+                    <separator/>
+                    <filter name="best_match" string="Best for Our Business"
+                            domain="[('ai_match', '=', 'high')]"/>
+                    <filter name="match_medium_up" string="Relevant (Medium+)"
+                            domain="[('ai_match', 'in', ['high', 'medium'])]"/>
+                    <filter name="not_analyzed" string="Not Analyzed"
+                            domain="[('ai_match_date', '=', False)]"/>
                     <group>
+                        <filter name="group_match" string="Business Match"
+                                context="{'group_by': 'ai_match'}"/>
                         <filter name="group_state" string="Study Status"
                                 context="{'group_by': 'study_state'}"/>
                         <filter name="group_city" string="City" context="{'group_by': 'city'}"/>

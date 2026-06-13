@@ -19,8 +19,13 @@ _DIGIT_TRANS = str.maketrans('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', '012345
 class CrmForsah(models.Model):
     _name = "crm.forsah.client"
     _description = "Forsah Studyable Tender"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'crm.tender.ai.match.mixin']
     _order = "days_remaining asc, id desc"
+
+    @api.model
+    def _ai_match_candidates_domain(self):
+        # Small list — score every active tender.
+        return [('active', '=', True)]
 
     name = fields.Char(string="Name", required=True, readonly=True, tracking=True, index=True)
     category = fields.Char(string="Category", readonly=True, tracking=True)

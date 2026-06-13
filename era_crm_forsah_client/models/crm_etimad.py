@@ -14,7 +14,13 @@ ETIMAD_DATA_URL = 'https://service.era.net.sa/etimad/data'
 class CrmEtimad(models.Model):
     _name = "crm.etimad.client"
     _description = "Etimad Tender"
+    _inherit = ['crm.tender.ai.match.mixin']
     _order = "limit asc, id desc"
+
+    @api.model
+    def _ai_match_candidates_domain(self):
+        # Only score open tenders (deadline not passed); skip the expired backlog.
+        return [('active', '=', True), ('limit', '>=', fields.Date.today())]
 
     name = fields.Char("Name", required=True, readonly=True)
     category = fields.Char("Category")

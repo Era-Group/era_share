@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_forsah" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.forsah</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Studyable Tenders" string="Studyable Tenders"
+                     name="era_crm_forsah_client" groups="base.group_system">
+                    <block title="Business Activity" name="forsah_business_block">
+                        <setting string="Business Activity Description"
+                                 help="Describe the company's business. The AI uses this text to score how relevant each Forsah/Etimad tender is.">
+                            <field name="forsah_business_description"
+                                   placeholder="e.g. IT services, software development, enterprise systems integration, networking and infrastructure..."/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

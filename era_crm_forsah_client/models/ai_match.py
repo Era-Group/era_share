@@ -195,26 +195,25 @@ class TenderAiMatchMixin(models.AbstractModel):
     def action_ai_match(self):
         """Score tenders against the company business.
 
-        - With an explicit selection: score the first ``AI_MATCH_INLINE_CAP``
-          selected tenders now (overwriting their scores) and reset only the
-          overflow beyond the cap, which the scheduler then re-scores. Records
-          outside the selection are never touched.
+        - With an explicit selection: reset the WHOLE selection to unanalyzed,
+          then score the first ``AI_MATCH_INLINE_CAP`` now; the overflow stays
+          unanalyzed for the scheduler. Records outside the selection are never
+          touched.
         - With no selection: score the next batch of not-yet-analyzed candidates.
 
         Capping the synchronous run keeps a click from tying up a worker.
         """
         if self:
-            targets = self
-            # Re-scoring overwrites the inline batch, so only the overflow beyond
-            # the cap needs resetting — that's what the scheduler re-scores. This
-            # avoids clearing scores we are about to refresh, and avoids touching
-            # anything outside the actual targets.
-            targets[AI_MATCH_INLINE_CAP:].write({
+            # Reset the WHOLE selection to unanalyzed, then score the first batch;
+            # the overflow stays unanalyzed for the scheduler. Records outside the
+            # selection are never touched.
+            self.write({
                 'ai_match_date': False,
                 'ai_match_score': 0,
                 'ai_match': False,
                 'ai_match_reason': False,
             })
+            targets = self
         else:
             targets = self.search(
                 self._ai_match_candidates_domain() + [('ai_match_date', '=', False)])
@@ -223,7 +222,7 @@ class TenderAiMatchMixin(models.AbstractModel):
         scored = batch._run_ai_match()
         if not total:
             message = _("All candidate tenders are already analyzed. "
-                        "Use 'Re-analyze All' to re-score them.")
+                        "Select tenders and run AI Match to re-analyze them.")
         else:
             message = _("Analyzed %(n)s tender(s) against the company business.", n=len(scored))
             if total > len(batch):
@@ -244,12 +243,6 @@ class TenderAiMatchMixin(models.AbstractModel):
             },
         }
 
-    def action_ai_rematch_all(self):
-        """Reset and re-score ALL candidate tenders, ignoring the current
-        selection: ``action_ai_match`` on the full candidate set resets them all,
-        scores the first batch now, and the scheduler drains the rest.
-        """
-        return self.search(self._ai_match_candidates_domain()).action_ai_match()
 
     def _run_ai_match(self, batch_size=30):
         business = self._business_description()

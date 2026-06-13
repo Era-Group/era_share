@@ -456,9 +456,3 @@ msgstr "نشاط الشركة"
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Etimad Tender"
 msgstr "مناقصة اعتماد"
-
-#. module: era_crm_forsah_client
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
-#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
-msgid "Re-analyze All"
-msgstr "إعادة تحليل الكل"

@@ -15,12 +15,8 @@
                     <header>
                         <button name="action_ai_match" type="object" string="AI Match"
                                 class="btn-secondary" icon="fa-magic"
-                                confirm="Score these tenders' relevance to the company business with AI? If none are selected, the next batch of open tenders is scored."
-                                title="Score relevance of the selected tenders to the company business (a capped batch if none selected)"/>
-                        <button name="action_ai_rematch_all" type="object" string="Re-analyze All"
-                                class="btn-secondary" icon="fa-refresh"
-                                confirm="Re-analyze ALL tenders with AI? This clears the existing scores and re-scores them (uses AI credits)."
-                                title="Reset and re-score every tender — the first batch now, the rest by the scheduler"/>
+                                confirm="Run AI matching? Selected tenders are re-analyzed — the first 30 now, the rest by the scheduler. With no selection, the next batch of un-analyzed tenders is scored."
+                                title="Re-analyze the selected tenders (first 30 now, the rest by the scheduler); scores a new batch if none selected"/>
                     </header>
                     <field name="name"/>
                     <field name="city"/>

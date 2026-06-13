@@ -27,7 +27,7 @@
                     <field name="publish"/>
                     <field name="tag_ids" widget="many2many_tags"/>
                     <field name="ai_match" column_invisible="1"/>
-                    <field name="ai_match_score" string="Business Match" widget="badge"
+                    <field name="ai_match_display" string="Business Match" widget="badge"
                            decoration-success="ai_match == 'high'"
                            decoration-info="ai_match == 'medium'"
                            decoration-muted="ai_match == 'low'"/>
@@ -40,6 +40,68 @@
                     <button name="action_open_lead" type="object" string="Open Lead"
                             class="btn-secondary" invisible="not lead_id"/>
                 </list>
+            </field>
+        </record>
+
+        <!-- ##################### Form ######################### -->
+        <record id="crm_etimad_form" model="ir.ui.view">
+            <field name="name">crm.etimad.client.form</field>
+            <field name="model">crm.etimad.client</field>
+            <field name="arch" type="xml">
+                <form string="Etimad Tender">
+                    <header>
+                        <button name="action_create_lead" type="object" string="Create Opportunity"
+                                class="btn-primary" invisible="lead_id"/>
+                        <button name="action_open_lead" type="object" string="Open Lead"
+                                class="btn-secondary" invisible="not lead_id"/>
+                        <button name="etimad_open_link" type="object" string="Open Tender"
+                                class="btn-secondary" invisible="not link"/>
+                        <button name="action_ai_match" type="object" string="AI Match"
+                                class="btn-secondary" icon="fa-magic"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_lead" type="object" class="oe_stat_button"
+                                    icon="fa-star" invisible="not lead_id">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Opportunity</span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                                invisible="active"/>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="company"/>
+                                <field name="method"/>
+                                <field name="ref"/>
+                                <field name="cost"/>
+                            </group>
+                            <group>
+                                <field name="publish"/>
+                                <field name="questions"/>
+                                <field name="limit"/>
+                                <field name="category"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="link" widget="url"/>
+                                <field name="etimad_id"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                        </group>
+                        <group string="Business Match (AI)" name="ai_match_group">
+                            <field name="ai_match" widget="badge"
+                                   decoration-success="ai_match == 'high'"
+                                   decoration-info="ai_match == 'medium'"
+                                   decoration-muted="ai_match == 'low'"/>
+                            <field name="ai_match_score"/>
+                            <field name="ai_match_reason"/>
+                            <field name="ai_match_date"/>
+                        </group>
+                    </sheet>
+                </form>
             </field>
         </record>
 
@@ -91,7 +153,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="name">Crm Etimad</field>
             <field name="res_model">crm.etimad.client</field>
-            <field name="view_mode">list</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="crm_etimad_search"/>
             <field name="context">{'search_default_open_tenders': 1}</field>
         </record>

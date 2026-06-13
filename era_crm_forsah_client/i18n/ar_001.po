@@ -276,6 +276,8 @@ msgstr "الأيام المتبقية"
 #. module: era_crm_forsah_client
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_etimad_client__lead_id
 #: model:ir.model.fields,field_description:era_crm_forsah_client.field_crm_forsah_client__lead_id
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Opportunity"
 msgstr "الفرصة"
 
@@ -306,17 +308,20 @@ msgstr "تحديد كقابلة للدراسة"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Create Opportunity"
 msgstr "إنشاء فرصة"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Open Tender"
 msgstr "فتح المناقصة"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Open Lead"
 msgstr "فتح الفرصة"
 
@@ -396,11 +401,13 @@ msgstr "منخفض"
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_tree
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "AI Match"
 msgstr "تحليل بالذكاء الاصطناعي"
 
 #. module: era_crm_forsah_client
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_forsah_form
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
 msgid "Business Match (AI)"
 msgstr "مطابقة النشاط (ذكاء اصطناعي)"
 
@@ -433,3 +440,8 @@ msgstr "وصف نشاط الشركة"
 #: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.res_config_settings_view_form_forsah
 msgid "Business Activity"
 msgstr "نشاط الشركة"
+
+#. module: era_crm_forsah_client
+#: model_terms:ir.ui.view,arch_db:era_crm_forsah_client.crm_etimad_form
+msgid "Etimad Tender"
+msgstr "مناقصة اعتماد"

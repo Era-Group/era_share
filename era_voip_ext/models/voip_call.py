@@ -105,6 +105,28 @@ class VoipCall(models.Model):
     )
     sales_evaluation_reason = fields.Text(string="سبب التقييم", copy=False)
 
+    lead_post_status = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("posted", "Posted"),
+            ("no_lead", "No Lead Found"),
+            ("skipped", "Skipped"),
+        ],
+        string="Lead Post Status",
+        default="pending",
+        copy=False,
+        index=True,
+        help="Tracks whether the call analysis has been posted to the related "
+             "lead's chatter, so it is posted exactly once.",
+    )
+    analysis_lead_id = fields.Many2one(
+        "crm.lead",
+        string="Analyzed Lead",
+        copy=False,
+        index=True,
+        help="Lead whose chatter received this call's analysis.",
+    )
+
     def _commit_if_needed(self):
         if not modules.module.current_test:
             self.env.cr.commit()
@@ -429,7 +451,7 @@ class VoipCall(models.Model):
                 "Call %s: transcript too short for analysis (%d chars) — skipping",
                 call.id, len(clean),
             )
-            self._safe_write(call, {"analysis_status": "skipped"})
+            self._safe_write(call, {"analysis_status": "skipped", "lead_post_status": "skipped"})
             return False
         if not self._safe_write(call, {"analysis_status": "queued"}):
             return False
@@ -468,7 +490,7 @@ class VoipCall(models.Model):
                 "Call %s: analysis not substantive (summary=%d chars, is_meaningful=%s) — skipping",
                 call.id, len(summary), data.get("is_meaningful"),
             )
-            self._safe_write(call, {"analysis_status": "skipped"})
+            self._safe_write(call, {"analysis_status": "skipped", "lead_post_status": "skipped"})
             return False
 
         allowed_ratings = {"weak", "medium", "good", "excellent"}
@@ -488,31 +510,60 @@ class VoipCall(models.Model):
         if not self._safe_write(call, vals):
             return False
         try:
-            self._post_evaluation_to_lead(
-                call,
-                rating=rating,
-                reason=reason,
-                summary=summary,
-                obstacles=obstacles,
-                recommendations=recommendations,
-            )
+            self._post_evaluation_to_lead(call)
         except Exception:
             _logger.exception(
                 "Call %s: failed to post evaluation to related lead", call.id,
             )
         return True
 
+    def _lead_has_analysis_note(self, lead, call):
+        """True when this call's analysis was already posted to the lead chatter.
+
+        Matches the call link embedded in the note body (``id=<call.id>&model=
+        voip.call``, with ``&`` HTML-escaped as ``&amp;`` once stored), so the
+        check is robust to a lost ``lead_post_status`` flag.
+        """
+        if not lead or not call.id:
+            return False
+        Message = self.env["mail.message"].sudo()
+        return bool(
+            Message.search_count(
+                [
+                    ("model", "=", "crm.lead"),
+                    ("res_id", "=", lead.id),
+                    ("message_type", "=", "comment"),
+                    ("body", "like", f"id={call.id}&"),
+                ]
+            )
+        )
+
     def _find_related_lead(self, call):
+        """Resolve the crm.lead a call belongs to.
+
+        The base ``voip.call`` model carries no direct lead link (no
+        ``res_model``/``res_id``/``lead_id`` column), so we try several
+        strategies from most to least authoritative. Phone-number matching is
+        the dominant link in practice, since most leads have no ``partner_id``.
+        """
         Lead = self.env.get("crm.lead")
         if Lead is None:
             return False
+        Lead = Lead.sudo()
+        # 1. Generic record link, if some other module added one (future-proof).
         if call._fields.get("res_model") and call._fields.get("res_id"):
             if call.res_model == "crm.lead" and call.res_id:
                 lead = Lead.browse(call.res_id).exists()
                 if lead:
                     return lead
+        # 2. Explicit lead_id link, if present (future-proof).
         if call._fields.get("lead_id") and call.lead_id:
             return call.lead_id
+        # 3. A real-time call summary, when linked, carries an explicit lead.
+        summary = call._find_realtime_summary()
+        if summary and "lead_id" in summary._fields and summary.lead_id:
+            return summary.lead_id
+        # 4. Same contact (only works when the lead has a partner_id set).
         if call.partner_id:
             lead = Lead.search(
                 [
@@ -524,7 +575,66 @@ class VoipCall(models.Model):
             )
             if lead:
                 return lead
+        # 5. Phone-number match — the primary link in this deployment.
+        lead = self._find_lead_by_phone(call)
+        if lead:
+            return lead
         return False
+
+    def _find_lead_by_phone(self, call):
+        """Find the single lead whose phone/mobile matches the call number.
+
+        Numbers are compared *digit-normalised* (non-digits stripped on both
+        sides) on the last 9 digits — the Saudi national significant number — so
+        ``+966 50 …``, ``050-…`` and the Studio mobile field all line up despite
+        formatting. Active leads win over archived ones, and we **abstain** when
+        more than one lead in the chosen tier matches, rather than guess and risk
+        posting a call's analysis onto an unrelated customer's chatter.
+        """
+        Lead = self.env.get("crm.lead")
+        if Lead is None:
+            return False
+        digits = re.sub(r"\D", "", call.phone_number or "")
+        # Require a full national number; shorter strings (extensions, partial
+        # numbers) suffix-match too many records to be trusted.
+        if len(digits) < 9:
+            return False
+        tail = digits[-9:]
+        columns = [
+            name
+            for name in ("phone_sanitized", "phone", "mobile", "x_studio_mobile")
+            if name in Lead._fields and Lead._fields[name].store
+        ]
+        if not columns:
+            return False
+        norm = " OR ".join(
+            f"regexp_replace(COALESCE({col}, ''), '\\D', '', 'g') LIKE %(pat)s"
+            for col in columns
+        )
+        self.env.cr.execute(
+            f"""
+                SELECT id, active
+                  FROM crm_lead
+                 WHERE {norm}
+              ORDER BY active DESC, write_date DESC, id DESC
+                 LIMIT 2
+            """,
+            {"pat": f"%{tail}"},
+        )
+        rows = self.env.cr.fetchall()
+        if not rows:
+            return False
+        # Prefer active leads; only consider ambiguity within the chosen tier.
+        active_rows = [row for row in rows if row[1]]
+        pool = active_rows or rows
+        if len(pool) > 1:
+            _logger.info(
+                "Call %s: phone %s matches multiple leads %s — abstaining to "
+                "avoid posting analysis to the wrong lead",
+                call.id, call.phone_number, [row[0] for row in pool],
+            )
+            return False
+        return Lead.browse(pool[0][0])
 
     def _build_call_link(self, call):
         if not call or not call.id:
@@ -535,13 +645,44 @@ class VoipCall(models.Model):
         path = f"/web#id={call.id}&model=voip.call&view_type=form"
         return f"{base_url}{path}" if base_url else path
 
-    def _post_evaluation_to_lead(self, call, rating, reason, summary,
-                                 obstacles, recommendations):
+    def _post_evaluation_to_lead(self, call):
+        """Post the stored call analysis to the related lead's chatter, once.
+
+        Reads the analysis straight off the call record, so it can be used both
+        right after analysis and by the backfill cron. Idempotent: a call is
+        only ever posted once (tracked via ``lead_post_status``).
+        """
+        if not call:
+            return False
+        if call.lead_post_status == "posted":
+            return True
+
+        rating = call.sales_evaluation
+        reason = call.sales_evaluation_reason
+        summary = call.call_summary_long
+        obstacles = call.call_obstacles
+        recommendations = call.call_recommendations
+        if not any([summary, obstacles, recommendations, reason, rating]):
+            self._safe_write(call, {"lead_post_status": "skipped"})
+            return False
+
         lead = self._find_related_lead(call)
         if not lead:
+            _logger.info(
+                "Call %s: no related lead found — analysis not posted to chatter",
+                call.id,
+            )
+            self._safe_write(call, {"lead_post_status": "no_lead"})
             return False
-        if not any([summary, obstacles, recommendations, reason, rating]):
-            return False
+
+        # Idempotency backstop: never post twice for the same call even if the
+        # status flag was lost (write failure / interrupted run / legacy note).
+        if self._lead_has_analysis_note(lead, call):
+            self._safe_write(
+                call,
+                {"lead_post_status": "posted", "analysis_lead_id": lead.id},
+            )
+            return True
 
         def _block(label, value):
             if not value:
@@ -573,6 +714,7 @@ class VoipCall(models.Model):
             )
         body = Markup("").join(sections)
         if not body:
+            self._safe_write(call, {"lead_post_status": "skipped"})
             return False
 
         odoobot = self.env.ref("base.partner_root", raise_if_not_found=False)
@@ -585,6 +727,10 @@ class VoipCall(models.Model):
         if odoobot:
             post_kwargs["author_id"] = odoobot.id
         lead.sudo().message_post(**post_kwargs)
+        self._safe_write(
+            call,
+            {"lead_post_status": "posted", "analysis_lead_id": lead.id},
+        )
         return True
 
     def action_retranscript(self):
@@ -639,12 +785,58 @@ class VoipCall(models.Model):
             seen.add(call.id)
             self._analyze_call(call, call._transcript_for_analysis())
 
+    @api.model
+    def _get_next_pending_lead_post_call(self, exclude_ids=None):
+        exclude_clause = ""
+        params = []
+        if exclude_ids:
+            exclude_clause = "AND id != ALL(%s)"
+            params.append(list(exclude_ids))
+        self.env.cr.execute(
+            f"""
+                SELECT id
+                  FROM {self._table}
+                 WHERE analysis_status = 'done'
+                   AND lead_post_status = 'pending'
+                   {exclude_clause}
+              ORDER BY create_date DESC
+                 LIMIT 1
+                 FOR UPDATE SKIP LOCKED
+            """,
+            params,
+        )
+        row = self.env.cr.fetchone()
+        return self.browse(row[0]) if row else self.browse()
+
+    @api.model
+    def _cron_post_pending_analysis_to_lead(self):
+        """Post analysis to the related lead for calls that were analysed but
+        never reached a lead chatter (backlog + any future misses)."""
+        # Stop 100 s before the worker real-time limit (1200 s).
+        deadline = time.monotonic() + 1100
+        seen = set()
+        while time.monotonic() < deadline:
+            call = self._get_next_pending_lead_post_call(exclude_ids=seen)
+            if not call:
+                break
+            seen.add(call.id)
+            try:
+                self._post_evaluation_to_lead(call)
+            except Exception:
+                # Leave status 'pending' so a transient failure is retried on the
+                # next cron run rather than being permanently marked as no_lead.
+                _logger.exception(
+                    "Call %s: backfill post of analysis to lead failed", call.id,
+                )
+            self._commit_if_needed()
+
     def action_reanalyze_call(self):
         self.ensure_one()
         if self.analysis_status == "queued":
             raise UserError(_("This call is already being analyzed."))
         if not self.transcript:
             raise UserError(_("No transcript available to analyze."))
+        self.write({"lead_post_status": "pending"})
         self._analyze_call(self, self._transcript_for_analysis())
         return True
 
@@ -662,7 +854,7 @@ class VoipCall(models.Model):
             to_queue |= call
 
         if to_queue:
-            to_queue.write({"analysis_status": "pending"})
+            to_queue.write({"analysis_status": "pending", "lead_post_status": "pending"})
             queued = len(to_queue)
             cron = self.env.ref(
                 "era_voip_ext.ir_cron_analyze_pending_voip_calls",

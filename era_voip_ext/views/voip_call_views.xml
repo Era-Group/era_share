@@ -29,9 +29,11 @@
                         <group>
                             <field name="analysis_status"/>
                             <field name="sales_evaluation"/>
+                            <field name="lead_post_status"/>
                         </group>
                         <group>
                             <field name="sales_evaluation_reason"/>
+                            <field name="analysis_lead_id"/>
                         </group>
                     </group>
                     <group string="ملخص المكالمة" col="1">

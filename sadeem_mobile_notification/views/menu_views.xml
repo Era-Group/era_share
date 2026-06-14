@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu -->
+    <menuitem id="menu_notification_root"
+              name="Notifications"
+              web_icon="sadeem_mobile_notification,static/description/icon.png"
+              groups="sadeem_mobile_notification.group_notification_admin"
+              sequence="90"/>
+
+    <!-- Submenu: Configurations -->
+    <menuitem id="menu_notification_config"
+              name="Configurations"
+              parent="menu_notification_root"
+              action="notification_config_action"
+              sequence="10"/>
+
+    <!-- Submenu: Devices -->
+    <menuitem id="menu_notification_device"
+              name="Registered Devices"
+              parent="menu_notification_root"
+              action="notification_device_action"
+              sequence="20"/>
+
+    <!-- Submenu: Logs -->
+    <menuitem id="menu_notification_log"
+              name="Notification Logs"
+              parent="menu_notification_root"
+              action="notification_log_action"
+              sequence="30"/>
+
+</odoo>

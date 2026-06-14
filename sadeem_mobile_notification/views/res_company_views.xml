@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_company_view_form_inherit_notification" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.notification</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Notifications" name="notifications">
+                    <group>
+                        <group>
+                            <field name="default_notification_config_id"/>
+                            <field name="notification_config_count"/>
+                        </group>
+                    </group>
+                    <field name="notification_config_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="provider"/>
+                            <field name="device_count"/>
+                            <field name="active"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

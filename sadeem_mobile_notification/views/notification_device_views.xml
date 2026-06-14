@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="notification_device_view_list" model="ir.ui.view">
+        <field name="name">notification.device.list</field>
+        <field name="model">notification.device</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="platform"/>
+                <field name="config_id"/>
+                <field name="last_seen"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="notification_device_view_form" model="ir.ui.view">
+        <field name="name">notification.device.form</field>
+        <field name="model">notification.device</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <header>
+                    <button name="action_send_test_notification"
+                            string="Send Test Notification"
+                            type="object"
+                            class="oe_highlight"
+                            icon="fa-paper-plane"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Device Name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Device Info" readonly="1">
+                            <field name="user_id"/>
+                            <field name="config_id"/>
+                            <field name="platform"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Tokens" readonly="1">
+                            <field name="topic"/>
+                            <field name="fcm_token"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Device Details" readonly="1">
+                            <field name="app_version"/>
+                            <field name="os_version"/>
+                            <field name="device_model"/>
+                        </group>
+                        <group string="Activity" readonly="1">
+                            <field name="last_seen"/>
+                            <field name="registration_date"/>
+                            <field name="notification_count"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="notification_device_view_search" model="ir.ui.view">
+        <field name="name">notification.device.search</field>
+        <field name="model">notification.device</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="topic"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <separator/>
+                <group>
+                    <filter name="group_platform" string="Platform" context="{'group_by': 'platform'}"/>
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_config" string="Configuration" context="{'group_by': 'config_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="notification_device_action" model="ir.actions.act_window">
+        <field name="name">Registered Devices</field>
+        <field name="res_model">notification.device</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="notification_device_view_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No devices registered yet
+            </p>
+            <p>
+                Devices are registered automatically via the mobile API.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_notification_config_user,notification.config.user,model_notification_config,base.group_user,1,0,0,0
+access_notification_config_admin,notification.config.admin,model_notification_config,sadeem_mobile_notification.group_notification_admin,1,1,1,1
+access_notification_device_user,notification.device.user,model_notification_device,base.group_user,1,0,0,0
+access_notification_device_admin,notification.device.admin,model_notification_device,sadeem_mobile_notification.group_notification_admin,1,1,1,1
+access_notification_log_user,notification.log.user,model_notification_log,base.group_user,1,0,0,0
+access_notification_log_admin,notification.log.admin,model_notification_log,sadeem_mobile_notification.group_notification_admin,1,1,1,1

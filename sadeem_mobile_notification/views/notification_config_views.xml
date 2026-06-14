@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="notification_config_view_list" model="ir.ui.view">
+        <field name="name">notification.config.list</field>
+        <field name="model">notification.config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="device_count"/>
+                <field name="success_rate" widget="progressbar"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="notification_config_view_form" model="ir.ui.view">
+        <field name="name">notification.config.form</field>
+        <field name="model">notification.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection"
+                            string="Test Connection"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-plug"/>
+                    <button name="action_test_notification"
+                            string="Send Test"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-paper-plane"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Configuration Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="provider" widget="radio"
+                                   options="{'horizontal': true}"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <!-- ntfy Configuration -->
+                            <group string="ntfy Server" invisible="provider != 'ntfy'">
+                                <group>
+                                    <field name="ntfy_server_url"
+                                           placeholder="https://ntfy.example.com"
+                                           required="provider == 'ntfy'"/>
+                                    <field name="ntfy_auth_method" widget="radio"
+                                           options="{'horizontal': true}"/>
+                                </group>
+                                <group>
+                                    <field name="ntfy_auth_token"
+                                           invisible="ntfy_auth_method != 'token'"
+                                           required="ntfy_auth_method == 'token'"
+                                           placeholder="tk_xxxxxxxxxxxxx"
+                                           password="True"/>
+                                    <field name="ntfy_username"
+                                           invisible="ntfy_auth_method != 'basic'"
+                                           required="ntfy_auth_method == 'basic'"
+                                           placeholder="e.g., sender_user"/>
+                                    <field name="ntfy_password"
+                                           invisible="ntfy_auth_method != 'basic'"
+                                           required="ntfy_auth_method == 'basic'"
+                                           password="True"/>
+                                </group>
+                            </group>
+                            <!-- FCM Configuration -->
+                            <group string="FCM Server Settings" invisible="provider != 'fcm'">
+                                <group>
+                                    <field name="fcm_project_id"
+                                           placeholder="my-firebase-project"/>
+                                    <field name="fcm_server_key" password="True"
+                                           placeholder="Legacy server key (optional if using v1)"/>
+                                </group>
+                                <group>
+                                    <field name="fcm_service_account_json" widget="ace"
+                                           placeholder='Paste the service account JSON here...'/>
+                                </group>
+                            </group>
+                            <group string="FCM Client Config (Mobile App)" invisible="provider != 'fcm'">
+                                <group>
+                                    <field name="fcm_api_key" password="True"
+                                           placeholder="AIzaSy..."/>
+                                    <field name="fcm_app_id"
+                                           placeholder="1:123456789:android:abc123"/>
+                                </group>
+                                <group>
+                                    <field name="fcm_messaging_sender_id"
+                                           placeholder="123456789"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- ntfy Setup Help -->
+                        <page string="ntfy Token Setup" name="ntfy_token_help"
+                              invisible="provider != 'ntfy' or ntfy_auth_method != 'token'">
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <h4>
+                                        <i class="fa fa-key"/>
+                                        How to Generate an ntfy Access Token
+                                    </h4>
+                                    <p>To generate a token on your ntfy server:</p>
+                                    <ol>
+                                        <li>Connect to your ntfy server:
+                                            <code>docker exec -it ntfy sh</code>
+                                        </li>
+                                        <li>Generate token (expires in 365 days):
+                                            <code>ntfy token add --expires=365d --label="Odoo Notification"
+                                                your_username
+                                            </code>
+                                        </li>
+                                        <li>Copy the generated token (format: <code>tk_xxxxx</code>)
+                                        </li>
+                                        <li>Paste it in the "Access Token" field above</li>
+                                        <li>Click <b>"Test Connection"</b> to verify it works
+                                        </li>
+                                    </ol>
+                                    <p>
+                                        <strong>Note:</strong>
+                                        The token is used via HTTP Basic auth with empty username.
+                                        When using curl:
+                                        <code>curl -u :tk_xxxxx -d "message" https://ntfy.server/topic</code>
+                                        (note the colon before the token)
+                                    </p>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- ntfy Password Setup Help -->
+                        <page string="ntfy Auth Setup" name="ntfy_password_help"
+                              invisible="provider != 'ntfy' or ntfy_auth_method != 'basic'">
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <h4>
+                                        <i class="fa fa-user"/>
+                                        Username &amp; Password Authentication
+                                    </h4>
+                                    <p>To create a user on your ntfy server:</p>
+                                    <ol>
+                                        <li>Connect to your ntfy server:
+                                            <code>docker exec -it ntfy sh</code>
+                                        </li>
+                                        <li>Create a user:
+                                            <code>ntfy user add sender_user</code>
+                                        </li>
+                                        <li>Grant write access to topics:
+                                            <code>ntfy access sender_user 'user_*' write</code>
+                                        </li>
+                                        <li>Enter the username and password above</li>
+                                        <li>Click <b>"Test Connection"</b> to verify
+                                        </li>
+                                    </ol>
+                                    <p>
+                                        <strong>Tip:</strong>
+                                        Use topic patterns like <code>user_*</code> to allow the sender to publish
+                                        to all user topics without giving full admin access.
+                                    </p>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- FCM Setup Help -->
+                        <page string="FCM Setup" name="fcm_help"
+                              invisible="provider != 'fcm'">
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <h4>
+                                        <i class="fa fa-fire"/>
+                                        Firebase Cloud Messaging Setup
+                                    </h4>
+                                    <p>
+                                        <strong>Option 1: FCM v1 API (Recommended)</strong>
+                                    </p>
+                                    <ol>
+                                        <li>Go to <b>Firebase Console</b> &gt; Project Settings &gt; Service accounts
+                                        </li>
+                                        <li>Click
+                                            <b>"Generate new private key"</b>
+                                        </li>
+                                        <li>Download the JSON file</li>
+                                        <li>Paste its contents in the <b>"Service Account JSON"</b> field
+                                        </li>
+                                        <li>Enter your
+                                            <b>Firebase Project ID</b>
+                                        </li>
+                                    </ol>
+                                    <hr/>
+                                    <p>
+                                        <strong>Option 2: Legacy API (Deprecated by Google)</strong>
+                                    </p>
+                                    <ol>
+                                        <li>Go to Firebase Console &gt; Project Settings &gt; Cloud Messaging</li>
+                                        <li>Copy the
+                                            <b>Server Key</b>
+                                        </li>
+                                        <li>Paste it in the "FCM Server Key" field</li>
+                                    </ol>
+                                    <p class="text-muted">
+                                        <i class="fa fa-info-circle"/>
+                                        The v1 API requires the <code>google-auth</code> Python library:
+                                        <code>pip install google-auth</code>
+                                    </p>
+                                </div>
+                            </group>
+                        </page>
+
+                        <page string="Rate Limiting" name="rate_limit">
+                            <group>
+                                <group>
+                                    <field name="monthly_limit"/>
+                                    <field name="current_month_count"/>
+                                    <field name="last_reset_date"/>
+                                </group>
+                                <group>
+                                    <button name="action_reset_counter"
+                                            string="Reset Counter"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-refresh"
+                                            groups="sadeem_mobile_notification.group_notification_admin"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group>
+                                    <field name="device_count"/>
+                                    <field name="total_sent"/>
+                                </group>
+                                <group>
+                                    <field name="total_failed"/>
+                                    <field name="success_rate" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Devices" name="devices">
+                            <field name="device_ids">
+                                <list create="0" edit="0">
+                                    <field name="name"/>
+                                    <field name="user_id"/>
+                                    <field name="platform"/>
+                                    <field name="topic"/>
+                                    <field name="last_seen"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Logs" name="logs">
+                            <field name="log_ids">
+                                <list decoration-success="status == 'sent'" create="0" delete="0"
+                                      decoration-danger="status == 'failed'">
+                                    <field name="sent_date"/>
+                                    <field name="title"/>
+                                    <field name="user_id"/>
+                                    <field name="topic"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="notification_config_view_search" model="ir.ui.view">
+        <field name="name">notification.config.search</field>
+        <field name="model">notification.config</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_ntfy" string="ntfy" domain="[('provider', '=', 'ntfy')]"/>
+                <filter name="filter_fcm" string="FCM" domain="[('provider', '=', 'fcm')]"/>
+                <separator/>
+                <group>
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="notification_config_action" model="ir.actions.act_window">
+        <field name="name">Notification Configurations</field>
+        <field name="res_model">notification.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="notification_config_view_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first notification configuration
+            </p>
+            <p>
+                Configure ntfy or FCM to send push notifications to mobile devices.
+            </p>
+        </field>
+    </record>
+
+</odoo>

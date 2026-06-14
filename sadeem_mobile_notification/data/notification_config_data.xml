@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="demo_ntfy_config" model="notification.config">
+            <field name="name">Demo ntfy Server</field>
+            <field name="provider">ntfy</field>
+            <field name="ntfy_server_url">https://ntfy.sh</field>
+            <field name="ntfy_auth_method">none</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="monthly_limit">10000</field>
+        </record>
+    </data>
+</odoo>

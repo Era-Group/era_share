@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="notification_log_view_list" model="ir.ui.view">
+        <field name="name">notification.log.list</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'sent'"
+                  decoration-danger="status == 'failed'"
+                  create="0" edit="0">
+                <field name="sent_date"/>
+                <field name="title"/>
+                <field name="user_id"/>
+                <field name="topic"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="notification_log_view_form" model="ir.ui.view">
+        <field name="name">notification.log.form</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="sent_date"/>
+                            <field name="config_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="topic"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="title"/>
+                        <field name="message"/>
+                    </group>
+                    <group invisible="status == 'sent'">
+                        <field name="error_message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="notification_log_view_search" model="ir.ui.view">
+        <field name="name">notification.log.search</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title"/>
+                <field name="user_id"/>
+                <field name="topic"/>
+                <filter name="filter_sent" string="Sent" domain="[('status', '=', 'sent')]"/>
+                <filter name="filter_failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                <separator/>
+                <filter name="filter_last_7_days" string="Last 7 Days"
+                        domain="[('sent_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="filter_last_30_days" string="Last 30 Days"
+                        domain="[('sent_date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <group>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_config" string="Configuration" context="{'group_by': 'config_id'}"/>
+                    <filter name="group_sent_date" string="Sent Date" context="{'group_by': 'sent_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="notification_log_action" model="ir.actions.act_window">
+        <field name="name">Notification Logs</field>
+        <field name="res_model">notification.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="notification_log_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No notifications sent yet
+            </p>
+            <p>
+                All sent and failed notifications will appear here.
+            </p>
+        </field>
+    </record>
+
+</odoo>

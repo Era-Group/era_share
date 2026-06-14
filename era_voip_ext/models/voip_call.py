@@ -785,51 +785,6 @@ class VoipCall(models.Model):
             seen.add(call.id)
             self._analyze_call(call, call._transcript_for_analysis())
 
-    @api.model
-    def _get_next_pending_lead_post_call(self, exclude_ids=None):
-        exclude_clause = ""
-        params = []
-        if exclude_ids:
-            exclude_clause = "AND id != ALL(%s)"
-            params.append(list(exclude_ids))
-        self.env.cr.execute(
-            f"""
-                SELECT id
-                  FROM {self._table}
-                 WHERE analysis_status = 'done'
-                   AND lead_post_status = 'pending'
-                   {exclude_clause}
-              ORDER BY create_date DESC
-                 LIMIT 1
-                 FOR UPDATE SKIP LOCKED
-            """,
-            params,
-        )
-        row = self.env.cr.fetchone()
-        return self.browse(row[0]) if row else self.browse()
-
-    @api.model
-    def _cron_post_pending_analysis_to_lead(self):
-        """Post analysis to the related lead for calls that were analysed but
-        never reached a lead chatter (backlog + any future misses)."""
-        # Stop 100 s before the worker real-time limit (1200 s).
-        deadline = time.monotonic() + 1100
-        seen = set()
-        while time.monotonic() < deadline:
-            call = self._get_next_pending_lead_post_call(exclude_ids=seen)
-            if not call:
-                break
-            seen.add(call.id)
-            try:
-                self._post_evaluation_to_lead(call)
-            except Exception:
-                # Leave status 'pending' so a transient failure is retried on the
-                # next cron run rather than being permanently marked as no_lead.
-                _logger.exception(
-                    "Call %s: backfill post of analysis to lead failed", call.id,
-                )
-            self._commit_if_needed()
-
     def action_reanalyze_call(self):
         self.ensure_one()
         if self.analysis_status == "queued":

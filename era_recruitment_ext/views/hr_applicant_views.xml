@@ -26,4 +26,19 @@
             </xpath>
         </field>
     </record>
+
+    <record id="hr_kanban_view_applicant_inherit_era_ai_match" model="ir.ui.view">
+        <field name="name">hr.applicant.kanban.inherit.era.ai.match</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_id']" position="after">
+                <field name="ai_match_score_display"/>
+                <span t-if="record.ai_match_score_display.raw_value" class="badge text-bg-info">
+                    <i class="fa fa-robot me-1" role="img" aria-label="AI Match Score"/>
+                    <t t-out="record.ai_match_score_display.value"/>
+                </span>
+            </xpath>
+        </field>
+    </record>
 </odoo>

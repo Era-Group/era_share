@@ -32,9 +32,9 @@
         <field name="model">hr.applicant</field>
         <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='job_id']" position="after">
-                <field name="ai_match_score_display"/>
-                <span t-if="record.ai_match_score_display.raw_value" class="badge text-bg-info">
+            <xpath expr="//a[@name='action_open_attachments']" position="before">
+                <field name="ai_match_score_display" invisible="1"/>
+                <span t-if="record.ai_match_score_display.raw_value" class="badge text-bg-info me-1" title="AI Match Score">
                     <i class="fa fa-robot me-1" role="img" aria-label="AI Match Score"/>
                     <t t-out="record.ai_match_score_display.value"/>
                 </span>

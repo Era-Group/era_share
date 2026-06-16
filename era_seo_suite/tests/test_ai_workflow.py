@@ -72,21 +72,55 @@ class TestAIWorkflow(TransactionCase):
         f = self._make_finding(self._make_page('/sup-2'), 'missing_h1')
         self.assertFalse(f.ai_supported)
 
-    # --- Mechanical fix (no agent call) --------------------------------------
+    # --- URL-protection policy ------------------------------------------------
+    # era_seo_suite never rewrites a page/blog public URL. The slug audit
+    # checks still produce informational findings, but they are not AI-fixable
+    # and the apply chokepoint refuses any url/slug/name write.
 
-    def test_slug_uppercase_mechanical(self):
+    def test_slug_finding_not_ai_fixable(self):
+        """Slug findings are informational only — never AI-fixable."""
+        for code in ('slug_contains_uppercase', 'slug_contains_stopwords',
+                     'slug_too_long'):
+            f = self._make_finding(self._make_page('/Caps-%s' % code), code)
+            self.assertFalse(
+                f.ai_supported,
+                'slug code %s must not be AI-fixable (URL protection)' % code)
+
+    def test_slug_suggest_marks_not_supported_and_keeps_url(self):
+        """action_ai_suggest must not propose a url change for slug findings."""
         page = self._make_page(url='/Has-Caps')
         f = self._make_finding(page, 'slug_contains_uppercase')
-        # Patch _resolve_agent so is_available() passes; the mechanical path
-        # should not actually call get_direct_response.
         agent = _mock_agent('{}')
         with patch.object(AIClient, '_resolve_agent', return_value=agent):
             f.action_ai_suggest()
         f.invalidate_recordset()
-        self.assertEqual(f.ai_status, 'suggested')
-        self.assertEqual(f.ai_proposed_value, '/has-caps')
-        self.assertEqual(f.ai_model_used, 'mechanical')
+        self.assertEqual(f.ai_status, 'not_supported')
+        self.assertFalse(f.ai_proposed_field)
+        # No AI call, and the page URL is untouched.
         agent.get_direct_response.assert_not_called()
+        self.assertEqual(page.url, '/Has-Caps')
+
+    def test_apply_refuses_url_field_write(self):
+        """Even a (force-)suggested url proposal is refused at apply time."""
+        page = self._make_page(url='/keep-this-url')
+        f = self._make_finding(page, 'slug_too_long')
+        # Force the finding into a state that WOULD write url, bypassing the
+        # earlier guards, to prove the apply chokepoint is the last line of
+        # defense.
+        f.write({
+            'ai_status': 'suggested',
+            'ai_fix_type': 'field',
+            'ai_proposed_field': 'url',
+            'ai_proposed_value': '/a-rewritten-slug',
+            'ai_confidence': 1.0,
+        })
+        f.action_ai_apply()
+        f.invalidate_recordset()
+        page.invalidate_recordset()
+        # URL unchanged; finding parked for manual review, not applied.
+        self.assertEqual(page.url, '/keep-this-url')
+        self.assertNotEqual(f.ai_status, 'applied')
+        self.assertFalse(f.is_resolved)
 
     # --- Full agent-mocked workflow ------------------------------------------
 

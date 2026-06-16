@@ -1,5 +1,28 @@
 # Changelog
 
+## [19.0.3.3.5] — 2026-06-16
+
+### Changed — URL-protection policy: the suite never rewrites a page's public URL
+
+The AI auto-fixer used to be able to rewrite `website.page.url` to "clean up"
+a slug (the `slug_contains_uppercase`, `slug_contains_stopwords` and
+`slug_too_long` checks). Changing a live URL silently breaks inbound links and
+loses SEO equity, so this is now disabled in code:
+
+- The three slug checks are removed from `_FIELD_MAP` (ai_client.py) and from
+  `AI_FIXABLE_CODES` (seo_audit_finding_ai.py). Slug findings now show
+  `ai_status = 'not_supported'` — the Suggest/Apply buttons are hidden and the
+  bulk Auto-Fix cron (`cron_bulk_ai_fix`) no longer selects them.
+- Defense in depth: `_ai_apply_field` refuses to write any URL-affecting field
+  (`url`, `name`, `website_url`, `seo_name`, `slug`) — see
+  `URL_PROTECTED_FIELDS` — so no AI proposal, present or future, manual or
+  unattended, can change a public URL through the fix pipeline.
+- The slug **audit** still runs: admins keep the informational findings as
+  advice. Manual URL edits via Odoo's native website editor are unaffected.
+
+The AI blog "Regenerate" button (`action_era_ai_regenerate`) is intentionally
+left as-is: it is a deliberate human action that replaces the whole article.
+
 ## [19.0.3.0.0] — 2026-05-28
 
 ### Changed — physically merged the entire suite into one module

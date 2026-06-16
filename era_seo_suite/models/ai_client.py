@@ -134,9 +134,16 @@ _FIELD_MAP = {
     'missing_meta_description': ('seo_description', True),
     'description_too_long': ('seo_description', True),
     'description_too_short': ('seo_description', True),
-    'slug_contains_uppercase': ('url', False),   # mechanical: lowercase
-    'slug_contains_stopwords': ('url', True),
-    'slug_too_long': ('url', True),
+    # URL-PROTECTION POLICY: the slug checks (slug_contains_uppercase,
+    # slug_contains_stopwords, slug_too_long) are deliberately NOT mapped to a
+    # target field. Rewriting website.page.url changes the page's live public
+    # URL, breaks inbound links/SEO equity and is never done automatically by
+    # this module. The slug *audit* checks still run (they surface as
+    # informational findings so an admin can decide), but the AI pipeline must
+    # not produce a url proposal for them. The findings are also kept out of
+    # AI_FIXABLE_CODES (see seo_audit_finding_ai.py) and any url/name write is
+    # refused at the apply chokepoint (_ai_apply_field). Do NOT re-add a slug
+    # -> 'url' entry here without removing those guards on purpose.
 }
 
 # Richer fix types, dispatched in suggest_fix() to dedicated handlers.
@@ -1877,12 +1884,14 @@ class AIClient:
 
     @staticmethod
     def _field_and_mechanical_fix(finding, target):
+        # NOTE: slug/url fixes are intentionally absent from _FIELD_MAP
+        # (URL-PROTECTION POLICY), so this never returns the 'url' field. The
+        # former mechanical "lowercase the slug" shortcut was removed with it —
+        # the module must never rewrite a page's public URL.
         mapping = _FIELD_MAP.get(finding.check_code)
         if not mapping:
             raise ValueError(_('Check code %s is not AI-fixable.', finding.check_code))
         field, needs_ai = mapping
-        if not needs_ai and finding.check_code == 'slug_contains_uppercase':
-            return 'url', (target.url or '').lower()
         return field, None
 
     # Phrases the major LLM providers use when refusing a request.

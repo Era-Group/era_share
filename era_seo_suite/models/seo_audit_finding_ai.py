@@ -42,15 +42,29 @@ AI_FIXABLE_CODES = {
     'title_too_short',
     'description_too_long',
     'description_too_short',
-    'slug_contains_uppercase',
-    'slug_contains_stopwords',
-    'slug_too_long',
+    # URL-PROTECTION POLICY: the slug checks (slug_contains_uppercase,
+    # slug_contains_stopwords, slug_too_long) are intentionally EXCLUDED. They
+    # would rewrite website.page.url — the page's live public URL — which this
+    # module must never change automatically. Keeping them out makes the
+    # findings ai_status='not_supported' (no Suggest/Apply button) and keeps
+    # them out of the bulk Auto-Fix cron domain (cron_bulk_ai_fix filters on
+    # AI_FIXABLE_CODES). The slug *audit* still runs as informational advice.
+    # See _FIELD_MAP in ai_client.py and the _ai_apply_field guard below.
     # Richer fixes (19.0.7.0.0):
     'missing_og_image',     # mechanical: company logo
     'missing_schema',       # AI picks a JSON-LD template, attaches an instance
     'image_missing_alt',    # AI writes alt text, injected into the content imgs
     'thin_content',         # AI proposes an HTML block, appended on apply
 }
+
+# URL-PROTECTION POLICY (defense in depth): fields whose value forms (or
+# derives) a record's public URL. The AI apply pipeline must never write any of
+# these — doing so would change a live page/blog URL. Enforced in
+# _ai_apply_field regardless of how the finding was produced, so a future
+# re-introduction of a slug fix (or a malformed proposal) still cannot rewrite
+# a URL. Manual admin edits via Odoo's native UI are unaffected: this guard
+# only governs THIS module's AI fix writes.
+URL_PROTECTED_FIELDS = frozenset({'url', 'name', 'website_url', 'seo_name', 'slug'})
 
 # Even if the configured threshold is lowered, these fix families must never
 # be applied without a human clicking Apply. Thin-content writes AI-authored
@@ -589,9 +603,27 @@ class EraSeoAuditFinding(models.Model):
             return {}
 
     def _ai_apply_field(self, target):
-        """seo_title / seo_description (per language) or the slug."""
+        """seo_title / seo_description (per language). NOT url/slug.
+
+        URL-PROTECTION POLICY: this is the single chokepoint every field fix
+        passes through, so it is also where we hard-stop any write that would
+        change a record's public URL. Even though the slug codes are already
+        kept out of _FIELD_MAP / AI_FIXABLE_CODES, this guard ensures that no
+        AI proposal — present or future, manual Apply or unattended cron — can
+        rewrite website.page.url (or a blog post's name / slug). It does NOT
+        touch manual admin URL edits made through Odoo's native UI.
+        """
         if not self.ai_proposed_field or self.ai_proposed_value is None:
             raise UserError(_('No proposed value to apply.'))
+        if self.ai_proposed_field in URL_PROTECTED_FIELDS:
+            # Raising here rolls back this finding's per-record savepoint in
+            # action_ai_apply (so the target URL is untouched) and its except
+            # handler parks the finding for manual review with this reason.
+            raise UserError(_(
+                'Refusing to change the public URL (field "%s"). URL/slug '
+                'changes are disabled in era_seo_suite — edit the URL manually '
+                'via the website editor if you really need to.',
+                self.ai_proposed_field))
         translations = {}
         if self.ai_proposed_translations:
             try:

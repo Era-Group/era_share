@@ -33,8 +33,11 @@
         <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
         <field name="arch" type="xml">
             <xpath expr="//a[@name='action_open_attachments']" position="before">
+                <field name="ai_match_score" invisible="1"/>
                 <field name="ai_match_score_display" invisible="1"/>
-                <span t-if="record.ai_match_score_display.raw_value" class="badge text-bg-info me-1" title="AI Match Score">
+                <span t-if="record.ai_match_score_display.raw_value"
+                      t-attf-class="badge me-1 {{ record.ai_match_score.raw_value >= 80 ? 'text-bg-success' : record.ai_match_score.raw_value &lt; 30 ? 'text-bg-danger' : 'text-bg-warning' }}"
+                      title="AI Match Score">
                     <i class="fa fa-robot me-1" role="img" aria-label="AI Match Score"/>
                     <t t-out="record.ai_match_score_display.value"/>
                 </span>

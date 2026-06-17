@@ -49,6 +49,23 @@ subscription-backed CLI to serve multiple users.
         "views/res_config_settings_views.xml",
         "views/era_ai_accounts_menus.xml",
     ],
+    "assets": {
+        # Mirror the bundles where core ``ai`` loads its discuss "post" patch
+        # (the one that calls /ai/generate_response), so the refetch fallback is
+        # present wherever the Ask AI chat runs: backend, public, portal, livechat.
+        "web.assets_backend": [
+            "era_ai_accounts/static/src/discuss/core/common/ai_chat_refetch_patch.js",
+        ],
+        "mail.assets_public": [
+            "era_ai_accounts/static/src/discuss/core/common/ai_chat_refetch_patch.js",
+        ],
+        "portal.assets_chatter_helpers": [
+            "era_ai_accounts/static/src/discuss/core/common/ai_chat_refetch_patch.js",
+        ],
+        "im_livechat.assets_embed_core": [
+            "era_ai_accounts/static/src/discuss/core/common/ai_chat_refetch_patch.js",
+        ],
+    },
     "installable": True,
     "application": False,
     # The custom_llm OpenAI-compatible provider that era_odoo_ai_ext used to add is

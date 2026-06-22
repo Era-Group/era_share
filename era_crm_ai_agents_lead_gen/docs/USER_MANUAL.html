@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead Generation — User Manual</title>
+<style>
+  :root{
+    --accent:#0f766e;          /* teal */
+    --accent-d:#0b4f4a;
+    --ink:#1f2933;
+    --muted:#52606d;
+    --line:#e2e8f0;
+    --bg:#f7f9fb;
+    --sidebar:#0b2e2b;
+    --sidebar-ink:#cfe8e4;
+    --code-bg:#eef2f4;
+    --warn-bg:#fff4e5; --warn-bd:#e8920c;
+    --tip-bg:#eafaf3;  --tip-bd:#12a36b;
+    --note-bg:#eef4ff; --note-bd:#3b6fe0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  }
+  /* ---------- layout ---------- */
+  .wrap{display:flex; align-items:flex-start}
+  nav.toc{
+    position:sticky; top:0; align-self:flex-start;
+    width:280px; min-width:280px; height:100vh; overflow-y:auto;
+    background:var(--sidebar); color:var(--sidebar-ink);
+    padding:24px 18px; font-size:14px;
+  }
+  nav.toc h2{color:#fff; font-size:15px; letter-spacing:.04em; text-transform:uppercase; margin:0 0 4px}
+  nav.toc .sub{color:#7fb8b1; font-size:12px; margin:0 0 18px}
+  nav.toc a{display:block; color:var(--sidebar-ink); text-decoration:none; padding:6px 10px; border-radius:6px; margin:1px 0}
+  nav.toc a:hover{background:rgba(255,255,255,.08); color:#fff}
+  nav.toc ol{list-style:none; margin:0; padding:0; counter-reset:s}
+  nav.toc ol li a::before{counter-increment:s; content:counter(s) ".  "; color:#5e9a93; font-variant-numeric:tabular-nums}
+  main{flex:1; min-width:0; padding:48px 56px; max-width:980px; margin:0 auto}
+  /* ---------- typography ---------- */
+  h1{font-size:30px; margin:0 0 4px; color:var(--accent-d); line-height:1.2}
+  .lead{color:var(--muted); font-size:17px; margin:0 0 8px}
+  .stamp{color:var(--muted); font-size:13px; border-bottom:1px solid var(--line); padding-bottom:18px; margin-bottom:8px}
+  section{padding-top:28px; margin-top:14px; border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  h2{font-size:23px; color:var(--accent-d); margin:.2em 0 .5em}
+  h2 .n{color:var(--accent); font-weight:700; margin-right:.4em}
+  h3{font-size:18px; color:var(--ink); margin:1.4em 0 .4em}
+  p{margin:.6em 0}
+  ul,ol{margin:.5em 0 .8em; padding-left:1.4em}
+  li{margin:.25em 0}
+  strong{color:var(--accent-d)}
+  /* ---------- inline code: RTL/LTR safe ---------- */
+  code{
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--code-bg); color:#0b4f4a; padding:1px 6px; border-radius:5px;
+    font-size:.88em; white-space:nowrap;
+    direction:ltr; unicode-bidi:isolate;          /* never reorder in mixed text */
+  }
+  .path{color:#5b21b6}
+  /* ---------- tables ---------- */
+  table{border-collapse:collapse; width:100%; margin:1em 0; font-size:14.5px; background:#fff;
+        border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:#0f766e0d; color:var(--accent-d); font-weight:700; letter-spacing:.01em}
+  tr:last-child td{border-bottom:none}
+  td code{white-space:normal}
+  .ok{color:#0b7a4b; font-weight:700}
+  .no{color:#b3261e; font-weight:700}
+  .part{color:#b6740a; font-weight:700}
+  /* ---------- callouts ---------- */
+  .callout{border-left:5px solid; border-radius:8px; padding:14px 16px 14px 18px; margin:1.1em 0; font-size:15px}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .h{font-weight:700; display:block; margin-bottom:4px}
+  .warn{background:var(--warn-bg); border-color:var(--warn-bd)}
+  .warn .h{color:#9a5b00}
+  .tip{background:var(--tip-bg); border-color:var(--tip-bd)}
+  .tip .h{color:#0b6e49}
+  .note{background:var(--note-bg); border-color:var(--note-bd)}
+  .note .h{color:#274bb0}
+  /* ---------- misc ---------- */
+  .pill{display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:999px; vertical-align:middle}
+  .pill.off{background:#fde2e1; color:#b3261e}
+  .pill.on{background:#d8f3e6; color:#0b7a4b}
+  .steps{counter-reset:st; list-style:none; padding-left:0}
+  .steps>li{position:relative; padding:4px 0 4px 44px; margin:.4em 0}
+  .steps>li::before{counter-increment:st; content:counter(st); position:absolute; left:0; top:2px;
+    width:30px; height:30px; border-radius:50%; background:var(--accent); color:#fff;
+    font-weight:700; display:flex; align-items:center; justify-content:center; font-size:14px}
+  footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px}
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    .wrap{flex-direction:column}
+    nav.toc{position:static; width:100%; min-width:0; height:auto}
+    nav.toc ol{columns:2}
+    main{padding:28px 20px}
+  }
+  /* ---------- print ---------- */
+  @media print{
+    nav.toc{display:none}
+    body{background:#fff}
+    main{max-width:none; padding:0}
+    section{break-inside:avoid; border-top:1px solid #ccc}
+    .callout,table{break-inside:avoid}
+    a{color:inherit; text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc">
+  <h2>Lead Generation</h2>
+  <p class="sub">User &amp; Manager Manual</p>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#before">Before you start</a></li>
+    <li><a href="#config">Configuration</a></li>
+    <li><a href="#providers">Activating data providers</a></li>
+    <li><a href="#manual">Running a discovery (manual)</a></li>
+    <li><a href="#cron">Running automatically (cron)</a></li>
+    <li><a href="#handoff">The Enrichment hand-off</a></li>
+    <li><a href="#caps">Caps &amp; cost control</a></li>
+    <li><a href="#audit">Audit &amp; monitoring</a></li>
+    <li><a href="#pdpl">PDPL &amp; compliance</a></li>
+    <li><a href="#faq">Troubleshooting / FAQ</a></li>
+    <li><a href="#glossary">Glossary</a></li>
+  </ol>
+</nav>
+
+<main>
+  <h1>Lead Generation — User Manual</h1>
+  <p class="lead">Net-new B2B company &amp; decision-maker discovery for the Era Group CRM AI Agents suite.</p>
+  <p class="stamp">Module: <code>era_crm_ai_agents_lead_gen</code> &nbsp;·&nbsp; Audience: managers &amp; administrators &nbsp;·&nbsp; Scope: configuration &amp; day-to-day operation</p>
+
+  <!-- 1 ============================================================= -->
+  <section id="overview">
+    <h2><span class="n">1.</span>Overview</h2>
+    <p>Lead Generation is the <strong>top of the sales funnel</strong>. Its job is to bring
+       <strong>net-new companies</strong> (and, optionally, their decision-makers) <em>into</em> the
+       CRM from external data sources, de-duplicate them against what you already have, tag them so
+       they are traceable, and leave them ready for the rest of the suite to work.</p>
+
+    <h3>What it does</h3>
+    <ul>
+      <li>Queries external sources (search APIs, business registries) in priority order to <strong>discover companies</strong> that match your targeting (sectors, regions, size).</li>
+      <li>Uses the suite's AI to read each source's raw response and extract structured firmographics (name, website, city, …).</li>
+      <li><strong>De-duplicates before creating</strong>, then creates a <code>res.partner</code> company record, tags it <code>by_lead_generator_agent</code>, and stamps the exact source on <code>x_lead_gen_source</code>.</li>
+      <li>Optionally discovers <strong>decision-makers</strong> (named individuals) and links them to their company — only when explicitly enabled.</li>
+      <li>Runs on a daily schedule, inside hard daily and cost caps, with every decision written to the audit log.</li>
+    </ul>
+
+    <h3>What it does <em>not</em> do</h3>
+    <ul>
+      <li>It is <strong>not Enrichment (#2)</strong>. Enrichment <em>completes and verifies</em> records that already exist; Lead Generation <em>brings in records that do not exist yet</em>. They are separate modules with separate jobs.</li>
+      <li>It does not send any outreach. It only creates records; messaging is governed by the Compliance layer (#1) and other agents.</li>
+      <li>It does not guarantee data quality. Extraction is best-effort over search results — expect a company name and website far more reliably than a VAT number or sector.</li>
+    </ul>
+
+    <div class="callout note">
+      <span class="h">ℹ️ Honest expectations (read this)</span>
+      <p>Out of the box, with the right API tokens, this module reliably finds <strong>companies</strong>. The
+         <strong>decision-maker (people) side is intentionally limited today</strong>: most contact-data
+         providers are not yet implemented and LinkedIn is a deferred stub (see
+         <a href="#providers">§4</a>). Treat the company feed as a "suggested companies" list a human reviews —
+         not a finished, ready-to-call contact database.</p>
+    </div>
+  </section>
+
+  <!-- 2 ============================================================= -->
+  <section id="before">
+    <h2><span class="n">2.</span>Before you start — prerequisites</h2>
+    <ul>
+      <li><strong>Base module installed.</strong> Lead Generation depends on <code>era_crm_ai_agents_base</code>
+          (the shared agent registry, AI Compliance Guard, usage/cost tracking and audit log). It is the only
+          hard dependency.</li>
+      <li><strong>Python <code>requests</code></strong> must be available on the server (it ships with Odoo;
+          declared as an external dependency).</li>
+      <li><strong>A manager role.</strong> All configuration and the source list are visible only to the
+          <strong>AI Agents Manager</strong> group. Salespeople can see sources read-only; they cannot change them.</li>
+      <li><strong>API tokens in the server environment</strong> for any source you intend to use — never in the
+          database (see <a href="#providers">§4</a>).</li>
+    </ul>
+
+    <div class="callout warn">
+      <span class="h">⚠️ Everything ships OFF by default — and that is deliberate</span>
+      <p>On a fresh install the master switch <code>era_crm_ai_agents_lead_gen.enabled</code> is
+         <span class="pill off">OFF</span>, <strong>every one of the 18 seeded sources is inactive</strong>
+         (<code>active = False</code>), and decision-maker fetching is <span class="pill off">OFF</span>.
+         Nothing queries the network, nothing spends money, and nothing creates records until a manager
+         deliberately turns it on. This is the conservative, review-first posture required by PDPL
+         (<a href="#pdpl">§10</a>).</p>
+    </div>
+  </section>
+
+  <!-- 3 ============================================================= -->
+  <section id="config">
+    <h2><span class="n">3.</span>Configuration (manager-facing)</h2>
+    <p>All settings live on the global <strong>Settings</strong> page, inside the
+       <strong>CRM AI Agents → Lead Generation</strong> block (manager-only). You can also open it directly via
+       the menu <strong>CRM AI Agent Base → Lead Generation → Settings</strong>. Each field is backed by an
+       <code>ir.config_parameter</code> key under the <code>era_crm_ai_agents_lead_gen.*</code> namespace —
+       shown below so you can recognise them in the audit log and technical parameters.</p>
+
+    <h3>Master &amp; PDPL toggles</h3>
+    <table>
+      <thead><tr><th>Setting / config key</th><th>Default</th><th>What it controls</th><th>Recommended</th></tr></thead>
+      <tbody>
+        <tr><td>Enable Lead Generation<br><code>…lead_gen.enabled</code></td><td><span class="pill off">False</span></td>
+            <td>Master switch. While OFF, the engine does nothing at all — no source is ever queried.</td>
+            <td>Leave OFF until sources + targeting + legal review are ready; then ON.</td></tr>
+        <tr><td>Fetch Decision-Makers<br><code>…lead_gen.fetch_decision_makers</code></td><td><span class="pill off">False</span></td>
+            <td>Separate gate for discovering <em>individuals</em>. The heaviest part under PDPL.</td>
+            <td>Keep OFF unless legal review explicitly approves people discovery.</td></tr>
+        <tr><td>Route through Compliance<br><code>…require_compliance_check</code></td><td>True</td>
+            <td>Posture flag: created records must pass Compliance (#1) before any outreach.</td>
+            <td>Leave True.</td></tr>
+        <tr><td>Decision-maker notice<br><code>…decision_maker_notice</code></td><td><code>required</code></td>
+            <td>Documented stance on giving individuals a processing notice (<code>required</code> / <code>not_required</code>).</td>
+            <td>Leave <code>required</code>.</td></tr>
+        <tr><td>Decision-maker consent<br><code>…decision_maker_consent</code></td><td><code>required</code></td>
+            <td>Documented stance on consent before processing personal data.</td>
+            <td>Leave <code>required</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Targeting</h3>
+    <table>
+      <thead><tr><th>Setting / config key</th><th>Default</th><th>What it controls</th><th>Recommended</th></tr></thead>
+      <tbody>
+        <tr><td>Target Sectors<br><code>…target_sectors</code></td><td>(empty)</td>
+            <td>Comma-separated industries to prospect, e.g. <code>Construction, Logistics</code>.</td>
+            <td>Set to your real ICP; empty = no sector filter.</td></tr>
+        <tr><td>Target Regions / Cities<br><code>…target_regions</code></td><td>(empty)</td>
+            <td>Comma-separated regions/cities, e.g. <code>Riyadh, Jeddah, Dammam</code>.</td>
+            <td>Set your KSA target cities.</td></tr>
+        <tr><td>Target Company Size<br><code>…target_company_size</code></td><td>(empty)</td>
+            <td>Free-text size bands, e.g. <code>11-50, 51-200</code>.</td>
+            <td>Optional.</td></tr>
+        <tr><td>Target Job Titles<br><code>…target_job_titles</code></td><td>(empty)</td>
+            <td>Decision-maker titles, e.g. <code>CEO, Procurement Manager</code> — used only when people-fetch is ON.</td>
+            <td>Set when (and if) you enable decision-maker fetching.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Caps, de-dup, residency &amp; provenance</h3>
+    <table>
+      <thead><tr><th>Setting / config key</th><th>Default</th><th>What it controls</th><th>Recommended</th></tr></thead>
+      <tbody>
+        <tr><td>Daily Fetch Cap<br><code>…daily_cap</code></td><td><code>50</code></td>
+            <td>Max records the engine may <strong>create per day</strong>. <code>0</code> or less = unlimited;
+                an empty/unreadable value <strong>blocks</strong> (fail-safe). Dual-enforced (<a href="#caps">§8</a>).</td>
+            <td>Start low (25–50) and raise once you trust the data.</td></tr>
+        <tr><td>On duplicate match<br><code>…dedup_mode</code></td><td><code>skip</code></td>
+            <td><code>skip</code> = leave the existing partner untouched; <code>update</code> = fill only its
+                <em>blank</em> fields. Neither ever creates a duplicate.</td>
+            <td>Leave <code>skip</code> unless you trust source data over your own.</td></tr>
+        <tr><td>Default jurisdiction<br><code>…default_jurisdiction</code></td><td><code>sa</code></td>
+            <td>Registry jurisdiction code used when targeting gives none — keeps registry searches
+                Saudi-scoped instead of global.</td>
+            <td>Leave <code>sa</code> for a KSA business.</td></tr>
+        <tr><td>Missing-token policy<br><code>…block_source_without_token</code></td><td><code>warn</code></td>
+            <td><code>warn</code> = skip a token-less active source <strong>and audit it</strong>;
+                <code>silent</code> = skip without an audit row.</td>
+            <td>Leave <code>warn</code> (never silent).</td></tr>
+        <tr><td>Prefer local sources<br><code>…data_residency_prefer_local</code></td><td>True</td>
+            <td>Favours in-region (Saudi) registries — already reflected in the seeded source priorities.</td>
+            <td>Leave True.</td></tr>
+        <tr><td>Flag data leaving region<br><code>…data_residency_flag_egress</code></td><td>True</td>
+            <td>Writes an audit flag whenever a non-Saudi-local source is used, so cross-border movement is never silent.</td>
+            <td>Leave True.</td></tr>
+        <tr><td>Lead-Gen tag name<br><code>…tag_name</code></td><td><code>by_lead_generator_agent</code></td>
+            <td>The partner tag stamped on every created record, so the whole externally-sourced set is filterable.</td>
+            <td>Leave as is unless you have a naming convention.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout note">
+      <span class="h">ℹ️ The cost cap is shared, not local</span>
+      <p>Spending is governed by the <strong>suite-wide monthly cost cap</strong>
+         <code>era_crm_ai_agents.monthly_cost_cap</code> (default <code>100.0</code> USD), optionally
+         overridden per agent via <code>era_crm_ai_agents.monthly_cost_cap.era_lead_gen</code>. There is no
+         separate "lead-gen dollar cap" — the daily cap above limits <em>record volume</em>, while the monthly
+         cap limits <em>spend</em>. See <a href="#caps">§8</a>.</p>
+    </div>
+  </section>
+
+  <!-- 4 ============================================================= -->
+  <section id="providers">
+    <h2><span class="n">4.</span>Activating data providers</h2>
+    <p>A <strong>provider</strong> (or "source") is one external data service. The engine only queries a source
+       when <strong>all three</strong> of these hold — this is the token-presence model:</p>
+    <ol>
+      <li><strong>Active</strong> — the source record is toggled <code>active = True</code> (a manager decision; everything ships inactive).</li>
+      <li><strong>Token present</strong> — the environment variable the source names in <code>env_key_param</code>
+          resolves to a value on the server. The secret itself is <strong>never stored in Odoo</strong> — only the
+          variable's <em>name</em> is.</li>
+      <li><strong>In scope</strong> — for decision-maker sources, the separate <code>fetch_decision_makers</code> toggle must also be ON.</li>
+    </ol>
+    <p>An <strong>active source whose token is missing is skipped — never silently</strong>: a <code>blocked</code>
+       audit entry is written (unless you set the missing-token policy to <code>silent</code>). You manage sources
+       under <strong>CRM AI Agent Base → Lead Generation → Sources</strong>: drag to re-order priority, toggle
+       <em>active</em> inline, and read the live <strong>Token</strong> indicator.</p>
+
+    <div class="callout tip">
+      <span class="h">💡 How to switch a source on</span>
+      <p>1) Put the API key in the server environment under the variable the source names (e.g.
+         <code>ERA_LEADGEN_SERPAPI_KEY</code>) and restart the server so it is picked up. 2) Open the source in
+         <strong>Sources</strong>, confirm <strong>Token = ✓</strong>, and toggle it <strong>Active</strong>.
+         3) Make sure the master toggle is ON. The source now enters the waterfall by its priority.</p>
+    </div>
+
+    <h3>What actually works today</h3>
+    <p>The seeded catalogue lists 18 candidate sources to show the intended shape of the system. Their real status today:</p>
+    <table>
+      <thead><tr><th>Source</th><th>Type</th><th>Status today</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>SerpAPI, Brave Search, Google Custom Search, Bing</td><td>web&nbsp;search</td><td class="ok">Functional</td>
+            <td>Build a query from targeting → call the API → AI extracts companies. Need their key in env.
+                Google CSE also needs a search-engine id in <code>ERA_LEADGEN_GOOGLE_CSE_CX</code>.</td></tr>
+        <tr><td>OpenCorporates</td><td>registry</td><td class="ok">Functional</td>
+            <td>Public company-registry API, scoped by <code>default_jurisdiction</code>. Needs its token.</td></tr>
+        <tr><td>Saudi Ministry of Commerce, Saudi Business Center</td><td>registry</td><td class="part">Needs provisioning</td>
+            <td>No public API; the handler calls a manager-provided base URL
+                (<code>ERA_LEADGEN_SAUDI_MOC_URL</code> / <code>…_BUSINESS_CENTER_URL</code>). Absent that, it skips honestly.</td></tr>
+        <tr><td>Public-Page Scrape</td><td>scrape</td><td class="part">Opt-in, fragile</td>
+            <td>Fetches a manager-set page (<code>ERA_LEADGEN_SCRAPE_URL</code>) and lets the AI read it. Brittle by nature.</td></tr>
+        <tr><td>Hunter</td><td>contact data</td><td class="part">Partial</td>
+            <td>Works via GET but needs a known company <em>domain</em> — i.e. it is useful <em>after</em> a company exists, not for blind discovery.</td></tr>
+        <tr><td>Apollo, Lusha, RocketReach, SignalHire</td><td>contact data</td><td class="no">Not implemented</td>
+            <td>These are POST people-search APIs; the current egress seam is GET-only, so they skip honestly. Deferred.</td></tr>
+        <tr><td>LinkedIn</td><td>social</td><td class="no">Stub (deferred)</td>
+            <td>ToS-restricted; the handler is a declared stub that never runs and never blocks the module.</td></tr>
+        <tr><td>ZeroBounce, NeverBounce, WhatsApp/WAHA, Mobile Validation</td><td>verification</td><td class="no">Not used in discovery</td>
+            <td>These <em>verify</em> existing contact data; the discovery engine only walks company and decision-maker sources, so they do not run during a discovery pass.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <span class="h">⚠️ The people-discovery sources are the limited ones</span>
+      <p>The contact-data providers that would turn "a company" into "a named person to call" are exactly the ones
+         <strong>not yet active</strong> (Apollo/Lusha/RocketReach/SignalHire deferred, LinkedIn stubbed). Plan around
+         company discovery today; do not promise a ready-made contact database.</p>
+    </div>
+  </section>
+
+  <!-- 5 ============================================================= -->
+  <section id="manual">
+    <h2><span class="n">5.</span>Running a discovery — manual run</h2>
+    <ol class="steps">
+      <li><strong>Set your targeting.</strong> In <strong>Lead Generation → Settings</strong>, fill
+          <em>Target Sectors</em> and <em>Target Regions</em> (e.g. <code>Construction</code> /
+          <code>Riyadh, Jeddah</code>). Optionally set size.</li>
+      <li><strong>Activate at least one working source</strong> with its token present (see <a href="#providers">§4</a>) — for example SerpAPI or OpenCorporates.</li>
+      <li><strong>Turn the master toggle ON</strong> (<em>Enable Lead Generation</em>). Leave <em>Fetch Decision-Makers</em> OFF for a company-only run.</li>
+      <li><strong>Trigger a run.</strong> The engine runs the same code path whether triggered manually or by the
+          cron. (Day-to-day, most teams simply let the daily cron do it — see <a href="#cron">§6</a>.)</li>
+      <li><strong>Find the results in CRM.</strong> New companies appear as <code>res.partner</code> records,
+          each carrying the <code>by_lead_generator_agent</code> tag and an <code>x_lead_gen_source</code> stamp
+          naming the exact provider. The fastest view is
+          <strong>Lead Generation → Externally-Sourced Records</strong>, which lists everything the engine created,
+          grouped by source.</li>
+    </ol>
+    <div class="callout note">
+      <span class="h">ℹ️ The waterfall, briefly</span>
+      <p>Within a run the engine tries eligible sources <strong>in priority order and stops at the first that
+         returns results</strong> (the "waterfall"). One run therefore yields one source's batch per category —
+         expect a handful of companies per run, not hundreds.</p>
+    </div>
+  </section>
+
+  <!-- 6 ============================================================= -->
+  <section id="cron">
+    <h2><span class="n">6.</span>Running automatically — the daily cron</h2>
+    <p>A scheduled action, <strong>"Lead Generation: Scheduled fetch"</strong>, runs <strong>once per day</strong>
+       and calls the same entry point as a manual run, unattended.</p>
+    <ul>
+      <li><strong>Runs as a dedicated, non-superuser service account</strong> — the <em>Lead Generation Bot</em>
+          (login <code>lead_gen_bot</code>) — so creation and de-dup obey normal access rules rather than running as the administrator.</li>
+      <li><strong>Gated by the master toggle.</strong> If <code>…lead_gen.enabled</code> is OFF, the scheduled run
+          exits immediately and does nothing. The single master switch governs scheduled runs too.</li>
+      <li><strong>Respects both caps</strong> — the daily record cap and the monthly cost cap (<a href="#caps">§8</a>).</li>
+      <li><strong>Never errors out.</strong> Because it runs unattended, any guard block (consent, cost cap, a
+          paused agent) becomes a <strong>skip-with-audit</strong> — the job finishes cleanly and leaves an audit
+          trail instead of failing.</li>
+    </ul>
+    <div class="callout tip">
+      <span class="h">💡 Turning the schedule on/off</span>
+      <p>The simplest control is the master toggle: enable the module and the daily run starts producing; disable
+         it and the cron keeps firing but does nothing. The cron record itself can also be deactivated by an
+         administrator under <em>Settings → Technical → Scheduled Actions</em> if you want to stop it entirely.</p>
+    </div>
+    <div class="callout note">
+      <span class="h">ℹ️ After install</span>
+      <p>New scheduled actions require a <strong>full server restart</strong> to register (an upgrade alone is not
+         enough). If the cron does not appear, restart the Odoo service.</p>
+    </div>
+  </section>
+
+  <!-- 7 ============================================================= -->
+  <section id="handoff">
+    <h2><span class="n">7.</span>The Enrichment hand-off</h2>
+    <p>Lead Generation does not call the Enrichment module directly — the hand-off is intentionally
+       <strong>soft and dependency-free</strong>. Every record the engine creates is already
+       <strong>tagged</strong> (<code>by_lead_generator_agent</code>) and <strong>source-stamped</strong>
+       (<code>x_lead_gen_source</code>). That tag/stamp <em>is</em> the hand-off: Enrichment (#2), once present,
+       scans for these records on its own schedule and completes/verifies them. No direct call, no hard
+       dependency, no coupling.</p>
+    <div class="callout note">
+      <span class="h">ℹ️ Why "soft"</span>
+      <p>It keeps the two modules independent — Lead Generation installs and works whether or not Enrichment is
+         present, and you can isolate or purge the entire externally-sourced population in one move by filtering
+         on the tag or the source field.</p>
+    </div>
+  </section>
+
+  <!-- 8 ============================================================= -->
+  <section id="caps">
+    <h2><span class="n">8.</span>Caps &amp; cost control</h2>
+    <h3>Daily record cap (<code>…daily_cap</code>, default 50)</h3>
+    <p>This limits how many records the engine may <strong>create per day</strong>, and it is
+       <strong>dual-enforced</strong>:</p>
+    <ul>
+      <li><strong>Before each source call</strong> — if the day's count already meets the cap, the engine does
+          not even fetch (zero spend).</li>
+      <li><strong>At each record creation</strong> — a last-line check, so two near-simultaneous runs cannot
+          both slip past and overshoot.</li>
+    </ul>
+    <p>Fail-safe behaviour: a value of <code>0</code> or less means <strong>unlimited</strong> (explicit
+       opt-out); a missing or unreadable value <strong>blocks</strong> the run (so the cap can never silently
+       disappear).</p>
+
+    <h3>Monthly cost cap (suite-wide)</h3>
+    <p>Spend is bounded by <code>era_crm_ai_agents.monthly_cost_cap</code> (default <code>100.0</code> USD),
+       enforced by the base. The Lead-Gen engine additionally <strong>re-checks this limit before each source
+       call</strong>, so once the month's spend is exhausted it stops fetching rather than continuing to spend.
+       Each run records both halves of its cost: the source-API call (<code>usage_type = source_api</code>) and
+       the AI extraction (<code>usage_type = llm</code>).</p>
+
+    <h3>What happens when a cap is hit</h3>
+    <ul>
+      <li><strong>Attended (manual) run, over the cost cap:</strong> the run fails fast with a clear error so you know to act.</li>
+      <li><strong>Unattended (cron) run, over a cap:</strong> the run <strong>skips with an audit entry</strong>
+          (<code>cost_cap_exceeded</code>) and finishes cleanly — it never errors the scheduler.</li>
+    </ul>
+  </section>
+
+  <!-- 9 ============================================================= -->
+  <section id="audit">
+    <h2><span class="n">9.</span>Audit &amp; monitoring</h2>
+    <p>Every meaningful decision is written to the suite's append-only audit log
+       (<strong>CRM AI Agents → Configuration → Audit Log</strong>, manager-only). What you will see for Lead Generation:</p>
+    <table>
+      <thead><tr><th>Event type</th><th>When it is written</th></tr></thead>
+      <tbody>
+        <tr><td><code>external_contact</code></td><td>A new company or decision-maker record was created (links to the record; an individual's name is <em>not</em> stored in the entry — only a reference).</td></tr>
+        <tr><td><code>blocked</code></td><td>An active source was skipped because its token was missing (the never-silent skip).</td></tr>
+        <tr><td><code>source_fetch_failed</code></td><td>A source call failed. Only the host and the error type are logged — never the URL, query string, or token.</td></tr>
+        <tr><td><code>cost_cap_exceeded</code></td><td>A run or creation was stopped by the daily cap or the monthly cost cap.</td></tr>
+        <tr><td><code>ai_request</code> / <code>other</code></td><td>Per-attempt outcomes (success / skip / empty / data-left-region flag) and run start/end summaries.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout tip">
+      <span class="h">💡 Quick health check</span>
+      <p>Filter the audit log by agent or event type. A healthy enabled run shows a "run start", one or more
+         per-source attempts, <code>external_contact</code> rows for what it created, and a "run end" summary.
+         Lots of <code>blocked</code> rows means active sources are missing their tokens.</p>
+    </div>
+  </section>
+
+  <!-- 10 ============================================================= -->
+  <section id="pdpl">
+    <h2><span class="n">10.</span>PDPL &amp; compliance</h2>
+    <div class="callout warn">
+      <span class="h">⚠️ Read before enabling decision-maker discovery</span>
+      <p>Discovering <strong>decision-makers</strong> means processing the personal data of named individuals who
+         <strong>have not consented</strong> — and the extraction step sends source content to an international AI
+         provider. This is the heaviest activity in the module under Saudi PDPL. <strong>A lawful basis must be
+         reviewed and approved by your legal/DPO function before you enable it.</strong></p>
+    </div>
+    <p>The module is <strong>designed for compliance but does not assert it</strong>:</p>
+    <ul>
+      <li>Defaults are deliberately conservative — the master toggle, people-fetch, and every source are
+          <strong>OFF</strong> on install.</li>
+      <li>People-fetch sits behind a <strong>second, separate toggle</strong> so it can never be switched on by
+          accident with the master switch.</li>
+      <li>Company data is treated as lighter; individuals are stored as linked contacts so retention/erasure can
+          be applied to them separately.</li>
+      <li>Cross-border data movement is <strong>flagged in the audit</strong> when a non-local source is used.</li>
+      <li>The notice/consent <strong>posture settings</strong> record your stance; the Compliance layer (#1)
+          enforces "no outreach without consent" downstream.</li>
+    </ul>
+    <div class="callout warn">
+      <span class="h">⚠️ Enabling is not the same as being compliant</span>
+      <p>Turning the toggles on does not, by itself, make the behaviour lawful. The conservative defaults exist so
+         that the decision is a <strong>deliberate, reviewed</strong> one — not a default. There is no approved
+         Era Group PDPL reference wired in; that review is yours to complete.</p>
+    </div>
+  </section>
+
+  <!-- 11 ============================================================= -->
+  <section id="faq">
+    <h2><span class="n">11.</span>Troubleshooting / FAQ</h2>
+
+    <h3>"I enabled the module but no leads appear."</h3>
+    <p>Most often <strong>no source is eligible</strong>. Check, in order: is at least one source <strong>Active</strong>?
+       Does that source show <strong>Token = ✓</strong> (its env var is set and the server was restarted)? Is the
+       source a <em>company</em> source (verification sources never run in discovery)? Is the <strong>daily cap</strong>
+       already reached for today? The audit log will show <code>blocked</code> (missing token) or
+       <code>cost_cap_exceeded</code> (cap) rows that explain it.</p>
+
+    <h3>"A specific provider isn't running."</h3>
+    <p>If it is Apollo/Lusha/RocketReach/SignalHire or LinkedIn, that is expected — those are not implemented yet
+       (<a href="#providers">§4</a>). For a Saudi registry, set its <code>…_URL</code> environment variable. For a
+       web-search provider, confirm the key env var (and, for Google CSE, the <code>…_CX</code> id). A token-less
+       active source is skipped with a <code>blocked</code> audit entry.</p>
+
+    <h3>"The daily cron didn't run / didn't create anything."</h3>
+    <p>Three usual causes: (1) the <strong>master toggle is OFF</strong> — the cron fires but exits immediately;
+       (2) the cron was never registered because the server <strong>was not restarted</strong> after install;
+       (3) a <strong>cap was hit</strong> — look for <code>cost_cap_exceeded</code> in the audit. The cron never
+       throws an error; it always finishes and leaves a trail.</p>
+
+    <h3>"I hit the daily cap."</h3>
+    <p>Expected and safe — the engine stops creating for the day. Raise <code>…daily_cap</code> if you genuinely
+       want more per day, set it to <code>0</code> for unlimited (not recommended while you are still trusting the
+       data), or simply wait for the next day.</p>
+
+    <h3>"A legitimately new company wasn't created — it looks like a duplicate."</h3>
+    <p>De-dup matches on email, website domain, VAT, or <em>name + region</em>. A bare name match alone never
+       blocks creation, so this is rare; if it happens, the incoming record genuinely matched an existing one on a
+       strong key. In <code>skip</code> mode nothing is changed; switch to <code>update</code> if you want blank
+       fields on the existing record filled.</p>
+
+    <h3>"Could a source call leak our API key into the logs?"</h3>
+    <p>No. On any failure only the <strong>host</strong> and the <strong>error type</strong> are logged — never
+       the full URL, query string, or raw exception — so query-string tokens (SerpAPI, Google CSE) cannot appear
+       in the server log or the audit.</p>
+
+    <h3>"Why is decision-maker discovery so limited?"</h3>
+    <p>By design and by status: the people-search providers that need it are either not yet implemented (POST
+       APIs) or deferred (LinkedIn), and the capability is the most sensitive under PDPL. Company discovery is the
+       supported path today.</p>
+  </section>
+
+  <!-- 12 ============================================================= -->
+  <section id="glossary">
+    <h2><span class="n">12.</span>Glossary</h2>
+    <ul>
+      <li><strong>Provider / source</strong> — one external data service (a search API, a registry, a contact-data
+          API). Described by one record under <strong>Sources</strong>.</li>
+      <li><strong>Token-presence</strong> — a source is only used when its named environment variable resolves to
+          a value; the secret is never stored in Odoo, only the variable's name (<code>env_key_param</code>).</li>
+      <li><strong>Waterfall</strong> — trying eligible sources in priority order and stopping at the first that
+          returns results.</li>
+      <li><strong>Skip-with-audit</strong> — when something cannot proceed (missing token, hit cap, guard block),
+          the engine skips that step and writes an audit entry instead of failing — never a silent skip.</li>
+      <li><strong>Dual enforcement</strong> — the daily cap is checked both before fetching and again at each
+          record creation, so it cannot be overshot.</li>
+      <li><strong>Soft hand-off</strong> — passing records to Enrichment purely via the tag + source stamp, with
+          no direct call or code dependency.</li>
+      <li><strong>Lead Generation Bot</strong> — the dedicated non-superuser account the daily cron runs as, so
+          scheduled work obeys normal access rules.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Era Group — CRM AI Agents · Lead Generation module (<code>era_crm_ai_agents_lead_gen</code>).
+    This manual describes configuration and operation; for architecture and build rules see the project
+    reference files. Every config key and default herein is taken from the module source.
+  </footer>
+</main>
+</div>
+</body>
+</html>

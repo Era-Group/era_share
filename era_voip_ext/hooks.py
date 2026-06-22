@@ -1,6 +1,3 @@
-from odoo import SUPERUSER_ID, api
-
-
 def _ensure_dedicated_partner(env, agent_xmlid):
     agent = env.ref(agent_xmlid, raise_if_not_found=False)
     if not agent:
@@ -30,6 +27,6 @@ def _ensure_dedicated_partner(env, agent_xmlid):
     agent.sudo().write({"partner_id": new_partner.id})
 
 
-def post_init_hook(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+def post_init_hook(env):
+    # Odoo 17+ passes the Environment directly (was (cr, registry) pre-17).
     _ensure_dedicated_partner(env, "era_voip_ext.voip_call_formatting_agent")

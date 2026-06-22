@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The partner tag stamped on every record the Lead-Generation agent
+         creates, so externally-sourced contacts can be filtered or purged in one
+         move. The tag NAME is manager-configurable (era_crm_ai_agents_lead_gen.
+         tag_name); the persistence layer resolves by that name and falls back to
+         THIS seeded record. noupdate="1" so a manager rename survives upgrades. -->
+    <data noupdate="1">
+        <record id="tag_by_lead_generator_agent" model="res.partner.category">
+            <field name="name">by_lead_generator_agent</field>
+        </record>
+    </data>
+</odoo>

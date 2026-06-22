@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add the Lead Generation policy block into the existing "CRM AI Agents"
+         settings app (defined by the Base). That app block is gated to
+         group_crm_ai_manager, so everything we add here is MANAGER-ONLY by
+         inheritance — no extra groups needed (satisfies 16.2's "non-managers
+         cannot edit PDPL toggles"). -->
+    <record id="res_config_settings_view_form_lead_gen" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crm.ai.lead.gen</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id"
+               ref="era_crm_ai_agents_base.res_config_settings_view_form_crm_ai"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='era_crm_ai_agents_base']" position="inside">
+
+                <block title="Lead Generation" name="crm_ai_lead_gen">
+
+                    <setting string="Enable Lead Generation"
+                             help="Master switch for the whole prospecting engine. OFF = no source is ever queried.">
+                        <field name="lead_gen_enabled"/>
+                    </setting>
+
+                    <setting string="Fetch Decision-Makers (individuals)"
+                             help="Allow gathering named individuals. The heaviest part under PDPL; keep OFF until a legal review approves it.">
+                        <field name="lead_gen_fetch_decision_makers"/>
+                        <div class="text-warning mt-2"
+                             invisible="not lead_gen_fetch_decision_makers">
+                            <i class="fa fa-exclamation-triangle"/>
+                            PDPL: fetching named individuals processes personal
+                            data. Ensure you have a lawful basis before enabling.
+                        </div>
+                    </setting>
+
+                    <setting string="Active source with missing token"
+                             help="What to do when a source is active but its token env var is not set.">
+                        <field name="lead_gen_block_source_without_token"/>
+                    </setting>
+
+                    <setting string="Daily fetch cap"
+                             help="Max records created per day. 0 or less = unlimited. Checked before each source call and at each record creation.">
+                        <field name="lead_gen_daily_cap"/>
+                    </setting>
+
+                    <setting string="On duplicate match"
+                             help="Skip duplicates or update blank fields on the existing partner. Never creates a duplicate.">
+                        <field name="lead_gen_dedup_mode"/>
+                    </setting>
+
+                    <setting string="Lead-Gen tag name"
+                             help="Tag stamped on every record the engine creates.">
+                        <field name="lead_gen_tag_name"/>
+                    </setting>
+
+                    <div class="content-group mt-3">
+                        <h4 class="mt-3">Targeting</h4>
+                        <div class="text-muted">
+                            Comma-separated values. Leave a field empty to apply
+                            no filter on that dimension.
+                        </div>
+                        <div class="row mt-2">
+                            <label for="lead_gen_target_sectors" class="col-lg-4"/>
+                            <field name="lead_gen_target_sectors"/>
+                        </div>
+                        <div class="row">
+                            <label for="lead_gen_target_regions" class="col-lg-4"/>
+                            <field name="lead_gen_target_regions"/>
+                        </div>
+                        <div class="row">
+                            <label for="lead_gen_target_company_size" class="col-lg-4"/>
+                            <field name="lead_gen_target_company_size"/>
+                        </div>
+                        <div class="row">
+                            <label for="lead_gen_target_job_titles" class="col-lg-4"/>
+                            <field name="lead_gen_target_job_titles"
+                                   invisible="not lead_gen_fetch_decision_makers"/>
+                            <div class="col-lg-8 text-muted"
+                                 invisible="lead_gen_fetch_decision_makers">
+                                Enable decision-maker fetching to set target job titles.
+                            </div>
+                        </div>
+                    </div>
+
+                </block>
+
+                <block title="PDPL &amp; Compliance" name="crm_ai_lead_gen_pdpl">
+
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fa fa-balance-scale"/>
+                        <strong>Activation requires legal review.</strong>
+                        There is no approved Era Group PDPL reference on file yet.
+                        These settings are deliberately conservative and DESIGN
+                        FOR compliance — they do not assert it. Do not enable lead
+                        generation (especially decision-maker fetching) until your
+                        legal/DPO review signs off.
+                    </div>
+
+                    <setting string="Route through Compliance before outreach"
+                             help="Externally-sourced records must pass the Compliance guard (#1) before any outreach.">
+                        <field name="lead_gen_require_compliance_check"/>
+                    </setting>
+                    <setting string="Decision-maker notice"
+                             help="Posture on giving individuals a processing notice. Conservative default = required.">
+                        <field name="lead_gen_decision_maker_notice"/>
+                    </setting>
+                    <setting string="Decision-maker consent"
+                             help="Posture on obtaining consent before processing an individual's data. Conservative default = required.">
+                        <field name="lead_gen_decision_maker_consent"/>
+                    </setting>
+                    <setting string="Prefer local (in-region) sources"
+                             help="Favour in-region sources (Saudi registries first) for data residency.">
+                        <field name="lead_gen_data_residency_prefer_local"/>
+                    </setting>
+                    <setting string="Flag when data leaves the region"
+                             help="Audit a flag whenever a non-Saudi-local source is used, so cross-border movement is never silent.">
+                        <field name="lead_gen_data_residency_flag_egress"/>
+                    </setting>
+
+                    <div class="text-muted mt-2">
+                        Every record the engine creates is tagged
+                        (<code>by_lead_generator_agent</code>) and stamped with its
+                        source (<code>x_lead_gen_source</code>), so all
+                        externally-sourced records can be isolated or purged in one
+                        move (filter Contacts by that tag).
+                    </div>
+
+                </block>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

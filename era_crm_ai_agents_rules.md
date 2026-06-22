@@ -151,6 +151,12 @@ Module-specific elevations (approved per module, same single-purpose discipline)
 
 6. **Public opt-out controller** (`era_crm_ai_agents_compliance`, module 1) — the public unsubscribe endpoint (`controllers/opt_out_controller.py`) runs `auth='public'` because the opting-out recipient is, by definition, not logged in (PDPL-mandated). It uses one narrow sudo solely to: validate a signed token → resolve the partner → call `process_opt_out` (withdraw marketing consent + clear `crm_ai_intl_processing_consent` + audit). The token is signed with Odoo's instance secret (`database.secret`); no new stored secret. It writes nothing else under sudo. (The 72h enforcement cron runs as `base.user_root`, the normal cron context, not an ad-hoc sudo.)
 7. **Compliance config read** (`era_crm_ai_agents_compliance`, module 1) — a read-only helper (`_compliance_config`) sudo-reads ONLY `ir.config_parameter` keys under the `era_crm_ai_agents_compliance.*` namespace, so the send-window / norms / opt-out engines can load manager settings while running as a salesperson. Read-only; writes nothing; touches no other namespace and no secret. Same narrow category as elevation #1 (cap read).
+8. **Lead-Gen config read** (`era_crm_ai_agents_lead_gen`, module 16) — the engine's `_cfg` helper (`services/lead_gen_engine.py`) sudo-reads ONLY `ir.config_parameter` keys under the `era_crm_ai_agents_lead_gen.*` namespace (master toggle, targeting, decision-maker toggle, missing-token policy), so the prospecting waterfall can load manager settings while running as a salesperson. Read-only; writes nothing; touches no other namespace and no secret. Same narrow category as elevations #1 (cap read) and #7 (compliance config read). NOTE: source tokens are NOT read this way — they are read straight from the process environment via `os.getenv` (no sudo, never the DB), so this elevation never touches a secret.
+
+_(Elevation #9 "Lead-Gen cost re-attribution" was removed: the per-record split
+that needed a `sudo().unlink()` of the guard's usage row was cut in favour of
+batch-level cost — one `source_api` usage row per run via the already-approved
+usage create (#4), plus the guard's own `llm` row. No unlink remains.)_
 
 **Any new `sudo` elevation must be flagged and approved before use — never assumed.** This list is the registry of what has been approved; extend it (with the same single-purpose discipline) when a new elevation is approved.
 
@@ -183,6 +189,50 @@ auth, and fail-safe.
      call** (this module's prayer-times fetch) and nothing else — narrow scope:
      this endpoint only, no PII, no key.
 
+2. **Lead-Gen source calls** (`era_crm_ai_agents_lead_gen`, module 16) — the
+   prospecting engine's outbound source lookups.
+   - **Caller:** the SINGLE seam `crm.ai.lead_gen.agent._http_get`
+     (`models/crm_ai_lead_gen_agent.py`), reached only via
+     `LeadGenEngine.http_get`. `requests` is imported lazily and ONLY there; no
+     handler imports it. GET-only today.
+   - **Endpoints:** the active source's API, by `provider_type` (handlers under
+     `services/handlers/`): web search (SerpAPI `serpapi.com`, Brave
+     `api.search.brave.com`, Google CSE `googleapis.com/customsearch`, Bing
+     `api.bing.microsoft.com`); business registries (OpenCorporates
+     `api.opencorporates.com`, Saudi MoC / Business Center via a
+     manager-provisioned env base URL); public-page scrape (a manager-set
+     `ERA_LEADGEN_SCRAPE_URL`); contact-data (Hunter `api.hunter.io`; Apollo /
+     Lusha / RocketReach / SignalHire deferred — POST). LinkedIn is a flagged
+     stub (no call).
+   - **Data sent:** ONLY targeting terms (sectors / regions / company size / job
+     titles) and the source's own token. **NEVER** a partner's name, phone,
+     email, or national ID — Lead Gen DISCOVERS new records, it does not send
+     known PII out.
+   - **Auth:** each source's API token, read at call time from the env var the
+     provider NAMES (`env_key_param`) via `os.getenv` — never stored in the DB
+     (Rule 03). A source with no token resolves `token_present=False` and is
+     skipped (audited per the warn/silent policy).
+   - **No token in logs (Rule 03):** for query-param-token providers (SerpAPI,
+     Google CSE) the token rides in the URL, and a network library's exception
+     string can echo the full URL. `_http_get` therefore logs ONLY the host
+     (`scheme://netloc`, via `_safe_host`) + the exception CLASS name — never the
+     full URL, query string, or raw exception — to either the server log or the
+     `source_fetch_failed` audit row.
+   - **Run context:** the scheduled run executes as the dedicated non-superuser
+     **Lead Generation Bot** (Rule 09), not root, so creation/de-dup obey ACLs.
+   - **Triple gate (nothing fires by default):** the module master toggle
+     (`era_crm_ai_agents_lead_gen.enabled`, default OFF) AND the per-source
+     `active` flag (all seeded OFF) AND `token_present`. Decision-maker sources
+     need the additional `fetch_decision_makers` toggle (default OFF). Every
+     source call books its cost (Rule 14) and the run is audited (Rule 20).
+   - **Fail-safe:** any network error / empty result is isolated — the waterfall
+     falls through to the next source and the run survives; a source is never
+     retried blindly and never fakes a result.
+   - **Anti-bypass CI:** when the "no direct egress / no `requests`/`openai`
+     import in agent modules" test is built, it MUST allowlist EXACTLY this one
+     seam (`crm.ai.lead_gen.agent._http_get`) for this module — no handler may
+     import `requests` directly.
+
 Any further direct egress must be added here AND allowlisted in the anti-bypass
 test before use.
 
@@ -211,6 +261,7 @@ test before use.
 - ❌ Wrong: `<field name="users" eval="[(4, ref('base.user_admin'))]"/>`.
 - ✅ Correct: `<field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>`.
 - Note: the `users` field/alias is gone; the M2M is now `user_ids`. Same `Invalid field` error class as #1. (Uniqueness is now `UNIQUE(privilege_id, name)`.)
+- **Mirror on `res.users`:** the groups M2M on a USER is now **`group_ids`**, not `groups_id` (`<field name="group_ids" eval="[Command.set([ref('base.group_user'), ...])]"/>`). `groups_id` raises `ValueError: Invalid field 'groups_id' in 'res.users'` and aborts the whole registry load. `Command` IS available in the XML eval context (core `base/data/res_users_data.xml` uses `Command.set`). Verified building the Lead-Gen Bot cron user (module 16).
 
 ### 3. Search-view group-by
 - ❌ Wrong: `<group expand="0" string="Group By">` inside `<search>` → `Invalid view ... search definition`.

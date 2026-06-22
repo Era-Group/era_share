@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pre-seed the Lead-Gen agent's registry row so runtime stays read-only
+         for users (the mixin's _get_or_create_agent then just reads it).
+         transport=api with a model that IS in the Base rate card (gpt-4.1-mini),
+         so LLM extraction is priced (not blocked as unpriced) and its cost
+         counts toward the Rule 14 cap. A manager can switch it to the Claude CLI
+         transport later. noupdate="1" so those manager edits survive upgrades. -->
+    <data noupdate="1">
+        <record id="agent_lead_gen" model="crm.ai.agent">
+            <field name="name">Lead Generation</field>
+            <field name="tech_name">era_lead_gen</field>
+            <field name="transport">api</field>
+            <field name="model_code">gpt-4.1-mini</field>
+        </record>
+    </data>
+</odoo>

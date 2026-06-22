@@ -27,6 +27,7 @@ class CrmAiAuditLog(models.Model):
             ("external_contact", "External Contact"),
             # Infrastructure events emitted by crm.ai.agent.mixin
             ("llm_call_failed", "LLM Call Failed"),
+            ("source_fetch_failed", "Source Fetch Failed"),
             ("cost_cap_exceeded", "Cost Cap Exceeded"),
             ("approval_requested", "Approval Requested"),
             # AI Compliance Guard decisions (native AI egress)

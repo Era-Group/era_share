@@ -95,6 +95,28 @@ class CrmAiUsage(models.Model):
              "no provider usage at our seam. 'Measured' = exact provider count "
              "(reserved for if/when a provider usage figure is threaded through).",
     )
+    usage_type = fields.Selection(
+        selection=[("llm", "LLM Call"), ("source_api", "Source API")],
+        string="Usage Type",
+        default="llm",
+        required=True,
+        index=True,
+        help="What kind of spend this row records. 'llm' = an LLM provider call "
+             "(the default — every existing/native/Compliance row is an LLM row). "
+             "'source_api' = a non-LLM external data-source call (e.g. the Lead "
+             "Generation engine's search/registry/contact APIs). Makes the two "
+             "cost streams explicit for reporting instead of inferring from "
+             "empty-model + zero-tokens.",
+    )
+    record_ref = fields.Reference(
+        selection=[("res.partner", "Contact"), ("crm.lead", "Lead")],
+        string="Related Record",
+        index=True,
+        help="The record this usage is attributed to, when an agent can tie a "
+             "cost to one record (e.g. Lead Generation links each split "
+             "source/LLM row to the partner it created, so per-record cost is "
+             "summable). Empty for batch/native usage that has no single record.",
+    )
     # create_date is provided automatically by Odoo and is the month boundary.
 
     @api.depends("input_tokens", "output_tokens")
@@ -107,8 +129,9 @@ class CrmAiUsage(models.Model):
     # ------------------------------------------------------------------
     @api.model
     def record(self, agent, model, in_tok, out_tok, cost, unpriced=False,
-               token_source="estimated", via_cli=False):
-        """Create one usage row for an LLM call.
+               token_source="estimated", via_cli=False, usage_type="llm",
+               record_ref=None):
+        """Create one usage row for an LLM or source-API call.
 
         Approved sudo elevation (create-only): AI users are read-only on this
         model, so record() sudo-creates. user_id is captured from the caller
@@ -118,9 +141,16 @@ class CrmAiUsage(models.Model):
         :param token_source: 'estimated' (length-based) or 'measured' (provider).
         :param via_cli: True for the Claude CLI/subscription path — cost is 0 by
             design and consumption is governed by the monthly token limit.
+        :param usage_type: 'llm' (default — every existing caller and the guard)
+            or 'source_api' (a non-LLM data-source call).
+        :param record_ref: optional record (recordset) this cost is attributed
+            to, stored as a Reference. Empty for batch/native usage.
         """
         if not agent:
             raise ValueError("crm.ai.usage.record() requires an agent.")
+        ref = False
+        if record_ref is not None and getattr(record_ref, "id", False):
+            ref = "%s,%s" % (record_ref._name, record_ref.id)
         return self.sudo().create({
             "agent_id": agent.id,
             "model_id": model.id if model else False,
@@ -131,6 +161,8 @@ class CrmAiUsage(models.Model):
             "unpriced": bool(unpriced),
             "token_source": token_source or "estimated",
             "via_cli": bool(via_cli),
+            "usage_type": usage_type or "llm",
+            "record_ref": ref,
         })
 
     # ------------------------------------------------------------------

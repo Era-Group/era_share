@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed every Lead-Gen setting so the param always EXISTS from install.
+         Without this, res.config.settings skips WRITING a boolean toggled OFF on
+         a fresh install (current False == value False → no write), so the OFF
+         choice would silently not persist (the "first-OFF-lost" bug). Booleans
+         use the 'True'/'False' string representation that the set_values
+         override and the rest of the suite expect.
+
+         Defaults are CONSERVATIVE (module OFF, decision-makers OFF, no targeting
+         assumed) so an untouched install does nothing until a manager opts in.
+         noupdate="1" so manager edits survive module upgrades. -->
+    <data noupdate="1">
+
+        <!-- Master toggles — both OFF -->
+        <record id="cfg_lead_gen_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="cfg_lead_gen_fetch_decision_makers" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.fetch_decision_makers</field>
+            <field name="value">False</field>
+        </record>
+
+        <!-- Targeting — empty (no filter assumed) -->
+        <record id="cfg_lead_gen_target_sectors" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.target_sectors</field>
+            <field name="value"></field>
+        </record>
+        <record id="cfg_lead_gen_target_regions" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.target_regions</field>
+            <field name="value"></field>
+        </record>
+        <record id="cfg_lead_gen_target_company_size" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.target_company_size</field>
+            <field name="value"></field>
+        </record>
+        <record id="cfg_lead_gen_target_job_titles" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.target_job_titles</field>
+            <field name="value"></field>
+        </record>
+
+        <!-- Missing-token policy — warn (never silent) by default -->
+        <record id="cfg_lead_gen_block_source_without_token" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.block_source_without_token</field>
+            <field name="value">warn</field>
+        </record>
+
+        <!-- Default registry jurisdiction — Saudi-scoped by default (no silent
+             global search on first run). Manager-editable; the handler reads
+             this, never a hardcoded market. -->
+        <record id="cfg_lead_gen_default_jurisdiction" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.default_jurisdiction</field>
+            <field name="value">sa</field>
+        </record>
+
+        <!-- 16.5 — provenance tag stamped on created records (configurable). -->
+        <record id="cfg_lead_gen_tag_name" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.tag_name</field>
+            <field name="value">by_lead_generator_agent</field>
+        </record>
+
+        <!-- 16.5 — duplicate policy. 'skip' (default, conservative) never
+             touches existing data; 'update' fills only blank fields on a match. -->
+        <record id="cfg_lead_gen_dedup_mode" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.dedup_mode</field>
+            <field name="value">skip</field>
+        </record>
+
+        <!-- 16.7 — PDPL / Compliance posture (conservative defaults). These
+             DESIGN FOR compliance; they do not assert it (no approved Era Group
+             PDPL reference on file yet). Enforcement of "no outreach without
+             consent" lives downstream in the Compliance layer (#1). -->
+        <record id="cfg_lead_gen_require_compliance_check" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.require_compliance_check</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_lead_gen_decision_maker_notice" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.decision_maker_notice</field>
+            <field name="value">required</field>
+        </record>
+        <record id="cfg_lead_gen_decision_maker_consent" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.decision_maker_consent</field>
+            <field name="value">required</field>
+        </record>
+        <record id="cfg_lead_gen_data_residency_prefer_local" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.data_residency_prefer_local</field>
+            <field name="value">True</field>
+        </record>
+        <record id="cfg_lead_gen_data_residency_flag_egress" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.data_residency_flag_egress</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- 16.6 — daily fetch cap: max records the engine may CREATE per day.
+             Fail-safe like the Base cost cap: missing/unparseable -> block; <=0
+             -> unlimited (explicit opt-out); else over when today's count >= cap.
+             Seeded to a conservative finite 50 so it is never 'missing' on a
+             clean install (which would block everything). -->
+        <record id="cfg_lead_gen_daily_cap" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_lead_gen.daily_cap</field>
+            <field name="value">50</field>
+        </record>
+
+    </data>
+</odoo>

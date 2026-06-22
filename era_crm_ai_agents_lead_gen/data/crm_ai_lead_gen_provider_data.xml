@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================= -->
+    <!-- Seed records for ALL candidate lead-gen sources.              -->
+    <!--                                                               -->
+    <!-- noupdate="1": these are starting points. Managers will edit   -->
+    <!-- priority / cost, fill in the real env-var name, and (after    -->
+    <!-- PDPL review) flip `active` ON. Those edits MUST survive a      -->
+    <!-- module upgrade, so we never overwrite them on update.         -->
+    <!--                                                               -->
+    <!-- EVERY source ships active="False" (Rule: conservative         -->
+    <!-- defaults). `env_key_param` is only the NAME of the env var    -->
+    <!-- that must hold the token — never the secret (Rule 03). The    -->
+    <!-- `priority` numbers encode the intended waterfall: local Saudi -->
+    <!-- registries first (data residency), then light company web     -->
+    <!-- sources, then verification, then heavy decision-maker         -->
+    <!-- providers, with LinkedIn last (ToS-restricted).               -->
+    <!-- ============================================================= -->
+    <data noupdate="1">
+
+        <!-- ===== Company data — Saudi registries (local = best for residency) ===== -->
+        <record id="provider_saudi_moc" model="crm.ai.lead_gen.provider">
+            <field name="name">Saudi Ministry of Commerce</field>
+            <field name="provider_type">local_registry</field>
+            <field name="category">company</field>
+            <field name="priority">5</field>
+            <field name="cost">0.0</field>
+            <field name="fields_filled">name, vat, commercial_registration, sector, city</field>
+            <field name="env_key_param">ERA_LEADGEN_SAUDI_MOC_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_saudi_business_center" model="crm.ai.lead_gen.provider">
+            <field name="name">Saudi Business Center</field>
+            <field name="provider_type">local_registry</field>
+            <field name="category">company</field>
+            <field name="priority">6</field>
+            <field name="cost">0.0</field>
+            <field name="fields_filled">name, commercial_registration, address, sector</field>
+            <field name="env_key_param">ERA_LEADGEN_SAUDI_BUSINESS_CENTER_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_opencorporates" model="crm.ai.lead_gen.provider">
+            <field name="name">OpenCorporates</field>
+            <field name="provider_type">local_registry</field>
+            <field name="category">company</field>
+            <field name="priority">8</field>
+            <field name="cost">0.02</field>
+            <field name="fields_filled">name, registration_number, address, status, country</field>
+            <field name="env_key_param">ERA_LEADGEN_OPENCORPORATES_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- ===== Company data — web search APIs ===== -->
+        <record id="provider_serpapi" model="crm.ai.lead_gen.provider">
+            <field name="name">SerpAPI (Web Search)</field>
+            <field name="provider_type">web_search</field>
+            <field name="category">company</field>
+            <field name="priority">10</field>
+            <field name="cost">0.005</field>
+            <field name="fields_filled">name, website, domain</field>
+            <field name="env_key_param">ERA_LEADGEN_SERPAPI_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_brave_search" model="crm.ai.lead_gen.provider">
+            <field name="name">Brave Search API</field>
+            <field name="provider_type">web_search</field>
+            <field name="category">company</field>
+            <field name="priority">12</field>
+            <field name="cost">0.004</field>
+            <field name="fields_filled">name, website, domain</field>
+            <field name="env_key_param">ERA_LEADGEN_BRAVE_SEARCH_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_google_cse" model="crm.ai.lead_gen.provider">
+            <field name="name">Google Custom Search</field>
+            <field name="provider_type">web_search</field>
+            <field name="category">company</field>
+            <field name="priority">14</field>
+            <field name="cost">0.005</field>
+            <field name="fields_filled">name, website, domain</field>
+            <field name="env_key_param">ERA_LEADGEN_GOOGLE_CSE_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_bing_search" model="crm.ai.lead_gen.provider">
+            <field name="name">Bing Web Search</field>
+            <field name="provider_type">web_search</field>
+            <field name="category">company</field>
+            <field name="priority">16</field>
+            <field name="cost">0.005</field>
+            <field name="fields_filled">name, website, domain</field>
+            <field name="env_key_param">ERA_LEADGEN_BING_SEARCH_KEY</field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- ===== Company data — public-page scrape (no token needed) ===== -->
+        <record id="provider_public_scrape" model="crm.ai.lead_gen.provider">
+            <field name="name">Public-Page Scrape (e.g. odoo.com customers)</field>
+            <field name="provider_type">web_scrape</field>
+            <field name="category">company</field>
+            <field name="priority">30</field>
+            <field name="cost">0.0</field>
+            <field name="fields_filled">name, website</field>
+            <!-- No API token: a public scrape needs no key. Left empty on
+                 purpose; token_present is irrelevant for token-less sources. -->
+            <field name="env_key_param"></field>
+            <field name="pdpl_sensitivity">light</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- ===== Channel / contact verification (personal data → heavy) ===== -->
+        <record id="provider_zerobounce" model="crm.ai.lead_gen.provider">
+            <field name="name">ZeroBounce (Email Verification)</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">verification</field>
+            <field name="priority">40</field>
+            <field name="cost">0.007</field>
+            <field name="fields_filled">email (validated)</field>
+            <field name="env_key_param">ERA_LEADGEN_ZEROBOUNCE_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_neverbounce" model="crm.ai.lead_gen.provider">
+            <field name="name">NeverBounce (Email Verification)</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">verification</field>
+            <field name="priority">42</field>
+            <field name="cost">0.008</field>
+            <field name="fields_filled">email (validated)</field>
+            <field name="env_key_param">ERA_LEADGEN_NEVERBOUNCE_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_waha_presence" model="crm.ai.lead_gen.provider">
+            <field name="name">WhatsApp Presence (WAHA)</field>
+            <field name="provider_type">social</field>
+            <field name="category">verification</field>
+            <field name="priority">44</field>
+            <field name="cost">0.0</field>
+            <field name="fields_filled">whatsapp presence</field>
+            <field name="env_key_param">ERA_LEADGEN_WAHA_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_mobile_validation" model="crm.ai.lead_gen.provider">
+            <field name="name">Mobile Number Validation</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">verification</field>
+            <field name="priority">46</field>
+            <field name="cost">0.005</field>
+            <field name="fields_filled">phone (validated)</field>
+            <field name="env_key_param">ERA_LEADGEN_MOBILE_VALIDATION_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- ===== Decision-makers (individuals → heavy, gated separately) ===== -->
+        <record id="provider_apollo" model="crm.ai.lead_gen.provider">
+            <field name="name">Apollo</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">50</field>
+            <field name="cost">0.10</field>
+            <field name="fields_filled">name, job_title, email, phone, linkedin</field>
+            <field name="env_key_param">ERA_LEADGEN_APOLLO_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_hunter" model="crm.ai.lead_gen.provider">
+            <field name="name">Hunter</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">52</field>
+            <field name="cost">0.08</field>
+            <field name="fields_filled">name, email, job_title</field>
+            <field name="env_key_param">ERA_LEADGEN_HUNTER_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_lusha" model="crm.ai.lead_gen.provider">
+            <field name="name">Lusha</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">54</field>
+            <field name="cost">0.12</field>
+            <field name="fields_filled">name, job_title, email, phone</field>
+            <field name="env_key_param">ERA_LEADGEN_LUSHA_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_rocketreach" model="crm.ai.lead_gen.provider">
+            <field name="name">RocketReach</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">56</field>
+            <field name="cost">0.12</field>
+            <field name="fields_filled">name, job_title, email, phone, linkedin</field>
+            <field name="env_key_param">ERA_LEADGEN_ROCKETREACH_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="provider_signalhire" model="crm.ai.lead_gen.provider">
+            <field name="name">SignalHire</field>
+            <field name="provider_type">contact_data</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">58</field>
+            <field name="cost">0.12</field>
+            <field name="fields_filled">name, job_title, email, phone</field>
+            <field name="env_key_param">ERA_LEADGEN_SIGNALHIRE_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- LinkedIn last: hardest + ToS-restricted (overview: "last priority
+             or deferred"). Highest priority number → tried last, if ever. -->
+        <record id="provider_linkedin" model="crm.ai.lead_gen.provider">
+            <field name="name">LinkedIn</field>
+            <field name="provider_type">social</field>
+            <field name="category">decision_maker</field>
+            <field name="priority">90</field>
+            <field name="cost">0.0</field>
+            <field name="fields_filled">name, job_title, company</field>
+            <field name="env_key_param">ERA_LEADGEN_LINKEDIN_KEY</field>
+            <field name="pdpl_sensitivity">heavy</field>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

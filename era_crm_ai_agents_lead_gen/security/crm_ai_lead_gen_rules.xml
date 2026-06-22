@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================= -->
+        <!-- Record rules for era_crm_ai_agents_lead_gen                    -->
+        <!--                                                               -->
+        <!-- crm.ai.lead_gen.provider is a GLOBAL configuration catalog    -->
+        <!-- (one shared list of sources for the whole company), exactly   -->
+        <!-- like the Base's crm.ai.agent / crm.ai.model. It therefore     -->
+        <!-- needs NO per-row (record) rule: there is nothing user-        -->
+        <!-- specific to scope. Who may do what is enforced entirely by    -->
+        <!-- ir.model.access.csv:                                          -->
+        <!--   - AI Agents User    -> read-only  (see sources to run a     -->
+        <!--                          fetch; cannot edit)                  -->
+        <!--   - AI Agents Manager -> full CRUD  (manage providers + the   -->
+        <!--                          env-var token config)                -->
+        <!--   - everyone else     -> no access  (no ACL row at all)       -->
+        <!--                                                               -->
+        <!-- The manager-only restriction on the PDPL toggles is a         -->
+        <!-- res.config.settings field-group concern, wired in 16.3 / 16.7 -->
+        <!-- (not a model ACL). Partner records created by the engine      -->
+        <!-- follow standard CRM ACLs (core), so nothing is added for them -->
+        <!-- here.                                                         -->
+        <!--                                                               -->
+        <!-- This file is intentionally rule-free; it documents the        -->
+        <!-- decision and gives the next per-user lead-gen model (e.g. a   -->
+        <!-- future run-log) a home for its rules.                         -->
+        <!-- ============================================================= -->
+
+    </data>
+</odoo>

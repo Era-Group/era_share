@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Search for the traceability action: filter / group externally-sourced
+         records by their Lead-Gen source. -->
+    <record id="view_partner_lead_gen_search" model="ir.ui.view">
+        <field name="name">res.partner.lead.gen.search</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Externally-Sourced Records">
+                <field name="name"/>
+                <field name="x_lead_gen_source" string="Lead-Gen Source"/>
+                <filter name="companies" string="Companies"
+                        domain="[('is_company', '=', True)]"/>
+                <filter name="individuals" string="Decision-Makers"
+                        domain="[('is_company', '=', False)]"/>
+                <separator/>
+                <filter name="has_source" string="Lead-Gen sourced"
+                        domain="[('x_lead_gen_source', '!=', False)]"/>
+                <group>
+                    <filter name="group_source" string="Source"
+                            context="{'group_by': 'x_lead_gen_source'}"/>
+                    <filter name="group_company_type" string="Company / Individual"
+                            context="{'group_by': 'is_company'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Traceability action: every record the engine created (tagged
+         by_lead_generator_agent + stamped with x_lead_gen_source). The domain
+         keys on the source stamp, so the whole externally-sourced population is
+         isolated in one click (and purgeable from here). -->
+    <record id="action_crm_ai_lead_gen_sourced_partners" model="ir.actions.act_window">
+        <field name="name">Externally-Sourced Records</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('x_lead_gen_source', '!=', False)]</field>
+        <field name="search_view_id" ref="view_partner_lead_gen_search"/>
+        <field name="context">{'search_default_group_source': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No externally-sourced records yet.</p>
+            <p>Records created by the Lead-Generation engine appear here, grouped
+               by source. They all carry the <b>by_lead_generator_agent</b> tag and
+               an <b>x_lead_gen_source</b> stamp, so they can be reviewed or purged
+               as a set.</p>
+        </field>
+    </record>
+
+</odoo>

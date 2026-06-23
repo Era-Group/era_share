@@ -2,26 +2,21 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Dedicated NON-superuser service account for the scheduled run.
-             Rule 09: the agent's business logic (discovery, de-dup, partner
-             creation) must run under real ACLs/record rules, not as the
-             superuser. This bot is an ordinary internal user (can create
-             res.partner) plus the AI Agents User group (read sources/agents);
-             config/usage/audit still go through the Base's approved sudo
-             helpers. No password is set, so it cannot be used to log in. -->
-        <record id="user_lead_gen_bot" model="res.users">
-            <field name="name">Lead Generation Bot</field>
-            <field name="login">lead_gen_bot</field>
-            <field name="group_ids" eval="[Command.set([
-                ref('base.group_user'),
-                ref('era_crm_ai_agents_base.group_crm_ai_user')])]"/>
-        </record>
-
         <!-- Scheduled lead-generation run.
 
-             Runs as the dedicated Lead Generation Bot (NOT root) and calls the
-             SAME entrypoint as a manual run, with unattended=True so any guard
-             block becomes skip-with-audit (never raises in a scheduled context).
+             Execution identity is SUITE-WIDE and configurable, not hardcoded
+             here (Rule 09). The cron resolves its run-user at run time via the
+             Base resolver crm.ai.agent._get_cron_run_user(), which returns the
+             internal account chosen in Settings (default: the least-privilege
+             "CRM AI Automation" user) or OdooBot if a manager opted in. A
+             setting change therefore takes effect on the NEXT run — no cron
+             record needs rewriting. The static user_id below is only the safe
+             bootstrap identity (the same least-privilege automation account),
+             so the run is never root unless explicitly configured.
+
+             It calls the SAME entrypoint as a manual run, with unattended=True
+             so any guard block becomes skip-with-audit (never raises in a
+             scheduled context).
 
              Governance is the SINGLE master toggle: the cron ships active=True,
              but the engine no-ops immediately when lead_gen_enabled=False, so it
@@ -35,9 +30,9 @@
         <record id="ir_cron_lead_gen_run" model="ir.cron">
             <field name="name">Lead Generation: Scheduled fetch</field>
             <field name="model_id" ref="model_crm_ai_lead_gen_agent"/>
-            <field name="user_id" ref="user_lead_gen_bot"/>
+            <field name="user_id" ref="era_crm_ai_agents_base.user_crm_ai_automation"/>
             <field name="state">code</field>
-            <field name="code">model.run_lead_generation(unattended=True)</field>
+            <field name="code">model.with_user(env['crm.ai.agent']._get_cron_run_user()).run_lead_generation(unattended=True)</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="nextcall"

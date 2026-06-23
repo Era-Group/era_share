@@ -44,6 +44,38 @@
                             change is recorded in the AI audit log.
                         </div>
                     </block>
+                    <block title="Agent Automation (cron identity)"
+                           name="era_crm_ai_cron_identity">
+                        <setting string="Agent cron execution identity"
+                                 help="How scheduled agent runs authenticate. Applies to every agent cron in the suite.">
+                            <field name="era_cron_run_mode"/>
+                            <div class="content-group mt-2"
+                                 invisible="era_cron_run_mode != 'user'">
+                                <label for="era_cron_run_user_id" class="o_light_label me-2"/>
+                                <field name="era_cron_run_user_id"/>
+                                <div class="text-muted">
+                                    Runs scheduled agents under this internal
+                                    account's access rules (Rule 09). Defaults to
+                                    the least-privilege "CRM AI Automation" user;
+                                    repoint it at any existing internal user to add
+                                    no extra account.
+                                </div>
+                            </div>
+                            <div class="alert alert-danger mt-2" role="alert"
+                                 invisible="era_cron_run_mode != 'odoobot'">
+                                <i class="fa fa-exclamation-triangle"/>
+                                <strong>OdooBot runs agents as the superuser.</strong>
+                                It <strong>bypasses all access rules and record
+                                rules</strong>, contradicts Rule 09 (agents must run
+                                under real permissions, never the superuser), and
+                                carries <strong>PDPL risk</strong>: scheduled agents
+                                would process individuals' personal data with
+                                unrestricted access to every record in the database.
+                                Use a dedicated internal user instead unless you
+                                fully accept this.
+                            </div>
+                        </setting>
+                    </block>
                 </app>
             </xpath>
         </field>

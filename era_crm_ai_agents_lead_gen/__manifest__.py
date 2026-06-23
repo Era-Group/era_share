@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA CRM AI Agents — Lead Generation",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "CRM",
     "summary": "B2B prospecting engine that brings net-new companies and decision-makers into the Era CRM AI Agents suite",
     "description": (
@@ -61,8 +61,9 @@
         "data/crm_ai_lead_gen_provider_data.xml",
         # 16.3 — manager-only Lead Generation Settings block.
         "views/res_config_settings_views.xml",
-        # 16.8 — scheduled run (inert via the master toggle; runs as the
-        # dedicated non-superuser Lead Generation Bot).
+        # 16.8 — scheduled run (inert via the master toggle). Execution identity
+        # is resolved suite-wide via crm.ai.agent._get_cron_run_user() (Base),
+        # defaulting to the shared least-privilege CRM AI Automation account.
         "data/ir_cron.xml",
         # 16.9 — views + manager-only menus (menus last: they ref the actions).
         "views/crm_ai_lead_gen_provider_views.xml",

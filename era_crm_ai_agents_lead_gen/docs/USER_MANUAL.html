@@ -230,7 +230,7 @@
     <section id="en-cron"><h2><span class="n">6.</span>Running automatically — the daily cron</h2>
       <p>The scheduled action <strong>"Lead Generation: Scheduled fetch"</strong> runs <strong>once per day</strong> and calls the same entry point, unattended.</p>
       <ul>
-        <li><strong>Runs as a dedicated non-superuser account</strong> — the <em>Lead Generation Bot</em> (login <code>lead_gen_bot</code>) — so work obeys normal access rules.</li>
+        <li><strong>Runs under a shared, least-privilege execution identity</strong> — by default the internal <em>CRM AI Automation</em> account (login <code>crm_ai_automation</code>), which is <strong>not</strong> a superuser, so scheduled work obeys normal access rules. A manager can point this at any existing internal user in Settings, or (with a clear warning) switch it to OdooBot — see the note on execution identity below.</li>
         <li><strong>Gated by the master toggle</strong> — if disabled it exits immediately.</li>
         <li><strong>Respects both caps</strong> (§8).</li>
         <li><strong>Never errors out</strong> — any guard block becomes a <strong>skip-with-audit</strong>.</li>
@@ -304,7 +304,7 @@
         <li><strong>Skip-with-audit</strong> — skipping a step and writing an audit entry instead of failing; never silent.</li>
         <li><strong>Dual enforcement</strong> — the daily cap is checked before fetching and again at creation.</li>
         <li><strong>Soft hand-off</strong> — passing records to Enrichment purely via the tag + source stamp.</li>
-        <li><strong>Lead Generation Bot</strong> — the dedicated non-superuser account the cron runs as.</li>
+        <li><strong>Execution identity</strong> — the user a scheduled run authenticates as. The suite-wide default is the least-privilege <em>CRM AI Automation</em> account (runs under normal access rules); a manager may repoint it to any internal user, or opt in to OdooBot (superuser — bypasses access rules, with a PDPL caution).</li>
       </ul>
     </section>
 
@@ -440,7 +440,7 @@
     <section id="ar-cron"><h2><span class="n">٦.</span>التشغيل التلقائي — المجدوِل اليومي</h2>
       <p>الإجراء المجدوَل <strong>«Lead Generation: Scheduled fetch»</strong> يعمل <strong>مرة يوميًا</strong> ويستدعي نفس نقطة الدخول دون إشراف.</p>
       <ul>
-        <li><strong>يعمل بحساب مخصّص غير خارق الصلاحيات</strong> — <em>روبوت توليد العملاء</em> (الدخول <code>lead_gen_bot</code>) — كي يلتزم العمل بقواعد الوصول العادية.</li>
+        <li><strong>يعمل بهوية تنفيذ مشتركة ذات أقل الامتيازات</strong> — افتراضيًا حساب <em>CRM AI Automation</em> الداخلي (الدخول <code>crm_ai_automation</code>)، وهو <strong>ليس</strong> مستخدمًا خارق الصلاحيات، فيلتزم العمل المجدوَل بقواعد الوصول العادية. ويمكن للمدير توجيهه إلى أي مستخدم داخلي قائم من الإعدادات، أو تبديله (مع تحذير واضح) إلى OdooBot — راجع ملاحظة هوية التنفيذ أدناه.</li>
         <li><strong>محكوم بالمفتاح الرئيسي</strong> — إن كان معطّلًا يخرج فورًا.</li>
         <li><strong>يحترم الحدّين</strong> (القسم ٨).</li>
         <li><strong>لا يفشل أبدًا</strong> — أي حجب من الحارس يصبح <strong>تخطّيًا مع توثيق</strong>.</li>
@@ -514,7 +514,7 @@
         <li><strong>التخطّي مع التوثيق</strong> — تخطّي خطوة وكتابة علامة تدقيق بدل الفشل؛ ليس بصمت أبدًا.</li>
         <li><strong>التطبيق المزدوج</strong> — فحص الحد اليومي قبل الجلب ومجددًا عند الإنشاء.</li>
         <li><strong>التسليم غير المباشر</strong> — تمرير السجلات للإثراء عبر الوسم وختم المصدر فقط.</li>
-        <li><strong>روبوت توليد العملاء</strong> — الحساب المخصّص غير خارق الصلاحيات الذي يعمل به المجدوِل.</li>
+        <li><strong>هوية التنفيذ</strong> — المستخدم الذي يصادق به التشغيل المجدوَل. الافتراضي على مستوى الحزمة هو حساب <em>CRM AI Automation</em> ذو أقل الامتيازات (يعمل ضمن قواعد الوصول العادية)؛ ويمكن للمدير توجيهه إلى أي مستخدم داخلي، أو تفعيل OdooBot (خارق الصلاحيات — يتجاوز قواعد الوصول، مع تنبيه بشأن حماية البيانات الشخصية).</li>
       </ul>
     </section>
 

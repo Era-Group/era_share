@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA CRM AI Agents — Base",
-    "version": "19.0.5.0.0",
+    "version": "19.0.6.0.0",
     "category": "CRM",
     "summary": "Shared infrastructure for the Era CRM AI Agents suite",
     "description": (
@@ -57,6 +57,9 @@
         "views/crm_ai_agents_menus.xml",
         # Data
         "data/crm_ai_model_data.xml",
+        # Shared least-privilege cron-run user — MUST load before the config
+        # params (the cron_run_user_id default refs it) and any cron.
+        "data/crm_ai_automation_user.xml",
         "data/ir_config_parameter_data.xml",
         "data/ir_cron_data.xml",
     ],

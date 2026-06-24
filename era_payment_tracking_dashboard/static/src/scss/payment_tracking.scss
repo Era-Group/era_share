@@ -1,6 +1,36 @@
-// مسافة صغيرة بين بطاقات لوحة متابعة الدفعات
+// تنسيق هادئ لبطاقات لوحة متابعة الدفعات (اتجاه: مركّز على المبلغ)
 .o_ptd_kanban {
     .o_kanban_record {
-        margin-bottom: 8px;
+        margin-bottom: 8px;          // مسافة صغيرة بين البطاقات
+        border-radius: 8px;
+        padding: 10px 12px;          // مساحة تتنفّس
+    }
+
+    // اسم العميل: واضح دون مبالغة
+    .o_ptd_name {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    // المبلغ المتبقي: العنصر الأبرز في البطاقة
+    .o_ptd_due {
+        font-size: 1.2rem;
+        letter-spacing: -0.2px;
+    }
+
+    // شريط تقدّم رفيع وهادئ، ونسبة بخط صغير
+    .o_ptd_bar {
+        font-size: 11px;
+
+        .progress,
+        .o_progress {
+            height: 6px !important;
+            border-radius: 4px;
+        }
+    }
+
+    // تذييل خفيف بفاصل رفيع
+    .o_kanban_record footer {
+        border-top: 1px solid var(--border-color, #e7e7e7);
     }
 }

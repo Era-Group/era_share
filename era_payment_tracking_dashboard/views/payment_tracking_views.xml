@@ -217,35 +217,47 @@
                     sample="1">
                 <field name="currency_id"/>
                 <field name="state"/>
-                <field name="overdue_installments"/>
+                <field name="next_payment_date"/>
+                <field name="amount_due"/>
+                <field name="amount_total"/>
                 <templates>
                     <t t-name="card">
-                        <div class="d-flex align-items-center">
+                        <!-- رأس: العميل + المرجع + الأولوية -->
+                        <div class="d-flex align-items-center mb-2">
                             <field name="partner_id" widget="many2one_avatar" class="me-2"/>
                             <div class="flex-grow-1 text-truncate">
-                                <field name="partner_id" class="fw-bold"/>
-                                <small class="text-muted ms-1"><field name="sale_order_id"/></small>
+                                <div class="fw-bold text-truncate o_ptd_name"><field name="partner_id"/></div>
+                                <small class="text-muted"><field name="sale_order_id"/></small>
                             </div>
-                            <span t-if="record.overdue_installments.raw_value &gt; 0"
-                                  class="badge text-bg-danger ms-1">
-                                <t t-out="record.overdue_installments.value"/> متأخر
+                            <field name="priority" widget="priority" class="ms-1"/>
+                        </div>
+
+                        <!-- المتبقي + شريط التقدّم في الوسط + المبلغ -->
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small text-nowrap">المتبقي</span>
+                            <field name="payment_percentage" widget="progressbar" class="o_ptd_bar flex-grow-1"/>
+                            <span class="o_ptd_due fw-bold text-nowrap"
+                                  t-att-class="record.state.raw_value == 'overdue' ? 'text-danger' : (record.state.raw_value == 'paid' ? 'text-success' : '')">
+                                <field name="amount_due" widget="monetary"/>
                             </span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                            <span class="badge rounded-pill text-bg-danger text-nowrap"><field name="amount_due" widget="monetary"/></span>
-                            <field name="payment_percentage" widget="progressbar" class="flex-grow-1"/>
-                            <span class="badge rounded-pill text-bg-light border text-nowrap"><field name="amount_total" widget="monetary"/></span>
+
+                        <!-- سطر ثانوي هادئ: الإجمالي (عند وجود سداد جزئي) + الدفعة القادمة -->
+                        <div class="d-flex align-items-center text-muted small mt-1"
+                             t-if="record.next_payment_date.raw_value or record.amount_total.raw_value !== record.amount_due.raw_value">
+                            <span t-if="record.amount_total.raw_value !== record.amount_due.raw_value">
+                                من <field name="amount_total" widget="monetary"/>
+                            </span>
+                            <span t-if="record.next_payment_date.raw_value" class="ms-auto text-nowrap">
+                                <i class="fa fa-calendar-o me-1" title="الدفعة القادمة"/><field name="next_payment_date"/>
+                            </span>
                         </div>
-                        <div t-if="record.next_payment_date.raw_value" class="small text-muted d-flex align-items-center gap-1">
-                            <i class="fa fa-calendar-o" title="الدفعة القادمة"/><field name="next_payment_date"/>
-                            <span class="badge rounded-pill text-bg-warning text-nowrap ms-auto"><field name="next_payment_amount" widget="monetary"/></span>
-                        </div>
-                        <footer class="pt-0">
-                            <field name="priority" widget="priority"/>
-                            <field name="activity_ids" widget="kanban_activity"/>
+
+                        <!-- تذييل: حالة واحدة + النشاط -->
+                        <footer class="pt-2 d-flex align-items-center">
                             <field name="state" widget="label_selection"
-                                   options="{'classes': {'paid': 'success', 'overdue': 'danger', 'in_progress': 'warning', 'pending': 'info', 'cancelled': 'secondary'}}"
-                                   class="ms-auto"/>
+                                   options="{'classes': {'paid': 'success', 'overdue': 'danger', 'in_progress': 'warning', 'pending': 'secondary', 'cancelled': 'light'}}"/>
+                            <field name="activity_ids" widget="kanban_activity" class="ms-auto"/>
                         </footer>
                     </t>
                 </templates>

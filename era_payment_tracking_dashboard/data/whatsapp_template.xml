@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- قالب واتساب للأعمال (التكامل القياسي whatsapp) لتذكير العملاء بالدفعات.
+     يُنشأ بحالة «مسودة»؛ على المسؤول إرساله إلى Meta للاعتماد (زر «إرسال»)
+     قبل أن يصبح زر الإرسال فعّالًا. noupdate=1 حتى لا تُلغى حالة الاعتماد
+     عند ترقية الوحدة لاحقًا. -->
+<odoo noupdate="1">
+    <record id="whatsapp_template_payment_reminder" model="whatsapp.template">
+        <field name="name">تذكير بالدفعات المستحقة</field>
+        <field name="template_name">payment_tracking_reminder</field>
+        <field name="lang_code">ar</field>
+        <field name="template_type">utility</field>
+        <field name="model_id" ref="era_payment_tracking_dashboard.model_payment_tracking"/>
+        <field name="phone_field">partner_id.phone</field>
+        <field name="footer_text">الإدارة المالية</field>
+        <field name="body">عميلنا العزيز {{1}}،
+
+نود تذكيركم بوجود مبلغ مستحق على طلبكم رقم {{2}}.
+المبلغ المتبقي: {{3}} {{4}}
+تاريخ الدفعة القادمة: {{5}}
+
+نشكر لكم حسن تعاونكم.</field>
+        <field name="variable_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {
+                'name': '{{1}}',
+                'demo_value': 'شركة النور للتجارة',
+                'line_type': 'body',
+                'field_type': 'field',
+                'field_name': 'partner_id',
+            }),
+            (0, 0, {
+                'name': '{{2}}',
+                'demo_value': 'S00123',
+                'line_type': 'body',
+                'field_type': 'field',
+                'field_name': 'sale_order_id',
+            }),
+            (0, 0, {
+                'name': '{{3}}',
+                'demo_value': '15000.00',
+                'line_type': 'body',
+                'field_type': 'field',
+                'field_name': 'amount_due',
+            }),
+            (0, 0, {
+                'name': '{{4}}',
+                'demo_value': 'SAR',
+                'line_type': 'body',
+                'field_type': 'field',
+                'field_name': 'currency_id.name',
+            }),
+            (0, 0, {
+                'name': '{{5}}',
+                'demo_value': '2026-07-01',
+                'line_type': 'body',
+                'field_type': 'field',
+                'field_name': 'next_payment_date',
+            }),
+        ]"/>
+    </record>
+</odoo>

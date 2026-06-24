@@ -2,6 +2,21 @@
 <odoo>
 
     <!-- ================================================================
+         إجراء إرسال واتساب للأعمال (التكامل القياسي whatsapp.composer)
+         يفتح مُنشئ الرسائل القياسي، فيلتقط القالب المعتمد ورقم الجوال من
+         السجل تلقائيًا. مربوط بالنموذج (binding) ليظهر أيضًا في قائمة
+         الإجراءات للإرسال الجماعي من العرض الشبكي/القائمة.
+         ================================================================ -->
+    <record id="action_payment_tracking_whatsapp" model="ir.actions.act_window">
+        <field name="name">إرسال تذكير عبر واتساب</field>
+        <field name="res_model">whatsapp.composer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="era_payment_tracking_dashboard.model_payment_tracking"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <!-- ================================================================
          List View
          ================================================================ -->
     <record id="view_payment_tracking_list" model="ir.ui.view">
@@ -47,7 +62,10 @@
             <form string="متابعة دفعات">
                 <header>
                     <button name="action_send_whatsapp_reminder" type="object"
-                            string="إرسال واتساب" icon="fa-whatsapp" class="btn-success"
+                            string="واتساب (WAHA)" icon="fa-whatsapp" class="btn-success"
+                            invisible="not partner_mobile or not waha_session_active"/>
+                    <button name="%(action_payment_tracking_whatsapp)d" type="action"
+                            string="واتساب للأعمال" icon="fa-whatsapp" class="btn-success"
                             invisible="not partner_mobile"/>
                     <button name="action_send_email_reminder" type="object"
                             string="إرسال بريد" icon="fa-envelope"
@@ -60,6 +78,7 @@
                 </header>
                 <sheet>
                     <field name="currency_id" invisible="1"/>
+                    <field name="waha_session_active" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_invoices" type="object"
                                 class="oe_stat_button" icon="fa-file-text-o">

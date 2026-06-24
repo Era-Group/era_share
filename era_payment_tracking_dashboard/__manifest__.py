@@ -20,6 +20,7 @@
         'mail',
         'web',
         'base_automation',
+        'whatsapp',
     ],
     'data': [
         'security/payment_tracking_security.xml',
@@ -27,6 +28,7 @@
         'data/sequence.xml',
         'data/email_templates.xml',
         'data/automated_actions.xml',
+        'data/whatsapp_template.xml',
         'data/assets.xml',
         'views/payment_tracking_views.xml',
         'views/menu.xml',

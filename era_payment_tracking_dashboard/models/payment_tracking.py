@@ -148,6 +148,12 @@ class PaymentTracking(models.Model):
     partner_mobile = fields.Char(
         string='الجوال (واتساب)', related='partner_id.phone', readonly=True,
     )
+    # حقل مساعد لإظهار/إخفاء زر «واتساب (WAHA)»: صحيح فقط إن كانت لشركة السجل
+    # جلسة واتساب (WAHA) افتراضية بحالة «تعمل». مُحاط بحارس ليبقى آمنًا حتى لو
+    # لم تكن وحدة WAHA مثبّتة (عندها يبقى الزر مخفيًا دائمًا).
+    waha_session_active = fields.Boolean(
+        string='جلسة WAHA فعّالة', compute='_compute_waha_session_active',
+    )
 
     # ------------------------------------------------------------------
     # إحصائيات الأقساط
@@ -273,6 +279,15 @@ class PaymentTracking(models.Model):
             else:
                 rec.state = 'pending'
 
+    @api.depends('company_id')
+    def _compute_waha_session_active(self):
+        # وحدة WAHA تضيف الحقل default_whatsapp_session_id إلى res.company؛
+        # نتحقق من وجوده أولًا حتى لا نتعطّل إن لم تكن الوحدة مثبّتة.
+        has_field = 'default_whatsapp_session_id' in self.env['res.company']._fields
+        for rec in self:
+            session = rec.company_id.default_whatsapp_session_id if has_field else False
+            rec.waha_session_active = bool(session) and session.status == 'working'
+
     # ==================================================================
     # توليد الأقساط
     # ==================================================================
@@ -372,8 +387,20 @@ class PaymentTracking(models.Model):
     # ==================================================================
     # الأزرار / الإجراءات
     # ==================================================================
+    @api.model
+    def _get_whatsapp_safe_fields(self):
+        """الحقول المسموح استخدامها كمتغيّرات في قوالب واتساب لهذا النموذج.
+
+        تتيح لمسؤول واتساب غير النظامي تحرير/إعادة اعتماد قالب التذكير دون
+        خطأ صلاحيات (قيد whatsapp.template.variable._check_field_name).
+        """
+        return {
+            'partner_id', 'sale_order_id', 'amount_due',
+            'currency_id.name', 'next_payment_date',
+        }
+
     def _get_reminder_message(self):
-        """يبني نص رسالة التذكير (واتساب)."""
+        """يبني نص رسالة التذكير المعبّأ مسبقًا لمعالج WAHA."""
         self.ensure_one()
 
         def _fmt(amount):
@@ -402,43 +429,30 @@ class PaymentTracking(models.Model):
         return '\n'.join(lines)
 
     def action_send_whatsapp_reminder(self):
+        """زر «واتساب (WAHA)»: يفتح معالج WAHA معبّأً برقم الجوال ونص التذكير.
+
+        أما زر «واتساب للأعمال» فيستدعي مباشرةً إجراء النافذة
+        action_payment_tracking_whatsapp (التكامل القياسي whatsapp.composer).
+        """
         self.ensure_one()
+        if 'sadeem.waha.send.whatsapp.wizard' not in self.env:
+            raise UserError(_('وحدة WAHA لواتساب غير مثبّتة على النظام.'))
         if not self.partner_mobile:
             raise UserError(_('لا يوجد رقم جوال للعميل لإرسال رسالة واتساب.'))
-        message = self._get_reminder_message()
-        # نفضل تكامل WAHA المثبّت محليًا، ثم نلجأ إلى whatsapp.composer إن وُجد
-        if 'sadeem.waha.send.whatsapp.wizard' in self.env:
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _('إرسال تذكير عبر واتساب'),
-                'res_model': 'sadeem.waha.send.whatsapp.wizard',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'active_model': 'payment.tracking',
-                    'active_id': self.id,
-                    'default_partner_id': self.partner_id.id,
-                    'default_phone_number': self.partner_mobile,
-                    'default_message_text': message,
-                },
-            }
-        if 'whatsapp.composer' in self.env:
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _('إرسال تذكير عبر واتساب'),
-                'res_model': 'whatsapp.composer',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'active_model': 'payment.tracking',
-                    'active_id': self.id,
-                    'default_res_model': 'payment.tracking',
-                    'default_res_ids': repr(self.ids),
-                    'default_phone': self.partner_mobile,
-                    'default_free_text_1': message,
-                },
-            }
-        raise UserError(_('لا توجد وحدة واتساب مثبّتة على النظام.'))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('إرسال تذكير عبر واتساب (WAHA)'),
+            'res_model': 'sadeem.waha.send.whatsapp.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'active_model': 'payment.tracking',
+                'active_id': self.id,
+                'default_partner_id': self.partner_id.id,
+                'default_phone_number': self.partner_mobile,
+                'default_message_text': self._get_reminder_message(),
+            },
+        }
 
     def action_send_email_reminder(self):
         self.ensure_one()

@@ -220,6 +220,10 @@
                 <field name="next_payment_date"/>
                 <field name="amount_due"/>
                 <field name="amount_total"/>
+                <!-- مجموع «المتبقي» في ترويسة كل عمود (مع تلوين حسب الأولوية) -->
+                <progressbar field="priority"
+                             colors='{"3": "danger", "2": "warning", "1": "info", "0": "muted"}'
+                             sum_field="amount_due"/>
                 <templates>
                     <t t-name="card">
                         <!-- رأس: العميل + المرجع + الأولوية -->

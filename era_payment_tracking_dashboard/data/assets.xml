@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- تسجيل ملف الأنماط كسجل ir.asset (يُقرأ من قاعدة البيانات عند بناء
+         الحزمة) فيسري بـ -u دون إعادة تشغيل الخادم. -->
+    <record id="asset_payment_tracking_scss" model="ir.asset">
+        <field name="name">Payment Tracking kanban styles</field>
+        <field name="bundle">web.assets_backend</field>
+        <field name="path">era_payment_tracking_dashboard/static/src/scss/payment_tracking.scss</field>
+    </record>
+</odoo>

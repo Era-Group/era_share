@@ -27,6 +27,7 @@
         'data/sequence.xml',
         'data/email_templates.xml',
         'data/automated_actions.xml',
+        'data/assets.xml',
         'views/payment_tracking_views.xml',
         'views/menu.xml',
     ],

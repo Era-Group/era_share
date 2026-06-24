@@ -193,7 +193,7 @@
         <field name="name">payment.tracking.kanban</field>
         <field name="model">payment.tracking</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state" class="o_kanban_small_column"
+            <kanban default_group_by="state" class="o_kanban_small_column o_ptd_kanban"
                     default_order="priority desc, next_payment_date asc, id desc"
                     sample="1">
                 <field name="currency_id"/>
@@ -213,13 +213,13 @@
                             </span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center gap-2">
-                            <strong class="text-danger text-nowrap"><field name="amount_due" widget="monetary"/></strong>
+                            <span class="badge rounded-pill text-bg-danger text-nowrap"><field name="amount_due" widget="monetary"/></span>
                             <field name="payment_percentage" widget="progressbar" class="flex-grow-1"/>
-                            <small class="text-muted text-nowrap">من <field name="amount_total" widget="monetary"/></small>
+                            <span class="badge rounded-pill text-bg-light border text-nowrap"><field name="amount_total" widget="monetary"/></span>
                         </div>
-                        <div t-if="record.next_payment_date.raw_value" class="small text-muted">
-                            <i class="fa fa-calendar-o me-1" title="الدفعة القادمة"/><field name="next_payment_date"/>
-                            · <field name="next_payment_amount" widget="monetary"/>
+                        <div t-if="record.next_payment_date.raw_value" class="small text-muted d-flex align-items-center gap-1">
+                            <i class="fa fa-calendar-o" title="الدفعة القادمة"/><field name="next_payment_date"/>
+                            <span class="badge rounded-pill text-bg-warning text-nowrap ms-auto"><field name="next_payment_amount" widget="monetary"/></span>
                         </div>
                         <footer class="pt-0">
                             <field name="priority" widget="priority"/>

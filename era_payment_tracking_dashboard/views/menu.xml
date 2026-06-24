@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_payment_tracking_root"
+              name="متابعة الدفعات"
+              web_icon="era_payment_tracking_dashboard,static/description/icon.png"
+              sequence="60"
+              groups="era_payment_tracking_dashboard.group_payment_tracking_user"/>
+
+    <menuitem id="menu_payment_tracking_dashboard"
+              name="لوحة المتابعة"
+              parent="menu_payment_tracking_root"
+              action="action_payment_tracking"
+              sequence="10"/>
+
+    <!-- إجراء صيانة: جلب متابعات للأوامر المؤكدة الموجودة مسبقًا -->
+    <record id="action_backfill_existing_orders" model="ir.actions.server">
+        <field name="name">توليد متابعات للأوامر المؤكدة الحالية</field>
+        <field name="model_id" ref="model_payment_tracking"/>
+        <field name="state">code</field>
+        <!-- منطق مضمَّن (لا يعتمد على دوال بايثون مضافة لاحقًا) ليعمل دون
+             إعادة تشغيل الخادم. ينشئ متابعة لكل أمر مؤكَّد لا يملك متابعة. -->
+        <field name="code"><![CDATA[
+orders = env['sale.order'].search([('state', '=', 'sale')])
+existing = set(model.sudo().search([]).mapped('sale_order_id').ids)
+todo = orders.filtered(lambda o: o.id not in existing)
+created = model.create([{'sale_order_id': o.id} for o in todo]) if todo else model.browse()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'متابعة الدفعات',
+        'message': ('تم إنشاء %s متابعة للأوامر المؤكدة الحالية.' % len(created)),
+        'type': 'success',
+        'sticky': False,
+    },
+}
+]]></field>
+    </record>
+
+    <menuitem id="menu_payment_tracking_backfill"
+              name="توليد المتابعات الناقصة"
+              parent="menu_payment_tracking_root"
+              action="action_backfill_existing_orders"
+              groups="era_payment_tracking_dashboard.group_payment_tracking_manager"
+              sequence="90"/>
+
+</odoo>

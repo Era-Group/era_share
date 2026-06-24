@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         List View
+         ================================================================ -->
+    <record id="view_payment_tracking_list" model="ir.ui.view">
+        <field name="name">payment.tracking.list</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <list string="متابعة الدفعات"
+                  default_order="priority desc, next_payment_date asc, id desc"
+                  decoration-success="state == 'paid'"
+                  decoration-danger="state == 'overdue'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="amount_total" widget="monetary" sum="الإجمالي"/>
+                <field name="amount_paid" widget="monetary" sum="المدفوع"/>
+                <field name="amount_due" widget="monetary" sum="المتبقي"/>
+                <field name="payment_percentage" widget="progressbar"/>
+                <field name="next_payment_date"/>
+                <field name="next_payment_amount" widget="monetary" optional="show"/>
+                <field name="overdue_installments" optional="show"
+                       decoration-danger="overdue_installments &gt; 0"/>
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'paid'"
+                       decoration-danger="state == 'overdue'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-info="state == 'pending'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Form View
+         ================================================================ -->
+    <record id="view_payment_tracking_form" model="ir.ui.view">
+        <field name="name">payment.tracking.form</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <form string="متابعة دفعات">
+                <header>
+                    <button name="action_send_whatsapp_reminder" type="object"
+                            string="إرسال واتساب" icon="fa-whatsapp" class="btn-success"
+                            invisible="not partner_mobile"/>
+                    <button name="action_send_email_reminder" type="object"
+                            string="إرسال بريد" icon="fa-envelope"
+                            invisible="not partner_email"/>
+                    <button name="action_refresh_data" type="object"
+                            string="تحديث البيانات" icon="fa-refresh"
+                            context="{'from_button': True}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,in_progress,overdue,paid"/>
+                </header>
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="invoice_count" widget="statinfo" string="الفواتير"/>
+                        </button>
+                        <button name="action_view_payments" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="payment_count" widget="statinfo" string="الدفعات"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon" title="مدفوع" bg_color="text-bg-success"
+                            invisible="state != 'paid'"/>
+                    <widget name="web_ribbon" title="متأخر" bg_color="text-bg-danger"
+                            invisible="state != 'overdue'"/>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="معلومات الطلب">
+                            <field name="sale_order_id"
+                                   options="{'no_create': True, 'no_open': False}"/>
+                            <field name="partner_id"/>
+                            <field name="order_date"/>
+                            <field name="payment_term_id"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="معلومات الاتصال">
+                            <field name="partner_email" widget="email"/>
+                            <field name="partner_phone" widget="phone"/>
+                            <field name="partner_mobile" widget="phone"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="المبالغ">
+                            <field name="amount_total" widget="monetary"/>
+                            <field name="amount_invoiced" widget="monetary"/>
+                            <field name="amount_paid" widget="monetary"/>
+                            <field name="amount_due" widget="monetary"/>
+                            <field name="payment_percentage" widget="progressbar"/>
+                        </group>
+                        <group string="التواريخ">
+                            <field name="first_invoice_date"/>
+                            <field name="next_payment_date"/>
+                            <field name="next_payment_amount" widget="monetary"/>
+                            <field name="last_payment_date"/>
+                            <field name="days_overdue"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="الأقساط المتوقعة" name="installments">
+                            <field name="installment_line_ids">
+                                <list editable="bottom"
+                                      decoration-success="state == 'paid'"
+                                      decoration-danger="state == 'overdue'"
+                                      decoration-warning="state == 'partial'"
+                                      decoration-info="state == 'upcoming'"
+                                      decoration-muted="state == 'unpaid'">
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="due_date"/>
+                                    <field name="amount_expected" widget="monetary" sum="المتوقع"/>
+                                    <field name="amount_paid" widget="monetary" sum="المدفوع"/>
+                                    <field name="amount_due" widget="monetary" sum="المتبقي"/>
+                                    <field name="payment_date"/>
+                                    <field name="days_overdue"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'paid'"
+                                           decoration-danger="state == 'overdue'"
+                                           decoration-warning="state == 'partial'"
+                                           decoration-info="state == 'upcoming'"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="installment_count"/>
+                                <field name="paid_installments"/>
+                                <field name="overdue_installments"/>
+                            </group>
+                        </page>
+
+                        <page string="الفواتير" name="invoices">
+                            <field name="invoice_ids" readonly="1">
+                                <list string="الفواتير" create="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="invoice_date"/>
+                                    <field name="invoice_date_due"/>
+                                    <field name="amount_total" widget="monetary"/>
+                                    <field name="amount_residual" widget="monetary"/>
+                                    <field name="payment_state" widget="badge"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="الدفعات" name="payments">
+                            <field name="payment_ids" readonly="1">
+                                <list string="الدفعات" create="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="payment_type"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="ملاحظات" name="notes">
+                            <field name="notes" placeholder="أضف ملاحظاتك هنا..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Kanban View
+         ================================================================ -->
+    <record id="view_payment_tracking_kanban" model="ir.ui.view">
+        <field name="name">payment.tracking.kanban</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column"
+                    default_order="priority desc, next_payment_date asc, id desc"
+                    sample="1">
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="overdue_installments"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-center">
+                            <field name="partner_id" widget="many2one_avatar" class="me-2"/>
+                            <div class="flex-grow-1 text-truncate">
+                                <field name="partner_id" class="fw-bold"/>
+                                <small class="text-muted ms-1"><field name="sale_order_id"/></small>
+                            </div>
+                            <span t-if="record.overdue_installments.raw_value &gt; 0"
+                                  class="badge text-bg-danger ms-1">
+                                <t t-out="record.overdue_installments.value"/> متأخر
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <strong class="text-danger text-nowrap"><field name="amount_due" widget="monetary"/></strong>
+                            <field name="payment_percentage" widget="progressbar" class="flex-grow-1"/>
+                            <small class="text-muted text-nowrap">من <field name="amount_total" widget="monetary"/></small>
+                        </div>
+                        <div t-if="record.next_payment_date.raw_value" class="small text-muted">
+                            <i class="fa fa-calendar-o me-1" title="الدفعة القادمة"/><field name="next_payment_date"/>
+                            · <field name="next_payment_amount" widget="monetary"/>
+                        </div>
+                        <footer class="pt-0">
+                            <field name="priority" widget="priority"/>
+                            <field name="activity_ids" widget="kanban_activity"/>
+                            <field name="state" widget="label_selection"
+                                   options="{'classes': {'paid': 'success', 'overdue': 'danger', 'in_progress': 'warning', 'pending': 'info', 'cancelled': 'secondary'}}"
+                                   class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Search View
+         ================================================================ -->
+    <record id="view_payment_tracking_search" model="ir.ui.view">
+        <field name="name">payment.tracking.search</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <search string="بحث في متابعة الدفعات">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="payment_term_id"/>
+                <separator/>
+                <filter name="active_followup" string="قيد المتابعة"
+                        domain="[('state', 'in', ['overdue', 'in_progress', 'pending'])]"/>
+                <separator/>
+                <filter name="overdue" string="الدفعات المتأخرة"
+                        domain="[('state', '=', 'overdue')]"/>
+                <filter name="in_progress" string="جاري الدفع"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="pending" string="بانتظار الدفع"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter name="paid" string="مدفوع كاملاً"
+                        domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="due_this_week" string="دفعة قادمة هذا الأسبوع"
+                        domain="[('next_payment_date', '&gt;=', 'today'), ('next_payment_date', '&lt;', '=week_start +1w')]"/>
+                <filter name="due_this_month" string="دفعة قادمة هذا الشهر"
+                        domain="[('next_payment_date', '&gt;=', 'today'), ('next_payment_date', '&lt;', '=1d +1m')]"/>
+                <separator/>
+                <filter name="high_priority" string="أولوية عالية"
+                        domain="[('priority', 'in', ['2', '3'])]"/>
+                <separator/>
+                <filter name="my_orders" string="متابعاتي"
+                        domain="[('sale_order_id.user_id', '=', uid)]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="الحالة"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_partner" string="العميل"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_term" string="سياسة الدفع"
+                            context="{'group_by': 'payment_term_id'}"/>
+                    <filter name="group_priority" string="الأولوية"
+                            context="{'group_by': 'priority'}"/>
+                    <filter name="group_order_date" string="تاريخ الطلب"
+                            context="{'group_by': 'order_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Pivot View
+         ================================================================ -->
+    <record id="view_payment_tracking_pivot" model="ir.ui.view">
+        <field name="name">payment.tracking.pivot</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <pivot string="تحليل الدفعات">
+                <field name="partner_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount_total" type="measure"/>
+                <field name="amount_paid" type="measure"/>
+                <field name="amount_due" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Graph View
+         ================================================================ -->
+    <record id="view_payment_tracking_graph" model="ir.ui.view">
+        <field name="name">payment.tracking.graph</field>
+        <field name="model">payment.tracking</field>
+        <field name="arch" type="xml">
+            <graph string="رسم بياني للدفعات" type="bar" stacked="1">
+                <field name="partner_id"/>
+                <field name="amount_paid" type="measure"/>
+                <field name="amount_due" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Action
+         ================================================================ -->
+    <record id="action_payment_tracking" model="ir.actions.act_window">
+        <field name="name">لوحة المتابعة</field>
+        <field name="res_model">payment.tracking</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_payment_tracking_search"/>
+        <field name="context">{'search_default_active_followup': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                لا توجد متابعات دفعات بعد
+            </p>
+            <p>
+                تُنشأ المتابعات تلقائيًا عند تأكيد أوامر البيع، أو يمكنك إنشاؤها يدويًا.
+            </p>
+        </field>
+    </record>
+
+</odoo>

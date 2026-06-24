@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         فئة ومجموعات الوصول الخاصة بالتطبيق
+         تظهر فئة "متابعة الدفعات" في نموذج المستخدم، وتُعيَّن لكل مستخدم
+         إحدى القيمتين: مستخدم / مدير.
+         ================================================================ -->
+    <record id="module_category_payment_tracking" model="ir.module.category">
+        <field name="name">متابعة الدفعات</field>
+        <field name="description">التحكّم في الوصول إلى تطبيق متابعة الدفعات.</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- في أودو 19 ترتبط المجموعة بـ"صلاحية" (res.groups.privilege) ترتبط بدورها بالفئة -->
+    <record id="privilege_payment_tracking" model="res.groups.privilege">
+        <field name="name">متابعة الدفعات</field>
+        <field name="category_id" ref="module_category_payment_tracking"/>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- مستخدم: وصول كامل لاستخدام التطبيق (قراءة/كتابة/إنشاء) -->
+    <record id="group_payment_tracking_user" model="res.groups">
+        <field name="name">مستخدم</field>
+        <field name="privilege_id" ref="privilege_payment_tracking"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">يصل إلى لوحة متابعة الدفعات ويستخدمها.</field>
+    </record>
+
+    <!-- مدير: كل الصلاحيات (بما فيها الحذف وأدوات الصيانة)، ويتضمّن مجموعة المستخدم -->
+    <record id="group_payment_tracking_manager" model="res.groups">
+        <field name="name">مدير</field>
+        <field name="privilege_id" ref="privilege_payment_tracking"/>
+        <field name="implied_ids" eval="[(4, ref('group_payment_tracking_user'))]"/>
+        <field name="comment">صلاحيات كاملة بما فيها الحذف وتوليد المتابعات الناقصة.</field>
+    </record>
+
+    <data noupdate="1">
+
+        <!-- متعدد الشركات: السجلات المرئية ضمن شركات المستخدم فقط. -->
+        <record id="payment_tracking_rule_company" model="ir.rule">
+            <field name="name">متابعة الدفعات: متعدد الشركات</field>
+            <field name="model_id" ref="model_payment_tracking"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="payment_tracking_line_rule_company" model="ir.rule">
+            <field name="name">سطور الأقساط: متعدد الشركات</field>
+            <field name="model_id" ref="model_payment_tracking_line"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="global" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

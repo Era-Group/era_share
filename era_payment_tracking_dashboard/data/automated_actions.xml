@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Action 1: إنشاء متابعة دفعات عند تأكيد أمر البيع
+             ============================================================ -->
+        <record id="automation_create_tracking" model="base.automation">
+            <field name="name">إنشاء متابعة دفعات عند تأكيد أمر البيع</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="trigger">on_create_or_write</field>
+            <field name="filter_domain">[('state', '=', 'sale')]</field>
+            <field name="trigger_field_ids" eval="[(6, 0, [ref('sale.field_sale_order__state')])]"/>
+        </record>
+        <record id="server_action_create_tracking" model="ir.actions.server">
+            <field name="name">إنشاء متابعة دفعات</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="base_automation_id" ref="automation_create_tracking"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+Tracking = env['payment.tracking'].sudo()
+for order in records:
+    if order.state == 'sale' and not Tracking.search([('sale_order_id', '=', order.id)], limit=1):
+        Tracking.create({'sale_order_id': order.id})
+]]></field>
+        </record>
+
+        <!-- ============================================================
+             Action 2: تحديث المتابعة عند ترحيل فاتورة العميل
+             ============================================================ -->
+        <record id="automation_refresh_on_invoice" model="base.automation">
+            <field name="name">تحديث المتابعة عند ترحيل الفاتورة</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="trigger">on_create_or_write</field>
+            <field name="filter_domain">[('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]</field>
+            <field name="trigger_field_ids" eval="[(6, 0, [ref('account.field_account_move__state')])]"/>
+        </record>
+        <record id="server_action_refresh_on_invoice" model="ir.actions.server">
+            <field name="name">تحديث المتابعة من الفاتورة</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="base_automation_id" ref="automation_refresh_on_invoice"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+Tracking = env['payment.tracking'].sudo()
+trackings = Tracking
+for move in records:
+    trackings |= Tracking.search([('invoice_ids', 'in', move.id)])
+    if move.invoice_origin:
+        origins = [o.strip() for o in move.invoice_origin.split(',') if o.strip()]
+        if origins:
+            trackings |= Tracking.search([('sale_order_id.name', 'in', origins)])
+if trackings:
+    trackings.action_refresh_data()
+]]></field>
+        </record>
+
+        <!-- ============================================================
+             Action 3: تحديث المتابعة عند استلام دفعة واردة
+             ============================================================ -->
+        <record id="automation_refresh_on_payment" model="base.automation">
+            <field name="name">تحديث المتابعة عند استلام دفعة</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="trigger">on_create_or_write</field>
+            <field name="filter_domain">[('payment_type', '=', 'inbound'), ('state', 'in', ['paid', 'in_process'])]</field>
+            <field name="trigger_field_ids" eval="[(6, 0, [ref('account.field_account_payment__state')])]"/>
+        </record>
+        <record id="server_action_refresh_on_payment" model="ir.actions.server">
+            <field name="name">تحديث المتابعة من الدفعة</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="base_automation_id" ref="automation_refresh_on_payment"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+Tracking = env['payment.tracking'].sudo()
+trackings = Tracking
+for payment in records:
+    if payment.partner_id:
+        trackings |= Tracking.search([
+            ('partner_id', 'child_of', payment.partner_id.commercial_partner_id.id),
+            ('state', 'not in', ['paid', 'cancelled']),
+        ])
+if trackings:
+    trackings.action_refresh_data()
+]]></field>
+        </record>
+
+        <!-- ============================================================
+             Cron: تذكير يومي بالأقساط المتأخرة
+             ============================================================ -->
+        <record id="cron_payment_tracking_overdue" model="ir.cron">
+            <field name="name">متابعة الدفعات: تذكير بالمتأخرات</field>
+            <field name="model_id" ref="model_payment_tracking"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_payment_reminders()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

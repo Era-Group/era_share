@@ -46,12 +46,38 @@ $o-era-wa-zindex: 1041;
                 color: #fff;
                 background-color: $o-era-wa-header-hover;
             }
+
+            &.o-active {
+                color: #fff;
+                background-color: $o-era-wa-header-hover;
+            }
         }
     }
 
     .o_era_wa_float_body {
         // Allow inner flex children to shrink and scroll instead of overflowing.
         min-height: 0;
+    }
+
+    // Member-list inspector inside the float: give it a fixed, contained width
+    // (tunable via the CSS variable) instead of the default ~250px resizable.
+    // Both the outer panel container and the inner ActionPanel must be pinned.
+    .o-discuss-ChannelMemberList {
+        flex: 0 0 auto !important;
+        width: var(--o-era-wa-members-width, 240px) !important;
+        min-width: 0 !important;
+        max-width: 55% !important;
+
+        .o-mail-ActionPanel {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+        }
+    }
+
+    // "Show/hide members" toggle (header users icon) collapses that inspector.
+    &.o-era-members-hidden .o-discuss-ChannelMemberList {
+        display: none !important;
     }
 
     .o_era_wa_float_sidebar {
@@ -99,8 +125,10 @@ $o-era-wa-zindex: 1041;
 
 .o_era_wa_float_bubble {
     z-index: $o-era-wa-zindex - 1;
-    inset-block-end: 24px;
-    inset-inline-end: 24px;
+    // Physical bottom-right anchor (WhatsApp convention), independent of RTL/LTR,
+    // matching the window's default corner.
+    bottom: 24px;
+    right: 24px;
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -119,7 +147,7 @@ $o-era-wa-zindex: 1041;
     .o_era_wa_float_bubble_badge {
         position: absolute;
         top: -2px;
-        inset-inline-end: -2px;
+        right: -2px;
         background-color: var(--danger, #dc3545);
         color: #fff;
         font-size: .7rem;

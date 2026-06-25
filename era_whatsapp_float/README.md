@@ -17,6 +17,10 @@ Discuss** experience, scoped to **WhatsApp** conversations (the official
 * **Minimize** (chevron-down) or **close** collapses the window back to the
   bubble, so it can be reopened with a single click.
 * The header is a **drag handle**; the bottom-end corner is a **resize grip**.
+* A **members toggle** (people icon in the header) shows/hides the Discuss
+  member-list inspector. It is **hidden by default** so the conversation uses the
+  full width; the panel width is fixed (tune via the `--o-era-wa-members-width`
+  CSS variable, default `240px`).
 
 ## How it works (technical)
 

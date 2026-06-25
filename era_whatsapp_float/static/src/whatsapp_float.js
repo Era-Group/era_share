@@ -61,6 +61,11 @@ export class WhatsappFloatWindow extends Component {
             height: 600,
         });
 
+        // Window-local layout options. `membersHidden` collapses the Discuss
+        // member-list inspector so the conversation gets the full width; it is
+        // hidden by default in the narrow float.
+        this.layout = useState({ membersHidden: true });
+
         // Reused `DiscussSidebarChannel` items decide between "select in Discuss"
         // and "open a chat window" based on `inDiscussApp`; force the former.
         useSubEnv({ inDiscussApp: true });
@@ -163,6 +168,26 @@ export class WhatsappFloatWindow extends Component {
     onBubbleClick() {
         this.state.open = true;
         this.state.minimized = false;
+    }
+
+    /**
+     * Show/hide the Discuss member-list inspector inside the float. Hiding is a
+     * pure CSS collapse (reclaims the conversation width). When revealing, if no
+     * member panel is currently mounted, open it through the genuine Discuss
+     * "Members" header action (found by its language-independent icon).
+     */
+    toggleMembers() {
+        this.layout.membersHidden = !this.layout.membersHidden;
+        if (this.layout.membersHidden) {
+            return;
+        }
+        const root = this.rootRef.el;
+        if (root && !root.querySelector(".o-discuss-ChannelMemberList")) {
+            const button = [...root.querySelectorAll("button .oi-users")]
+                .map((icon) => icon.closest("button"))
+                .find(Boolean);
+            button?.click();
+        }
     }
 
     // ---- manual corner resize (bottom-start corner) ----

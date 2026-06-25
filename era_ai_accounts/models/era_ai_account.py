@@ -246,11 +246,20 @@ class EraAiAccount(models.Model):
         help="Temporarily block all AI calls through this account without archiving it.",
     )
     max_concurrency = fields.Integer(
-        default=1,
-        help="Legacy hint. CLI-proxy calls are serialized host-wide per provider: "
-             "Claude allows ai.cli_max_concurrency slots, Codex always exactly 1 "
-             "(its auth.json is single-writer).",
+        default=1, readonly=True,
+        help="Legacy field (kept for migrations). CLI-proxy calls are serialized "
+             "host-wide per provider: Claude allows ai.cli_max_concurrency slots, "
+             "Codex always exactly 1 (its auth.json is single-writer). Configure "
+             "that concurrency in Settings → AI.",
     )
+    # --- Usage stats (incremented on every outbound call) --------------------
+    request_count = fields.Integer(
+        string="Requests", readonly=True, copy=False,
+        help="Total outbound AI calls (chat, images, transcriptions) through this "
+             "account since creation. Useful for spotting a shared account being "
+             "hammered or an abandoned one.",
+    )
+    last_request_at = fields.Datetime(readonly=True, copy=False)
 
     # --- Secret (encrypted, manager-only) ------------------------------------
     secret_encrypted = fields.Char(
@@ -541,7 +550,12 @@ class EraAiAccount(models.Model):
         """
         self.ensure_one()
         self._assert_usable()
+        if len(prompt or "") > 4000:
+            _logger.warning(
+                "era_ai_accounts: image prompt truncated from %d to 4000 chars "
+                "on account '%s' (id=%s).", len(prompt or ""), self.name, self.id)
         prompt = (prompt or "")[:4000]
+        self._log_request()
         if self.provider == "cloudflare":
             return self._generate_image_cloudflare(prompt, model, steps, width, height)
         if self.provider == "openai":
@@ -567,6 +581,7 @@ class EraAiAccount(models.Model):
         self._assert_usable()
         if not audio:
             raise UserError(_("No audio was supplied to transcribe."))
+        self._log_request()
         if self.provider == "openai":
             if self.auth_mode == "cli_proxy":
                 raise UserError(_(
@@ -727,6 +742,7 @@ class EraAiAccount(models.Model):
         """
         self.ensure_one()
         self._assert_usable()
+        self._log_request()
         model = model or self._default_chat_model()
         system_messages = [system] if system else []
         service = LLMApiService(
@@ -1125,9 +1141,9 @@ class EraAiAccount(models.Model):
             _DEVICE_PARAM % self.id,
             json.dumps({"pid": pid, "out": out_path, "started_at": time.time()}))
         # codex contacts the auth server before printing the URL/code — poll its
-        # output briefly (worst case ~10s) instead of making the user reopen.
+        # output briefly (worst case ~5s) so the wizard shows the code right away.
         url = code = raw = ""
-        for _attempt in range(40):
+        for _attempt in range(20):
             time.sleep(0.25)
             raw = codex_cli_transport.device_login_read(out_path)
             url, code = codex_cli_transport.parse_device_login(raw)
@@ -1275,6 +1291,18 @@ class EraAiAccount(models.Model):
             raise UserError(_("AI account '%s' is disabled (kill switch).", self.name))
         if not self.active:
             raise UserError(_("AI account '%s' is archived.", self.name))
+
+    def _log_request(self):
+        """Increment per-account usage counters. Uses a raw UPDATE to avoid
+        concurrent-write conflicts when multiple users share one account."""
+        self.ensure_one()
+        try:
+            self.env.cr.execute(
+                "UPDATE era_ai_account SET request_count = COALESCE(request_count, 0) + 1, "
+                "last_request_at = NOW() WHERE id = %s",
+                (self.id,))
+        except Exception:  # noqa: BLE001 — never let a stats counter block a call
+            _logger.debug("era_ai_accounts: could not update request_count", exc_info=True)
 
     # ---------------------------------------------------------------- resolution
     @api.model

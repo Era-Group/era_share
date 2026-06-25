@@ -314,6 +314,19 @@ def _patch():
     if getattr(LLMApiService, "_era_ai_accounts_patched", False):
         return
 
+    # Load-order guard: this layer captures custom_llm_service_patch's wrappers
+    # as the "original" methods below and delegates the default branch to them.
+    # If a future refactor reorders the imports in models/__init__.py so this
+    # file loads first, it would capture the pristine upstream methods instead
+    # — and every custom_llm request would bypass its model-fallback / retry
+    # logic. Fail loudly at startup rather than degrade silently.
+    if not getattr(LLMApiService, "_era_custom_llm_patched", False):
+        raise ImportError(
+            "era_ai_accounts: llm_service_patch must load AFTER "
+            "custom_llm_service_patch (it captures that layer's wrappers as its "
+            "originals). Check the import order in models/__init__.py."
+        )
+
     original_init = LLMApiService.__init__
     original_get_api_token = LLMApiService._get_api_token
     original_get_base_headers = LLMApiService._get_base_headers

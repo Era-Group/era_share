@@ -413,16 +413,48 @@ class EraAiAccount(models.Model):
                     "(Claude CLI) and OpenAI (Codex CLI) providers."
                 ))
 
+    # Flags an admin must NOT pass via cli_extra_args: they override the
+    # sandbox / capability restrictions the transports enforce deliberately, or
+    # smuggle in arbitrary code/tool execution on a shared subscription account.
+    # Kept as a denylist (not an allowlist) so benign flags like --max-tokens or
+    # --model keep working without a code change each time the CLIs evolve.
+    _CLI_DENYLIST_TOKENS = (
+        "--dangerously-skip-permissions", "--dangerously", "--bypass",
+        "--allow-write", "--allow-net", "--allow-all", "--full-auto",
+        "--yolo", "--y", "--no-sandbox", "--disable-sandbox",
+        # Claude Code permission grants / tool overrides
+        "--allowedTools", "--allow-tools", "--disallowedTools",
+        "--permission-mode", "--add-dir", "--resume", "--continue",
+        # Codex capability re-enablers
+        "--enable", "--config", "--config-file", "-c",
+        "--ask-for-approval", "--sandbox-mode",
+        "--project-doc", "--project-doc-max-bytes",
+    )
+
     @api.constrains("cli_extra_args")
     def _check_cli_extra_args(self):
         # The transports shlex-split this field on every call — catch an
         # unbalanced quote at save time instead of failing every AI request.
+        # Also enforce a denylist so a manager can't widen what the subprocess
+        # is allowed to do (the sandbox flags are load-bearing on a shared
+        # ChatGPT/Claude subscription account).
         for rec in self:
-            if rec.sudo().cli_extra_args:
-                try:
-                    shlex.split(rec.sudo().cli_extra_args)
-                except ValueError as exc:
-                    raise ValidationError(_("Invalid CLI extra arguments: %s", exc))
+            args = rec.sudo().cli_extra_args
+            if not args:
+                continue
+            try:
+                tokens = shlex.split(args)
+            except ValueError as exc:
+                raise ValidationError(_("Invalid CLI extra arguments: %s", exc))
+            for token in tokens:
+                # Match the flag even when written as --flag=value.
+                flag = token.split("=", 1)[0]
+                if flag in self._CLI_DENYLIST_TOKENS:
+                    raise ValidationError(_(
+                        "The CLI argument '%s' is blocked for security: it can "
+                        "override the sandbox or re-enable capabilities on the "
+                        "connected account. Remove it from 'CLI extra arguments'.",
+                        flag))
 
     @api.constrains("base_url")
     def _check_base_url(self):

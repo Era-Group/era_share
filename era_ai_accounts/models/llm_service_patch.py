@@ -39,7 +39,9 @@ from ..utils import llm_cli_transport
 from .custom_llm_service_patch import (
     _autofill_required_tool_arguments,
     _coerce_tool_arguments_for_schema,
+    _extract_tool_calls_from_text,
 )
+from .era_ai_account import ZAI_OPENAI_BASE_URL
 
 _logger = logging.getLogger(__name__)
 
@@ -122,6 +124,72 @@ def _coerce_message_text(content):
                 parts.append(block)
         return "".join(parts)
     return str(content)
+
+
+def _zai_build_messages(system_prompts, user_prompts, inputs):
+    """Build OpenAI chat-completions ``messages`` from Odoo's (system, user, inputs).
+
+    Besides plain role/content turns, ``inputs`` carries the OpenAI-style tool
+    entries this module appends during the tool loop — ``function_call`` (the
+    assistant's own call) and ``function_call_output`` (the executed result) —
+    which must be rendered as a native ``assistant``/``tool`` message pair so
+    Z.AI's chat-completions endpoint can continue the call. Consecutive
+    ``function_call`` entries collapse into a single assistant message (parallel
+    tool calls), as the chat-completions schema requires.
+    """
+    messages = []
+    for prompt in (system_prompts or []):
+        if prompt:
+            messages.append({"role": "system", "content": prompt})
+    for prompt in (user_prompts or []):
+        if prompt:
+            messages.append({"role": "user", "content": prompt})
+
+    pending = []  # consecutive assistant tool_calls awaiting a flush
+
+    def _flush():
+        if pending:
+            messages.append({"role": "assistant", "content": None, "tool_calls": list(pending)})
+            pending.clear()
+
+    for item in (inputs or []):
+        itype = item.get("type")
+        if itype == "function_call":
+            arguments = item.get("arguments")
+            if not isinstance(arguments, str):
+                arguments = json.dumps(arguments or {})
+            pending.append({
+                "id": item.get("call_id"),
+                "type": "function",
+                "function": {"name": item.get("name"), "arguments": arguments or "{}"},
+            })
+            continue
+        _flush()
+        if itype == "function_call_output":
+            messages.append({
+                "role": "tool",
+                "tool_call_id": item.get("call_id"),
+                "content": str(item.get("output") or ""),
+            })
+            continue
+        role = item.get("role", "user")
+        if role not in ("user", "assistant", "system", "tool"):
+            role = "user"
+        messages.append({"role": role, "content": _coerce_message_text(item.get("content", ""))})
+    _flush()
+
+    # The endpoint needs at least one non-system turn to answer.
+    if not any(m["role"] != "system" for m in messages):
+        messages.append({"role": "user", "content": "Hello"})
+    return messages
+
+
+def _zai_tools_payload(tools):
+    """OpenAI chat-completions ``tools`` array from upstream's tools dict."""
+    return [{
+        "type": "function",
+        "function": {"name": name, "description": description, "parameters": schema},
+    } for name, (description, _allow_end, _fn, schema) in tools.items()]
 
 
 def _cli_tool_instructions(env, tools):
@@ -276,6 +344,12 @@ def _patch():
             self.provider, self.env = "cloudflare", env
             self.base_url = self._era_account._cloudflare_base_url()
             return
+        if provider == "zai":
+            # Z.AI (GLM) OpenAI-compatible chat at api.z.ai/api/paas/v4.
+            self.provider, self.env = "zai", env
+            self.base_url = (
+                (self._era_account and self._era_account.base_url) or ZAI_OPENAI_BASE_URL)
+            return
         return original_init(self, env, provider)
 
     def _get_api_token(self):
@@ -312,7 +386,7 @@ def _patch():
             if acc.title:
                 headers["X-Title"] = _h(acc.title)
             return headers
-        if self.provider == "cloudflare":
+        if self.provider in ("cloudflare", "zai"):
             return {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._get_api_token()}",
@@ -326,12 +400,15 @@ def _patch():
             return _request_llm_anthropic(self, *args, **kwargs)
         if self.provider == "cloudflare":
             return _request_llm_cloudflare(self, *args, **kwargs)
+        if self.provider == "zai":
+            return _request_llm_zai(self, *args, **kwargs)
         return original_request_llm(self, *args, **kwargs)
 
     def _build_tool_call_response(self, tool_call_id, return_value):
         # Upstream raises NotImplementedError for unknown providers; the CLI
-        # tool loop reuses the OpenAI envelope (rendered by _flatten).
-        if self.provider in _CLI_PROVIDERS:
+        # tool loop and the Z.AI chat-completions loop reuse the OpenAI
+        # function_call_output envelope (rendered back into the next request).
+        if self.provider in _CLI_PROVIDERS or self.provider == "zai":
             return {
                 "type": "function_call_output",
                 "call_id": tool_call_id,
@@ -450,6 +527,78 @@ def _patch():
             raise UserError(_("Cloudflare Workers AI returned no text."))
         return [text], [], list(inputs or ())
 
+    def _request_llm_zai(self, llm_model, system_prompts, user_prompts, tools=None,
+                         files=None, schema=None, temperature=0.2, inputs=(), web_grounding=False):
+        # Z.AI (GLM) via its OpenAI-compatible /chat/completions endpoint, with
+        # native tool-calling (GLM emits standard OpenAI tool_calls). Plugs into
+        # upstream's request_llm loop the same way the OpenAI path does: return
+        # (responses, to_call, next_inputs); tool results come back through
+        # `inputs` as function_call_output entries that _zai_build_messages
+        # renders into the next round's messages.
+        messages = _zai_build_messages(system_prompts, user_prompts, inputs)
+        body = {"model": llm_model, "messages": messages, "temperature": temperature}
+        if tools:
+            body["tools"] = _zai_tools_payload(tools)
+            body["tool_choice"] = "auto"
+        elif schema:
+            # No tools: nudge strict JSON when the caller expects structured output.
+            body["response_format"] = {"type": "json_object"}
+        response = self._request(
+            method="post", endpoint="/chat/completions",
+            headers=self._get_base_headers(), body=body)
+        choices = response.get("choices") or []
+        message = (choices[0].get("message") if choices else {}) or {}
+
+        next_inputs = list(inputs or ())
+        to_call = []
+        for tc in (message.get("tool_calls") or []):
+            function = tc.get("function") or {}
+            name = function.get("name") or ""
+            if not name:
+                continue
+            # Per the OpenAI spec `arguments` is a JSON string, but some
+            # OpenAI-compatible gateways send an already-parsed dict — keep it
+            # rather than feeding a dict to json.loads (TypeError -> dropped to
+            # {}). Mirrors custom_llm_service_patch's tool-arg handling.
+            raw_args = function.get("arguments")
+            if isinstance(raw_args, dict):
+                arguments = raw_args
+            elif isinstance(raw_args, str) and raw_args.strip():
+                try:
+                    arguments = json.loads(raw_args)
+                except json.JSONDecodeError:
+                    arguments = {}
+            else:
+                arguments = {}
+            if not isinstance(arguments, dict):
+                arguments = {}
+            call_id = tc.get("id") or ("zaicall-%s" % uuid.uuid4().hex[:12])
+            arguments = _normalize_cli_tool_arguments(self.env, tools or {}, name, arguments)
+            to_call.append((name, call_id, arguments))
+            next_inputs.append({
+                "type": "function_call", "name": name,
+                "call_id": call_id, "arguments": json.dumps(arguments),
+            })
+
+        text = _coerce_message_text(message.get("content"))
+        # Some GLM models emit tool calls as plain-text JSON instead of the
+        # native tool_calls field — salvage them (same helper as custom_llm).
+        if tools and not to_call and text:
+            for name, call_id, arguments in _extract_tool_calls_from_text(
+                    text, tools, self.env.context):
+                to_call.append((name, call_id, arguments))
+                next_inputs.append({
+                    "type": "function_call", "name": name,
+                    "call_id": call_id, "arguments": json.dumps(arguments, ensure_ascii=False),
+                })
+
+        if to_call:
+            return [], to_call, next_inputs
+        if not (text and text.strip()):
+            raise UserError(_("Z.AI returned no text (finish_reason=%s).",
+                              (choices[0].get("finish_reason") if choices else None)))
+        return [text], [], next_inputs
+
     LLMApiService.__init__ = __init__
     LLMApiService._get_api_token = _get_api_token
     LLMApiService._get_base_headers = _get_base_headers
@@ -458,10 +607,11 @@ def _patch():
     LLMApiService._request_llm_cli = _request_llm_cli
     LLMApiService._request_llm_anthropic = _request_llm_anthropic
     LLMApiService._request_llm_cloudflare = _request_llm_cloudflare
+    LLMApiService._request_llm_zai = _request_llm_zai
     LLMApiService._era_ai_accounts_patched = True
     _logger.info(
         "era_ai_accounts: account-aware LLMApiService layer active "
-        "(Claude/Codex CLI + Anthropic)")
+        "(Claude/Codex CLI + Anthropic + Z.AI)")
 
 
 _patch()

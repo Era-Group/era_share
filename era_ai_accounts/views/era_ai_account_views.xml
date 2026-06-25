@@ -84,13 +84,27 @@
                                 no API key, one shared login. If you don't link one, the CLI falls back
                                 to the server's own <code>~/.codex</code> login under the HOME below.
                             </div>
+                            <div class="text-muted mt-2" invisible="provider != 'zai'">
+                                <b>Z.AI (GLM)</b> over the CLI: the local <code>claude</code> binary is
+                                pointed at Z.AI's Anthropic-compatible endpoint
+                                (<code>api.z.ai/api/anthropic</code>) using your <b>GLM Coding Plan</b> API
+                                key (set below). Flat-rate subscription — <b>every user</b> routes through
+                                this one key. <b>Sync models</b> to pick a GLM model; Z.AI maps it
+                                server-side, so no Claude login is needed.
+                            </div>
                         </div>
                         <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
+                        <field name="secret" password="True" string="Z.AI API key"
+                               invisible="provider != 'zai'"
+                               placeholder="paste your Z.AI / GLM Coding Plan API key (write-only)"
+                               groups="era_ai_accounts.group_ai_account_manager"/>
+                        <field name="secret_masked" string="Stored key" invisible="provider != 'zai'"
+                               groups="era_ai_accounts.group_ai_account_manager"/>
                         <field name="cli_tools_enabled"/>
                         <field name="max_concurrency"/>
                         <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
-                        <div class="text-muted" colspan="2">
+                        <div class="text-muted" colspan="2" invisible="provider == 'zai'">
                             Routes calls through the locally-authenticated first-party CLI
                             (Claude Code for Anthropic, Codex for OpenAI). No API key is used.
                             Serving many users draws on that subscription's rate limits — use the kill
@@ -111,6 +125,13 @@
                             FLUX (1-schnell / 2). Billed in <b>Neurons</b> (a compute-usage unit, not money)
                             with <b>10,000 free per day</b>; beyond that, <b>USD $0.011 per 1,000 Neurons</b>.
                             Sync models to see each model's indicative rate.
+                        </div>
+                        <div class="text-muted" colspan="2" invisible="provider != 'zai'">
+                            <b>Z.AI (GLM)</b> direct API: OpenAI-compatible chat via
+                            <code>api.z.ai/api/paas/v4</code>. Paste your Z.AI API key above and
+                            <b>Sync models</b> for the GLM catalog (GLM-4.6/4.7/5.x, plus free Flash
+                            models). Billed per token in USD — see
+                            <a href="https://docs.z.ai/guides/overview/pricing" target="_blank">z.ai pricing</a>.
                         </div>
                         <field name="base_url" invisible="provider != 'custom'"
                                placeholder="https://openrouter.ai/api/v1"/>

@@ -102,6 +102,42 @@ live rate at <https://developers.cloudflare.com/workers-ai/platform/pricing/>.
 Content runs through Cloudflare's OpenAI-compatible `/ai/v1/chat/completions`;
 images through `/ai/run/@cf/black-forest-labs/flux-1-schnell`.
 
+## Z.AI (GLM / Zhipu) — API key *or* CLI proxy
+
+Z.AI serves the GLM model family (GLM-4.6/4.7, GLM-5.x, plus free Flash models)
+through **two** surfaces, and this module supports **both** — the same Z.AI API
+key works for either. Pick **provider Z.AI (GLM / Zhipu)**, then choose the auth
+mode:
+
+1. **API key** (auth mode *API key*) — OpenAI-compatible chat at
+   `https://api.z.ai/api/paas/v4` (`/chat/completions`, Bearer auth). Paste the
+   key, **Validate connection** (token-free `/models` check), **Sync models**
+   for the curated GLM catalog with indicative USD rates. This route supports
+   **native tool-calling**, so it can drive tool-using agents — not just chat.
+   Billed **per token in USD** (see the
+   [pricing page](https://docs.z.ai/guides/overview/pricing)).
+
+2. **CLI proxy** (auth mode *Local CLI proxy*) — the **GLM Coding Plan** flow:
+   the local `claude` binary is pointed at Z.AI's **Anthropic-compatible**
+   endpoint (`https://api.z.ai/api/anthropic`) with your key exported as
+   `ANTHROPIC_AUTH_TOKEN`. This is a **flat-rate subscription** (no per-token
+   billing), serving every user through that one key. Paste the key in the *CLI
+   proxy* box, **Validate** (checks the `claude` binary **and** the key),
+   **Sync models** for the GLM list. Z.AI maps the Claude tiers to GLM models
+   server-side via `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL`, so the
+   transport **pins all three to the selected GLM model and passes no
+   `--model`** (Claude Code rejects a non-Claude name there). No "Login with
+   Claude" / OAuth is involved — the key alone authenticates. The same
+   host-wide concurrency cap, pacing gap and kill switch as the other CLI
+   proxies apply (it shares the Claude binary's slot pool). Tools work through
+   the JSON-envelope tool loop, gated by **Allow agent tools**. *Requirement:*
+   the `claude` binary must be present and its **CLI HOME** onboarded (the same
+   one the Claude proxy uses); with an explicit auth token Claude Code runs
+   non-interactively against Z.AI.
+
+Image generation and transcription are **not** offered for Z.AI here (use
+Cloudflare/OpenAI for those).
+
 ## Configure
 
 1. **AI ▸ AI Accounts ▸ New** (managers only).

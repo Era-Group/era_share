@@ -47,9 +47,12 @@ _PKCE_PARAM = "era_ai_accounts.oauth_pkce.%s"
 # once the login completes, fails, or is superseded.
 _DEVICE_PARAM = "era_ai_accounts.codex_device.%s"
 
-# Providers that have a first-party local CLI we can proxy through (the
-# "connected account" path): Anthropic's `claude` and OpenAI's `codex`.
-CLI_PROXY_PROVIDERS = ("anthropic", "openai")
+# Providers that can route through the local CLI proxy. Anthropic's `claude`
+# and OpenAI's `codex` use their own first-party binary under the connected
+# account's auth; Z.AI (GLM) reuses the SAME `claude` binary but pointed at
+# Z.AI's Anthropic-compatible endpoint with a GLM Coding Plan API key (see
+# _cli_cfg / llm_cli_transport).
+CLI_PROXY_PROVIDERS = ("anthropic", "openai", "zai")
 
 # Per-provider layout of the linked-account credential store, mirroring what
 # each first-party CLI expects:
@@ -119,6 +122,50 @@ OPENAI_IMAGE_MODELS = [
     ("dall-e-3", "DALL·E 3", "image", "paid — see OpenAI image pricing"),
 ]
 
+# --- Z.AI (Zhipu GLM) --------------------------------------------------------
+# Z.AI exposes two compatible surfaces for the SAME GLM models and the SAME API
+# key, and this module supports both:
+#   * "api_key" mode  -> OpenAI-compatible chat at api.z.ai/api/paas/v4
+#                        (/chat/completions, Bearer auth, native tool-calling).
+#   * "cli_proxy" mode -> the local `claude` binary pointed at Z.AI's
+#                        Anthropic-compatible endpoint (api.z.ai/api/anthropic)
+#                        with the key as ANTHROPIC_AUTH_TOKEN — the GLM Coding
+#                        Plan flow (flat-rate subscription, no per-token billing).
+# Z.AI has no per-model price API, so the rows below carry indicative USD rates
+# captured from the public pricing page (2026-06) — verify the live page:
+#   https://docs.z.ai/guides/overview/pricing
+ZAI_OPENAI_BASE_URL = "https://api.z.ai/api/paas/v4"
+ZAI_ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
+
+# Curated GLM chat models for the OpenAI-compatible API ("api_key" mode), with
+# indicative USD rates. Editable per account; "Sync models" re-applies this set.
+ZAI_MODELS = [
+    # (model_id, label, kind, rate)
+    ("glm-4.6", "GLM-4.6 (recommended)", "chat", "≈$0.6 in / $2.2 out per 1M tokens"),
+    ("glm-4.7", "GLM-4.7", "chat", "≈$0.6 in / $2.2 out per 1M tokens"),
+    ("glm-5.2", "GLM-5.2 (flagship)", "chat", "≈$1.4 in / $4.4 out per 1M tokens"),
+    ("glm-5.1", "GLM-5.1", "chat", "≈$1.4 in / $4.4 out per 1M tokens"),
+    ("glm-5-turbo", "GLM-5 Turbo", "chat", "≈$1.2 in / $4.0 out per 1M tokens"),
+    ("glm-4.7-flashx", "GLM-4.7 FlashX (cheap)", "chat", "≈$0.07 in / $0.4 out per 1M tokens"),
+    ("glm-4.7-flash", "GLM-4.7 Flash (free)", "chat", "Free"),
+    ("glm-4.5-air", "GLM-4.5 Air (lightweight)", "chat", "≈$0.2 in / $1.1 out per 1M tokens"),
+    ("glm-4.5-flash", "GLM-4.5 Flash (free)", "chat", "Free"),
+    # Vision-capable chat models (image understanding / OCR via chat completions).
+    ("glm-5v-turbo", "GLM-5V Turbo (vision)", "chat", "≈$1.2 in / $4.0 out per 1M tokens"),
+    ("glm-4.6v", "GLM-4.6V (vision)", "chat", "≈$0.3 in / $0.9 out per 1M tokens"),
+]
+
+# Curated GLM models for the CLI proxy ("cli_proxy" mode). Z.AI maps the Claude
+# tiers to a GLM model server-side via ANTHROPIC_DEFAULT_*_MODEL, so the model
+# id here is exported as that mapping (the transport passes no --model, which
+# Claude Code rejects for a non-Claude name). Chat only — the CLI is text-only.
+ZAI_CLI_MODELS = [
+    ("glm-4.6", "GLM-4.6 (recommended)"),
+    ("glm-4.7", "GLM-4.7"),
+    ("glm-5.2", "GLM-5.2 (flagship)"),
+    ("glm-4.5-air", "GLM-4.5 Air (fast)"),
+]
+
 
 def _codex_plan_from_id_token(id_token):
     """Best-effort ChatGPT plan name ('plus', 'pro', …) from a Codex id_token.
@@ -151,6 +198,7 @@ class EraAiAccount(models.Model):
         selection=[
             ("anthropic", "Anthropic (Claude)"),
             ("openai", "OpenAI"),
+            ("zai", "Z.AI (GLM / Zhipu)"),
             ("google", "Google Gemini"),
             ("cloudflare", "Cloudflare Workers AI"),
             ("custom", "Custom (OpenAI-compatible)"),
@@ -166,9 +214,9 @@ class EraAiAccount(models.Model):
         required=True,
         default="cli_proxy",
         help="CLI proxy routes calls through a locally-authenticated first-party "
-             "CLI — Claude Code for Anthropic, Codex for OpenAI — using the "
-             "connected account (no API key, no per-token billing). API key calls "
-             "the provider over HTTP.",
+             "CLI — Claude Code for Anthropic, Codex for OpenAI, or the Claude "
+             "binary pointed at Z.AI's endpoint for GLM. API key calls the "
+             "provider over HTTP (OpenAI/Gemini/Cloudflare/Z.AI/custom).",
     )
 
     # --- Sharing / ownership -------------------------------------------------
@@ -399,16 +447,19 @@ class EraAiAccount(models.Model):
         """Provider token used to build a LLMApiService for this account."""
         self.ensure_one()
         if self.auth_mode == "cli_proxy":
+            # Z.AI cli_proxy reuses the Claude (anthropic_cli) transport — the
+            # same `claude` binary, redirected to Z.AI via _cli_cfg's env keys.
             return "openai_cli" if self.provider == "openai" else "anthropic_cli"
         if self.provider == "custom":
             return "custom_llm"
-        return self.provider  # openai / google / anthropic / cloudflare
+        return self.provider  # openai / google / anthropic / cloudflare / zai
 
     _PROVIDER_DEFAULT_MODEL = {
         "anthropic": "claude-opus-4-8",
         "openai": "gpt-4o",
         "google": "gemini-2.5-flash",
         "cloudflare": "@cf/meta/llama-3.1-8b-instruct",
+        "zai": "glm-4.6",
     }
 
     # ------------------------------------------------------------- Cloudflare
@@ -672,6 +723,8 @@ class EraAiAccount(models.Model):
                 return "opus"
             if self.provider == "openai":
                 return CODEX_CLI_MODELS[0][0]
+            if self.provider == "zai":
+                return ZAI_CLI_MODELS[0][0]
         return self._PROVIDER_DEFAULT_MODEL.get(self.provider)
 
     def _default_chat_model(self):
@@ -1152,7 +1205,7 @@ class EraAiAccount(models.Model):
             home_dir = self.cli_home_dir or "/opt/odoo"
             config_dir = False
 
-        return {
+        cfg = {
             "account_id": self.id,
             "provider": self.provider,
             "cli_path": self.cli_path or False,
@@ -1170,6 +1223,19 @@ class EraAiAccount(models.Model):
             "concurrency": concurrency,
             "lock_wait": _f("ai.cli_lock_wait", "300"),
         }
+        # Z.AI (GLM) over the CLI: redirect the Claude binary at Z.AI's
+        # Anthropic-compatible endpoint with the GLM Coding Plan key. The
+        # transport exports these (ANTHROPIC_BASE_URL / ANTHROPIC_AUTH_TOKEN +
+        # the GLM model mapping) instead of using the connected-account OAuth.
+        if self.provider == "zai":
+            token = self._get_secret()
+            if not token:
+                raise UserError(_(
+                    "Set the Z.AI API key on account '%s' (used as the CLI's "
+                    "ANTHROPIC_AUTH_TOKEN).", self.name))
+            cfg["anthropic_base_url"] = (self.base_url or ZAI_ANTHROPIC_BASE_URL).strip()
+            cfg["anthropic_auth_token"] = token
+        return cfg
 
     def _assert_usable(self):
         self.ensure_one()
@@ -1242,6 +1308,16 @@ class EraAiAccount(models.Model):
             out = subprocess.run([binary, "--version"], capture_output=True, text=True, timeout=30)
             if out.returncode != 0:
                 raise UserError(_("Claude CLI not runnable: %s", (out.stderr or "").strip()))
+            if self.provider == "zai":
+                # The binary is fine; also prove the GLM Coding Plan key is
+                # accepted (token-free) via Z.AI's OpenAI-style /models listing —
+                # the same key authenticates both Z.AI surfaces.
+                token = self._get_secret()
+                if not token:
+                    raise UserError(_("Set the Z.AI API key before validating."))
+                self._http_get_json(
+                    ZAI_OPENAI_BASE_URL + "/models",
+                    {"Authorization": "Bearer %s" % token}, 30)
             return True
         if self.provider == "cloudflare":
             # Verify token + account + Workers AI access without spending tokens.
@@ -1251,6 +1327,14 @@ class EraAiAccount(models.Model):
             url = ("https://api.cloudflare.com/client/v4/accounts/%s/ai/models/search?per_page=1"
                    % self._cloudflare_account())
             self._http_get_json(url, {"Authorization": "Bearer %s" % token}, 30)
+            return True
+        if self.provider == "zai":
+            # OpenAI-compatible /models listing — token-free key check.
+            token = self._get_secret()
+            if not token:
+                raise UserError(_("Set the Z.AI API key before validating."))
+            base = (self.base_url or ZAI_OPENAI_BASE_URL).rstrip("/")
+            self._http_get_json(base + "/models", {"Authorization": "Bearer %s" % token}, 30)
             return True
         # API-key: list models (no token spend) to prove the key works.
         self._http_list_models()
@@ -1266,12 +1350,21 @@ class EraAiAccount(models.Model):
         Model = self.env["era.ai.model"]
         # rows: (model_id, label, kind, cost_info)
         if self.auth_mode == "cli_proxy":
-            cli_models = CODEX_CLI_MODELS if self.provider == "openai" else CLAUDE_CLI_MODELS
+            if self.provider == "openai":
+                cli_models = CODEX_CLI_MODELS
+            elif self.provider == "zai":
+                cli_models = ZAI_CLI_MODELS
+            else:
+                cli_models = CLAUDE_CLI_MODELS
             rows = [(mid, label, "chat", "") for mid, label in cli_models]
         elif self.provider == "cloudflare":
             # Cloudflare has no per-model price API, so use the curated catalog with
             # the published Neuron rates baked in (see CLOUDFLARE_MODELS).
             rows = list(CLOUDFLARE_MODELS)
+        elif self.provider == "zai":
+            # Z.AI has no per-model price API either; ship the curated GLM catalog
+            # with indicative USD rates (editable per account).
+            rows = list(ZAI_MODELS)
         elif self.provider == "openai":
             # /models lists chat models only — add the image models so they can be
             # picked for cover generation (gpt-image-1 / DALL·E).

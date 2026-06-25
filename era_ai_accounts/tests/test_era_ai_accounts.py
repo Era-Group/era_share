@@ -1253,3 +1253,251 @@ class TestEraAiAccounts(TransactionCase):
         with patch.object(LLMApiService, "_request", fake_request):
             text = acc.generate_text("hi", system="be brief")
         self.assertEqual(text, "hello from cf")
+
+    # ------------------------------------------------------------- Z.AI (GLM)
+    def test_zai_service_provider_and_modes(self):
+        # Z.AI supports BOTH auth modes (no constraint violation). cli_proxy
+        # reuses the Claude (anthropic_cli) transport; api_key uses the "zai"
+        # OpenAI-compatible transport.
+        cli = self.Account.create({
+            "name": "GLM cli", "provider": "zai", "auth_mode": "cli_proxy", "secret": "zk"})
+        api = self.Account.create({
+            "name": "GLM api", "provider": "zai", "auth_mode": "api_key", "secret": "zk"})
+        self.assertEqual(cli._service_provider(), "anthropic_cli")
+        self.assertEqual(api._service_provider(), "zai")
+
+    # ---- CLI proxy mode (Claude binary -> Z.AI Anthropic endpoint) ----
+    def test_zai_cli_sync_models_and_default(self):
+        acc = self.Account.create({
+            "name": "GLM cli2", "provider": "zai", "auth_mode": "cli_proxy", "secret": "zk"})
+        acc.action_sync_models()
+        self.assertEqual(set(acc.model_ids.mapped("model_id")),
+                         {m[0] for m in era_ai_account.ZAI_CLI_MODELS})
+        self.assertEqual(acc._default_chat_model(), "glm-4.6")
+        # CLI is text-only -> all chat rows.
+        self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
+
+    def test_zai_cli_cfg_injects_endpoint_and_key(self):
+        acc = self.Account.create({
+            "name": "GLM cfg", "provider": "zai", "auth_mode": "cli_proxy", "secret": "zk-2"})
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["provider"], "zai")
+        self.assertEqual(cfg["anthropic_base_url"], era_ai_account.ZAI_ANTHROPIC_BASE_URL)
+        self.assertEqual(cfg["anthropic_auth_token"], "zk-2")
+
+    def test_zai_cli_cfg_requires_key(self):
+        acc = self.Account.create({
+            "name": "GLM nokey", "provider": "zai", "auth_mode": "cli_proxy"})
+        with self.assertRaises(UserError):
+            acc._cli_cfg()
+
+    def test_zai_cli_complete_sets_env_and_skips_model(self):
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = '{"type":"result","result":"glm via cli","is_error":false}'
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        with patch.object(llm_cli_transport, "resolve_cli_binary", return_value="/usr/bin/claude"), \
+             patch.object(llm_cli_transport.subprocess, "run", side_effect=fake_run), \
+             patch.dict(llm_cli_transport.os.environ, {"ANTHROPIC_API_KEY": "sk-leak"}):
+            text = llm_cli_transport.cli_complete(
+                {"account_id": 1, "home_dir": "/opt/odoo",
+                 "anthropic_base_url": "https://api.z.ai/api/anthropic",
+                 "anthropic_auth_token": "zk-token",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                "glm-4.6", "system here", "user asks", timeout=30)
+        self.assertEqual(text, "glm via cli")
+        # Z.AI picks the model via env mapping, never via --model.
+        self.assertNotIn("--model", captured["args"])
+        env = captured["env"]
+        self.assertEqual(env["ANTHROPIC_BASE_URL"], "https://api.z.ai/api/anthropic")
+        self.assertEqual(env["ANTHROPIC_AUTH_TOKEN"], "zk-token")
+        self.assertEqual(env["ANTHROPIC_DEFAULT_OPUS_MODEL"], "glm-4.6")
+        self.assertEqual(env["ANTHROPIC_DEFAULT_SONNET_MODEL"], "glm-4.6")
+        self.assertEqual(env["ANTHROPIC_DEFAULT_HAIKU_MODEL"], "glm-4.6")
+        # The leaked Anthropic key never reaches the subprocess.
+        self.assertNotIn("ANTHROPIC_API_KEY", env)
+
+    def test_zai_cli_validate(self):
+        acc = self.Account.create({
+            "name": "GLM cval", "provider": "zai", "auth_mode": "cli_proxy", "secret": "zk"})
+        seen = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "1.2.3 (Claude Code)"
+            stderr = ""
+
+        def fake_get(self2, url, headers, timeout):
+            seen["url"], seen["headers"] = url, headers
+            return {"data": []}
+
+        with patch.object(llm_cli_transport, "resolve_cli_binary", return_value="/usr/bin/claude"), \
+             patch.object(era_ai_account.subprocess, "run", return_value=_Proc()), \
+             patch.object(type(acc), "_http_get_json", fake_get):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertIn("/api/paas/v4/models", seen["url"])
+        self.assertEqual(seen["headers"]["Authorization"], "Bearer zk")
+
+    def test_zai_cli_agent_routes(self):
+        acc = self.Account.create({
+            "name": "GLM route", "provider": "zai", "auth_mode": "cli_proxy", "secret": "zk"})
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "GLM routed", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        with patch.object(llm_cli_transport, "cli_complete", return_value="glm answer") as mocked:
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["glm answer"])
+        self.assertEqual(mocked.call_args.args[1], "glm-4.6")  # selected GLM model id
+        cfg = mocked.call_args.args[0]
+        self.assertEqual(cfg["anthropic_base_url"], era_ai_account.ZAI_ANTHROPIC_BASE_URL)
+        self.assertEqual(cfg["anthropic_auth_token"], "zk")
+
+    # ---- API key mode (OpenAI-compatible /chat/completions) ----
+    def test_zai_api_sync_models(self):
+        acc = self.Account.create({
+            "name": "GLM apisync", "provider": "zai", "auth_mode": "api_key", "secret": "zk"})
+        acc.action_sync_models()
+        ids = set(acc.model_ids.mapped("model_id"))
+        self.assertIn("glm-4.6", ids)
+        self.assertIn("glm-4.5-flash", ids)
+        self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
+        self.assertEqual(acc._default_chat_model(), "glm-4.6")
+        free = acc.model_ids.filtered(lambda m: m.model_id == "glm-4.5-flash")
+        self.assertEqual(free.cost_info, "Free")
+
+    def test_zai_api_validate(self):
+        acc = self.Account.create({
+            "name": "GLM apival", "provider": "zai", "auth_mode": "api_key", "secret": "zk"})
+        seen = {}
+
+        def fake_get(self2, url, headers, timeout):
+            seen["url"], seen["headers"] = url, headers
+            return {"data": [{"id": "glm-4.6"}]}
+
+        with patch.object(type(acc), "_http_get_json", fake_get):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertIn("/api/paas/v4/models", seen["url"])
+        self.assertEqual(seen["headers"]["Authorization"], "Bearer zk")
+
+    def test_zai_api_content_via_agent(self):
+        acc = self.Account.create({
+            "name": "GLM apichat", "provider": "zai", "auth_mode": "api_key", "secret": "zk-a"})
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "GLM api agent", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        captured = {}
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            captured["endpoint"], captured["body"], captured["headers"] = endpoint, body, headers
+            return {"choices": [{"message": {"content": "glm says hi"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["glm says hi"])
+        self.assertEqual(captured["endpoint"], "/chat/completions")
+        self.assertEqual(captured["body"]["model"], "glm-4.6")
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer zk-a")
+
+    def test_zai_api_generate_text(self):
+        acc = self.Account.create({
+            "name": "GLM apitext", "provider": "zai", "auth_mode": "api_key", "secret": "zk-t"})
+        acc.action_sync_models()
+
+        def fake_request(self, method, endpoint, headers=None, body=None, **kwargs):
+            return {"choices": [{"message": {"content": "hello from glm"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            text = acc.generate_text("hi", system="be brief")
+        self.assertEqual(text, "hello from glm")
+
+    def test_zai_build_messages(self):
+        from odoo.addons.era_ai_accounts.models.llm_service_patch import _zai_build_messages
+        msgs = _zai_build_messages(
+            ["sys"], [],
+            [
+                {"role": "user", "content": "question"},
+                {"type": "function_call", "name": "get_data",
+                 "call_id": "c1", "arguments": '{"q": 7}'},
+                {"type": "function_call_output", "call_id": "c1", "output": "42"},
+            ])
+        self.assertEqual(msgs[0], {"role": "system", "content": "sys"})
+        self.assertEqual(msgs[1], {"role": "user", "content": "question"})
+        self.assertEqual(msgs[2]["role"], "assistant")
+        self.assertEqual(msgs[2]["tool_calls"][0]["id"], "c1")
+        self.assertEqual(msgs[2]["tool_calls"][0]["function"]["name"], "get_data")
+        self.assertEqual(msgs[3], {"role": "tool", "tool_call_id": "c1", "content": "42"})
+
+    def test_zai_api_tool_loop_roundtrip(self):
+        # Native OpenAI tool_calls over /chat/completions: round 1 calls a tool,
+        # the upstream loop executes it, round 2 sees the tool message and answers.
+        acc = self.Account.create({
+            "name": "GLM tools", "provider": "zai", "auth_mode": "api_key", "secret": "zk-1"})
+        calls, bodies = [], []
+        replies = iter([
+            {"choices": [{"message": {"content": None, "tool_calls": [
+                {"id": "tc1", "type": "function",
+                 "function": {"name": "get_data", "arguments": '{"q": 7}'}}]}}]},
+            {"choices": [{"message": {"content": "final answer using the data"}}]},
+        ])
+
+        def fake_request(self2, method, endpoint, headers=None, body=None, **kw):
+            bodies.append(body)
+            return next(replies)
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env, provider="zai")
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = service.request_llm(
+                "glm-4.6", ["be helpful"], [],
+                inputs=[{"role": "user", "content": "how many?"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["final answer using the data"])
+        self.assertEqual(calls, [{"q": 7}])
+        # Round 1 advertised the tool; round 2 carried the result back as a tool message.
+        self.assertEqual(bodies[0]["tools"][0]["function"]["name"], "get_data")
+        self.assertEqual(bodies[0]["tool_choice"], "auto")
+        round2 = bodies[1]["messages"]
+        self.assertTrue(any(m.get("role") == "assistant" and m.get("tool_calls") for m in round2))
+        self.assertTrue(any(
+            m.get("role") == "tool" and "result:7" in (m.get("content") or "")
+            for m in round2))
+
+    def test_zai_api_tool_call_dict_arguments(self):
+        # A non-conforming gateway may send tool-call arguments as an
+        # already-parsed dict (not a JSON string) — they must be preserved,
+        # not fed to json.loads (TypeError) and silently dropped to {}.
+        acc = self.Account.create({
+            "name": "GLM dictargs", "provider": "zai", "auth_mode": "api_key", "secret": "zk"})
+        calls = []
+        replies = iter([
+            {"choices": [{"message": {"content": None, "tool_calls": [
+                {"id": "tc1", "type": "function",
+                 "function": {"name": "get_data", "arguments": {"q": 9}}}]}}]},
+            {"choices": [{"message": {"content": "done"}}]},
+        ])
+
+        def fake_request(self2, method, endpoint, headers=None, body=None, **kw):
+            return next(replies)
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env, provider="zai")
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = service.request_llm(
+                "glm-4.6", [], [], inputs=[{"role": "user", "content": "q"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["done"])
+        self.assertEqual(calls, [{"q": 9}])  # dict args preserved, not {}

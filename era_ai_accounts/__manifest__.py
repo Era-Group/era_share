@@ -1,8 +1,8 @@
 # Part of the ERA Group custom addon layer. License: LGPL-3.
 {
     "name": "ERA AI Accounts",
-    "summary": "Link AI provider accounts (Claude/ChatGPT via local CLI proxy — no API key — "
-               "or OpenAI/Gemini/Cloudflare/custom via key), share them with users, "
+    "summary": "Link AI provider accounts (Claude/ChatGPT/GLM via local CLI proxy — no API key — "
+               "or OpenAI/Gemini/Cloudflare/Z.AI-GLM/custom via key), share them with users, "
                "generate text or images, and pick models dynamically per account.",
     "description": """
 ERA AI Accounts
@@ -19,9 +19,13 @@ stack with first-class **AI accounts**:
 * **Login with Claude / Connect ChatGPT** — link a Claude subscription in-app
   (OAuth, no API key) or a ChatGPT subscription (paste the Codex CLI's
   ``auth.json``), stored once on the server and used by every user in the system.
-* **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API) and any
-  OpenAI-compatible custom provider, with credentials stored per account
-  (encrypted at rest, restricted to AI Account Managers).
+* **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API),
+  Cloudflare Workers AI, **Z.AI (GLM / Zhipu)** and any OpenAI-compatible custom
+  provider, with credentials stored per account (encrypted at rest, restricted
+  to AI Account Managers).
+* **Z.AI (GLM) two ways** — either the OpenAI-compatible **API key** route, or
+  the **CLI proxy** (the Claude binary pointed at Z.AI's Anthropic-compatible
+  endpoint with a GLM Coding Plan key — flat-rate, no per-token billing).
 * **Speech-to-text** — transcribe audio through an OpenAI API-key account
   (Whisper / ``gpt-4o-transcribe``) via ``account.transcribe()``; the CLI proxies
   are text-only.
@@ -33,7 +37,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.11.0",
+    "version": "19.0.1.12.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

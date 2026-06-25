@@ -202,8 +202,12 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
             "'CLI binary path' or the ERA_AI_CLAUDE_BIN environment variable."
         ))
 
+    # Z.AI (GLM) routing: the model is selected through Z.AI's server-side
+    # mapping (ANTHROPIC_DEFAULT_*_MODEL, set below), so we pass NO --model —
+    # Claude Code rejects a non-Claude name like "glm-4.6" on that flag.
+    zai_base = cfg.get("anthropic_base_url")
     args = [binary, "-p", "--output-format", "json"]
-    if model:
+    if model and not zai_base:
         args += ["--model", model]
     # Disable all built-in tools so this behaves as a pure chat completion.
     args += ["--allowed-tools", ""]
@@ -228,9 +232,35 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     config_dir = cfg.get("config_dir")
     if config_dir:
         run_env["CLAUDE_CONFIG_DIR"] = config_dir
-    # Never inherit an API key into the subprocess: we want it to use the
-    # connected account's own (subscription/OAuth) auth, not bill an API key.
-    run_env.pop("ANTHROPIC_API_KEY", None)
+    # Never inherit Anthropic auth/routing from the ambient env. The regular
+    # Claude path must use the connected account's own (subscription/OAuth) auth
+    # against the default endpoint — not an exported API key or bearer token —
+    # and the Z.AI block below is the SINGLE source of truth for the Z.AI
+    # endpoint + token + model mapping. Drop them all here, then re-set only what
+    # this call needs (so e.g. an operator's own ANTHROPIC_AUTH_TOKEN/BASE_URL
+    # for personal `claude` use can never contaminate auth or billing here).
+    for var in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL",
+                "ANTHROPIC_DEFAULT_OPUS_MODEL", "ANTHROPIC_DEFAULT_SONNET_MODEL",
+                "ANTHROPIC_DEFAULT_HAIKU_MODEL"):
+        run_env.pop(var, None)
+
+    # Z.AI (GLM Coding Plan) routing: point this same Claude binary at Z.AI's
+    # Anthropic-compatible endpoint with the GLM Coding Plan key as a bearer
+    # ANTHROPIC_AUTH_TOKEN (distinct from ANTHROPIC_API_KEY, which we drop
+    # above). Z.AI maps the Claude tiers to GLM models server-side, so we pin
+    # all three tiers to the selected GLM model — that, not --model, is how the
+    # model is chosen for Z.AI. Absent (regular Claude) -> nothing changes.
+    if zai_base:
+        run_env["ANTHROPIC_BASE_URL"] = zai_base
+        if cfg.get("anthropic_auth_token"):
+            run_env["ANTHROPIC_AUTH_TOKEN"] = cfg["anthropic_auth_token"]
+        if model:
+            run_env["ANTHROPIC_DEFAULT_OPUS_MODEL"] = model
+            run_env["ANTHROPIC_DEFAULT_SONNET_MODEL"] = model
+            run_env["ANTHROPIC_DEFAULT_HAIKU_MODEL"] = model
+        # Keep the CLI's own request timeout above our subprocess timeout so a
+        # slow GLM response isn't cut short internally before we time it out.
+        run_env["API_TIMEOUT_MS"] = str(int(max(1, timeout)) * 1000)
 
     req_size = len(system_prompt or "") + len(user_prompt or "")
     gap = _compute_gap(cfg, req_size) if cfg.get("gap_enabled", True) else 0.0

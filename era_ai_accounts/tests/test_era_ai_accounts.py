@@ -1501,3 +1501,44 @@ class TestEraAiAccounts(TransactionCase):
                 tools=self._fake_tools(calls))
         self.assertEqual(out, ["done"])
         self.assertEqual(calls, [{"q": 9}])  # dict args preserved, not {}
+
+    # ------------------------------------------------------------- new safeguards
+    def test_cli_denylist_blocks_dangerous_flags(self):
+        acc = self.Account.create({
+            "name": "Deny", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        for flag in ("--dangerously-skip-permissions", "--yolo", "--add-dir /tmp",
+                      "--config web_search=enabled", "-c sandbox_mode=none"):
+            with self.assertRaises(ValidationError, msg=f"flag={flag}"):
+                acc.cli_extra_args = flag
+                acc.flush_recordset()
+
+    def test_cli_denylist_allows_benign_flags(self):
+        acc = self.Account.create({
+            "name": "Allow", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        acc.cli_extra_args = "--max-tokens 4096 --verbose"
+        acc.flush_recordset()  # no ValidationError
+
+    def test_request_count_increments(self):
+        acc = self.Account.create({
+            "name": "Count", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "a", "secret": "t",
+        })
+        self.assertEqual(acc.request_count, 0)
+        self.assertFalse(acc.last_request_at)
+        acc._log_request()
+        self.env.flush_all()
+        self.assertEqual(acc.request_count, 1)
+        acc._log_request()
+        self.env.flush_all()
+        self.assertEqual(acc.request_count, 2)
+        self.assertTrue(acc.last_request_at)
+
+    def test_max_concurrency_is_readonly(self):
+        acc = self.Account.create({
+            "name": "RO", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        field_meta = self.env["era.ai.account"]._fields["max_concurrency"]
+        self.assertTrue(field_meta.readonly,
+                        "max_concurrency must be readonly (legacy, use ai.cli_max_concurrency)")

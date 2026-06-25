@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_whatsapp_float.Window">
+      <!-- Whole widget is visible to WhatsApp users only. -->
+      <t t-if="state.allowed">
+        <!-- Floating Discuss window. -->
+        <div t-if="state.open and !state.minimized"
+             class="o_era_wa_float position-fixed d-flex flex-column d-print-none shadow-lg"
+             t-ref="root"
+             t-attf-style="top:{{position.top}};left:{{position.left}};bottom:{{position.bottom}};right:{{position.right}};width:{{position.width}}px;height:{{position.height}}px;">
+            <div class="o_era_wa_float_header d-flex align-items-center flex-shrink-0">
+                <i class="fa fa-whatsapp me-2"/>
+                <span class="o_era_wa_float_title flex-grow-1 text-truncate fw-bold">WhatsApp</span>
+                <button class="o_era_wa_float_btn btn btn-sm" t-on-click="onMinimize"
+                        title="Minimize">
+                    <i class="fa fa-chevron-down"/>
+                </button>
+                <button class="o_era_wa_float_btn btn btn-sm" t-on-click="onClose" title="Close">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+
+            <div class="o_era_wa_float_body d-flex flex-grow-1 overflow-hidden">
+                <!-- WhatsApp-only conversation list, reusing native sidebar items. -->
+                <div class="o_era_wa_float_sidebar o-mail-DiscussSidebar o-mail-discussSidebarBgColor d-flex flex-column overflow-auto o-scrollbar-thin flex-shrink-0 py-1">
+                    <t t-if="!whatsappThreads.length">
+                        <div class="o_era_wa_float_empty text-muted text-center small p-3">
+                            No WhatsApp conversations yet.
+                        </div>
+                    </t>
+                    <t t-foreach="whatsappThreads" t-as="thread" t-key="thread.localId">
+                        <DiscussSidebarChannel thread="thread"/>
+                    </t>
+                </div>
+
+                <!-- Genuine Discuss content pane (thread + composer). -->
+                <div class="o_era_wa_float_content flex-grow-1 d-flex overflow-hidden">
+                    <Discuss hasSidebar="false"/>
+                </div>
+            </div>
+
+            <!-- Resize grip. -->
+            <div class="o_era_wa_float_resize" t-on-pointerdown="onResizePointerDown"/>
+        </div>
+
+        <!-- Launcher bubble: visible whenever the window is closed or minimized. -->
+        <div t-else=""
+             class="o_era_wa_float_bubble position-fixed d-print-none d-flex align-items-center justify-content-center"
+             t-on-click="onBubbleClick" title="WhatsApp conversations">
+            <i class="fa fa-whatsapp"/>
+            <span t-if="unreadCount"
+                  class="o_era_wa_float_bubble_badge badge rounded-pill"
+                  t-esc="unreadCount"/>
+        </div>
+      </t>
+    </t>
+
+</templates>

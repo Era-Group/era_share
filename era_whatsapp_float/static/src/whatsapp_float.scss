@@ -1,0 +1,128 @@
+// WhatsApp brand palette
+$o-era-wa-green: #25d366;
+$o-era-wa-header: #075e54;
+$o-era-wa-header-hover: #0a7163;
+
+// Float above the navbar/systray (sticky ~1030) but below modals (1050+),
+// so Discuss composer popovers/dialogs still render on top.
+$o-era-wa-zindex: 1041;
+
+.o_era_wa_float {
+    z-index: $o-era-wa-zindex;
+    width: 760px;
+    height: 600px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    min-width: 420px;
+    min-height: 360px;
+    background-color: var(--o-mail-Discuss-background, #fff);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 10px;
+    overflow: hidden;
+
+    .o_era_wa_float_header {
+        height: 48px;
+        padding: 0 .5rem 0 1rem;
+        background-color: $o-era-wa-header;
+        color: #fff;
+        cursor: grab;
+        user-select: none;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        .o_era_wa_float_title {
+            font-size: 1rem;
+        }
+
+        .o_era_wa_float_btn {
+            color: rgba(255, 255, 255, .85);
+            border: 0;
+            box-shadow: none;
+            cursor: pointer;
+
+            &:hover {
+                color: #fff;
+                background-color: $o-era-wa-header-hover;
+            }
+        }
+    }
+
+    .o_era_wa_float_body {
+        // Allow inner flex children to shrink and scroll instead of overflowing.
+        min-height: 0;
+    }
+
+    .o_era_wa_float_sidebar {
+        width: 280px;
+        min-width: 220px;
+        border-inline-end: 1px solid var(--border-color, #dee2e6);
+    }
+
+    .o_era_wa_float_content {
+        min-width: 0;
+        min-height: 0;
+
+        // The embedded Discuss fills the remaining space.
+        .o-mail-Discuss {
+            height: 100%;
+            width: 100%;
+            border-top: 0 !important;
+        }
+    }
+
+    .o_era_wa_float_resize {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline-end: 0;
+        width: 16px;
+        height: 16px;
+        cursor: nwse-resize;
+        z-index: 1;
+        // Subtle corner grip.
+        background: linear-gradient(
+            135deg,
+            transparent 0 50%,
+            var(--border-color, #adb5bd) 50% 60%,
+            transparent 60% 70%,
+            var(--border-color, #adb5bd) 70% 80%,
+            transparent 80%
+        );
+
+        &:dir(rtl) {
+            cursor: nesw-resize;
+            transform: scaleX(-1);
+        }
+    }
+}
+
+.o_era_wa_float_bubble {
+    z-index: $o-era-wa-zindex - 1;
+    inset-block-end: 24px;
+    inset-inline-end: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: $o-era-wa-green;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+    transition: transform .15s ease, box-shadow .15s ease;
+
+    &:hover {
+        transform: scale(1.06);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+    }
+
+    .o_era_wa_float_bubble_badge {
+        position: absolute;
+        top: -2px;
+        inset-inline-end: -2px;
+        background-color: var(--danger, #dc3545);
+        color: #fff;
+        font-size: .7rem;
+        min-width: 1.25rem;
+    }
+}

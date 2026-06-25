@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#25d366"/>
+      <stop offset="1" stop-color="#075e54"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="256" height="256" rx="56" fill="url(#g)"/>
+  <!-- chat card + tail -->
+  <path d="M96 158 L124 158 L90 182 Z" fill="#ffffff"/>
+  <rect x="48" y="46" width="160" height="124" rx="24" fill="#ffffff"/>
+  <!-- message lines -->
+  <rect x="66" y="78"  width="104" height="16" rx="8" fill="#128c7e"/>
+  <rect x="66" y="102" width="88"  height="16" rx="8" fill="#128c7e"/>
+  <rect x="66" y="126" width="72"  height="16" rx="8" fill="#128c7e"/>
+</svg>

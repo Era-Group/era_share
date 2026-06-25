@@ -5,8 +5,8 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
 /**
- * Small systray button (top navbar) that toggles the floating WhatsApp window,
- * complementing the always-visible bottom bubble.
+ * Systray button (top navbar) that toggles the floating WhatsApp window. This is
+ * the sole launcher for the float.
  */
 export class WhatsappFloatSystray extends Component {
     static template = "era_whatsapp_float.Systray";

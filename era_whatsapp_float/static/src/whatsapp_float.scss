@@ -123,34 +123,4 @@ $o-era-wa-zindex: 1041;
     }
 }
 
-.o_era_wa_float_bubble {
-    z-index: $o-era-wa-zindex - 1;
-    // Physical bottom-right anchor (WhatsApp convention), independent of RTL/LTR,
-    // matching the window's default corner.
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: $o-era-wa-green;
-    color: #fff;
-    font-size: 28px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
-    transition: transform .15s ease, box-shadow .15s ease;
-
-    &:hover {
-        transform: scale(1.06);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
-    }
-
-    .o_era_wa_float_bubble_badge {
-        position: absolute;
-        top: -2px;
-        right: -2px;
-        background-color: var(--danger, #dc3545);
-        color: #fff;
-        font-size: .7rem;
-        min-width: 1.25rem;
-    }
-}
+// The float is launched from the systray icon; no bottom launcher bubble.

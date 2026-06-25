@@ -7,15 +7,14 @@ Discuss** experience, scoped to **WhatsApp** conversations (the official
 
 ## What it does
 
-* A persistent **WhatsApp bubble** sits at the bottom-right of every backend
-  page. Click it to open the floating window. A WhatsApp icon is also added to
-  the top systray.
+* A **WhatsApp icon in the top systray** is the launcher. Click it to open the
+  floating window (click again to minimize).
 * The window shows a **WhatsApp-only conversation list** on the side and the
   **real Discuss thread + composer** (message history, attachments, delivery
   ticks, reactions, …) in the main pane — it reuses the genuine Discuss OWL
   components, so it inherits every Discuss feature automatically.
-* **Minimize** (chevron-down) or **close** collapses the window back to the
-  bubble, so it can be reopened with a single click.
+* **Minimize** (chevron-down) or **close** hides the window; reopen it from the
+  systray icon.
 * The header is a **drag handle**; the bottom-end corner is a **resize grip**.
 * A **members toggle** (people icon in the header) shows/hides the Discuss
   member-list inspector. It is **hidden by default** so the conversation uses the

@@ -18,7 +18,7 @@ import { DiscussSidebarChannel } from "@mail/discuss/core/public_web/discuss_sid
 
 // Single shared, reactive state for the one-and-only floating window. It is
 // created in the service `start()` and shared with the window component so the
-// systray button, the bubble and any other caller all drive the same window.
+// systray button and any other caller all drive the same window.
 // `allowed` gates the whole widget to WhatsApp users; it flips to true once the
 // group membership resolves (see the service `start()` below).
 const floatState = reactive({
@@ -125,14 +125,6 @@ export class WhatsappFloatWindow extends Component {
         return category.threads.filter((thread) => thread.displayInSidebar);
     }
 
-    /** Total unread WhatsApp messages, shown as a badge on the bubble. */
-    get unreadCount() {
-        return this.whatsappThreads.reduce(
-            (total, thread) => total + (thread.importantCounter || 0),
-            0
-        );
-    }
-
     _activate() {
         // Make sure channels are loaded so the WhatsApp list can populate.
         if (this.store.channels?.status === "not_fetched") {
@@ -162,11 +154,6 @@ export class WhatsappFloatWindow extends Component {
 
     onClose() {
         this.state.open = false;
-        this.state.minimized = false;
-    }
-
-    onBubbleClick() {
-        this.state.open = true;
         this.state.minimized = false;
     }
 
@@ -219,7 +206,7 @@ export const whatsappFloatService = {
         registry
             .category("main_components")
             .add("era_whatsapp_float.Window", { Component: WhatsappFloatWindow });
-        // Reveal the bubble/window/systray only for WhatsApp users.
+        // Reveal the window/systray only for WhatsApp users.
         user.hasGroup(WHATSAPP_GROUP).then((hasAccess) => {
             floatState.allowed = hasAccess;
         });

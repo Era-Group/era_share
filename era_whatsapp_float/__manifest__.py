@@ -37,6 +37,8 @@ the rest of Odoo and inherits every Discuss feature automatically.
             "era_whatsapp_float/static/src/whatsapp_float.xml",
             "era_whatsapp_float/static/src/whatsapp_float_systray.js",
             "era_whatsapp_float/static/src/whatsapp_float_systray.xml",
+            "era_whatsapp_float/static/src/whatsapp_chatter_button.js",
+            "era_whatsapp_float/static/src/whatsapp_chatter_button.xml",
         ],
     },
     "installable": True,

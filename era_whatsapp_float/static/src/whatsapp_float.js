@@ -25,6 +25,7 @@ const floatState = reactive({
     open: false,
     minimized: false,
     allowed: false,
+    targetChannelId: null, // set by openChannel() to navigate on next show
 });
 
 // The official `whatsapp` (EE) module's access group.
@@ -104,6 +105,30 @@ export class WhatsappFloatWindow extends Component {
             () => [this.isShown]
         );
 
+        // When a specific channel was requested (via openChannel()), navigate to it
+        // once it becomes available in the store (channels may still be loading).
+        useEffect(
+            () => {
+                if (!this.state.targetChannelId || !this.isShown) {
+                    return;
+                }
+                const thread = this.store.Thread.get({
+                    model: "discuss.channel",
+                    id: this.state.targetChannelId,
+                });
+                if (thread) {
+                    thread.setAsDiscussThread(false);
+                    this.state.targetChannelId = null;
+                }
+            },
+            () => [
+                this.state.targetChannelId,
+                this.state.open,
+                this.state.minimized,
+                this.whatsappThreads.length,
+            ]
+        );
+
         onWillUnmount(() => this._deactivate());
     }
 
@@ -134,10 +159,14 @@ export class WhatsappFloatWindow extends Component {
             this._previousIsActive = this.store.discuss.isActive;
         }
         this.store.discuss.isActive = true;
-        // Land on a WhatsApp conversation if none (or a non-WhatsApp one) is open.
-        const current = this.store.discuss.thread;
-        if (!current || current.channel_type !== "whatsapp") {
-            this.whatsappThreads[0]?.setAsDiscussThread(false);
+        // When a specific target was requested, let the dedicated useEffect handle
+        // navigation (it re-fires once channels are loaded). Otherwise auto-select
+        // the first WhatsApp conversation if no WhatsApp thread is active.
+        if (!this.state.targetChannelId) {
+            const current = this.store.discuss.thread;
+            if (!current || current.channel_type !== "whatsapp") {
+                this.whatsappThreads[0]?.setAsDiscussThread(false);
+            }
         }
     }
 
@@ -227,6 +256,11 @@ export const whatsappFloatService = {
                     floatState.open = true;
                     floatState.minimized = false;
                 }
+            },
+            openChannel(channelId) {
+                floatState.targetChannelId = channelId;
+                floatState.open = true;
+                floatState.minimized = false;
             },
         };
     },

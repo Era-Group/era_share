@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+<!--
+    Inserts a WhatsApp shortcut button into the Chatter topbar, just before the
+    grow-spacer (i.e. after the Activity button). The button only renders when:
+      - the record's partner has an existing WhatsApp conversation, AND
+      - the current user belongs to the WhatsApp access group.
+-->
+<t t-name="era_whatsapp_float.ChatterPatch" t-inherit="mail.Chatter" t-inherit-mode="extension">
+    <xpath expr="//span[hasclass('o-mail-Chatter-topbarGrow')]" position="before">
+        <button t-if="waButtonVisible"
+                class="o-mail-Chatter-whatsappFloat btn btn-secondary text-nowrap me-1"
+                t-att-class="{ 'my-2': !props.compactHeight }"
+                t-on-click="openWhatsappFromChatter"
+                title="Open WhatsApp conversation">
+            <i class="fa fa-whatsapp me-1" aria-hidden="true"/>
+            <span>WhatsApp</span>
+        </button>
+    </xpath>
+</t>
+
+</templates>

@@ -1,0 +1,57 @@
+<section style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; color: #1a1a1a; max-width: 1000px; margin: 0 auto; padding: 0 0 32px 0;">
+
+  <!-- Hero -->
+  <div style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 60%, #134e4a 130%); border-radius: 16px; padding: 48px 40px 40px 40px; color: #fff; margin-bottom: 32px;">
+    <h1 style="margin: 0 0 12px 0; font-size: 2.2em; font-weight: 800; letter-spacing: -0.5px;">ERA Address Client</h1>
+    <p style="margin: 0; font-size: 1.15em; opacity: 0.9; max-width: 680px;">Client for ERA Address Lookup service via service.era.net.sa — looks up Saudi addresses by building number or coordinates.</p>
+  </div>
+
+  <!-- Arabic RTL Summary -->
+  <div style="background: #f0fdfa; border: 1.5px solid #99f6e4; border-radius: 14px; padding: 24px 28px; margin-bottom: 32px; direction: rtl; text-align: right;">
+    <h2 style="color: #0f766e; margin: 0 0 10px 0; font-size: 1.2em;">نبذة عن الوحدة</h2>
+    <p style="margin: 0; line-height: 1.9; color: #134e4a;">
+      يوفّر هذا الوحدة عميلًا مشتركًا للاتصال بخدمة ERA للعناوين عبر service.era.net.sa، مما يتيح البحث عن العناوين السعودية بالرقم البنائي أو الإحداثيات الجغرافية. تُستخدَم الوحدة كمكتبة مشتركة تعتمد عليها وحدات ERA الأخرى دون تكرار منطق الاتصال. يتم تخزين مفتاح API وعنوان الخدمة بأمان في معاملات النظام ومعالجة أخطاء الشبكة بشكل واضح.
+    </p>
+  </div>
+
+  <!-- Feature Grid -->
+  <div style="display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 32px;">
+
+    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
+      <div style="font-size: 2em; margin-bottom: 10px;">🏠</div>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Saudi Address Lookup</h3>
+      <p style="margin: 0; color: #444; line-height: 1.6;">Query the ERA Address service to resolve building numbers into full Saudi postal addresses including district, city, and zip code.</p>
+    </div>
+
+    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
+      <div style="font-size: 2em; margin-bottom: 10px;">📍</div>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Coordinate-Based Search</h3>
+      <p style="margin: 0; color: #444; line-height: 1.6;">Reverse-geocode GPS coordinates to retrieve the nearest registered Saudi address from the national address database.</p>
+    </div>
+
+    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
+      <div style="font-size: 2em; margin-bottom: 10px;">🔗</div>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">ERA Service Integration</h3>
+      <p style="margin: 0; color: #444; line-height: 1.6;">Connects to service.era.net.sa with configurable base URL and API key — settings stored securely in system parameters.</p>
+    </div>
+
+    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
+      <div style="font-size: 2em; margin-bottom: 10px;">🔄</div>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Reusable Client Library</h3>
+      <p style="margin: 0; color: #444; line-height: 1.6;">Shared across ERA modules as a dependency — any module can call the address API without duplicating connection logic.</p>
+    </div>
+
+    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
+      <div style="font-size: 2em; margin-bottom: 10px;">🛡️</div>
+      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Error Handling</h3>
+      <p style="margin: 0; color: #444; line-height: 1.6;">Gracefully handles network errors, invalid inputs, and service timeouts with clear exception messages for developers.</p>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; color: #aaa; font-size: 0.88em; border-top: 1px solid #e5e7eb; padding-top: 18px;">
+    &copy; ERA Network — ERA Address Client Module
+  </div>
+
+</section>

@@ -123,10 +123,11 @@ class CrmForsah(models.Model):
     def get_forsah_data(self):
         """Fetch the Forsah feed and upsert it into ``crm.forsah.client``.
 
-        Records are matched on ``forsah_id`` so that triage decisions
-        (``study_state``), tags and any linked opportunity survive a refresh.
-        Tenders that disappear from the feed are archived rather than deleted,
-        preserving their history and any opportunities created from them.
+        Records are matched on ``link`` (the marketplace URL — a stable natural
+        key) and updated in place, so triage decisions (``study_state``), tags
+        and any linked opportunity always survive a refresh. Existing records
+        are never deactivated by the sync; ones that drop out of the feed are
+        left untouched (use due-date filters to hide expired ones).
         """
         try:
             response = requests.get(FORSAH_DATA_URL, timeout=30)
@@ -145,45 +146,34 @@ class CrmForsah(models.Model):
 
         Tender = self.with_context(active_test=False)
         touched = self.browse()
-        seen_refs = []
         for data in payload.get('data') or []:
             name = data.get('name')
-            ref = data.get('id')
-            if not name or not ref:
-                # The feed always carries an id; skip malformed items rather than
-                # creating an undeduplicated record on every run.
-                if name and not ref:
-                    _logger.warning("Forsah feed item without id skipped: %s", name)
+            link = data.get('link')
+            if not name or not link:
+                # `link` (the marketplace URL) is the stable natural key; skip
+                # malformed items rather than creating an undeduplicated record.
+                if name and not link:
+                    _logger.warning("Forsah feed item without link skipped: %s", name)
                 continue
             feed_vals = {
                 'name': name,
-                'link': data.get('link'),
+                'link': link,
                 'size': data.get('size'),
                 'category': data.get('category'),
                 'days': data.get('days'),
                 'due_date': self._parse_feed_date(data.get('due_date')),
                 'city': data.get('city'),
             }
-            record = Tender.search([('forsah_id', '=', ref)], limit=1)
+            record = Tender.search([('link', '=', link)], limit=1)
             if record:
-                # Refresh only feed-sourced fields; reactivate if it had been
-                # archived for falling out of a previous feed.
-                record.write({**feed_vals, 'active': True})
+                # Update feed-sourced fields in place; never recreate, so triage
+                # decisions, tags and any linked opportunity are preserved.
+                record.write(feed_vals)
             else:
-                record = self.create({**feed_vals, 'forsah_id': ref})
+                record = self.create({**feed_vals, 'forsah_id': data.get('id')})
             touched |= record
-            seen_refs.append(ref)
 
         touched._sync_category_tags()
-
-        if seen_refs:
-            stale = Tender.search([
-                ('forsah_id', '!=', False),
-                ('forsah_id', 'not in', seen_refs),
-                ('active', '=', True),
-            ])
-            if stale:
-                stale.write({'active': False})
         _logger.info("Forsah sync: %s tenders upserted.", len(touched))
         return True
 

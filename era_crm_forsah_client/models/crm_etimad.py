@@ -61,6 +61,23 @@ class CrmEtimad(models.Model):
     def action_mark_rejected(self):
         self.write({'study_state': 'rejected'})
 
+    @staticmethod
+    def _clean_date(value):
+        """Coerce a feed date into something the Date field accepts.
+
+        The Etimad API may send 'False' or '' for a missing date; anything
+        that isn't a valid 'YYYY-MM-DD' value becomes False instead of crashing.
+        """
+        if not isinstance(value, str):
+            return value if value else False
+        value = value.strip()
+        if not value or value == 'False':
+            return False
+        try:
+            return fields.Date.to_date(value)
+        except (ValueError, TypeError):
+            return False
+
     def get_etimad_data(self):
         """Fetch the Etimad feed and create any tenders not already present."""
         try:
@@ -87,13 +104,13 @@ class CrmEtimad(models.Model):
                 'name': data.get('name'),
                 'link': data.get('link'),
                 'category': data.get('category'),
-                'limit': data.get('limit'),
+                'limit': self._clean_date(data.get('limit')),
                 'company': data.get('company'),
                 'method': data.get('method'),
                 'ref': ref,
                 'cost': data.get('cost'),
-                'questions': data.get('questions'),
-                'publish': data.get('publish'),
+                'questions': self._clean_date(data.get('questions')),
+                'publish': self._clean_date(data.get('publish')),
             })
         return True
 

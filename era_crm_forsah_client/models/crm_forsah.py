@@ -215,6 +215,19 @@ class CrmForsah(models.Model):
     def action_mark_rejected(self):
         self.write({'study_state': 'rejected'})
 
+    @api.model
+    def action_archive_old(self):
+        """Archive opportunities whose submission deadline (due_date) has passed.
+
+        Only genuinely expired records are archived — records merely absent from
+        a feed refresh are left untouched.
+        """
+        today = fields.Date.today()
+        expired = self.search([('due_date', '<', today), ('active', '=', True)])
+        if expired:
+            expired.write({'active': False})
+        return True
+
     def _get_source(self):
         return self.env['utm.source'].search([('name', '=', 'Forsah')], limit=1)
 

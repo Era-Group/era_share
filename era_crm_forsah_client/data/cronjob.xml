@@ -41,6 +41,16 @@
         <field name="interval_number">1</field>
         <field name="active">True</field>
     </record>
+    <record id="ir_cron_forsah_archive_old_records" model="ir.cron">
+        <field name="name">Forsah Archive Old Records</field>
+        <field name="model_id" ref="model_crm_forsah_client"/>
+        <field name="state">code</field>
+        <field name="code">model.action_archive_old()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="active">True</field>
+    </record>
     <record id="ir_cron_forsah_refresh_days" model="ir.cron">
         <field name="name">Forsah Refresh Days Remaining</field>
         <field name="model_id" ref="model_crm_forsah_client"/>

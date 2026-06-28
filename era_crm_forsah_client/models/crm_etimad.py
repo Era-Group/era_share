@@ -97,21 +97,27 @@ class CrmEtimad(models.Model):
 
         for data in payload.get('data') or []:
             ref = data.get('ref')
-            if ref and self.search_count([('ref', '=', ref)]):
+            name = data.get('name')
+            if not ref or not name:
                 continue
-            self.create({
+            feed_vals = {
                 'etimad_id': data.get('id'),
-                'name': data.get('name'),
+                'name': name,
                 'link': data.get('link'),
                 'category': data.get('category'),
                 'limit': self._clean_date(data.get('limit')),
                 'company': data.get('company'),
                 'method': data.get('method'),
-                'ref': ref,
                 'cost': data.get('cost'),
                 'questions': self._clean_date(data.get('questions')),
                 'publish': self._clean_date(data.get('publish')),
-            })
+            }
+            record = self.with_context(active_test=False).search([('ref', '=', ref)], limit=1)
+            if record:
+                # Update feed fields in place; triage, tags and lead are preserved.
+                record.write(feed_vals)
+            else:
+                self.create({**feed_vals, 'ref': ref})
         return True
 
     @api.model

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل المستخدم — وحدة الإثراء (Enrichment)</title>
+<style>
+  :root{
+    --primary:#0f4c5c; --secondary:#1b6e7e; --accent:#c79a3a;
+    --bg:#f6f8f9; --card:#ffffff; --text:#1f2d33; --muted:#5d6f78;
+    --line:#e2e8ea; --tip-bg:#eef6f3; --tip-line:#2e8b6f;
+    --warn-bg:#fdf4e7; --warn-line:#c79a3a; --step-bg:#f0f5f6;
+    --start-bg:#eaf4f1; --start-line:#0f4c5c;
+    --danger-bg:#fcebea; --danger-line:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma","Geeza Pro",sans-serif;
+    line-height:1.95; font-size:17px;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
+  code,.kw{background:#fff; border:1px solid var(--line); border-radius:5px;
+    padding:1px 6px; font-family:Consolas,"Courier New",monospace; direction:ltr;
+    unicode-bidi:embed; display:inline-block; font-size:.92em; color:#2c4470}
+  /* Cover */
+  .cover{background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff; padding:54px 30px 46px; text-align:center;
+    border-radius:0 0 26px 26px; box-shadow:0 6px 24px rgba(15,76,92,.18);}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.16); color:#fff;
+    padding:5px 16px; border-radius:30px; font-size:14px; margin-bottom:14px;}
+  .cover h1{margin:6px 0 10px; font-size:33px; font-weight:800}
+  .cover p{margin:0 auto; max-width:660px; font-size:18px; opacity:.95}
+  .cover .ver{margin-top:16px; font-size:14px; opacity:.8}
+  /* Intro */
+  .intro{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 26px; margin:26px 0; box-shadow:0 2px 10px rgba(0,0,0,.03);
+    border-right:6px solid var(--accent);}
+  .intro h2{margin:0 0 8px; color:var(--primary); font-size:22px}
+  /* Quick start */
+  .quickstart{background:var(--start-bg); border:2px solid var(--start-line);
+    border-radius:18px; padding:26px 28px; margin:26px 0; box-shadow:0 4px 16px rgba(15,76,92,.10)}
+  .quickstart h2{margin:0 0 6px; color:var(--primary); font-size:27px}
+  .quickstart .sub{color:var(--secondary); margin:0 0 16px; font-size:16px}
+  /* TOC */
+  .toc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 24px; margin:24px 0}
+  .toc h3{margin:0 0 10px; color:var(--secondary)}
+  .toc ol{margin:0; padding-inline-start:22px}
+  .toc a{color:var(--primary); text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  /* Sections */
+  section{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:26px 28px; margin:22px 0; box-shadow:0 2px 10px rgba(0,0,0,.03)}
+  section h2{color:var(--primary); font-size:24px; margin:0 0 6px;
+    border-bottom:2px solid var(--line); padding-bottom:10px}
+  section h3{color:var(--secondary); font-size:19px; margin:18px 0 8px}
+  section .intro-line{color:var(--muted); margin:0 0 12px}
+  .path{display:inline-block; background:var(--step-bg); border:1px solid var(--line);
+    border-radius:8px; padding:3px 10px; font-size:15px; color:var(--primary);
+    margin:2px 0; font-weight:600; direction:rtl}
+  /* Steps */
+  ol.steps{counter-reset:step; list-style:none; padding:0; margin:14px 0}
+  ol.steps li{counter-increment:step; position:relative; background:#fff;
+    border:1px solid var(--line); border-radius:12px; padding:14px 60px 14px 16px; margin:10px 0}
+  .quickstart ol.steps li{background:#fff}
+  ol.steps li::before{content:counter(step); position:absolute; right:14px; top:14px;
+    width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px}
+  ol.steps li b{color:var(--primary)}
+  /* Option card */
+  .opt{border:1px solid var(--line); border-radius:14px; padding:8px 18px 16px; margin:16px 0; background:#fcfdfd}
+  .opt h3{color:var(--secondary); font-size:19px; margin:14px 0 10px}
+  .opt .qa{display:flex; gap:10px; margin:8px 0; align-items:flex-start}
+  .opt .qa .lbl{flex:0 0 96px; font-weight:700; font-size:14px; padding:3px 0; text-align:center; border-radius:8px}
+  .opt .qa.what .lbl{background:#e7eff1; color:#0f4c5c}
+  .opt .qa.why  .lbl{background:#eef6f3; color:#2e8b6f}
+  .opt .qa.eff  .lbl{background:#fdf4e7; color:#9c6b16}
+  .opt .qa .txt{flex:1}
+  .ex{background:#eef2fb; border-right:4px solid #3b5b9a; border-radius:10px; padding:10px 14px; margin:10px 0 2px; font-size:15px}
+  .ex b{color:#2c4470}
+  /* Callouts */
+  .tip,.warn,.danger{border-radius:12px; padding:14px 18px; margin:16px 0; font-size:16px}
+  .tip{background:var(--tip-bg); border-right:5px solid var(--tip-line)}
+  .warn{background:var(--warn-bg); border-right:5px solid var(--warn-line)}
+  .danger{background:var(--danger-bg); border-right:6px solid var(--danger-line)}
+  .tip b,.warn b,.danger b{display:block; margin-bottom:4px}
+  .danger b{color:var(--danger-line); font-size:17px}
+  /* What-if */
+  .whatif{border:1px solid var(--line); border-radius:12px; padding:6px 18px 14px; margin:12px 0; background:#fff}
+  .whatif p{margin:12px 0}
+  .whatif .q{font-weight:700; color:var(--primary)}
+  .whatif .a{color:var(--text)}
+  /* Tables */
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:16px; background:#fff}
+  th,td{border:1px solid var(--line); padding:11px 13px; text-align:right; vertical-align:top}
+  th{background:var(--primary); color:#fff; font-weight:700}
+  tr:nth-child(even) td{background:#fafcfc}
+  .pill{display:inline-block; background:var(--tip-bg); color:var(--primary); border-radius:20px; padding:1px 10px; font-size:14px; font-weight:600}
+  .pill.off{background:#fcebea; color:#c0392b}
+  /* Tech */
+  .tech{background:#f1f3f4; border:1px dashed #b8c2c6; border-radius:12px; padding:16px 20px; margin-top:26px; font-size:15px; color:var(--muted)}
+  .tech h3{color:#46555c; margin-top:0}
+  .tech code{background:#fff}
+  footer{text-align:center; color:var(--muted); font-size:14px; margin-top:30px}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <span class="badge">Era Group · CRM AI Agents</span>
+  <h1>وحدة الإثراء — Enrichment</h1>
+  <p>المحرّك الذي يكمّل بيانات عملائك من مصادر موثوقة، ويتحقّق من صحة البريد والجوال والواتساب — بالتسلسل، وبأقل تكلفة، وباحترام كامل لخصوصية العميل.</p>
+  <div class="ver">الإصدار 19.0.1.3.0 · دليل المستخدم</div>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <h2>وش تسوّي لك هذه الوحدة؟ (بسطر واحد)</h2>
+    <p>تأخذ سجل عميل ناقص أو قديم، وتجرّب مزوّدي البيانات <b>واحدًا بعد الآخر حسب الأولوية</b>، وتتوقف عند <b>أول مزوّد ينجح</b> — فتملأ الحقول الناقصة وتتحقّق من أن البريد والجوال «شغّالين»، وتتحقّق (اختياريًا) من وجود الرقم على واتساب. وهي محرّك مشترك: وكلاء آخرون (مثل «إحياء العملاء الخاملين») يستدعونها لتحديث البيانات قبل العمل عليها.</p>
+  </div>
+
+  <!-- ===================== START HERE ===================== -->
+  <div class="quickstart" id="start">
+    <h2>★ ابدأ من هنا</h2>
+    <p class="sub">الوحدة تأتي <b>مطفأة بالكامل</b> ولا تنفق ريالًا حتى تشغّلها بنفسك. اتبع هذا الترتيب.</p>
+
+    <ol class="steps">
+      <li><b>افتح إعدادات الإثراء.</b><br>
+        من القائمة: <span class="path">Enrichment ← Settings</span>.<br>
+        <span style="color:var(--muted)">(هذه الشاشات تظهر فقط لمن عنده صلاحية «مدير وكلاء الذكاء» — AI Agents Manager.)</span></li>
+
+      <li><b>افهم التكلفة قبل أي شيء.</b><br>
+        كل مزوّد له «طريقة محاسبة» وتكلفة لكل محاولة. <u>بعض المزوّدين يُحاسبونك حتى لو فشلت المحاولة.</u> اقرأ قسم <a href="#cost">«التكلفة والحد الأقصى»</a> قبل تفعيل أي مزوّد.</li>
+
+      <li><b>فعّل المفتاح الرئيسي.</b><br>
+        شغّل <code>enrichment_enabled</code> (Enable Enrichment). وهو مطفأ، <b>لا يُستعلَم أي مزوّد إطلاقًا</b>.</li>
+
+      <li><b>فعّل مزوّدًا واحدًا أو اثنين فقط في البداية.</b><br>
+        من <span class="path">Enrichment ← Providers</span>: كل المزوّدين يأتون <b>غير مفعّلين</b>. فعّل المزوّد فقط بعد أن يُضيف مسؤول النظام مفتاح الـ API الخاص به في متغيّرات البيئة (env). ابدأ بالأقل تكلفة.</li>
+
+      <li><b>اترك الواتساب مطفأً حتى تقرأ تحذير PDPL.</b><br>
+        فحص الواتساب يرسل رقم العميل إلى جهة خارج السعودية. لا تفعّله قبل قراءة قسم <a href="#whatsapp">«الواتساب و PDPL»</a> والحصول على أساس نظامي.</li>
+
+      <li><b>جرّب على سجل واحد.</b><br>
+        افتح أي جهة اتصال واضغط زر <b>Enrich</b>، ثم راجع النتيجة في <span class="path">Enrichment ← Requests</span>.</li>
+    </ol>
+
+    <div class="tip">
+      <b>✅ القاعدة الذهبية</b>
+      شغّل القليل، راقب لوحة «Provider Performance» (نسبة النجاح والتكلفة لكل مزوّد)، ثم وسّع تدريجيًا. الحد الأقصى للتكلفة (Rule 14) يحميك، لكن فهمك للتكلفة يحميك أكثر.
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>محتويات الدليل</h3>
+    <ol>
+      <li><a href="#overview">نظرة عامة: كيف يعمل «الشلال» (Waterfall)</a></li>
+      <li><a href="#settings">الإعدادات وكتالوج المزوّدين</a></li>
+      <li><a href="#cost">التكلفة والحد الأقصى (مهم جدًا)</a></li>
+      <li><a href="#whatsapp">الواتساب و PDPL (الأهم — اقرأه كاملًا)</a></li>
+      <li><a href="#usage">كيفية الاستخدام وقراءة النتائج</a></li>
+      <li><a href="#audit">سجل التدقيق (Audit)</a></li>
+      <li><a href="#trouble">استكشاف الأخطاء والحالات الشائعة</a></li>
+      <li><a href="#table">جدول مختصر: وش يسوّي كل إعداد</a></li>
+    </ol>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section id="overview">
+    <h2>١) نظرة عامة: كيف يعمل «الشلال» (Waterfall)</h2>
+    <p class="intro-line">الفكرة الأساسية التي يقوم عليها المحرّك بالكامل.</p>
+
+    <p>عند طلب إثراء سجل، يرتّب المحرّك المزوّدين <b>المفعّلين</b> حسب حقل <b>الأولوية</b> (الأصغر أولًا)، ثم يجرّبهم واحدًا بعد الآخر:</p>
+    <ol class="steps">
+      <li><b>يبدأ بأعلى أولوية</b> (مثلًا السجلات الرسمية السعودية أولًا، لأنها الأنسب لخصوصية البيانات).</li>
+      <li><b>إذا نجح المزوّد</b> وأعاد البيانات المطلوبة — <u>يتوقّف الشلال فورًا</u> ولا يجرّب من بعده. (هذا معنى «التوقف عند أول نجاح».)</li>
+      <li><b>إذا فشل المزوّد</b> — ينتقل للمزوّد التالي تلقائيًا، حتى يملأ ما هو ناقص أو ينتهي المزوّدون.</li>
+    </ol>
+
+    <p>الحقول التي يملؤها المحرّك لا تُكتب فوق قيمة موجودة — يملأ <b>الناقص</b> فقط. أما التحقّق من «صلاحية» البريد/الجوال فيُحدّث الحقول التالية على جهة الاتصال:</p>
+    <ul>
+      <li><code>email_valid</code> — البريد قابل للتسليم.</li>
+      <li><code>mobile_valid</code> — الجوال قابل للوصول (هذه النسخة تتحقّق من حقل <code>phone</code>).</li>
+      <li><code>has_whatsapp</code> — الرقم موجود على واتساب (فقط لو فُعّل الفحص — انظر قسم الواتساب).</li>
+      <li><code>crm_ai_deliverability_checked</code> — تاريخ آخر تحقّق (فارغ = لم يُتحقَّق أبدًا).</li>
+    </ul>
+
+    <div class="tip">
+      <b>قيمة «غير معروف» (unknown) ليست خطأ</b>
+      إذا أعاد مزوّد نتيجة «غير معروف» (مثلًا بريد غير حاسم، أو الواتساب غير متاح)، فالمحرّك <u>لا يكتب علامة خاطئة</u> ويترك الحقل كما هو. غياب الإجابة لا يُقرأ أبدًا كإجابة سلبية.
+    </div>
+  </section>
+
+  <!-- ===================== SETTINGS ===================== -->
+  <section id="settings">
+    <h2>٢) الإعدادات وكتالوج المزوّدين</h2>
+    <p class="intro-line">المكان: <span class="path">Enrichment ← Settings</span> و <span class="path">Enrichment ← Providers</span></p>
+
+    <div class="opt">
+      <h3>«Enable Enrichment» — المفتاح الرئيسي</h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المفتاح الكبير <code>enrichment_enabled</code> الذي يشغّل أو يوقف المحرّك بالكامل.</span></div>
+      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">حماية افتراضية: لا شيء ينفق ولا يُستعلَم أي مزوّد ما لم تشغّله بنفسك.</span></div>
+      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>الافتراضي مطفأ (OFF):</b> أي طلب إثراء يرجع فارغًا دون أي تكلفة. &nbsp; <b>لو شغّلته:</b> يبدأ المحرّك بتجربة المزوّدين المفعّلين فقط.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>كتالوج المزوّدين — <span class="path">Providers</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">قائمة مصادر البيانات. لكل مزوّد: <b>الاسم</b>، <b>النوع</b>، <b>الأولوية</b>، مفتاح التفعيل <b>Active</b>، <b>طريقة المحاسبة</b> (billing mode)، <b>التكلفة لكل محاولة</b>، واسم متغيّر البيئة الذي يحمل مفتاح الـ API.</span></div>
+      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">لتتحكّم في <u>أي</u> المصادر تُستخدم وبأي ترتيب وبأي تكلفة.</span></div>
+      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>كل المزوّدين يأتون غير مفعّلين (Active = OFF).</b> ومزوّد مفعّل بدون مفتاح API صالح يتم <u>تخطّيه</u> تلقائيًا.</span></div>
+    </div>
+
+    <h3>كيف أفعّل مزوّدًا؟</h3>
+    <ol class="steps">
+      <li>اطلب من مسؤول النظام إضافة مفتاح الـ API كمتغيّر بيئة باسمه المذكور في حقل المزوّد (مثل <code>ERA_ENRICH_ZEROBOUNCE</code> أو <code>ERA_ENRICH_HLR</code>). <b>المفتاح لا يُخزَّن في النظام إطلاقًا — فقط اسمه</b> (القاعدة 03).</li>
+      <li>افتح المزوّد من <span class="path">Enrichment ← Providers</span> وتأكّد أن <b>Token present</b> صار «نعم».</li>
+      <li>فعّل <b>Active</b>، واضبط <b>الأولوية</b> و<b>التكلفة لكل محاولة</b>.</li>
+      <li>احفظ. صار المزوّد جزءًا من الشلال.</li>
+    </ol>
+
+    <table>
+      <tr><th>الإعداد</th><th>المفتاح</th><th>الافتراضي</th><th>وظيفته</th></tr>
+      <tr><td>تفعيل الإثراء</td><td><code>enrichment_enabled</code></td><td><span class="pill off">مطفأ</span></td><td>المفتاح الرئيسي للمحرّك بالكامل.</td></tr>
+      <tr><td>فحص الواتساب</td><td><code>whatsapp_check_enabled</code></td><td><span class="pill off">مطفأ</span></td><td>بوابة منفصلة وحسّاسة (PDPL) — انظر قسم الواتساب.</td></tr>
+      <tr><td>مدة التخزين المؤقت</td><td><code>enrichment_cache_ttl_days</code></td><td>30 يومًا</td><td>تتجاوز (ولا تُحاسبك على) إعادة فحص نفس البريد/الرقم خلال هذه المدة.</td></tr>
+      <tr><td>نموذج البحث على الويب</td><td><code>enrichment_web_search_model</code></td><td>gpt-4.1-mini</td><td>النموذج المستخدم لاستخراج البيانات من نتائج البحث (المصدر الأخير).</td></tr>
+      <tr><td>حجم الدفعة المجدولة</td><td><code>cron_batch_size</code></td><td>50</td><td>عدد السجلات التي تعالجها المهمة المجدولة في كل تشغيل.</td></tr>
+      <tr><td>نافذة «التقادم»</td><td><code>cron_staleness_days</code></td><td>30 يومًا</td><td>السجل الذي لم يُتحقَّق منذ هذه المدة يُعاد التحقّق منه تلقائيًا.</td></tr>
+    </table>
+  </section>
+
+  <!-- ===================== COST ===================== -->
+  <section id="cost">
+    <h2>٣) التكلفة والحد الأقصى <span style="color:var(--accent)">(مهم جدًا)</span></h2>
+    <p class="intro-line">افهم هذا القسم قبل أن تفعّل عدّة مزوّدين — فهو يحدّد كم تنفق.</p>
+
+    <p>لكل مزوّد <b>طريقة محاسبة</b> (billing mode). الفرق بينها جوهري وله أثر مباشر على فاتورتك:</p>
+
+    <div class="opt">
+      <h3>الطرق الثلاث للمحاسبة</h3>
+      <div class="qa what"><span class="lbl">per_call</span><span class="txt"><b>يُحاسَب على كل محاولة — حتى لو فشلت.</b> كثير من خدمات التحقّق تفرض رسومًا على كل استعلام بغضّ النظر عن النتيجة. هذه هي الطريقة الافتراضية، لأنها الأكثر تحفّظًا (تفترض أن المحاولة تكلّف).</span></div>
+      <div class="qa why"><span class="lbl">per_success</span><span class="txt">يُحاسَب <u>فقط</u> عندما يُعيد المزوّد بيانات فعلية. المحاولة الفاشلة مجانية.</span></div>
+      <div class="qa eff"><span class="lbl">free</span><span class="txt">بدون تكلفة مالية (مثل واتساب عبر خادم ذاتي الاستضافة WAHA) — لكنه يبقى محكومًا بالبوابات والموافقة.</span></div>
+    </div>
+
+    <div class="danger">
+      <b>⚠ نقطة لا بد أن يفهمها المدير</b>
+      في الشلال، إذا كان لديك عدّة مزوّدين من نوع <code>per_call</code> وفشل أول مزوّدَين ثم نجح الثالث — <u>فأنت دفعت ثمن المحاولات الثلاث</u>، وليس الناجحة فقط. سلسلة من المحاولات الفاشلة <b>تستهلك الميزانية فعليًا</b>. لذلك: فعّل أقل عدد ممكن من المزوّدين، ورتّب الأكثر نجاحًا والأقل تكلفة في الأولوية الأعلى.
+    </div>
+
+    <h3>الحد الأقصى للتكلفة (Rule 14)</h3>
+    <p>كل محاولة مدفوعة تُسجَّل في «دفتر الاستهلاك» (<code>crm.ai.usage</code>) وتُحتسَب ضمن السقف الشهري لوكيل الإثراء. عندما يبلغ الإنفاق الشهري السقف:</p>
+    <ul>
+      <li>المحرّك <b>يتوقّف قبل بدء أي محاولة جديدة</b> (فحص مُسبق قبل كل محاولة).</li>
+      <li>يُسجَّل حدث <code>cost_cap_exceeded</code> في سجل التدقيق.</li>
+      <li>الطلب يُغلَق بحالة «متوقّف بسبب السقف» (capped) — دون أي إنفاق إضافي.</li>
+    </ul>
+    <p>السقف العام الافتراضي للمنظومة <b>100 دولار شهريًا</b>، ويمكن لمسؤول النظام ضبط سقف خاص بوكيل الإثراء عبر المعامل <code>era_crm_ai_agents.monthly_cost_cap.era_enrichment</code>.</p>
+
+    <div class="tip">
+      <b>راقب الإنفاق من لوحة الأداء</b>
+      افتح <span class="path">Enrichment ← Provider Performance</span> لرؤية <b>نسبة النجاح</b> و<b>إجمالي التكلفة لكل مزوّد</b>. أوقف أي مزوّد نسبة نجاحه منخفضة وتكلفته عالية.
+    </div>
+  </section>
+
+  <!-- ===================== WHATSAPP / PDPL ===================== -->
+  <section id="whatsapp">
+    <h2>٤) الواتساب و PDPL <span style="color:var(--danger-line)">(الأهم — اقرأه كاملًا)</span></h2>
+    <p class="intro-line">المكان: <span class="path">Enrichment ← Settings ← قسم WhatsApp presence</span></p>
+
+    <div class="danger">
+      <b>ماذا يحدث فعليًا عند تفعيل فحص الواتساب؟</b>
+      فحص «وجود الرقم على واتساب» <u>يُرسِل رقم جوال العميل إلى واتساب/Meta</u> — وهي جهة معالجة <b>خارج المملكة العربية السعودية</b>. هذا <b>نقل بيانات شخصية عبر الحدود</b> وله تبعات بموجب نظام حماية البيانات الشخصية (PDPL). لا تفعّله إلا بعد فهم الأثر النظامي والحصول على <b>أساس نظامي مشروع</b> (موافقة أو ما يعادلها).
+    </div>
+
+    <h3>بوابتان تحميان هذا الإجراء — كلتاهما يجب أن تنجحا</h3>
+    <div class="opt">
+      <div class="qa what"><span class="lbl">البوابة A</span><span class="txt">مفتاح المدير <code>whatsapp_check_enabled</code> — <b>مطفأ افتراضيًا</b> ومنفصل تمامًا عن المفتاح الرئيسي. وهو مطفأ، لا يُرسَل أي رقم أبدًا.</span></div>
+      <div class="qa why"><span class="lbl">البوابة B</span><span class="txt">موافقة على مستوى كل سجل (حقل <code>crm_ai_intl_processing_consent</code> على جهة الاتصال). <b>تصميم «مغلق عند الشك» (fail-closed):</b> إن لم تتأكّد الموافقة بشكل إيجابي صريح — لأي سبب — <u>فالرقم لا يُرسَل إطلاقًا</u>.</span></div>
+      <div class="qa eff"><span class="lbl">النتيجة</span><span class="txt">الرقم يُرسَل <b>فقط</b> عندما تكون البوابة A مفعّلة <u>و</u> الموافقة مؤكّدة <u>و</u> موصّل الواتساب متاح. غياب أي شرط = لا إرسال.</span></div>
+    </div>
+
+    <div class="warn">
+      <b>موصّل الواتساب (WAHA) اختياري</b>
+      الوحدة تعمل بالكامل بدونه (البريد والجوال). إذا لم يكن الموصّل <code>sadeem_waha_whatsapp</code> متاحًا أو غير متّصل، فإن خانة الواتساب تُعيد «غير معروف» (unknown) ويُكمل الشلال عمله بشكل طبيعي — دون أي خطأ.
+    </div>
+
+    <div class="tip">
+      <b>الخصوصية في السجل</b>
+      حتى عند إجراء الفحص، لا يُسجَّل الرقم الخام أبدًا في سجل التدقيق — يُسجَّل <b>مُعرّف مُجزّأ (hash) مُقنّع</b> فقط مع نتيجة (موجود/غير موجود).
+    </div>
+  </section>
+
+  <!-- ===================== USAGE ===================== -->
+  <section id="usage">
+    <h2>٥) كيفية الاستخدام وقراءة النتائج</h2>
+
+    <h3>أ) إثراء يدوي لسجل واحد</h3>
+    <ol class="steps">
+      <li>افتح جهة الاتصال (res.partner).</li>
+      <li>اضغط زر <b>Enrich</b> في أعلى النموذج.</li>
+      <li>يعمل المحرّك تحت <u>صلاحياتك أنت</u> (لا صلاحيات مرتفعة)، ويسجّل النتيجة في طلب إثراء جديد.</li>
+    </ol>
+
+    <h3>ب) الإثراء المجدول (دفعات)</h3>
+    <p>مهمة مجدولة يومية (<span class="path">Enrichment ← يعمل تلقائيًا</span>) تختار دفعة من السجلات «المتقادمة» (لم يُتحقَّق منها أبدًا أو منذ مدة طويلة، ولها بريد أو جوال) وتُعيد التحقّق منها — ضمن السقف، وتتوقّف فور بلوغه. تعمل المهمة بحساب آلي <b>محدود الصلاحيات</b> (وليس المستخدم الجذر). وهي خاملة تمامًا ما لم يكن المفتاح الرئيسي مشغّلًا.</p>
+    <div class="warn">
+      <b>ملاحظة فنية للمدير</b>
+      أي مهمة مجدولة جديدة (ir.cron) تحتاج <b>إعادة تشغيل الخادم</b> لتُسجَّل — لا يكفي تحديث الوحدة.
+    </div>
+
+    <h3>ج) قراءة سجل التشغيل (<span class="path">Enrichment ← Requests</span>)</h3>
+    <p>كل تشغيل يُنشئ سجل <code>crm.ai.enrichment.request</code> يعرض:</p>
+    <table>
+      <tr><th>الحقل</th><th>وش يعني</th></tr>
+      <tr><td>الحالة (State)</td><td><b>done</b> اكتمل · <b>failed</b> لم يُحصَّل شيء · <b>capped</b> توقّف بسبب السقف · <b>processing</b> قيد التنفيذ.</td></tr>
+      <tr><td>المزوّدون المجرّبون</td><td>قائمة بكل محاولة: المزوّد، الحالة، هل كانت مدفوعة، والتكلفة — تظهر تفصيليًا في جدول «Provider attempts».</td></tr>
+      <tr><td>الحقول المُثراة</td><td>أي حقل امتلأ ومن أي مزوّد.</td></tr>
+      <tr><td>القابلية للتواصل (Contactability)</td><td>نتيجة كل قناة: <code>email</code> / <code>phone</code> / <code>whatsapp</code>. القيمة قد تكون «صحيح/خطأ/غير معروف» (None = غير معروف / لم يُفحَص).</td></tr>
+      <tr><td>إجمالي التكلفة</td><td>مجموع ما أُنفق في هذا التشغيل.</td></tr>
+    </table>
+    <div class="tip">
+      <b>كيف تقرأ «غير معروف» (unknown)؟</b>
+      تعني أن المحرّك <u>لم يستطع الحسم</u> (لا «صالح» ولا «غير صالح») — مثلًا بريد من نوع catch-all، أو موصّل واتساب غير متاح، أو لا توجد موافقة فلم يُرسَل شيء. لا تعاملها كنتيجة سلبية؛ هي ببساطة «بدون إجابة».
+    </div>
+  </section>
+
+  <!-- ===================== AUDIT ===================== -->
+  <section id="audit">
+    <h2>٦) سجل التدقيق (Audit)</h2>
+    <p class="intro-line">المكان: <span class="path">CRM AI Agents ← Configuration ← Audit Log</span> (للمدير)</p>
+    <p>يسجّل المحرّك القرارات الحسّاسة (القاعدة 20) بتصميم آمن للخصوصية:</p>
+    <ul>
+      <li><b>ملخّص كل تشغيل</b> على مستوى العملية: أسماء المزوّدين، الحالة، والتكلفة لكل مزوّد — <u>دون أي قيمة بيانات مُثراة</u>.</li>
+      <li><b>تجاوز السقف</b> (<code>cost_cap_exceeded</code>): يُسجَّل عند توقّف التشغيل بسبب الحد الأقصى.</li>
+      <li><b>اتصال خارجي</b> (فحص الواتساب): يُسجَّل <b>مُعرّف مُجزّأ ومُقنّع</b> فقط، لا الرقم الخام.</li>
+    </ul>
+    <div class="tip">
+      <b>المبدأ الأساسي</b>
+      السجل يحفظ <u>إشارات</u> للسجلات (نوع السجل ورقمه) ومُعرّفات مُقنّعة فقط — <b>لا بيانات شخصية خام إطلاقًا</b>. والسجل غير قابل للتعديل أو الحذف لغير مسؤولي النظام.
+    </div>
+  </section>
+
+  <!-- ===================== TROUBLESHOOTING ===================== -->
+  <section id="trouble">
+    <h2>٧) استكشاف الأخطاء والحالات الشائعة</h2>
+
+    <div class="whatif">
+      <p><span class="q">المزوّد مفعّل لكنه لا يعمل أبدًا.</span><br>
+        <span class="a">غالبًا مفتاح الـ API غير موجود في البيئة. افتح المزوّد وتحقّق أن <b>Token present</b> = نعم. مزوّد بدون مفتاح صالح يُتخطّى تلقائيًا (هذا تصميم آمن، وليس عطلًا).</span></p>
+
+      <p><span class="q">توقّف الإثراء فجأة ولم يكمل السجلات.</span><br>
+        <span class="a">على الأرجح بلغت السقف الشهري (Rule 14). تجد حالة <b>capped</b> في الطلب وحدث <code>cost_cap_exceeded</code> في سجل التدقيق. راجع الإنفاق، أو اطلب رفع السقف من مسؤول النظام.</span></p>
+
+      <p><span class="q">خانة الواتساب دائمًا «غير معروف».</span><br>
+        <span class="a">أسباب محتملة (كلها سليمة): البوابة A (<code>whatsapp_check_enabled</code>) مطفأة، أو لا توجد موافقة على السجل (البوابة B)، أو موصّل WAHA غير متاح/غير متّصل. في كل الحالات لا يُرسَل الرقم ويُكمل الشلال عمله.</span></p>
+
+      <p><span class="q">سجل فيه بريد وجوال لكن لم يُتحقَّق منهما.</span><br>
+        <span class="a">التحقّق من القابلية للتواصل يحتاج طلبًا من نوع «contactability» (زر Enrich أو المهمة المجدولة تفعل ذلك). كما أن نقل البريد/الجوال إلى جهة تحقّق خارجية <u>يتطلّب موافقة العميل</u> (نفس بوابة الموافقة) — بدونها لا يُرسَل شيء وتبقى النتيجة «غير معروف».</span></p>
+
+      <p><span class="q">شغّلت المفتاح الرئيسي لكن لا شيء يحدث.</span><br>
+        <span class="a">تأكّد أن لديك <b>مزوّدًا واحدًا على الأقل مفعّلًا وله مفتاح API</b>، وأن السجل فيه ما يُملأ أو يُتحقَّق منه. بدون مزوّدين مفعّلين، يعمل المحرّك لكنه لا يجد ما يفعله.</span></p>
+    </div>
+  </section>
+
+  <!-- ===================== SUMMARY TABLE ===================== -->
+  <section id="table">
+    <h2>٨) جدول مختصر: وش يسوّي كل إعداد</h2>
+    <table>
+      <tr><th>الإعداد / الزر</th><th>المكان</th><th>الافتراضي</th><th>الأثر باختصار</th></tr>
+      <tr><td>Enable Enrichment</td><td>Settings</td><td><span class="pill off">مطفأ</span></td><td>يشغّل/يوقف المحرّك بالكامل.</td></tr>
+      <tr><td>كتالوج المزوّدين</td><td>Providers</td><td>كلهم مطفأون</td><td>أي المصادر تُستخدم، بأي ترتيب وتكلفة.</td></tr>
+      <tr><td>طريقة المحاسبة</td><td>Providers</td><td>per_call</td><td><b>per_call يُحاسب حتى عند الفشل</b> · per_success عند النجاح فقط · free مجاني.</td></tr>
+      <tr><td>التخزين المؤقت (TTL)</td><td>Settings</td><td>30 يومًا</td><td>يتجنّب إعادة الفحص والمحاسبة لنفس القيمة.</td></tr>
+      <tr><td>فحص الواتساب</td><td>Settings</td><td><span class="pill off">مطفأ</span></td><td>حسّاس PDPL — يرسل الرقم لـ Meta؛ بوابتان + موافقة.</td></tr>
+      <tr><td>الإثراء المجدول</td><td>تلقائي يوميًا</td><td>دفعة 50 / تقادم 30 يومًا</td><td>يعيد التحقّق من المتقادمين ضمن السقف.</td></tr>
+      <tr><td>زر Enrich</td><td>نموذج جهة الاتصال</td><td>—</td><td>إثراء فوري لسجل واحد بصلاحياتك.</td></tr>
+      <tr><td>Provider Performance</td><td>قائمة الإثراء</td><td>—</td><td>نسبة النجاح والتكلفة لكل مزوّد.</td></tr>
+    </table>
+  </section>
+
+  <!-- ===================== TECH ===================== -->
+  <div class="tech">
+    <h3>مراجع فنية (لمسؤول النظام)</h3>
+    <p>
+      الوحدة: <code>era_crm_ai_agents_enrichment</code> · النماذج الداخلية: <code>crm.ai.enrichment.provider</code> ، <code>crm.ai.enrichment.request</code> ، <code>crm.ai.enrichment.attempt</code> ·
+      الوكيل: <code>crm.ai.enrichment.agent</code> (يرث <code>crm.ai.agent.mixin</code>).<br>
+      المفاتيح (env فقط): <code>ERA_ENRICH_WATHIQ</code> ، <code>ERA_ENRICH_MAROOF</code> ، <code>ERA_ENRICH_HUNTER</code> ، <code>ERA_ENRICH_ZEROBOUNCE</code> ، <code>ERA_ENRICH_HLR</code> ، <code>ERA_ENRICH_WEBSEARCH</code>.<br>
+      السقف: <code>era_crm_ai_agents.monthly_cost_cap.era_enrichment</code> · موصّل الواتساب الاختياري: <code>sadeem_waha_whatsapp</code> · حقول القابلية على جهة الاتصال: <code>email_valid</code> ، <code>mobile_valid</code> ، <code>has_whatsapp</code> ، <code>crm_ai_deliverability_checked</code>.
+    </p>
+  </div>
+
+  <footer>
+    Era Group · CRM AI Agents — وحدة الإثراء (Enrichment) · دليل المستخدم · الإصدار 19.0.1.3.0
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sadeem_waha_whatsapp.WizardViewChatButton">
+        <button class="btn btn-outline-success btn-sm" t-on-click="openChat" title="View full conversation">
+            <i class="fa fa-comments me-1"/>View Chat
+        </button>
+    </t>
+
+</templates>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default WhatsApp Templates -->
+        <record id="template_welcome_message" model="sadeem.waha.whatsapp.template">
+            <field name="name">Welcome Message</field>
+            <field name="template_type">text</field>
+            <field name="message_text">Welcome to our service! Thank you for choosing us. If you have any questions, feel free to ask.</field>
+        </record>
+
+        <record id="template_order_confirmation" model="sadeem.waha.whatsapp.template">
+            <field name="name">Order Confirmation</field>
+            <field name="template_type">text</field>
+            <field name="message_text">Your order has been confirmed! Order details will be sent to you shortly. Thank you for your business.</field>
+        </record>
+
+        <record id="template_appointment_reminder" model="sadeem.waha.whatsapp.template">
+            <field name="name">Appointment Reminder</field>
+            <field name="template_type">text</field>
+            <field name="message_text">This is a reminder about your appointment tomorrow. Please confirm your attendance or let us know if you need to reschedule.</field>
+        </record>
+
+        <!-- Cron Job for Session Refresh -->
+        <record id="cron_refresh_waha_sessions" model="ir.cron">
+            <field name="name">Refresh WAHA Sessions Status</field>
+            <field name="model_id" ref="model_sadeem_waha_session"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_refresh_all_sessions()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

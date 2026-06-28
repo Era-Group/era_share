@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_waha_session_form_chat" model="ir.ui.view">
+        <field name="name">sadeem.waha.session.form.chat</field>
+        <field name="model">sadeem.waha.session</field>
+        <field name="inherit_id" ref="sadeem_waha_whatsapp.view_waha_session_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_waha_chat"
+                        type="object"
+                        string="Web UI"
+                        class="btn-primary"
+                        icon="fa-whatsapp"
+                        invisible="status != 'working'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

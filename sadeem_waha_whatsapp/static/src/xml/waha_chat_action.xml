@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sadeem_waha_chat.WahaChatAction">
+        <!-- No dir here: inherit Odoo's direction so the list sits at the
+             inline-start edge (left in LTR, right in RTL). -->
+        <div class="o_waha_chat">
+            <!-- Chat list (inline-start side) -->
+            <div class="o_waha_chat_list" t-on-scroll="onChatScroll">
+                <div class="o_waha_chat_list_header">
+                    <span t-esc="sessionName"/>
+                </div>
+
+                <t t-if="state.chatsError">
+                    <div class="o_waha_chat_error">
+                        <div t-esc="state.chatsError"/>
+                        <button t-if="state.canRetry"
+                                class="btn btn-sm btn-secondary o_waha_retry"
+                                t-on-click="retryChats">
+                            Retry
+                        </button>
+                    </div>
+                </t>
+
+                <t t-foreach="state.chats" t-as="chat" t-key="chat.id">
+                    <div class="o_waha_chat_item"
+                         t-att-class="{ o_active: chat.id === state.activeChatId }"
+                         t-on-click="() => this.openChat(chat)">
+                        <img class="o_waha_avatar"
+                             t-if="chat.picture"
+                             t-att-src="chat.picture"
+                             alt=""/>
+                        <div class="o_waha_avatar o_waha_avatar_placeholder" t-else="">
+                            <i class="fa fa-user"/>
+                        </div>
+                        <div class="o_waha_chat_item_body">
+                            <div class="o_waha_chat_item_name" t-esc="chat.partner_name or chat.name"/>
+                            <div class="o_waha_chat_item_preview" t-esc="chat.last_message.body"/>
+                        </div>
+                        <span class="o_waha_unread badge rounded-pill"
+                              t-if="chat.unread"
+                              t-esc="chat.unread"/>
+                    </div>
+                </t>
+
+                <div class="o_waha_loading" t-if="state.chatsLoading">…</div>
+            </div>
+
+            <!-- Right pane: thread + composer -->
+            <div class="o_waha_chat_thread_pane">
+                <t t-if="!state.activeChatId">
+                    <div class="o_waha_empty">Select a conversation to start</div>
+                </t>
+                <t t-else="">
+                    <div class="o_waha_thread" t-ref="thread" t-on-scroll="onThreadScroll">
+                        <div class="o_waha_loadmore" t-if="state.msgHasMore and !state.msgLoading">
+                            <button class="btn btn-sm btn-link" t-on-click="() => this.loadMessages()">
+                                Load older messages
+                            </button>
+                        </div>
+                        <div class="o_waha_loading" t-if="state.msgLoading">…</div>
+                        <t t-foreach="state.messages" t-as="msg" t-key="msg.waha_message_id or msg_index">
+                            <div class="o_waha_msg_wrap"
+                                 t-att-class="msg.direction === 'outgoing' ? 'o_waha_out' : 'o_waha_in'">
+                                <div class="o_waha_msg">
+                                    <span class="o_waha_msg_text" t-if="msg.text" t-esc="msg.text"/>
+                                    <t t-if="msg.has_attachment">
+                                        <a t-if="isImage(msg)"
+                                           class="o_waha_img_link"
+                                           t-att-href="msg.attachment_url"
+                                           target="_blank">
+                                            <img class="o_waha_img"
+                                                 t-att-src="msg.attachment_url"
+                                                 t-att-alt="msg.attachment_name or ''"
+                                                 t-on-load="onMediaLoad"/>
+                                        </a>
+                                        <audio t-elif="isAudio(msg)"
+                                               class="o_waha_audio"
+                                               controls="controls"
+                                               t-att-src="msg.attachment_url"
+                                               t-on-loadedmetadata="onMediaLoad"/>
+                                        <a t-else=""
+                                           class="o_waha_attach"
+                                           t-att-href="msg.attachment_url"
+                                           target="_blank">
+                                            <i class="fa fa-paperclip"/>
+                                            <span t-esc="msg.attachment_name or 'Attachment'"/>
+                                        </a>
+                                    </t>
+                                    <t t-set="tk" t-value="tick(msg)"/>
+                                    <span t-if="tk" class="o_waha_tick" t-att-class="tk.cls" t-esc="tk.glyph"/>
+                                    <button class="o_waha_react_btn"
+                                            t-on-click="() => this.togglePicker(msg.waha_message_id)">
+                                        <i class="fa fa-smile-o"/>
+                                    </button>
+                                </div>
+                                <span class="o_waha_reaction"
+                                      t-if="state.reactions[msg.waha_message_id]"
+                                      t-on-click="() => this.react(msg, state.reactions[msg.waha_message_id])"
+                                      t-esc="state.reactions[msg.waha_message_id]"/>
+                                <div class="o_waha_picker" t-if="state.pickerFor === msg.waha_message_id">
+                                    <span t-foreach="EMOJIS" t-as="emo" t-key="emo"
+                                          class="o_waha_picker_emo"
+                                          t-on-click="() => this.react(msg, emo)"
+                                          t-esc="emo"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="o_waha_composer">
+                        <input type="file" t-ref="file" class="d-none" t-on-change="onFileChange"/>
+                        <button class="btn o_waha_attach_btn" t-on-click="pickFile" title="Attach file">
+                            <i class="fa fa-paperclip"/>
+                        </button>
+                        <textarea class="o_waha_composer_input"
+                                  placeholder="Type a message"
+                                  t-model="state.composer"
+                                  t-on-keydown="onComposerKeydown"/>
+                        <button class="btn btn-primary o_waha_send" t-on-click="() => this.sendMessage()">
+                            <i class="fa fa-paper-plane"/>
+                        </button>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,438 @@
+.waha_qr_code {
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.waha_qr_code img {
+    max-width: 300px;
+    max-height: 300px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.waha_status_badge {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.875em;
+}
+
+.waha_status_working {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.waha_status_scan_qr_code {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.waha_status_failed {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.waha_status_stopped {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.whatsapp_message_container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.whatsapp_message_outgoing {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.whatsapp_message_incoming {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.whatsapp_message_bubble {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.whatsapp_message_bubble.outgoing {
+    background-color: #dcf8c6;
+    color: #000;
+}
+
+.whatsapp_message_bubble.incoming {
+    background-color: #ffffff;
+    color: #000;
+    border: 1px solid #e0e0e0;
+}
+
+/* ── WhatsApp Floating Chat Window ── */
+
+.waha-float-window {
+    position: fixed;
+    bottom: 16px;
+    right: 24px;
+    width: 360px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.28);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1075; /* above Odoo navbar (1000) but below modals (1050+) */
+    transition: height 0.2s ease, box-shadow 0.2s ease;
+    background: #e5ddd5 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5b9a8' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.waha-float-window--minimized {
+    width: 280px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.22);
+}
+
+/* Header */
+.waha-float-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #075e54;
+    color: #fff;
+    padding: 10px 12px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+    border-radius: 12px 12px 0 0;
+    gap: 8px;
+}
+
+.waha-float-window--dragging .waha-float-header {
+    cursor: grabbing;
+}
+
+.waha-float-window--dragging {
+    opacity: 0.92;
+    box-shadow: 0 16px 48px rgba(0,0,0,.35);
+}
+
+.waha-float-window--minimized .waha-float-header {
+    border-radius: 12px;
+}
+
+.waha-float-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.waha-float-wa-icon {
+    font-size: 22px;
+    color: #25D366;
+    flex-shrink: 0;
+}
+
+.waha-float-header-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.waha-float-name {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.waha-float-phone {
+    font-size: 11px;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.waha-float-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.waha-float-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.15s;
+    padding: 0;
+}
+
+.waha-float-btn:hover {
+    background: rgba(255,255,255,.3);
+}
+
+.waha-float-btn--close:hover {
+    background: rgba(220,53,69,.7);
+}
+
+/* contact link styled same as icon buttons */
+a.waha-float-btn {
+    text-decoration: none;
+    line-height: 1;
+}
+
+/* Body */
+.waha-float-body {
+    display: flex;
+    flex-direction: column;
+    height: 440px;
+}
+
+.waha-fallback-notice {
+    background: #fff3cd;
+    color: #856404;
+    border-bottom: 1px solid #ffc107;
+    padding: 5px 10px;
+    font-size: 0.78rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.waha-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.waha-msg-row {
+    display: flex;
+    margin-bottom: 2px;
+}
+
+.waha-msg-row--outgoing {
+    justify-content: flex-end;
+}
+
+.waha-msg-row--incoming {
+    justify-content: flex-start;
+}
+
+.waha-bubble {
+    max-width: 70%;
+    padding: 6px 10px 4px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.13);
+    word-break: break-word;
+}
+
+.waha-bubble--outgoing {
+    background: #dcf8c6;
+    border-top-right-radius: 2px;
+}
+
+.waha-bubble--incoming {
+    background: #ffffff;
+    border-top-left-radius: 2px;
+}
+
+.waha-bubble-text {
+    font-size: 14px;
+    color: #111;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.waha-bubble-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 3px;
+    margin-top: 2px;
+}
+
+.waha-time {
+    font-size: 11px;
+    color: #667781;
+}
+
+.waha-status {
+    font-size: 11px;
+    color: #667781;
+}
+
+.waha-status--read {
+    color: #53bdeb;
+}
+
+.waha-attachment-img {
+    max-width: 320px;
+    max-height: 320px;
+    width: 100%;
+    border-radius: 6px;
+    display: block;
+    cursor: pointer;
+}
+
+.waha-attachment-link {
+    font-size: 13px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.waha-chat-input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f0f2f5;
+    border-top: 1px solid #d1d7db;
+}
+
+.waha-chat-input {
+    flex: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 9px 14px;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    background: #fff;
+    max-height: 100px;
+    overflow-y: auto;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+
+.waha-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.waha-send-btn:hover:not(:disabled) {
+    background: #1da851;
+}
+
+.waha-send-btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.waha-attach-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    color: #54656f;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.waha-attach-btn:hover {
+    color: #25D366;
+}
+
+/* Attachment preview bar */
+.waha-attach-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #fff;
+    border-top: 1px solid #d1d7db;
+}
+
+.waha-attach-preview-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.waha-attach-preview-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.waha-attach-remove {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.waha-attach-remove:hover {
+    color: #e00;
+}
+
+/* Audio / Video players in bubbles */
+.waha-audio-player {
+    width: 220px;
+    height: 36px;
+    display: block;
+}
+
+.waha-video-player {
+    max-width: 240px;
+    max-height: 180px;
+    border-radius: 4px;
+    display: block;
+}
+
+.waha-doc-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 0;
+}
+
+.waha-doc-link:hover {
+    text-decoration: underline;
+}

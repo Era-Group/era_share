@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sadeem_waha_whatsapp.WhatsappChatDialog">
+        <div t-ref="floatWindow"
+             t-attf-class="waha-float-window {{ state.minimized ? 'waha-float-window--minimized' : '' }} {{ state.dragging ? 'waha-float-window--dragging' : '' }}">
+
+            <!-- Header: drag handle + minimize on click -->
+            <div class="waha-float-header"
+                 t-on-mousedown="onDragStart"
+                 t-on-click="toggleMinimize">
+
+                <div class="waha-float-header-left">
+                    <i class="fa fa-whatsapp waha-float-wa-icon"/>
+                    <div class="waha-float-header-text">
+                        <span class="waha-float-name" t-esc="props.partnerName"/>
+                        <span class="waha-float-phone" t-esc="props.phoneNumber"/>
+                    </div>
+                </div>
+
+                <!-- Action buttons — stop propagation so they don't toggle minimize -->
+                <div class="waha-float-header-actions" t-on-click.stop="" t-on-mousedown.stop="">
+
+                    <!-- Open contact -->
+                    <t t-if="contactUrl">
+                        <a class="waha-float-btn"
+                           t-att-href="contactUrl"
+                           target="_blank"
+                           title="Open contact">
+                            <i class="fa fa-user"/>
+                        </a>
+                    </t>
+
+                    <!-- Minimize / restore -->
+                    <button class="waha-float-btn"
+                            t-on-click="toggleMinimize"
+                            t-att-title="state.minimized ? 'Restore' : 'Minimize'">
+                        <i t-attf-class="fa {{ state.minimized ? 'fa-chevron-up' : 'fa-chevron-down' }}"/>
+                    </button>
+
+                    <!-- Close -->
+                    <button class="waha-float-btn waha-float-btn--close"
+                            t-on-click="props.close"
+                            title="Close">
+                        <i class="fa fa-times"/>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Body — hidden when minimized -->
+            <div class="waha-float-body" t-if="!state.minimized">
+
+                <t t-if="state.isFallback">
+                    <div class="waha-fallback-notice">
+                        <i class="fa fa-exclamation-triangle me-1"/>
+                        Showing saved messages — live history unavailable
+                    </div>
+                </t>
+
+                <div class="waha-chat-messages" t-ref="messages">
+                    <t t-if="state.hasMore and !state.loading">
+                        <div class="text-center py-2">
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    t-on-click="loadMoreMessages"
+                                    t-att-disabled="state.loadingMore">
+                                <t t-if="state.loadingMore">
+                                    <i class="fa fa-spinner fa-spin me-1"/>Loading...
+                                </t>
+                                <t t-else="">
+                                    <i class="fa fa-chevron-up me-1"/>Load older messages
+                                </t>
+                            </button>
+                        </div>
+                    </t>
+                    <t t-if="state.loading">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa fa-spinner fa-spin fa-2x"/>
+                            <div class="mt-2">Loading messages...</div>
+                        </div>
+                    </t>
+                    <t t-elif="state.messages.length === 0">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa fa-comments fa-3x mb-2"/>
+                            <div>No messages yet</div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                            <div t-attf-class="waha-msg-row waha-msg-row--{{ msg.direction }}">
+                                <div t-attf-class="waha-bubble waha-bubble--{{ msg.direction }}">
+                                    <t t-if="msg.has_attachment and (msg.message_type === 'image' or (msg.attachment_mimetype and msg.attachment_mimetype.startsWith('image/')))">
+                                        <a t-att-href="msg.attachment_url" target="_blank">
+                                            <img t-att-src="msg.attachment_url" class="waha-attachment-img"/>
+                                        </a>
+                                    </t>
+                                    <t t-elif="msg.has_attachment and (msg.message_type === 'voice' or (msg.attachment_mimetype and msg.attachment_mimetype.startsWith('audio/')))">
+                                        <audio controls="1" class="waha-audio-player">
+                                            <source t-att-src="msg.attachment_url" t-att-type="msg.attachment_mimetype"/>
+                                        </audio>
+                                    </t>
+                                    <t t-elif="msg.has_attachment and (msg.message_type === 'video' or (msg.attachment_mimetype and msg.attachment_mimetype.startsWith('video/')))">
+                                        <video controls="1" class="waha-video-player">
+                                            <source t-att-src="msg.attachment_url" t-att-type="msg.attachment_mimetype"/>
+                                        </video>
+                                    </t>
+                                    <t t-elif="msg.has_attachment">
+                                        <a t-att-href="msg.attachment_url" target="_blank" class="waha-doc-link">
+                                            <i class="fa fa-file me-1"/>
+                                            <t t-esc="msg.attachment_name"/>
+                                        </a>
+                                    </t>
+                                    <t t-if="msg.text">
+                                        <div class="waha-bubble-text" t-esc="msg.text"/>
+                                    </t>
+                                    <div class="waha-bubble-meta">
+                                        <span class="waha-time"
+                                              t-att-title="formatDateTime(msg.create_date)">
+                                            <t t-esc="formatTime(msg.create_date)"/>
+                                        </span>
+                                        <t t-if="msg.direction === 'outgoing'">
+                                            <span t-attf-class="waha-status {{ isReadStatus(msg.status) ? 'waha-status--read' : '' }}">
+                                                <t t-esc="getStatusIcon(msg.status)"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+
+                <t t-if="state.attachFile">
+                    <div class="waha-attach-preview">
+                        <t t-if="state.attachFile.previewUrl">
+                            <img t-att-src="state.attachFile.previewUrl" class="waha-attach-preview-img"/>
+                        </t>
+                        <t t-else="">
+                            <i class="fa fa-file fa-2x text-primary"/>
+                        </t>
+                        <div class="waha-attach-preview-info">
+                            <div class="fw-semibold text-truncate" style="max-width:160px">
+                                <t t-esc="state.attachFile.name"/>
+                            </div>
+                            <div class="text-muted small">
+                                <t t-esc="formatFileSize(state.attachFile.size)"/>
+                            </div>
+                        </div>
+                        <button class="waha-attach-remove" t-on-click="clearAttachment">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </t>
+
+                <div class="waha-chat-input-row">
+                    <input
+                        type="file"
+                        t-ref="fileInput"
+                        class="d-none"
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.txt"
+                        t-on-change="onFileSelected"
+                    />
+                    <button class="waha-attach-btn" t-on-click="onClickAttach" title="Attach file">
+                        <i class="fa fa-paperclip"/>
+                    </button>
+                    <textarea
+                        class="waha-chat-input"
+                        placeholder="Type a message..."
+                        t-model="state.text"
+                        t-on-keydown="onKeydown"
+                        rows="1"
+                    />
+                    <button
+                        class="waha-send-btn"
+                        t-on-click="onSend"
+                        t-att-disabled="state.sending or (!state.text.trim() and !state.attachFile)"
+                    >
+                        <t t-if="state.sending">
+                            <i class="fa fa-spinner fa-spin"/>
+                        </t>
+                        <t t-else="">
+                            <i class="fa fa-send"/>
+                        </t>
+                    </button>
+                </div>
+
+            </div><!-- /waha-float-body -->
+        </div>
+    </t>
+
+</templates>

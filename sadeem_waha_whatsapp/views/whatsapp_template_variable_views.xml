@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Template Variable list View -->
+    <record id="view_sadeem_waha_whatsapp_template_variable_list" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.template.variable.list</field>
+        <field name="model">sadeem.waha.whatsapp.template.variable</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="field_type"/>
+                <field name="model_id" column_invisible="1"/>
+                <field name="field_name" invisible="field_type != 'field'" required="field_type == 'field'"/>
+                <field name="demo_value"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Template Variable Form View -->
+    <record id="view_sadeem_waha_whatsapp_template_variable_form" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.template.variable.form</field>
+        <field name="model">sadeem.waha.whatsapp.template.variable</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="field_type"/>
+                        </group>
+                        <group>
+                            <field name="model_id" invisible="1"/>
+                            <field name="field_name" invisible="field_type != 'field'" required="field_type == 'field'"/>
+                            <field name="demo_value"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

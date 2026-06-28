@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Company Form to add WhatsApp settings -->
+    <record id="view_company_form_whatsapp" model="ir.ui.view">
+        <field name="name">res.company.form.whatsapp</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="WhatsApp" name="whatsapp">
+                    <group>
+                        <field name="default_whatsapp_session_id"
+                               domain="[('company_id', 'in', [False, id]), ('status', '=', 'working')]"
+                               context="{'default_company_id': id}"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Default WhatsApp Session</strong><br/>
+                        This session will be used by default for outgoing WhatsApp messages from this company.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sadeem_waha_chat.WahaFloatWindow">
+        <t t-if="state.open">
+            <!-- Minimized: a floating bubble the user clicks to restore. -->
+            <div t-if="state.minimized"
+                 class="o_waha_float_bubble"
+                 t-on-click="restore"
+                 title="WhatsApp">
+                <i class="fa fa-whatsapp"/>
+            </div>
+
+            <!-- Restored: the draggable / resizable window. -->
+            <div t-else="" class="o_waha_float" t-att-style="style">
+                <div class="o_waha_float_header"
+                     t-on-pointerdown="onHeaderPointerDown">
+                    <span class="o_waha_float_title">
+                        <i class="fa fa-whatsapp"/>
+                        <span t-esc="state.sessionName or 'WhatsApp'"/>
+                    </span>
+                    <span class="o_waha_float_actions">
+                        <button class="o_waha_float_btn" t-on-click="minimize" title="Minimize">
+                            <i class="fa fa-minus"/>
+                        </button>
+                        <button class="o_waha_float_btn" t-on-click="close" title="Close">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </span>
+                </div>
+                <div class="o_waha_float_body">
+                    <!-- t-key forces a fresh chat component per session. -->
+                    <WahaChatAction t-key="state.sessionId" t-props="actionProps"/>
+                </div>
+                <div class="o_waha_float_resize"
+                     t-on-pointerdown="onResizePointerDown"
+                     title="Resize"/>
+            </div>
+        </t>
+    </t>
+
+</templates>

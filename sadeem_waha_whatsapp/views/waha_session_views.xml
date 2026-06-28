@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- WAHA Session List View -->
+    <record id="view_waha_session_list" model="ir.ui.view">
+        <field name="name">sadeem.waha.session.list</field>
+        <field name="model">sadeem.waha.session</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Sessions" decoration-success="status=='working'"
+                  decoration-warning="status=='scan_qr_code'" decoration-danger="status=='failed'">
+                <field name="name"/>
+                <field name="phone_number"/>
+                <field name="profile_name"/>
+                <field name="status"/>
+                <field name="engine"/>
+                <field name="messages_sent"/>
+                <field name="messages_received"/>
+                <field name="last_sync"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- WAHA Session Form View -->
+    <record id="view_waha_session_form" model="ir.ui.view">
+        <field name="name">sadeem.waha.session.form</field>
+        <field name="model">sadeem.waha.session</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Session">
+                <header>
+                    <button name="action_start_session" type="object" string="Start Session"
+                            class="btn-primary" invisible="status in ['starting', 'working']"/>
+                    <button name="action_stop_session" type="object" string="Stop Session"
+                            class="btn-secondary" invisible="status in ['stopped', 'failed']"/>
+                    <button name="action_refresh_status" type="object" string="Refresh Status"
+                            class="btn-light"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sent_messages" type="object" class="oe_stat_button" icon="fa-comments">
+                            <field name="messages_sent" widget="statinfo" string="Sent"/>
+                        </button>
+                        <button name="action_view_received_messages" type="object" class="oe_stat_button" icon="fa-envelope">
+                            <field name="messages_received" widget="statinfo" string="Received"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon" title="Inactive" bg_color="bg-danger" invisible="active"/>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Session Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group name="session_config">
+                            <field name="session_id"/>
+                            <field name="waha_server_url"/>
+                            <field name="api_key" widget="password"/>
+                            <field name="engine"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group name="profile_info">
+                            <field name="phone_number"/>
+                            <field name="profile_name"/>
+                            <field name="last_sync"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="QR Code" invisible="status not in ['scan_qr_code', 'starting']">
+                            <div class="alert alert-info" role="alert" invisible="status != 'scan_qr_code'">
+                                <strong>Scan QR Code with WhatsApp Mobile App</strong>
+                                <br/>
+                                Open WhatsApp on your phone → Settings → Linked Devices → Link a Device
+                            </div>
+
+                            <div class="text-center" invisible="not qr_code_image">
+                                <field name="qr_code_image" widget="image" options="{'size': [512, 512]}"/>
+                                <br/>
+                                <button name="action_get_qr_code" type="object" string="Refresh QR Code"
+                                        class="btn-primary mt-3"/>
+                            </div>
+
+                            <div class="text-center" invisible="qr_code_image">
+                                <p>No QR Code available</p>
+                                <button name="action_get_qr_code" type="object" string="Get QR Code"
+                                        class="btn-primary"/>
+                            </div>
+                        </page>
+
+                        <page string="Webhook Configuration">
+                            <group>
+                                <group>
+                                    <field name="webhook_url"
+                                           placeholder="http://your-server.com/waha/whatsapp/webhook"
+                                           readonly="0"/>
+                                    <field name="webhook_events"
+                                           placeholder="message,message.status,session.status"/>
+                                </group>
+                                <group>
+                                    <button name="action_set_default_webhook"
+                                            type="object"
+                                            string="Set Default URL"
+                                            class="btn-info"
+                                            icon="fa-link"/>
+                                    <button name="action_auto_configure_webhook"
+                                            type="object"
+                                            string="Auto Configure"
+                                            class="btn-success"
+                                            icon="fa-magic"/>
+                                </group>
+                            </group>
+
+                            <div class="mt-3">
+                                <button name="action_update_webhook"
+                                        type="object"
+                                        string="Update Webhook"
+                                        class="btn-primary mr-2"
+                                        invisible="status not in ['working', 'scan_qr_code']"/>
+                            </div>
+
+                            <div class="alert alert-info mt-3" role="alert">
+                                <strong>Webhook Configuration:</strong>
+                                <br/>
+                                •
+                                <strong>Default URL:</strong>
+                                <code>
+                                    <field name="webhook_url" readonly="1" nolabel="1"/>
+                                </code>
+                                <br/>
+                                • <strong>Supported Events:</strong> message, message.status, session.status,
+                                connection.update
+                                <br/>
+                                • <strong>Auto Configure:</strong> Sets default URL and events automatically
+                            </div>
+
+                            <div class="alert alert-warning mt-2" role="alert">
+                                <strong>Note:</strong>
+                                Make sure your Odoo server is accessible from the internet for webhooks to work.
+                                The webhook URL is automatically generated based on your Odoo base URL.
+                            </div>
+                        </page>
+
+                        <page string="Notifications">
+                            <group>
+                                <field name="notify_user_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Error Info" invisible="not error_message">
+                            <field name="error_message" readonly="1"/>
+                        </page>
+
+                        <page string="Profile Picture" invisible="not profile_picture">
+                            <field name="profile_picture" widget="image"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- WAHA Session Kanban View -->
+    <record id="view_waha_session_kanban" model="ir.ui.view">
+        <field name="name">sadeem.waha.session.kanban</field>
+        <field name="model">sadeem.waha.session</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="status"/>
+                <field name="phone_number"/>
+                <field name="profile_name"/>
+                <field name="messages_sent"/>
+                <field name="messages_received"/>
+                <templates>
+                    <t t-name="card" class="oe_kanban_global_click">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted small"><field name="phone_number"/></div>
+                            </div>
+                            <span t-attf-class="badge #{record.status.raw_value == 'working' ? 'text-bg-success' : record.status.raw_value == 'scan_qr_code' ? 'text-bg-warning' : 'text-bg-secondary'}">
+                                <field name="status"/>
+                            </span>
+                        </div>
+                        <div class="mt-1"><field name="profile_name"/></div>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="badge text-bg-light">↗ <field name="messages_sent"/></span>
+                            <span class="badge text-bg-light">↙ <field name="messages_received"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="action_waha_session" model="ir.actions.act_window">
+        <field name="name">WhatsApp Sessions</field>
+        <field name="res_model">sadeem.waha.session</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first WhatsApp session
+            </p>
+            <p>
+                WhatsApp sessions allow you to connect and manage multiple WhatsApp accounts.
+                Click the create button to add a new session.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,1792 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sadeem_waha_whatsapp
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-20 22:53+0000\n"
+"PO-Revision-Date: 2026-04-20 22:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid "+20XXXXXXXXXX or +966XXXXXXXXX"
+msgstr "+20XXXXXXXXXX أو +966XXXXXXXXX"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid ""
+"<br/>\n"
+"                                • <strong>Supported Events:</strong> message, message.status, session.status,\n"
+"                                connection.update\n"
+"                                <br/>\n"
+"                                • <strong>Auto Configure:</strong> Sets default URL and events automatically"
+msgstr ""
+"<br/>\n"
+"                                • <strong>الأحداث المدعومة:</strong> message, message.status, session.status,\n"
+"                                connection.update\n"
+"                                <br/>\n"
+"                                • <strong>الإعداد التلقائي:</strong> يقوم بتعيين الرابط الافتراضي والأحداث تلقائياً"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid ""
+"<small>International format required: +[country code][number] <br/> <span "
+"class=\"text-danger fw-bold\">⚠ Must start with +</span></small>"
+msgstr ""
+"<small>الصيغة الدولية مطلوبة: +[رمز الدولة][الرقم] <br/> <span "
+"class=\"text-danger fw-bold\">⚠ يجب أن يبدأ بـ +</span></small>"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_partner_form_whatsapp
+msgid ""
+"<span class=\"o_stat_text\">Send</span>\n"
+"                        <span class=\"o_stat_text\">WhatsApp</span>"
+msgstr ""
+"<span class=\"o_stat_text\">إرسال</span>\n"
+"                        <span class=\"o_stat_text\">واتساب</span>"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_company_form_whatsapp
+msgid ""
+"<strong>Default WhatsApp Session</strong><br/>\n"
+"                        This session will be used by default for outgoing WhatsApp messages from this company."
+msgstr ""
+"<strong>جلسة واتساب الافتراضية</strong><br/>\n"
+"                        سيتم استخدام هذه الجلسة افتراضياً لإرسال رسائل واتساب الصادرة من هذه الشركة."
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid ""
+"<strong>Field of Model:</strong>\n"
+"                                            Auto-fill from record field"
+msgstr ""
+"<strong>حقل من النموذج:</strong>\n"
+"                                            تعبئة تلقائية من حقل السجل"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid ""
+"<strong>Free Text:</strong>\n"
+"                                            User enters manually"
+msgstr ""
+"<strong>نص حر:</strong>\n"
+"                                            يقوم المستخدم بإدخاله يدوياً"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid ""
+"<strong>Note:</strong>\n"
+"                                Make sure your Odoo server is accessible from the internet for webhooks to work.\n"
+"                                The webhook URL is automatically generated based on your Odoo base URL."
+msgstr ""
+"<strong>ملاحظة:</strong>\n"
+"                                تأكد من أن سيرفر أودو الخاص بك متاح من خلال الإنترنت لكي تعمل الـ Webhooks.\n"
+"                                يتم إنشاء رابط الـ Webhook تلقائياً بناءً على رابط أودو الأساسي."
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid ""
+"<strong>Scan QR Code with WhatsApp Mobile App</strong>\n"
+"                                <br/>\n"
+"                                Open WhatsApp on your phone → Settings → Linked Devices → Link a Device"
+msgstr ""
+"<strong>قم بمسح كود QR من تطبيق واتساب على الموبايل</strong>\n"
+"                                <br/>\n"
+"                                افتح واتساب على هاتفك ← الإعدادات ← الأجهزة المرتبطة ← ربط جهاز"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid ""
+"<strong>User Mobile:</strong>\n"
+"                                            Current user mobile"
+msgstr ""
+"<strong>موبايل المستخدم:</strong>\n"
+"                                            رقم موبايل المستخدم الحالي"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid ""
+"<strong>User Name:</strong>\n"
+"                                            Current user name"
+msgstr ""
+"<strong>اسم المستخدم:</strong>\n"
+"                                            اسم المستخدم الحالي"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "<strong>Variable Types:</strong>"
+msgstr "<strong>أنواع المتغيرات:</strong>"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid ""
+"<strong>Webhook Configuration:</strong>\n"
+"                                <br/>\n"
+"                                •\n"
+"                                <strong>Default URL:</strong>"
+msgstr ""
+"<strong>إعدادات الـ Webhook:</strong>\n"
+"                                <br/>\n"
+"                                •\n"
+"                                <strong>الرابط الافتراضي:</strong>"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__api_key
+msgid "API Key"
+msgstr "مفتاح API"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_needaction
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_needaction
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_needaction
+msgid "Action Needed"
+msgstr "الإجراء المطلوب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__active
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_exception_decoration
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_exception_decoration
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_state
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_state
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_type_icon
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_type_icon
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_whatsapp_all_messages
+msgid "All Messages"
+msgstr "كل الرسائل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__model_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__model_id
+msgid "Applies to"
+msgstr "ينطبق على"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Attach file"
+msgstr "إرفاق ملف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__attachment_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__attachment_id
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "Attachment"
+msgstr "المرفق"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_attachment_count
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_attachment_count
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__audio
+msgid "Audio"
+msgstr "صوت"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Auto Configuration"
+msgstr "الإعداد التلقائي"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Auto Configure"
+msgstr "إعداد تلقائي"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_partner_form_whatsapp
+msgid "Auto-computed from Mobile or Phone field"
+msgstr "محسوب تلقائياً من حقل الموبايل أو الهاتف"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__chat
+msgid "Chat"
+msgstr "محادثة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__chat_id
+msgid "Chat ID"
+msgstr "معرف المحادثة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__webhook_events
+msgid "Comma-separated list of events to receive"
+msgstr "قائمة بالأحداث المراد استقبالها مفصولة بفاصلة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__company_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__company_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_res_partner
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__partner_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__partner_id
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/chatter_whatsapp_button.js:0
+msgid "Could not retrieve phone number for this record"
+msgstr "تعذر الحصول على رقم الهاتف لهذا السجل"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.actions.act_window,help:sadeem_waha_whatsapp.action_waha_session
+msgid "Create your first WhatsApp session"
+msgstr "أنشئ أول جلسة واتساب لك"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__create_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__create_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__create_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__create_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__create_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__create_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__create_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__create_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__attachment_id
+msgid "Default Attachment"
+msgstr "المرفق الافتراضي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_company__default_whatsapp_session_id
+msgid "Default WhatsApp Session"
+msgstr "جلسة واتساب الافتراضية"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_res_company__default_whatsapp_session_id
+msgid "Default WhatsApp session for this company"
+msgstr "جلسة واتساب الافتراضية لهذه الشركة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Default webhook URL has been set: %s"
+msgstr "تم تعيين رابط الـ Webhook الافتراضي: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Default webhook URL set: %s"
+msgstr "تم تعيين رابط الـ Webhook الافتراضي: %s"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__status__delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__display_name
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__display_name
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__display_name
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__display_name
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__document
+msgid "Document"
+msgstr "مستند"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "Download"
+msgstr "تنزيل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__attachment_download_url
+msgid "Download URL"
+msgstr "رابط التنزيل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__status__draft
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_mail_thread
+msgid "Email Thread"
+msgstr "المحادثة البريدية"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__engine
+msgid "Engine"
+msgstr "المحرك"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "Enter your message here..."
+msgstr "اكتب رسالتك هنا..."
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid ""
+"Enter your message here...\n"
+"Use {{1}}, {{2}}, etc. for variables\n"
+"\n"
+"Example: Hello {{1}}, your order {{2}} is ready!"
+msgstr ""
+"اكتب رسالتك هنا...\n"
+"استخدم {{1}}, {{2}}, إلخ. للمتغيرات\n"
+"\n"
+"مثال: مرحباً {{1}}، طلبك رقم {{2}} جاهز!"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "Error Details"
+msgstr "تفاصيل الخطأ"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Error Info"
+msgstr "معلومات الخطأ"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__error_message
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__error_message
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__status__failed
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__status__failed
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Failed to connect to WAHA server: %s"
+msgstr "فشل الاتصال بسيرفر WAHA: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Failed to get QR code: %s"
+msgstr "فشل في الحصول على كود QR: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/whatsapp_chat_dialog.js:0
+msgid "Failed to load messages"
+msgstr "فشل تحميل الرسائل"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "Failed to send WhatsApp message: %s"
+msgstr "فشل إرسال رسالة الواتساب: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/whatsapp_chat_dialog.js:0
+msgid "Failed to send message"
+msgstr "فشل إرسال الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "Failed to send message: %s"
+msgstr "فشل إرسال الرسالة: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Failed to send voice message: %s"
+msgstr "فشل إرسال الرسالة الصوتية: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Failed to start session: %s"
+msgstr "فشل بدء الجلسة: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Failed to stop session: %s"
+msgstr "فشل إيقاف الجلسة: %s"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__field_name
+msgid "Field"
+msgstr "الحقل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template_variable__field_type__field
+msgid "Field of Model"
+msgstr "حقل من النموذج"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__file_upload
+msgid "File"
+msgstr "ملف"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid "File Attachment"
+msgstr "مرفق ملف"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "File Info"
+msgstr "معلومات الملف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__file_upload_name
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__attachment_file_size
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "File Size"
+msgstr "حجم الملف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_follower_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_follower_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_partner_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_partner_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_type_icon
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_type_icon
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template_variable__field_type__free_text
+msgid "Free Text"
+msgstr "نص حر"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__engine__gows
+msgid "GOWS (WebSocket Go)"
+msgstr "GOWS (WebSocket Go)"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Get QR Code"
+msgstr "احصل على كود QR"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Group By"
+msgstr "تجميع حسب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__has_message
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__has_message
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_exception_icon
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_exception_icon
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_exception_icon
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_exception_icon
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى نشاط استثنائي."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__message_needaction
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_needaction
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم التحديد، فإن الرسائل الجديدة تتطلب اهتمامك."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__message_has_error
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_has_error
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم التحديد، فإن بعض الرسائل لديها خطأ في التسليم."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__image
+msgid "Image"
+msgstr "صورة"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Inactive"
+msgstr "غير نشط"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__direction__incoming
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Incoming"
+msgstr "وارد"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_is_follower
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_is_follower
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__last_sync
+msgid "Last Sync"
+msgstr "آخر مزامنة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__write_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__write_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__write_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__write_uid
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__write_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__write_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__write_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__write_date
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Load older messages"
+msgstr "تحميل الرسائل الأقدم"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Loading messages..."
+msgstr "جاري تحميل الرسائل..."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Loading..."
+msgstr "جاري التحميل..."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__location
+msgid "Location"
+msgstr "الموقع"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__attachment_mimetype
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "MIME Type"
+msgstr "نوع MIME"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_waha_sessions
+msgid "Manage Sessions"
+msgstr "إدارة الجلسات"
+
+#. module: sadeem_waha_whatsapp
+#: model:res.groups,comment:sadeem_waha_whatsapp.group_waha_whatsapp_manager
+msgid "Manage templates and sessions"
+msgstr "إدارة القوالب والجلسات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__message_text
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "Message Content"
+msgstr "محتوى الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_has_error
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_has_error
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_whatsapp_message_templates
+msgid "Message Templates"
+msgstr "قوالب الرسائل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__text
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_text
+msgid "Message Text"
+msgstr "نص الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__message_type
+msgid "Message Type"
+msgstr "نوع الرسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_ids
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_waha_whatsapp_messages
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_partner_form_whatsapp
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__messages_received
+msgid "Messages Received"
+msgstr "الرسائل المستلمة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__messages_sent
+msgid "Messages Sent"
+msgstr "الرسائل المرسلة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__model
+msgid "Model Name"
+msgstr "اسم النموذج"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__my_activity_date_deadline
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__my_activity_date_deadline
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نهاية نشاطي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__engine__noweb
+msgid "NOWEB (WebSocket NodeJS)"
+msgstr "NOWEB (WebSocket NodeJS)"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_calendar_event_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_calendar_event_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "حدث تقويم النشاط التالي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_date_deadline
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_date_deadline
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_summary
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_summary
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_type_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_type_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "No QR Code available"
+msgstr "لا يوجد كود QR متاح"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "No QR code data received. Session might already be authenticated."
+msgstr "لم يتم استلام بيانات كود QR. قد تكون الجلسة مصادق عليها بالفعل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/res_partner.py:0
+msgid ""
+"No WhatsApp number available for this contact. Please add a mobile or phone "
+"number."
+msgstr ""
+"لا يوجد رقم واتساب متاح لجهة الاتصال هذه. يرجى إضافة رقم موبايل أو هاتف."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/chatter_whatsapp_button.js:0
+msgid ""
+"No WhatsApp number found for this record, please add mobile or phone number"
+msgstr "لم يتم العثور على رقم واتساب لهذا السجل، يرجى إضافة رقم موبايل أو هاتف"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "No messages yet"
+msgstr "لا توجد رسائل بعد"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "No webhook URL configured."
+msgstr "لم يتم إعداد رابط Webhook."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__notification
+msgid "Notification"
+msgstr "إشعار"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__notify_user_ids
+msgid "Notify Users"
+msgstr "إشعار المستخدمين"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_needaction_counter
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_needaction_counter
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__message_has_error_counter
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_has_error_counter
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__message_needaction_counter
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_needaction_counter
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراء"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__message_has_error_counter
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_has_error_counter
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Open contact"
+msgstr "فتح جهة الاتصال"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__direction__outgoing
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Outgoing"
+msgstr "صادر"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__phone_number
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__phone_number
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__phone_number
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "Phone number is required"
+msgstr "رقم الهاتف مطلوب"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid ""
+"Phone number must be in international format starting with '+'\n"
+"Example: +201234567890\n"
+"Current: %s"
+msgstr ""
+"يجب أن يكون رقم الهاتف بالصيغة الدولية بادئاً بـ '+'\n"
+"مثال: +201234567890\n"
+"الحالي: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid ""
+"Phone number seems too short. Please use international format.\n"
+"Example: +201234567890"
+msgstr ""
+"رقم الهاتف يبدو قصيراً جداً. يرجى استخدام الصيغة الدولية.\n"
+"مثال: +201234567890"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "Please enter a message text or attach a file"
+msgstr "يرجى إدخال نص الرسالة أو إرفاق ملف"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "Please select a WhatsApp session"
+msgstr "يرجى اختيار جلسة واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__profile_name
+msgid "Profile Name"
+msgstr "اسم الملف الشخصي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__profile_picture
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Profile Picture"
+msgstr "صورة الملف الشخصي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__qr_code
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "QR Code"
+msgstr "كود QR"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "QR Code Error"
+msgstr "خطأ في كود QR"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__qr_code_image
+msgid "QR Code Image"
+msgstr "صورة كود QR"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "QR Code Request"
+msgstr "طلب كود QR"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "QR Code Retrieved"
+msgstr "تم استلام كود QR"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "QR Code retrieved successfully. Please scan to authenticate."
+msgstr "تم استلام كود QR بنجاح. يرجى المسح للمصادقة."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__rating_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__rating_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__status__read
+msgid "Read"
+msgstr "تمت القراءة"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Refresh QR Code"
+msgstr "تحديث كود QR"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Refresh Status"
+msgstr "تحديث الحالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.actions.server,name:sadeem_waha_whatsapp.cron_refresh_waha_sessions_ir_actions_server
+msgid "Refresh WAHA Sessions Status"
+msgstr "تحديث حالة جلسات WAHA"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__res_id
+msgid "Resource ID"
+msgstr "معرف المورد"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__res_model
+msgid "Resource Model"
+msgstr "نموذج المورد"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_user_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_user_id
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__demo_value
+msgid "Sample Value"
+msgstr "قيمة تجريبية"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "Sample value"
+msgstr "قيمة تجريبية"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__status__scan_qr_code
+msgid "Scan QR Code"
+msgstr "مسح كود QR"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Scan Required"
+msgstr "المسح مطلوب"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Search WhatsApp Messages"
+msgstr "البحث في رسائل الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid "Select a template or compose your own message..."
+msgstr "اختر قالباً أو اكتب رسالتك الخاصة..."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__model_id
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__model_id
+msgid "Select the model this template applies to"
+msgstr "اختر النموذج الذي ينطبق عليه هذا القالب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_send_whatsapp_message
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "Send Message"
+msgstr "إرسال رسالة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/chatter_whatsapp_button.xml:0
+msgid "Send W-WhatsApp Message"
+msgstr "إرسال رسالة W-واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.actions.act_window,name:sadeem_waha_whatsapp.action_send_whatsapp_wizard
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid "Send WhatsApp Message"
+msgstr "إرسال رسالة واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_sadeem_waha_send_whatsapp_wizard
+msgid "Send WhatsApp Message Wizard"
+msgstr "معالج إرسال رسالة واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__status__sent
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__session_id
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Active"
+msgstr "الجلسة نشطة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Authenticated"
+msgstr "تمت مصادقة الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Created"
+msgstr "تم إنشاء الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Failed"
+msgstr "فشلت الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__session_id
+msgid "Session ID"
+msgstr "معرف الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__name
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Session Name"
+msgstr "اسم الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Start Failed"
+msgstr "فشل بدء الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Started"
+msgstr "تم بدء الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session Stopped"
+msgstr "تم إيقاف الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session authenticated successfully!<br/>Phone: %s<br/>Profile: %s"
+msgstr "تمت مصادقة الجلسة بنجاح!<br/>الهاتف: %s<br/>الملف الشخصي: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session has failed. Please check logs and restart."
+msgstr "فشلت الجلسة. يرجى مراجعة السجلات وإعادة التشغيل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session is not active. Current status: %s"
+msgstr "الجلسة غير نشطة. الحالة الحالية: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session is now working and ready to send/receive messages."
+msgstr "الجلسة تعمل الآن وجاهزة لإرسال/استقبال الرسائل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Session is waiting for QR code scan."
+msgstr "الجلسة في انتظار مسح كود QR."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_waha_whatsapp_sessions
+msgid "Sessions"
+msgstr "الجلسات"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Set Default URL"
+msgstr "تعيين الرابط الافتراضي"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Showing saved messages — live history unavailable"
+msgstr "عرض الرسائل المحفوظة — السجل المباشر غير متاح"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Start Session"
+msgstr "بدء الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__status__starting
+msgid "Starting"
+msgstr "جاري البدء"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__status
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__status
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_state
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_state
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: تاريخ الاستحقاق قد مر بالفعل\n"
+"اليوم: تاريخ النشاط اليوم\n"
+"مخطط: الأنشطة المستقبلية."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__sticker
+msgid "Sticker"
+msgstr "ملصق"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Stop Session"
+msgstr "إيقاف الجلسة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__status__stopped
+msgid "Stopped"
+msgstr "متوقف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__name
+msgid "Subject"
+msgstr "الموضوع"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__template_id
+msgid "Template"
+msgstr "القالب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__name
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "Template Name"
+msgstr "اسم القالب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_waha_whatsapp_templates
+msgid "Templates"
+msgstr "القوالب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__text
+msgid "Text"
+msgstr "نص"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_send_whatsapp_wizard__message_type__text
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template__template_type__text
+msgid "Text Only"
+msgstr "نص فقط"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "This Week"
+msgstr "هذا الأسبوع"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Today"
+msgstr "اليوم"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__message_type
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__template_type
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__field_type
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_search
+msgid "Type"
+msgstr "النوع"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_dialog.xml:0
+msgid "Type a message..."
+msgstr "اكتب رسالة..."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__activity_exception_decoration
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__activity_exception_decoration
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء على السجل."
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+msgid ""
+"Type your message here or select a template above...  You can leave this "
+"empty if you only want to send a file or voice message."
+msgstr ""
+"اكتب رسالتك هنا أو اختر قالباً من الأعلى... يمكنك ترك هذا فارغاً إذا كنت "
+"تريد إرسال ملف أو رسالة صوتية فقط."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__webhook_url
+msgid "URL to receive incoming messages"
+msgstr "الرابط لاستقبال الرسائل الواردة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__name
+msgid "Unique session identifier"
+msgstr "معرف الجلسة الفريد"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Update Webhook"
+msgstr "تحديث الـ Webhook"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__template_id
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_send_whatsapp_wizard_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_list
+msgid "Use Template"
+msgstr "استخدام القالب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__message_text
+msgid "Use {{1}}, {{2}}, etc. for variables"
+msgstr "استخدم {{1}}, {{2}}, إلخ. للمتغيرات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template_variable__field_type__user_company
+msgid "User Company"
+msgstr "شركة المستخدم"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template_variable__field_type__user_mobile
+msgid "User Mobile"
+msgstr "موبايل المستخدم"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template_variable__field_type__user_name
+msgid "User Name"
+msgstr "اسم المستخدم"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__notify_user_ids
+msgid "Users to notify when a new WhatsApp message is received"
+msgstr "المستخدمون الذين سيتم إشعارهم عند استلام رسالة واتساب جديدة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__name
+msgid "Variable Name"
+msgstr "اسم المتغير"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__variable_ids
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "Variables"
+msgstr "المتغيرات"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__video
+msgid "Video"
+msgstr "فيديو"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/whatsapp_chat_button.xml:0
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/wizard_view_chat_button.xml:0
+msgid "View Chat"
+msgstr "عرض المحادثة"
+
+#. module: sadeem_waha_whatsapp
+#: model:res.groups,comment:sadeem_waha_whatsapp.group_waha_whatsapp_user
+msgid "View and send messages"
+msgstr "عرض وإرسال الرسائل"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/wizard_view_chat_button.xml:0
+msgid "View full conversation"
+msgstr "عرض المحادثة كاملة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_message__message_type__voice
+msgid "Voice"
+msgstr "صوت"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__voice_file
+msgid "Voice File"
+msgstr "ملف صوتي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__voice_filename
+msgid "Voice Filename"
+msgstr "اسم الملف الصوتي"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_send_whatsapp_wizard__message_type__voice
+msgid "Voice Message"
+msgstr "رسالة صوتية"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/chatter_whatsapp_button.xml:0
+msgid "W-WhatsApp"
+msgstr "W-واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__api_key
+msgid "WAHA API Key for authentication"
+msgstr "مفتاح WAHA API للمصادقة"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__waha_message_id
+msgid "WAHA Message ID"
+msgstr "معرف رسالة WAHA"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__waha_server_url
+msgid "WAHA Server URL"
+msgstr "رابط سيرفر WAHA"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_sadeem_waha_session
+msgid "WAHA WhatsApp Session"
+msgstr "جلسة واتساب WAHA"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__session_id
+msgid "WAHA session identifier"
+msgstr "معرف جلسة WAHA"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__engine__webjs
+msgid "WEBJS (Browser based)"
+msgstr "WEBJS (يعتمد على المتصفح)"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.ui.menu,name:sadeem_waha_whatsapp.menu_waha_whatsapp_main
+msgid "Waha WhatsApp"
+msgstr "واتساب Waha"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.module.category,name:sadeem_waha_whatsapp.module_category_sadeem_waha_whatsapp
+msgid "Waha Whatsapp"
+msgstr "واتساب Waha"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "Webhook Configuration"
+msgstr "إعدادات الـ Webhook"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook Configured"
+msgstr "تم إعداد الـ Webhook"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__webhook_events
+msgid "Webhook Events"
+msgstr "أحداث الـ Webhook"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__webhook_url
+msgid "Webhook URL"
+msgstr "رابط الـ Webhook"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook URL configured. Will be applied when session starts."
+msgstr "تم إعداد رابط الـ Webhook. سيتم تطبيقه عند بدء الجلسة."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook URL set. Please update webhook manually."
+msgstr "تم تعيين رابط الـ Webhook. يرجى تحديث الـ Webhook يدوياً."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook auto-configured and updated successfully!"
+msgstr "تم إعداد وتحديث الـ Webhook تلقائياً بنجاح!"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook auto-configured.<br/>URL: %s<br/>Events: %s"
+msgstr "تم إعداد الـ Webhook تلقائياً.<br/>الرابط: %s<br/>الأحداث: %s"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "Webhook configuration updated successfully!"
+msgstr "تم تحديث إعدادات الـ Webhook بنجاح!"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_session__website_message_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__website_message_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_session__website_message_ids
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_message__website_message_ids
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template__website_message_ids
+msgid "Website communication history"
+msgstr "سجل اتصالات الموقع"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_company_form_whatsapp
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:res.groups,name:sadeem_waha_whatsapp.group_waha_whatsapp_manager
+msgid "WhatsApp Manager"
+msgstr "مدير الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_sadeem_waha_whatsapp_message
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_form
+msgid "WhatsApp Message"
+msgstr "رسالة واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_partner__waha_whatsapp_message_count
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_users__waha_whatsapp_message_count
+msgid "WhatsApp Message Count"
+msgstr "عدد رسائل الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_sadeem_waha_whatsapp_template
+msgid "WhatsApp Message Template"
+msgstr "قالب رسالة واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.actions.act_window,name:sadeem_waha_whatsapp.action_whatsapp_message
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_partner__waha_whatsapp_message_ids
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_users__waha_whatsapp_message_ids
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_message_list
+msgid "WhatsApp Messages"
+msgstr "رسائل الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_partner__waha_whatsapp_number
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_res_users__waha_whatsapp_number
+msgid "WhatsApp Number"
+msgstr "رقم الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_partner_form_whatsapp
+msgid "WhatsApp Number (Auto)"
+msgstr "رقم الواتساب (تلقائي)"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+#: model:ir.model.fields,field_description:sadeem_waha_whatsapp.field_sadeem_waha_send_whatsapp_wizard__session_id
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "WhatsApp Session"
+msgstr "جلسة الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.actions.act_window,name:sadeem_waha_whatsapp.action_waha_session
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_list
+msgid "WhatsApp Sessions"
+msgstr "جلسات الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "WhatsApp Template"
+msgstr "قالب واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model,name:sadeem_waha_whatsapp.model_sadeem_waha_whatsapp_template_variable
+msgid "WhatsApp Template Variable"
+msgstr "متغير قالب واتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.actions.act_window,name:sadeem_waha_whatsapp.action_whatsapp_template
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_list
+msgid "WhatsApp Templates"
+msgstr "قوالب الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#: model:res.groups,name:sadeem_waha_whatsapp.group_waha_whatsapp_user
+msgid "WhatsApp User"
+msgstr "مستخدم الواتساب"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "WhatsApp message sent successfully!"
+msgstr "تم إرسال رسالة الواتساب بنجاح!"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_res_partner__waha_whatsapp_number
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_res_users__waha_whatsapp_number
+msgid "WhatsApp phone number (auto-computed from mobile/phone)"
+msgstr "رقم هاتف الواتساب (محسوب تلقائياً من الموبايل/الهاتف)"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "WhatsApp session '%s' has been created successfully."
+msgstr "تم إنشاء جلسة الواتساب '%s' بنجاح."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/wizard/send_whatsapp_wizard.py:0
+msgid "WhatsApp session is not active. Please check the session status."
+msgstr "جلسة الواتساب غير نشطة. يرجى التحقق من حالة الجلسة."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid ""
+"WhatsApp session started successfully. Please scan QR code if required."
+msgstr "تم بدء جلسة الواتساب بنجاح. يرجى مسح كود QR إذا لزم الأمر."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/models/waha_session.py:0
+msgid "WhatsApp session stopped successfully."
+msgstr "تم إيقاف جلسة الواتساب بنجاح."
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.actions.act_window,help:sadeem_waha_whatsapp.action_waha_session
+msgid ""
+"WhatsApp sessions allow you to connect and manage multiple WhatsApp accounts.\n"
+"                Click the create button to add a new session."
+msgstr ""
+"جلسات الواتساب تتيح لك الاتصال وإدارة عدة حسابات واتساب.\n"
+"                اضغط على زر الإنشاء لإضافة جلسة جديدة."
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_whatsapp_template__template_type__with_attachment
+msgid "With Attachment"
+msgstr "مع مرفق"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_send_whatsapp_wizard__message_type__with_file
+msgid "With File"
+msgstr "مع ملف"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields.selection,name:sadeem_waha_whatsapp.selection__sadeem_waha_session__status__working
+msgid "Working"
+msgstr "تعمل"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_whatsapp_template_form
+msgid "e.g., name, email, partner_id.name"
+msgstr "مثال: name, email, partner_id.name"
+
+#. module: sadeem_waha_whatsapp
+#: model:ir.model.fields,help:sadeem_waha_whatsapp.field_sadeem_waha_whatsapp_template_variable__name
+msgid "e.g., {{1}}, {{2}}"
+msgstr "مثال: {{1}}, {{2}}"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "http://your-server.com/waha/whatsapp/webhook"
+msgstr "http://your-server.com/waha/whatsapp/webhook"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form
+msgid "message,message.status,session.status"
+msgstr "message,message.status,session.status"
+
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Could not reach the WhatsApp server."
+msgstr "تعذّر الوصول إلى خادم واتساب."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/controllers/chat_overview_controller.py:0
+msgid "Could not reach the WhatsApp server. Please try again shortly."
+msgstr "تعذّر الوصول إلى خادم واتساب. يرجى المحاولة بعد قليل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Could not read the file."
+msgstr "تعذّرت قراءة الملف."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#. odoo-python
+#: code:addons/sadeem_waha_whatsapp/controllers/chat_overview_controller.py:0
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Could not send the reaction."
+msgstr "تعذّر إرسال التفاعل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Failed to load messages."
+msgstr "تعذّر تحميل الرسائل."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Failed to send message."
+msgstr "تعذّر إرسال الرسالة."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "Failed to send."
+msgstr "تعذّر الإرسال."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/waha_float.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/js/waha_chat_action.js:0
+msgid "No session was provided."
+msgstr "لم يتم توفير جلسة."
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/waha_float.xml:0
+msgid "Resize"
+msgstr "تغيير الحجم"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/waha_chat_action.xml:0
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/waha_chat_action.xml:0
+msgid "Select a conversation to start"
+msgstr "اختر محادثة للبدء"
+
+#. module: sadeem_waha_whatsapp
+#. odoo-javascript
+#: code:addons/sadeem_waha_whatsapp/static/src/xml/waha_chat_action.xml:0
+msgid "Type a message"
+msgstr "اكتب رسالة"
+
+#. module: sadeem_waha_whatsapp
+#: model_terms:ir.ui.view,arch_db:sadeem_waha_whatsapp.view_waha_session_form_chat
+msgid "Web UI"
+msgstr "واجهة الويب"

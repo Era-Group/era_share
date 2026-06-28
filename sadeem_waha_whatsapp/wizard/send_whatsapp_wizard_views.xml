@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>    <!-- Send WhatsApp Wizard Form -->
+
+<odoo>
+
+    <!-- Send WhatsApp Wizard Form -->
+    <record id="view_send_whatsapp_wizard_form" model="ir.ui.view">
+        <field name="name">sadeem.waha.send.whatsapp.wizard.form</field>
+        <field name="model">sadeem.waha.send.whatsapp.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send WhatsApp Message">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="template_id" string="Use Template"/>
+                        <h1>
+                            <field name="template_id" placeholder="Select a template or compose your own message..."
+                                   options="{'no_create': True, 'no_open': True}"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group name="recipient">
+                            <field name="partner_id" options="{'no_create': True}"/>
+                            <field name="phone_number" required="1"
+                                       placeholder="+20XXXXXXXXXX or +966XXXXXXXXX"
+                                       class="oe_inline"/>
+                            <div class="text-muted" style="margin-top: -8px;">
+                                <small>International format required: +[country code][number] <br/> <span class="text-danger fw-bold">⚠ Must start with +</span></small>
+                            </div>
+                        </group>
+                        <group name="session_section">
+                            <field name="session_id" required="1"
+                                   options="{'no_create': True}"
+                                   domain="[('status', '=', 'working')]"/>
+                            <field name="message_type"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Message Content">
+                            <group>
+                                <field name="message_text"
+                                       placeholder="Type your message here or select a template above...
+
+You can leave this empty if you only want to send a file or voice message."
+                                       nolabel="1"
+                                       colspan="2"/>
+                            </group>
+                        </page>
+
+                        <page string="File Attachment" invisible="message_type not in ['with_file', 'voice']">
+                            <group invisible="message_type != 'with_file'">
+                                <field name="file_upload" filename="file_upload_name" required="message_type == 'with_file'"/>
+                                <field name="file_upload_name" invisible="1"/>
+                            </group>
+                            <group invisible="message_type != 'voice'">
+                                <field name="voice_file" filename="voice_filename"/>
+                                <field name="voice_filename"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <footer>
+                    <button name="action_send" type="object" string="Send Message" class="btn-primary" icon="fa-paper-plane"/>
+                    <widget name="wizard_view_chat_button"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Send Message Action -->
+    <record id="action_send_whatsapp_wizard" model="ir.actions.act_window">
+        <field name="name">Send WhatsApp Message</field>
+        <field name="res_model">sadeem.waha.send.whatsapp.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

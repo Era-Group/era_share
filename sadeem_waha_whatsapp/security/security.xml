@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- WhatsApp Module Category -->
+        <record model="ir.module.category" id="module_category_sadeem_waha_whatsapp">
+            <field name="name">Waha Whatsapp</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- WhatsApp Privilege (Odoo 19: groups are organized under privileges) -->
+        <record model="res.groups.privilege" id="privilege_sadeem_waha_whatsapp">
+            <field name="name">Waha Whatsapp</field>
+            <field name="category_id" ref="module_category_sadeem_waha_whatsapp"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="group_waha_whatsapp_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="privilege_id" ref="privilege_sadeem_waha_whatsapp"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">View and send messages</field>
+        </record>
+
+        <!-- WhatsApp Manager Group -->
+        <record id="group_waha_whatsapp_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="privilege_id" ref="privilege_sadeem_waha_whatsapp"/>
+            <field name="implied_ids" eval="[(4, ref('group_waha_whatsapp_user'))]"/>
+            <field name="comment">Manage templates and sessions</field>
+        </record>
+
+        <!-- Grant admin the manager group on install -->
+        <record id="base.user_admin" model="res.users">
+            <field name="group_ids" eval="[(4, ref('group_waha_whatsapp_manager'))]"/>
+        </record>
+
+        <!-- Record Rules -->
+        <record id="rule_waha_session_company" model="ir.rule">
+            <field name="name">WAHA Session: multi-company</field>
+            <field name="model_id" ref="model_sadeem_waha_session"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_whatsapp_message_company" model="ir.rule">
+            <field name="name">WhatsApp Message: multi-company</field>
+            <field name="model_id" ref="model_sadeem_waha_whatsapp_message"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

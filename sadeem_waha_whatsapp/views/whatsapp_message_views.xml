@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- WhatsApp Message List View -->
+    <record id="view_whatsapp_message_list" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.message.list</field>
+        <field name="model">sadeem.waha.whatsapp.message</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Messages" decoration-success="status=='sent'" decoration-warning="status=='draft'"
+                  decoration-danger="status=='failed'" create="0" edit="0">
+                <field name="create_date"/>
+                <field name="partner_id"/>
+                <field name="phone_number"/>
+                <field name="direction" widget="badge"/>
+                <field name="message_type"/>
+                <field name="text" widget="char" limit="50"/>
+                <field name="status"/>
+                <field name="session_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- WhatsApp Message Form View -->
+    <record id="view_whatsapp_message_form" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.message.form</field>
+        <field name="model">sadeem.waha.whatsapp.message</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Message" create="0" edit="0">
+                <header>
+                    <button name="action_send" type="object" string="Send Message"
+                            class="btn-primary" invisible="direction != 'outgoing' or status != 'draft'"/>
+                    <widget name="whatsapp_chat_button"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="status not in ['draft']"/>
+                            <field name="phone_number" readonly="status not in ['draft']"/>
+                            <field name="chat_id" readonly="status not in ['draft']"/>
+                            <field name="session_id" readonly="status not in ['draft']"/>
+                        </group>
+                        <group>
+                            <field name="direction" readonly="1"/>
+                            <field name="message_type" readonly="status not in ['draft']"/>
+                            <field name="waha_message_id" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="status not in ['draft']"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Message Content">
+                            <field name="text" placeholder="Enter your message here..." readonly="status not in ['draft']"/>
+                        </page>
+
+                        <page string="Attachment" invisible="not attachment_id">
+                            <group>
+                                <group string="File Info">
+                                    <field name="attachment_id" string="File Name" readonly="1"/>
+                                    <field name="attachment_mimetype" string="MIME Type" readonly="1"/>
+                                    <field name="attachment_file_size" string="File Size" readonly="1"/>
+                                    <field name="attachment_download_url" string="Download" widget="url" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Error Details" invisible="not error_message">
+                            <field name="error_message" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- WhatsApp Message Search View -->
+    <record id="view_whatsapp_message_search" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.message.search</field>
+        <field name="model">sadeem.waha.whatsapp.message</field>
+        <field name="arch" type="xml">
+            <search string="Search WhatsApp Messages">
+                <field name="text"/>
+                <field name="partner_id"/>
+                <field name="phone_number"/>
+                <field name="session_id"/>
+
+                <filter string="Outgoing" name="outgoing" domain="[('direction', '=', 'outgoing')]"/>
+                <filter string="Incoming" name="incoming" domain="[('direction', '=', 'incoming')]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('status', '=', 'draft')]"/>
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <filter string="Failed" name="failed" domain="[('status', '=', 'failed')]"/>
+                <separator/>
+                <filter string="Create Date" name="today" date="create_date"/>
+
+                <separator/>
+                <filter string="Contact" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                <filter string="Session" name="group_session" context="{'group_by': 'session_id'}"/>
+                <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                <filter string="Type" name="group_type" context="{'group_by': 'message_type'}"/>
+                <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_whatsapp_message" model="ir.actions.act_window">
+        <field name="name">WhatsApp Messages</field>
+        <field name="res_model">sadeem.waha.whatsapp.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+</odoo>

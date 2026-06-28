@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sadeem_waha_whatsapp.Chatter" t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//*[contains(@class, 'o-mail-Chatter-logNote')]" position="after">
+            <button t-if="state.thread.canSendWahaWhatsapp"
+                    class="btn btn-secondary text-nowrap me-1"
+                    t-att-class="{'my-2': !props.compactHeight }"
+                    data-hotkey="shift+a"
+                    t-on-click="sendWahaWhatsapp"
+                    title="Send W-WhatsApp Message">
+                <i class="fa fa-whatsapp me-1"/>
+                <span>W-WhatsApp</span>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

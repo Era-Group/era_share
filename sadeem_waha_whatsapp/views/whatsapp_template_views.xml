@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- WhatsApp Template List View -->
+    <record id="view_whatsapp_template_list" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.template.list</field>
+        <field name="model">sadeem.waha.whatsapp.template</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Templates">
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="template_type"/>
+                <field name="active"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <button name="action_use_template" type="object" string="Use Template"
+                        class="btn-primary btn-sm" icon="fa-paper-plane"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- WhatsApp Template Form View -->
+    <record id="view_whatsapp_template_form" model="ir.ui.view">
+        <field name="name">sadeem.waha.whatsapp.template.form</field>
+        <field name="model">sadeem.waha.whatsapp.template</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Template">
+                <header>
+                    <button name="action_use_template" type="object" string="Use Template"
+                            class="btn-primary"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Template Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="model_id" options="{'no_create': True}"/>
+                            <field name="template_type"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="Attachment" invisible="template_type != 'with_attachment'">
+                        <field name="attachment_id" nolabel="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Message">
+                            <field name="message_text"
+                                   placeholder="Enter your message here...&#10;Use {{1}}, {{2}}, etc. for variables&#10;&#10;Example: Hello {{1}}, your order {{2}} is ready!"/>
+                        </page>
+
+                        <page string="Variables">
+                            <field name="variable_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="field_type"/>
+                                    <field name="model_id" column_invisible="1"/>
+                                    <field name="field_name" invisible="field_type != 'field'"
+                                           required="field_type == 'field'"
+                                           placeholder="e.g., name, email, partner_id.name"/>
+                                    <field name="demo_value" placeholder="Sample value"/>
+                                </list>
+                            </field>
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Variable Types:</strong>
+                                    <ul class="mb-0">
+                                        <li>
+                                            <strong>Field of Model:</strong>
+                                            Auto-fill from record field
+                                        </li>
+                                        <li>
+                                            <strong>Free Text:</strong>
+                                            User enters manually
+                                        </li>
+                                        <li>
+                                            <strong>User Name:</strong>
+                                            Current user name
+                                        </li>
+                                        <li>
+                                            <strong>User Mobile:</strong>
+                                            Current user mobile
+                                        </li>
+                                    </ul>
+                                </div>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_template" model="ir.actions.act_window">
+        <field name="name">WhatsApp Templates</field>
+        <field name="res_model">sadeem.waha.whatsapp.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

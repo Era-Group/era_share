@@ -1,71 +1,248 @@
+<!-- Apps-store description for era_website_voice_agent_ai. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- HERO -->
+  <!-- HERO BANNER -->
   <div style="background:linear-gradient(135deg,#701a75 0%,#a21caf 60%,#d946ef 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Website Voice Agent AI</h1>
+
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">وكيل صوتي ذكي للموقع من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Floating voice widget using OpenAI Realtime API — records calls, transcribes, and stores Arabic summaries in CRM</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">زر صوتي عائم يستخدم OpenAI Realtime API — يسجّل ويحوّل لنص ويحفظ ملخصاً عربياً في CRM</p>
+
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      Add a <b>floating microphone button</b> to your Odoo website that connects visitors to an OpenAI Realtime API voice agent in real time — conversations are transcribed, summarised in Arabic, and stored as <b>qualified CRM leads</b> with full recordings, automatically.
+    </p>
+
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      أضف <b>زر ميكروفون عائم</b> إلى موقع أودو يُوصّل الزوار بوكيل صوتي يعمل بـ OpenAI Realtime API في الوقت الفعلي — تُنسخ المحادثات وتُلخَّص بالعربية وتُحفظ كـ<b>فرص CRM مؤهّلة</b> مع تسجيلات كاملة، تلقائياً.
+    </p>
+
   </div>
 
-  <!-- FEATURE CARDS -->
+  <!-- FEATURE CARDS GRID -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
+    <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">🎙️</div>
+
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Realtime Voice Widget</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Floating mic button on your website for instant AI voice conversations.</p>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">A floating circular mic button (configurable position, bottom-right by default) is injected into the website frontend via a QWeb template override. Clicking it opens a WebRTC audio channel directly to the OpenAI Realtime API.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The widget displays a live waveform animation during the conversation and a clear "Listening…" / "AI is speaking…" status indicator so visitors always know what is happening.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
         <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">أداة صوتية حية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">زر ميكروفون عائم على موقعك لمحادثات صوتية فورية بالذكاء الاصطناعي.</p>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُحقن زر ميكروفون دائري عائم (موقعه قابل للتهيئة، أسفل اليمين افتراضياً) في واجهة الموقع عبر تجاوز قالب QWeb. الضغط عليه يفتح قناة صوت WebRTC مباشرةً مع OpenAI Realtime API. تعرض الأداة رسوماً متحركة للموجة الصوتية الحية أثناء المحادثة ومؤشر حالة واضح "يستمع…" / "الذكاء الاصطناعي يتحدث…".</p>
+
       </div>
+
     </div>
 
+    <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
+      <div style="font-size:2em;margin-bottom:10px;">🤖</div>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">OpenAI Realtime Agent</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">The agent's persona, system prompt, voice model (Alloy, Echo, Shimmer, or Verse), and allowed tools are fully configured from Odoo Settings → Website → Voice Agent.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The agent speaks and understands Arabic, English, or both — controlled by the <code>voice_agent_language</code> system parameter. No code editing is needed to change the agent's behaviour or language after initial setup.</p>
+
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">وكيل OpenAI الحي</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">شخصية الوكيل وموجّه النظام ونموذج الصوت (Alloy، Echo، Shimmer، أو Verse) والأدوات المسموح بها تُهيَّأ بالكامل من إعدادات أودو. يتحدث الوكيل ويفهم العربية أو الإنجليزية أو كليهما — يتحكم به معامل النظام <code>voice_agent_language</code>. لا تعديل كود مطلوب لتغيير سلوك الوكيل أو لغته بعد الإعداد الأولي.</p>
+
+      </div>
+
+    </div>
+
+    <!-- Card 3 -->
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">📝</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Auto Transcription</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Transcribes every voice session automatically using OpenAI Realtime API.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Automatic Transcription</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">The full conversation — visitor and agent turns alike — is transcribed in real time via the Realtime API's text delta events. The transcript is stored as an <code>era.realtime.call.transcript</code> record with speaker labels, timestamps, and the full turn-by-turn text.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Transcripts are linked to the resulting CRM lead and are searchable from the back-end lead view.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
         <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">نسخ تلقائي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ينسخ كل جلسة صوتية تلقائياً باستخدام OpenAI Realtime API.</p>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُنسخ المحادثة الكاملة — دور الزائر والوكيل معاً — في الوقت الفعلي عبر أحداث نص دلتا لـ Realtime API. يُحفظ النص كسجل <code>era.realtime.call.transcript</code> مع تسميات المتحدث والطوابع الزمنية والنص الكامل دوراً بدور. تُربط النصوص بفرصة CRM الناتجة وتكون قابلة للبحث من عرض الفرصة في الخلفية.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">🇸🇦</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Arabic AI Summaries</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Generates structured Arabic summaries of each conversation for CRM.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Arabic AI Summary</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">After the call ends, a second AI call (standard chat API, not Realtime) generates a concise Arabic summary covering: customer intent, key questions asked, objections raised, and the recommended next step for the sales team.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The summary is written to the CRM lead description and a dedicated <code>era_voice_summary_ar</code> field, so Arabic-speaking sales teams get an immediately actionable brief.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">ملخصات عربية بالذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يولّد ملخصات عربية منظمة لكل محادثة لإدراجها في CRM.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">ملخّص عربي بالذكاء الاصطناعي</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">بعد انتهاء المكالمة، يولّد استدعاء AI ثانٍ (واجهة الدردشة القياسية) ملخصاً عربياً موجزاً يتضمن: نية العميل، الأسئلة الرئيسية المطروحة، الاعتراضات المُثارة، والخطوة التالية الموصى بها لفريق المبيعات. يُكتب الملخص في وصف فرصة CRM وحقل <code>era_voice_summary_ar</code> المخصص.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 5 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">📂</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Recordings in CRM</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Stores call recordings and transcripts directly inside CRM lead records.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Recording Storage</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Browser-side <code>MediaRecorder</code> captures the audio stream in WebM/Opus format throughout the call. On call end, the recording is uploaded to Odoo as an <code>ir.attachment</code> and linked directly to the CRM lead.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Recordings can be played back from the lead chatter at any time, and the file size is capped via the <code>voice_agent_max_recording_mb</code> system parameter to keep storage usage predictable.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">التسجيلات في CRM</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يخزن تسجيلات المكالمات والنصوص مباشرةً داخل سجلات فرص CRM.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">تخزين التسجيلات</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يلتقط <code>MediaRecorder</code> على جانب المتصفح تدفق الصوت بصيغة WebM/Opus طوال المكالمة. عند انتهاء المكالمة، يُرفع التسجيل إلى أودو كـ <code>ir.attachment</code> ويُربط مباشرةً بفرصة CRM. يمكن تشغيل التسجيلات من السجل الصوتي للفرصة في أي وقت، وحجم الملف مقيّد عبر معامل نظام <code>voice_agent_max_recording_mb</code>.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 6 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Easy Configuration</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Configure OpenAI key, agent prompt, and widget behavior from Odoo settings.</p>
+
+      <div style="font-size:2em;margin-bottom:10px;">📊</div>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Automatic CRM Lead Creation</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">If no matching partner is found by email or phone, a new CRM lead is created automatically with: the lead name set to the AI-extracted visitor name (or "Website Voice Call — {date}" as a fallback), the description filled with the Arabic summary, and the tag "Voice Agent" applied.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The lead appears in the standard CRM pipeline immediately — ready for follow-up without any manual data entry.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">إعداد سهل</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اضبط مفتاح OpenAI وموجّه الوكيل وسلوك الأداة من إعدادات أودو.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">إنشاء فرصة CRM تلقائي</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">إذا لم يُعثر على شريك مطابق بالبريد الإلكتروني أو الهاتف، تُنشأ فرصة CRM جديدة تلقائياً: اسم الفرصة مستخرج بالذكاء الاصطناعي من اسم الزائر (أو "مكالمة صوتية من الموقع — {التاريخ}" احتياطياً)، الوصف يتضمن الملخص العربي، والوسم "Voice Agent" مطبّق. تظهر الفرصة في خط أنابيب CRM فوراً — جاهزة للمتابعة دون إدخال بيانات يدوي.</p>
+
       </div>
+
+    </div>
+
+    <!-- Card 7 -->
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #f5d0fe;border-radius:14px;padding:24px 22px;">
+
+      <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">Full Settings Page</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">A dedicated settings section under Settings → Website → Voice Agent lets admins configure: OpenAI API key, voice model selection, agent persona/system-prompt text, widget position on the page, primary language, recording on/off toggle, and the CRM pipeline stage for newly created leads.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">All changes take effect immediately without any code deployment or server restart.</p>
+
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#a21caf;">صفحة إعدادات كاملة</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">قسم إعدادات مخصص تحت الإعدادات → الموقع → الوكيل الصوتي يُمكّن المديرين من ضبط: مفتاح OpenAI API، اختيار نموذج الصوت، نص شخصية الوكيل/موجّه النظام، موقع الأداة في الصفحة، اللغة الأساسية، تفعيل/إلغاء التسجيل، ومرحلة خط أنابيب CRM للفرص الجديدة. جميع التغييرات فورية دون نشر كود أو إعادة تشغيل خادم.</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS SECTION -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+
+          <li>Configure OpenAI API key and agent settings in Settings → Website → Voice Agent.</li>
+
+          <li>Website visitor clicks the floating mic button → WebRTC session opens with OpenAI Realtime API.</li>
+
+          <li>Conversation happens in real time; transcript accumulates turn by turn.</li>
+
+          <li>Call ends → browser uploads the WebM/Opus recording to Odoo as an attachment.</li>
+
+          <li>AI generates an Arabic summary of the conversation (intent, questions, objections, next step).</li>
+
+          <li>CRM lead is created with transcript + recording + Arabic summary → sales team picks it up in the pipeline.</li>
+
+        </ol>
+      </div>
+
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+
+          <li>هيّئ مفتاح OpenAI API وإعدادات الوكيل في الإعدادات → الموقع → الوكيل الصوتي.</li>
+
+          <li>يضغط زائر الموقع على زر الميكروفون العائم → تفتح جلسة WebRTC مع OpenAI Realtime API.</li>
+
+          <li>تجري المحادثة في الوقت الفعلي؛ يتراكم النص دوراً بدور.</li>
+
+          <li>تنتهي المكالمة → يرفع المتصفح تسجيل WebM/Opus إلى أودو كمرفق.</li>
+
+          <li>يولّد الذكاء الاصطناعي ملخصاً عربياً (النية، الأسئلة، الاعتراضات، الخطوة التالية).</li>
+
+          <li>تُنشأ فرصة CRM مع النص + التسجيل + الملخص العربي → يلتقطها فريق المبيعات في خط الأنابيب.</li>
+
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO BOXES -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
+
+    <div style="flex:1 1 300px;background:#fdf4ff;border:1.5px solid #f5d0fe;border-radius:14px;padding:20px 24px;">
+
+      <h3 style="margin:0 0 8px;color:#a21caf;font-size:1em;">🔑 API key required</h3>
+
+      <p style="margin:0 0 10px;color:#701a75;line-height:1.6;font-size:.93em;">An OpenAI API key with access to the <b>Realtime API</b> (gpt-4o-realtime-preview or newer) is required. Standard chat completions access is additionally needed for the post-call Arabic summary step. The key is stored encrypted in Odoo system parameters and never exposed to the browser frontend.</p>
+
+      <p dir="rtl" style="margin:0;color:#a21caf;line-height:1.8;font-size:.91em;border-top:1px solid #f5d0fe;padding-top:10px;">يُطلب مفتاح OpenAI API مع صلاحية الوصول إلى <b>Realtime API</b> (gpt-4o-realtime-preview أو أحدث). الوصول إلى اكتمالات الدردشة القياسية مطلوب أيضاً لخطوة الملخص العربي بعد المكالمة. المفتاح مُخزَّن مشفّراً في معاملات نظام أودو ولا يُكشف أبداً لواجهة المتصفح الأمامية.</p>
+
+    </div>
+
+    <div style="flex:1 1 300px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:20px 24px;">
+
+      <h3 style="margin:0 0 8px;color:#1e40af;font-size:1em;">ℹ️ Browser permissions</h3>
+
+      <p style="margin:0 0 10px;color:#1e3a8a;line-height:1.6;font-size:.93em;">The floating widget requests microphone permission via the standard browser <code>getUserMedia</code> API — the browser's native permission prompt will appear the first time the visitor clicks the mic button. HTTPS is required for <code>getUserMedia</code> to work; the module is designed for production Odoo websites served over TLS.</p>
+
+      <p dir="rtl" style="margin:0;color:#1e40af;line-height:1.8;font-size:.91em;border-top:1px solid #bfdbfe;padding-top:10px;">تطلب الأداة العائمة إذن الميكروفون عبر واجهة المتصفح القياسية <code>getUserMedia</code> — يظهر موجّه إذن المتصفح الأصلي في المرة الأولى التي يضغط فيها الزائر على زر الميكروفون. HTTPS مطلوب لعمل <code>getUserMedia</code>؛ الوحدة مصممة لمواقع أودو الإنتاجية المخدومة عبر TLS.</p>
+
     </div>
 
   </div>
 
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Website Voice Agent AI · Voice AI for your website · Odoo 19
+    ERA Website Voice Agent AI · وكيل صوتي ذكي للموقع من ERA · Odoo 19
   </div>
 
 </section>

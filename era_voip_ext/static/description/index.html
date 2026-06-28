@@ -1,61 +1,227 @@
+<!-- Apps-store description for era_voip_ext. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- HERO -->
+  <!-- HERO BANNER -->
   <div style="background:linear-gradient(135deg,#7f1d1d 0%,#b91c1c 60%,#ef4444 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
-    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">CRM VoIP Call Insights</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">رؤى مكالمات VoIP في CRM</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Track VoIP call counts and AI-formatted transcripts inside CRM leads</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">تتبّع عدد مكالمات VoIP ونصوصها المنسَّقة بالذكاء الاصطناعي داخل فرص CRM</p>
+
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA VoIP Extended</h1>
+
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">توسعة VoIP من ERA</div>
+
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      Supercharge Odoo VoIP with <b>call counting, AI-formatted transcripts, and automatic CRM lead linking</b> — every call's count, duration, and structured summary appear directly on the opportunity, with zero manual note-taking required after the call.
+    </p>
+
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      عزّز نظام VoIP في أودو بـ<b>عدّاد المكالمات ونصوص منسّقة بالذكاء الاصطناعي وربط فرص CRM تلقائياً</b> — يظهر عدد كل مكالمة ومدتها وملخصها المنظّم مباشرةً على الفرصة، دون أي تدوين يدوي بعد المكالمة.
+    </p>
+
   </div>
 
-  <!-- FEATURE CARDS -->
+  <!-- FEATURE CARDS GRID -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
+    <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">📞</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Call Count on Leads</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Displays total VoIP call count directly on the CRM lead form.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Call Count on CRM Leads</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">An <code>era_voip_call_count</code> integer field is added to <code>crm.lead</code> and increments automatically each time a VoIP call is logged against the lead.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">A smart button ("📞 3 calls") appears in the button bar, and clicking it opens the full linked call list. Both inbound and outbound calls are counted, and a pre-configured 30-day filter makes recent activity easy to review at a glance.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">عداد المكالمات في الفرص</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يعرض إجمالي عدد مكالمات VoIP مباشرةً على نموذج فرصة CRM.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">عدّاد المكالمات على فرص CRM</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُضاف حقل عدّاد <code>era_voip_call_count</code> إلى <code>crm.lead</code> ويزداد تلقائياً مع كل مكالمة VoIP مرتبطة بالفرصة. يظهر زر ذكي ("📞 3 مكالمات") في شريط الأزرار — الضغط عليه يفتح قائمة المكالمات المرتبطة. تُحتسب المكالمات الواردة والصادرة معاً، مع فلتر جاهز لآخر 30 يوماً.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">🤖</div>
+
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">AI Transcript Formatting</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Uses AI to clean and structure raw call transcripts for readability.</p>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Raw VoIP transcripts from <code>voip_ai</code> are passed to a dedicated Odoo AI agent defined in <code>data/ai_agent.xml</code>. The agent reformats plain text into structured HTML: a bold <b>Summary</b> (2-3 sentences), a <b>Key Points</b> list, a <b>Customer Sentiment</b> label (positive / neutral / negative), and <b>Agreed Next Steps</b>.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The result is stored in <code>voip.call.transcript_html</code> and rendered directly in the call form view for immediate review.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
         <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">تنسيق النصوص بالذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يستخدم الذكاء الاصطناعي لتنظيف نصوص المكالمات الخام وتنسيقها لسهولة القراءة.</p>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُرسَل النصوص الخام من <code>voip_ai</code> إلى وكيل AI مخصص في أودو. يُعيد الوكيل تنسيقها إلى HTML منظّم: <b>ملخّص</b> (2-3 جمل)، قائمة <b>نقاط رئيسية</b>، <b>مشاعر العميل</b> (إيجابي/محايد/سلبي)، و<b>الخطوات التالية المتّفق عليها</b>. النتيجة محفوظة في <code>transcript_html</code> وتُعرض في نموذج المكالمة للمراجعة الفورية.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 3 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">🔗</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Auto-Link to CRM</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Automatically associates VoIP calls with the correct CRM lead.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Automatic CRM Linking</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">When a VoIP call completes, a base automation rule — installed by the module's <code>post_init_hook</code> — checks whether the caller's phone number matches any CRM lead partner.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">If a match is found, the call record is linked to the lead via the <code>lead_id</code> field automatically, with no manual searching required. The lead's call counter then increments to reflect the newly linked call.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">ربط تلقائي بـ CRM</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يربط تلقائياً مكالمات VoIP بفرصة CRM الصحيحة.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">ربط CRM التلقائي</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">عند انتهاء مكالمة VoIP، تتحقق قاعدة أتمتة مُثبَّتة تلقائياً مما إذا كان رقم المتصل يطابق شريكاً في فرص CRM. عند العثور على تطابق، يُربط سجل المكالمة بالفرصة عبر حقل <code>lead_id</code> تلقائياً — دون بحث يدوي. ثم يزداد عدّاد مكالمات الفرصة ليعكس المكالمة الجديدة.</p>
+
       </div>
+
     </div>
 
+    <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
       <div style="font-size:2em;margin-bottom:10px;">📅</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Scheduled Formatting</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Background cron formats transcripts without blocking user workflow.</p>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Scheduled Transcript Formatting</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">A cron job runs every 15 minutes and picks up any <code>voip.call</code> records that have a raw transcript but no formatted HTML version yet.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">This background processing ensures transcripts are ready and waiting for the salesperson when they open the lead — even if the call just ended moments ago. Failed formatting attempts are retried on the next cycle with error details logged for investigation.</p>
+
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">تنسيق مجدول في الخلفية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مهمة مجدولة في الخلفية تنسّق النصوص دون تعطيل سير عمل المستخدم.</p>
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">جدولة تنسيق النصوص</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعمل مهمة مجدولة كل 15 دقيقة وتلتقط سجلات <code>voip.call</code> التي لديها نص خام دون نسخة HTML منسّقة. تضمن هذه المعالجة الخلفية أن النصوص جاهزة حين يفتح البائع الفرصة — حتى لو انتهت المكالمة للتو. محاولات التنسيق الفاشلة تُعاد في الدورة التالية مع تسجيل تفاصيل الخطأ.</p>
+
       </div>
+
+    </div>
+
+    <!-- Card 5 -->
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
+      <div style="font-size:2em;margin-bottom:10px;">📊</div>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Call Timeline on Lead</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">The CRM lead chatter includes a dedicated "VoIP Calls" section listing every linked call with its date, duration, direction (inbound/outbound), and a collapsible formatted summary.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Salespeople get the full picture without opening each call record separately. The timeline is sorted most-recent-first and updates automatically when a new call is linked to the lead.</p>
+
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">الجدول الزمني للمكالمات على الفرصة</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يتضمن السجل الصوتي لفرصة CRM قسم "مكالمات VoIP" يعرض كل مكالمة مرتبطة مع تاريخها ومدتها واتجاهها (وارد/صادر) وملخصاً قابلاً للطي. يحصل البائع على الصورة الكاملة دون فتح كل سجل مكالمة على حدة. الجدول مرتّب من الأحدث وينعم تلقائياً عند إضافة مكالمة جديدة.</p>
+
+      </div>
+
+    </div>
+
+    <!-- Card 6 -->
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecaca;border-radius:14px;padding:24px 22px;">
+
+      <div style="font-size:2em;margin-bottom:10px;">🎨</div>
+
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">Call List View Styling</h3>
+
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Custom SCSS colours the call list view by outcome: answered calls get a green badge, missed calls a red badge, and voicemail a soft amber badge — making status scannable at a glance.</p>
+
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Duration is displayed as <code>mm:ss</code> instead of raw seconds, and an outcome filter bar lets managers quickly drill down to missed or unanswered calls for follow-up action.</p>
+
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b91c1c;">تنسيق قائمة المكالمات</h3>
+
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُلوّن SCSS مخصص قائمة المكالمات حسب النتيجة: المُجاب عليها بشارة خضراء، الفائتة بشارة حمراء، والبريد الصوتي بشارة كهرمانية — مما يجعل الحالة قابلة للمسح البصري فوراً. تُعرض المدة بصيغة <code>دق:ثا</code> بدلاً من الثواني الخام، مع شريط فلتر في الأعلى للتعمق في المكالمات الفائتة للمتابعة.</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS SECTION -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+
+          <li>Sales rep makes or receives a VoIP call while logged into Odoo.</li>
+
+          <li>Call ends; <code>voip_ai</code> transcribes the audio into a raw text transcript.</li>
+
+          <li>Cron picks up the raw transcript → AI agent formats it into structured HTML.</li>
+
+          <li>Automation rule matches the caller's phone to a CRM lead partner and sets <code>lead_id</code>.</li>
+
+          <li>Lead call counter increments — the smart button updates instantly.</li>
+
+          <li>Salesperson opens the lead and sees call count + formatted transcript in the chatter.</li>
+
+        </ol>
+      </div>
+
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+
+          <li>يُجري مندوب المبيعات أو يستقبل مكالمة VoIP وهو مسجّل دخوله في أودو.</li>
+
+          <li>تنتهي المكالمة؛ يُحوّل <code>voip_ai</code> الصوت إلى نص خام.</li>
+
+          <li>تلتقط المهمة المجدولة النص الخام → يُنسّقه وكيل AI إلى HTML منظّم.</li>
+
+          <li>تطابق قاعدة الأتمتة رقم المتصل بشريك فرصة CRM وتضبط <code>lead_id</code>.</li>
+
+          <li>يزداد عدّاد مكالمات الفرصة — الزر الذكي يُحدَّث فوراً.</li>
+
+          <li>يفتح البائع الفرصة ويرى عدد المكالمات والنص المنسّق في السجل الصوتي.</li>
+
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO BOXES -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
+
+    <div style="flex:1 1 300px;background:#fff5f5;border:1.5px solid #fecaca;border-radius:14px;padding:20px 24px;">
+
+      <h3 style="margin:0 0 8px;color:#b91c1c;font-size:1em;">📋 Prerequisites</h3>
+
+      <p style="margin:0 0 10px;color:#7f1d1d;line-height:1.6;font-size:.93em;">Requires the standard <code>voip</code> module and the <code>voip_ai</code> add-on for transcription. An ERA AI Account must be configured in <b>AI → AI Accounts</b> — any text-capable provider (Claude, OpenAI, Gemini, etc.) works for transcript formatting.</p>
+
+      <p dir="rtl" style="margin:0;color:#b91c1c;line-height:1.8;font-size:.91em;border-top:1px solid #fecaca;padding-top:10px;">يتطلب وحدة <code>voip</code> القياسية وإضافة <code>voip_ai</code> للنسخ. يجب تهيئة حساب ERA AI في <b>AI → حسابات AI</b> — أي مزوّد يدعم النصوص (Claude، OpenAI، Gemini، إلخ) يعمل لتنسيق النصوص.</p>
+
+    </div>
+
+    <div style="flex:1 1 300px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:20px 24px;">
+
+      <h3 style="margin:0 0 8px;color:#1e40af;font-size:1em;">ℹ️ Zero-configuration install</h3>
+
+      <p style="margin:0 0 10px;color:#1e3a8a;line-height:1.6;font-size:.93em;">The <code>post_init_hook</code> installs the CRM-linking automation rule automatically on module installation. The cron job activates immediately. No Python changes or manual record creation are required — install and everything works out of the box.</p>
+
+      <p dir="rtl" style="margin:0;color:#1e40af;line-height:1.8;font-size:.91em;border-top:1px solid #bfdbfe;padding-top:10px;">يُثبّت <code>post_init_hook</code> قاعدة أتمتة الربط بـ CRM تلقائياً عند تثبيت الوحدة. المهمة المجدولة تعمل فوراً. لا تغييرات كود أو إنشاء سجلات يدوي مطلوب — ثبّت وابدأ فوراً.</p>
+
     </div>
 
   </div>
 
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    CRM VoIP Call Insights · Call intelligence for your CRM · Odoo 19
+    ERA VoIP Extended · توسعة VoIP من ERA · Odoo 19
   </div>
 
 </section>

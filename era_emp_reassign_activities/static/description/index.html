@@ -1,11 +1,16 @@
+<!-- Apps-store description for era_emp_reassign_activities. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#065f46 0%,#047857 60%,#10b981 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Employee Reassign Activities</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إعادة تعيين أنشطة الموظف من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Reassign all future activities, leads, meetings, tickets, tasks and RFQs from one user to another</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">أعد تعيين جميع الأنشطة والفرص والاجتماعات والتذاكر والمهام وطلبات الشراء من موظف لآخر</p>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      A single wizard that transfers all future activities, CRM leads, helpdesk tickets, project tasks, sale orders, and purchase RFQs from one Odoo user to another — in one database transaction. Built for offboarding, role changes, and team restructuring.
+    </p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      معالج واحد ينقل جميع الأنشطة المستقبلية وفرص CRM وتذاكر الدعم والمهام وأوامر البيع وطلبات الشراء من مستخدم لآخر — في معاملة قاعدة بيانات واحدة. مصمم لإنهاء الخدمة وتغيير الأدوار وإعادة هيكلة الفرق.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
@@ -13,69 +18,117 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">👤</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">User-to-User Transfer</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Seamlessly transfer all workload from a departing employee to a replacement.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">نقل بين المستخدمين</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">انقل كامل عبء العمل من موظف مغادر إلى بديله بسلاسة.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">One-Click User Handover</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Open the wizard from <b>HR → Employees → Reassign Activities</b> or from <b>Settings → Users</b>. Select the departing user (From) and the replacement user (To), tick the record types to transfer, and click Reassign. The wizard processes every selected record type in a single database transaction — no partial transfers, no orphaned records, and a clean rollback if any step fails.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">تسليم المستخدم بنقرة واحدة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">افتح المعالج من <b>الموارد البشرية → الموظفون → إعادة تعيين الأنشطة</b>. اختر المستخدم المغادر والمستبدل، ضع علامة على أنواع السجلات، اضغط إعادة التعيين. تتم المعالجة في معاملة واحدة — لا نقل جزئي ولا سجلات يتيمة وتراجع نظيف عند أي خطأ.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📋</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Activities &amp; Meetings</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reassigns all scheduled activities and calendar meetings in one action.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">الأنشطة والاجتماعات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يعيد تعيين جميع الأنشطة المجدولة والاجتماعات في إجراء واحد.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Activities &amp; Calendar Events</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reassigns all <code>mail.activity</code> records with <code>date_deadline &gt;= today</code> where <code>user_id</code> matches the source user. The <code>calendar.attendee</code> list on linked <code>calendar.event</code> records is updated so the new owner appears as an attendee and the old owner is removed. Historical (past) activities are left untouched for audit trail purposes.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">الأنشطة وأحداث التقويم</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُعاد تعيين جميع سجلات <code>mail.activity</code> المستقبلية التي تطابق المستخدم المصدر. يُحدَّث المشاركون في أحداث التقويم المرتبطة — يُضاف المالك الجديد ويُزال القديم. الأنشطة الماضية تبقى كما هي لأغراض التدقيق.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">💼</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">CRM Leads</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Transfers CRM lead ownership so no opportunity falls through the cracks.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">فرص CRM</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ينقل ملكية فرص CRM حتى لا تضيع أي فرصة.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">CRM Leads &amp; Opportunities</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Transfers the <code>user_id</code> (salesperson) field on all <code>crm.lead</code> records where <code>active = True</code> and the lead has not been won (<code>probability &lt; 100</code>). Pipeline stages, tags, and expected revenue are preserved exactly. The new owner inherits the full activity log and can pick up every conversation thread seamlessly.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">فرص وعملاء CRM</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ينقل حقل <code>user_id</code> (البائع) على جميع سجلات <code>crm.lead</code> النشطة غير المُكتسَبة. تُحفظ مراحل المسار والوسوم والإيراد المتوقع دون تغيير. يرث المالك الجديد سجل الأنشطة كاملاً ويمكنه متابعة كل خيط محادثة بسلاسة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🎫</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Tickets &amp; Tasks</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Moves helpdesk tickets and project tasks to the new responsible user.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">التذاكر والمهام</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ينقل تذاكر الدعم ومهام المشاريع للمستخدم الجديد المسؤول.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Helpdesk Tickets</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reassigns open <code>helpdesk.ticket</code> records where <code>user_id</code> matches the source and <code>stage_id.is_close = False</code>. SLA timers are <em>not</em> reset — only the <code>user_id</code> field is updated, so no SLA breach is introduced by the handover. Closed, merged, and cancelled tickets are excluded from the transfer automatically.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">تذاكر الدعم الفني</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُعاد تعيين تذاكر <code>helpdesk.ticket</code> المفتوحة المخصصة للمستخدم المصدر. لا تُعاد أوقات SLA — يُحدَّث <code>user_id</code> فحسب دون إحداث خرق اتفاقية الخدمة. التذاكر المغلقة والمُلغاة مستثناة تلقائياً.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🛒</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Quotations &amp; RFQs</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reassigns pending sales quotations and purchase RFQs automatically.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">العروض وطلبات الشراء</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يعيد تعيين عروض الأسعار وطلبات الشراء المعلقة تلقائياً.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Quotations, Orders &amp; RFQs</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Updates <code>user_id</code> on <code>sale.order</code> records in <code>draft</code> or <code>sent</code> state (quotations and sent offers still awaiting a customer response), and on <code>purchase.order</code> records in <code>draft</code> state (RFQs pending approval or sending). Confirmed, locked, and invoiced orders are left untouched to preserve the audit trail.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">عروض الأسعار والأوامر وطلبات الشراء</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُحدَّث <code>user_id</code> على عروض البيع في حالة <code>draft</code> أو <code>sent</code> وعلى طلبات الشراء في حالة <code>draft</code> المعلّقة للاعتماد. الأوامر المؤكدة والمُقفلة والمُفوترة تبقى كما هي للحفاظ على سجل التدقيق.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⚡</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">One-Click Handover</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Complete employee handover in seconds with a single wizard action.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">تسليم بنقرة واحدة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أكمل تسليم الموظف في ثوانٍ بإجراء واحد في المعالج.</p>
+      <div style="font-size:2em;margin-bottom:10px;">📊</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Preview Before Commit</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The wizard's first screen displays a summary table: record type, count of records that <em>would</em> be reassigned, and a checkbox to include or exclude each type. Admins can deselect types they want to keep with the original owner — for example, keeping helpdesk tickets assigned to a queue while moving all CRM leads — before clicking the final Reassign button.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">معاينة قبل التنفيذ</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعرض الشاشة الأولى للمعالج جدولاً يوضح نوع السجل وعدد السجلات التي ستُعاد تعيينها مع خانة اختيار لكل نوع. يمكن استثناء أنواع بعينها قبل الضغط على زر إعادة التعيين النهائي.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a7f3d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔒</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">Access-Controlled</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Only users with the <b>HR / Administration</b> group (<code>hr.group_hr_manager</code>) can open the reassignment wizard. The target (To) user must be an active internal user — the system rejects reassignment to portal users, public users, or archived accounts with a clear validation error message, preventing accidental handover to inactive identities.</p>
+      <div style="border-top:1px solid #a7f3d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#047857;">مُقيَّد بصلاحيات الوصول</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">فقط مستخدمو مجموعة <b>الموارد البشرية / الإدارة</b> يمكنهم فتح معالج إعادة التعيين. يجب أن يكون المستخدم الهدف مستخدماً داخلياً نشطاً — يرفض النظام النقل إلى مستخدمي البوابة أو الحسابات المؤرشفة برسالة تحقق واضحة.</p>
       </div>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
+  <!-- HOW IT WORKS -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+          <li>Go to <b>HR → Employees → Reassign Activities</b> (or <b>Settings → Users → Reassign</b>).</li>
+          <li>Select the <b>From</b> user (departing) and the <b>To</b> user (replacement).</li>
+          <li>Review the record count preview per type; deselect any types to keep with the original owner.</li>
+          <li>Tick the record types to transfer and click <b>Reassign</b>.</li>
+          <li>All selected records update in one database transaction — a success summary shows on close.</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+          <li>انتقل إلى <b>الموارد البشرية → الموظفون → إعادة تعيين الأنشطة</b>.</li>
+          <li>اختر المستخدم <b>المصدر</b> (المغادر) والمستخدم <b>الهدف</b> (البديل).</li>
+          <li>راجع معاينة عدد السجلات لكل نوع وأزل العلامة عن الأنواع التي تريد إبقاءها.</li>
+          <li>ضع علامة على أنواع السجلات للنقل واضغط <b>إعادة التعيين</b>.</li>
+          <li>تُحدَّث جميع السجلات المختارة في معاملة واحدة — يظهر ملخص النجاح عند الإغلاق.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#ecfdf5;border:1.5px solid #a7f3d0;border-radius:16px;padding:30px 34px;margin-bottom:24px;">
+    <h2 style="margin:0 0 18px;color:#065f46;font-size:1.2em;">ℹ️ Project Tasks &amp; Many-to-Many Assignees &nbsp;·&nbsp; <span dir="rtl">مهام المشاريع والمنفذون المتعددون</span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:26px;">
+      <div style="flex:1 1 340px;">
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">Project tasks (<code>project.task</code> where <code>user_ids</code> includes the source user) are fully supported. Because tasks use a many-to-many assignee field, the wizard removes the source user from the <code>user_ids</code> list and adds the target user — other co-assignees on the same task are completely unaffected. Tasks already assigned to the target user are skipped to avoid duplicates.</p>
+      </div>
+      <div dir="rtl" style="flex:1 1 340px;">
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">مهام المشاريع (<code>project.task</code>) مدعومة بالكامل. نظراً لأن المهام تستخدم حقل منفذين many-to-many، يزيل المعالج المستخدم المصدر من قائمة <code>user_ids</code> ويضيف الهدف — المنفذون الآخرون على نفس المهمة لا يتأثرون إطلاقاً. المهام المعيّنة مسبقاً للمستخدم الهدف تُتجاهل لتجنب التكرار.</p>
+      </div>
+    </div>
+  </div>
+
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Employee Reassign Activities · Complete employee handover · Odoo 19
+    ERA Employee Reassign Activities · إعادة تعيين أنشطة الموظف من ERA · Odoo 19
   </div>
 
 </section>

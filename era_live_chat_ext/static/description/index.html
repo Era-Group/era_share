@@ -1,11 +1,16 @@
+<!-- Apps-store description for era_live_chat_ext. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#0e7490 0%,#0891b2 60%,#22d3ee 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Live Chat Extensions</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إضافات الدردشة المباشرة من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Hides the Ask Human button and fixes RTL overflow in Arabic AI chat responses</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">يخفي زر "اسأل بشرياً" ويصلح تجاوز النص العربي في فقاعات الدردشة</p>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      Front-end and back-end patches for Odoo Live Chat on Arabic-language AI-agent sites. Hides the "Ask Human" escalation button, fixes RTL overflow in AI replies, forces correct font rendering, and adds an All Chat History admin menu — install and forget.
+    </p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      تصحيحات للواجهتين الأمامية والخلفية لدردشة أودو المباشرة على المواقع العربية التي تعمل بوكلاء الذكاء الاصطناعي. تخفي زر "اسأل بشرياً"، تصلح تدفق النص العربي الطويل، تضبط تصيير الخطوط، وتضيف قائمة سجل المحادثات للمسؤولين — ثبّت وانسَ.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
@@ -13,59 +18,105 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🙈</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Hide Ask Human Button</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Removes the escalation button so all chat stays with the AI agent.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Hide "Ask Human" Button</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Odoo's AI live chat widget renders an "Ask Human" / "اسأل بشرياً" button when an AI chatbot is active, offering a human escalation path. This module injects a CSS rule into <code>web.assets_frontend</code> and a JS OWL patch that removes the button element from the DOM on widget mount. Visitors on AI-only sites never see an escalation option that no one will answer — eliminating dead-end UX and failed expectations.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
         <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">إخفاء زر "اسأل بشرياً"</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يزيل زر التصعيد حتى تبقى المحادثة مع وكيل الذكاء الاصطناعي.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يحقن النظام قاعدة CSS وتصحيح OWL يزيل زر التصعيد من DOM عند تحميل ويدجت الدردشة. زوار المواقع التي تعتمد الذكاء الاصطناعي حصراً لا يرون خياراً للتصعيد لن يُجيب عليه أحد — مما يمنع تجربة المستخدم المنتهية بطريق مسدود.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">↔️</div>
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">RTL Overflow Fix</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Fixes text overflow in Arabic chat bubbles caused by LTR default styling.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">إصلاح تجاوز النص العربي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يصلح تجاوز النص في فقاعات الدردشة العربية الناجم عن تنسيق LTR الافتراضي.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Long Arabic AI replies triggered a horizontal scroll bar inside the chat bubble because the widget's default <code>white-space: nowrap</code> was not overridden for RTL content. This module patches the SCSS bundle to enforce <code>word-break: break-word</code> and <code>overflow-wrap: anywhere</code> inside <code>.o_mail_message_content</code> when the page <code>lang</code> or <code>dir</code> is Arabic. The fix targets Arabic pages only — LTR sites are completely unaffected.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">إصلاح تجاوز RTL</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُصحّح حزمة SCSS لإلزام <code>word-break: break-word</code> و<code>overflow-wrap: anywhere</code> داخل <code>.o_mail_message_content</code> عند اكتشاف الصفحات العربية. يمنع ظهور شريط التمرير الأفقي في فقاعات الدردشة للردود العربية الطويلة دون أي تأثير على المواقع اللاتينية.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🤖</div>
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Full AI End-to-End</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Keeps the entire conversation handled by AI without human intervention.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">ذكاء اصطناعي بالكامل بلا تدخل بشري</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يبقي المحادثة كاملةً بيد الذكاء الاصطناعي دون تدخل بشري.</p>
-      </div>
-    </div>
-
-    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📜</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Chat History Menu</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Displays conversation history in a clean dropdown menu.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">قائمة سجل المحادثات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يعرض سجل المحادثات في قائمة منسدلة أنيقة.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">With the human escalation path removed and the RTL display fixed, the AI chatbot configured under <b>Live Chat → Chatbots</b> handles every visitor conversation from greeting to resolution. The widget remains fully branded — custom logo, primary colour, and welcome message — and AI responses stream naturally using Odoo's standard <code>im_livechat.chatbot.script</code> step flow without interruption.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">تجربة ذكاء اصطناعي كاملة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مع إزالة مسار التصعيد البشري وإصلاح العرض العربي، يتولى الذكاء الاصطناعي كل محادثة من التحية حتى الحل. تبقى الويدجت بعلامتها التجارية الكاملة وتتدفق ردود الذكاء الاصطناعي بشكل طبيعي عبر تدفق Chatbot المعياري في أودو دون انقطاع.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🎨</div>
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Font Consistency</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Ensures consistent Arabic and English font rendering across chat messages.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">تناسق خط الدردشة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يضمن تناسق عرض الخطوط العربية والإنجليزية عبر رسائل الدردشة.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Forces the live chat widget to inherit the website's <code>body</code> font family (e.g. <code>Tajawal</code>, <code>Cairo</code>, <code>IBM Plex Arabic</code>) rather than falling back to the Odoo UI default (<code>Roboto</code> / <code>Noto</code>). Icon fonts (<code>Font Awesome</code>) are explicitly excluded from the override using a <code>:not([class^="fa"])</code> selector so icon glyphs render correctly alongside Arabic text.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">اتساق الخطوط</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يجبر ويدجت الدردشة على توريث خط <code>body</code> الموقع (مثل Tajawal أو Cairo) بدلاً من خط أودو الافتراضي. خطوط الأيقونات (Font Awesome) مستثناة صراحةً بمحدد <code>:not([class^="fa"])</code> حتى تظهر الأيقونات بشكل صحيح بجانب النص العربي.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📜</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">All Chat History Menu</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Adds a backend menu item under <b>Live Chat → All Chat History</b> that lists every <code>discuss.channel</code> session linked to a live chat — including AI-only chatbot sessions that the default Live Chat app hides behind team-based filters. The list view shows visitor, channel name, chatbot script, message count, and session start time. No extra filter adjustment needed for full visibility.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">قائمة سجل جميع المحادثات</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تضيف عنصر قائمة <b>الدردشة المباشرة → سجل جميع المحادثات</b> يعرض كل جلسة <code>discuss.channel</code> المرتبطة بالدردشة المباشرة — بما فيها جلسات الذكاء الاصطناعي الحصرية التي تختبئ خلف فلاتر الفريق الافتراضية. يمنح مديري الدعم رؤية كاملة بدون ضبط إضافي.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #a5f3fc;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔧</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">Install and Forget</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">No settings page, no configuration required, no Odoo server restart needed. CSS and JS assets are automatically bundled into <code>web.assets_backend</code> and <code>web.assets_frontend</code> via standard <code>ir.asset</code> records declared in the module's data XML. On the next browser reload all patches are active for both frontend visitors and backend agents. Uninstalling cleanly removes every override.</p>
+      <div style="border-top:1px solid #a5f3fc;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0e7490;">ثبّت وانسَ</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">لا صفحة إعدادات ولا تهيئة ولا إعادة تشغيل خادم مطلوبة. تُضاف أصول CSS و JS تلقائياً عبر سجلات <code>ir.asset</code> المعيارية المُعلنة في XML الوحدة. عند أول تحميل للمتصفح تصبح جميع التصحيحات نشطة. إلغاء التثبيت يزيل كل التجاوزات نظيفاً.</p>
       </div>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
+  <!-- HOW IT WORKS -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+          <li>Install <code>era_live_chat_ext</code> alongside the standard <code>im_livechat</code> module from <b>Apps</b>.</li>
+          <li>JS and SCSS assets are registered in <code>web.assets_backend</code> and <code>web.assets_frontend</code> — no manual inclusion needed.</li>
+          <li>On the next browser page load, the "Ask Human" button is absent and RTL overflow is fixed for Arabic pages.</li>
+          <li>Backend users see the new <b>Live Chat → All Chat History</b> menu with unfiltered session visibility.</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+          <li>ثبّت <code>era_live_chat_ext</code> مع وحدة <code>im_livechat</code> المعيارية من <b>التطبيقات</b>.</li>
+          <li>تُسجَّل أصول JS و SCSS في حزم الأصول المعيارية — لا إدراج يدوي مطلوب.</li>
+          <li>عند أول تحميل للمتصفح، يختفي زر "اسأل بشرياً" ويُصلح تدفق النص العربي في الصفحات العربية.</li>
+          <li>يرى مستخدمو الخلفية قائمة <b>الدردشة المباشرة → سجل جميع المحادثات</b> الجديدة بدون فلاتر.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#ecfeff;border:1.5px solid #a5f3fc;border-radius:16px;padding:30px 34px;margin-bottom:24px;">
+    <h2 style="margin:0 0 18px;color:#0e7490;font-size:1.2em;">ℹ️ Compatibility &amp; Upgrade Safety &nbsp;·&nbsp; <span dir="rtl">التوافق وأمان الترقية</span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:26px;">
+      <div style="flex:1 1 340px;">
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">This module targets Odoo 19's <code>im_livechat</code> with the Chatbot AI agent feature. The "Ask Human" patch hooks into the <code>LivechatButton</code> OWL component by name. If Odoo changes the component name in a minor update, the JS patch degrades gracefully (no-op) rather than throwing an error — the site continues to work and the button may reappear until the patch is updated. No Python model monkey-patching is performed.</p>
+      </div>
+      <div dir="rtl" style="flex:1 1 340px;">
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">تستهدف هذه الوحدة <code>im_livechat</code> في أودو 19. تصحيح "اسأل بشرياً" يربط بمكوّن OWL <code>LivechatButton</code> بالاسم. إذا غيّرت أودو اسم المكوّن في تحديث طفيف، يتجاهل التصحيح بأمان دون رمي أخطاء — الموقع يستمر في العمل وقد يعود الزر حتى تحديث التصحيح. لا تعديل على نماذج Python الأساسية.</p>
+      </div>
+    </div>
+  </div>
+
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Live Chat Extensions · Better Arabic AI chat · Odoo 19
+    ERA Live Chat Extensions · إضافات الدردشة المباشرة من ERA · Odoo 19
   </div>
 
 </section>

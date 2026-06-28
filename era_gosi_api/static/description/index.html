@@ -1,11 +1,16 @@
+<!-- Apps-store description for era_gosi_api. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#14532d 0%,#15803d 60%,#22c55e 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA GOSI API Integration</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">تكامل GOSI API من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Verify Saudi employee GOSI status and deductions via the GOSI Engagement Deduction API</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">تحقق من اشتراكات الموظفين في GOSI واستعلم عن الاستقطاعات عبر API المزودة من GOSI</p>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">تكامل واجهة GOSI من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      Integrate Odoo HR with the Saudi <b>GOSI Engagement &amp; Deduction API</b>. Verify registration status, retrieve contribution deductions, and flag discrepancies — all from the employee form without leaving Odoo or accessing external portals.
+    </p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      يدمج أودو HR مع <b>واجهة GOSI للاشتراكات والاستقطاعات</b>. تحقق من حالة التسجيل، استرجع استقطاعات الاشتراكات، وأشر إلى التناقضات — كل ذلك من نموذج الموظف دون مغادرة أودو أو الدخول إلى البوابات الخارجية.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
@@ -13,69 +18,108 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🏛️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">GOSI Verification</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Verify Saudi employee registration and contribution status with GOSI.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">التحقق من GOSI</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تحقق من تسجيل الموظف السعودي وحالة مساهماته في GOSI.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">GOSI Registration Verification</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Queries the GOSI API using the employee's <code>l10n_sa_iqama</code> (IQAMA number) or <code>ssnid</code> (Saudi national ID) field stored on <code>hr.employee</code>. The API response returns the employee's registration status — active, inactive, or not found — which is written to a dedicated <code>gosi_status</code> field and displayed as a colour-coded badge. The field is indexed and filterable in the employee list view for bulk compliance checks.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">التحقق من التسجيل في GOSI</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يستعلم واجهة GOSI باستخدام رقم الإقامة أو الهوية الوطنية المخزَّن في <code>hr.employee</code>. تُكتب حالة التسجيل (نشط، غير نشط، غير موجود) في حقل <code>gosi_status</code> مخصص وتظهر كشارة ملوّنة. الحقل قابل للتصفية في عرض قائمة الموظفين لفحوصات الامتثال الجماعية.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">💰</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Deduction Queries</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Query exact GOSI deduction amounts for payroll accuracy.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">الاستعلام عن الاستقطاعات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">استعلم عن مبالغ استقطاعات GOSI الدقيقة لضمان دقة الرواتب.</p>
-      </div>
-    </div>
-
-    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🔐</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Secure API</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Authenticated and encrypted connection to the official GOSI API.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">اتصال API آمن</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اتصال مصادق ومشفر بـ API الرسمي لـ GOSI.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Deduction Retrieval</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Fetches the current month's employee contribution amount and employer contribution amount from GOSI's deduction endpoint. Values are written to <code>gosi_employee_deduction</code> and <code>gosi_employer_deduction</code> fields on <code>hr.employee</code> and can be compared with the computed payroll deduction lines to catch discrepancies before payroll close. A mismatch warning banner appears if values differ beyond the configured tolerance.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">استرجاع الاستقطاعات</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يجلب مبلغ اشتراك الموظف ومبلغ اشتراك صاحب العمل للشهر الحالي ويكتبهما في حقلين مخصصين للمقارنة مع بنود استقطاع الرواتب. يظهر تنبيه تلقائي على النموذج عند وجود تناقض يتجاوز العتبة المُهيَّأة قبل إغلاق دورة الرواتب.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📋</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Employee Status</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">View real-time GOSI registration status per employee record.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">حالة الموظف</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اعرض حالة تسجيل GOSI الفورية لكل سجل موظف.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Engagement Period Lookup</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Retrieves the employee's GOSI engagement start date (<code>gosi_engagement_start</code>) and end date (<code>gosi_engagement_end</code>) from the GOSI engagement endpoint. These dates are cross-referenced with the employee's Odoo contract start date to verify registration predates employment, supporting Saudi Labour Law compliance audits and GOSI inspection responses.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">استرجاع فترة الاشتراك</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يسترجع تاريخ بدء وانتهاء اشتراك الموظف في GOSI. تُقارَن هذه التواريخ بتاريخ بدء عقد الموظف في أودو للتحقق من أن التسجيل سابق للتوظيف، مما يدعم تدقيقات الامتثال لنظام العمل السعودي والردود على فحوصات GOSI.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔐</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Secure API Authentication</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">GOSI API credentials (client ID and client secret) are stored as encrypted <code>ir.config_parameter</code> values under <b>Settings → HR → GOSI Configuration</b> and never displayed after saving. At call time the module posts to GOSI's OAuth2 token endpoint to obtain a short-lived bearer token which is used for the actual API request and then discarded — no long-lived tokens are cached in the database.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">مصادقة API آمنة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُخزَّن بيانات اعتماد GOSI API كقيم <code>ir.config_parameter</code> مشفَّرة ولا تظهر بعد الحفظ. عند كل استدعاء يُجلَب رمز OAuth2 قصير الأمد من نقطة نهاية التوكن ويُستخدم للطلب ثم يُتخلص منه — لا رموز طويلة الأمد في قاعدة البيانات.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔄</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Real-Time Data</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Pulls live data from GOSI on demand, no stale caches.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">بيانات فورية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يسحب بيانات حية من GOSI عند الطلب دون ذاكرة تخزين مؤقت قديمة.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Bulk Verification Action</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">A server action available from <b>HR → Employees list view → Action → Verify GOSI</b> allows batch-verifying multiple employees in one click. Results are written via a background cron queue to avoid blocking the UI during large batch operations. A chatter message is posted on each employee record when its verification completes, and a summary notification appears when the full batch is done.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">إجراء التحقق الجماعي</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يتيح إجراء الخادم التحقق من عدة موظفين دفعةً واحدة من قائمة الموظفين. تُكتب النتائج عبر قائمة انتظار في الخلفية لتجنب تجميد الواجهة. تُنشر رسالة في chatter كل موظف عند اكتمال تحققه ويظهر إشعار ملخص عند انتهاء الدفعة كاملة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📊</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Compliance Ready</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Supports HR compliance workflows for Saudi labor law requirements.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">جاهز للامتثال</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يدعم سير عمل الامتثال لمتطلبات نظام العمل السعودي.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Compliance Status Badge</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">A summary widget on the employee form's <b>Private Information</b> tab displays a green / amber / red badge based on the last GOSI check result, the <code>gosi_last_check</code> date (last successful API pull), and whether the fetched deduction amounts match the payroll lines. The badge refreshes automatically after each verification call without requiring a full page reload.</p>
+      <div style="border-top:1px solid #bbf7d0;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">شارة حالة الامتثال</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعرض شارة ملوّنة (أخضر / أصفر / أحمر) في تبويب المعلومات الخاصة بناءً على آخر نتيجة تحقق وتاريخ آخر استعلام ناجح ومطابقة مبالغ الاستقطاع. تتحدث الشارة تلقائياً بعد كل استدعاء تحقق دون إعادة تحميل الصفحة.</p>
       </div>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
+  <!-- HOW IT WORKS -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+          <li>Enter GOSI API credentials under <b>Settings → HR → GOSI Configuration</b> (client ID + client secret).</li>
+          <li>Open an employee form — ensure the IQAMA or national ID is filled in on the <b>Private Information</b> tab.</li>
+          <li>Click <b>Verify GOSI</b>: module fetches an OAuth2 bearer token then calls the GOSI engagement and deduction endpoints.</li>
+          <li>Results (status, deduction amounts, engagement dates) are written to the employee record and the badge updates instantly.</li>
+          <li>Payroll team reviews mismatch warnings before running payroll close for the month.</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+          <li>أدخل بيانات اعتماد GOSI API في <b>الإعدادات → الموارد البشرية → إعداد GOSI</b>.</li>
+          <li>افتح نموذج الموظف — تأكد من إدخال رقم الإقامة أو الهوية الوطنية في تبويب المعلومات الخاصة.</li>
+          <li>اضغط <b>التحقق من GOSI</b>: يجلب النظام رمز OAuth2 ثم يستدعي نقاط نهاية GOSI.</li>
+          <li>تُكتب النتائج في سجل الموظف فوراً وتتحدث الشارة في الحال.</li>
+          <li>يراجع فريق الرواتب أي تحذيرات تناقض قبل إغلاق دورة الرواتب الشهرية.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIP BOXES -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
+    <div style="flex:1 1 300px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:20px 24px;">
+      <h3 style="margin:0 0 8px;color:#14532d;font-size:1em;">🔐 API Security Note</h3>
+      <p style="margin:0 0 10px;color:#374151;line-height:1.6;font-size:.93em;">GOSI client secrets are stored encrypted and never exposed in the UI after saving. The OAuth2 token fetched per call is short-lived (typically 1 hour) and is not persisted to the database. Rotate credentials every 90 days per GOSI's published security policy.</p>
+      <p dir="rtl" style="margin:0;color:#14532d;line-height:1.8;font-size:.91em;border-top:1px solid #bbf7d0;padding-top:10px;">أسرار GOSI مشفَّرة ولا تظهر في الواجهة بعد الحفظ. رمز OAuth2 المُجلَب لكل استدعاء قصير الأمد ولا يُخزَّن في قاعدة البيانات. جدّد بيانات الاعتماد كل 90 يوماً وفق سياسة أمان GOSI المنشورة.</p>
+    </div>
+    <div style="flex:1 1 300px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:14px;padding:20px 24px;">
+      <h3 style="margin:0 0 8px;color:#14532d;font-size:1em;">ℹ️ Requirements</h3>
+      <p style="margin:0 0 10px;color:#374151;line-height:1.6;font-size:.93em;">Requires an active GOSI API subscription obtained from the GOSI developer portal (gosi.gov.sa). Each employee must have their national ID or IQAMA number filled in on the <b>Private Information</b> tab before verification can run. The Payroll module is recommended for deduction comparison.</p>
+      <p dir="rtl" style="margin:0;color:#14532d;line-height:1.8;font-size:.91em;border-top:1px solid #bbf7d0;padding-top:10px;">يتطلب اشتراكاً نشطاً في GOSI API من بوابة المطورين (gosi.gov.sa). يجب إدخال رقم الهوية الوطنية أو الإقامة لكل موظف قبل التحقق. يُوصى بتثبيت وحدة الرواتب لمقارنة الاستقطاعات.</p>
+    </div>
+  </div>
+
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA GOSI API Integration · Saudi HR compliance · Odoo 19
+    ERA GOSI API Integration · تكامل واجهة GOSI من ERA · Odoo 19
   </div>
 
 </section>

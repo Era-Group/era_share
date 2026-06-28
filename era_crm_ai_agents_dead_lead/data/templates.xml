@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Manager-APPROVED, slotted comeback templates. The Dead-Lead agent fills
+         only the {{slots}}; the surrounding body is never rewritten (task 3.4).
+         Slots: {{name}} {{company}} {{salesperson}} are filled from CRM records;
+         {{personal_note}} is the ONLY AI-authored part. Point the agent's
+         "template_id" at one of these to enable AI personalisation.
+
+         noupdate="1" so a manager's edits to an approved body survive upgrades. -->
+    <data noupdate="1">
+
+        <record id="dead_lead_tmpl_general" model="crm.ai.dead.lead.template">
+            <field name="name">General Comeback (slotted)</field>
+            <field name="sequence">5</field>
+            <field name="body">السلام عليكم ورحمة الله وبركاته {{name}}،
+
+{{personal_note}}
+
+يسعدنا التواصل معكم مجدداً، ونحن على استعداد لخدمتكم في الوقت الذي يناسبكم.
+
+مع خالص التقدير،
+{{salesperson}}</field>
+            <field name="note">General-purpose approved comeback. {{personal_note}}
+                is AI-authored (one short Arabic sentence); all other lines are
+                fixed. A human approves the final text before sending.</field>
+        </record>
+
+        <record id="dead_lead_tmpl_price" model="crm.ai.dead.lead.template">
+            <field name="name">Price/Budget Comeback (slotted)</field>
+            <field name="sequence">10</field>
+            <field name="body">السلام عليكم ورحمة الله وبركاته {{name}}،
+
+{{personal_note}}
+
+طرأت لدينا بعض التحديثات التي قد تتوافق بشكل أفضل مع متطلبات {{company}}، ويسعدنا مناقشتها معكم متى ما كان ذلك مناسباً.
+
+مع خالص التقدير،
+{{salesperson}}</field>
+            <field name="note">For leads lost on price/budget. {{personal_note}}
+                is AI-authored; the rest is fixed and manager-approved. Make no
+                specific price claim in the template — a human approves before
+                sending.</field>
+        </record>
+
+    </data>
+</odoo>

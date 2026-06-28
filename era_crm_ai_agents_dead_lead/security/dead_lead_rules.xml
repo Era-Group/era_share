@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =================================================================
+         Record rules for era_crm_ai_agents_dead_lead (Rule 09)
+
+         WHY THIS FILE ADDS NO ir.rule RECORDS — by design.
+
+         1. crm.ai.dead.lead.agent + crm.ai.dead.lead.template are
+            COMPANY-GLOBAL configuration (one shared agent config + a shared
+            set of approved templates), exactly like the Base crm.ai.agent /
+            crm.ai.model and the Enrichment crm.ai.enrichment.provider. They
+            need NO per-row rule: who-may-do-what is enforced entirely by
+            ir.model.access.csv (AI User -> read-only, AI Manager -> full).
+
+         2. The agent ACTS on crm.lead, and the "own lost leads only"
+            guarantee (this task's acceptance) is delivered WITHOUT a crm.lead
+            record rule, because a group rule here cannot tighten access:
+              - Record rules attached to groups are OR-ed across the user's
+                groups, then AND-ed with global rules. Core CRM already grants
+                a salesperson `crm_rule_personal_lead`
+                (['|',('user_id','=',user.id),('user_id','=',False)]) and may
+                grant `crm_rule_all_lead` (all leads) via
+                sales_team.group_sale_salesman_all_leads. ANY rule we OR in
+                could only WIDEN that union, never narrow it.
+              - A GLOBAL (group-less) crm.lead rule WOULD narrow, but it would
+                apply to EVERY user of the system (sales managers included) and
+                break the rest of the CRM — out of scope and unsafe.
+
+            Instead, "own lost leads only" is guaranteed by the two mechanisms
+            this suite is built on:
+              (a) Rule 09 — the agent inherits crm.ai.agent.mixin and runs
+                  under the acting salesperson with NO sudo, so it can never
+                  exceed that user's own crm.lead visibility; and
+              (b) the scan/processing domain pins ('user_id','=',user.id) on
+                  closed-lost leads (task 3.7 cron_scan_dead_leads), narrowing
+                  to the user's OWN lost leads (excluding team/all-leads and
+                  unassigned).
+
+         If a future task introduces a PER-USER dead-lead activity/log model,
+         add its own-row rule here (mirroring the Base crm.ai.usage /
+         Enrichment crm.ai.enrichment.request `create_uid = user.id` rule).
+         ================================================================= -->
+</odoo>

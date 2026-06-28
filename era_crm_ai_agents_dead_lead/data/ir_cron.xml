@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Daily Dead-Lead scan (task 3.7).
+
+             EXECUTION IDENTITY (Rule 09) is suite-wide and configurable, not
+             hardcoded: the code resolves the run-user at run time via the Base
+             resolver crm.ai.agent._get_cron_run_user() and applies with_user(),
+             so the scan runs as the manager-chosen least-privilege account
+             (default: "CRM AI Automation"), never root unless explicitly opted
+             into. The static user_id below is only the safe bootstrap identity
+             (the same least-privilege account). A Settings change takes effect on
+             the NEXT run; this record never needs rewriting.
+
+             GOVERNANCE: the cron ships active=True but cron_scan_dead_leads()
+             no-ops immediately unless the agent's scan_enabled flag is ON
+             (default OFF) — a sending agent stays fully inert until a manager
+             opts in. Nothing is ever sent by the cron: it only drafts and routes
+             to the human approval gate (3.5); the send happens only after a human
+             approves (3.6). The batch is bounded by scan_batch_size and stops the
+             instant the Rule-14 cost cap trips.
+
+             NOTE: a new ir.cron requires a full server RESTART to register (see
+             the Dev Environment Notes) — a module upgrade alone is not enough. -->
+        <record id="ir_cron_scan_dead_leads" model="ir.cron">
+            <field name="name">Dead-Lead: Scan lost leads</field>
+            <field name="model_id" ref="model_crm_ai_dead_lead_agent"/>
+            <field name="user_id" ref="era_crm_ai_agents_base.user_crm_ai_automation"/>
+            <field name="state">code</field>
+            <field name="code">model.with_user(env['crm.ai.agent']._get_cron_run_user()).cron_scan_dead_leads()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 05:00:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

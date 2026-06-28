@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pre-seed the Dead-Lead agent so it exists on install and runtime stays
+         read-only for users (How-to-build-an-agent step 3). noupdate=1 so a
+         manager's later edits (threshold, template body, model) are preserved
+         across module upgrades. -->
+    <data noupdate="1">
+
+        <!-- The approved comeback template (manager-editable). Default body is a
+             neutral, placeholder Arabic greeting; a human approves every final
+             message before it is sent (task 3.5). -->
+        <record id="dead_lead_template_default" model="crm.ai.dead.lead.template">
+            <field name="name">Default Comeback Template</field>
+            <field name="body">السلام عليكم ورحمة الله وبركاته،
+
+نتواصل معكم من جديد بخصوص اهتمامكم السابق. يسعدنا تقديم ما يناسب احتياجكم الحالي.
+
+مع خالص التقدير.</field>
+            <field name="note">Default approved template. Edit the body and add
+                more templates as needed; the agent fills only the personal
+                parts and a human approves the final text before sending.</field>
+        </record>
+
+        <!-- The crm.ai.agent registry row (this is "the agent record created on
+             install"). API transport; high-sensitivity Arabic drafting (task
+             3.4) uses model_code_advanced. Both codes are priced in the Base
+             rate card, so the priced path is never blocked as unpriced. -->
+        <record id="agent_era_dead_lead" model="crm.ai.agent">
+            <field name="name">Dead-Lead Resurrection</field>
+            <field name="tech_name">era_dead_lead</field>
+            <field name="transport">api</field>
+            <field name="model_code">gpt-4.1-mini</field>
+            <field name="model_code_advanced">gpt-4o</field>
+        </record>
+
+        <!-- The agent's configuration record (manager-editable thresholds and
+             the approved template it draws from). -->
+        <record id="dead_lead_agent_config" model="crm.ai.dead.lead.agent">
+            <field name="name">Dead-Lead Resurrection</field>
+            <field name="elapsed_days_threshold">180</field>
+            <field name="template_id" ref="dead_lead_template_default"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_dead_lead_template_list" model="ir.ui.view">
+        <field name="name">crm.ai.dead.lead.template.list</field>
+        <field name="model">crm.ai.dead.lead.template</field>
+        <field name="arch" type="xml">
+            <list string="Comeback Templates">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_dead_lead_template_form" model="ir.ui.view">
+        <field name="name">crm.ai.dead.lead.template.form</field>
+        <field name="model">crm.ai.dead.lead.template</field>
+        <field name="arch" type="xml">
+            <form string="Comeback Template">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Approved Body">
+                        <field name="body" nolabel="1"/>
+                    </group>
+                    <group string="Reviewer Guidance">
+                        <field name="note" nolabel="1"/>
+                    </group>
+                    <div class="text-muted">
+                        Use slots the agent fills: <b>{{name}}</b>,
+                        <b>{{company}}</b>, <b>{{salesperson}}</b> (from the
+                        record) and <b>{{personal_note}}</b> (the only
+                        AI-authored part). Everything outside the slots is sent
+                        exactly as written.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_dead_lead_template" model="ir.actions.act_window">
+        <field name="name">Comeback Templates</field>
+        <field name="res_model">crm.ai.dead.lead.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+</odoo>

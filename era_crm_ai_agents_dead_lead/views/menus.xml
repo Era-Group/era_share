@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Suite menu convention: Dead-Lead is tightly integrated with the shared
+         data (candidates/results are crm.lead; approvals are the Base
+         crm.ai.approval), so it lives UNDER the Base root menu as its own group
+         (a peer of Dashboard / Agents / Approvals / Compliance) rather than a
+         standalone navbar app. User-facing boards are visible to AI users;
+         configuration is manager-gated. -->
+    <menuitem id="menu_crm_ai_dead_lead_root"
+              name="Dead-Lead"
+              parent="era_crm_ai_agents_base.menu_crm_ai_root"
+              sequence="45"
+              groups="era_crm_ai_agents_base.group_crm_ai_user"/>
+
+    <menuitem id="menu_crm_ai_dead_lead_candidates"
+              name="Candidates"
+              parent="menu_crm_ai_dead_lead_root"
+              action="action_dead_lead_candidates"
+              sequence="10"
+              groups="era_crm_ai_agents_base.group_crm_ai_user"/>
+
+    <menuitem id="menu_crm_ai_dead_lead_approvals"
+              name="Comeback Approvals"
+              parent="menu_crm_ai_dead_lead_root"
+              action="action_dead_lead_approvals"
+              sequence="20"
+              groups="era_crm_ai_agents_base.group_crm_ai_user"/>
+
+    <menuitem id="menu_crm_ai_dead_lead_results"
+              name="Results"
+              parent="menu_crm_ai_dead_lead_root"
+              action="action_dead_lead_results"
+              sequence="30"
+              groups="era_crm_ai_agents_base.group_crm_ai_user"/>
+
+    <!-- Configuration (managers only) -->
+    <menuitem id="menu_crm_ai_dead_lead_config"
+              name="Configuration"
+              parent="menu_crm_ai_dead_lead_root"
+              sequence="90"
+              groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
+
+    <menuitem id="menu_crm_ai_dead_lead_settings"
+              name="Dead-Lead Settings"
+              parent="menu_crm_ai_dead_lead_config"
+              action="action_crm_ai_dead_lead_agent"
+              sequence="10"
+              groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
+
+    <menuitem id="menu_crm_ai_dead_lead_templates"
+              name="Comeback Templates"
+              parent="menu_crm_ai_dead_lead_config"
+              action="action_crm_ai_dead_lead_template"
+              sequence="20"
+              groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
+
+</odoo>

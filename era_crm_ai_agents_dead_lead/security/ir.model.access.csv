@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_ai_dead_lead_agent_user,crm.ai.dead.lead.agent user,model_crm_ai_dead_lead_agent,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_dead_lead_agent_manager,crm.ai.dead.lead.agent manager,model_crm_ai_dead_lead_agent,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_dead_lead_template_user,crm.ai.dead.lead.template user,model_crm_ai_dead_lead_template,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_dead_lead_template_manager,crm.ai.dead.lead.template manager,model_crm_ai_dead_lead_template,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1

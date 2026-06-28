@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Shared list for the Dead-Lead boards (lost leads + send stamp). -->
+    <record id="view_dead_lead_lead_list" model="ir.ui.view">
+        <field name="name">crm.lead.dead.lead.list</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <list string="Dead-Lead Leads" create="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="contact_name" optional="show"/>
+                <field name="phone" optional="show"/>
+                <field name="email_from" optional="hide"/>
+                <field name="lost_reason_id"/>
+                <field name="user_id"/>
+                <field name="crm_ai_dead_lead_last_sent"/>
+                <field name="create_date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dead_lead_lead_search" model="ir.ui.view">
+        <field name="name">crm.lead.dead.lead.search</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <search string="Dead-Lead Leads">
+                <field name="name" string="Lead / Opportunity"/>
+                <field name="partner_id"/>
+                <field name="lost_reason_id"/>
+                <field name="user_id"/>
+                <filter name="my_leads" string="My Leads"
+                        domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="not_contacted" string="Not Yet Contacted"
+                        domain="[('crm_ai_dead_lead_last_sent', '=', False)]"/>
+                <filter name="contacted" string="Comeback Sent"
+                        domain="[('crm_ai_dead_lead_last_sent', '!=', False)]"/>
+                <group>
+                    <filter name="group_lost_reason" string="Lost Reason"
+                            context="{'group_by': 'lost_reason_id'}"/>
+                    <filter name="group_salesperson" string="Salesperson"
+                            context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Candidates board — every closed-lost lead (the resurrection pool). -->
+    <record id="action_dead_lead_candidates" model="ir.actions.act_window">
+        <field name="name">Resurrection Candidates</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_dead_lead_lead_list"/>
+        <field name="search_view_id" ref="view_dead_lead_lead_search"/>
+        <field name="domain">[('active', '=', False), ('probability', '&lt;=', 0)]</field>
+        <field name="context">{'active_test': False, 'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No closed-lost leads yet.</p>
+            <p>Closed-lost leads appear here as resurrection candidates. The
+               agent re-approaches qualifying ones through compliance and your
+               approval.</p>
+        </field>
+    </record>
+
+    <!-- Results board — leads a comeback was actually sent for. -->
+    <record id="action_dead_lead_results" model="ir.actions.act_window">
+        <field name="name">Resurrection Results</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_dead_lead_lead_list"/>
+        <field name="search_view_id" ref="view_dead_lead_lead_search"/>
+        <field name="domain">[('crm_ai_dead_lead_last_sent', '!=', False)]</field>
+        <field name="context">{'active_test': False, 'create': False, 'search_default_contacted': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No comebacks sent yet.</p>
+            <p>Once an approved comeback is sent, the lead appears here with the
+               send timestamp.</p>
+        </field>
+    </record>
+
+</odoo>

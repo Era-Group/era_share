@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dead-Lead's slice of the shared approval queue. Reuses the Base
+         crm.ai.approval list/form (the model's default views); only the domain
+         narrows it to this agent's proposals. -->
+    <record id="action_dead_lead_approvals" model="ir.actions.act_window">
+        <field name="name">Comeback Approvals</field>
+        <field name="res_model">crm.ai.approval</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('agent_id.tech_name', '=', 'era_dead_lead')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No comebacks awaiting approval.</p>
+            <p>Drafted comeback messages appear here for your review. Approving
+               one sends it over WhatsApp; you can edit the text before
+               approving.</p>
+        </field>
+    </record>
+
+</odoo>

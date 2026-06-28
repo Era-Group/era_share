@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Expose the Dead-Lead classification policy on the lost reason
+         (manager-editable; consumed by trigger detection, task 3.3). -->
+    <record id="view_crm_lost_reason_form_dead_lead" model="ir.ui.view">
+        <field name="name">crm.lost.reason.form.dead.lead</field>
+        <field name="model">crm.lost.reason</field>
+        <field name="inherit_id" ref="crm.crm_lost_reason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Dead-Lead Resurrection">
+                    <field name="crm_ai_resurrectable"/>
+                    <field name="crm_ai_reason_bucket"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

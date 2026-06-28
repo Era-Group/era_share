@@ -8,7 +8,7 @@
             <field name="model">crm.etimad.client</field>
             <field name="arch" type="xml">
                 <list string="Etimad Tenders" create="false" delete="false" edit="false"
-                      default_order="id desc"
+                      default_order="ai_match_score desc, limit asc"
                       decoration-danger="limit and limit &lt; current_date"
                       decoration-muted="lead_id">
                     <header>

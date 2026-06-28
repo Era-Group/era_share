@@ -1,11 +1,16 @@
+<!-- Apps-store description for era_address_client. Self-contained inline styles. -->
 <section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 60%,#134e4a 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Address Client</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">عميل العناوين من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Resolve Saudi addresses by building number or GPS coordinates via service.era.net.sa</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">ابحث عن العناوين السعودية بالرقم البنائي أو الإحداثيات الجغرافية عبر service.era.net.sa</p>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">عميل العنوان الوطني من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
+      Shared library connecting all ERA modules to the <b>ERA Address Lookup REST API</b> at <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:4px;">service.era.net.sa</code>. Resolve Saudi national addresses from a building number or GPS coordinates — once, consistently, across every module that depends on it.
+    </p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
+      مكتبة مشتركة تربط جميع وحدات ERA بـ <b>واجهة برمجة البحث عن العناوين الوطنية</b> على <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:4px;">service.era.net.sa</code>. حوّل رقم المبنى أو إحداثيات GPS إلى عنوان وطني سعودي مفصَّل — مرة واحدة لجميع الوحدات المعتمدة عليها.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
@@ -14,58 +19,105 @@
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🏠</div>
       <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Saudi Address Lookup</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Look up verified Saudi national addresses by building number instantly.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Sends a POST request to <code>/address/lookup</code> with the building number (<b>رقم المبنى</b>). The API response includes district (<b>الحي</b>), city (<b>المدينة</b>), zip code, street name, and building type. All returned fields are automatically mapped to the corresponding <code>res.partner</code> address fields when the lookup is triggered from a partner form, saving data-entry time and eliminating manual transcription errors.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">البحث عن العنوان السعودي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ابحث عن العناوين السعودية الرسمية بالرقم البنائي بشكل فوري.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">البحث عن العنوان الوطني السعودي</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُرسل طلب POST إلى <code>/address/lookup</code> بـ<b>رقم المبنى</b>، فيعيد الحي والمدينة والرمز البريدي واسم الشارع ونوع المبنى. تُعيَّن الحقول تلقائياً على <code>res.partner</code> عند استدعاء البحث من نموذج جهة الاتصال، مما يُلغي الإدخال اليدوي ويضمن دقة البيانات.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📍</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Coordinate Reverse-Geocoding</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Convert GPS latitude/longitude to a full Saudi address.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Reverse Geocoding</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Supply GPS latitude and longitude to <code>AddressClient.reverse(lat, lng)</code> and receive the nearest registered address in the <b>Saudi National Address</b> database. This is especially useful for field teams logging site visits on mobile devices — the app captures current GPS position and resolves the official address without requiring the user to type anything. The result is returned in the same structured format as a building-number lookup.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تحويل الإحداثيات لعنوان</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">حوّل خطوط الطول والعرض إلى عنوان سعودي كامل.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">الترميز الجغرافي العكسي</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أدخل خط العرض وخط الطول في <code>AddressClient.reverse(lat, lng)</code> للحصول على أقرب عنوان مسجَّل في قاعدة بيانات العنوان الوطني. مثالي لفرق الميدان التي تسجّل الزيارات عبر الجوال — يلتقط التطبيق الموقع الحالي ويُحوّله إلى عنوان رسمي دون أي إدخال يدوي.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔗</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">ERA Service Integration</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Connects to service.era.net.sa for real-time address resolution.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Configurable Service Endpoint</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The base URL and API key are stored as <code>ir.config_parameter</code> records — <code>era_address.service_url</code> and <code>era_address.api_key</code>. Administrators change them in <b>Settings → Technical → System Parameters</b> without any code deployment or server restart. This makes it straightforward to point all ERA modules at a staging endpoint during testing and switch to production with a single field update.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تكامل مع خدمة ERA</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يتصل بـ service.era.net.sa للحصول على العناوين فورياً.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">نقطة خدمة قابلة للتهيئة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُخزَّن عنوان URL الأساسي ومفتاح API في معاملات النظام <code>era_address.service_url</code> و<code>era_address.api_key</code>. يغيّرها المسؤول من <b>الإعدادات ← التقني ← معاملات النظام</b> دون نشر كود أو إعادة تشغيل الخادم.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔄</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Shared Client Library</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reusable by all ERA modules that need address data.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Reusable Dependency</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Install <code>era_address_client</code> once, then any other ERA module simply adds it to <code>depends</code> in its manifest. That module immediately gains access to both <code>AddressClient(env).lookup(building_no)</code> and <code>AddressClient(env).reverse(lat, lng)</code> with zero additional configuration. The HTTP layer is implemented in exactly one place — bug fixes and API version upgrades propagate to all dependent modules automatically.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">مكتبة مشتركة لعدة وحدات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يمكن لجميع وحدات ERA استخدامها للوصول إلى بيانات العناوين.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">اعتمادية قابلة لإعادة الاستخدام</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ثبّت <code>era_address_client</code> مرة واحدة، ثم تُضيف أي وحدة ERA اسمها في <code>depends</code> للحصول فوراً على <code>lookup</code> و<code>reverse</code>. طبقة HTTP موحَّدة في مكان واحد — الإصلاحات وتحديثات الإصدار تنتشر تلقائياً لجميع الوحدات المعتمدة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Error Handling</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Robust error handling and graceful fallback for failed lookups.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Structured Error Handling</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Network timeouts, 4xx client errors, 5xx server errors, and malformed JSON responses each raise a distinct typed Python exception — <code>AddressLookupError</code>, <code>AddressNetworkError</code>, and <code>AddressParseError</code>. Calling modules catch these at the form level and surface clean, user-readable validation messages rather than raw stack traces. This keeps the Odoo UI professional even when the external service is temporarily unavailable.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">معالجة الأخطاء</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">معالجة قوية للأخطاء مع تراجع آمن عند فشل البحث.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">معالجة أخطاء منظَّمة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُثار استثناءات Python مكتوبة بدقة لكل حالة: انتهاء مهلة الشبكة، أخطاء 4xx و5xx، وردود JSON مشوَّهة. تُعرض رسائل خطأ واضحة للمستخدم بدلاً من سجلات خام، مما يحافظ على احترافية واجهة أودو حتى عند توقف الخدمة الخارجية مؤقتاً.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">⚡</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Lightweight &amp; Fast</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">No heavy third-party dependencies — the client uses Odoo's built-in <code>requests</code> session with a configurable timeout controlled by <code>era_address.timeout</code>. The design targets real-time use inside <code>onchange</code> handlers on partner and sales order forms, so latency is minimised. Connection pooling is handled by the existing Odoo session, keeping memory overhead negligible even under concurrent usage.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">خفيف وسريع</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">لا اعتماديات ثقيلة — يستخدم عميل أودو المدمج <code>requests</code> مع مهلة قابلة للتهيئة عبر <code>era_address.timeout</code>. مُصمَّم للاستخدام الفوري داخل معالجات <code>onchange</code>، مع تجميع اتصالات يُدار بواسطة الجلسة الحالية لأودو للحفاظ على أداء ممتاز.</p>
       </div>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
+  <!-- HOW IT WORKS -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+      <div style="flex:1 1 340px;">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
+        <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
+          <li>Install <b>ERA Address Client</b> (or it installs automatically as a dependency).</li>
+          <li>Go to <b>Settings → Technical → System Parameters</b> and set <code>era_address.service_url</code> and <code>era_address.api_key</code>.</li>
+          <li>Any ERA module in its Python code calls <code>AddressClient(self.env).lookup(building_no)</code> or <code>.reverse(lat, lng)</code>.</li>
+          <li>The client posts to the ERA Address API, parses the response, and returns a structured dict of address fields — ready to write to <code>res.partner</code>.</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 340px;" dir="rtl">
+        <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
+        <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
+          <li>ثبّت <b>ERA Address Client</b> (أو يُثبَّت تلقائياً كاعتمادية).</li>
+          <li>اذهب إلى <b>الإعدادات ← التقني ← معاملات النظام</b> وعيّن <code>era_address.service_url</code> و<code>era_address.api_key</code>.</li>
+          <li>تستدعي أي وحدة ERA في كودها البرمجي <code>AddressClient(self.env).lookup(building_no)</code> أو <code>.reverse(lat, lng)</code>.</li>
+          <li>يُرسل العميل الطلب لواجهة ERA، يُحلّل الرد، ويُعيد قاموس بيانات العنوان جاهزاً للكتابة في <code>res.partner</code>.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOXES -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
+    <div style="flex:1 1 300px;background:#f0fdfa;border:1.5px solid #99f6e4;border-radius:14px;padding:20px 24px;">
+      <h3 style="margin:0 0 8px;color:#0f766e;font-size:1em;">🔑 Subscription Required</h3>
+      <p style="margin:0 0 10px;color:#134e4a;line-height:1.6;font-size:.93em;">Requires an active ERA Address API subscription at <b>service.era.net.sa</b>. The API key is stored encrypted in Odoo system parameters and is never written to logs, chat history, or error messages. Contact your ERA account manager to obtain credentials.</p>
+      <p dir="rtl" style="margin:0;color:#0f766e;line-height:1.8;font-size:.91em;border-top:1px solid #99f6e4;padding-top:10px;">يتطلب اشتراكاً نشطاً في ERA Address API على <b>service.era.net.sa</b>. يُخزَّن مفتاح API مشفَّراً في معاملات النظام ولا يُكتب في السجلات أو رسائل الخطأ. تواصل مع مدير حساب ERA للحصول على بيانات الاعتماد.</p>
+    </div>
+    <div style="flex:1 1 300px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:20px 24px;">
+      <h3 style="margin:0 0 8px;color:#92400e;font-size:1em;">ℹ️ Developer Library — No UI</h3>
+      <p style="margin:0 0 10px;color:#78350f;line-height:1.6;font-size:.93em;">This module has no menus, views, or user-facing screens. It is a pure Python library intended to be consumed by other ERA modules. End users interact with address resolution through the UI of whichever ERA module depends on it, such as the partner form or sales order.</p>
+      <p dir="rtl" style="margin:0;color:#92400e;line-height:1.8;font-size:.91em;border-top:1px solid #fde68a;padding-top:10px;">هذه الوحدة بلا قوائم أو نماذج أو شاشات للمستخدم. هي مكتبة Python خالصة مُصمَّمة للاستهلاك من وحدات ERA الأخرى. يتفاعل المستخدمون مع البحث عن العنوان من خلال واجهة الوحدة المعتمدة عليها.</p>
+    </div>
+  </div>
+
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Address Client · Built for Saudi address resolution · Odoo 19
+    ERA Address Client · عميل العنوان الوطني من ERA · Odoo 19
   </div>
 
 </section>

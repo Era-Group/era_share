@@ -3,9 +3,15 @@
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 60%,#3b82f6 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Enrich CRM</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إثراء بيانات CRM من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Enrich CRM leads with LinkedIn, phone, and email data via the Era Enrich service</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">أثرِ فرص CRM ببيانات LinkedIn والهاتف والبريد الإلكتروني عبر خدمة Era Enrich</p>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إثراء CRM من ERA</div>
+    <p style="font-size:1.05em;margin:0 0 10px;color:rgba(255,255,255,.88);max-width:700px;margin-left:auto;margin-right:auto;">
+      Enrich CRM leads with LinkedIn profiles, verified phone, additional email, company size, and industry — all within Odoo.
+      Sales reps select leads, click Enrich, and within minutes every field they needed is populated.
+    </p>
+    <p dir="rtl" style="font-size:1em;margin:0;color:rgba(255,255,255,.8);max-width:700px;margin-left:auto;margin-right:auto;">
+      أثرِ فرص CRM ببيانات LinkedIn والهاتف المُتحقق منه والبريد الإضافي وحجم الشركة والصناعة — كل ذلك داخل أودو.
+      يختار مندوبو المبيعات الفرص ويضغطون إثراء، وفي دقائق تُملأ جميع الحقول المطلوبة.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
@@ -13,69 +19,182 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔍</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Lead Enrichment</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Automatically fills missing lead data using Era Enrich service lookups.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">Lead Enrichment from CRM Form</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        An "Enrich" button on the CRM lead form sends the lead's name, email, phone, and company to Era Enrich.
+        The module matches the identifiers against the enrichment database, queues a result callback, and immediately
+        returns focus to the user — no waiting.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إثراء الفرص</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يملأ تلقائياً بيانات الفرص الناقصة باستخدام بحث خدمة Era Enrich.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">إثراء الفرصة من نموذج CRM</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          زر "إثراء" في نموذج فرصة CRM يرسل اسم الفرصة وبريدها وهاتفها وشركتها إلى Era Enrich.
+          تطابق الوحدة المعرّفات مع قاعدة بيانات الإثراء وتُجدول استدعاءً رجعياً بالنتائج وتُعيد التركيز فوراً للمستخدم دون انتظار.
+        </p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">💼</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">LinkedIn Data</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Appends LinkedIn profile URLs to contacts and lead records.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">LinkedIn Data</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        Returns the prospect's LinkedIn public profile URL, headline, current title, and years of experience.
+        Stored in dedicated fields on crm.lead and displayed in the lead's smart button bar for quick access
+        without opening a browser.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">بيانات LinkedIn</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يضيف روابط ملفات LinkedIn للجهات والسجلات.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">بيانات LinkedIn</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          تُعيد عنوان ملف LinkedIn العام ووصفه والمسمى الوظيفي الحالي وسنوات الخبرة.
+          تُخزَّن في حقول مخصصة على crm.lead وتُعرض في شريط الأزرار الذكية للفرصة للوصول السريع دون فتح متصفح.
+        </p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📞</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Phone &amp; Email Append</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Discovers and adds missing phone numbers and email addresses.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">Phone &amp; Email Append</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        Adds verified mobile/direct-line and professional email to the lead if they were missing or only had a
+        generic address. Existing correct data is never overwritten — only empty or placeholder fields are filled,
+        preserving any manual corrections the sales rep has already made.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إضافة الهاتف والبريد</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يكتشف ويضيف أرقام الهاتف والبريد الإلكتروني الناقصة.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">إضافة الهاتف والبريد</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          يضيف هاتفاً محمولاً/مباشراً مُتحققاً منه وبريداً مهنياً للفرصة إذا كانت مفقودة أو تحتوي عنواناً عاماً فقط.
+          البيانات الصحيحة الموجودة لا تُستبدل — الحقول الفارغة فقط تُملأ، مما يحافظ على أي تصحيحات يدوية أجراها المندوب.
+        </p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⚡</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Bulk Enrich Action</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Enrich multiple leads at once using the list view action menu.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">Bulk Enrich Server Action</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        Select multiple leads in list view and run "Enrich Selected". The module respects the rate limit from
+        era_spy_base and queues all requests, processing them in batches over the next few minutes with a live
+        counter updating on the action wizard.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إثراء جماعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أثرِ فرصاً متعددة دفعةً واحدة من قائمة الإجراءات في عرض القائمة.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">إجراء الإثراء الجماعي</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          اختر فرصاً متعددة في عرض القائمة وشغّل "إثراء المحدد". تحترم الوحدة حد المعدل من era_spy_base وتُجدول
+          جميع الطلبات، معالجةً إياها على دفعات مع عداد مباشر يُحدَّث في معالج الإجراء.
+        </p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔄</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Async Callbacks</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Enrichment happens in the background via webhook callbacks.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">Async Callback Processing</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        Results arrive at the callback URL provided by era_spy_base. The controller identifies the lead, merges
+        the enrichment data field-by-field, and posts a chatter note: "Enriched by Era Enrich — LinkedIn, phone,
+        and email updated." The salesperson sees the change in real time without refreshing.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">ردود لاتزامنية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">الإثراء يحدث في الخلفية عبر ردود الويب اللاتزامنية.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">معالجة الاستدعاء الرجعي الغير متزامن</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          تصل النتائج لعنوان الاستدعاء الرجعي من era_spy_base. يُحدّد المتحكم الفرصة ويدمج بيانات الإثراء حقلاً
+          حقلاً، ويُنشئ ملاحظة في السجل: "تم الإثراء بواسطة Era Enrich". يرى المندوب التغيير فوراً.
+        </p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Rate-Limited</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Respects API rate limits to ensure reliable enrichment at scale.</p>
+      <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">Duplicate Guard</h3>
+      <p style="margin:0 0 14px;font-size:.95em;line-height:1.6;">
+        Before writing enrichment data, the module checks whether a partner with the same LinkedIn URL already
+        exists in Odoo. If it does, the lead is linked to the existing partner instead of creating a duplicate
+        contact, keeping the database clean and CRM reports accurate.
+      </p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">محكوم بمعدّل الطلب</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يحترم حدود معدّل API لضمان إثراء موثوق على نطاق واسع.</p>
+        <h3 style="margin:0 0 8px;color:#1d4ed8;font-size:1.05em;">حارس التكرار</h3>
+        <p style="margin:0;font-size:.93em;line-height:1.7;">
+          قبل كتابة بيانات الإثراء، تتحقق الوحدة من وجود شريك بنفس عنوان LinkedIn في أودو. إذا وُجد، تُربط الفرصة
+          بالشريك الموجود بدلاً من إنشاء جهة اتصال مكررة، مما يحافظ على نظافة قاعدة البيانات ودقة تقارير CRM.
+        </p>
       </div>
     </div>
 
   </div>
 
+  <!-- HOW IT WORKS -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <h2 style="text-align:center;color:#fff;margin:0 0 28px;font-size:1.35em;font-weight:700;">How It Works &nbsp;·&nbsp; كيف يعمل</h2>
+    <div style="display:flex;gap:40px;flex-wrap:wrap;">
+
+      <div style="flex:1 1 320px;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">1</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">Open a CRM lead then click the <strong style="color:#93c5fd;">"Enrich"</strong> button on the form.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">2</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">Module sends name, email, phone, and company identifiers to Era Enrich API — rate-limited via era_spy_base.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">3</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">Era Enrich matches and enriches the contact asynchronously in the background.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">4</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">Callback fires — lead fields updated field-by-field and a chatter note is posted automatically.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">5</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">Salesperson sees enriched LinkedIn, phone, and email within <strong style="color:#93c5fd;">1–2 minutes</strong> — no page refresh needed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 320px;" dir="rtl">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">١</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">افتح فرصة CRM ثم اضغط زر <strong style="color:#93c5fd;">"إثراء"</strong> في النموذج.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">٢</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">ترسل الوحدة المعرّفات لـ Era Enrich API بحد المعدل عبر era_spy_base.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">٣</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">تطابق Era Enrich جهة الاتصال وتُثريها بشكل غير متزامن في الخلفية.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">٤</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">ينطلق الاستدعاء الرجعي — تُحدَّث حقول الفرصة وتُنشر ملاحظة في السجل تلقائياً.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="background:#1d4ed8;color:#fff;border-radius:50%;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;">٥</div>
+            <p style="margin:0;font-size:.93em;line-height:1.6;">يرى المندوب LinkedIn والهاتف والبريد المُثراة خلال <strong style="color:#93c5fd;">1–2 دقيقة</strong> دون أي تحديث للصفحة.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:26px 28px;margin-bottom:24px;">
+    <h2 style="margin:0 0 10px;color:#1d4ed8;font-size:1.1em;font-weight:700;">🔗 Requires era_spy_base</h2>
+    <p style="margin:0 0 16px;font-size:.95em;line-height:1.7;color:#1e3a8a;">
+      era_spy_crm lists <strong>era_spy_base</strong> as a dependency. Install era_spy_base first to configure your
+      Era Enrich API credentials and rate limits — era_spy_crm inherits all connection settings automatically.
+    </p>
+    <p dir="rtl" style="margin:0;font-size:.93em;line-height:1.7;color:#1e3a8a;border-top:1px solid #bfdbfe;padding-top:14px;">
+      تدرج era_spy_crm وحدة era_spy_base كتبعية. ثبِّت era_spy_base أولاً لتكوين بيانات اعتماد Era Enrich وحدود
+      المعدل — تَرِث era_spy_crm جميع إعدادات الاتصال تلقائياً.
+    </p>
+  </div>
+
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Enrich CRM · Data enrichment for your pipeline · Odoo 19
+    ERA Enrich CRM &nbsp;·&nbsp; إثراء CRM من ERA &nbsp;·&nbsp; Odoo 19
   </div>
 
 </section>

@@ -32,11 +32,15 @@ class CrmForsah(models.Model):
     link = fields.Char(string="Link", readonly=True)
     size = fields.Char(string="Size", readonly=True, tracking=True)
     days = fields.Char(string="Days", readonly=True, tracking=True)
+    due_date = fields.Date(
+        string="Due Date", readonly=True, tracking=True,
+        help="Absolute submission deadline. Days Remaining is derived from this so it stays correct as time passes.",
+    )
     days_remaining = fields.Integer(
         string="Days Remaining",
         compute="_compute_days_remaining",
         store=True,
-        help="Number of days left to submit, parsed from the feed's days value. Used for sorting and filtering.",
+        help="Days left to submit, derived from the due date (refreshed daily). Used for sorting and filtering.",
     )
     city = fields.Char(string="City", readonly=True, tracking=True)
     tag_ids = fields.Many2many(
@@ -74,10 +78,36 @@ class CrmForsah(models.Model):
     # ------------------------------------------------------------------
     # Computed fields
     # ------------------------------------------------------------------
-    @api.depends('days')
+    @api.depends('due_date', 'days')
     def _compute_days_remaining(self):
+        today = fields.Date.context_today(self)
         for record in self:
-            record.days_remaining = self._extract_int(record.days)
+            if record.due_date:
+                record.days_remaining = (record.due_date - today).days
+            else:
+                record.days_remaining = self._extract_int(record.days)
+
+    @api.model
+    def _cron_refresh_days_remaining(self):
+        """Recompute days_remaining from due_date so it keeps counting down as
+        time passes, independent of when the feed last synced."""
+        records = self.search([('active', '=', True), ('due_date', '!=', False)])
+        records._compute_days_remaining()
+        records.flush_recordset(['days_remaining'])
+        return True
+
+    @staticmethod
+    def _parse_feed_date(value):
+        """Coerce a feed date to a value the Date field accepts (False if bad)."""
+        if not isinstance(value, str):
+            return value if value else False
+        value = value.strip()
+        if not value or value == 'False':
+            return False
+        try:
+            return fields.Date.to_date(value)
+        except (ValueError, TypeError):
+            return False
 
     @staticmethod
     def _extract_int(value):
@@ -131,6 +161,7 @@ class CrmForsah(models.Model):
                 'size': data.get('size'),
                 'category': data.get('category'),
                 'days': data.get('days'),
+                'due_date': self._parse_feed_date(data.get('due_date')),
                 'city': data.get('city'),
             }
             record = Tender.search([('forsah_id', '=', ref)], limit=1)

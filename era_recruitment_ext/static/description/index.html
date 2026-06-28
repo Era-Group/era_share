@@ -2,70 +2,133 @@
 
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#92400e 0%,#b45309 60%,#f59e0b 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
-    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Recruitment Extension</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إضافة التوظيف من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">AI CV match analysis — score and rank candidates against job descriptions automatically</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">تحليل تطابق السيرة الذاتية بالذكاء الاصطناعي — درّج وصنّف المرشحين تلقائياً</p>
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Recruitment AI Analyser</h1>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">محلّل التوظيف بالذكاء الاصطناعي من ERA</div>
+    <p style="font-size:1.05em;margin:0 0 8px;color:rgba(255,255,255,.92);max-width:720px;margin-left:auto;margin-right:auto;">
+      Adds AI-powered CV match analysis to Odoo Recruitment. Upload a CV, click Analyse, and receive a numeric match score, a strengths-and-gaps breakdown, and a hiring recommendation — all stored on the applicant record without leaving Odoo.
+    </p>
+    <p dir="rtl" style="font-size:1em;margin:0;color:rgba(255,255,255,.85);max-width:720px;margin-left:auto;margin-right:auto;">
+      يضيف تحليل مطابقة السير الذاتية بالذكاء الاصطناعي إلى التوظيف في أودو. ارفع السيرة الذاتية، اضغط تحليل، واحصل على درجة مطابقة رقمية وتفصيل للمزايا والثغرات وتوصية التوظيف — كل ذلك محفوظ على سجل المتقدم دون مغادرة أودو.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
+    <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🤖</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">AI CV Analysis</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Automatically analyzes uploaded CVs against the job description using AI.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">تحليل CV بالذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يحلل السير الذاتية المرفوعة تلقائياً مقارنةً بوصف الوظيفة بالذكاء الاصطناعي.</p>
+      <div style="font-size:2em;margin-bottom:8px;">🤖</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">AI CV Analysis</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Triggered from the applicant form via an "Analyse CV" button. The module extracts text from the attached CV (PDF via pdfminer, DOCX via python-docx), combines it with the job position description, and sends a structured prompt to the configured Odoo AI agent. The AI response is parsed and stored as <code>era_cv_match_score</code> and <code>era_cv_analysis_html</code> fields on the applicant record.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">تحليل السيرة الذاتية بالذكاء الاصطناعي</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">يُشغَّل من نموذج المتقدم بزر "تحليل السيرة الذاتية". تستخرج الوحدة النص من السيرة المرفقة (PDF عبر pdfminer، DOCX عبر python-docx)، تجمعه مع وصف الوظيفة، وترسل موجّهاً منظَّماً لوكيل AI أودو. يُحلَّل الرد ويُخزَّن في حقلي <code>era_cv_match_score</code> و<code>era_cv_analysis_html</code>.</p>
       </div>
     </div>
 
+    <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📊</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">Match Scoring</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Each applicant receives a match score for quick comparison.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">تقييم التطابق</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يحصل كل مقدّم على درجة تطابق للمقارنة السريعة.</p>
+      <div style="font-size:2em;margin-bottom:8px;">📊</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Match Score (0–100)</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">The AI returns a numeric score reflecting how well the candidate's experience, skills, and qualifications align with the job requirements. The score appears as a progress-bar badge on the applicant kanban card and list view so recruiters can rank at a glance. Colour coding: green above 70, amber 40–70, red below 40.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">درجة المطابقة (0–100)</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">يُعيد الذكاء الاصطناعي درجة رقمية تعكس مدى توافق خبرة المرشح ومهاراته ومؤهلاته مع متطلبات الوظيفة. تظهر الدرجة كشريط تقدم في بطاقة كانبان وعرض القائمة. تمييز لوني: أخضر فوق 70، عنبري 40–70، أحمر أقل من 40.</p>
       </div>
     </div>
 
+    <!-- Card 3 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⚡</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">One-Click Trigger</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Run the AI analysis on any applicant with a single button click.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">تشغيل بنقرة واحدة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">شغّل تحليل الذكاء الاصطناعي على أي مقدّم بنقرة زر واحدة.</p>
+      <div style="font-size:2em;margin-bottom:8px;">💪</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Strengths &amp; Gaps Breakdown</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">The analysis HTML includes two structured lists: Strengths (where the candidate clearly meets or exceeds requirements) and Gaps (missing skills, insufficient experience, or unclear fit). Each point references specific text from the CV and the job description so recruiters can verify the AI's reasoning.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">تفصيل المزايا والثغرات</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">يتضمن HTML التحليلي قائمتين منظمتين: المزايا (أين يلبّي المرشح المتطلبات أو يتجاوزها) والثغرات (المهارات المفقودة أو الخبرة غير الكافية). كل نقطة تستشهد بنص محدد من السيرة الذاتية والوصف الوظيفي.</p>
       </div>
     </div>
 
+    <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🎯</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">Job-Description Aware</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Uses the actual job position description as the scoring benchmark.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">واعٍ بوصف الوظيفة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يستخدم وصف الوظيفة الفعلي كمعيار للتقييم.</p>
+      <div style="font-size:2em;margin-bottom:8px;">📝</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Hiring Recommendation</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">A one-paragraph AI summary recommends whether to advance the candidate to the next stage, request a screening call, or decline — with brief reasoning. The recruiter can accept or override the recommendation; the AI note remains in the chatter for audit purposes.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">توصية التوظيف</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">ملخص AI بفقرة واحدة يوصي بالتقدم للمرحلة التالية أو طلب مقابلة أولية أو الرفض — مع مبرر موجز. يمكن للمجنّد قبول التوصية أو تجاوزها؛ تبقى ملاحظة AI في السجل للمراجعة.</p>
       </div>
     </div>
 
+    <!-- Card 5 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📋</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">Objective Ranking</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Remove bias by letting AI rank candidates on skills and qualifications.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#b45309;">ترتيب موضوعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أزل التحيز بالسماح للذكاء الاصطناعي بترتيب المرشحين وفق مهاراتهم ومؤهلاتهم.</p>
+      <div style="font-size:2em;margin-bottom:8px;">⚡</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Bulk Analysis Action</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">A server action on the applicant list allows selecting multiple applicants and running AI analysis on all of them in a background job. A progress counter shows how many have been processed and how many remain, updating every 30 seconds.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">إجراء التحليل الجماعي</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">إجراء خادم في قائمة المتقدمين يتيح اختيار متعددين وتشغيل تحليل AI عليهم في وظيفة خلفية. عداد تقدم يُظهر كم جرى تحليله وكم تبقى، يُحدَّث كل 30 ثانية.</p>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:8px;">🎯</div>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Job-Description Aware</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">The analysis is anchored to the actual <code>hr.job</code> or <code>hr.applicant.category</code> description on the recruitment position — not a generic rubric. Changing the job description changes what the AI evaluates, so the analysis always reflects the current requirements and no two job analyses use the same rubric.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">مرتبط بالوصف الوظيفي</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">يستند التحليل إلى الوصف الفعلي للوظيفة في <code>hr.job</code> أو <code>hr.applicant.category</code> — لا معيار عام. تغيير الوصف الوظيفي يغيّر ما يقيّمه الذكاء الاصطناعي، فلا تحليلان لوظيفتين يستخدمان نفس المعيار.</p>
       </div>
     </div>
 
   </div>
 
+  <!-- HOW IT WORKS (dark) -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <h2 style="margin:0 0 24px;font-size:1.4em;font-weight:700;color:#fff;text-align:center;">How It Works · كيف يعمل</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+
+      <!-- EN steps -->
+      <div style="flex:1 1 300px;">
+        <ol style="margin:0;padding-left:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
+          <li>Recruiter posts a job position with a detailed description and requirements</li>
+          <li>Applicant applies and attaches their CV (PDF or DOCX)</li>
+          <li>Recruiter opens the applicant form and clicks "Analyse CV"</li>
+          <li>AI reads CV vs job description, returns score + breakdown + recommendation (stored on record)</li>
+          <li>Score appears on kanban card; recruiter reviews analysis HTML and decides next stage</li>
+          <li>Bulk action processes multiple applicants in background overnight</li>
+        </ol>
+      </div>
+
+      <!-- AR steps -->
+      <div style="flex:1 1 300px;" dir="rtl">
+        <ol style="margin:0;padding-right:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
+          <li>يُنشر منصب وظيفي بوصف تفصيلي ومتطلبات</li>
+          <li>يتقدم مرشح ويرفق سيرته الذاتية (PDF أو DOCX)</li>
+          <li>يفتح المجنّد نموذج المتقدم ويضغط "تحليل السيرة الذاتية"</li>
+          <li>يقرأ الذكاء الاصطناعي السيرة مقابل الوصف الوظيفي ويُعيد درجة + تفصيل + توصية</li>
+          <li>تظهر الدرجة في بطاقة كانبان ويراجع المجنّد التحليل</li>
+          <li>الإجراء الجماعي يعالج متقدمين متعددين في الخلفية</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:24px 26px;margin-bottom:28px;">
+    <h3 style="margin:0 0 10px;color:#b45309;font-size:1.1em;">⚡ Works with Any Odoo AI Provider</h3>
+    <p style="margin:0 0 14px;font-size:.97em;line-height:1.7;">
+      The CV analysis uses whichever AI provider and model is configured on the ERA AI agent — OpenAI GPT-4o, Claude, Gemini, or a local model via <code>era_odoo_ai_ext</code>. No hardcoded provider dependency.
+    </p>
+    <p dir="rtl" style="margin:0;font-size:.97em;line-height:1.7;border-top:1px solid #fde68a;padding-top:12px;">
+      يستخدم تحليل السيرة أي مزوّد AI مُكوَّن على وكيل ERA — OpenAI GPT-4o أو Claude أو Gemini أو نموذج محلي عبر <code>era_odoo_ai_ext</code>. لا يوجد ارتباط بمزوّد محدد.
+    </p>
+  </div>
+
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Recruitment Extension · AI-powered hiring · Odoo 19
+    ERA Recruitment AI Analyser &nbsp;·&nbsp; محلّل التوظيف بالذكاء الاصطناعي &nbsp;·&nbsp; Odoo 19
   </div>
 
 </section>

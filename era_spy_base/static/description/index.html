@@ -3,69 +3,121 @@
   <!-- HERO -->
   <div style="background:linear-gradient(135deg,#1f2937 0%,#374151 60%,#6b7280 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Enrich Base</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">قاعدة ERA Enrich</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Shared API client, rate limiting, and callback infrastructure for all ERA Enrich add-ons</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">عميل API مشترك وضوابط معدّل الطلب وبنية الردود اللاتزامنية لجميع إضافات ERA Enrich</p>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">القاعدة الأساسية لـ ERA Enrich</div>
+    <p style="font-size:1.05em;margin:0 0 8px;color:rgba(255,255,255,.92);max-width:720px;margin-left:auto;margin-right:auto;">
+      The shared infrastructure module that all ERA Enrich add-ons depend on. It manages HTTP connections, stores credentials securely, enforces rate limits, exposes async callback endpoints, and provides a settings UI — so higher-level modules need no plumbing of their own.
+    </p>
+    <p dir="rtl" style="font-size:1em;margin:0;color:rgba(255,255,255,.85);max-width:720px;margin-left:auto;margin-right:auto;">
+      الوحدة الأساسية المشتركة التي تعتمد عليها جميع إضافات ERA Enrich. تدير اتصالات HTTP وتخزّن بيانات الاعتماد بأمان وتُطبّق حدود المعدل وتُعرّض نقاط نهاية استدعاء رجعي غير متزامن — فلا تحتاج الوحدات العليا لأي تمديدات تحتية.
+    </p>
   </div>
 
   <!-- FEATURE CARDS -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
+    <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🔌</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">Shared API Client</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Provides a unified HTTP client used by all ERA Enrich modules.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">عميل API مشترك</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يوفر عميل HTTP موحد تستخدمه جميع وحدات ERA Enrich.</p>
+      <div style="font-size:2em;margin-bottom:8px;">🔌</div>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Shared HTTP Client</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">A Python class <code>EraEnrichClient</code> wraps <code>requests.Session</code> with base URL, bearer token auth, retry logic (3 retries with exponential backoff), and a configurable timeout. All ERA Enrich modules import and instantiate this class — one implementation, zero duplication across the suite.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">عميل HTTP مشترك</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">فئة Python <code>EraEnrichClient</code> تلفّ <code>requests.Session</code> بعنوان URL الأساسي وتوثيق bearer وإعادة المحاولة (3 محاولات بتراجع أسي) ومهلة قابلة للضبط. جميع وحدات ERA Enrich تستورد هذه الفئة — تنفيذ واحد وصفر تكرار عبر المجموعة.</p>
       </div>
     </div>
 
+    <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⏱️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">Rate Limit Controls</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Built-in rate limiting to prevent API quota exhaustion.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">ضوابط معدّل الطلب</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ضوابط معدّل الطلب المدمجة لمنع استنفاد حصة API.</p>
+      <div style="font-size:2em;margin-bottom:8px;">⏱️</div>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Rate Limit Controls</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Two configurable limits: <code>era_enrich.rpm_limit</code> (requests per minute, default 60) and <code>era_enrich.bulk_max</code> (max records per bulk job). A token-bucket counter in Odoo's in-memory cache enforces the per-minute cap across all workers, preventing API throttling from the enrichment service.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">ضوابط حد المعدل</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">حدان قابلان للضبط: <code>era_enrich.rpm_limit</code> (طلبات في الدقيقة، الافتراضي 60) و<code>era_enrich.bulk_max</code> (أقصى سجلات للوظيفة الجماعية). عداد دلو رمزي في ذاكرة أودو يُطبّق الحد عبر جميع العمّال، مما يمنع تقييد API من خدمة الإثراء.</p>
       </div>
     </div>
 
+    <!-- Card 3 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📡</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">Callback Endpoints</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Registers webhook callback routes for asynchronous enrichment results.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">نقاط الاستجابة اللاتزامنية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يسجّل مسارات ردود الويب للنتائج اللاتزامنية للإثراء.</p>
+      <div style="font-size:2em;margin-bottom:8px;">📡</div>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Async Callback Endpoints</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Exposes <code>/era_enrich/callback/&lt;token&gt;</code> as a public JSON endpoint. The Era Enrich service POSTs enrichment results back to this URL after processing. The controller validates the token, finds the originating record, and writes the result — no polling, no open long-lived connections, no webhook delays.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">نقاط نهاية الاستدعاء الرجعي غير المتزامن</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">تُعرّض <code>/era_enrich/callback/&lt;token&gt;</code> كنقطة نهاية JSON عامة. تُرسل خدمة Era Enrich نتائج الإثراء عبر POST لهذا العنوان بعد المعالجة. يُتحقق المتحكم من الرمز، يجد السجل الأصلي، ويكتب النتيجة — بلا استطلاع ولا اتصالات مفتوحة مطوّلة.</p>
       </div>
     </div>
 
+    <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">Settings UI</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Central settings page for ERA Enrich API key and configuration.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">واجهة الإعدادات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">صفحة إعدادات مركزية لمفتاح API وإعدادات ERA Enrich.</p>
+      <div style="font-size:2em;margin-bottom:8px;">⚙️</div>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Settings UI</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">A dedicated section in Settings → ERA Group → Enrich lets admins set the API base URL, bearer token, RPM limit, and bulk cap without touching system parameters or code. All settings changes take effect immediately and are reflected in the next API call.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">واجهة الإعدادات</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">قسم مخصص في الإعدادات ← مجموعة ERA ← Enrich يتيح للمسؤولين ضبط عنوان URL الأساسي ورمز bearer وحد RPM والحد الجماعي دون لمس معاملات النظام أو الكود. جميع التغييرات تسري فوراً وتنعكس في استدعاء API التالي.</p>
       </div>
     </div>
 
+    <!-- Card 5 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🏗️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">Base for Extensions</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Required dependency for era_spy_crm and era_spy_recruitment modules.</p>
-      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#374151;">قاعدة للإضافات الأخرى</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تبعية مطلوبة لوحدتي era_spy_crm و era_spy_recruitment.</p>
+      <div style="font-size:2em;margin-bottom:8px;">🏗️</div>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Foundation for Extensions</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;"><code>era_spy_crm</code> and <code>era_spy_recruitment</code> both list <code>era_spy_base</code> in their <code>depends</code>. Install this module first; the extensions automatically gain the shared client, rate-limiter, and callback infrastructure without any additional configuration.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">قاعدة للامتدادات</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">تدرج <code>era_spy_crm</code> و<code>era_spy_recruitment</code> كلتاهما <code>era_spy_base</code> في قائمة <code>depends</code>. ثبِّت هذه الوحدة أولاً؛ تكتسب الامتدادات تلقائياً العميل المشترك ومُقيّد المعدل وبنية الاستدعاء الرجعي دون أي تكوين إضافي.</p>
       </div>
     </div>
 
   </div>
 
+  <!-- HOW IT WORKS (dark) -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <h2 style="margin:0 0 24px;font-size:1.4em;font-weight:700;color:#fff;text-align:center;">How It Works · كيف يعمل</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;">
+
+      <!-- EN steps -->
+      <div style="flex:1 1 300px;">
+        <ol style="margin:0;padding-left:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
+          <li>Install <code>era_spy_base</code></li>
+          <li>Set API URL and bearer token in Settings → ERA Enrich</li>
+          <li>Set RPM and bulk limits as needed</li>
+          <li>Install <code>era_spy_crm</code> and/or <code>era_spy_recruitment</code></li>
+          <li>They use <code>EraEnrichClient</code> automatically — no additional setup</li>
+          <li>Enrichment results arrive via the callback URL and are written to records in real time</li>
+        </ol>
+      </div>
+
+      <!-- AR steps -->
+      <div style="flex:1 1 300px;" dir="rtl">
+        <ol style="margin:0;padding-right:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
+          <li>ثبِّت <code>era_spy_base</code></li>
+          <li>اضبط عنوان API ورمز bearer في الإعدادات ← ERA Enrich</li>
+          <li>اضبط حدود RPM والجملة حسب الحاجة</li>
+          <li>ثبِّت <code>era_spy_crm</code> و/أو <code>era_spy_recruitment</code></li>
+          <li>تستخدمان <code>EraEnrichClient</code> تلقائياً — دون إعداد إضافي</li>
+          <li>تصل نتائج الإثراء عبر عنوان الاستدعاء الرجعي وتُكتب في السجلات فوراً</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#f9fafb;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 26px;margin-bottom:28px;">
+    <h3 style="margin:0 0 10px;color:#374151;font-size:1.1em;">🔑 Install Once, Use Everywhere</h3>
+    <p style="margin:0 0 14px;font-size:.97em;line-height:1.7;">
+      <code>era_spy_base</code> is a technical dependency — install it once and every ERA Enrich extension shares the same credentials, rate limits, and callback infrastructure without any additional setup. Uninstalling an extension does not affect the base or other extensions.
+    </p>
+    <p dir="rtl" style="margin:0;font-size:.97em;line-height:1.7;border-top:1px solid #d1d5db;padding-top:12px;">
+      <code>era_spy_base</code> تبعية تقنية — ثبِّتها مرة واحدة وكل امتداد ERA Enrich يشارك نفس بيانات الاعتماد وحدود المعدل وبنية الاستدعاء الرجعي دون إعداد إضافي. إلغاء تثبيت امتداد لا يؤثر على القاعدة أو الامتدادات الأخرى.
+    </p>
+  </div>
+
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Enrich Base · Foundation for ERA Enrich add-ons · Odoo 19
+    ERA Enrich Base &nbsp;·&nbsp; قاعدة ERA Enrich &nbsp;·&nbsp; Odoo 19
   </div>
 
 </section>

@@ -11,7 +11,8 @@ The two COMPLIANCE layers (PII redaction, consent check) enforce PDPL, so:
 The env-only-key assertion (Rule 03) is intentionally NOT exposed here — it is
 always enforced and never toggleable.
 """
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 _MANAGER = "era_crm_ai_agents_base.group_crm_ai_manager"
 
@@ -49,8 +50,46 @@ class ResConfigSettings(models.TransientModel):
         string="PDPL: consent check", groups=_MANAGER,
         config_parameter="era_crm_ai_agents.enable_consent_check")
 
+    # Agent cron execution identity (Rule 09). One identity for the whole suite;
+    # every agent cron resolves it via crm.ai.agent._get_cron_run_user().
+    era_cron_run_mode = fields.Selection(
+        selection=[
+            ("user", "Run as a chosen internal user (recommended)"),
+            ("odoobot", "Run as OdooBot / superuser (bypasses access rules)"),
+        ],
+        string="Agent cron execution identity", groups=_MANAGER,
+        config_parameter="era_crm_ai_agents.cron_run_mode",
+        help="How scheduled agent runs authenticate. 'user' runs under real "
+             "ACLs/record rules as the selected internal account (Rule 09). "
+             "'OdooBot' runs as the superuser and bypasses all access rules.")
+    era_cron_run_user_id = fields.Many2one(
+        comodel_name="res.users",
+        string="Agent cron run user", groups=_MANAGER,
+        domain="[('share', '=', False)]",
+        config_parameter="era_crm_ai_agents.cron_run_user_id",
+        help="The internal user every agent cron runs as in 'user' mode. "
+             "Defaults to the least-privilege 'CRM AI Automation' account; "
+             "point it at any existing internal user (e.g. an already-billable "
+             "account) to add no extra user. Must be internal (not portal).")
+
     def set_values(self):
-        """Audit any compliance layer being turned OFF (True -> False)."""
+        """Audit compliance-layer disables; validate the cron-run identity."""
+        # Validation: in 'user' mode the chosen account must be a usable
+        # INTERNAL user (Rule 09 / reject portal/public).
+        if self.era_cron_run_mode == "user":
+            u = self.era_cron_run_user_id
+            if not u:
+                raise UserError(_(
+                    "Select an internal user for the agent cron to run as, or "
+                    "switch the execution identity to OdooBot."))
+            if u.share:
+                raise UserError(_(
+                    "The agent cron run user must be an INTERNAL user. "
+                    "'%(name)s' is a portal/public user.", name=u.name))
+            if not u.active:
+                raise UserError(_(
+                    "The agent cron run user '%(name)s' is archived. Pick an "
+                    "active internal user.", name=u.name))
         icp = self.env["ir.config_parameter"].sudo()
         disabled = []
         for param, fname, label in _COMPLIANCE:

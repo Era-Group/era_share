@@ -94,7 +94,7 @@ Every **sending** agent calls `guard()` **before any message goes out**. `guard(
 - Build **ONLY** in `/opt/odoo/addons/`. **Never** touch `ce/addons`, `ee`, `themes`, `waha`, or `odoo.conf`.
 - Secrets (API keys/tokens) live in **environment variables**, read via `ir.config_parameter`. **NEVER** store secrets in code or the database.
 - Enforce a **hard AI cost cap in code**, not only in dashboards (Rule 14).
-- Every agent runs under the **salesperson's permissions** (`res.users` / `res.groups`), **never superuser** (Rule 09 / 19).
+- Every agent runs under **real user permissions** (`res.users` / `res.groups`), **not superuser** (Rule 09 / 19): interactive runs use the acting salesperson; scheduled agent runs use the configurable least-privilege cron identity (see "Cron execution identity"). The only superuser path for agent work is the explicit, manager-selected, UI-warned **OdooBot** cron opt-out. (System-maintenance crons run as root by design — see same section.)
 - **Log every sensitive decision** (send, delete, role change, external contact, export) to the **critical audit log** (Rule 20).
 - **PDPL compliance:** explicit consent before any marketing message; honor opt-out within **72h**; support **DSAR** access/erasure requests; respect Saudi data residency.
 - Keep a **human in the loop** for Arabic messages (and for all true "sending" actions, via the approval layer).
@@ -162,6 +162,53 @@ usage create (#4), plus the guard's own `llm` row. No unlink remains.)_
 
 ---
 
+## Cron execution identity (Rule 09)
+
+There are **two distinct classes of scheduled job** in the suite, and they
+intentionally run under **different identities**. This split is a convention, not
+an inconsistency:
+
+1. **Agent operations → the configurable resolver (default: least-privilege user).**
+   Any cron that performs **agent data processing** (discovery, creation, de-dup,
+   enrichment, sending — anything touching business/personal data on behalf of an
+   agent) resolves its run-user via the single Base resolver
+   `crm.ai.agent._get_cron_run_user()` and applies it with `model.with_user(...)`.
+   No agent cron hardcodes a user. Two modes, set in Settings (manager-only,
+   `era_crm_ai_agents.cron_run_*`):
+   - **`user` (DEFAULT)** — a manager-chosen **internal** user (validated
+     `share=false`), seeded to the shared least-privilege **CRM AI Automation**
+     account (`base.group_user` + `group_crm_ai_user` only, no password, internal).
+     One identity for the whole 16-module suite; a manager may repoint it at any
+     existing internal user. This is how **Rule 09 is honored**: the framework
+     forces `su=True` ONLY for `SUPERUSER_ID` (`orm/environments.py`), so
+     `with_user(<internal user>)` runs with **`su=False`** → ACLs and record rules
+     are fully enforced. No `sudo()` is used to run agent logic.
+   - **`odoobot`** — the explicit, **warned opt-out**: runs as `base.user_root`
+     (uid 1 → `su=True` → bypasses ACLs/record rules). The Settings UI shows a
+     visible danger warning (superuser, bypasses access rules, contradicts Rule 09,
+     PDPL risk). NOT the default; chosen deliberately and at the manager's risk.
+   - **Fail-safe:** a missing/invalid/portal/inactive configured user falls back to
+     the seeded automation account, then the calling user — **never silently to
+     root.** Reading the two config keys is the same narrow read as elevation #1.
+
+2. **System-maintenance crons → `base.user_root` (by design, outside the resolver).**
+   Crons that do **system reconciliation**, not agent data processing, correctly
+   run as root and MUST NOT be routed through `_get_cron_run_user()`:
+   - `era_crm_ai_agents_base` — `cron_check_caps` (daily cost/token cap
+     reconciliation across **all** users' usage).
+   - `era_crm_ai_agents_compliance` — the 72h opt-out enforcer and the prayer-time
+     cache warmer.
+   These need a global, cross-user view and own no agent-specific data decision, so
+   the least-privilege agent identity would be both wrong and insufficient. Keeping
+   them on root is the intended convention: **root for system maintenance, the
+   resolver for agent operations.**
+
+When a future agent module adds a scheduled run, it follows class 1 (call the
+resolver; never hardcode a user, never default to root). Only add a class-2
+root cron for genuine system reconciliation, and note it here.
+
+---
+
 ## External Network Egress Registry (non-LLM)
 
 All LLM traffic flows through Odoo native AI / the Claude CLI behind the base AI
@@ -218,8 +265,14 @@ auth, and fail-safe.
      (`scheme://netloc`, via `_safe_host`) + the exception CLASS name — never the
      full URL, query string, or raw exception — to either the server log or the
      `source_fetch_failed` audit row.
-   - **Run context:** the scheduled run executes as the dedicated non-superuser
-     **Lead Generation Bot** (Rule 09), not root, so creation/de-dup obey ACLs.
+   - **Run context:** the scheduled run executes under the **suite-wide
+     configurable cron identity** (see "Cron execution identity" below), which
+     defaults to the shared least-privilege **CRM AI Automation** internal user —
+     non-superuser, so creation/de-dup obey ACLs (Rule 09). The cron resolves it
+     at run time via `crm.ai.agent._get_cron_run_user()` and applies it with
+     `model.with_user(...)`; it does NOT hardcode a user. (The old per-module
+     "Lead Generation Bot" was retired in `19.0.1.1.0` — a post-migration
+     re-points existing crons and removes that user.)
    - **Triple gate (nothing fires by default):** the module master toggle
      (`era_crm_ai_agents_lead_gen.enabled`, default OFF) AND the per-source
      `active` flag (all seeded OFF) AND `token_present`. Decision-maker sources

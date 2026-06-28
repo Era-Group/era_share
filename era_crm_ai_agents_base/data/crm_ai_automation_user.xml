@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Shared least-privilege internal service account that every agent
+             cron in the suite runs as BY DEFAULT (Rule 09: agent business logic
+             runs under real ACLs / record rules, never as the superuser).
+
+             ONE identity for the whole 16-module suite. A manager may repoint
+             the "Agent cron run user" setting to any existing internal user
+             (e.g. an already-billable account, for zero added cost) — this is
+             just the safe default the m2o points at.
+
+             - share=false  -> internal user (the cron-run setting rejects
+               portal/public).
+             - No password is set, so it cannot authenticate interactively; it
+               is a technical/service account only.
+             - Least-privilege groups: base User + AI Agents User. NOT a manager,
+               NOT a system/admin user.
+
+             noupdate="1": created once; if a manager edits it (groups, archive),
+             a module upgrade will not revert their change. -->
+        <record id="user_crm_ai_automation" model="res.users">
+            <field name="name">CRM AI Automation</field>
+            <field name="login">crm_ai_automation</field>
+            <field name="group_ids" eval="[Command.set([
+                ref('base.group_user'),
+                ref('era_crm_ai_agents_base.group_crm_ai_user')])]"/>
+        </record>
+
+    </data>
+</odoo>

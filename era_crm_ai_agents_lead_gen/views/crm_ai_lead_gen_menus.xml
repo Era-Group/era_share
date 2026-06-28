@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Open the Lead Generation block on the global Settings page. The block
-         lives inside the Base's "CRM AI Agents" app (manager-gated), so the
-         context targets that module — same pattern as Compliance Settings. -->
+    <!-- Open the Settings page focused on Lead Generation's OWN app block (a
+         sibling of the Base "CRM AI Agents" app, defined in
+         res_config_settings_views.xml). The 'module' context key selects the
+         <app name="era_crm_ai_agents_lead_gen"> pane. Odoo 19 force-combines all
+         res.config.settings forms into one unified Settings page, so the app
+         sidebar still lists other apps — an accepted framework limitation. -->
     <record id="action_crm_ai_lead_gen_settings" model="ir.actions.act_window">
         <field name="name">Lead Generation Settings</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="target">current</field>
-        <field name="context">{'module': 'era_crm_ai_agents_base'}</field>
+        <field name="context">{'module': 'era_crm_ai_agents_lead_gen'}</field>
     </record>
 
-    <!-- Manager-only "Lead Generation" menu group under the Base CRM-AI root. -->
+    <!-- Suite menu convention: a SELF-CONTAINED functional module (Lead Gen is
+         its own prospecting engine) gets its OWN standalone top-level root menu
+         — a separate navbar app icon, NOT parented to the Base root. Manager-
+         gated; its three screens nest beneath it. web_icon is a self-contained,
+         brand-neutral 140x140 PNG under static/description (no external refs) —
+         PNG, not SVG, to match Odoo 19 core's app-icon convention (every core
+         web_icon is a PNG; SVG navbar icons are not a tested pattern). -->
     <menuitem id="menu_crm_ai_lead_gen_root"
               name="Lead Generation"
-              parent="era_crm_ai_agents_base.menu_crm_ai_root"
+              web_icon="era_crm_ai_agents_lead_gen,static/description/icon.png"
               sequence="50"
               groups="era_crm_ai_agents_base.group_crm_ai_manager"/>
 

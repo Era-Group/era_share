@@ -247,3 +247,53 @@ class CrmAiAgent(models.Model):
                 "AI agent '%(name)s' has no model configured. Set its Model "
                 "(and optionally Advanced Model) on the agent.", name=self.name))
         return self._provider_for_code(code), code
+
+    # ------------------------------------------------------------------
+    # Cron execution identity (Rule 09) — the single suite-wide resolver
+    # ------------------------------------------------------------------
+    @api.model
+    def _get_cron_run_user(self):
+        """Return the res.users every agent cron in the suite should run as.
+
+        Two modes, from ``era_crm_ai_agents.cron_run_mode``:
+          * ``user`` (default): the internal user picked in Settings
+            (``era_crm_ai_agents.cron_run_user_id``), seeded to the
+            least-privilege ``CRM AI Automation`` account. Runs under real
+            ACLs/record rules (Rule 09).
+          * ``odoobot``: ``base.user_root`` (superuser; bypasses ACLs/record
+            rules). Opt-in, with a visible Settings warning.
+
+        Fail-safe: a missing/invalid/portal/inactive configured user falls back
+        to the seeded automation account, then to the current user — NEVER
+        silently to root. Reading config is the Base's approved sudo elevation
+        #1 (config read only); resolving the user is a plain read.
+
+        Agent crons apply it with ``model.with_user(...)``. Odoo forces
+        ``su=True`` only for SUPERUSER_ID, so ``with_user(automation_user)``
+        keeps ACLs in force while ``with_user(base.user_root)`` elevates — no
+        manual ``sudo()`` needed.
+        """
+        icp = self.env["ir.config_parameter"].sudo()
+        mode = (icp.get_param("era_crm_ai_agents.cron_run_mode") or "user").strip()
+
+        if mode == "odoobot":
+            return self.env.ref("base.user_root")
+
+        # 'user' mode (and any unknown value -> safe default, never root).
+        Users = self.env["res.users"].sudo()
+        user = Users.browse()
+        raw = icp.get_param("era_crm_ai_agents.cron_run_user_id")
+        if raw:
+            try:
+                user = Users.browse(int(raw)).exists()
+            except (TypeError, ValueError):
+                user = Users.browse()
+        # Reject anything that is not a usable internal account.
+        if not user or not user.active or user.share:
+            user = self.env.ref(
+                "era_crm_ai_agents_base.user_crm_ai_automation",
+                raise_if_not_found=False)
+        if not user or not user.active or user.share:
+            # Last resort: the calling user (still never the superuser).
+            user = self.env.user
+        return user

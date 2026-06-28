@@ -57,5 +57,24 @@
             <field name="value">True</field>
         </record>
 
+        <!-- Agent cron execution identity (Rule 09). Two modes:
+               user    (DEFAULT) -> run as the res.users picked in Settings,
+                                    seeded to the least-privilege CRM AI
+                                    Automation account; ACLs/record rules apply.
+               odoobot           -> run as base.user_root (superuser, bypasses
+                                    ACLs). NOT the default; the Settings UI warns.
+             _get_cron_run_user() (crm.ai.agent) reads these; every agent cron
+             resolves through it. Seeded so the default identity exists from the
+             first run. -->
+        <record id="param_cron_run_mode" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.cron_run_mode</field>
+            <field name="value">user</field>
+        </record>
+        <record id="param_cron_run_user" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents.cron_run_user_id</field>
+            <field name="value"
+                   eval="str(ref('era_crm_ai_agents_base.user_crm_ai_automation'))"/>
+        </record>
+
     </data>
 </odoo>

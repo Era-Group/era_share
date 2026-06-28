@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default enrichment waterfall. Every provider is seeded INACTIVE
+         (active=False) and with the NAME of its token env var only (Rule 03 —
+         never the token value). A manager activates a provider once its env var
+         is provisioned; an active provider whose token is missing resolves
+         token_present=False and is skipped.
+
+         priority defines the waterfall order (low first): data-residency-friendly
+         Saudi registries first, then contact-data finders/verifiers, then the
+         web-search + LLM fallback last. provider_type + env_key_param are the
+         contract the later handlers (2.3+) dispatch on and read tokens from.
+
+         billing_mode defaults to per_call (conservative: many verification APIs
+         charge per attempt, not per success). WhatsApp is free (self-hosted WAHA)
+         and carries NO token; it stays gated by its own toggle + per-record
+         consent + connector availability regardless of `active`.
+
+         noupdate="1": a manager's activation / cost edits survive module upgrades. -->
+    <data noupdate="1">
+
+        <!-- 1) Saudi Commercial Registry (company data) — local first. -->
+        <record id="provider_wathiq" model="crm.ai.enrichment.provider">
+            <field name="name">Wathiq (Saudi CR)</field>
+            <field name="provider_type">company_data</field>
+            <field name="handler_key">wathiq</field>
+            <field name="priority">10</field>
+            <field name="fields_filled">name,company_registry,sector,city,country</field>
+            <field name="env_key_param">ERA_ENRICH_WATHIQ</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.0</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 2) Saudi business verification / reviews (company data). -->
+        <record id="provider_maroof" model="crm.ai.enrichment.provider">
+            <field name="name">Maroof</field>
+            <field name="provider_type">company_data</field>
+            <field name="handler_key">maroof</field>
+            <field name="priority">20</field>
+            <field name="fields_filled">name,website,sector</field>
+            <field name="env_key_param">ERA_ENRICH_MAROOF</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.0</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 3) Email finder (fills a missing email). -->
+        <record id="provider_hunter" model="crm.ai.enrichment.provider">
+            <field name="name">Hunter (email finder)</field>
+            <field name="provider_type">email</field>
+            <field name="handler_key">hunter</field>
+            <field name="priority">30</field>
+            <field name="fields_filled">email</field>
+            <field name="env_key_param">ERA_ENRICH_HUNTER</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.01</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 4) Email deliverability verification (per-attempt billing). -->
+        <record id="provider_zerobounce" model="crm.ai.enrichment.provider">
+            <field name="name">ZeroBounce (email verify)</field>
+            <field name="provider_type">email</field>
+            <field name="handler_key">zerobounce</field>
+            <field name="priority">40</field>
+            <field name="fields_filled">email</field>
+            <field name="env_key_param">ERA_ENRICH_ZEROBOUNCE</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.008</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 5) Phone / HLR lookup (per-attempt billing). -->
+        <record id="provider_hlr" model="crm.ai.enrichment.provider">
+            <field name="name">HLR Lookup (phone)</field>
+            <field name="provider_type">phone</field>
+            <field name="handler_key">hlr</field>
+            <field name="priority">50</field>
+            <field name="fields_filled">phone</field>
+            <field name="env_key_param">ERA_ENRICH_HLR</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.005</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 6) WhatsApp presence via the WAHA connector — FREE (self-hosted), NO
+             token. Stays double-gated (toggle + per-record consent) + connector-
+             available regardless of `active`. Rate/ban-limited, so cache it. -->
+        <record id="provider_whatsapp" model="crm.ai.enrichment.provider">
+            <field name="name">WhatsApp presence (WAHA)</field>
+            <field name="provider_type">whatsapp</field>
+            <field name="handler_key">waha</field>
+            <field name="priority">60</field>
+            <field name="fields_filled">whatsapp</field>
+            <field name="env_key_param"></field>
+            <field name="billing_mode">free</field>
+            <field name="cost_per_call">0.0</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- 7) Web search + LLM extraction — the LAST-RESORT fallback. -->
+        <record id="provider_web_search" model="crm.ai.enrichment.provider">
+            <field name="name">Web Search + LLM (fallback)</field>
+            <field name="provider_type">web_search</field>
+            <field name="handler_key">websearch</field>
+            <field name="priority">90</field>
+            <field name="fields_filled">name,website,sector,city,country</field>
+            <field name="env_key_param">ERA_ENRICH_WEBSEARCH</field>
+            <field name="billing_mode">per_call</field>
+            <field name="cost_per_call">0.005</field>
+            <field name="cache_ttl_days">30</field>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

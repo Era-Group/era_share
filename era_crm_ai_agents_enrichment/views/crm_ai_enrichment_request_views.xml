@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_enrichment_request_list" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.request.list</field>
+        <field name="model">crm.ai.enrichment.request</field>
+        <field name="arch" type="xml">
+            <list string="Enrichment Requests">
+                <field name="create_date"/>
+                <field name="partner_id"/>
+                <field name="lead_id"/>
+                <field name="request_type"/>
+                <field name="state"/>
+                <field name="total_cost"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_enrichment_request_form" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.request.form</field>
+        <field name="model">crm.ai.enrichment.request</field>
+        <field name="arch" type="xml">
+            <form string="Enrichment Request">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="lead_id"/>
+                            <field name="request_type"/>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="total_cost"/>
+                        </group>
+                    </group>
+                    <group string="Provider attempts">
+                        <field name="attempt_ids" nolabel="1">
+                            <list create="false" edit="false">
+                                <field name="provider_name"/>
+                                <field name="provider_type"/>
+                                <field name="status"/>
+                                <field name="success"/>
+                                <field name="billable"/>
+                                <field name="cost"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Result (JSON)">
+                        <field name="fields_enriched" nolabel="1"/>
+                        <field name="contactability" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_enrichment_request" model="ir.actions.act_window">
+        <field name="name">Enrichment Requests</field>
+        <field name="res_model">crm.ai.enrichment.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

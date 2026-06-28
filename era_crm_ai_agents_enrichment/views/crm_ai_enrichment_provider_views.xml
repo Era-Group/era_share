@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_enrichment_provider_list" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.provider.list</field>
+        <field name="model">crm.ai.enrichment.provider</field>
+        <field name="arch" type="xml">
+            <list string="Enrichment Providers">
+                <field name="priority" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="billing_mode"/>
+                <field name="cost_per_call"/>
+                <field name="token_present"/>
+                <field name="attempt_count"/>
+                <field name="success_rate" optional="show"/>
+                <field name="total_spend" optional="show"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_enrichment_provider_form" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.provider.form</field>
+        <field name="model">crm.ai.enrichment.provider</field>
+        <field name="arch" type="xml">
+            <form string="Enrichment Provider">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="provider_type"/>
+                            <field name="handler_key"/>
+                            <field name="priority"/>
+                            <field name="fields_filled"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="billing_mode"/>
+                            <field name="cost_per_call"/>
+                            <field name="cache_ttl_days"/>
+                            <field name="env_key_param"/>
+                            <field name="token_present"/>
+                        </group>
+                    </group>
+                    <group string="Performance">
+                        <group>
+                            <field name="attempt_count"/>
+                            <field name="success_rate"/>
+                            <field name="total_spend"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Rule 03: store only the NAME of the environment variable
+                        that holds the token — never the token value.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_enrichment_provider" model="ir.actions.act_window">
+        <field name="name">Enrichment Providers</field>
+        <field name="res_model">crm.ai.enrichment.provider</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+</odoo>

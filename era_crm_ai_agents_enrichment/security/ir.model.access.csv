@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_ai_enrichment_provider_user,crm.ai.enrichment.provider user,model_crm_ai_enrichment_provider,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_enrichment_provider_manager,crm.ai.enrichment.provider manager,model_crm_ai_enrichment_provider,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_enrichment_request_user,crm.ai.enrichment.request user,model_crm_ai_enrichment_request,era_crm_ai_agents_base.group_crm_ai_user,1,1,1,0
+access_crm_ai_enrichment_request_manager,crm.ai.enrichment.request manager,model_crm_ai_enrichment_request,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_enrichment_attempt_user,crm.ai.enrichment.attempt user,model_crm_ai_enrichment_attempt,era_crm_ai_agents_base.group_crm_ai_user,1,0,1,0
+access_crm_ai_enrichment_attempt_manager,crm.ai.enrichment.attempt manager,model_crm_ai_enrichment_attempt,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1

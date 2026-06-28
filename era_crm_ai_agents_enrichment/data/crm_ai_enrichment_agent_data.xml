@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pre-seed the Enrichment agent's crm.ai.agent registry row so runtime
+         stays read-only for users (How-to-build-an-agent step 3). API transport;
+         the web-search fallback's LLM extraction uses model_code (priced path,
+         seeded in the Base rate card). -->
+    <data noupdate="1">
+        <record id="agent_era_enrichment" model="crm.ai.agent">
+            <field name="name">Enrichment Engine</field>
+            <field name="tech_name">era_enrichment</field>
+            <field name="transport">api</field>
+            <field name="model_code">gpt-4.1-mini</field>
+        </record>
+    </data>
+</odoo>

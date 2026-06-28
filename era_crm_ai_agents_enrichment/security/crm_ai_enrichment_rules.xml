@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================= -->
+    <!-- Record rules for era_crm_ai_agents_enrichment                  -->
+    <!--                                                               -->
+    <!-- crm.ai.enrichment.provider is a GLOBAL configuration catalog   -->
+    <!-- (one shared waterfall for the company), like the Base's        -->
+    <!-- crm.ai.agent / crm.ai.model and the Lead-Gen sources. It needs -->
+    <!-- NO per-row rule; who-may-do-what is enforced by                -->
+    <!-- ir.model.access.csv: AI Agents User -> read-only, AI Agents    -->
+    <!-- Manager -> full CRUD (manage providers + token env config).    -->
+    <!--                                                               -->
+    <!-- crm.ai.enrichment.request IS per-user scoped (it logs a user's -->
+    <!-- enrichment activity over individuals' data — conservative PDPL -->
+    <!-- posture is restricted-by-default visibility). The rule mirrors  -->
+    <!-- the Base crm.ai.usage rule exactly: a user sees only the        -->
+    <!-- requests they triggered (create_uid), a manager sees all.       -->
+    <!-- ============================================================= -->
+
+    <record id="rule_crm_ai_enrichment_request_user" model="ir.rule">
+        <field name="name">Enrichment Request: own</field>
+        <field name="model_id" ref="model_crm_ai_enrichment_request"/>
+        <field name="groups" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_user'))]"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_crm_ai_enrichment_request_manager" model="ir.rule">
+        <field name="name">Enrichment Request: all (manager)</field>
+        <field name="model_id" ref="model_crm_ai_enrichment_request"/>
+        <field name="groups" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Attempts inherit the request's per-user scoping (via the request's
+         create_uid): a user sees only attempts from runs they triggered, a
+         manager sees all. Mirrors the request rule exactly. -->
+    <record id="rule_crm_ai_enrichment_attempt_user" model="ir.rule">
+        <field name="name">Enrichment Attempt: own</field>
+        <field name="model_id" ref="model_crm_ai_enrichment_attempt"/>
+        <field name="groups" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_user'))]"/>
+        <field name="domain_force">[('request_id.create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_crm_ai_enrichment_attempt_manager" model="ir.rule">
+        <field name="name">Enrichment Attempt: all (manager)</field>
+        <field name="model_id" ref="model_crm_ai_enrichment_attempt"/>
+        <field name="groups" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

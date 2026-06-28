@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Manual "Enrich" entry point in the contact form header. The base partner
+         form has no <header>, so we add one before the sheet. Visible to AI
+         Agents Users; the engine is inert until a manager enables it. -->
+    <record id="view_partner_form_crm_ai_enrich" model="ir.ui.view">
+        <field name="name">res.partner.form.crm.ai.enrich</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_crm_ai_enrich" type="object"
+                            string="Enrich" class="btn-secondary"
+                            groups="era_crm_ai_agents_base.group_crm_ai_user"/>
+                </header>
+            </xpath>
+            <!-- Read-only deliverability verdicts written by the engine (2.4). -->
+            <xpath expr="//notebook" position="inside">
+                <page string="AI Deliverability"
+                      groups="era_crm_ai_agents_base.group_crm_ai_user">
+                    <group>
+                        <group string="Verified contactability">
+                            <field name="email_valid"/>
+                            <field name="mobile_valid"/>
+                            <field name="has_whatsapp"/>
+                            <field name="crm_ai_deliverability_checked"/>
+                        </group>
+                        <group>
+                            <div class="text-muted">
+                                Set automatically by the Enrichment engine. A flag
+                                is written only on a definite verdict; an unchecked
+                                record shows no "Deliverability checked" date.
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

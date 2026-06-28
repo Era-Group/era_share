@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_ai_enrichment_attempt_list" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.attempt.list</field>
+        <field name="model">crm.ai.enrichment.attempt</field>
+        <field name="arch" type="xml">
+            <list string="Provider Attempts" create="false" edit="false">
+                <field name="create_date"/>
+                <field name="provider_name"/>
+                <field name="provider_type"/>
+                <field name="partner_id"/>
+                <field name="status"/>
+                <field name="success"/>
+                <field name="billable"/>
+                <field name="cost" sum="Total cost"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_enrichment_attempt_search" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.attempt.search</field>
+        <field name="model">crm.ai.enrichment.attempt</field>
+        <field name="arch" type="xml">
+            <search string="Provider Attempts">
+                <field name="provider_id"/>
+                <field name="partner_id"/>
+                <filter name="successful" string="Successful"
+                        domain="[('success', '=', True)]"/>
+                <filter name="billable" string="Billable"
+                        domain="[('billable', '=', True)]"/>
+                <separator/>
+                <filter name="group_provider" string="Provider"
+                        context="{'group_by': 'provider_id'}"/>
+                <filter name="group_type" string="Provider type"
+                        context="{'group_by': 'provider_type'}"/>
+                <filter name="group_status" string="Status"
+                        context="{'group_by': 'status'}"/>
+                <filter name="group_month" string="Month"
+                        context="{'group_by': 'create_date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- The dashboard: success rate (avg of success_unit) + cost (sum), per provider. -->
+    <record id="view_crm_ai_enrichment_attempt_pivot" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.attempt.pivot</field>
+        <field name="model">crm.ai.enrichment.attempt</field>
+        <field name="arch" type="xml">
+            <pivot string="Provider Performance">
+                <field name="provider_id" type="row"/>
+                <field name="success_unit" type="measure"/>
+                <field name="cost" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_enrichment_attempt_graph" model="ir.ui.view">
+        <field name="name">crm.ai.enrichment.attempt.graph</field>
+        <field name="model">crm.ai.enrichment.attempt</field>
+        <field name="arch" type="xml">
+            <graph string="Provider Performance" type="bar">
+                <field name="provider_id"/>
+                <field name="cost" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_enrichment_attempt" model="ir.actions.act_window">
+        <field name="name">Provider Performance</field>
+        <field name="res_model">crm.ai.enrichment.attempt</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'search_default_group_provider': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No enrichment attempts yet</p>
+            <p>Once the engine runs, each provider call is logged here. Use the
+               pivot to compare success rate and cost per provider.</p>
+        </field>
+    </record>
+
+</odoo>

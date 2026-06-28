@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed every Enrichment config param so OFF toggles persist on a clean
+         install (first-OFF-lost fix). Conservative defaults: engine OFF, and
+         WhatsApp presence OFF on its OWN separate toggle (Gate A). -->
+    <data noupdate="1">
+
+        <record id="param_enrichment_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.enabled</field>
+            <field name="value">False</field>
+        </record>
+
+        <record id="param_enrichment_whatsapp_check_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.whatsapp_check_enabled</field>
+            <field name="value">False</field>
+        </record>
+
+        <record id="param_enrichment_cache_ttl_days" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.cache_ttl_days</field>
+            <field name="value">30</field>
+        </record>
+
+        <record id="param_enrichment_web_search_model" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.web_search_model</field>
+            <field name="value">gpt-4.1-mini</field>
+        </record>
+
+        <!-- Scheduling (task 2.6): how many stale partners one cron tick processes,
+             and how old a deliverability check may be before it's "stale". -->
+        <record id="param_enrichment_cron_batch_size" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.cron_batch_size</field>
+            <field name="value">50</field>
+        </record>
+
+        <record id="param_enrichment_cron_staleness_days" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_enrichment.cron_staleness_days</field>
+            <field name="value">30</field>
+        </record>
+
+    </data>
+</odoo>

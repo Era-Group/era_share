@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Self-contained functional module: settings live in its OWN sibling app
+         block (a peer of "CRM AI Agents", NOT nested inside it). Inherits the
+         ROOT settings form; manager-gated. The Settings sub-menu opens the page
+         focused on this app via context module=era_crm_ai_agents_enrichment.
+         (Odoo 19 forbids a standalone res.config.settings form; the sibling-app
+         pattern is the suite convention — see Lead Gen.) -->
+    <record id="res_config_settings_view_form_enrichment" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crm.ai.enrichment</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Enrichment" string="Enrichment"
+                     name="era_crm_ai_agents_enrichment"
+                     logo="/era_crm_ai_agents_enrichment/static/description/icon.png"
+                     groups="era_crm_ai_agents_base.group_crm_ai_manager">
+
+                    <block title="Enrichment Engine" name="enrichment_main">
+                        <setting string="Enable Enrichment"
+                                 help="Master switch for the whole engine. OFF = no provider is ever queried.">
+                            <field name="enrichment_enabled"/>
+                        </setting>
+                        <setting string="Contactability cache (days)"
+                                 help="Skip and don't re-bill re-checking the same email/number within this window.">
+                            <field name="enrichment_cache_ttl_days"/>
+                        </setting>
+                        <setting string="Web-search extraction model"
+                                 help="Native AI model used to extract structured data from web-search fallback results. Must exist in the Base rate card.">
+                            <field name="enrichment_web_search_model"/>
+                        </setting>
+                    </block>
+
+                    <block title="Scheduled re-verification" name="enrichment_cron">
+                        <setting string="Scheduled batch size"
+                                 help="How many stale partners the daily cron re-verifies per run. The run still stops early if the cost cap trips.">
+                            <field name="enrichment_cron_batch_size"/>
+                        </setting>
+                        <setting string="Staleness window (days)"
+                                 help="A deliverability check older than this is re-verified by the cron. Never-checked records are always eligible.">
+                            <field name="enrichment_cron_staleness_days"/>
+                        </setting>
+                    </block>
+
+                    <block title="WhatsApp presence (PDPL-sensitive)"
+                           name="enrichment_whatsapp">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fa fa-exclamation-triangle"/>
+                            <strong>WhatsApp presence transmits a mobile number to
+                            WhatsApp/Meta</strong> via the WAHA connector. It is
+                            separate from the master switch and OFF by default, and
+                            it additionally requires the WAHA connector to be
+                            available and per-record consent to pass (fail-closed).
+                            Enable only with a lawful basis (PDPL).
+                        </div>
+                        <setting string="Enable WhatsApp presence check"
+                                 help="Gate A. OFF by default; separate from the master switch.">
+                            <field name="enrichment_whatsapp_check_enabled"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

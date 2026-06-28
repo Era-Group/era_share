@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Scheduled stale-record re-verification (task 2.6).
+
+             Execution identity is SUITE-WIDE and configurable, not hardcoded here
+             (Rule 09). The cron resolves its run-user at run time via the Base
+             resolver crm.ai.agent._get_cron_run_user() — the internal account
+             chosen in Settings (default: the least-privilege "CRM AI Automation"
+             user) or OdooBot if a manager opted in. A setting change takes effect
+             on the NEXT run; this record never needs rewriting. The static
+             user_id below is only the safe bootstrap identity (the same
+             least-privilege automation account), so the run is never root unless
+             explicitly configured.
+
+             Governance is the SINGLE master toggle: the cron ships active=True but
+             cron_enrich_stale() no-ops immediately when enrichment is disabled, so
+             it is fully inert until a manager enables the module. It does NOT
+             short-circuit the cost cap — each record goes through the identical
+             unattended enforcement (pre-check here + per-run check in the engine);
+             the batch stops the instant the cap trips.
+
+             New ir.cron records require a full server RESTART to register (see the
+             Dev Environment Notes) — a module upgrade alone is not enough. -->
+        <record id="ir_cron_enrich_stale" model="ir.cron">
+            <field name="name">Enrichment: Re-verify stale records</field>
+            <field name="model_id" ref="model_crm_ai_enrichment_agent"/>
+            <field name="user_id" ref="era_crm_ai_agents_base.user_crm_ai_automation"/>
+            <field name="state">code</field>
+            <field name="code">model.with_user(env['crm.ai.agent']._get_cron_run_user()).cron_enrich_stale()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 04:00:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

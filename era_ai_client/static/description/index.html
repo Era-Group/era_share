@@ -1,57 +1,71 @@
-<section style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; color: #1a1a1a; max-width: 1000px; margin: 0 auto; padding: 0 0 32px 0;">
+<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- Hero -->
-  <div style="background: linear-gradient(135deg, #475569 0%, #334155 60%, #1e293b 130%); border-radius: 16px; padding: 48px 40px 40px 40px; color: #fff; margin-bottom: 32px;">
-    <h1 style="margin: 0 0 12px 0; font-size: 2.2em; font-weight: 800; letter-spacing: -0.5px;">ERA AI Client Module</h1>
-    <p style="margin: 0; font-size: 1.15em; opacity: 0.9; max-width: 680px;">Shared internal AI client library used by other ERA modules to call configured AI providers — not user-facing, for developers.</p>
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 60%,#475569 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA AI Client</h1>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">عميل الذكاء الاصطناعي من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Shared internal library for calling configured AI providers from any ERA module</p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">مكتبة داخلية مشتركة لاستدعاء مزودي الذكاء الاصطناعي من أي وحدة ERA</p>
   </div>
 
-  <!-- Arabic RTL Summary -->
-  <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 24px 28px; margin-bottom: 32px; direction: rtl; text-align: right;">
-    <h2 style="color: #334155; margin: 0 0 10px 0; font-size: 1.2em;">نبذة عن الوحدة</h2>
-    <p style="margin: 0; line-height: 1.9; color: #1e293b;">
-      وحدة ERA AI Client هي مكتبة داخلية مشتركة تستخدمها وحدات ERA الأخرى للاتصال بمزوّدي الذكاء الاصطناعي المُهيَّئين. تُجرِّد الفوارق بين المزوّدين المختلفين وتوفّر واجهة موحّدة لإرسال الطلبات واستقبال الردود. هذه الوحدة موجّهة للمطوّرين وليست واجهة مستخدم نهائي.
-    </p>
+  <!-- FEATURE CARDS -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🤖</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Unified AI Interface</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Single consistent interface to call any configured AI provider.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">واجهة AI موحدة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">واجهة موحدة واحدة لاستدعاء أي مزود AI تم إعداده.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Provider Abstraction</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Abstracts provider differences so modules don't need provider-specific code.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">تجريد المزوّد</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يخفي الفروق بين المزودين حتى لا تحتاج الوحدات لكود خاص بكل مزود.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔌</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Reusable by Any Module</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Designed as a shared dependency for all ERA AI-powered features.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">قابل للاستخدام من أي وحدة</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مصمم كتبعية مشتركة لجميع ميزات ERA المعتمدة على الذكاء الاصطناعي.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔑</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Secure Key Handling</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reads API keys securely from Odoo system parameters.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">إدارة آمنة للمفاتيح</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يقرأ مفاتيح API بأمان من معاملات النظام في أودو.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📦</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Developer Library</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Clean Python API for ERA developers to integrate AI without boilerplate.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">مكتبة للمطورين</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">واجهة Python نظيفة للمطورين لدمج الذكاء الاصطناعي بسهولة.</p>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Feature Grid -->
-  <div style="display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 32px;">
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🧩</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #334155;">Shared AI Client</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">A common library module that other ERA add-ons depend on to call AI providers — centralizes provider connection logic in one place.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">⚙️</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #334155;">Provider Abstraction</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Abstracts away differences between AI providers so dependent modules call a unified interface regardless of backend.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🔑</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #334155;">Secure Key Management</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">API keys and provider settings are retrieved from system parameters — never hard-coded in module logic.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">📦</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #334155;">Dependency Base</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Install once and all ERA AI modules inherit the connection — reduces setup overhead for developers deploying multiple ERA modules.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🛠️</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #334155;">Developer-Focused</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Not user-facing; designed for ERA module developers who need a consistent, tested way to reach AI endpoints from Odoo.</p>
-    </div>
-
-  </div>
-
-  <!-- Footer -->
-  <div style="text-align: center; color: #aaa; font-size: 0.88em; border-top: 1px solid #e5e7eb; padding-top: 18px;">
-    &copy; ERA Network — ERA AI Client Module
+  <!-- FOOTER -->
+  <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
+    ERA AI Client · Shared AI infrastructure for ERA · Odoo 19
   </div>
 
 </section>

@@ -1,57 +1,71 @@
-<section style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; color: #1a1a1a; max-width: 1000px; margin: 0 auto; padding: 0 0 32px 0;">
+<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- Hero -->
-  <div style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 60%, #134e4a 130%); border-radius: 16px; padding: 48px 40px 40px 40px; color: #fff; margin-bottom: 32px;">
-    <h1 style="margin: 0 0 12px 0; font-size: 2.2em; font-weight: 800; letter-spacing: -0.5px;">ERA Address Client</h1>
-    <p style="margin: 0; font-size: 1.15em; opacity: 0.9; max-width: 680px;">Client for ERA Address Lookup service via service.era.net.sa — looks up Saudi addresses by building number or coordinates.</p>
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 60%,#134e4a 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Address Client</h1>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">عميل العناوين من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Resolve Saudi addresses by building number or GPS coordinates via service.era.net.sa</p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">ابحث عن العناوين السعودية بالرقم البنائي أو الإحداثيات الجغرافية عبر service.era.net.sa</p>
   </div>
 
-  <!-- Arabic RTL Summary -->
-  <div style="background: #f0fdfa; border: 1.5px solid #99f6e4; border-radius: 14px; padding: 24px 28px; margin-bottom: 32px; direction: rtl; text-align: right;">
-    <h2 style="color: #0f766e; margin: 0 0 10px 0; font-size: 1.2em;">نبذة عن الوحدة</h2>
-    <p style="margin: 0; line-height: 1.9; color: #134e4a;">
-      يوفّر هذا الوحدة عميلًا مشتركًا للاتصال بخدمة ERA للعناوين عبر service.era.net.sa، مما يتيح البحث عن العناوين السعودية بالرقم البنائي أو الإحداثيات الجغرافية. تُستخدَم الوحدة كمكتبة مشتركة تعتمد عليها وحدات ERA الأخرى دون تكرار منطق الاتصال. يتم تخزين مفتاح API وعنوان الخدمة بأمان في معاملات النظام ومعالجة أخطاء الشبكة بشكل واضح.
-    </p>
+  <!-- FEATURE CARDS -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🏠</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Saudi Address Lookup</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Look up verified Saudi national addresses by building number instantly.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">البحث عن العنوان السعودي</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ابحث عن العناوين السعودية الرسمية بالرقم البنائي بشكل فوري.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📍</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Coordinate Reverse-Geocoding</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Convert GPS latitude/longitude to a full Saudi address.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تحويل الإحداثيات لعنوان</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">حوّل خطوط الطول والعرض إلى عنوان سعودي كامل.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔗</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">ERA Service Integration</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Connects to service.era.net.sa for real-time address resolution.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تكامل مع خدمة ERA</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يتصل بـ service.era.net.sa للحصول على العناوين فورياً.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔄</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Shared Client Library</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Reusable by all ERA modules that need address data.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">مكتبة مشتركة لعدة وحدات</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يمكن لجميع وحدات ERA استخدامها للوصول إلى بيانات العناوين.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #99f6e4;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Error Handling</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Robust error handling and graceful fallback for failed lookups.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">معالجة الأخطاء</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">معالجة قوية للأخطاء مع تراجع آمن عند فشل البحث.</p>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Feature Grid -->
-  <div style="display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 32px;">
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🏠</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Saudi Address Lookup</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Query the ERA Address service to resolve building numbers into full Saudi postal addresses including district, city, and zip code.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">📍</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Coordinate-Based Search</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Reverse-geocode GPS coordinates to retrieve the nearest registered Saudi address from the national address database.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🔗</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">ERA Service Integration</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Connects to service.era.net.sa with configurable base URL and API key — settings stored securely in system parameters.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🔄</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Reusable Client Library</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Shared across ERA modules as a dependency — any module can call the address API without duplicating connection logic.</p>
-    </div>
-
-    <div style="flex: 1 1 290px; background: #fff; border: 1.5px solid #ccfbf1; border-radius: 14px; padding: 24px 22px;">
-      <div style="font-size: 2em; margin-bottom: 10px;">🛡️</div>
-      <h3 style="margin: 0 0 8px 0; font-size: 1.05em; color: #0f766e;">Error Handling</h3>
-      <p style="margin: 0; color: #444; line-height: 1.6;">Gracefully handles network errors, invalid inputs, and service timeouts with clear exception messages for developers.</p>
-    </div>
-
-  </div>
-
-  <!-- Footer -->
-  <div style="text-align: center; color: #aaa; font-size: 0.88em; border-top: 1px solid #e5e7eb; padding-top: 18px;">
-    &copy; ERA Network — ERA Address Client Module
+  <!-- FOOTER -->
+  <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
+    ERA Address Client · Built for Saudi address resolution · Odoo 19
   </div>
 
 </section>

@@ -1,72 +1,81 @@
-<section style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; max-width: 1000px; margin: 0 auto; padding: 0 0 40px 0; color: #1a1a2e; background: #ffffff;">
+<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- Hero -->
-  <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 60%, #14532d 130%); border-radius: 16px; padding: 48px 40px; margin-bottom: 36px; position: relative; overflow: hidden;">
-    <div style="position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-    <div style="position: absolute; bottom: -60px; right: 80px; width: 280px; height: 280px; background: rgba(255,255,255,0.04); border-radius: 50%;"></div>
-    <div style="position: relative; z-index: 1;">
-      <div style="display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">ERA Module</div>
-      <h1 style="margin: 0 0 16px 0; font-size: 36px; font-weight: 800; color: #ffffff; line-height: 1.2; letter-spacing: -0.5px;">ERA GOSI API Integration</h1>
-      <p style="margin: 0; font-size: 17px; color: rgba(255,255,255,0.85); line-height: 1.7; max-width: 680px;">Interact with Saudi GOSI Engagement Deduction API — verify employee GOSI status and deductions</p>
-    </div>
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#14532d 0%,#15803d 60%,#22c55e 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA GOSI API Integration</h1>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">تكامل GOSI API من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Verify Saudi employee GOSI status and deductions via the GOSI Engagement Deduction API</p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">تحقق من اشتراكات الموظفين في GOSI واستعلم عن الاستقطاعات عبر API المزودة من GOSI</p>
   </div>
 
-  <!-- Arabic RTL Card -->
-  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 32px 36px; margin-bottom: 36px; direction: rtl; text-align: right;">
-    <h2 style="margin: 0 0 14px 0; font-size: 20px; font-weight: 700; color: #14532d;">نظرة عامة</h2>
-    <p style="margin: 0; font-size: 15px; line-height: 1.9; color: #374151;">تربط هذه الوحدة أودو بواجهة برمجية لنظام التأمينات الاجتماعية السعودية (GOSI) للتحقق من حالة تسجيل الموظفين واستعلام اشتراكاتهم واستقطاعاتهم. تُستخدَم بيانات الاعتماد المخزّنة بأمان في معاملات النظام للمصادقة على الواجهة البرمجية. تعمل الوحدة كطبقة خدمة مشتركة يمكن لوحدات الرواتب والموارد البشرية الاستفادة منها.</p>
-  </div>
+  <!-- FEATURE CARDS -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
-  <!-- Features -->
-  <div style="margin-bottom: 36px;">
-    <h2 style="margin: 0 0 24px 0; font-size: 22px; font-weight: 700; color: #111827;">Key Features</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-
-      <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dcfce7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <div style="font-size: 28px; margin-bottom: 12px;">🏛️</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #111827;">GOSI API Integration</h3>
-        <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.6;">Connect to the Saudi GOSI Engagement Deduction API to programmatically retrieve employee social insurance status and deduction amounts.</p>
-      </div>
-
-      <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dcfce7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <div style="font-size: 28px; margin-bottom: 12px;">✅</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #111827;">Employee Status Verification</h3>
-        <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.6;">Verify in real-time whether an employee is registered with GOSI and retrieve their current contribution and deduction status.</p>
-      </div>
-
-      <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dcfce7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <div style="font-size: 28px; margin-bottom: 12px;">💰</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #111827;">Deduction Data</h3>
-        <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.6;">Fetch precise GOSI deduction figures for payroll processing — employee share, employer share, and total monthly contributions.</p>
-      </div>
-
-      <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dcfce7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <div style="font-size: 28px; margin-bottom: 12px;">🔐</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #111827;">Secure Authentication</h3>
-        <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.6;">Authenticates with the GOSI API using securely stored credentials from Odoo system parameters — keys never appear in code.</p>
-      </div>
-
-      <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dcfce7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <div style="font-size: 28px; margin-bottom: 12px;">🔄</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #111827;">Reusable Service Layer</h3>
-        <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.6;">Designed as a shared service module that HR and payroll modules can depend on for all GOSI API calls.</p>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #16a34a, #14532d); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <span style="color: #ffffff; font-weight: 800; font-size: 14px;">E</span>
-      </div>
-      <div>
-        <div style="font-size: 13px; font-weight: 700; color: #111827;">ERA Networks</div>
-        <div style="font-size: 11px; color: #9ca3af;">era.net.sa</div>
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🏛️</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">GOSI Verification</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Verify Saudi employee registration and contribution status with GOSI.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">التحقق من GOSI</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تحقق من تسجيل الموظف السعودي وحالة مساهماته في GOSI.</p>
       </div>
     </div>
-    <div style="font-size: 12px; color: #9ca3af;">Compatible with Odoo 17 · 18 · 19</div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">💰</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Deduction Queries</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Query exact GOSI deduction amounts for payroll accuracy.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">الاستعلام عن الاستقطاعات</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">استعلم عن مبالغ استقطاعات GOSI الدقيقة لضمان دقة الرواتب.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔐</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Secure API</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Authenticated and encrypted connection to the official GOSI API.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">اتصال API آمن</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اتصال مصادق ومشفر بـ API الرسمي لـ GOSI.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📋</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Employee Status</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">View real-time GOSI registration status per employee record.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">حالة الموظف</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اعرض حالة تسجيل GOSI الفورية لكل سجل موظف.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔄</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Real-Time Data</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Pulls live data from GOSI on demand, no stale caches.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">بيانات فورية</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يسحب بيانات حية من GOSI عند الطلب دون ذاكرة تخزين مؤقت قديمة.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bbf7d0;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📊</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">Compliance Ready</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Supports HR compliance workflows for Saudi labor law requirements.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#15803d;">جاهز للامتثال</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يدعم سير عمل الامتثال لمتطلبات نظام العمل السعودي.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
+    ERA GOSI API Integration · Saudi HR compliance · Odoo 19
   </div>
 
 </section>

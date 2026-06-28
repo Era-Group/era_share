@@ -1,58 +1,81 @@
-<section style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 1000px; margin: 0 auto; color: #1e293b;">
+<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
 
-  <!-- Hero -->
-  <div style="background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #1e3a8a 130%); border-radius: 12px; padding: 48px 40px; margin-bottom: 32px; text-align: center;">
-    <h1 style="margin: 0 0 12px; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">ERA Enrich CRM</h1>
-    <p style="margin: 0; font-size: 1.1rem; color: #bfdbfe; max-width: 640px; margin: 0 auto; line-height: 1.6;">ERA Enrich enrichment for CRM leads — enrich leads with LinkedIn, phone, and email via the Era Enrich service.</p>
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 60%,#3b82f6 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Enrich CRM</h1>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إثراء بيانات CRM من ERA</div>
+    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Enrich CRM leads with LinkedIn, phone, and email data via the Era Enrich service</p>
+    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">أثرِ فرص CRM ببيانات LinkedIn والهاتف والبريد الإلكتروني عبر خدمة Era Enrich</p>
   </div>
 
-  <!-- Arabic RTL Card -->
-  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 28px 32px; margin-bottom: 32px; direction: rtl; text-align: right;">
-    <h2 style="margin: 0 0 12px; font-size: 1.2rem; color: #1e3a8a; font-weight: 700;">نظرة عامة</h2>
-    <p style="margin: 0; font-size: 0.97rem; line-height: 1.85; color: #334155;">
-      تُتيح هذه الوحدة إثراء فرص المبيعات في CRM بيانات تواصل إضافية عبر خدمة Era Enrich، تشمل ملفات LinkedIn والهواتف وعناوين البريد الإلكتروني المهنية. يمكن إثراء فرصة مبيعات واحدة بنقرة واحدة أو إثراء مجموعة من الفرص دفعةً واحدة. تعتمد الوحدة على era_spy_base كبنية تحتية مشتركة لإدارة الاتصال وحدود المعدل.
-    </p>
+  <!-- FEATURE CARDS -->
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔍</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Lead Enrichment</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Automatically fills missing lead data using Era Enrich service lookups.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إثراء الفرص</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يملأ تلقائياً بيانات الفرص الناقصة باستخدام بحث خدمة Era Enrich.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">💼</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">LinkedIn Data</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Appends LinkedIn profile URLs to contacts and lead records.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">بيانات LinkedIn</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يضيف روابط ملفات LinkedIn للجهات والسجلات.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">📞</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Phone &amp; Email Append</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Discovers and adds missing phone numbers and email addresses.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إضافة الهاتف والبريد</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يكتشف ويضيف أرقام الهاتف والبريد الإلكتروني الناقصة.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">⚡</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Bulk Enrich Action</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Enrich multiple leads at once using the list view action menu.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">إثراء جماعي</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أثرِ فرصاً متعددة دفعةً واحدة من قائمة الإجراءات في عرض القائمة.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🔄</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Async Callbacks</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Enrichment happens in the background via webhook callbacks.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">ردود لاتزامنية</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">الإثراء يحدث في الخلفية عبر ردود الويب اللاتزامنية.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #bfdbfe;border-radius:14px;padding:24px 22px;">
+      <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">Rate-Limited</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Respects API rate limits to ensure reliable enrichment at scale.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#1d4ed8;">محكوم بمعدّل الطلب</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يحترم حدود معدّل API لضمان إثراء موثوق على نطاق واسع.</p>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Features -->
-  <h2 style="font-size: 1.3rem; font-weight: 700; color: #1e3a8a; margin: 0 0 20px;">Key Features</h2>
-  <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 36px;">
-
-    <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 20px;">
-      <div style="font-size: 1.6rem; margin-bottom: 10px;">🔍</div>
-      <h3 style="margin: 0 0 8px; font-size: 1rem; font-weight: 700; color: #1e40af;">Lead Enrichment</h3>
-      <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">Automatically enrich CRM leads with additional contact data — LinkedIn profiles, verified phone numbers, and professional email addresses via Era Enrich.</p>
-    </div>
-
-    <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 20px;">
-      <div style="font-size: 1.6rem; margin-bottom: 10px;">💼</div>
-      <h3 style="margin: 0 0 8px; font-size: 1rem; font-weight: 700; color: #1e40af;">LinkedIn Integration</h3>
-      <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">Pull LinkedIn profile data for lead contacts — company, title, industry, and profile URL enriched directly into the CRM lead form.</p>
-    </div>
-
-    <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 20px;">
-      <div style="font-size: 1.6rem; margin-bottom: 10px;">📞</div>
-      <h3 style="margin: 0 0 8px; font-size: 1rem; font-weight: 700; color: #1e40af;">Phone Verification</h3>
-      <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">Retrieve and validate phone numbers for leads — fills in missing phone data so sales reps can reach prospects immediately.</p>
-    </div>
-
-    <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 20px;">
-      <div style="font-size: 1.6rem; margin-bottom: 10px;">📧</div>
-      <h3 style="margin: 0 0 8px; font-size: 1rem; font-weight: 700; color: #1e40af;">Email Discovery</h3>
-      <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">Discover professional email addresses for leads where only a name or company is known — powered by the Era Enrich lookup service.</p>
-    </div>
-
-    <div style="flex: 1 1 280px; background: #ffffff; border: 1px solid #dbeafe; border-radius: 10px; padding: 22px 20px;">
-      <div style="font-size: 1.6rem; margin-bottom: 10px;">⚡</div>
-      <h3 style="margin: 0 0 8px; font-size: 1rem; font-weight: 700; color: #1e40af;">One-Click Enrich</h3>
-      <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">Enrich a single lead with one button click, or trigger bulk enrichment across multiple leads from the list view.</p>
-    </div>
-
-  </div>
-
-  <!-- Footer -->
-  <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center;">
-    <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">ERA Enrich CRM &mdash; Built for Odoo 19 &mdash; &copy; ERA Network</p>
+  <!-- FOOTER -->
+  <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
+    ERA Enrich CRM · Data enrichment for your pipeline · Odoo 19
   </div>
 
 </section>

@@ -1,81 +1,130 @@
-<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
+<section style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:860px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
-  <div style="background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 60%,#8b5cf6 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
-    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Monte Carlo Simulation</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">محاكاة مونت كارلو من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Model revenue, cost and project risk with probability distributions and thousands of simulated scenarios</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">نمذج الإيرادات والتكاليف ومخاطر المشاريع بتوزيعات احتمالية وآلاف السيناريوهات</p>
+  <div style="background:linear-gradient(135deg,#4c1d95,#6d28d9,#8b5cf6);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <div style="font-size:2.8em;margin-bottom:12px;">🎲</div>
+    <h1 style="margin:0 0 8px;font-size:2em;font-weight:800;letter-spacing:-0.5px;color:#fff;">ERA Monte Carlo Simulation</h1>
+    <p style="margin:0 0 18px;font-size:1.08em;opacity:.95;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.55;">Turn business uncertainty into actionable insight — run thousands of scenarios in the background and read the results as a plain-language risk summary. No Excel, no Python scripts, no statistics degree required.</p>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.25);margin:18px auto;max-width:420px;"/>
+    <p dir="rtl" style="margin:0;font-size:1.04em;opacity:.93;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.7;">حوّل حالة عدم اليقين في أعمالك إلى معرفة قابلة للتنفيذ. يتيح لك هذا الوحدة تشغيل آلاف السيناريوهات في الخلفية وقراءة النتائج كملخص مخاطر بلغة واضحة — دون إكسل ودون درجة في الإحصاء.</p>
   </div>
 
   <!-- FEATURE CARDS -->
+  <h2 style="margin:0 0 16px;color:#4c1d95;font-size:1.2em;font-weight:700;">Key Features</h2>
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🎲</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">Probability Distributions</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Define inputs with normal, triangular, or uniform probability distributions.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">🎲 Probability Distributions</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Six distribution types: Fixed (no uncertainty), Uniform (equal probability between min and max), Normal (bell curve, defined by mean and std dev), Log-normal (skewed, for costs and durations), Triangular (min/mode/max — ideal for expert estimates), Discrete (explicit probability-weighted list of outcomes). Parameters are set in the Odoo form and validated before the simulation runs.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">توزيعات احتمالية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">حدد المدخلات بتوزيعات احتمالية طبيعية أو مثلثية أو منتظمة.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">🎲 التوزيعات الاحتمالية</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">ستة أنواع: ثابت وموحد وطبيعي ولوغاريتمي طبيعي ومثلثي ومتقطع. كل معاملات التوزيع تُضبط في نموذج أودو وتُتحقق منها قبل بدء المحاكاة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📊</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">Scenario Engine</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Run thousands of Monte Carlo iterations to model outcome uncertainty.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">📊 Monte Carlo Engine</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Runs N iterations (configurable, default 10,000) sampling each input independently. The engine is pure Python (NumPy) and executes in an Odoo cron job so the UI stays responsive. Progress is tracked in a <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">simulation.run</code> record; users can watch the iteration counter update live.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">محرك السيناريوهات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">شغّل آلاف تكرارات مونت كارلو لنمذجة عدم اليقين في النتائج.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">📊 محرك مونتي كارلو</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">يُشغّل N تكراراً (قابل للضبط، الافتراضي 10,000) يأخذ عينات من كل مدخل باستقلالية. المحرك بـ Python خالص (NumPy) وينفّذ في وظيفة مجدولة أودو. يتتبع التقدم في سجل simulation.run بعداد يُحدَّث لحظياً.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🗣️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">Plain Business Language</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Results presented in clear business terms, not statistical jargon.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">🗣️ Plain-Language Risk Summary</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">After the run the AI generates a 200-word plain-language interpretation: <em>"There is a 75% chance that revenue exceeds SAR 1.2M; the most likely scenario is SAR 1.45M; the main risk driver is…"</em>. The summary is stored on the simulation record and can be regenerated at any time.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">لغة أعمال بسيطة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">النتائج تُقدَّم بمصطلحات أعمال واضحة لا بمصطلحات إحصائية معقدة.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">🗣️ ملخص المخاطر بلغة واضحة</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">بعد التشغيل يولّد الذكاء الاصطناعي تفسيراً بلغة بسيطة: "هناك 75% احتمال أن تتجاوز الإيرادات 1.2 مليون ريال؛ السيناريو الأكثر احتمالاً هو 1.45 مليون؛ المحرك الرئيسي للمخاطر هو…". يُخزَّن الملخص في السجل ويمكن إعادة توليده.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🤖</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">AI-Assisted Setup</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">AI helps define model parameters and interpret simulation results.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">🤖 AI-Assisted Distribution Fitting</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Click <strong>Ask AI</strong> on any input variable and describe it in plain English (<em>"our project always takes 3–6 months, usually around 4"</em>). The AI suggests the best distribution and parameters, which the user can accept with one click — no statistics knowledge needed.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">إعداد بمساعدة الذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">الذكاء الاصطناعي يساعد في تحديد معاملات النموذج وتفسير نتائج المحاكاة.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">🤖 ملاءمة التوزيع بمساعدة الذكاء الاصطناعي</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">اضغط "اسأل الذكاء الاصطناعي" على أي متغير مدخل وصِفه بلغة بسيطة. يقترح الذكاء الاصطناعي أفضل توزيع ومعاملاته، ويقبلها المستخدم بنقرة واحدة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">📈</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">Interactive Charts</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Visualize distributions, percentiles, and risk curves interactively.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">📈 Interactive Output Charts</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Results displayed as: (a) histogram of outcomes, (b) cumulative probability curve showing P10/P50/P90, and (c) tornado chart ranking input variable impact. All charts are rendered as inline SVG inside the Odoo form — no external chart library, no JavaScript dependency.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">مخططات تفاعلية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تصوّر التوزيعات والنسب المئوية ومنحنيات المخاطر بشكل تفاعلي.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">📈 مخططات النتائج التفاعلية</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">تُعرض النتائج كـ: (أ) رسم بياني تكراري، (ب) منحنى احتمال تراكمي يُظهر P10/P50/P90، (ج) مخطط إعصار يُرتّب تأثير كل متغير. جميع المخططات SVG داخل نموذج أودو — بلا مكتبة رسوم خارجية.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🏗️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">Safe Custom Formulas</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Define custom business formulas in a sandboxed safe environment.</p>
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">🏗️ Safe Custom Formulas</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Users write formulas linking input variables (e.g. <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">revenue - fixed_cost - (variable_cost * units)</code>). Formulas are evaluated in a sandboxed <strong>asteval</strong> environment — only arithmetic operations, no <code>import</code>, no file access.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#6d28d9;">صياغات مخصصة آمنة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">حدد صياغات أعمال مخصصة في بيئة آمنة معزولة.</p>
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">🏗️ معادلات مخصصة آمنة</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">يكتب المستخدمون معادلات تربط المتغيرات. تُقيَّم في بيئة asteval معزولة — عمليات حسابية فقط، بلا import، بلا وصول للملفات.</p>
       </div>
     </div>
 
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">📋 Simulation Model Library</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Pre-built models for common use cases: Revenue Forecast, Cost Estimate, Project Duration, Break-Even Analysis. Users select a template and fill in their numbers — no need to build a model from scratch. All templates are fully editable and saveable as new models.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">📋 مكتبة نماذج المحاكاة</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">نماذج جاهزة لحالات الاستخدام الشائعة: توقعات الإيرادات، تقديرات التكلفة، مدة المشروع، تحليل نقطة التعادل. يختار المستخدم قالباً ويملأ أرقامه دون الحاجة لبناء نموذج من الصفر.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 290px;background:#fff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 22px;">
+      <h3 style="margin:0 0 8px;color:#6d28d9;font-size:1em;font-weight:700;">🔁 Scenario Comparison</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Save multiple simulation runs on the same model (e.g. "Optimistic 2026", "Base 2026", "Pessimistic 2026") and compare their P50 outcomes side-by-side in a dedicated comparison view. Ideal for presenting a range of outcomes to stakeholders.</p>
+      <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
+        <h3 style="margin:0 0 6px;color:#6d28d9;font-size:.97em;font-weight:700;">🔁 مقارنة السيناريوهات</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">احفظ تشغيلات محاكاة متعددة على نفس النموذج وقارن نتائج P50 جنباً إلى جنب في عرض المقارنة.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS — DARK SECTION -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <h2 style="margin:0 0 22px;color:#c4b5fd;font-size:1.12em;font-weight:700;text-align:center;">⚙️ How it Works &nbsp;|&nbsp; كيف يعمل</h2>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;">
+      <div style="flex:1 1 260px;">
+        <ol style="margin:0;padding-left:20px;line-height:2.1;font-size:.93em;color:#d1d5db;">
+          <li>Open Monte Carlo → Simulation Models → New Model</li>
+          <li>Add input variables with their probability distributions</li>
+          <li>Define the output formula linking the variables</li>
+          <li>Click <strong style="color:#c4b5fd;">Run Simulation</strong> (N iterations)</li>
+          <li>Review histogram, P10/P50/P90, and AI plain-language summary</li>
+          <li>Share or export the run record to stakeholders</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 260px;" dir="rtl">
+        <ol style="margin:0;padding-right:20px;padding-left:0;line-height:2.1;font-size:.93em;color:#d1d5db;">
+          <li>افتح مونتي كارلو ← نماذج المحاكاة ← نموذج جديد</li>
+          <li>أضف متغيرات المدخلات بتوزيعاتها الاحتمالية</li>
+          <li>عرِّف معادلة الناتج التي تربط المتغيرات</li>
+          <li>اضغط <strong style="color:#c4b5fd;">تشغيل المحاكاة</strong> (N تكرار)</li>
+          <li>راجع الرسم البياني وP10/P50/P90 وملخص الذكاء الاصطناعي</li>
+          <li>شارك سجل التشغيل أو صدِّره للمعنيين</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:14px;padding:24px 26px;margin-bottom:24px;">
+    <h3 style="margin:0 0 10px;color:#6d28d9;font-size:1em;font-weight:700;">📐 Statistical Rigour, Zero Setup</h3>
+    <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Each output variable is automatically described by its mean, median, standard deviation, P10, P50, and P90. The module handles sampling, aggregation, and chart rendering — all a business user needs to do is describe their inputs and read the summary.</p>
+    <hr style="border:none;border-top:1px solid #ddd6fe;margin:0 0 14px;"/>
+    <p dir="rtl" style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">كل متغير ناتج يُوصف تلقائياً بمتوسطه ووسيطه وانحرافه المعياري وP10/P50/P90. الوحدة تتولى أخذ العينات والتجميع ورسم المخططات — كل ما يحتاجه المستخدم هو وصف مدخلاته وقراءة الملخص.</p>
   </div>
 
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Monte Carlo Simulation · Risk modelling for business · Odoo 19
+    ERA Monte Carlo Simulation &nbsp;·&nbsp; محاكاة مونتي كارلو من ERA &nbsp;·&nbsp; Odoo 19
   </div>
 
 </section>

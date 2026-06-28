@@ -1,71 +1,105 @@
-<section style="font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:1020px;margin:0 auto;padding:0 0 32px;">
+<section style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;max-width:860px;margin:0 auto;padding:0 0 32px;">
 
   <!-- HERO -->
-  <div style="background:linear-gradient(135deg,#581c87 0%,#7e22ce 60%,#a855f7 130%);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
-    <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Odoo AI Extension</h1>
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">إضافة Odoo AI من ERA</div>
-    <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.5;">Add a fully configurable custom LLM provider (OpenAI-compatible) to Odoo 19's AI settings</p>
-    <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:720px;margin-left:auto;margin-right:auto;line-height:1.7;">أضف مزوّد LLM مخصص متوافق مع OpenAI لإعدادات الذكاء الاصطناعي في أودو 19</p>
+  <div style="background:linear-gradient(135deg,#581c87,#7e22ce,#a855f7);border-radius:18px;padding:48px 40px;color:#fff;text-align:center;margin-bottom:28px;">
+    <div style="font-size:2.8em;margin-bottom:12px;">🔌</div>
+    <h1 style="margin:0 0 8px;font-size:2em;font-weight:800;letter-spacing:-0.5px;color:#fff;">ERA Odoo AI Ext</h1>
+    <p style="margin:0 0 18px;font-size:1.08em;opacity:.95;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.55;">Extend Odoo 19 AI with any OpenAI-compatible endpoint — Ollama, Azure, OpenRouter, Groq, or your own vLLM server — as a first-class provider. No core-file edits, no restarts, no compromises.</p>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.25);margin:18px auto;max-width:420px;"/>
+    <p dir="rtl" style="margin:0;font-size:1.04em;opacity:.93;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.7;">وسِّع ذكاء أودو 19 الاصطناعي بأي نقطة نهاية متوافقة مع OpenAI — Ollama أو Azure أو OpenRouter أو Groq أو خادمك الخاص — كمزوّد متكامل. دون تعديل ملفات النظام ودون إعادة تشغيل.</p>
   </div>
 
   <!-- FEATURE CARDS -->
+  <h2 style="margin:0 0 16px;color:#581c87;font-size:1.2em;font-weight:700;">Key Features</h2>
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px;">
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🔌</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">Custom LLM Provider</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Register any OpenAI-compatible endpoint as an Odoo AI provider.</p>
+      <h3 style="margin:0 0 8px;color:#7e22ce;font-size:1em;font-weight:700;">🔌 Custom LLM Provider Type</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Adds a <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">custom_llm</code> option to the Odoo AI provider selector (Settings → AI → Providers). When selected, three extra fields appear: Base URL, API Key (optional, stored encrypted), and Default Model. The provider appears in the same list as OpenAI and Gemini — no special Technical menu required.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">مزوّد LLM مخصص</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">سجّل أي نقطة نهاية متوافقة مع OpenAI كمزوّد AI في أودو.</p>
+        <h3 style="margin:0 0 6px;color:#7e22ce;font-size:.97em;font-weight:700;">🔌 نوع مزوّد LLM مخصص</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">يضيف خيار custom_llm إلى منتقي مزوّد AI في أودو. عند اختياره تظهر ثلاثة حقول إضافية: Base URL ومفتاح API (اختياري، مشفَّر) واسم النموذج الافتراضي. يظهر المزوّد في نفس قائمة OpenAI وGemini دون قائمة تقنية خاصة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">Full Settings UI</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Configure model name, API URL, and API key through Odoo settings.</p>
+      <h3 style="margin:0 0 8px;color:#7e22ce;font-size:1em;font-weight:700;">⚙️ Full Settings UI</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">All configuration lives in the standard Odoo AI settings page — no Technical menu required. Base URL, API key, and model name are editable by any user with the AI Configuration access right. Changes take effect immediately without a server restart.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">واجهة إعدادات كاملة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اضبط اسم النموذج وعنوان API والمفتاح عبر إعدادات أودو.</p>
+        <h3 style="margin:0 0 6px;color:#7e22ce;font-size:.97em;font-weight:700;">⚙️ واجهة إعدادات كاملة</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">جميع الإعدادات في صفحة AI الاعتيادية في أودو دون الحاجة لقائمة تقنية. عنوان URL ومفتاح API واسم النموذج قابلة للتعديل فوراً دون إعادة تشغيل الخادم.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🔄</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">Agent &amp; Embedding Support</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Supports both chat agent and embedding provider configurations.</p>
+      <h3 style="margin:0 0 8px;color:#7e22ce;font-size:1em;font-weight:700;">🔄 Chat, Tool-Call &amp; Embedding Support</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">The custom provider intercepts Odoo's AI dispatch path for chat completions, agent tool-calls (JSON mode), and text embeddings (RAG). All three paths use the OpenAI-compatible request format, so any server that speaks <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">/v1/chat/completions</code> and <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">/v1/embeddings</code> works out of the box.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">دعم الوكلاء والتضمينات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يدعم إعدادات وكيل الدردشة ومزوّد التضمينات معاً.</p>
+        <h3 style="margin:0 0 6px;color:#7e22ce;font-size:.97em;font-weight:700;">🔄 دعم الدردشة واستدعاءات الأدوات والتضمينات</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">يعترض المزوّد المخصص مسار إرسال AI في أودو للمحادثات واستدعاءات أدوات الوكيل (JSON mode) وتضمينات النص (RAG). الثلاثة مسارات تستخدم تنسيق OpenAI المتوافق.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">Non-Invasive Patch</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Extends Odoo AI without modifying core provider files.</p>
+      <h3 style="margin:0 0 8px;color:#7e22ce;font-size:1em;font-weight:700;">🛡️ Non-Invasive Patch</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Uses Python's module-level monkey-patch via <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">post_load</code> hook. Odoo's <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">ai</code> addon files are never touched — future Odoo updates install without conflicts. The patch is applied once at startup and reverts cleanly if the module is uninstalled.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">رقعة غير مُدمجة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يوسّع AI في أودو دون تعديل ملفات المزوّد الأساسية.</p>
+        <h3 style="margin:0 0 6px;color:#7e22ce;font-size:.97em;font-weight:700;">🛡️ رقعة غير تدخلية</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">يستخدم monkey-patch على مستوى الوحدة عبر خطاف post_load. ملفات وحدة ai في أودو لا تُلمس أبداً — تحديثات أودو المستقبلية تُثبَّت دون تعارض. تُطبَّق الرقعة مرة واحدة عند البدء وتُزال نظيفاً عند إلغاء التثبيت.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 22px;">
-      <div style="font-size:2em;margin-bottom:10px;">🔑</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">Secure Key Storage</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">API keys stored securely in Odoo system parameters.</p>
+      <h3 style="margin:0 0 8px;color:#7e22ce;font-size:1em;font-weight:700;">🔑 Encrypted Key Storage</h3>
+      <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">The API key is Fernet-encrypted in <code style="font-size:.88em;background:#f3f4f6;padding:1px 5px;border-radius:4px;">ir.config_parameter</code>. It is never written to logs, never returned in RPC responses, and only decrypted at request time inside the provider adapter. Admins can rotate keys without restarting Odoo.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#7e22ce;">تخزين آمن للمفاتيح</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مفاتيح API مخزّنة بأمان في معاملات نظام أودو.</p>
+        <h3 style="margin:0 0 6px;color:#7e22ce;font-size:.97em;font-weight:700;">🔑 تخزين مشفَّر للمفتاح</h3>
+        <p style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">مفتاح API مشفَّر بـ Fernet في ir.config_parameter. لا يُكتب في السجلات ولا يُعاد في ردود RPC، ويُفكَّ تشفيره فقط عند الطلب داخل محوّل المزوّد. يمكن للمسؤولين تدوير المفاتيح دون إعادة تشغيل أودو.</p>
       </div>
     </div>
 
+  </div>
+
+  <!-- HOW IT WORKS — DARK SECTION -->
+  <div style="background:#111827;border-radius:16px;padding:34px 38px;color:#e5e7eb;margin-bottom:24px;">
+    <h2 style="margin:0 0 22px;color:#d8b4fe;font-size:1.12em;font-weight:700;text-align:center;">⚙️ How it Works &nbsp;|&nbsp; كيف يعمل</h2>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;">
+      <div style="flex:1 1 260px;">
+        <ol style="margin:0;padding-left:20px;line-height:2.1;font-size:.93em;color:#d1d5db;">
+          <li>Install the module from Odoo Apps</li>
+          <li>Go to Settings → AI → Providers</li>
+          <li>Select <strong style="color:#d8b4fe;">Custom LLM</strong> as the provider type</li>
+          <li>Enter Base URL (e.g. <em>https://openrouter.ai/api/v1</em>) and API Key</li>
+          <li>Enter model name (e.g. <em>meta-llama/llama-3-70b-instruct</em>)</li>
+          <li>Click <strong style="color:#d8b4fe;">Test Connection</strong></li>
+          <li>All Odoo AI features (Ask AI, agents, RAG) now route through your endpoint</li>
+        </ol>
+      </div>
+      <div style="flex:1 1 260px;" dir="rtl">
+        <ol style="margin:0;padding-right:20px;padding-left:0;line-height:2.1;font-size:.93em;color:#d1d5db;">
+          <li>ثبِّت الوحدة من متجر أودو</li>
+          <li>اذهب إلى الإعدادات ← AI ← المزوّدون</li>
+          <li>اختر <strong style="color:#d8b4fe;">Custom LLM</strong> كنوع المزوّد</li>
+          <li>أدخل Base URL ومفتاح API</li>
+          <li>أدخل اسم النموذج المطلوب</li>
+          <li>اضغط <strong style="color:#d8b4fe;">اختبار الاتصال</strong></li>
+          <li>جميع ميزات AI في أودو تعمل الآن عبر نقطة النهاية المخصصة</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:#faf5ff;border:1.5px solid #e9d5ff;border-radius:14px;padding:24px 26px;margin-bottom:24px;">
+    <h3 style="margin:0 0 10px;color:#7e22ce;font-size:1em;font-weight:700;">🔗 Works with Ollama, Azure, OpenRouter, Groq &amp; more</h3>
+    <p style="margin:0 0 14px;color:#374151;line-height:1.6;font-size:.93em;">Any server implementing the OpenAI REST spec works: Ollama for local models, Azure OpenAI for enterprise, OpenRouter for multi-model routing, Groq for ultra-fast inference, Together AI for open-weights models, or a corporate proxy enforcing your own access policies.</p>
+    <hr style="border:none;border-top:1px solid #e9d5ff;margin:0 0 14px;"/>
+    <p dir="rtl" style="margin:0;color:#374151;line-height:1.65;font-size:.91em;">أي خادم يُنفّذ مواصفة OpenAI REST يعمل: Ollama للنماذج المحلية، Azure OpenAI للمؤسسات، OpenRouter لتوجيه النماذج المتعددة، Groq للاستدلال فائق السرعة، Together AI لنماذج الأوزان المفتوحة، أو وكيل مؤسسي يطبّق سياسات الوصول الخاصة بك.</p>
   </div>
 
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA Odoo AI Extension · Custom LLM for Odoo 19 · Odoo 19
+    ERA Odoo AI Ext &nbsp;·&nbsp; امتداد AI أودو من ERA &nbsp;·&nbsp; Odoo 19
   </div>
 
 </section>

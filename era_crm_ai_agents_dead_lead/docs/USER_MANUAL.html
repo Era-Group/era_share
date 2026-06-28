@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل المستخدم — وكيل إحياء العملاء المفقودين (Dead-Lead)</title>
+<style>
+  :root{
+    --primary:#0f4c5c; --secondary:#1b6e7e; --accent:#c79a3a;
+    --bg:#f6f8f9; --card:#ffffff; --text:#1f2d33; --muted:#5d6f78;
+    --line:#e2e8ea; --tip-bg:#eef6f3; --tip-line:#2e8b6f;
+    --warn-bg:#fdf4e7; --warn-line:#c79a3a; --step-bg:#f0f5f6;
+    --start-bg:#eaf4f1; --start-line:#0f4c5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma","Geeza Pro",sans-serif;
+    line-height:1.95; font-size:17px;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
+  .cover{background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff; padding:54px 30px 46px; text-align:center;
+    border-radius:0 0 26px 26px; box-shadow:0 6px 24px rgba(15,76,92,.18);}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.16); color:#fff;
+    padding:5px 16px; border-radius:30px; font-size:14px; margin-bottom:14px;}
+  .cover h1{margin:6px 0 10px; font-size:33px; font-weight:800}
+  .cover p{margin:0 auto; max-width:660px; font-size:18px; opacity:.95}
+  .cover .ver{margin-top:16px; font-size:14px; opacity:.8}
+  .intro{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 26px; margin:26px 0; box-shadow:0 2px 10px rgba(0,0,0,.03);
+    border-right:6px solid var(--accent);}
+  .intro h2{margin:0 0 8px; color:var(--primary); font-size:22px}
+  .quickstart{background:var(--start-bg); border:2px solid var(--start-line);
+    border-radius:18px; padding:26px 28px; margin:26px 0; box-shadow:0 4px 16px rgba(15,76,92,.10)}
+  .quickstart h2{margin:0 0 6px; color:var(--primary); font-size:27px}
+  .quickstart .sub{color:var(--secondary); margin:0 0 16px; font-size:16px}
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:6px 0 4px; justify-content:center}
+  .flow .node{background:#fff; border:2px solid var(--start-line); color:var(--primary);
+    border-radius:12px; padding:8px 16px; font-weight:700; font-size:16px}
+  .flow .arr{color:var(--secondary); font-weight:800; font-size:20px}
+  .toc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 24px; margin:24px 0}
+  .toc h3{margin:0 0 10px; color:var(--secondary)}
+  .toc ol{margin:0; padding-inline-start:22px}
+  .toc a{color:var(--primary); text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  section{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:26px 28px; margin:22px 0; box-shadow:0 2px 10px rgba(0,0,0,.03)}
+  section h2{color:var(--primary); font-size:24px; margin:0 0 6px;
+    border-bottom:2px solid var(--line); padding-bottom:10px}
+  section .intro-line{color:var(--muted); margin:0 0 12px}
+  .path{display:inline-block; background:var(--step-bg); border:1px solid var(--line);
+    border-radius:8px; padding:3px 10px; font-size:15px; color:var(--primary);
+    margin:2px 0; font-weight:600; direction:ltr}
+  .lbl-en{background:#eef2fb; border:1px solid #d4ddef; border-radius:6px; padding:0 7px;
+    font-size:14px; color:#2c4470; direction:ltr; display:inline-block; font-weight:600}
+  ol.steps{counter-reset:step; list-style:none; padding:0; margin:14px 0}
+  ol.steps li{counter-increment:step; position:relative; background:#fff;
+    border:1px solid var(--line); border-radius:12px; padding:14px 60px 14px 16px; margin:10px 0}
+  .quickstart ol.steps li{background:#fff}
+  ol.steps li::before{content:counter(step); position:absolute; right:14px; top:14px;
+    width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px}
+  ol.steps li b{color:var(--primary)}
+  .opt{border:1px solid var(--line); border-radius:14px; padding:8px 18px 16px; margin:16px 0; background:#fcfdfd}
+  .opt h3{color:var(--secondary); font-size:19px; margin:14px 0 10px}
+  .opt h3 .lbl-en{font-size:15px}
+  .opt .qa{display:flex; gap:10px; margin:8px 0; align-items:flex-start}
+  .opt .qa .lbl{flex:0 0 96px; font-weight:700; font-size:14px; padding:3px 0; text-align:center; border-radius:8px}
+  .opt .qa.what .lbl{background:#e7eff1; color:#0f4c5c}
+  .opt .qa.why  .lbl{background:#eef6f3; color:#2e8b6f}
+  .opt .qa.eff  .lbl{background:#fdf4e7; color:#9c6b16}
+  .opt .qa .txt{flex:1}
+  .tip,.warn{border-radius:12px; padding:14px 18px; margin:16px 0; font-size:16px}
+  .tip{background:var(--tip-bg); border-right:5px solid var(--tip-line)}
+  .warn{background:var(--warn-bg); border-right:5px solid var(--warn-line)}
+  .tip b,.warn b{display:block; margin-bottom:4px}
+  .whatif{border:1px solid var(--line); border-radius:12px; padding:6px 18px 14px; margin:12px 0; background:#fff}
+  .whatif p{margin:12px 0}
+  .whatif .q{font-weight:700; color:var(--primary)}
+  .whatif .a{color:var(--text)}
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:16px; background:#fff}
+  th,td{border:1px solid var(--line); padding:11px 13px; text-align:right; vertical-align:top}
+  th{background:var(--primary); color:#fff; font-weight:700}
+  tr:nth-child(even) td{background:#fafcfc}
+  .pill{display:inline-block; background:var(--tip-bg); color:var(--primary); border-radius:20px; padding:1px 10px; font-size:14px; font-weight:600}
+  .tech{background:#f1f3f4; border:1px dashed #b8c2c6; border-radius:12px; padding:16px 20px; margin-top:26px; font-size:15px; color:var(--muted)}
+  .tech h3{color:#46555c; margin-top:0}
+  .tech code{background:#fff; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-family:Consolas,monospace; direction:ltr; display:inline-block}
+  footer{text-align:center; color:var(--muted); font-size:14px; margin-top:30px}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <span class="badge">Era Group · CRM AI Agents</span>
+  <h1>وكيل إحياء العملاء المفقودين — Dead-Lead</h1>
+  <p>يراجع العملاء الذين خسرناهم سابقاً، ويقترح رسالة عودة عربية مناسبة، ويمرّرها لك للموافقة قبل أن تُرسل عبر واتساب — لا شيء يُرسل تلقائياً.</p>
+  <div class="ver">الإصدار 19.0.1.8.0 · دليل المستخدم</div>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <h2>وش يسوّي لك هذا الوكيل؟ (بسطرين)</h2>
+    <p>عندك عملاء أُغلقت فرصهم بحالة «مفقود/خسارة» وصاروا منسيين. هذا الوكيل يمرّ عليهم بشكل دوري، ويختار المؤهّل منهم (مضى عليه وقت كافٍ، وسبب خسارته يستحق إعادة المحاولة)، ويصيغ له رسالة عودة عربية من <b>قالب معتمد</b> — يملأ الذكاء الاصطناعي الجزء الشخصي فقط — ثم يضعها في طابور موافقة عندك. أنت من يقرّر: توافق فتُرسل، أو ترفض فلا يحصل شيء.</p>
+  </div>
+
+  <!-- ===================== QUICK PATH ===================== -->
+  <div class="quickstart" id="start">
+    <h2>★ المسار الكامل بنظرة سريعة</h2>
+    <p class="sub">أربع مراحل، والإنسان يقف في منتصفها. لا تصل رسالة لعميل إلا بعد موافقة بشرية.</p>
+    <div class="flow">
+      <span class="node">اكتشاف</span><span class="arr">←</span>
+      <span class="node">صياغة</span><span class="arr">←</span>
+      <span class="node">موافقة بشرية</span><span class="arr">←</span>
+      <span class="node">إرسال عبر واتساب</span>
+    </div>
+    <ol class="steps">
+      <li><b>اكتشاف:</b> الوكيل يفحص العملاء المفقودين ويختار المؤهّل (خسارة قابلة للإحياء + مضى عليها وقت كافٍ).</li>
+      <li><b>صياغة:</b> يبني رسالة عربية من قالب معتمد؛ الذكاء الاصطناعي يكتب <u>جملة تعريفية واحدة فقط</u>، وبقية النص ثابت كما اعتمده المدير.</li>
+      <li><b>موافقة بشرية:</b> الرسالة تظهر في طابور <span class="lbl-en">Comeback Approvals</span>. لك أن تعدّلها ثم توافق، أو ترفضها.</li>
+      <li><b>إرسال:</b> فقط عند موافقتك تُرسل عبر واتساب، ويُحدَّث العميل ويُسجَّل القرار في سجل التدقيق.</li>
+    </ol>
+    <div class="warn">
+      <b>القاعدة الذهبية</b>
+      الفحص المجدول (الـ cron) <u>يوجّه ويقترح فقط — ولا يُرسل أبداً</u>. الإرسال لا يحدث إلا بضغطة موافقة منك. هذا مُثبَت باختبار آلي ضمن الوحدة.
+    </div>
+  </div>
+
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc">
+    <h3>محتويات الدليل</h3>
+    <ol>
+      <li><a href="#what">ما هو الوكيل ومتى يفيدك</a></li>
+      <li><a href="#manager">للمدير: الإعداد خطوة بخطوة</a></li>
+      <li><a href="#rep">للمندوب: الاستخدام اليومي خطوة بخطوة</a></li>
+      <li><a href="#gate">بوابة الموافقة البشرية: لماذا لا شيء يُرسل تلقائياً</a></li>
+      <li><a href="#pdpl">الامتثال وحماية البيانات (PDPL)</a></li>
+      <li><a href="#limits">حدود الحالة الحالية (بصدق)</a></li>
+      <li><a href="#faq">أسئلة شائعة قصيرة</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== WHAT ===================== -->
+  <section id="what">
+    <h2>١) ما هو الوكيل ومتى يفيدك</h2>
+    <p class="intro-line">باختصار عملي قبل التفاصيل.</p>
+    <p>«إحياء العملاء المفقودين» هو أول وكيل <b>مُرسِل</b> في المنظومة. فائدته المباشرة: استرجاع إيراد من أصول موجودة أصلاً عندك (عملاء سبق خسارتهم)، بدل ملاحقة عملاء جدد فقط. يفيدك عندما يكون لديك عدد من الفرص المُغلقة بـ«خسارة»، وتظن أن بعضها قد ينضج مع مرور الوقت أو زوال سبب الاعتراض القديم.</p>
+    <p><b>المُحفِّز المُفعَّل اليوم:</b> «مضى وقت كافٍ على الخسارة» (مُحفِّز الوقت). المُحفِّزان الآخران المذكوران في الرؤية — «انتقال صاحب القرار» و«انخفاض السعر» — <b>مؤجَّلان ولم يُفعَّلا بعد</b> (انظر «حدود الحالة الحالية»).</p>
+    <div class="tip">
+      <b>الفكرة الأساسية في جملة</b>
+      الوكيل لا يكتب رسالة من الصفر، بل يملأ الفراغات الشخصية في <b>قالب اعتمدته أنت</b>؛ وكل رسالة تمرّ على الامتثال ثم على موافقتك قبل أن تغادر.
+    </div>
+  </section>
+
+  <!-- ===================== MANAGER ===================== -->
+  <section id="manager">
+    <h2>٢) للمدير: الإعداد خطوة بخطوة</h2>
+    <p class="intro-line">كل شاشات الإعداد تحت قائمة واحدة، وتظهر فقط لمن لديه صلاحية «مدير وكلاء الذكاء» (AI Agents Manager).</p>
+
+    <h3 style="color:var(--secondary)">أ) إعدادات الوكيل</h3>
+    <p>افتح الشاشة من القائمة:</p>
+    <p><span class="path">CRM AI Agent Base ← Dead-Lead ← Configuration ← Dead-Lead Settings</span></p>
+    <p>تفتح بطاقة الإعداد (قسمان: <span class="lbl-en">Trigger</span> و<span class="lbl-en">Scheduled Scan</span>). إليك كل حقل بمعناه العملي:</p>
+
+    <div class="opt">
+      <h3>عتبة الأيام المنقضية <span class="lbl-en">Elapsed Days Threshold</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">عدد الأيام التي يجب أن تمر على إغلاق العميل بـ«خسارة» قبل أن يصبح مؤهلاً لإعادة التواصل.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يمنع مطاردة عميل خسرته قبل أيام قليلة؛ تعطيه وقتاً قبل العودة إليه.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الافتراضي <b>180</b> يوماً. ضع <b>0</b> لتعطيل مُحفِّز الوقت تماماً (فلا يُرشَّح أحد بسببه).</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>القالب <span class="lbl-en">Template</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">قالب رسالة العودة المعتمد الذي يبني عليه الوكيل النص.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">هو ما يضمن أن النص يبقى ضمن صياغة اعتمدتها أنت، والذكاء الاصطناعي لا يخرج عنه.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مهم:</b> القالب الافتراضي المُهيَّأ عند التركيب اسمه <span class="lbl-en">Default Comeback Template</span> وهو <u>بلا خانات تعبئة</u>. لتفعيل التخصيص بالذكاء الاصطناعي، وجّه هذا الحقل إلى قالب يحتوي خانات مثل <span class="lbl-en">General Comeback (slotted)</span>.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>تفعيل الفحص المجدول <span class="lbl-en">Enable Scheduled Scan</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المفتاح الرئيسي لتشغيل الفحص اليومي التلقائي.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">وكيل مُرسِل يجب أن يبقى خاملاً حتى تقرر أنت تفعيله؛ لذلك هو <b>مُطفأ افتراضياً</b>.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">وهو مُطفأ: الفحص يعمل لكنه لا يفعل شيئاً. وحتى بعد تفعيله: <u>لا يُرسل تلقائياً</u> — يصيغ ويوجّه للموافقة فقط.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>حجم دفعة الفحص <span class="lbl-en">Scan Batch Size</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">أقصى عدد عملاء مفقودين يعالجهم الوكيل في كل تشغيل مجدول.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يضبط حجم العمل (والتكلفة) لكل تشغيل، ويمنع إغراق طابور الموافقات دفعة واحدة.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الافتراضي <b>50</b> عميلاً لكل تشغيل.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>فترة التهدئة (بالأيام) <span class="lbl-en">Resend Cooldown (days)</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">أقل عدد أيام بعد إرسال (أو اقتراح) رسالة لعميل قبل أن يُفحَص مرة أخرى.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يمنع إزعاج العميل نفسه برسائل متكررة في كل تشغيل.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الافتراضي <b>30</b> يوماً.</span></div>
+    </div>
+
+    <div class="tip">
+      <b>الفحص التلقائي: متى يعمل؟</b>
+      مهمة مجدولة باسم <span class="lbl-en">Dead-Lead: Scan lost leads</span> تعمل <b>يومياً الساعة 05:00</b> تحت مستخدم محدود الصلاحية (ليس مديراً ولا مستخدماً جذرياً) — ولا تعمل إطلاقاً ما لم يكن <span class="lbl-en">Enable Scheduled Scan</span> مفعّلاً. ملاحظة تقنية: المهمة الجديدة تحتاج إعادة تشغيل الخادم لتُسجَّل.
+    </div>
+
+    <h3 style="color:var(--secondary)">ب) قوالب رسائل العودة</h3>
+    <p>افتح القوالب من:</p>
+    <p><span class="path">CRM AI Agent Base ← Dead-Lead ← Configuration ← Comeback Templates</span></p>
+    <p>كل قالب يحتوي: <span class="lbl-en">Name</span> (اسم داخلي)، <span class="lbl-en">Sequence</span> (ترتيب)، <span class="lbl-en">Active</span> (فعّال)، و<span class="lbl-en">Body</span> (نص الرسالة المعتمد)، و<span class="lbl-en">Note</span> (إرشاد للمراجع). داخل النص تضع «خانات» يملؤها الوكيل تلقائياً:</p>
+    <table>
+      <tr><th>الخانة</th><th>من أين تُملأ</th></tr>
+      <tr><td><span class="lbl-en">{{name}}</span></td><td>اسم العميل/جهة الاتصال — من سجلّك مباشرة (ليس من الذكاء الاصطناعي).</td></tr>
+      <tr><td><span class="lbl-en">{{company}}</span></td><td>اسم الشركة — من سجلّك.</td></tr>
+      <tr><td><span class="lbl-en">{{salesperson}}</span></td><td>اسم المندوب المسؤول — من سجلّك.</td></tr>
+      <tr><td><span class="lbl-en">{{personal_note}}</span></td><td><b>الجزء الوحيد الذي يكتبه الذكاء الاصطناعي</b>: جملة عربية واحدة قصيرة لإعادة فتح الحديث.</td></tr>
+    </table>
+    <p>يأتي مع التركيب قالبان جاهزان بخانات: <span class="lbl-en">General Comeback (slotted)</span> و<span class="lbl-en">Price/Budget Comeback (slotted)</span>. عدّل نصوصها أو أضف قوالبك، ثم اختر القالب المطلوب في حقل <span class="lbl-en">Template</span> بإعدادات الوكيل.</p>
+    <div class="warn">
+      <b>كل ما هو خارج الخانات يُرسل حرفياً</b>
+      النص الثابت في القالب لا يعيد الذكاء الاصطناعي كتابته أبداً — هو يملأ الخانات فقط. اكتب نصاً ثابتاً محترماً ولا تضع فيه أي وعد أو سعر لا تريده أن يُرسل كما هو.
+    </div>
+
+    <h3 style="color:var(--secondary)">ج) تأهيل أسباب الخسارة للإحياء</h3>
+    <p>هل يستحق سبب الخسارة إعادة محاولة؟ هذا قرارك، وتضبطه على سبب الخسارة نفسه:</p>
+    <p><span class="path">CRM ← Configuration ← Lost Reasons</span> ← افتح سبباً ← قسم <span class="lbl-en">Dead-Lead Resurrection</span></p>
+    <div class="opt">
+      <h3>مؤهَّل للإحياء <span class="lbl-en">Eligible for Resurrection</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">مفتاح: هل يجوز للوكيل إعادة التواصل مع عميل خسرناه لهذا السبب؟</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">بعض الأسباب لا يصح معها العودة (مثل «عميل غير جاد» أو «عدم الرغبة بالتواصل»).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً</b>. أطفئه لأي سبب لا تريد الوكيل أن يعود مع عملائه نهائياً.</span></div>
+    </div>
+    <div class="opt">
+      <h3>فئة Dead-Lead <span class="lbl-en">Dead-Lead Bucket</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">تصنيف لسبب الخسارة يساعد الوكيل على ضبط نبرة المخاطبة.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يُمرَّر للوكيل كسياق عند الصياغة (دون أي بيانات شخصية).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">اختر من: <span class="lbl-en">Price / Budget</span> · <span class="lbl-en">Timing</span> · <span class="lbl-en">Competitor</span> · <span class="lbl-en">No Response</span> · <span class="lbl-en">Requirements Mismatch</span> · <span class="lbl-en">Other</span>. إن تركته فارغاً يُعامَل كـ«Other».</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== REP ===================== -->
+  <section id="rep">
+    <h2>٣) للمندوب: الاستخدام اليومي خطوة بخطوة</h2>
+    <p class="intro-line">ثلاث شاشات فقط تحتاجها يومياً: المرشّحون، طابور الموافقات، النتائج.</p>
+    <ol class="steps">
+      <li><b>افتح لوحة المرشّحين.</b><br>
+        <span class="path">CRM AI Agent Base ← Dead-Lead ← Candidates</span> (عنوان الشاشة <span class="lbl-en">Resurrection Candidates</span>).<br>
+        تعرض كل العملاء المُغلقين بـ«خسارة». الأعمدة تشمل: العميل <span class="lbl-en">Customer</span>، اسم جهة الاتصال، الهاتف، سبب الخسارة <span class="lbl-en">Lost Reason</span>، المندوب، وعمود <span class="lbl-en">Dead-Lead: Last Comeback Sent</span> (آخر رسالة عودة أُرسلت). استخدم فلتر <span class="lbl-en">My Leads</span> لرؤية عملائك أنت.</li>
+      <li><b>افهم لماذا ظهر العميل هنا.</b><br>
+        ظهوره في اللوحة يعني فقط أنه «مُغلق بخسارة». لكن الوكيل لن يصوغ له رسالة فعلياً إلا إذا كان: سبب خسارته <u>مؤهَّلاً للإحياء</u>، ومضى عليه وقت <u>يساوي العتبة أو أكثر</u>، ولديه جهة اتصال برقم هاتف. الفلاتر <span class="lbl-en">Not Yet Contacted</span> و<span class="lbl-en">Comeback Sent</span> تساعدك على فرز من رُوسل ومن لم يُراسل.</li>
+      <li><b>راجع الرسالة المقترحة في طابور الموافقات.</b><br>
+        <span class="path">CRM AI Agent Base ← Dead-Lead ← Comeback Approvals</span>.<br>
+        كل سطر هو رسالة عودة جاهزة بانتظار قرارك. افتحها واقرأ النص العربي كاملاً.</li>
+      <li><b>عدّل عند الحاجة، ثم وافق أو ارفض.</b><br>
+        تقدر تعدّل النص قبل الموافقة — <b>النص المُعدَّل هو ما يُرسل</b> (يَجُبّ المقترح). الموافقة تُرسل الرسالة عبر واتساب فوراً؛ الرفض لا يُرسل شيئاً.</li>
+      <li><b>تابع النتائج.</b><br>
+        <span class="path">CRM AI Agent Base ← Dead-Lead ← Results</span> (عنوان الشاشة <span class="lbl-en">Resurrection Results</span>).<br>
+        تعرض العملاء الذين أُرسلت لهم رسالة عودة فعلاً، مع وقت الإرسال. كما تُسجَّل ملاحظة في سجل محادثة العميل (chatter).</li>
+    </ol>
+    <div class="tip">
+      <b>سؤالك الطبيعي: «وين راحت الرسالة؟»</b>
+      كل رسالة موافَق عليها تُسجَّل في سجل محادثة العميل، ويُحدَّث حقل آخر إرسال، ويُكتب قيد في سجل التدقيق (برقم هاتف <u>مُقنّع</u> لا الرقم الصريح).
+    </div>
+  </section>
+
+  <!-- ===================== GATE ===================== -->
+  <section id="gate">
+    <h2>٤) بوابة الموافقة البشرية: لماذا لا شيء يُرسل تلقائياً</h2>
+    <p class="intro-line">هذه أهم ضمانة في الوكيل.</p>
+    <p>عندما يكتشف الوكيل عميلاً مؤهلاً ويصوغ له رسالة، فهو <b>لا يرسلها</b> — بل ينشئ «طلب موافقة» بحالة «معلّق» (pending) ويوجّهه لمندوب العميل. الإرسال الفعلي لا يحدث إلا في لحظة واحدة: حين يضغط إنسان «موافقة». بكلمات أخرى: <b>طريق الإرسال الوحيد يمرّ عبر زر الموافقة.</b></p>
+    <ul>
+      <li>الفحص المجدول (الـ cron) <b>يوجّه ويقترح فقط، ولا يُرسل أبداً</b> — وهذا مُثبَت باختبار آلي ضمن الوحدة (<span class="lbl-en">cron routes, never sends</span>).</li>
+      <li>عميل <b>بلا جهة اتصال مرتبطة</b> لا يُوجَّه أصلاً (لا يمكن التحقق من موافقته).</li>
+      <li>إذا منع الامتثال الرسالة، <b>لا يُنشأ طلب موافقة ولا يُرسل شيء</b>.</li>
+    </ul>
+    <div class="tip">
+      <b>دليل عملي</b>
+      ضمن اختبارات الوحدة، يمرّ المسار الكامل (اكتشاف ← صياغة ← موافقة ← إرسال) بنجاح، ويُتحقَّق صراحةً أن العميل <u>لا يُرسَل له قبل الموافقة</u> (لا يُستدعى الموصِّل، ولا يُختم حقل آخر إرسال) — وأن المُوصِّل يُستدعى مرة واحدة فقط بعد الموافقة. (٥ من ٥ اختبارات ناجحة على تركيب نظيف.)
+    </div>
+  </section>
+
+  <!-- ===================== PDPL ===================== -->
+  <section id="pdpl">
+    <h2>٥) الامتثال وحماية البيانات (PDPL)</h2>
+    <p class="intro-line">ماذا يفعل الوكيل تجاه بياناتك — وما الذي لا يفعله.</p>
+    <p><b>ماذا يفعل:</b></p>
+    <ul>
+      <li>قبل أن تصل أي رسالة إلى طابور الموافقة، تمرّ على <b>حارس الامتثال</b> المشترك: موافقة تسويقية صريحة (PDPL)، نافذة إرسال مسموحة (تراعي أوقات الصلاة والتقويم الهجري ورمضان)، وأعراف الخطاب. أي منع → لا طلب موافقة → لا إرسال.</li>
+      <li><b>أقل قدر من البيانات للذكاء الاصطناعي:</b> نص الطلب المُرسَل للذكاء الاصطناعي <u>لا يحوي اسم العميل ولا هاتفه ولا اسم شركته</u> — فقط فئة سبب الخسارة وعدد الأيام المنقضية. الاسم والشركة يُملآن من سجلّك أنت، لا من الذكاء الاصطناعي.</li>
+      <li>النص يبقى «مُقيَّداً بالقالب»: الذكاء الاصطناعي يملأ جملة شخصية واحدة فقط، ولا يعيد كتابة جسم الرسالة.</li>
+      <li>سجل التدقيق يخزّن <b>معرّفاً مُقنّعاً</b> للمستلِم (وليس الرقم الصريح)، ويُسجَّل كل قرار إرسال أو منع.</li>
+      <li>يعمل تحت صلاحيات المستخدم (مندوب/مدير)، لا كمستخدم جذري؛ والوصول الوحيد المرفوع هو نداء موصِّل واتساب نفسه (بسبب صلاحيات المورّد)، أما كتابة بيانات العميل والتدقيق فتجري بصلاحياتك.</li>
+    </ul>
+    <p><b>ما الذي لا يفعله:</b> لا يتجاوز الموافقة، ولا يكتب رسالة حرّة خارج القالب، ولا يُرسل بدون موافقة بشرية، ولا يخزّن أي مفاتيح/أسرار.</p>
+  </section>
+
+  <!-- ===================== LIMITS ===================== -->
+  <section id="limits">
+    <h2>٦) حدود الحالة الحالية (بصدق)</h2>
+    <p class="intro-line">حتى لا يُفهم أكثر مما هو مُثبَت فعلاً.</p>
+    <div class="warn">
+      <b>الإرسال الحقيقي عبر واتساب والامتثال: مُختبَران بالمحاكاة فقط</b>
+      مسار الإرسال الفعلي عبر واتساب (WAHA) وحارس الامتثال يُختبَران في الاختبارات الآلية باستخدام <b>بدائل وهمية</b> (موصِّل واتساب مُزيَّف، وحارس امتثال مُحاكى). الاختبارات الخمسة الناجحة تُثبت المسار الداخلي وبوابة الموافقة البشرية — لكن <u>التسليم الحقيقي عبر واتساب وقرارات الامتثال الحيّة لم تُتحقَّق بعد من طرف إلى طرف على بيئة staging</u>. لذلك: <b>لا تَعُدّ الإرسال الفعلي عبر واتساب «مُثبَتاً للإنتاج» بعد.</b>
+    </div>
+    <ul>
+      <li><b>مُحفِّزان مؤجَّلان:</b> «انتقال صاحب القرار» و«انخفاض السعر» معرَّفان لكن <u>لم يُفعَّلا</u>؛ المُفعَّل اليوم هو مُحفِّز الوقت فقط.</li>
+      <li><b>القالب الافتراضي بلا خانات:</b> لتفعيل التخصيص بالذكاء الاصطناعي يجب توجيه حقل <span class="lbl-en">Template</span> إلى قالب يحتوي خانات.</li>
+      <li><b>واجهة الاستخدام بالإنجليزية حالياً:</b> تسميات الحقول والقوائم تظهر بالإنجليزية (لم تُشحَن ترجمة عربية للواجهة بعد) — لذلك تظهر في هذا الدليل بنصّها الإنجليزي الفعلي.</li>
+      <li><b>موصِّل واتساب اختياري:</b> يُكتشَف تلقائياً إن وُجد؛ وإن لم يكن متصلاً (جلسة جاهزة) فالإرسال يفشل بأمان (يُسجَّل ولا يُسلَّم شيء).</li>
+      <li><b>توثيق مؤجَّل (مُتتبَّع):</b> تسجيل مسار الإرسال الخارجي والصلاحية المرفوعة في سجلّات المشروع، وإثبات إرسال واتساب حقيقي مع تحقّق «طبق الأصل» على staging.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <h2>٧) أسئلة شائعة قصيرة</h2>
+    <div class="whatif">
+      <p><span class="q">لماذا لا يظهر شيء في طابور الموافقات؟</span><br>
+        <span class="a">تأكد من: تفعيل <span class="lbl-en">Enable Scheduled Scan</span>، وأن حقل <span class="lbl-en">Template</span> يشير إلى قالب <u>يحتوي خانات</u>، ووجود عملاء مفقودين أقدم من العتبة بسبب خسارة <u>مؤهَّلة للإحياء</u> ولديهم <span class="lbl-en">Customer</span> برقم هاتف، وأنهم اجتازوا الامتثال (موافقة + نافذة وقت مسموحة).</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">هل يرسل الوكيل رسائل من دون علمي؟</span><br>
+        <span class="a">لا. لا شيء يُرسل إلا بعد ضغطك «موافقة». الفحص التلقائي يقترح فقط.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">عدّلت نص الرسالة قبل الموافقة — أيّهما يُرسل؟</span><br>
+        <span class="a">النص المُعدَّل هو الذي يُرسل؛ فهو يَجُبّ النص المقترح.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">كيف أمنع العودة لعملاء سبب خسارة معيّن نهائياً؟</span><br>
+        <span class="a">افتح سبب الخسارة وأطفئ <span class="lbl-en">Eligible for Resurrection</span>.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">متى يعمل الفحص التلقائي؟</span><br>
+        <span class="a">يومياً الساعة 05:00 (<span class="lbl-en">Dead-Lead: Scan lost leads</span>)، ولا يعمل إطلاقاً قبل تفعيل <span class="lbl-en">Enable Scheduled Scan</span>.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لماذا لا يظهر عميل خسرته قبل أسبوع في الاقتراحات؟</span><br>
+        <span class="a">لأن «عتبة الأيام المنقضية» (افتراضياً 180 يوماً) لم تكتمل بعد. هذا مقصود لإعطائه وقتاً.</span></p>
+    </div>
+  </section>
+
+  <div class="tech">
+    <h3>للمسؤول التقني (مرجع سريع)</h3>
+    <p>الوحدة: <code>era_crm_ai_agents_dead_lead</code> · الإصدار <code>19.0.1.8.0</code> · تعتمد على <code>era_crm_ai_agents_base</code> + <code>era_crm_ai_agents_compliance</code>.</p>
+    <p>النماذج: <code>crm.ai.dead.lead.agent</code> (الإعداد) · <code>crm.ai.dead.lead.template</code> (القوالب) · حقول على <code>crm.lost.reason</code> و<code>crm.lead</code>. المهمة المجدولة: <code>Dead-Lead: Scan lost leads</code> (يومياً 05:00، خاملة ما لم يُفعَّل <code>scan_enabled</code>).</p>
+    <p>الاختبارات: <code>tests/test_flow.py</code> — ٥ اختبارات ناجحة على تركيب نظيف (اكتشاف، صياغة مُقيَّدة بالقالب، بوابة الموافقة، منع الامتثال، الفحص يوجّه ولا يُرسل). موصِّل واتساب وحارس الامتثال مُحاكيان في الاختبار.</p>
+  </div>
+
+  <footer>Era Group · CRM AI Agents — وكيل إحياء العملاء المفقودين · دليل المستخدم (إصدار 19.0.1.8.0)</footer>
+
+</div>
+</body>
+</html>

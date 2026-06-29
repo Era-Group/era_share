@@ -22,214 +22,216 @@ msgid ""
 "A consent record must reference a contact unless it has been erased under a "
 "DSAR request."
 msgstr ""
+"يجب أن يرتبط سجل الموافقة بجهة اتصال ما لم يكن قد محي بموجب طلب صاحب البيانات "
+"(DSAR)."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "AI Consent"
-msgstr ""
+msgstr "موافقة الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_partner_form_crm_ai_consent
 msgid "AI Consent & PDPL"
-msgstr ""
+msgstr "موافقة الذكاء الاصطناعي ونظام حماية البيانات الشخصية (PDPL)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_partner__crm_ai_consent_ids
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_users__crm_ai_consent_ids
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_list
 msgid "AI Consent Log"
-msgstr ""
+msgstr "سجل موافقات الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_partner__crm_ai_opt_out_requested_on
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_users__crm_ai_opt_out_requested_on
 msgid "AI Opt-out Requested On"
-msgstr ""
+msgstr "تاريخ طلب إلغاء الاشتراك في الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_dsar_wizard__kind__access
 msgid "Access (export data)"
-msgstr ""
+msgstr "الوصول (تصدير البيانات)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__active
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_compliance.action_crm_ai_norm_term
 msgid "Add greetings, honorifics and informal openers"
-msgstr ""
+msgstr "أضف عبارات الترحيب وألقاب التشريف والمقدمات غير الرسمية"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Aladhan method id. 4 = Umm al-Qura (KSA)."
-msgstr ""
+msgstr "معرّف طريقة الحساب في Aladhan. القيمة 4 = أم القرى (KSA)."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,help:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_method
 msgid "Aladhan method id. 4 = Umm al-Qura University, Makkah (KSA)."
-msgstr ""
+msgstr "معرّف طريقة الحساب في Aladhan. القيمة 4 = جامعة أم القرى، مكة المكرمة (KSA)."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_dsar_erasure_mode__anonymize
 msgid "Anonymize"
-msgstr ""
+msgstr "إخفاء الهوية"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Anonymize (keep an erased trail) or hard delete."
-msgstr ""
+msgstr "إخفاء الهوية (مع الاحتفاظ بأثر ممحو) أو الحذف النهائي."
 
 #. module: era_crm_ai_agents_compliance
 #. odoo-python
 #: code:addons/era_crm_ai_agents_compliance/models/dsar_wizard.py:0
 msgid "Anonymized %s consent record(s) under DSAR erasure."
-msgstr ""
+msgstr "تم إخفاء هوية %s من سجلات الموافقة بموجب المحو وفق طلب صاحب البيانات (DSAR)."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__lang__any
 msgid "Any"
-msgstr ""
+msgstr "أي"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_partner_form_crm_ai_consent
 msgid "Apply Opt-out"
-msgstr ""
+msgstr "تطبيق إلغاء الاشتراك"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__lang__ar
 msgid "Arabic"
-msgstr ""
+msgstr "العربية"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Archived"
-msgstr ""
+msgstr "مؤرشف"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__asr
 msgid "Asr"
-msgstr ""
+msgstr "العصر"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_jumuah_enabled
 msgid "Block Friday Jumu'ah"
-msgstr ""
+msgstr "حظر الإرسال وقت صلاة الجمعة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_enabled
 msgid "Block during prayer times"
-msgstr ""
+msgstr "حظر الإرسال أثناء أوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Block during the five daily prayers."
-msgstr ""
+msgstr "حظر الإرسال أثناء الصلوات الخمس اليومية."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_weekend_enabled
 msgid "Block on weekend"
-msgstr ""
+msgstr "حظر الإرسال في عطلة نهاية الأسبوع"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Block on weekend days."
-msgstr ""
+msgstr "حظر الإرسال في أيام عطلة نهاية الأسبوع."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_working_hours_enabled
 msgid "Block outside working hours"
-msgstr ""
+msgstr "حظر الإرسال خارج ساعات العمل"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Block sends outside working hours."
-msgstr ""
+msgstr "حظر الإرسال خارج ساعات العمل."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.server,name:era_crm_ai_agents_compliance.ir_cron_crm_ai_enforce_opt_out_72h_ir_actions_server
 msgid "CRM AI Compliance: Enforce 72h opt-out"
-msgstr ""
+msgstr "امتثال وكلاء الذكاء الاصطناعي: تطبيق إلغاء الاشتراك خلال 72 ساعة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.server,name:era_crm_ai_agents_compliance.ir_cron_crm_ai_warm_prayer_cache_ir_actions_server
 msgid "CRM AI Compliance: Warm prayer-time cache"
-msgstr ""
+msgstr "امتثال وكلاء الذكاء الاصطناعي: تهيئة الذاكرة المؤقتة لأوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_crm_ai_norm_term
 msgid "CRM AI Cultural-Norm Vocabulary"
-msgstr ""
+msgstr "مفردات الأعراف الثقافية لوكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_crm_ai_dsar_wizard
 msgid "CRM AI DSAR Request"
-msgstr ""
+msgstr "طلب صاحب البيانات (DSAR) لوكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_crm_ai_consent
 msgid "CRM AI PDPL Consent Log"
-msgstr ""
+msgstr "سجل موافقات نظام حماية البيانات الشخصية (PDPL) لوكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_crm_ai_prayer_cache
 msgid "CRM AI Prayer-time Cache"
-msgstr ""
+msgstr "الذاكرة المؤقتة لأوقات الصلاة لوكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Calculation method"
-msgstr ""
+msgstr "طريقة الحساب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__category
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Category"
-msgstr ""
+msgstr "الفئة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Check tone"
-msgstr ""
+msgstr "فحص النبرة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_norms_check_tone
 msgid "Check tone (shouting)"
-msgstr ""
+msgstr "فحص النبرة (الصياح)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__city
 msgid "City"
-msgstr ""
+msgstr "المدينة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_dsar_wizard_form
 msgid "Close"
-msgstr ""
+msgstr "إغلاق"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,help:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_weekend_days
 msgid "Comma-separated weekday numbers (Mon=0 … Sun=6). KSA = 4,5 (Fri,Sat)."
-msgstr ""
+msgstr "أرقام أيام الأسبوع مفصولة بفواصل (الاثنين=0 … الأحد=6). KSA = 4,5 (الجمعة، السبت)."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.ui.menu,name:era_crm_ai_agents_compliance.menu_crm_ai_compliance_root
 msgid "Compliance"
-msgstr ""
+msgstr "الامتثال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.act_window,name:era_crm_ai_agents_compliance.action_crm_ai_compliance_settings
 #: model:ir.ui.menu,name:era_crm_ai_agents_compliance.menu_crm_ai_compliance_settings
 msgid "Compliance Settings"
-msgstr ""
+msgstr "إعدادات الامتثال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.act_window,name:era_crm_ai_agents_compliance.action_crm_ai_consent_status
 #: model:ir.ui.menu,name:era_crm_ai_agents_compliance.menu_crm_ai_compliance_status
 msgid "Compliance Status"
-msgstr ""
+msgstr "حالة الامتثال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_res_config_settings
@@ -239,34 +241,34 @@ msgstr "تهيئة الإعدادات"
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_pivot
 msgid "Consent"
-msgstr ""
+msgstr "الموافقة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.act_window,name:era_crm_ai_agents_compliance.action_crm_ai_consent
 #: model:ir.ui.menu,name:era_crm_ai_agents_compliance.menu_crm_ai_compliance_consent
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_partner_form_crm_ai_consent
 msgid "Consent Log"
-msgstr ""
+msgstr "سجل الموافقات"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__consent_type
 msgid "Consent Type"
-msgstr ""
+msgstr "نوع الموافقة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_graph
 msgid "Consent by State"
-msgstr ""
+msgstr "الموافقات حسب الحالة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Consent type guard() requires before a send."
-msgstr ""
+msgstr "نوع الموافقة الذي تشترطه دالة guard() قبل الإرسال."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Consent, Opt-out & DSAR"
-msgstr ""
+msgstr "الموافقة وإلغاء الاشتراك وطلب صاحب البيانات (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model,name:era_crm_ai_agents_compliance.model_res_partner
@@ -279,7 +281,7 @@ msgstr "جهة الاتصال"
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__country
 msgid "Country"
-msgstr ""
+msgstr "الدولة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__create_uid
@@ -287,7 +289,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__create_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشأه"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__create_date
@@ -295,69 +297,69 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__create_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__create_date
 msgid "Created on"
-msgstr ""
+msgstr "أُنشئ في"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Cultural Norms"
-msgstr ""
+msgstr "الأعراف الثقافية"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_dsar_wizard_form
 msgid "DSAR Request"
-msgstr ""
+msgstr "طلب صاحب البيانات (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.act_window,name:era_crm_ai_agents_compliance.action_crm_ai_dsar_wizard
 #: model:ir.ui.menu,name:era_crm_ai_agents_compliance.menu_crm_ai_compliance_dsar
 msgid "DSAR Requests"
-msgstr ""
+msgstr "طلبات أصحاب البيانات (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_dsar_erasure_mode
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "DSAR erasure mode"
-msgstr ""
+msgstr "وضع المحو لطلب صاحب البيانات (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_partner_form_crm_ai_consent
 msgid "DSAR…"
-msgstr ""
+msgstr "طلب صاحب البيانات (DSAR)…"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__date
 msgid "Date"
-msgstr ""
+msgstr "التاريخ"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_default_city
 msgid "Default city (fallback)"
-msgstr ""
+msgstr "المدينة الافتراضية (الاحتياطية)"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Default city / country"
-msgstr ""
+msgstr "المدينة / الدولة الافتراضية"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_default_country
 msgid "Default country code (fallback)"
-msgstr ""
+msgstr "رمز الدولة الافتراضي (الاحتياطي)"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Default timezone"
-msgstr ""
+msgstr "المنطقة الزمنية الافتراضية"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_default_tz
 msgid "Default timezone (fallback)"
-msgstr ""
+msgstr "المنطقة الزمنية الافتراضية (الاحتياطية)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__dhuhr
 msgid "Dhuhr"
-msgstr ""
+msgstr "الظهر"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__display_name
@@ -375,105 +377,107 @@ msgid ""
 "Edit the greeting / honorific vocabulary under\n"
 "                        Configuration → Norm Vocabulary."
 msgstr ""
+"يمكنك تعديل مفردات الترحيب / ألقاب التشريف من\n"
+"                        الإعداد ← مفردات الأعراف."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_norms_enabled
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Enforce cultural norms"
-msgstr ""
+msgstr "تطبيق الأعراف الثقافية"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_send_window_enabled
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Enforce send window"
-msgstr ""
+msgstr "تطبيق نافذة الإرسال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__lang__en
 msgid "English"
-msgstr ""
+msgstr "الإنجليزية"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__erased
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Erased (DSAR)"
-msgstr ""
+msgstr "ممحو (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_dsar_wizard__kind__erasure
 msgid "Erasure (anonymize)"
-msgstr ""
+msgstr "المحو (إخفاء الهوية)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__fajr
 msgid "Fajr"
-msgstr ""
+msgstr "الفجر"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Fallback when a contact has no city."
-msgstr ""
+msgstr "يُستخدم احتياطياً عندما لا تكون لجهة الاتصال مدينة محددة."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__fetched_on
 msgid "Fetched On"
-msgstr ""
+msgstr "تاريخ الجلب"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Fixed prayer times"
-msgstr ""
+msgstr "أوقات صلاة ثابتة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_fixed_times
 msgid "Fixed prayer times (Fajr,Dhuhr,Asr,Maghrib,Isha)"
-msgstr ""
+msgstr "أوقات صلاة ثابتة (الفجر، الظهر، العصر، المغرب، العشاء)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_prayer_source__fixed
 msgid "Fixed times"
-msgstr ""
+msgstr "أوقات ثابتة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Friday Jumu'ah"
-msgstr ""
+msgstr "صلاة الجمعة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_consent__state__granted
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Granted"
-msgstr ""
+msgstr "ممنوحة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__granted_on
 msgid "Granted On"
-msgstr ""
+msgstr "تاريخ المنح"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__category__greeting
 msgid "Greeting"
-msgstr ""
+msgstr "ترحيب"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Greetings"
-msgstr ""
+msgstr "عبارات الترحيب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_dsar_erasure_mode__delete
 msgid "Hard delete"
-msgstr ""
+msgstr "حذف نهائي"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__category__honorific
 msgid "Honorific"
-msgstr ""
+msgstr "لقب تشريف"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Honorifics"
-msgstr ""
+msgstr "ألقاب التشريف"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__id
@@ -488,33 +492,33 @@ msgstr "المُعرف"
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_norm_term__category__informal_opener
 msgid "Informal opener"
-msgstr ""
+msgstr "مقدمة غير رسمية"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Informal openers"
-msgstr ""
+msgstr "المقدمات غير الرسمية"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__isha
 msgid "Isha"
-msgstr ""
+msgstr "العشاء"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_jumuah_end
 msgid "Jumu'ah end (HH:MM)"
-msgstr ""
+msgstr "نهاية صلاة الجمعة (HH:MM)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_jumuah_start
 msgid "Jumu'ah start (HH:MM)"
-msgstr ""
+msgstr "بداية صلاة الجمعة (HH:MM)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__lang
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Language"
-msgstr ""
+msgstr "اللغة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__write_uid
@@ -522,7 +526,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__write_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__write_date
@@ -530,65 +534,65 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__write_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "تاريخ آخر تحديث"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_prayer_source__api
 msgid "Live API (by city)"
-msgstr ""
+msgstr "واجهة API مباشرة (حسب المدينة)"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Live API (real per-city times) or fixed times."
-msgstr ""
+msgstr "واجهة API مباشرة (أوقات فعلية لكل مدينة) أو أوقات ثابتة."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Longer midday block on Fridays."
-msgstr ""
+msgstr "حظر أطول في منتصف النهار أيام الجمعة."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_prayer_cache__maghrib
 msgid "Maghrib"
-msgstr ""
+msgstr "المغرب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_consent__consent_type__marketing
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_required_consent_type__marketing
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Marketing"
-msgstr ""
+msgstr "التسويق"
 
 #. module: era_crm_ai_agents_compliance
 #. odoo-python
 #: code:addons/era_crm_ai_agents_compliance/models/res_partner.py:0
 msgid "Marketing consent withdrawn for %s contact(s)."
-msgstr ""
+msgstr "تم سحب الموافقة التسويقية لعدد %s من جهات الاتصال."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Master switch. OFF = norms never block."
-msgstr ""
+msgstr "المفتاح الرئيسي. عند الإيقاف = لا تحظر الأعراف الإرسال أبداً."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Master switch. OFF = timing never blocks a send."
-msgstr ""
+msgstr "المفتاح الرئيسي. عند الإيقاف = لا يحظر التوقيت أي إرسال أبداً."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Month"
-msgstr ""
+msgstr "الشهر"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_compliance.action_crm_ai_consent
 msgid "No consent records yet"
-msgstr ""
+msgstr "لا توجد سجلات موافقة بعد"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_consent__state__none
 msgid "None"
-msgstr ""
+msgstr "لا شيء"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.actions.act_window,name:era_crm_ai_agents_compliance.action_crm_ai_norm_term
@@ -596,129 +600,129 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_norm_term_search
 msgid "Norm Vocabulary"
-msgstr ""
+msgstr "مفردات الأعراف"
 
 #. module: era_crm_ai_agents_compliance
 #. odoo-python
 #: code:addons/era_crm_ai_agents_compliance/models/res_partner.py:0
 msgid "Opt-out applied"
-msgstr ""
+msgstr "تم تطبيق إلغاء الاشتراك"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_opt_out_window_hours
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Opt-out enforcement window (hours)"
-msgstr ""
+msgstr "نافذة تطبيق إلغاء الاشتراك (بالساعات)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__opt_out_on
 msgid "Opted Out On"
-msgstr ""
+msgstr "تاريخ إلغاء الاشتراك"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_compliance.action_crm_ai_consent
 msgid "PDPL consent events (grants, withdrawals, opt-outs) are logged here."
-msgstr ""
+msgstr "تُسجَّل هنا أحداث الموافقة وفق نظام حماية البيانات الشخصية (PDPL) (المنح والسحب وإلغاء الاشتراك)."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "PDPL window; the safety-net cron enforces within it."
-msgstr ""
+msgstr "نافذة نظام حماية البيانات الشخصية (PDPL)؛ تطبّق المهمة المجدولة الاحتياطية الإلغاء ضمنها."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_block_minutes
 msgid "Prayer block window (minutes)"
-msgstr ""
+msgstr "نافذة الحظر أثناء الصلاة (بالدقائق)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_method
 msgid "Prayer calculation method"
-msgstr ""
+msgstr "طريقة حساب أوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Prayer times"
-msgstr ""
+msgstr "أوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Prayer-time Source"
-msgstr ""
+msgstr "مصدر أوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_prayer_source
 msgid "Prayer-time source"
-msgstr ""
+msgstr "مصدر أوقات الصلاة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Quieter window during Ramadan (Hijri-detected)."
-msgstr ""
+msgstr "نافذة أكثر هدوءاً خلال رمضان (يُكتشف عبر التقويم الهجري)."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_ramadan_end
 msgid "Ramadan quiet end (HH:MM)"
-msgstr ""
+msgstr "نهاية فترة الهدوء في رمضان (HH:MM)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_ramadan_enabled
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Ramadan quiet hours"
-msgstr ""
+msgstr "ساعات الهدوء في رمضان"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_ramadan_start
 msgid "Ramadan quiet start (HH:MM)"
-msgstr ""
+msgstr "بداية فترة الهدوء في رمضان (HH:MM)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_dsar_wizard__kind
 msgid "Request Type"
-msgstr ""
+msgstr "نوع الطلب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_norms_check_greeting
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Require greeting"
-msgstr ""
+msgstr "اشتراط الترحيب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_norms_check_honorific
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Require honorific"
-msgstr ""
+msgstr "اشتراط لقب التشريف"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Required consent type"
-msgstr ""
+msgstr "نوع الموافقة المطلوب"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_required_consent_type
 msgid "Required consent type for sends"
-msgstr ""
+msgstr "نوع الموافقة المطلوب للإرسال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_dsar_wizard__result
 msgid "Result"
-msgstr ""
+msgstr "النتيجة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_dsar_wizard_form
 msgid "Run DSAR"
-msgstr ""
+msgstr "تنفيذ طلب صاحب البيانات (DSAR)"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Send Window"
-msgstr ""
+msgstr "نافذة الإرسال"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_consent__consent_type__service
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__res_config_settings__crm_ai_required_consent_type__service
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Service"
-msgstr ""
+msgstr "الخدمة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,help:era_crm_ai_agents_compliance.field_crm_ai_consent__erased
@@ -726,60 +730,63 @@ msgid ""
 "Set when a DSAR erasure has anonymized this row by severing its contact "
 "link. The row is kept only as an anonymized event count."
 msgstr ""
+"يُفعَّل عندما يقوم محو طلب صاحب البيانات (DSAR) بإخفاء هوية هذا السجل عبر قطع "
+"ارتباطه بجهة الاتصال. ويُحتفظ بالسجل فقط كعدد أحداث مجهول الهوية."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__source
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Source"
-msgstr ""
+msgstr "المصدر"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_consent__state
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "State"
-msgstr ""
+msgstr "الحالة"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_crm_ai_norm_term__text
 msgid "Term"
-msgstr ""
+msgstr "المصطلح"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_compliance.action_crm_ai_norm_term
 msgid ""
 "The cultural-norms engine checks outbound messages against these terms."
 msgstr ""
+"يفحص محرّك الأعراف الثقافية الرسائل الصادرة بمقارنتها بهذه المصطلحات."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #. module: era_crm_ai_agents_compliance
 #. odoo-python
 #: code:addons/era_crm_ai_agents_compliance/models/crm_ai_consent.py:0
 msgid "Unknown DSAR kind %r — expected 'access' or 'erasure'."
-msgstr ""
+msgstr "نوع طلب صاحب البيانات (DSAR) غير معروف %r — المتوقع 'access' أو 'erasure'."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Used when a contact has no timezone set."
-msgstr ""
+msgstr "يُستخدم عندما لا تكون لجهة الاتصال منطقة زمنية محددة."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Used when source is Fixed (Fajr,Dhuhr,Asr,Maghrib,Isha)."
-msgstr ""
+msgstr "يُستخدم عندما يكون المصدر ثابتاً (الفجر، الظهر، العصر، المغرب، العشاء)."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Weekend"
-msgstr ""
+msgstr "عطلة نهاية الأسبوع"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_weekend_days
 msgid "Weekend days"
-msgstr ""
+msgstr "أيام عطلة نهاية الأسبوع"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,help:era_crm_ai_agents_compliance.field_res_partner__crm_ai_opt_out_requested_on
@@ -789,34 +796,37 @@ msgid ""
 "72-hour enforcement window is measured from here; the daily safety-net cron "
 "guarantees the withdrawal is applied."
 msgstr ""
+"وقت طلب جهة الاتصال هذه إلغاء الاشتراك في الرسائل التسويقية للذكاء الاصطناعي. "
+"تُحتسب نافذة التطبيق البالغة 72 ساعة وفق نظام حماية البيانات الشخصية (PDPL) "
+"اعتباراً من هذا الوقت؛ وتضمن المهمة المجدولة الاحتياطية اليومية تطبيق السحب."
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,help:era_crm_ai_agents_compliance.field_crm_ai_consent__source
 msgid "Where this consent event originated (e.g. web form, phone, import)."
-msgstr ""
+msgstr "مصدر حدث الموافقة هذا (مثل نموذج الويب، أو الهاتف، أو الاستيراد)."
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_partner_form_crm_ai_consent
 msgid "Withdraw this contact's marketing consent?"
-msgstr ""
+msgstr "هل تريد سحب الموافقة التسويقية لجهة الاتصال هذه؟"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_compliance.selection__crm_ai_consent__state__withdrawn
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.view_crm_ai_consent_search
 msgid "Withdrawn"
-msgstr ""
+msgstr "مسحوبة"
 
 #. module: era_crm_ai_agents_compliance
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_compliance.res_config_settings_view_form_compliance
 msgid "Working hours"
-msgstr ""
+msgstr "ساعات العمل"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_working_end
 msgid "Working hours end (HH:MM)"
-msgstr ""
+msgstr "نهاية ساعات العمل (HH:MM)"
 
 #. module: era_crm_ai_agents_compliance
 #: model:ir.model.fields,field_description:era_crm_ai_agents_compliance.field_res_config_settings__crm_ai_working_start
 msgid "Working hours start (HH:MM)"
-msgstr ""
+msgstr "بداية ساعات العمل (HH:MM)"

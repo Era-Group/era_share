@@ -26,6 +26,13 @@ msgid ""
 "                            generation (especially decision-maker fetching) until your\n"
 "                            legal/DPO review signs off."
 msgstr ""
+"<i class=\"fa fa-balance-scale\"/>\n"
+"                            <strong>يتطلب التفعيل مراجعة قانونية.</strong>\n"
+"                            لا يوجد بعدُ مرجع معتمد لنظام حماية البيانات الشخصية (PDPL) خاص بمجموعة Era.\n"
+"                            هذه الإعدادات متحفّظة عن قصد ومصمَّمة\n"
+"                            لخدمة الامتثال — وهي لا تضمنه. لا تفعّل توليد\n"
+"                            العملاء المحتملين (وخصوصاً جلب بيانات صانعي القرار) حتى توافق\n"
+"                            مراجعتك القانونية / مسؤول حماية البيانات (DPO) على ذلك."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -34,6 +41,9 @@ msgid ""
 "                                PDPL: fetching named individuals processes personal\n"
 "                                data. Ensure you have a lawful basis before enabling."
 msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                                نظام حماية البيانات الشخصية (PDPL): إن جلب أفراد محددين بالاسم يعني معالجة بيانات\n"
+"                                شخصية. تأكّد من وجود أساس قانوني قبل التفعيل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
@@ -44,23 +54,28 @@ msgid ""
 "                        decision — review PDPL before enabling, especially for\n"
 "                        decision-maker (heavy) sources."
 msgstr ""
+"لا يدخل المصدر ضمن التسلسل المتدرّج إلا عندما يكون\n"
+"                        <b>نشطاً</b> ويتحقّق متغيّر بيئة الرمز الخاص به\n"
+"                        (<b>الرمز</b> = ✓). التفعيل قرار قانوني / تشغيلي —\n"
+"                        راجع نظام حماية البيانات الشخصية (PDPL) قبل التفعيل، وخصوصاً\n"
+"                        لمصادر صانعي القرار (الثقيلة)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
 msgid "Activation"
-msgstr ""
+msgstr "التفعيل"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__active
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_block_source_without_token
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Active source with missing token"
-msgstr ""
+msgstr "مصدر نشط برمز مفقود"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_fetch_decision_makers
@@ -69,6 +84,9 @@ msgid ""
 "company-level data is gathered. This is the HEAVIEST part under PDPL; keep "
 "it off until a legal review approves it."
 msgstr ""
+"السماح بجلب أفراد محددين بالاسم (صانعي القرار). معطّل (افتراضياً) = جمع "
+"البيانات على مستوى الشركة فقط. هذا هو الجزء الأثقل بموجب نظام حماية البيانات "
+"الشخصية (PDPL)؛ أبقِه معطّلاً حتى تعتمده مراجعة قانونية."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -76,11 +94,13 @@ msgid ""
 "Allow gathering named individuals. The heaviest part under PDPL; keep OFF "
 "until a legal review approves it."
 msgstr ""
+"السماح بجمع أفراد محددين بالاسم. هذا هو الجزء الأثقل بموجب نظام حماية البيانات "
+"الشخصية (PDPL)؛ أبقِه معطّلاً حتى تعتمده مراجعة قانونية."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_apollo
 msgid "Apollo"
-msgstr ""
+msgstr "Apollo"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -88,47 +108,49 @@ msgid ""
 "Audit a flag whenever a non-Saudi-local source is used, so cross-border "
 "movement is never silent."
 msgstr ""
+"تسجيل علامة في سجل التدقيق كلما استُخدم مصدر غير سعودي محلي، بحيث لا يحدث "
+"نقل للبيانات عبر الحدود بصمت."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_bing_search
 msgid "Bing Web Search"
-msgstr ""
+msgstr "Bing Web Search"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_brave_search
 msgid "Brave Search API"
-msgstr ""
+msgstr "Brave Search API"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen_provider
 msgid "CRM AI Lead-Gen Source / Provider"
-msgstr ""
+msgstr "مصدر / مزوّد توليد العملاء المحتملين بالذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen_agent
 msgid "CRM AI Lead-Generation Agent"
-msgstr ""
+msgstr "وكيل توليد العملاء المحتملين بالذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen
 msgid "CRM AI Lead-Generation Persistence"
-msgstr ""
+msgstr "تخزين بيانات توليد العملاء المحتملين بالذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__category
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Category"
-msgstr ""
+msgstr "الفئة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__verification
 msgid "Channel / Email Verification"
-msgstr ""
+msgstr "التحقق من القناة / البريد الإلكتروني"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
 msgid "Classification"
-msgstr ""
+msgstr "التصنيف"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_job_titles
@@ -137,6 +159,9 @@ msgid ""
 "Manager, CFO'). Used only when decision-maker fetching is enabled. Empty = "
 "no title filter."
 msgstr ""
+"مسميات وظيفية لصانعي القرار يُبحث عنها، مفصولة بفواصل (مثل 'الرئيس التنفيذي، "
+"مدير المشتريات، المدير المالي'). تُستخدم فقط عند تفعيل جلب صانعي القرار. "
+"الفراغ = لا يوجد تصفية بحسب المسمى الوظيفي."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_regions
@@ -144,6 +169,8 @@ msgid ""
 "Comma-separated regions or cities (e.g. 'Jeddah, Riyadh, Dammam'). Empty = "
 "no region filter."
 msgstr ""
+"مناطق أو مدن مفصولة بفواصل (مثل 'جدة، الرياض، الدمام'). الفراغ = لا يوجد "
+"تصفية بحسب المنطقة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_sectors
@@ -151,6 +178,8 @@ msgid ""
 "Comma-separated sectors/industries to prospect (e.g. 'Construction, "
 "Logistics, Healthcare'). Empty = no sector filter."
 msgstr ""
+"قطاعات / صناعات يُستهدف التنقيب فيها، مفصولة بفواصل (مثل 'الإنشاءات، "
+"الخدمات اللوجستية، الرعاية الصحية'). الفراغ = لا يوجد تصفية بحسب القطاع."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_company_size
@@ -158,6 +187,8 @@ msgid ""
 "Comma-separated size bands to target (e.g. '11-50, 51-200'). Free text so "
 "the bands stay manager-editable. Empty = any size."
 msgstr ""
+"نطاقات حجم مستهدفة مفصولة بفواصل (مثل '11-50، 51-200'). نص حر بحيث تبقى "
+"النطاقات قابلة للتعديل من قِبل المدير. الفراغ = أي حجم."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -165,26 +196,28 @@ msgid ""
 "Comma-separated values. Leave a field empty to apply\n"
 "                                no filter on that dimension."
 msgstr ""
+"قيم مفصولة بفواصل. اترك الحقل فارغاً لعدم تطبيق\n"
+"                                أي تصفية على ذلك البُعد."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Companies"
-msgstr ""
+msgstr "الشركات"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Company"
-msgstr ""
+msgstr "شركة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Company / Individual"
-msgstr ""
+msgstr "شركة / فرد"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__company
 msgid "Company Data"
-msgstr ""
+msgstr "بيانات الشركة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model,name:era_crm_ai_agents_lead_gen.model_res_config_settings
@@ -199,59 +232,59 @@ msgstr "جهة الاتصال"
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__contact_data
 msgid "Contact-Data Provider"
-msgstr ""
+msgstr "مزوّد بيانات جهات الاتصال"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__cost
 msgid "Cost"
-msgstr ""
+msgstr "التكلفة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشأه"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__create_date
 msgid "Created on"
-msgstr ""
+msgstr "أُنشئ في"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_daily_cap
 msgid "Daily Fetch Cap (records/day)"
-msgstr ""
+msgstr "الحد اليومي للجلب (سجل/يوم)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Daily fetch cap"
-msgstr ""
+msgstr "الحد اليومي للجلب"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Decision-Maker"
-msgstr ""
+msgstr "صانع القرار"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__decision_maker
 msgid "Decision-Maker (Individual)"
-msgstr ""
+msgstr "صانع القرار (فرد)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Decision-Makers"
-msgstr ""
+msgstr "صانعو القرار"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_consent
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Decision-maker consent"
-msgstr ""
+msgstr "موافقة صانع القرار"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_notice
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Decision-maker notice"
-msgstr ""
+msgstr "إشعار صانع القرار"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen__display_name
@@ -266,12 +299,12 @@ msgstr "اسم العرض"
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_enabled
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Enable Lead Generation"
-msgstr ""
+msgstr "تفعيل توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Enable decision-maker fetching to set target job titles."
-msgstr ""
+msgstr "فعّل جلب صانعي القرار لتحديد المسميات الوظيفية المستهدفة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__cost
@@ -280,6 +313,9 @@ msgid ""
 " 14 consumption tracking added in later tasks (cost must count BOTH the "
 "source-API call and any LLM-extraction call)."
 msgstr ""
+"التكلفة المُقدّرة لكل عملية جلب ناجحة من هذا المصدر، بالدولار الأمريكي. تغذّي"
+" تتبّع الاستهلاك وفق Rule 14 الذي يُضاف في مهام لاحقة (يجب أن تحتسب التكلفة "
+"كلاً من استدعاء API الخاص بالمصدر وأي استدعاء استخراج عبر LLM)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -290,13 +326,18 @@ msgid ""
 "                            externally-sourced records can be isolated or purged in one\n"
 "                            move (filter Contacts by that tag)."
 msgstr ""
+"كل سجل ينشئه المحرّك يوسَم\n"
+"                            (<code>by_lead_generator_agent</code>) ويُختم بمصدره\n"
+"                            (<code>x_lead_gen_source</code>)، بحيث يمكن عزل أو حذف\n"
+"                            جميع السجلات من مصادر خارجية بخطوة واحدة\n"
+"                            (تصفية جهات الاتصال بحسب ذلك الوسم)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
 #: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_sourced
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Externally-Sourced Records"
-msgstr ""
+msgstr "السجلات من مصادر خارجية"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -304,28 +345,30 @@ msgid ""
 "Externally-sourced records must pass the Compliance guard (#1) before any "
 "outreach."
 msgstr ""
+"يجب أن تجتاز السجلات من مصادر خارجية حارس الامتثال (#1) قبل أي تواصل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Favour in-region sources (Saudi registries first) for data residency."
 msgstr ""
+"تفضيل المصادر داخل المنطقة (السجلات السعودية أولاً) لضمان إقامة البيانات."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_fetch_decision_makers
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Fetch Decision-Makers (individuals)"
-msgstr ""
+msgstr "جلب صانعي القرار (أفراد)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__fields_filled
 msgid "Fields Filled"
-msgstr ""
+msgstr "الحقول المعبّأة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_flag_egress
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Flag when data leaves the region"
-msgstr ""
+msgstr "وضع علامة عند مغادرة البيانات للمنطقة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__fields_filled
@@ -334,21 +377,24 @@ msgid ""
 "'name, website, vat' or 'email, phone, job_title'). Documentation/targeting "
 "aid, not enforced here."
 msgstr ""
+"ملاحظة نصية حرة عن حقول جهة الاتصال التي يعبّئها هذا المصدر عادةً (مثل "
+"'name, website, vat' أو 'email, phone, job_title'). أداة للتوثيق / الاستهداف، "
+"وليست مُلزِمة هنا."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_google_cse
 msgid "Google Custom Search"
-msgstr ""
+msgstr "Google Custom Search"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__pdpl_sensitivity__heavy
 msgid "Heavy (personal data)"
-msgstr ""
+msgstr "ثقيل (بيانات شخصية)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_hunter
 msgid "Hunter"
-msgstr ""
+msgstr "Hunter"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen__id
@@ -363,17 +409,17 @@ msgstr "المُعرف"
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Inactive"
-msgstr ""
+msgstr "غير نشط"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "آخر تحديث في"
 
 #. module: era_crm_ai_agents_lead_gen
 #. odoo-python
@@ -382,17 +428,17 @@ msgstr ""
 #: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_root
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Lead Generation"
-msgstr ""
+msgstr "توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_settings
 msgid "Lead Generation Settings"
-msgstr ""
+msgstr "إعدادات توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.actions.server,name:era_crm_ai_agents_lead_gen.ir_cron_lead_gen_run_ir_actions_server
 msgid "Lead Generation: Scheduled fetch"
-msgstr ""
+msgstr "توليد العملاء المحتملين: الجلب المجدول"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_partner__x_lead_gen_source
@@ -400,55 +446,55 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Lead-Gen Source"
-msgstr ""
+msgstr "مصدر توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Lead-Gen Sources"
-msgstr ""
+msgstr "مصادر توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_tag_name
 msgid "Lead-Gen Tag Name"
-msgstr ""
+msgstr "اسم وسم توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #. odoo-python
 #: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen_agent.py:0
 msgid "Lead-Gen agent is misconfigured (no tech name)."
-msgstr ""
+msgstr "وكيل توليد العملاء المحتملين مُعدّ بشكل خاطئ (لا يوجد اسم تقني)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Lead-Gen sourced"
-msgstr ""
+msgstr "من مصدر توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Lead-Gen tag name"
-msgstr ""
+msgstr "اسم وسم توليد العملاء المحتملين"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__pdpl_sensitivity__light
 msgid "Light (B2B / company)"
-msgstr ""
+msgstr "خفيف (شركات B2B)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_linkedin
 msgid "LinkedIn"
-msgstr ""
+msgstr "LinkedIn"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__local_registry
 msgid "Local Business Registry"
-msgstr ""
+msgstr "سجل الأعمال المحلي"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_lusha
 msgid "Lusha"
-msgstr ""
+msgstr "Lusha"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__active
@@ -457,6 +503,9 @@ msgid ""
 " decision that overrides everything: an inactive source is never used, even "
 "if its token is present. PDPL activation requires explicit review."
 msgstr ""
+"مفتاح رئيسي يدوي لهذا المصدر (معطّل افتراضياً). قرار تشغيلي وقانوني يَجُبّ كل"
+" ما عداه: لا يُستخدم المصدر غير النشط أبداً، حتى لو كان رمزه موجوداً. يتطلب "
+"التفعيل بموجب نظام حماية البيانات الشخصية (PDPL) مراجعة صريحة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_enabled
@@ -464,6 +513,8 @@ msgid ""
 "Master switch for the whole prospecting engine. OFF (default) = no source is"
 " ever queried, regardless of per-source toggles."
 msgstr ""
+"المفتاح الرئيسي لمحرّك التنقيب بأكمله. معطّل (افتراضياً) = لا يُستعلَم أي"
+" مصدر إطلاقاً، بصرف النظر عن مفاتيح كل مصدر على حدة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -471,6 +522,7 @@ msgid ""
 "Master switch for the whole prospecting engine. OFF = no source is ever "
 "queried."
 msgstr ""
+"المفتاح الرئيسي لمحرّك التنقيب بأكمله. معطّل = لا يُستعلَم أي مصدر إطلاقاً."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -478,6 +530,8 @@ msgid ""
 "Max records created per day. 0 or less = unlimited. Checked before each "
 "source call and at each record creation."
 msgstr ""
+"الحد الأقصى للسجلات المنشأة يومياً. 0 أو أقل = بلا حد. يُفحص قبل كل استدعاء "
+"مصدر وعند إنشاء كل سجل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_daily_cap
@@ -487,63 +541,66 @@ msgid ""
 "blocks fetching. Checked BEFORE each source call and again at each record "
 "creation."
 msgstr ""
+"الحد الأقصى للسجلات التي قد يُنشئها المحرّك يومياً. آمن عند الفشل مثل سقف التكلفة: "
+"0 أو سالب = بلا حد (إلغاء اشتراك صريح)؛ القيمة المفقودة / غير القابلة للتحليل "
+"تمنع الجلب. يُفحص قبل كل استدعاء مصدر ومرة أخرى عند إنشاء كل سجل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_mobile_validation
 msgid "Mobile Number Validation"
-msgstr ""
+msgstr "التحقق من رقم الجوال"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__name
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_neverbounce
 msgid "NeverBounce (Email Verification)"
-msgstr ""
+msgstr "NeverBounce (التحقق من البريد الإلكتروني)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
 msgid "No externally-sourced records yet."
-msgstr ""
+msgstr "لا توجد سجلات من مصادر خارجية بعد."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
 msgid "No lead-gen sources found."
-msgstr ""
+msgstr "لم يُعثر على أي مصادر لتوليد العملاء المحتملين."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_consent__not_required
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_notice__not_required
 msgid "Not required"
-msgstr ""
+msgstr "غير مطلوب"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_dedup_mode
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "On duplicate match"
-msgstr ""
+msgstr "عند مطابقة مكرّرة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_opencorporates
 msgid "OpenCorporates"
-msgstr ""
+msgstr "OpenCorporates"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "PDPL & Compliance"
-msgstr ""
+msgstr "نظام حماية البيانات الشخصية (PDPL) والامتثال"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "PDPL Heavy"
-msgstr ""
+msgstr "ثقيل بموجب PDPL"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "PDPL Sensitivity"
-msgstr ""
+msgstr "حساسية PDPL"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__pdpl_sensitivity
@@ -552,6 +609,9 @@ msgid ""
 "sources MUST be 'heavy'; they are gated behind the conservative people-fetch"
 " toggle (16.7)."
 msgstr ""
+"وزن البيانات التي يجلبها هذا المصدر بموجب نظام حماية البيانات الشخصية (PDPL). "
+"مصادر صانعي القرار / البيانات الشخصية يجب أن تكون 'ثقيلة'؛ وهي محكومة بمفتاح "
+"جلب الأشخاص المتحفّظ (16.7)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_tag_name
@@ -560,11 +620,14 @@ msgid ""
 "sourced contacts can be isolated or purged. Resolved by name; defaults to "
 "'by_lead_generator_agent'."
 msgstr ""
+"وسم جهة الاتصال الذي يُختم على كل سجل يُنشئه المحرّك، بحيث يمكن عزل أو حذف "
+"جهات الاتصال من مصادر خارجية. يُحدَّد بالاسم؛ والقيمة الافتراضية هي "
+"'by_lead_generator_agent'."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__pdpl_sensitivity
 msgid "Pdpl Sensitivity"
-msgstr ""
+msgstr "حساسية PDPL"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_notice
@@ -573,6 +636,8 @@ msgid ""
 "Conservative default = required. Documented stance; Compliance enforces it "
 "before outreach."
 msgstr ""
+"الموقف من تزويد الأفراد (صانعي القرار) بإشعار معالجة. القيمة الافتراضية "
+"المتحفّظة = مطلوب. موقف موثّق؛ وتفرضه طبقة الامتثال قبل التواصل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -580,6 +645,7 @@ msgid ""
 "Posture on giving individuals a processing notice. Conservative default = "
 "required."
 msgstr ""
+"الموقف من تزويد الأفراد بإشعار معالجة. القيمة الافتراضية المتحفّظة = مطلوب."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -587,6 +653,8 @@ msgid ""
 "Posture on obtaining consent before processing an individual's data. "
 "Conservative default = required."
 msgstr ""
+"الموقف من الحصول على الموافقة قبل معالجة بيانات الفرد. القيمة الافتراضية "
+"المتحفّظة = مطلوب."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_consent
@@ -595,32 +663,34 @@ msgid ""
 "data. Conservative default = required. Documented stance; Compliance "
 "enforces it before outreach."
 msgstr ""
+"الموقف من الحصول على الموافقة قبل معالجة البيانات الشخصية للفرد. القيمة "
+"الافتراضية المتحفّظة = مطلوب. موقف موثّق؛ وتفرضه طبقة الامتثال قبل التواصل."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_prefer_local
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Prefer local (in-region) sources"
-msgstr ""
+msgstr "تفضيل المصادر المحلية (داخل المنطقة)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__priority
 msgid "Priority"
-msgstr ""
+msgstr "الأولوية"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__provider_type
 msgid "Provider Type"
-msgstr ""
+msgstr "نوع المزوّد"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__web_scrape
 msgid "Public-Page Scrape"
-msgstr ""
+msgstr "كشط الصفحات العامة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_public_scrape
 msgid "Public-Page Scrape (e.g. odoo.com customers)"
-msgstr ""
+msgstr "كشط الصفحات العامة (مثل عملاء odoo.com)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
@@ -630,53 +700,57 @@ msgid ""
 "               an <b>x_lead_gen_source</b> stamp, so they can be reviewed or purged\n"
 "               as a set."
 msgstr ""
+"تظهر هنا السجلات التي أنشأها محرّك توليد العملاء المحتملين، مجمَّعة\n"
+"               بحسب المصدر. وكلها تحمل وسم <b>by_lead_generator_agent</b>\n"
+"               وختم <b>x_lead_gen_source</b>، بحيث يمكن مراجعتها أو حذفها\n"
+"               كمجموعة واحدة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_consent__required
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_notice__required
 msgid "Required"
-msgstr ""
+msgstr "مطلوب"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_rocketreach
 msgid "RocketReach"
-msgstr ""
+msgstr "RocketReach"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_require_compliance_check
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Route through Compliance before outreach"
-msgstr ""
+msgstr "التوجيه عبر الامتثال قبل التواصل"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_saudi_business_center
 msgid "Saudi Business Center"
-msgstr ""
+msgstr "المركز السعودي للأعمال"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_saudi_moc
 msgid "Saudi Ministry of Commerce"
-msgstr ""
+msgstr "وزارة التجارة السعودية"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_serpapi
 msgid "SerpAPI (Web Search)"
-msgstr ""
+msgstr "SerpAPI (بحث الويب)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_settings
 msgid "Settings"
-msgstr ""
+msgstr "الإعدادات"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_signalhire
 msgid "SignalHire"
-msgstr ""
+msgstr "SignalHire"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_dedup_mode__skip
 msgid "Skip duplicates (leave existing untouched)"
-msgstr ""
+msgstr "تخطّي المكرّرات (ترك السجلات الحالية دون مساس)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
@@ -684,31 +758,33 @@ msgid ""
 "Skip duplicates or update blank fields on the existing partner. Never "
 "creates a duplicate."
 msgstr ""
+"تخطّي المكرّرات أو تحديث الحقول الفارغة في جهة الاتصال الحالية. لا يُنشئ "
+"سجلاً مكرّراً أبداً."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_block_source_without_token__silent
 msgid "Skip silently (no audit)"
-msgstr ""
+msgstr "تخطٍّ صامت (بدون تدقيق)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__social
 msgid "Social Network"
-msgstr ""
+msgstr "شبكة اجتماعية"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
 msgid "Source"
-msgstr ""
+msgstr "المصدر"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
 msgid "Source name"
-msgstr ""
+msgstr "اسم المصدر"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_sources
 msgid "Sources"
-msgstr ""
+msgstr "المصادر"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
@@ -717,36 +793,39 @@ msgid ""
 "               Active and set its token environment variable to bring it into the\n"
 "               prospecting waterfall."
 msgstr ""
+"تُهيَّأ المصادر مسبقاً عند التثبيت (جميعها غير نشطة). فعّل المصدر\n"
+"               واضبط متغيّر بيئة الرمز الخاص به لإدخاله في\n"
+"               التسلسل المتدرّج للتنقيب."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Tag stamped on every record the engine creates."
-msgstr ""
+msgstr "الوسم الذي يُختم على كل سجل ينشئه المحرّك."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_company_size
 msgid "Target Company Size"
-msgstr ""
+msgstr "حجم الشركة المستهدف"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_job_titles
 msgid "Target Job Titles (decision-makers)"
-msgstr ""
+msgstr "المسميات الوظيفية المستهدفة (صانعو القرار)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_regions
 msgid "Target Regions / Cities"
-msgstr ""
+msgstr "المناطق / المدن المستهدفة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_sectors
 msgid "Target Sectors"
-msgstr ""
+msgstr "القطاعات المستهدفة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "Targeting"
-msgstr ""
+msgstr "الاستهداف"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__env_key_param
@@ -755,6 +834,9 @@ msgid ""
 "never the secret itself (Rule 03). Leave empty for sources that need no "
 "token (e.g. some public scrapes)."
 msgstr ""
+"اسم متغيّر البيئة الذي يحتفظ برمز API الخاص بهذا المصدر — وليس القيمة السرية "
+"نفسها أبداً (Rule 03). اتركه فارغاً للمصادر التي لا تحتاج رمزاً (مثل بعض "
+"عمليات الكشط العامة)."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__provider_type
@@ -762,6 +844,8 @@ msgid ""
 "The TECHNICAL kind of source. Drives which handler (added in 16.4) knows how"
 " to query it."
 msgstr ""
+"النوع التقني للمصدر. يحدّد المعالج (المضاف في 16.4) الذي يعرف كيفية"
+" الاستعلام عنه."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_partner__x_lead_gen_source
@@ -772,21 +856,25 @@ msgid ""
 "Generation agent CREATED; empty for everything else, so externally-sourced "
 "records can be isolated or purged."
 msgstr ""
+"مزوّد توليد العملاء المحتملين المحدّد الذي جُلب منه هذا السجل (مثل "
+"'SerpAPI (Web Search)' أو 'OpenCorporates'). يُضبط فقط على السجلات التي "
+"أنشأها وكيل توليد العملاء المحتملين؛ ويبقى فارغاً لكل ما عداها، بحيث يمكن "
+"عزل أو حذف السجلات من مصادر خارجية."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_list
 msgid "Token"
-msgstr ""
+msgstr "الرمز"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__env_key_param
 msgid "Token Env Var Name"
-msgstr ""
+msgstr "اسم متغيّر بيئة الرمز"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__token_present
 msgid "Token Present"
-msgstr ""
+msgstr "الرمز موجود"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__token_present
@@ -796,38 +884,42 @@ msgid ""
 "environment (os.getenv) — the secret is never stored or pulled through the "
 "DB, so no sudo elevation is involved."
 msgstr ""
+"يكون صحيحاً فقط إذا كان متغيّر البيئة المسمّى في 'اسم متغيّر بيئة الرمز' "
+"يتحقّق حالياً إلى قيمة غير فارغة. يُقرأ مباشرةً من بيئة العملية "
+"(os.getenv) — فالقيمة السرية لا تُخزَّن أو تُسحب عبر قاعدة البيانات أبداً، "
+"وبالتالي لا تُستخدم أي صلاحيات sudo مرتفعة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #. module: era_crm_ai_agents_lead_gen
 #. odoo-python
 #: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen.py:0
 msgid "Unknown Company"
-msgstr ""
+msgstr "شركة غير معروفة"
 
 #. module: era_crm_ai_agents_lead_gen
 #. odoo-python
 #: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen.py:0
 msgid "Unknown Contact"
-msgstr ""
+msgstr "جهة اتصال غير معروفة"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_dedup_mode__update
 msgid "Update existing (fill blank fields only)"
-msgstr ""
+msgstr "تحديث الموجود (تعبئة الحقول الفارغة فقط)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
 msgid "Verification"
-msgstr ""
+msgstr "التحقق"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_block_source_without_token__warn
 msgid "Warn & skip (audit the skip)"
-msgstr ""
+msgstr "تحذير وتخطٍّ (تسجيل التخطّي في التدقيق)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__priority
@@ -835,11 +927,13 @@ msgid ""
 "Waterfall position — LOWER runs first. Sources are tried in this order until"
 " the needed data is found."
 msgstr ""
+"الموضع في التسلسل المتدرّج — الأقل يُنفَّذ أولاً. تُجرَّب المصادر بهذا الترتيب حتى"
+" يُعثر على البيانات المطلوبة."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__web_search
 msgid "Web Search API"
-msgstr ""
+msgstr "Web Search API"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__category
@@ -848,11 +942,14 @@ msgid ""
 "'decision_maker' (individuals) is the heaviest part and is gated behind a "
 "separate, off-by-default toggle."
 msgstr ""
+"ما يجلبه هذا المصدر إلى النظام. 'company' أخفّ بموجب نظام حماية البيانات "
+"الشخصية (PDPL)؛ بينما 'decision_maker' (الأفراد) هو الجزء الأثقل وهو محكوم "
+"بمفتاح منفصل معطّل افتراضياً."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
 msgid "What to do when a source is active but its token env var is not set."
-msgstr ""
+msgstr "ما الذي يجب فعله عندما يكون المصدر نشطاً لكن متغيّر بيئة الرمز غير مضبوط."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_block_source_without_token
@@ -862,6 +959,10 @@ msgid ""
 " (same philosophy as the Base's block_unpriced_model). 'silent' skips "
 "without auditing."
 msgstr ""
+"ما الذي يجب فعله عندما يكون المصدر نشطاً لكن متغيّر بيئة الرمز غير مضبوط. 'warn' "
+"(الافتراضي) يتخطّى المصدر ويكتب تحذيراً في سجل التدقيق — وليس تخطياً صامتاً"
+" أبداً (الفلسفة نفسها المتّبعة في block_unpriced_model في الموديول الأساسي). 'silent' يتخطّى "
+"دون تسجيل في التدقيق."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_dedup_mode
@@ -870,11 +971,14 @@ msgid ""
 "(default) never touches existing data; 'update' fills only the BLANK fields "
 "on the match. Neither ever creates a duplicate."
 msgstr ""
+"ما الذي يجب فعله عندما يطابق سجل وارد جهة اتصال موجودة. 'skip' "
+"(الافتراضي) لا يمسّ البيانات الحالية أبداً؛ بينما 'update' يعبّئ الحقول الفارغة فقط "
+"في السجل المطابق. ولا أيّ منهما يُنشئ سجلاً مكرّراً أبداً."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_waha_presence
 msgid "WhatsApp Presence (WAHA)"
-msgstr ""
+msgstr "تواجد WhatsApp (WAHA)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_require_compliance_check
@@ -883,6 +987,9 @@ msgid ""
 " (#1) before ANY outreach. Lead Gen only creates records; this records the "
 "posture the Compliance layer enforces."
 msgstr ""
+"عند التفعيل (الافتراضي)، يجب أن تجتاز السجلات من مصادر خارجية حارس الامتثال"
+" (#1) قبل أي تواصل. توليد العملاء المحتملين يُنشئ السجلات فقط؛ وهذا يسجّل "
+"الموقف الذي تفرضه طبقة الامتثال."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_flag_egress
@@ -890,6 +997,8 @@ msgid ""
 "When ON (default), the engine writes an audit flag whenever a non-Saudi-"
 "local source is used, so cross-border data movement is never silent."
 msgstr ""
+"عند التفعيل (الافتراضي)، يكتب المحرّك علامة في سجل التدقيق كلما استُخدم مصدر "
+"غير سعودي محلي، بحيث لا يحدث نقل للبيانات عبر الحدود بصمت."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_prefer_local
@@ -897,13 +1006,15 @@ msgid ""
 "When ON (default), the waterfall favours in-region sources (the Saudi "
 "registries sit at the top of the priority order) for data residency."
 msgstr ""
+"عند التفعيل (الافتراضي)، يفضّل التسلسل المتدرّج المصادر داخل المنطقة (تأتي "
+"السجلات السعودية في أعلى ترتيب الأولوية) لضمان إقامة البيانات."
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_zerobounce
 msgid "ZeroBounce (Email Verification)"
-msgstr ""
+msgstr "ZeroBounce (التحقق من البريد الإلكتروني)"
 
 #. module: era_crm_ai_agents_lead_gen
 #: model:res.partner.category,name:era_crm_ai_agents_lead_gen.tag_by_lead_generator_agent
 msgid "by_lead_generator_agent"
-msgstr ""
+msgstr "by_lead_generator_agent"

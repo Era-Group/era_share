@@ -18,22 +18,22 @@ msgstr ""
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__active
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_template_form
 msgid "Approved Body"
-msgstr ""
+msgstr "النص المعتمد"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__body
 msgid "Body"
-msgstr ""
+msgstr "نص الرسالة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_candidates
 msgid "Candidates"
-msgstr ""
+msgstr "المرشّحون"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_candidates
@@ -42,90 +42,93 @@ msgid ""
 "               agent re-approaches qualifying ones through compliance and your\n"
 "               approval."
 msgstr ""
+"تظهر هنا العملاء المحتملون المغلقون كفرص خاسرة بوصفهم مرشّحين لإعادة الإحياء.\n"
+"               ويتولّى الوكيل إعادة التواصل مع المؤهّلين منهم عبر فحص الامتثال\n"
+"               واعتمادك."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.act_window,name:era_crm_ai_agents_dead_lead.action_dead_lead_approvals
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_approvals
 msgid "Comeback Approvals"
-msgstr ""
+msgstr "اعتمادات رسائل العودة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Comeback Sent"
-msgstr ""
+msgstr "تم إرسال رسالة العودة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_template_form
 msgid "Comeback Template"
-msgstr ""
+msgstr "قالب رسالة العودة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.act_window,name:era_crm_ai_agents_dead_lead.action_crm_ai_dead_lead_template
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_templates
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_template_list
 msgid "Comeback Templates"
-msgstr ""
+msgstr "قوالب رسائل العودة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__competitor
 msgid "Competitor"
-msgstr ""
+msgstr "منافس"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_config
 msgid "Configuration"
-msgstr ""
+msgstr "الإعداد"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__create_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشأه"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__create_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__create_date
 msgid "Created on"
-msgstr ""
+msgstr "أُنشئ في"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_root
 msgid "Dead-Lead"
-msgstr ""
+msgstr "العميل المحتمل الخامل"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_agent_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_agent_list
 msgid "Dead-Lead Agent"
-msgstr ""
+msgstr "وكيل العملاء المحتملين الخاملين"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_lost_reason__crm_ai_reason_bucket
 msgid "Dead-Lead Bucket"
-msgstr ""
+msgstr "تصنيف العميل المحتمل الخامل"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model,name:era_crm_ai_agents_dead_lead.model_crm_ai_dead_lead_template
 msgid "Dead-Lead Comeback Template"
-msgstr ""
+msgstr "قالب رسالة العودة للعميل المحتمل الخامل"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Dead-Lead Leads"
-msgstr ""
+msgstr "العملاء المحتملون الخاملون"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.agent,name:era_crm_ai_agents_dead_lead.agent_era_dead_lead
 #: model:crm.ai.dead.lead.agent,name:era_crm_ai_agents_dead_lead.dead_lead_agent_config
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_lost_reason_form_dead_lead
 msgid "Dead-Lead Resurrection"
-msgstr ""
+msgstr "إحياء العملاء المحتملين الخاملين"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model,name:era_crm_ai_agents_dead_lead.model_crm_ai_dead_lead_agent
 msgid "Dead-Lead Resurrection Agent"
-msgstr ""
+msgstr "وكيل إحياء العملاء المحتملين الخاملين"
 
 #. module: era_crm_ai_agents_dead_lead
 #. odoo-python
@@ -135,27 +138,30 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"إحياء العملاء المحتملين الخاملين: تم إرسال رسالة العودة المعتمدة عبر WhatsApp.\n"
+"\n"
+"%s"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.act_window,name:era_crm_ai_agents_dead_lead.action_crm_ai_dead_lead_agent
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_settings
 msgid "Dead-Lead Settings"
-msgstr ""
+msgstr "إعدادات العملاء المحتملين الخاملين"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_lead__crm_ai_dead_lead_last_sent
 msgid "Dead-Lead: Last Comeback Sent"
-msgstr ""
+msgstr "العميل المحتمل الخامل: آخر رسالة عودة مُرسلة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.server,name:era_crm_ai_agents_dead_lead.ir_cron_scan_dead_leads_ir_actions_server
 msgid "Dead-Lead: Scan lost leads"
-msgstr ""
+msgstr "العميل المحتمل الخامل: فحص العملاء المحتملين الخاسرين"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,name:era_crm_ai_agents_dead_lead.dead_lead_template_default
 msgid "Default Comeback Template"
-msgstr ""
+msgstr "قالب رسالة العودة الافتراضي"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__display_name
@@ -168,7 +174,7 @@ msgstr "اسم العرض"
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__name
 msgid "Display label for this agent configuration."
-msgstr ""
+msgstr "التسمية المعروضة لإعداد هذا الوكيل."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_approvals
@@ -177,26 +183,29 @@ msgid ""
 "               one sends it over WhatsApp; you can edit the text before\n"
 "               approving."
 msgstr ""
+"تظهر هنا مسوّدات رسائل العودة لمراجعتك. واعتماد إحداها\n"
+"               يرسلها عبر WhatsApp؛ ويمكنك تعديل النص قبل\n"
+"               الاعتماد."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__elapsed_days_threshold
 msgid "Elapsed Days Threshold"
-msgstr ""
+msgstr "عتبة عدد الأيام المنقضية"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_lost_reason__crm_ai_resurrectable
 msgid "Eligible for Resurrection"
-msgstr ""
+msgstr "مؤهّل لإعادة الإحياء"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__scan_enabled
 msgid "Enable Scheduled Scan"
-msgstr ""
+msgstr "تفعيل الفحص المجدول"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,name:era_crm_ai_agents_dead_lead.dead_lead_tmpl_general
 msgid "General Comeback (slotted)"
-msgstr ""
+msgstr "رسالة عودة عامة (بخانات قابلة للتعبئة)"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_lost_reason__crm_ai_reason_bucket
@@ -204,6 +213,8 @@ msgid ""
 "How the Dead-Lead Resurrection agent classifies leads lost for this reason; "
 "drives the comeback approach (task 3.4). Unset is treated as 'Other'."
 msgstr ""
+"الطريقة التي يصنّف بها وكيل إحياء العملاء المحتملين الخاملين العملاء الذين خُسروا لهذا السبب؛ "
+"وهي تحدّد أسلوب رسالة العودة (المهمة 3.4). وعند عدم التحديد يُعامَل على أنه 'أخرى'."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__id
@@ -221,23 +232,26 @@ msgid ""
 "existing behaviour is preserved until a manager deliberately opts a reason "
 "out."
 msgstr ""
+"عند الإيقاف، لا يُعيد وكيل العملاء المحتملين الخاملين إحياء العملاء الذين خُسروا لهذا السبب "
+"إطلاقاً (مثل 'ليس عميلاً محتملاً حقيقياً' / 'عدم التواصل'). والقيمة الافتراضية مُفعّلة، بحيث "
+"يُحفَظ السلوك القائم إلى أن يستثني المدير سبباً ما عمداً."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__name
 msgid "Internal label for this approved comeback template."
-msgstr ""
+msgstr "تسمية داخلية لقالب رسالة العودة المعتمد هذا."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__write_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__write_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "آخر تحديث في"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model,name:era_crm_ai_agents_dead_lead.model_crm_lead
@@ -247,12 +261,12 @@ msgstr "عميل مهتم"
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Lead / Opportunity"
-msgstr ""
+msgstr "عميل محتمل / فرصة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Lost Reason"
-msgstr ""
+msgstr "سبب الخسارة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__scan_enabled
@@ -261,6 +275,9 @@ msgid ""
 "fully inert until a manager opts in. When off, the cron runs but does "
 "nothing."
 msgstr ""
+"المفتاح الرئيسي للفحص اليومي. مُعطّل افتراضياً — إذ يظل الوكيل المرسِل خاملاً "
+"تماماً إلى أن يُفعّله المدير. وعند الإيقاف، تُنفَّذ المهمة المجدولة دون أن "
+"تفعل شيئاً."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__scan_batch_size
@@ -268,6 +285,8 @@ msgid ""
 "Maximum number of lost leads to process per scheduled run (bounds work and "
 "cost per run)."
 msgstr ""
+"الحد الأقصى لعدد العملاء المحتملين الخاسرين المراد معالجتهم في كل تشغيل مجدول "
+"(يضبط حجم العمل والتكلفة لكل تشغيل)."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__cooldown_days
@@ -275,6 +294,8 @@ msgid ""
 "Minimum days after a comeback was sent (or proposed) before the same lead "
 "may be scanned again. Prevents re-contacting the same lead on every run."
 msgstr ""
+"أقل عدد من الأيام بعد إرسال رسالة العودة (أو اقتراحها) قبل أن يُعاد فحص العميل "
+"المحتمل نفسه. يمنع إعادة التواصل مع العميل المحتمل نفسه في كل تشغيل."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__elapsed_days_threshold
@@ -283,47 +304,50 @@ msgid ""
 "time elapsed' trigger may fire (task 3.3). A manager may change this; the "
 "default is a safe, conservative window."
 msgstr ""
+"أقل عدد من الأيام يجب أن يكون العميل المحتمل مغلقاً كخاسر خلالها قبل أن يُطلَق "
+"محفّز 'انقضاء وقت كافٍ' (المهمة 3.3). ويمكن للمدير تغيير هذه القيمة؛ والقيمة "
+"الافتراضية نافذة آمنة ومتحفّظة."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "My Leads"
-msgstr ""
+msgstr "عملائي المحتملون"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__name
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__name
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__no_response
 msgid "No Response"
-msgstr ""
+msgstr "عدم الاستجابة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_candidates
 msgid "No closed-lost leads yet."
-msgstr ""
+msgstr "لا يوجد عملاء محتملون مغلقون كخاسرين حتى الآن."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_approvals
 msgid "No comebacks awaiting approval."
-msgstr ""
+msgstr "لا توجد رسائل عودة بانتظار الاعتماد."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_results
 msgid "No comebacks sent yet."
-msgstr ""
+msgstr "لم تُرسَل أي رسائل عودة حتى الآن."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Not Yet Contacted"
-msgstr ""
+msgstr "لم يتم التواصل بعد"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__note
 msgid "Note"
-msgstr ""
+msgstr "ملاحظة"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_dead_lead.action_dead_lead_results
@@ -331,6 +355,8 @@ msgid ""
 "Once an approved comeback is sent, the lead appears here with the\n"
 "               send timestamp."
 msgstr ""
+"بمجرد إرسال رسالة عودة معتمدة، يظهر العميل المحتمل هنا مع\n"
+"               وقت الإرسال."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model,name:era_crm_ai_agents_dead_lead.model_crm_lost_reason
@@ -343,71 +369,73 @@ msgid ""
 "Optional guidance for the salesperson / reviewer about when this template is"
 " appropriate."
 msgstr ""
+"إرشادات اختيارية لمندوب المبيعات / المراجِع حول متى يكون هذا القالب"
+" مناسباً."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__other
 msgid "Other"
-msgstr ""
+msgstr "أخرى"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__price
 msgid "Price / Budget"
-msgstr ""
+msgstr "السعر / الميزانية"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,name:era_crm_ai_agents_dead_lead.dead_lead_tmpl_price
 msgid "Price/Budget Comeback (slotted)"
-msgstr ""
+msgstr "رسالة عودة بشأن السعر/الميزانية (بخانات قابلة للتعبئة)"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__requirements
 msgid "Requirements Mismatch"
-msgstr ""
+msgstr "عدم تطابق المتطلبات"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__cooldown_days
 msgid "Resend Cooldown (days)"
-msgstr ""
+msgstr "فترة التهدئة قبل إعادة الإرسال (بالأيام)"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.ui.menu,name:era_crm_ai_agents_dead_lead.menu_crm_ai_dead_lead_results
 msgid "Results"
-msgstr ""
+msgstr "النتائج"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.act_window,name:era_crm_ai_agents_dead_lead.action_dead_lead_candidates
 msgid "Resurrection Candidates"
-msgstr ""
+msgstr "مرشّحو إعادة الإحياء"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.actions.act_window,name:era_crm_ai_agents_dead_lead.action_dead_lead_results
 msgid "Resurrection Results"
-msgstr ""
+msgstr "نتائج إعادة الإحياء"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_template_form
 msgid "Reviewer Guidance"
-msgstr ""
+msgstr "إرشادات المراجِع"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_dead_lead_lead_search
 msgid "Salesperson"
-msgstr ""
+msgstr "مندوب المبيعات"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__scan_batch_size
 msgid "Scan Batch Size"
-msgstr ""
+msgstr "حجم دفعة الفحص"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_agent_form
 msgid "Scheduled Scan"
-msgstr ""
+msgstr "الفحص المجدول"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__sequence
 msgid "Sequence"
-msgstr ""
+msgstr "التسلسل"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_agent_form
@@ -418,11 +446,16 @@ msgid ""
 "                        every comeback still goes through compliance and human\n"
 "                        approval."
 msgstr ""
+"اضبط <b>elapsed_days_threshold</b> على 0 لتعطيل\n"
+"                        محفّز انقضاء الوقت. ويظل الفحص خاملاً إلى أن يكون\n"
+"                        <b>تفعيل الفحص المجدول</b> مُفعّلاً؛ وهو لا يرسل أبداً —\n"
+"                        إذ تمرّ كل رسالة عودة عبر فحص الامتثال والاعتماد\n"
+"                        البشري."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,field_description:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__template_id
 msgid "Template"
-msgstr ""
+msgstr "القالب"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_template__body
@@ -430,6 +463,8 @@ msgid ""
 "The approved comeback message body (Arabic). The agent fills only the "
 "personal parts; a human approves the final text before sending."
 msgstr ""
+"نص رسالة العودة المعتمد (بالعربية). يعبّئ الوكيل الأجزاء الشخصية فقط؛ "
+"ويعتمد شخص بشري النص النهائي قبل الإرسال."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_ai_dead_lead_agent__template_id
@@ -437,16 +472,18 @@ msgid ""
 "The approved comeback template the agent fills the personal parts of when "
 "drafting (task 3.4)."
 msgstr ""
+"قالب رسالة العودة المعتمد الذي يعبّئ الوكيل أجزاءه الشخصية عند "
+"إعداد المسوّدة (المهمة 3.4)."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_dead_lead.selection__crm_lost_reason__crm_ai_reason_bucket__timing
 msgid "Timing"
-msgstr ""
+msgstr "التوقيت"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_agent_form
 msgid "Trigger"
-msgstr ""
+msgstr "المحفّز"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_dead_lead.view_crm_ai_dead_lead_template_form
@@ -457,6 +494,11 @@ msgid ""
 "                        AI-authored part). Everything outside the slots is sent\n"
 "                        exactly as written."
 msgstr ""
+"استخدم الخانات التي يعبّئها الوكيل: <b>{{name}}</b>،\n"
+"                        <b>{{company}}</b>، <b>{{salesperson}}</b> (من\n"
+"                        السجل) و<b>{{personal_note}}</b> (الجزء الوحيد\n"
+"                        الذي يصوغه الذكاء الاصطناعي). أما كل ما هو خارج الخانات فيُرسَل\n"
+"                        كما هو مكتوب تماماً."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:ir.model.fields,help:era_crm_ai_agents_dead_lead.field_crm_lead__crm_ai_dead_lead_last_sent
@@ -464,6 +506,8 @@ msgid ""
 "When the Dead-Lead Resurrection agent last sent an approved comeback message"
 " for this lead (set on send). Used by the scan as a cooldown signal."
 msgstr ""
+"موعد آخر مرة أرسل فيها وكيل إحياء العملاء المحتملين الخاملين رسالة عودة معتمدة"
+" لهذا العميل المحتمل (يُضبط عند الإرسال). يستخدمه الفحص كإشارة لفترة التهدئة."
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,body:era_crm_ai_agents_dead_lead.dead_lead_tmpl_price
@@ -477,6 +521,14 @@ msgid ""
 "مع خالص التقدير،\n"
 "{{salesperson}}"
 msgstr ""
+"السلام عليكم ورحمة الله وبركاته {{name}}،\n"
+"\n"
+"{{personal_note}}\n"
+"\n"
+"طرأت لدينا بعض التحديثات التي قد تتوافق بشكل أفضل مع متطلبات {{company}}، ويسعدنا مناقشتها معكم متى ما كان ذلك مناسباً.\n"
+"\n"
+"مع خالص التقدير،\n"
+"{{salesperson}}"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,body:era_crm_ai_agents_dead_lead.dead_lead_tmpl_general
@@ -490,6 +542,14 @@ msgid ""
 "مع خالص التقدير،\n"
 "{{salesperson}}"
 msgstr ""
+"السلام عليكم ورحمة الله وبركاته {{name}}،\n"
+"\n"
+"{{personal_note}}\n"
+"\n"
+"يسعدنا التواصل معكم مجدداً، ونحن على استعداد لخدمتكم في الوقت الذي يناسبكم.\n"
+"\n"
+"مع خالص التقدير،\n"
+"{{salesperson}}"
 
 #. module: era_crm_ai_agents_dead_lead
 #: model:crm.ai.dead.lead.template,body:era_crm_ai_agents_dead_lead.dead_lead_template_default
@@ -500,3 +560,8 @@ msgid ""
 "\n"
 "مع خالص التقدير."
 msgstr ""
+"السلام عليكم ورحمة الله وبركاته،\n"
+"\n"
+"نتواصل معكم من جديد بخصوص اهتمامكم السابق. يسعدنا تقديم ما يناسب احتياجكم الحالي.\n"
+"\n"
+"مع خالص التقدير."

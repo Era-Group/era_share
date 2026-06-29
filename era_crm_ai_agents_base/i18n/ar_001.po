@@ -29,91 +29,101 @@ msgid ""
 "                                Use a dedicated internal user instead unless you\n"
 "                                fully accept this."
 msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                                <strong>يشغّل OdooBot الوكلاء بصلاحيات المستخدم الخارق.</strong>\n"
+"                                وهو <strong>يتجاوز جميع قواعد الوصول وقواعد\n"
+"                                السجلات</strong>، ويخالف القاعدة Rule 09 (يجب تشغيل الوكلاء\n"
+"                                بصلاحيات حقيقية، لا بصلاحيات المستخدم الخارق إطلاقاً)،\n"
+"                                ويحمل <strong>مخاطر PDPL</strong>: إذ ستعالج الوكلاء المجدولة\n"
+"                                البيانات الشخصية للأفراد مع وصول\n"
+"                                غير مقيّد إلى كل سجل في قاعدة البيانات.\n"
+"                                استخدم مستخدماً داخلياً مخصّصاً بدلاً من ذلك ما لم\n"
+"                                تقبل هذا المخاطرة بالكامل."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_partner_form_crm_ai_consent
 msgid "AI & PDPL"
-msgstr ""
+msgstr "الذكاء الاصطناعي و PDPL"
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_approval.py:0
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "AI Agent"
-msgstr ""
+msgstr "وكيل الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_agent
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 msgid "AI Agents"
-msgstr ""
+msgstr "وكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:res.groups,name:era_crm_ai_agents_base.group_crm_ai_manager
 msgid "AI Agents Manager"
-msgstr ""
+msgstr "مدير وكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:res.groups,name:era_crm_ai_agents_base.group_crm_ai_user
 msgid "AI Agents User"
-msgstr ""
+msgstr "مستخدم وكلاء الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_dashboard_list
 msgid "AI Agents — Consumption & Status"
-msgstr ""
+msgstr "وكلاء الذكاء الاصطناعي — الاستهلاك والحالة"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "AI Approval"
-msgstr ""
+msgstr "اعتماد الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_approval_queue
 msgid "AI Approval Queue"
-msgstr ""
+msgstr "قائمة اعتمادات الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_approval_all
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "AI Approvals"
-msgstr ""
+msgstr "اعتمادات الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_form
 msgid "AI Audit Entry"
-msgstr ""
+msgstr "إدخال تدقيق الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_audit_log
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_search
 msgid "AI Audit Log"
-msgstr ""
+msgstr "سجل تدقيق الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_partner__crm_ai_consent_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_users__crm_ai_consent_date
 msgid "AI Consent Date"
-msgstr ""
+msgstr "تاريخ الموافقة على الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "AI Cost Cap (Rule 14)"
-msgstr ""
+msgstr "سقف تكلفة الذكاء الاصطناعي (Rule 14)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_dashboard
 msgid "AI Dashboard"
-msgstr ""
+msgstr "لوحة معلومات الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_partner__crm_ai_intl_processing_consent
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_users__crm_ai_intl_processing_consent
 msgid "AI Int'l Processing Consent"
-msgstr ""
+msgstr "الموافقة على المعالجة الدولية بالذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_model
@@ -121,17 +131,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_list
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_search
 msgid "AI Model Pricing"
-msgstr ""
+msgstr "تسعير نماذج الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__ai_request
 msgid "AI Request (allowed)"
-msgstr ""
+msgstr "طلب ذكاء اصطناعي (مسموح)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__blocked
 msgid "AI Request Blocked"
-msgstr ""
+msgstr "طلب ذكاء اصطناعي محظور"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.act_window,name:era_crm_ai_agents_base.action_crm_ai_usage
@@ -139,13 +149,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_pivot
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "AI Usage"
-msgstr ""
+msgstr "استهلاك الذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_agent_mixin.py:0
 msgid "AI agent %s has no _agent_tech_name set."
-msgstr ""
+msgstr "وكيل الذكاء الاصطناعي %s ليس له قيمة محددة في _agent_tech_name."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -154,18 +164,20 @@ msgid ""
 "AI agent '%(name)s' has no model configured. Set its Model (and optionally "
 "Advanced Model) on the agent."
 msgstr ""
+"وكيل الذكاء الاصطناعي '%(name)s' لا يحتوي على نموذج مُهيّأ. حدّد النموذج (و"
+"النموذج المتقدّم اختيارياً) على الوكيل."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_agent_mixin.py:0
 msgid "AI agent '%(name)s' is %(state)s and cannot run."
-msgstr ""
+msgstr "وكيل الذكاء الاصطناعي '%(name)s' في حالة %(state)s ولا يمكن تشغيله."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_agent_mixin.py:0
 msgid "AI agent '%(name)s' is over its monthly %(kind)s limit (Rule 14)."
-msgstr ""
+msgstr "وكيل الذكاء الاصطناعي '%(name)s' تجاوز حدّه الشهري لـ %(kind)s (Rule 14)."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -174,6 +186,8 @@ msgid ""
 "AI agent '%(name)s' is set to the Claude CLI transport but has no Claude "
 "Account configured."
 msgstr ""
+"وكيل الذكاء الاصطناعي '%(name)s' مضبوط على نقل Claude CLI لكن لا يوجد حساب "
+"Claude مُهيّأ له."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -182,32 +196,34 @@ msgid ""
 "AI agent '%(name)s' uses the Claude CLI transport but has no Claude Account "
 "set. Pick an era_ai_accounts account."
 msgstr ""
+"وكيل الذكاء الاصطناعي '%(name)s' يستخدم نقل Claude CLI لكن لا يوجد حساب Claude "
+"محدد له. اختر حساب era_ai_accounts."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.module.category,description:era_crm_ai_agents_base.module_category_crm_ai_agents
 msgid "Access to the Era CRM AI Agents suite."
-msgstr ""
+msgstr "الوصول إلى حزمة Era لوكلاء الذكاء الاصطناعي لإدارة علاقات العملاء."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__active
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__active
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_model
 msgid "Add a model price to the rate card."
-msgstr ""
+msgstr "أضف سعر نموذج إلى بطاقة الأسعار."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__model_code_advanced
 msgid "Advanced Model"
-msgstr ""
+msgstr "النموذج المتقدّم"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_form
 msgid "After"
-msgstr ""
+msgstr "بعد"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__agent_id
@@ -217,23 +233,23 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_search
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Agent"
-msgstr ""
+msgstr "وكيل"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Agent Automation (cron identity)"
-msgstr ""
+msgstr "أتمتة الوكيل (هوية المهمة المجدولة)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_cron_run_mode
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Agent cron execution identity"
-msgstr ""
+msgstr "هوية تنفيذ المهمة المجدولة للوكيل"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_cron_run_user_id
 msgid "Agent cron run user"
-msgstr ""
+msgstr "مستخدم تشغيل المهمة المجدولة للوكيل"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_approval_queue
@@ -241,72 +257,74 @@ msgid ""
 "Agent outputs that need human approval (e.g. Arabic messages)\n"
 "                appear here for the reviewer to edit, approve, or reject."
 msgstr ""
+"تظهر هنا مخرجات الوكيل التي تتطلب اعتماداً بشرياً (مثل الرسائل العربية)\n"
+"                ليقوم المراجع بتحريرها أو اعتمادها أو رفضها."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_agents
 msgid "Agents"
-msgstr ""
+msgstr "الوكلاء"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_dashboard_graph
 msgid "Agents by Status"
-msgstr ""
+msgstr "الوكلاء حسب الحالة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__approval_requested
 msgid "Approval Requested"
-msgstr ""
+msgstr "تم طلب الاعتماد"
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_approval.py:0
 msgid "Approval: %s"
-msgstr ""
+msgstr "الاعتماد: %s"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_approvals
 msgid "Approvals"
-msgstr ""
+msgstr "الاعتمادات"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "Approve"
-msgstr ""
+msgstr "اعتماد"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_approval__state__approved
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "Approved"
-msgstr ""
+msgstr "معتمد"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_search
 msgid "Archived"
-msgstr ""
+msgstr "مؤرشف"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_config_audit
 msgid "Audit Log"
-msgstr ""
+msgstr "سجل التدقيق"
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_audit_log.py:0
 msgid "Audit log entries are immutable and cannot be edited."
-msgstr ""
+msgstr "إدخالات سجل التدقيق غير قابلة للتغيير ولا يمكن تحريرها."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_audit_log.py:0
 msgid "Audit log entries cannot be deleted."
-msgstr ""
+msgstr "لا يمكن حذف إدخالات سجل التدقيق."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_form
 msgid "Before"
-msgstr ""
+msgstr "قبل"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -314,95 +332,97 @@ msgid ""
 "Block AI calls whose model has no price in the rate card, so cost is never "
 "silently uncounted."
 msgstr ""
+"احظر طلبات الذكاء الاصطناعي التي لا يوجد لنموذجها سعر في بطاقة الأسعار، حتى لا "
+"تُغفل التكلفة دون احتساب بصمت."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Block Unpriced Models (Rule 14 fail-safe)"
-msgstr ""
+msgstr "حظر النماذج غير المسعّرة (إجراء أمان احتياطي لـ Rule 14)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_block_unpriced_model
 msgid "Block unpriced AI models (Rule 14 fail-safe)"
-msgstr ""
+msgstr "حظر نماذج الذكاء الاصطناعي غير المسعّرة (إجراء أمان احتياطي لـ Rule 14)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_list
 msgid "CLI"
-msgstr ""
+msgstr "CLI"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__via_cli
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "CLI / Subscription"
-msgstr ""
+msgstr "CLI / الاشتراك"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__cli_model_code
 msgid "CLI Model"
-msgstr ""
+msgstr "نموذج CLI"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_root
 msgid "CRM AI Agent Base"
-msgstr ""
+msgstr "أساس وكلاء الذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_agent_mixin
 msgid "CRM AI Agent Mixin"
-msgstr ""
+msgstr "الصنف المخصّص (Mixin) لوكيل الذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_agent
 msgid "CRM AI Agent Registry"
-msgstr ""
+msgstr "سجل وكلاء الذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.module.category,name:era_crm_ai_agents_base.module_category_crm_ai_agents
 #: model:res.groups.privilege,name:era_crm_ai_agents_base.privilege_crm_ai_agents
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "CRM AI Agents"
-msgstr ""
+msgstr "وكلاء الذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.actions.server,name:era_crm_ai_agents_base.ir_cron_crm_ai_check_caps_ir_actions_server
 msgid "CRM AI Agents: Check cost caps"
-msgstr ""
+msgstr "وكلاء الذكاء الاصطناعي لإدارة علاقات العملاء: فحص سقوف التكلفة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_audit_log
 msgid "CRM AI Critical Audit Log"
-msgstr ""
+msgstr "سجل التدقيق الحرج للذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_approval
 msgid "CRM AI Human Approval"
-msgstr ""
+msgstr "الاعتماد البشري للذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_model
 msgid "CRM AI Model Pricing (Rate Card)"
-msgstr ""
+msgstr "تسعير نماذج الذكاء الاصطناعي لإدارة علاقات العملاء (بطاقة الأسعار)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_crm_ai_usage
 msgid "CRM AI Usage"
-msgstr ""
+msgstr "استهلاك الذكاء الاصطناعي لإدارة علاقات العملاء"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_agent__state__capped
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 msgid "Capped"
-msgstr ""
+msgstr "موقوف لبلوغ السقف"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__cli_account_id
 msgid "Claude Account"
-msgstr ""
+msgstr "حساب Claude"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_agent__transport__cli
 msgid "Claude CLI (subscription)"
-msgstr ""
+msgstr "Claude CLI (الاشتراك)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__cli_model_code
@@ -410,11 +430,13 @@ msgid ""
 "Claude CLI model alias (e.g. 'opus', 'sonnet', 'haiku') or a full model id. "
 "Aliases resolve to the latest model of that tier."
 msgstr ""
+"اسم بديل لنموذج Claude CLI (مثل 'opus' أو 'sonnet' أو 'haiku') أو معرّف نموذج "
+"كامل. تُحَلّ الأسماء البديلة إلى أحدث نموذج في تلك الفئة."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Compliance Layers (PDPL)"
-msgstr ""
+msgstr "طبقات الامتثال (PDPL)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_res_config_settings
@@ -424,17 +446,17 @@ msgstr "تهيئة الإعدادات"
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_config
 msgid "Configuration"
-msgstr ""
+msgstr "الإعداد"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Consent Check"
-msgstr ""
+msgstr "فحص الموافقة"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "Consumption (this month)"
-msgstr ""
+msgstr "الاستهلاك (هذا الشهر)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model,name:era_crm_ai_agents_base.model_res_partner
@@ -446,22 +468,22 @@ msgstr "جهة الاتصال"
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__cost
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_list
 msgid "Cost"
-msgstr ""
+msgstr "التكلفة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__cost_cap_exceeded
 msgid "Cost Cap Exceeded"
-msgstr ""
+msgstr "تم تجاوز سقف التكلفة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_model__price_input_1k
 msgid "Cost in USD per 1,000 input (prompt) tokens."
-msgstr ""
+msgstr "التكلفة بالدولار الأمريكي لكل 1,000 رمز إدخال (موجّه)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_model__price_output_1k
 msgid "Cost in USD per 1,000 output (completion) tokens."
-msgstr ""
+msgstr "التكلفة بالدولار الأمريكي لكل 1,000 رمز إخراج (استكمال)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__create_uid
@@ -470,7 +492,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__create_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشأه"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__create_date
@@ -479,38 +501,38 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__create_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__create_date
 msgid "Created on"
-msgstr ""
+msgstr "أُنشئ في"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__currency_id
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__currency_id
 msgid "Currency"
-msgstr ""
+msgstr "العملة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_dashboard
 msgid "Dashboard"
-msgstr ""
+msgstr "لوحة المعلومات"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__decided_on
 msgid "Decided On"
-msgstr ""
+msgstr "تاريخ القرار"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__delete
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_enable_audit
 msgid "Detailed AI audit log (Rule 20)"
-msgstr ""
+msgstr "سجل تدقيق مفصّل للذكاء الاصطناعي (Rule 20)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Detailed Audit Log (Rule 20)"
-msgstr ""
+msgstr "سجل تدقيق مفصّل (Rule 20)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -519,6 +541,9 @@ msgid ""
 "                            non-Saudi AI provider without PDPL protection. Each\n"
 "                            change is recorded in the AI audit log."
 msgstr ""
+"يؤدي تعطيل طبقة امتثال إلى إرسال البيانات الشخصية إلى\n"
+"                            مزوّد ذكاء اصطناعي غير سعودي دون حماية PDPL. ويُسجَّل كل\n"
+"                            تغيير في سجل تدقيق الذكاء الاصطناعي."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__display_name
@@ -530,7 +555,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__display_name
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_partner__display_name
 msgid "Display Name"
-msgstr "اسم العرض"
+msgstr "الاسم المعروض"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_agent
@@ -538,32 +563,34 @@ msgid ""
 "Each satellite module registers its agent here automatically on\n"
 "                install. You can pause, enable, or inspect monthly cost from this view."
 msgstr ""
+"يسجّل كل موديول تابع وكيله هنا تلقائياً عند\n"
+"                التثبيت. يمكنك إيقافه مؤقتاً أو تفعيله أو الاطلاع على التكلفة الشهرية من هذا العرض."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__edited_content
 msgid "Edited Content"
-msgstr ""
+msgstr "المحتوى المحرَّر"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "Edited Content (optional — supersedes proposed on approval)"
-msgstr ""
+msgstr "المحتوى المحرَّر (اختياري — يحلّ محل المقترح عند الاعتماد)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__effective_content
 msgid "Effective Content"
-msgstr ""
+msgstr "المحتوى الفعلي"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "Enable"
-msgstr ""
+msgstr "تفعيل"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_agent__state__enabled
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 msgid "Enabled"
-msgstr ""
+msgstr "مُفعَّل"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__state
@@ -571,27 +598,29 @@ msgid ""
 "Enabled: running. Paused: switched off by a user. Capped: auto-paused "
 "because the monthly cost cap was hit (Rule 14)."
 msgstr ""
+"مُفعَّل: قيد التشغيل. موقوف مؤقتاً: أوقفه أحد المستخدمين. موقوف لبلوغ السقف: "
+"أُوقف تلقائياً لأن سقف التكلفة الشهري قد بُلِغ (Rule 14)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_enable_cost_cap
 msgid "Enforce AI cost cap (Rule 14)"
-msgstr ""
+msgstr "فرض سقف تكلفة الذكاء الاصطناعي (Rule 14)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Enforce the hard monthly cost cap before any spend."
-msgstr ""
+msgstr "فرض سقف التكلفة الشهري الصارم قبل أي إنفاق."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_usage__token_source__estimated
 msgid "Estimated"
-msgstr ""
+msgstr "مُقدّر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_audit_log__event_type
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_search
 msgid "Event Type"
-msgstr ""
+msgstr "نوع الحدث"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_usage
@@ -599,6 +628,8 @@ msgid ""
 "Every LLM call records a row here with its token counts and cost,\n"
 "                feeding the monthly cost cap (Rule 14)."
 msgstr ""
+"يسجّل كل استدعاء لـ LLM صفاً هنا مع أعداد الرموز والتكلفة،\n"
+"                ويغذّي سقف التكلفة الشهري (Rule 14)."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_audit_log
@@ -606,36 +637,38 @@ msgid ""
 "Every sensitive AI decision is recorded here (Rule 20).\n"
 "                Entries are append-only and cannot be edited or deleted."
 msgstr ""
+"يُسجَّل هنا كل قرار حساس للذكاء الاصطناعي (Rule 20).\n"
+"                الإدخالات للإضافة فقط ولا يمكن تحريرها أو حذفها."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__external_contact
 msgid "External Contact"
-msgstr ""
+msgstr "جهة اتصال خارجية"
 
 #. module: era_crm_ai_agents_base
 #: model:crm.ai.model,name:era_crm_ai_agents_base.model_gpt_41_mini
 msgid "GPT-4.1 mini"
-msgstr ""
+msgstr "GPT-4.1 mini"
 
 #. module: era_crm_ai_agents_base
 #: model:crm.ai.model,name:era_crm_ai_agents_base.model_gpt_4o
 msgid "GPT-4o"
-msgstr ""
+msgstr "GPT-4o"
 
 #. module: era_crm_ai_agents_base
 #: model:crm.ai.model,name:era_crm_ai_agents_base.model_gemini_25_flash
 msgid "Gemini 2.5 Flash"
-msgstr ""
+msgstr "Gemini 2.5 Flash"
 
 #. module: era_crm_ai_agents_base
 #: model:crm.ai.model,name:era_crm_ai_agents_base.model_gemini_25_pro
 msgid "Gemini 2.5 Pro"
-msgstr ""
+msgstr "Gemini 2.5 Pro"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_model__provider__google
 msgid "Google"
-msgstr ""
+msgstr "Google"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_res_config_settings__era_cron_run_mode
@@ -644,6 +677,9 @@ msgid ""
 "rules as the selected internal account (Rule 09). 'OdooBot' runs as the "
 "superuser and bypasses all access rules."
 msgstr ""
+"كيفية مصادقة عمليات تشغيل الوكيل المجدولة. 'user' يشغّلها بصلاحيات الوصول "
+"وقواعد السجلات الحقيقية للحساب الداخلي المحدّد (Rule 09). 'OdooBot' يشغّلها "
+"بصلاحيات المستخدم الخارق ويتجاوز جميع قواعد الوصول."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -651,6 +687,8 @@ msgid ""
 "How scheduled agent runs authenticate. Applies to every agent cron in the "
 "suite."
 msgstr ""
+"كيفية مصادقة عمليات تشغيل الوكيل المجدولة. ينطبق ذلك على كل مهمة مجدولة للوكلاء "
+"في الحزمة."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_usage__token_source
@@ -661,6 +699,11 @@ msgid ""
 "seam. 'Measured' = exact provider count (reserved for if/when a provider "
 "usage figure is threaded through)."
 msgstr ""
+"كيفية الحصول على أعداد الرموز. 'مُقدّر' = على أساس الطول (~1 رمز / 4 أحرف): "
+"وهو الخيار الوحيد لمسار CLI، وكذلك الحال في استدعاءات API الأصلية لأن دالة "
+"request_llm العامة في Odoo لا تُرجِع أي بيانات استهلاك من المزوّد عند نقطة "
+"الربط لدينا. 'مقيس' = العدد الدقيق من المزوّد (محجوز لما إذا/عندما تُمرَّر "
+"بيانات استهلاك من المزوّد)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__transport
@@ -669,6 +712,9 @@ msgid ""
 "cap). 'Claude CLI' runs through the era_ai_accounts subscription proxy — no "
 "dollar cost, governed by the monthly token limit; tokens are estimated."
 msgstr ""
+"كيفية استدعاء هذا الوكيل لـ LLM. 'Native API' يُسعَّر لكل رمز (سقف تكلفة "
+"بالدولار). 'Claude CLI' يعمل عبر وسيط اشتراك era_ai_accounts — بلا تكلفة "
+"بالدولار، ويُحكَم بالحد الشهري للرموز؛ والرموز مُقدّرة."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__id
@@ -680,12 +726,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__id
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_partner__id
 msgid "ID"
-msgstr "المُعرف"
+msgstr "المعرّف"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__icon
 msgid "Icon"
-msgstr ""
+msgstr "أيقونة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_model__provider
@@ -693,41 +739,43 @@ msgid ""
 "Informational label (OpenAI / Google). Selection is driven by the agent's "
 "model code, not by this field."
 msgstr ""
+"تسمية إعلامية (OpenAI / Google). يُحدَّد الاختيار بناءً على رمز نموذج الوكيل، "
+"وليس بناءً على هذا الحقل."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_list
 msgid "Input"
-msgstr ""
+msgstr "الإدخال"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__price_input_1k
 msgid "Input Price / 1K"
-msgstr ""
+msgstr "سعر الإدخال / 1000"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__input_tokens
 msgid "Input Tokens"
-msgstr ""
+msgstr "رموز الإدخال"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_partner_form_crm_ai_consent
 msgid "International AI Processing Consent"
-msgstr ""
+msgstr "الموافقة على المعالجة الدولية بالذكاء الاصطناعي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_usage__usage_type__llm
 msgid "LLM Call"
-msgstr ""
+msgstr "استدعاء LLM"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__llm_call_failed
 msgid "LLM Call Failed"
-msgstr ""
+msgstr "فشل استدعاء LLM"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__last_run
 msgid "Last Run"
-msgstr ""
+msgstr "آخر تشغيل"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__write_uid
@@ -736,7 +784,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__write_uid
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__write_date
@@ -745,22 +793,22 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__write_date
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "آخر تحديث في"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_usage__record_ref__crm_lead
 msgid "Lead"
-msgstr ""
+msgstr "عميل محتمل"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "Leave blank to approve as proposed, or edit here..."
-msgstr ""
+msgstr "اتركه فارغاً للاعتماد كما هو مقترح، أو حرّر هنا..."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_usage__token_source__measured
 msgid "Measured"
-msgstr ""
+msgstr "مقيس"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__model_code
@@ -769,49 +817,49 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Model"
-msgstr ""
+msgstr "النموذج"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__code
 msgid "Model Code"
-msgstr ""
+msgstr "رمز النموذج"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_config_models
 msgid "Models"
-msgstr ""
+msgstr "النماذج"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_search
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Month"
-msgstr ""
+msgstr "الشهر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__monthly_cost
 msgid "Monthly Cost"
-msgstr ""
+msgstr "التكلفة الشهرية"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__monthly_tokens
 msgid "Monthly Tokens"
-msgstr ""
+msgstr "الرموز الشهرية"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "My Queue"
-msgstr ""
+msgstr "قائمتي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__name
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__name
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_agent__transport__api
 msgid "Native API (OpenAI / Google)"
-msgstr ""
+msgstr "Native API (OpenAI / Google)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__model_code
@@ -820,49 +868,52 @@ msgid ""
 "'gemini-2.5-flash'). Must be supported by Odoo native AI and priced in the "
 "rate card (CRM AI → Models)."
 msgstr ""
+"رمز النموذج الأصلي الذي يستخدمه هذا الوكيل افتراضياً (مثل 'gpt-4.1-mini' أو "
+"'gemini-2.5-flash'). يجب أن يكون مدعوماً من الذكاء الاصطناعي الأصلي في Odoo "
+"ومُسعَّراً في بطاقة الأسعار (CRM AI ← النماذج)."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_agent
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_dashboard
 msgid "No AI agents registered yet."
-msgstr ""
+msgstr "لم يُسجَّل أي وكيل ذكاء اصطناعي بعد."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_usage
 msgid "No AI usage recorded yet."
-msgstr ""
+msgstr "لم يُسجَّل أي استهلاك للذكاء الاصطناعي بعد."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_audit_log
 msgid "No audit entries yet."
-msgstr ""
+msgstr "لا توجد إدخالات تدقيق بعد."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_approval_queue
 msgid "Nothing waiting for sign-off."
-msgstr ""
+msgstr "لا شيء بانتظار الاعتماد."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_approval.py:0
 msgid "Only pending requests can be approved."
-msgstr ""
+msgstr "يمكن اعتماد الطلبات المعلّقة فقط."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
 #: code:addons/era_crm_ai_agents_base/models/crm_ai_approval.py:0
 msgid "Only pending requests can be rejected."
-msgstr ""
+msgstr "يمكن رفض الطلبات المعلّقة فقط."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_model__provider__openai
 msgid "OpenAI"
-msgstr ""
+msgstr "OpenAI"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Operational Layers"
-msgstr ""
+msgstr "الطبقات التشغيلية"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_approval__edited_content
@@ -870,6 +921,7 @@ msgid ""
 "Optional human edit. When set, it supersedes the proposed content on "
 "approval."
 msgstr ""
+"تحرير بشري اختياري. عند تعيينه، يحلّ محل المحتوى المقترح عند الاعتماد."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__model_code_advanced
@@ -877,36 +929,38 @@ msgid ""
 "Optional native model code for high-sensitivity calls (sensitivity='high'). "
 "Falls back to Model when empty."
 msgstr ""
+"رمز نموذج أصلي اختياري للاستدعاءات عالية الحساسية (sensitivity='high'). "
+"يرجع إلى النموذج عند تركه فارغاً."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__other
 msgid "Other"
-msgstr ""
+msgstr "أخرى"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_list
 msgid "Output"
-msgstr ""
+msgstr "الإخراج"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__price_output_1k
 msgid "Output Price / 1K"
-msgstr ""
+msgstr "سعر الإخراج / 1000"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__output_tokens
 msgid "Output Tokens"
-msgstr ""
+msgstr "رموز الإخراج"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__compliance_disabled
 msgid "PDPL Protection Disabled"
-msgstr ""
+msgstr "حماية PDPL مُعطَّلة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_enable_pii_redaction
 msgid "PDPL: PII redaction"
-msgstr ""
+msgstr "PDPL: حجب البيانات الشخصية"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -914,11 +968,13 @@ msgid ""
 "PDPL: block AI calls carrying a customer's personal data unless they "
 "consented to international processing. Turning this OFF is audited."
 msgstr ""
+"PDPL: حظر طلبات الذكاء الاصطناعي التي تحمل بيانات شخصية للعميل ما لم يوافق على "
+"المعالجة الدولية. يُسجَّل تعطيل هذا في التدقيق."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_res_config_settings__era_enable_consent_check
 msgid "PDPL: consent check"
-msgstr ""
+msgstr "PDPL: فحص الموافقة"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -927,50 +983,53 @@ msgid ""
 "and restore it on the response. Turning this OFF sends unredacted personal "
 "data abroad and is audited."
 msgstr ""
+"PDPL: إخفاء البيانات الشخصية قبل إرسالها إلى مزوّد ذكاء اصطناعي دولي، "
+"واستعادتها في الاستجابة. يؤدي تعطيل هذا إلى إرسال بيانات شخصية غير محجوبة إلى "
+"الخارج ويُسجَّل في التدقيق."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "PII Redaction"
-msgstr ""
+msgstr "حجب البيانات الشخصية"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "Pause"
-msgstr ""
+msgstr "إيقاف مؤقت"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_agent__state__paused
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 msgid "Paused"
-msgstr ""
+msgstr "موقوف مؤقتاً"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_approval__state__pending
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "Pending"
-msgstr ""
+msgstr "معلّق"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Priced API"
-msgstr ""
+msgstr "API مُسعَّر"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
 msgid "Pricing (USD / 1K tokens)"
-msgstr ""
+msgstr "التسعير (دولار أمريكي / 1000 رمز)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__proposed_content
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "Proposed Content"
-msgstr ""
+msgstr "المحتوى المقترح"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_model__provider
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_search
 msgid "Provider"
-msgstr ""
+msgstr "المزوّد"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
@@ -980,49 +1039,53 @@ msgid ""
 "                        cap (Rule 14) can be computed. Review prices when a provider\n"
 "                        changes its rates or Odoo adds a model."
 msgstr ""
+"بطاقة أسعار فقط — قائمة النماذج المتاحة يملكها\n"
+"                        الذكاء الاصطناعي الأصلي في Odoo. توفّر هذه التسعير لكل رمز كي\n"
+"                        يمكن حساب سقف التكلفة (Rule 14). راجع الأسعار عندما يغيّر\n"
+"                        مزوّد أسعاره أو عندما يضيف Odoo نموذجاً."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
 msgid "Record an audit row for every AI request and decision."
-msgstr ""
+msgstr "سجّل صف تدقيق لكل طلب وقرار للذكاء الاصطناعي."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_form
 msgid "Reject"
-msgstr ""
+msgstr "رفض"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_approval__state__rejected
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "Rejected"
-msgstr ""
+msgstr "مرفوض"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__record_ref
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_audit_log__model_ref
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__record_ref
 msgid "Related Record"
-msgstr ""
+msgstr "السجل المرتبط"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__reviewer_id
 msgid "Reviewer"
-msgstr ""
+msgstr "المراجع"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__role_change
 msgid "Role Change"
-msgstr ""
+msgstr "تغيير الدور"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__res_config_settings__era_cron_run_mode__odoobot
 msgid "Run as OdooBot / superuser (bypasses access rules)"
-msgstr ""
+msgstr "التشغيل بصفة OdooBot / المستخدم الخارق (يتجاوز قواعد الوصول)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__res_config_settings__era_cron_run_mode__user
 msgid "Run as a chosen internal user (recommended)"
-msgstr ""
+msgstr "التشغيل بصفة مستخدم داخلي مختار (موصى به)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.res_config_settings_view_form_crm_ai
@@ -1033,6 +1096,11 @@ msgid ""
 "                                    repoint it at any existing internal user to add\n"
 "                                    no extra account."
 msgstr ""
+"يشغّل الوكلاء المجدولة بصلاحيات الوصول\n"
+"                                    لهذا الحساب الداخلي (Rule 09). يُضبَط افتراضياً على\n"
+"                                    مستخدم \"CRM AI Automation\" الأقل امتيازاً؛\n"
+"                                    وجّهه إلى أي مستخدم داخلي قائم لتجنّب\n"
+"                                    إضافة حساب إضافي."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -1041,26 +1109,28 @@ msgid ""
 "Select an internal user for the agent cron to run as, or switch the "
 "execution identity to OdooBot."
 msgstr ""
+"اختر مستخدماً داخلياً لتشغيل المهمة المجدولة للوكيل بصفته، أو بدّل هوية التنفيذ "
+"إلى OdooBot."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__send
 msgid "Send"
-msgstr ""
+msgstr "إرسال"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_usage__usage_type__source_api
 msgid "Source API"
-msgstr ""
+msgstr "API المصدر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__source_fetch_failed
 msgid "Source Fetch Failed"
-msgstr ""
+msgstr "فشل جلب المصدر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__source_model
 msgid "Source Model"
-msgstr ""
+msgstr "النموذج المصدر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__tech_name
@@ -1068,23 +1138,25 @@ msgid ""
 "Stable unique key satellite modules use to find or create their agent record"
 " on install. Underscores only, no spaces."
 msgstr ""
+"مفتاح فريد ثابت تستخدمه الموديولات التابعة للعثور على سجل وكيلها أو إنشائه عند "
+"التثبيت. شرطات سفلية فقط، بلا مسافات."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__state
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 msgid "State"
-msgstr ""
+msgstr "الحالة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_approval__state
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_approval_search
 msgid "Status"
-msgstr ""
+msgstr "الحالة"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__tech_name
 msgid "Technical Name"
-msgstr ""
+msgstr "الاسم التقني"
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -1093,6 +1165,8 @@ msgid ""
 "The agent cron run user '%(name)s' is archived. Pick an active internal "
 "user."
 msgstr ""
+"مستخدم تشغيل المهمة المجدولة للوكيل '%(name)s' مؤرشف. اختر مستخدماً داخلياً "
+"نشطاً."
 
 #. module: era_crm_ai_agents_base
 #. odoo-python
@@ -1101,6 +1175,8 @@ msgid ""
 "The agent cron run user must be an INTERNAL user. '%(name)s' is a "
 "portal/public user."
 msgstr ""
+"يجب أن يكون مستخدم تشغيل المهمة المجدولة للوكيل مستخدماً داخلياً. '%(name)s' "
+"مستخدم بوابة/عام."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_res_partner__crm_ai_intl_processing_consent
@@ -1111,6 +1187,10 @@ msgid ""
 "Compliance Guard blocks any AI call carrying this partner's personal data "
 "(PDPL)."
 msgstr ""
+"وافق العميل على معالجة بياناته الشخصية من قِبل مزوّد ذكاء اصطناعي دولي (مثل "
+"OpenAI/Google، ومقرّه الولايات المتحدة). عند عدم تحديده، يحظر حارس الامتثال "
+"للذكاء الاصطناعي أي استدعاء ذكاء اصطناعي يحمل بيانات شخصية لجهة الاتصال هذه "
+"(PDPL)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__cli_account_id
@@ -1118,6 +1198,8 @@ msgid ""
 "The era_ai_accounts provider account used when Transport is 'Claude CLI'. "
 "Should be a local-CLI-proxy (Anthropic) account."
 msgstr ""
+"حساب مزوّد era_ai_accounts المستخدم عندما يكون النقل 'Claude CLI'. ينبغي أن "
+"يكون حساب وسيط CLI محلي (Anthropic)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_res_config_settings__era_cron_run_user_id
@@ -1127,6 +1209,10 @@ msgid ""
 "internal user (e.g. an already-billable account) to add no extra user. Must "
 "be internal (not portal)."
 msgstr ""
+"المستخدم الداخلي الذي تعمل به كل مهمة مجدولة للوكيل في وضع 'user'. يُضبَط "
+"افتراضياً على حساب 'CRM AI Automation' الأقل امتيازاً؛ وجّهه إلى أي مستخدم "
+"داخلي قائم (مثل حساب قابل للفوترة بالفعل) لتجنّب إضافة مستخدم إضافي. يجب أن "
+"يكون داخلياً (وليس بوابة)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_usage__unpriced
@@ -1135,6 +1221,9 @@ msgid ""
 "be computed (recorded as 0). A manager should add a price for the model so "
 "the cap stays accurate (Rule 14)."
 msgstr ""
+"لم يكن للنموذج المستخدم سعر في بطاقة الأسعار، لذا تعذّر حساب تكلفة هذا "
+"الاستدعاء (سُجِّلت كـ 0). ينبغي على المدير إضافة سعر للنموذج كي يبقى السقف "
+"دقيقاً (Rule 14)."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_model__code
@@ -1143,6 +1232,9 @@ msgid ""
 "'gemini-2.5-flash'). Must match the code an agent uses and a model Odoo "
 "native AI supports."
 msgstr ""
+"معرّف النموذج الأصلي الذي ينطبق عليه هذا السعر (مثل 'gpt-4o' أو "
+"'gemini-2.5-flash'). يجب أن يطابق الرمز الذي يستخدمه أحد الوكلاء ونموذجاً "
+"يدعمه الذكاء الاصطناعي الأصلي في Odoo."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_usage__record_ref
@@ -1152,11 +1244,15 @@ msgid ""
 "it created, so per-record cost is summable). Empty for batch/native usage "
 "that has no single record."
 msgstr ""
+"السجل الذي يُنسَب إليه هذا الاستهلاك، عندما يمكن للوكيل ربط تكلفة بسجل واحد "
+"(مثلاً، يربط توليد العملاء المحتملين كل صف مصدر/LLM منفصل بجهة الاتصال التي "
+"أنشأها، بحيث تكون تكلفة كل سجل قابلة للجمع). يكون فارغاً للاستهلاك "
+"الدُفعي/الأصلي الذي لا يرتبط بسجل واحد."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "This Month"
-msgstr ""
+msgstr "هذا الشهر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_usage__via_cli
@@ -1166,6 +1262,9 @@ msgid ""
 "limit, not the dollar cap. The token counts are estimated — do NOT read a 0 "
 "cost here as 'free/unlimited'."
 msgstr ""
+"جرى هذا الاستدعاء عبر مسار Claude CLI (الاشتراك): فلا تكلفة بالدولار لكل رمز "
+"(التكلفة = 0 بحكم التصميم) ويُحكَم بالحد الشهري للرموز، لا بسقف الدولار. وأعداد "
+"الرموز مُقدّرة — لا تفسّر تكلفة 0 هنا على أنها 'مجانية/غير محدودة'."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_dashboard
@@ -1175,6 +1274,10 @@ msgid ""
 "                by status. Salespeople see their own cost slice; managers see the\n"
 "                global totals."
 msgstr ""
+"تعرض لوحة المعلومات هذه إنفاق كل وكيل الشهري (مع الإجمالي في\n"
+"                تذييل العمود) وحالة سقفه. يصنّف الرسم البياني الوكلاء\n"
+"                حسب الحالة. يرى مندوبو المبيعات حصتهم من التكلفة؛ ويرى المدراء\n"
+"                الإجماليات العامة."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.actions.act_window,help:era_crm_ai_agents_base.action_crm_ai_model
@@ -1184,16 +1287,20 @@ msgid ""
 "                Google (Gemini) prices; keep it complete so the cost cap (Rule 14)\n"
 "                stays accurate as providers change pricing."
 msgstr ""
+"هذه بطاقة أسعار مفهرسة برمز النموذج — وليست قائمة\n"
+"                النماذج (التي يملكها الذكاء الاصطناعي الأصلي في Odoo). مُهيّأة مسبقاً بأسعار\n"
+"                OpenAI (GPT) و Google (Gemini)؛ احرص على اكتمالها كي يبقى سقف التكلفة (Rule 14)\n"
+"                دقيقاً مع تغيّر المزوّدين لأسعارهم."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__token_source
 msgid "Token Source"
-msgstr ""
+msgstr "مصدر الرموز"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_list
 msgid "Total"
-msgstr ""
+msgstr "الإجمالي"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__monthly_tokens
@@ -1203,6 +1310,9 @@ msgid ""
 " the 'Claude CLI' (subscription) transport — where there is no dollar cost, "
 "this is NOT zero/free."
 msgstr ""
+"إجمالي الرموز (المُقدّرة) المسجّلة لهذا الوكيل في الشهر التقويمي الحالي. هذا هو "
+"رقم الاستهلاك الذي يُحكَم بالحد الشهري للرموز على نقل 'Claude CLI' (الاشتراك) "
+"— حيث لا توجد تكلفة بالدولار، وهذا ليس صفراً/مجانياً."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_agent__monthly_cost
@@ -1211,75 +1321,78 @@ msgid ""
 " from crm.ai.usage. Meaningful for the 'Native API' transport; the 'Claude "
 "CLI' transport has no dollar cost — see Monthly Tokens."
 msgstr ""
+"إجمالي إنفاق الذكاء الاصطناعي المسجّل لهذا الوكيل في الشهر التقويمي الحالي، "
+"مجموعاً من crm.ai.usage. وهو ذو دلالة لنقل 'Native API'؛ أما نقل 'Claude CLI' "
+"فلا تكلفة بالدولار له — انظر الرموز الشهرية."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_dashboard_list
 msgid "Total Spend (Month)"
-msgstr ""
+msgstr "إجمالي الإنفاق (الشهر)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__total_tokens
 msgid "Total Tokens"
-msgstr ""
+msgstr "إجمالي الرموز"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_dashboard_list
 msgid "Total Tokens (Month)"
-msgstr ""
+msgstr "إجمالي الرموز (الشهر)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_agent__transport
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_search
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Transport"
-msgstr ""
+msgstr "النقل"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "Transport & Model"
-msgstr ""
+msgstr "النقل والنموذج"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__unpriced
 msgid "Unpriced"
-msgstr ""
+msgstr "غير مسعّر"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_usage_search
 msgid "Unpriced (no rate)"
-msgstr ""
+msgstr "غير مسعّر (بلا سعر)"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields.selection,name:era_crm_ai_agents_base.selection__crm_ai_audit_log__event_type__unpriced_model
 msgid "Unpriced Model Used"
-msgstr ""
+msgstr "استُخدم نموذج غير مسعّر"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.ui.menu,name:era_crm_ai_agents_base.menu_crm_ai_config_usage
 msgid "Usage"
-msgstr ""
+msgstr "الاستهلاك"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__usage_type
 msgid "Usage Type"
-msgstr ""
+msgstr "نوع الاستهلاك"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_audit_log__user_id
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_usage__user_id
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_audit_log_search
 msgid "User"
-msgstr ""
+msgstr "المستخدم"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_audit_log__value_after
 msgid "Value After"
-msgstr ""
+msgstr "القيمة بعد"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,field_description:era_crm_ai_agents_base.field_crm_ai_audit_log__value_before
 msgid "Value Before"
-msgstr ""
+msgstr "القيمة قبل"
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_usage__usage_type
@@ -1290,6 +1403,11 @@ msgid ""
 "search/registry/contact APIs). Makes the two cost streams explicit for "
 "reporting instead of inferring from empty-model + zero-tokens."
 msgstr ""
+"نوع الإنفاق الذي يسجّله هذا الصف. 'llm' = استدعاء لمزوّد LLM (الافتراضي — كل "
+"صف قائم/أصلي/امتثالي هو صف LLM). 'source_api' = استدعاء لمصدر بيانات خارجي "
+"غير LLM (مثل واجهات البحث/السجلات/جهات الاتصال في محرك توليد العملاء "
+"المحتملين). يوضّح هذا تيارَي التكلفة صراحةً لأغراض التقارير بدلاً من استنتاجهما "
+"من نموذج فارغ + صفر رموز."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_crm_ai_approval__effective_content
@@ -1297,44 +1415,45 @@ msgid ""
 "What will actually be used: the edited content if any, else the proposed "
 "content."
 msgstr ""
+"ما سيُستخدم فعلياً: المحتوى المحرَّر إن وُجد، وإلا المحتوى المقترح."
 
 #. module: era_crm_ai_agents_base
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_res_partner__crm_ai_consent_date
 #: model:ir.model.fields,help:era_crm_ai_agents_base.field_res_users__crm_ai_consent_date
 msgid "When AI international-processing consent was recorded."
-msgstr ""
+msgstr "متى سُجِّلت الموافقة على المعالجة الدولية بالذكاء الاصطناعي."
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "e.g. Dead-Lead Resurrection"
-msgstr ""
+msgstr "مثال: إحياء العملاء المحتملين الخاملين"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
 msgid "e.g. GPT-4o"
-msgstr ""
+msgstr "مثال: GPT-4o"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "e.g. era_dead_lead"
-msgstr ""
+msgstr "مثال: era_dead_lead"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "e.g. gpt-4.1-mini"
-msgstr ""
+msgstr "مثال: gpt-4.1-mini"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "e.g. gpt-4o (optional)"
-msgstr ""
+msgstr "مثال: gpt-4o (اختياري)"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_model_form
 msgid "e.g. gpt-4o, gemini-2.5-flash"
-msgstr ""
+msgstr "مثال: gpt-4o، gemini-2.5-flash"
 
 #. module: era_crm_ai_agents_base
 #: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_base.view_crm_ai_agent_form
 msgid "e.g. opus"
-msgstr ""
+msgstr "مثال: opus"

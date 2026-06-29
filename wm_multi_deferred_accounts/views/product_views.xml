@@ -1,0 +1,26 @@
+<!-- Copyright 2020 CorTex IT Solutions Ltd. (<https://cortexsolutions.net/>)-->
+<!-- License OPL-1-->
+
+<odoo>
+    <data>
+        <!-- Add deferred expense/revenue accounts to products -->
+        <record id="product_template_form_view_inherit_deferred" model="ir.ui.view">
+            <field name="name">product.template.form.inherit.deferred</field>
+            <field name="model">product.template</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="account.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='invoicing']//group[@name='properties']//group"
+                       position="after">
+                    <group name="deferred_accounts" string="Deferred Accounts">
+                        <field name="property_deferred_account_revenue_id" readonly="sale_ok == 0"
+                               groups="account.group_account_readonly"/>
+                        <field name="property_deferred_account_expense_id" readonly="purchase_ok == 0"
+                               groups="account.group_account_readonly"/>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

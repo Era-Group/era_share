@@ -1,0 +1,80 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* wm_multi_deferred_accounts
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-23 14:50+0000\n"
+"PO-Revision-Date: 2024-01-23 17:52+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
+"n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. module: wm_multi_deferred_accounts
+#. odoo-python
+#: code:addons/wm_multi_deferred_accounts/models/account_move_line.py:0
+#, python-format
+msgid "Deferral of %s"
+msgstr "تأجيل %s"
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model.fields,field_description:wm_multi_deferred_accounts.field_account_move_line__deferred_account_id
+msgid "Deferred Account"
+msgstr "الحساب المؤجل"
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model.fields,field_description:wm_multi_deferred_accounts.field_product_product__property_deferred_account_expense_id
+#: model:ir.model.fields,field_description:wm_multi_deferred_accounts.field_product_template__property_deferred_account_expense_id
+msgid "Deferred Expense Account"
+msgstr "حساب المصروفات المؤجلة"
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model.fields,field_description:wm_multi_deferred_accounts.field_product_product__property_deferred_account_revenue_id
+#: model:ir.model.fields,field_description:wm_multi_deferred_accounts.field_product_template__property_deferred_account_revenue_id
+msgid "Deferred Revenue Account"
+msgstr "حساب الإيرادات المؤجلة"
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model,name:wm_multi_deferred_accounts.model_account_move
+msgid "Journal Entry"
+msgstr "قيد اليومية"
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model,name:wm_multi_deferred_accounts.model_account_move_line
+msgid "Journal Item"
+msgstr "بند  اليومية"
+
+#. module: wm_multi_deferred_accounts
+#. odoo-python
+#: code:addons/wm_multi_deferred_accounts/models/account_move_line.py:0
+#, python-format
+msgid "Please set the deferred accounts in the accounting settings."
+msgstr "يرجى إعداد الحسابات المؤجلة في إعدادات المحاسبة."
+
+#. module: wm_multi_deferred_accounts
+#. odoo-python
+#: code:addons/wm_multi_deferred_accounts/models/account_move_line.py:0
+#, python-format
+msgid "Please set the deferred journal in the accounting settings."
+msgstr "يرجى إعداد دفتر اليومية المؤجل في إعدادات المحاسبة."
+
+#. module: wm_multi_deferred_accounts
+#: model:ir.model,name:wm_multi_deferred_accounts.model_product_template
+msgid "Product"
+msgstr "المنتج"
+
+#. module: wm_multi_deferred_accounts
+#. odoo-python
+#: code:addons/wm_multi_deferred_accounts/models/account_move_line.py:0
+#, python-format
+msgid ""
+"You cannot generate deferred entries for a miscellaneous journal entry."
+msgstr "لا يمكنك إنشاء قيود مؤجلة لقيد يومية من المتفرقات."

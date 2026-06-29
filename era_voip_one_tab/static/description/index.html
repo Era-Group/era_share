@@ -6,14 +6,14 @@
 
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA VoIP One Tab</h1>
 
-    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">تسجيل SIP لتبويب واحد من ERA</div>
+    <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">مكالمات نظيفة بلا رنين وهمي من ERA</div>
 
     <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
-      Solve the <b>multiple-tab SIP storm problem</b> once and for all — enforce a single active SIP registration per user across all open browser tabs, eliminate ghost rings and audio conflicts, and connect only when a call is actually in progress.
+      No more phantom ringing across a dozen tabs. Calls ring <b>once, in the right place</b>, and connect cleanly every time — so your team answers smoothly and never fumbles a call again.
     </p>
 
     <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
-      احلّ مشكلة <b>تسجيل SIP في تبويبات متعددة</b> مرة واحدة وللأبد — أبقِ تسجيلاً SIP واحداً نشطاً لكل مستخدم عبر جميع تبويبات المتصفح المفتوحة، وأزل المكالمات الوهمية وتعارضات الصوت، واتصل فقط عندما تكون هناك مكالمة فعلية.
+      لا مزيد من الرنين الوهمي عبر عشرات التبويبات. تَرِنّ المكالمة <b>مرة واحدة في المكان الصحيح</b> وتتّصل بنظافة في كل مرة — فيُجيب فريقك بسلاسة ولا يربك مكالمة بعد اليوم.
     </p>
 
   </div>
@@ -26,17 +26,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">🎯</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Single Active Registration</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">One Ring, the Right Place</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Uses the browser's <code>BroadcastChannel</code> API to negotiate a "primary tab" across all open Odoo tabs for the same user. Only the primary tab registers with the SIP server — all other tabs stay idle.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Open Odoo in as many tabs as you like — your phone stays tied to just one of them. Calls always ring where they should, with no duplicates and no confusion.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">When the primary tab closes, a remaining tab automatically takes over leadership within 2 seconds, with no user action needed.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Close that tab and another quietly takes over in a couple of seconds. Your team never has to think about it — it just keeps working.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تسجيل نشط واحد</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">رنّة واحدة في المكان الصحيح</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يستخدم واجهة <code>BroadcastChannel</code> في المتصفح للتفاوض على "التبويب الأساسي" عبر جميع تبويبات أودو المفتوحة للمستخدم نفسه. التبويب الأساسي فقط يسجّل مع خادم SIP — باقي التبويبات تبقى خاملة. عند إغلاق التبويب الأساسي، يتولى تبويب آخر القيادة خلال ثانيتين تلقائياً.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">افتح أودو في ما تشاء من التبويبات — هاتفك يبقى مرتبطاً بواحد فقط منها. تَرِنّ المكالمات حيث ينبغي دائماً، بلا تكرار ولا التباس. أغلق ذلك التبويب فيتولّى آخر المهمة بهدوء خلال ثانيتين. لا يحتاج فريقك للتفكير في الأمر — يعمل ببساطة.</p>
 
       </div>
 
@@ -47,17 +47,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">📵</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Connect-on-Call-Only Mode</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Lighter on Your Phone System</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Even the primary tab can be configured to avoid a persistent SIP registration. It connects (REGISTER) only when a call is initiated or the softphone widget is opened, and disconnects (DEREGISTER) when the call ends and the widget closes.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Your phone connection can stay quiet until it's actually needed — waking up the instant a call starts and stepping back when it ends.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">This halves SIP server load for large deployments and keeps the server free of unnecessary REGISTER storms between calls.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">That keeps your phone system calm and responsive even with a big team online, so calls connect fast and your provider stays happy.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">وضع الاتصال عند المكالمة فقط</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">عبء أخف على نظام الهاتف</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يمكن تهيئة التبويب الأساسي لتجنب التسجيل المستمر في SIP. يتصل (REGISTER) فقط عند بدء مكالمة أو فتح واجهة الهاتف، ويقطع الاتصال (DEREGISTER) عند انتهاء المكالمة وإغلاق الواجهة. يُقلّل هذا حمل خادم SIP إلى النصف في النشرات الكبيرة ويحافظ على الخادم خالياً من عواصف REGISTER غير الضرورية.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يبقى اتصال الهاتف هادئاً حتى تَحتاجه فعلاً — يستيقظ لحظة بدء المكالمة ويتراجع عند انتهائها. هذا يُبقي نظام هاتفك هادئاً وسريع الاستجابة حتى مع فريق كبير متصل، فتتّصل المكالمات بسرعة ويبقى مزوّدك مرتاحاً.</p>
 
       </div>
 
@@ -68,17 +68,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">🔇</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Eliminates Ghost Calls</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Goodbye, Ghost Calls</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Without this module, an incoming call triggers a ringing event in every open tab simultaneously — multiple ring sounds, multiple answer buttons, audio routed to whichever tab responds first.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">You know the chaos: one call sets every tab ringing at once, a dozen answer buttons, and a scramble to find which one to click.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">With it, only the primary tab receives the SIP INVITE and rings — one notification, one answer button, clean audio. No more frantic tab-hunting when the phone rings.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">That's gone. One ring, one answer button, clean audio — so your team picks up calmly and the caller hears a confident hello, not fumbling.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">إزالة المكالمات الوهمية</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">وداعاً للمكالمات الوهمية</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">بدون هذه الوحدة، تُطلق المكالمة الواردة رنيناً في كل تبويب مفتوح في آنٍ واحد — أصوات رنين متعددة وأزرار إجابة متعددة والصوت يذهب لأول تبويب يستجيب. مع الوحدة، فقط التبويب الأساسي يستقبل INVITE ويرنّ — إشعار واحد وزر إجابة واحد وصوت نظيف بلا تعارض.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعرف الفوضى: مكالمة واحدة تُرِنّ كل التبويبات معاً، وعشرات أزرار الإجابة، وسباق لإيجاد أيّها تضغط. انتهى ذلك. رنّة واحدة وزر إجابة واحد وصوت نظيف — فيُجيب فريقك بهدوء ويسمع المتصل تحية واثقة لا ارتباكاً.</p>
 
       </div>
 
@@ -89,17 +89,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">🔐</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Permission-Based Opt-In</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Roll It Out at Your Pace</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">A new security group <b>VoIP One Tab User</b> controls who gets the single-tab behaviour. Users not in the group retain the default Odoo VoIP registration model.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Turn the clean-calling experience on for whoever you choose. Start with one team, prove it out, then expand whenever you're ready.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">This lets you roll out the feature gradually, test with a subset of your team, or keep specific power users on the legacy multi-tab registration if their workflow demands it.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Everyone else keeps working exactly as before — no surprises, no disruption, no risk to your rollout.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">تفعيل قائم على الأذونات</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">طبّقها على وتيرتك</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مجموعة أمان جديدة <b>VoIP One Tab User</b> تتحكم في من يحصل على سلوك التبويب الواحد. المستخدمون غير المنتمين للمجموعة يحتفظون بنموذج تسجيل Odoo VoIP الافتراضي. يتيح ذلك الطرح التدريجي أو الاختبار مع فريق فرعي أو إبقاء مستخدمين محددين على النموذج القديم.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">فعّل تجربة المكالمات النظيفة لمن تختار. ابدأ بفريق واحد، أثبت نجاحها، ثم وسّع متى شئت. يبقى الجميع غيرهم يعملون تماماً كالسابق — بلا مفاجآت ولا تعطيل ولا مخاطرة على طرحك.</p>
 
       </div>
 
@@ -110,17 +110,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Configurable in Settings</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Your Settings, Your Way</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Admins can toggle "Connect on call only" vs "Always registered" and "One tab mode" vs "All tabs mode" from a dedicated section in Settings → VoIP → ERA VoIP. Changes take effect on next browser reload.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Choose how it behaves with a couple of simple switches — connect only when calling or stay always-on, one-tab or every-tab. Each option is spelled out in plain language.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">No code edits, no config files — everything is in the standard Odoo settings UI, with clear descriptions for each option.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">It all lives right inside your normal Odoo settings, so any admin can adjust it in seconds without help.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">قابل للتهيئة من الإعدادات</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">إعداداتك على طريقتك</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يمكن للمديرين تبديل "الاتصال عند المكالمة فقط" مقابل "مسجّل دائماً" و"وضع التبويب الواحد" مقابل "جميع التبويبات" من قسم مخصص في الإعدادات. التغييرات تسري عند إعادة تحميل المتصفح. لا تعديلات كود ولا ملفات إعداد — كل شيء في واجهة إعدادات أودو القياسية.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اختر سلوكها بنقرتين بسيطتين — الاتصال عند المكالمة فقط أو البقاء متصلاً دائماً، تبويب واحد أو كل التبويبات. كل خيار موضّح بلغة بسيطة. كل ذلك داخل إعدادات أودو المعتادة، فيضبطه أي مسؤول في ثوانٍ دون مساعدة.</p>
 
       </div>
 
@@ -131,17 +131,17 @@
 
       <div style="font-size:2em;margin-bottom:10px;">⚡</div>
 
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Zero Call-Quality Impact</h3>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">Same Crystal-Clear Calls</h3>
 
-      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">The connect-on-call-only approach adds approximately 200 ms to call setup time (the REGISTER round trip) — imperceptible in practice. SIP re-registration after a network disruption is handled automatically by the Odoo VoIP JavaScript stack.</p>
+      <p style="margin:0 0 8px;color:#4b5563;line-height:1.6;font-size:.95em;">Cleaner doesn't mean compromised. Your calls connect just as fast and sound just as good — the difference is purely the chaos that's gone.</p>
 
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Audio quality, codec negotiation, and DTMF signalling are completely unaffected by the single-tab enforcement.</p>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Audio quality, keypad tones, and dropped-connection recovery all keep working perfectly. You gain the calm and lose absolutely nothing.</p>
 
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
 
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">لا تأثير على جودة المكالمة</h3>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#0f766e;">نفس وضوح المكالمات</h3>
 
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">نهج الاتصال عند المكالمة فقط يُضيف حوالي 200 مللي ثانية لوقت إعداد المكالمة (رحلة REGISTER ذهاباً وإياباً) — غير ملحوظة عملياً. إعادة التسجيل SIP بعد انقطاع الشبكة يعالجها تلقائياً مكدس JavaScript لـ VoIP في أودو. جودة الصوت وتفاوض الترميز وإشارات DTMF لا تتأثر على الإطلاق.</p>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">الأنظف لا يعني الأنقص. تتّصل مكالماتك بالسرعة نفسها وتبدو بالجودة نفسها — الفرق هو الفوضى التي اختفت فحسب. جودة الصوت ونغمات لوحة الأرقام واستعادة الاتصال بعد الانقطاع تعمل جميعها بإتقان. تكسب الهدوء ولا تخسر شيئاً البتة.</p>
 
       </div>
 
@@ -157,17 +157,17 @@
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
         <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
 
-          <li>Install module and assign the <b>VoIP One Tab User</b> permission group to the relevant users.</li>
+          <li>Switch it on for the people you want to give clean calling to.</li>
 
-          <li>User opens Odoo in 3 browser tabs → Tab 1 wins the BroadcastChannel election and becomes primary; Tabs 2 &amp; 3 are idle.</li>
+          <li>They open Odoo in as many tabs as they like — it sorts itself out.</li>
 
-          <li>Incoming call arrives at the SIP server → only Tab 1 receives the INVITE and rings.</li>
+          <li>A call comes in and rings in exactly one place.</li>
 
-          <li>User answers in Tab 1; audio flows cleanly with no conflict from other tabs.</li>
+          <li>They answer calmly; the audio is clean with nothing competing.</li>
 
-          <li>Call ends → primary tab sends DEREGISTER (if connect-on-call-only is enabled).</li>
+          <li>The call ends and the connection steps back, quiet again.</li>
 
-          <li>If Tab 1 closes, Tab 2 wins a new election and takes over SIP registration within 2 seconds.</li>
+          <li>If a tab closes mid-day, another takes over in seconds — no one notices.</li>
 
         </ol>
       </div>
@@ -176,17 +176,17 @@
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
         <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
 
-          <li>ثبّت الوحدة وامنح مجموعة الأذونات <b>VoIP One Tab User</b> للمستخدمين المعنيين.</li>
+          <li>فعّلها لمن تريد منحهم المكالمات النظيفة.</li>
 
-          <li>يفتح المستخدم أودو في 3 تبويبات → التبويب 1 يفوز في انتخاب BroadcastChannel ويصبح أساسياً؛ التبويبان 2 و3 خاملان.</li>
+          <li>يفتحون أودو في ما يشاؤون من التبويبات — وهي تنظّم نفسها.</li>
 
-          <li>تصل مكالمة واردة لخادم SIP → فقط التبويب 1 يستقبل INVITE ويرنّ.</li>
+          <li>تصل مكالمة فتَرِنّ في مكان واحد بالضبط.</li>
 
-          <li>يُجيب المستخدم في التبويب 1؛ الصوت يتدفق بنظافة دون تعارض.</li>
+          <li>يُجيبون بهدوء؛ والصوت نظيف لا شيء يزاحمه.</li>
 
-          <li>تنتهي المكالمة → التبويب الأساسي يرسل DEREGISTER (إذا كان وضع الاتصال عند المكالمة مفعّلاً).</li>
+          <li>تنتهي المكالمة فيتراجع الاتصال هادئاً من جديد.</li>
 
-          <li>إذا أُغلق التبويب 1، يفوز التبويب 2 في انتخاب جديد ويتولى تسجيل SIP خلال ثانيتين.</li>
+          <li>إن أُغلق تبويب أثناء اليوم، يتولّى آخر المهمة في ثوانٍ — دون أن يلاحظ أحد.</li>
 
         </ol>
       </div>
@@ -199,21 +199,21 @@
 
     <div style="flex:1 1 300px;background:#f0fdfa;border:1.5px solid #99f6e4;border-radius:14px;padding:20px 24px;">
 
-      <h3 style="margin:0 0 8px;color:#0f766e;font-size:1em;">🖥️ Why this matters for large teams</h3>
+      <h3 style="margin:0 0 8px;color:#0f766e;font-size:1em;">🖥️ Made for busy call centres</h3>
 
-      <p style="margin:0 0 10px;color:#134e4a;line-height:1.6;font-size:.93em;">In a call centre with 50 agents each having 3 browser tabs open, the SIP server receives up to 150 REGISTER messages on startup instead of 50 — a 3× storm that can trigger SIP server throttling or rate-limiting. This module cuts that back to 50 regardless of how many tabs each agent has open.</p>
+      <p style="margin:0 0 10px;color:#134e4a;line-height:1.6;font-size:.93em;">Picture fifty agents each with a few tabs open. Without this, your phone system is hammered with far more connections than there are people — enough to slow it down or trip its limits. This keeps it to one per agent, no matter how many tabs they open, so the whole floor stays fast and dependable.</p>
 
-      <p dir="rtl" style="margin:0;color:#0f766e;line-height:1.8;font-size:.91em;border-top:1px solid #99f6e4;padding-top:10px;">في مركز اتصال بـ 50 وكيلاً لكل منهم 3 تبويبات مفتوحة، يستقبل خادم SIP ما يصل إلى 150 رسالة REGISTER عند الإطلاق بدلاً من 50 — عاصفة 3 أضعاف قد تُشغّل تحديد معدل الخادم. هذه الوحدة تُعيدها إلى 50 بغض النظر عن عدد التبويبات المفتوحة.</p>
+      <p dir="rtl" style="margin:0;color:#0f766e;line-height:1.8;font-size:.91em;border-top:1px solid #99f6e4;padding-top:10px;">تخيّل خمسين وكيلاً لكل منهم بضعة تبويبات. بدون هذا، يُثقَل نظام هاتفك باتصالات أكثر بكثير من عدد الأشخاص — بما يكفي لإبطائه أو تجاوز حدوده. هذا يُبقيه اتصالاً واحداً لكل وكيل مهما فتح من تبويبات، فيبقى المركز كله سريعاً وموثوقاً.</p>
 
     </div>
 
     <div style="flex:1 1 300px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:20px 24px;">
 
-      <h3 style="margin:0 0 8px;color:#1e40af;font-size:1em;">ℹ️ Requires Odoo VoIP</h3>
+      <h3 style="margin:0 0 8px;color:#1e40af;font-size:1em;">ℹ️ Works with Odoo phone calling</h3>
 
-      <p style="margin:0 0 10px;color:#1e3a8a;line-height:1.6;font-size:.93em;">This module patches the standard Odoo <code>voip</code> module's JavaScript registration layer. It does not replace or bundle its own SIP stack — it relies on Odoo's built-in <code>sip.js</code> integration. No third-party SIP libraries are included; the call quality is entirely determined by your SIP provider and network.</p>
+      <p style="margin:0 0 10px;color:#1e3a8a;line-height:1.6;font-size:.93em;">This adds calm and reliability on top of Odoo's built-in phone calling — it doesn't replace it or change your provider. Your call quality stays in the hands of your network and phone provider, exactly as it is today; this simply makes the experience smoother.</p>
 
-      <p dir="rtl" style="margin:0;color:#1e40af;line-height:1.8;font-size:.91em;border-top:1px solid #bfdbfe;padding-top:10px;">تُصحح هذه الوحدة طبقة تسجيل JavaScript لوحدة <code>voip</code> القياسية في أودو. لا تستبدل مكدس SIP الخاص بها — تعتمد على تكامل <code>sip.js</code> المدمج في أودو. لا مكتبات SIP خارجية مضمنة؛ جودة المكالمة تحددها بالكامل شبكتك ومزوّد SIP الخاص بك.</p>
+      <p dir="rtl" style="margin:0;color:#1e40af;line-height:1.8;font-size:.91em;border-top:1px solid #bfdbfe;padding-top:10px;">يضيف هذا الهدوء والموثوقية فوق نظام الاتصال المدمج في أودو — لا يستبدله ولا يغيّر مزوّدك. تبقى جودة مكالماتك بيد شبكتك ومزوّد هاتفك تماماً كما هي اليوم؛ هذا يجعل التجربة أكثر سلاسة فحسب.</p>
 
     </div>
 
@@ -221,7 +221,7 @@
 
   <!-- FOOTER -->
   <div style="text-align:center;color:#9ca3af;font-size:.85em;border-top:1px solid #e5e7eb;padding-top:16px;">
-    ERA VoIP One Tab · تسجيل SIP لتبويب واحد من ERA · Odoo 19
+    ERA VoIP One Tab · مكالمات نظيفة بلا رنين وهمي من ERA · Odoo 19
   </div>
 
 </section>

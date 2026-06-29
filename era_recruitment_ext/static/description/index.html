@@ -5,10 +5,10 @@
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Recruitment AI Analyser</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">محلّل التوظيف بالذكاء الاصطناعي من ERA</div>
     <p style="font-size:1.05em;margin:0 0 8px;color:rgba(255,255,255,.92);max-width:720px;margin-left:auto;margin-right:auto;">
-      Adds AI-powered CV match analysis to Odoo Recruitment. Upload a CV, click Analyse, and receive a numeric match score, a strengths-and-gaps breakdown, and a hiring recommendation — all stored on the applicant record without leaving Odoo.
+      Instantly see who's the best fit. AI reads every CV against the job and ranks your candidates — so you interview the right people first, skip the pile of mismatches, and fill roles faster without the hours of manual screening.
     </p>
     <p dir="rtl" style="font-size:1em;margin:0;color:rgba(255,255,255,.85);max-width:720px;margin-left:auto;margin-right:auto;">
-      يضيف تحليل مطابقة السير الذاتية بالذكاء الاصطناعي إلى التوظيف في أودو. ارفع السيرة الذاتية، اضغط تحليل، واحصل على درجة مطابقة رقمية وتفصيل للمزايا والثغرات وتوصية التوظيف — كل ذلك محفوظ على سجل المتقدم دون مغادرة أودو.
+      اعرف فوراً من هو الأنسب. يقرأ الذكاء الاصطناعي كل سيرة ذاتية مقابل الوظيفة ويرتّب مرشحيك — لتقابل الأنسب أولاً، وتتجاوز كومة غير المطابقين، وتملأ الشواغر أسرع دون ساعات الفرز اليدوي.
     </p>
   </div>
 
@@ -18,66 +18,66 @@
     <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">🤖</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">AI CV Analysis</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">Triggered from the applicant form via an "Analyse CV" button. The module extracts text from the attached CV (PDF via pdfminer, DOCX via python-docx), combines it with the job position description, and sends a structured prompt to the configured Odoo AI agent. The AI response is parsed and stored as <code>era_cv_match_score</code> and <code>era_cv_analysis_html</code> fields on the applicant record.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Screen Any CV in One Click</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Open an applicant, click Analyse, and let AI do the reading for you. It instantly digests the CV against the role and hands back a clear verdict — no copy-pasting, no skimming dozens of pages, no leaving Odoo. What used to take twenty minutes now takes seconds.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">تحليل السيرة الذاتية بالذكاء الاصطناعي</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">يُشغَّل من نموذج المتقدم بزر "تحليل السيرة الذاتية". تستخرج الوحدة النص من السيرة المرفقة (PDF عبر pdfminer، DOCX عبر python-docx)، تجمعه مع وصف الوظيفة، وترسل موجّهاً منظَّماً لوكيل AI أودو. يُحلَّل الرد ويُخزَّن في حقلي <code>era_cv_match_score</code> و<code>era_cv_analysis_html</code>.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">افرز أي سيرة ذاتية بنقرة واحدة</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">افتح المتقدم، اضغط تحليل، ودع الذكاء الاصطناعي يقرأ بدلاً منك. يستوعب السيرة مقابل الوظيفة فوراً ويعيد حكماً واضحاً — دون نسخ ولصق أو تصفّح عشرات الصفحات أو مغادرة أودو. ما كان يستغرق عشرين دقيقة صار ثوانٍ.</p>
       </div>
     </div>
 
     <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">📊</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Match Score (0–100)</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">The AI returns a numeric score reflecting how well the candidate's experience, skills, and qualifications align with the job requirements. The score appears as a progress-bar badge on the applicant kanban card and list view so recruiters can rank at a glance. Colour coding: green above 70, amber 40–70, red below 40.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Rank Candidates at a Glance</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Every applicant gets a clear match score showing how well they fit the role, right on your pipeline cards. Green means strong, amber means maybe, red means skip — so you sort your shortlist in seconds and focus your time where it actually counts.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">درجة المطابقة (0–100)</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">يُعيد الذكاء الاصطناعي درجة رقمية تعكس مدى توافق خبرة المرشح ومهاراته ومؤهلاته مع متطلبات الوظيفة. تظهر الدرجة كشريط تقدم في بطاقة كانبان وعرض القائمة. تمييز لوني: أخضر فوق 70، عنبري 40–70، أحمر أقل من 40.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">رتّب المرشحين بنظرة واحدة</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">كل متقدم ينال درجة مطابقة واضحة تُظهر مدى ملاءمته للوظيفة، مباشرة على بطاقات مسارك. الأخضر قوي، العنبري محتمل، الأحمر تجاوزه — لترتّب قائمتك المختصرة في ثوانٍ وتركّز وقتك حيث يهمّ فعلاً.</p>
       </div>
     </div>
 
     <!-- Card 3 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">💪</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Strengths &amp; Gaps Breakdown</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">The analysis HTML includes two structured lists: Strengths (where the candidate clearly meets or exceeds requirements) and Gaps (missing skills, insufficient experience, or unclear fit). Each point references specific text from the CV and the job description so recruiters can verify the AI's reasoning.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Know Their Strengths and Gaps</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Get more than a number. You see exactly where each candidate shines and where they fall short — backed by real lines from their CV and the job. Walk into every interview already knowing what to probe, and make decisions you can defend.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">تفصيل المزايا والثغرات</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">يتضمن HTML التحليلي قائمتين منظمتين: المزايا (أين يلبّي المرشح المتطلبات أو يتجاوزها) والثغرات (المهارات المفقودة أو الخبرة غير الكافية). كل نقطة تستشهد بنص محدد من السيرة الذاتية والوصف الوظيفي.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">اعرف نقاط قوتهم وثغراتهم</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">احصل على أكثر من رقم. ترى بالضبط أين يتألق كل مرشح وأين يقصّر — مدعوماً بأسطر حقيقية من سيرته والوظيفة. ادخل كل مقابلة وأنت تعرف ما تسأل عنه، واتخذ قرارات تستطيع الدفاع عنها.</p>
       </div>
     </div>
 
     <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">📝</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Hiring Recommendation</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">A one-paragraph AI summary recommends whether to advance the candidate to the next stage, request a screening call, or decline — with brief reasoning. The recruiter can accept or override the recommendation; the AI note remains in the chatter for audit purposes.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">A Clear Recommendation</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">For every candidate you get a straight answer — advance, screen, or pass — with the reasoning behind it. It's like having an extra recruiter on the team who never tires. The call is always yours, and the note stays on file for everyone to see.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">توصية التوظيف</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">ملخص AI بفقرة واحدة يوصي بالتقدم للمرحلة التالية أو طلب مقابلة أولية أو الرفض — مع مبرر موجز. يمكن للمجنّد قبول التوصية أو تجاوزها؛ تبقى ملاحظة AI في السجل للمراجعة.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">توصية واضحة</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">لكل مرشح تحصل على إجابة مباشرة — تقدّم، قابِل، أو تجاوز — مع سبب القرار. كأن معك مجنّداً إضافياً لا يتعب. القرار يبقى لك دائماً، وتبقى الملاحظة محفوظة ليراها الجميع.</p>
       </div>
     </div>
 
     <!-- Card 5 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">⚡</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Bulk Analysis Action</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">A server action on the applicant list allows selecting multiple applicants and running AI analysis on all of them in a background job. A progress counter shows how many have been processed and how many remain, updating every 30 seconds.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Sift Hundreds Overnight</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Flooded with applicants? Select them all and let the AI work through the whole stack while you focus elsewhere. Come back to a fully ranked shortlist — no late nights, no backlog, just the best people surfaced and ready for you to call.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">إجراء التحليل الجماعي</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">إجراء خادم في قائمة المتقدمين يتيح اختيار متعددين وتشغيل تحليل AI عليهم في وظيفة خلفية. عداد تقدم يُظهر كم جرى تحليله وكم تبقى، يُحدَّث كل 30 ثانية.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">افرز المئات بين عشية وضحاها</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">غمرتك الطلبات؟ اخترها جميعاً ودع الذكاء الاصطناعي يعالج الكومة كاملة بينما تنشغل بغيرها. عُد إلى قائمة مختصرة مرتّبة بالكامل — بلا سهر ولا تراكم، فقط الأفضل ظاهرون وجاهزون لتتصل بهم.</p>
       </div>
     </div>
 
     <!-- Card 6 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fde68a;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">🎯</div>
-      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Job-Description Aware</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">The analysis is anchored to the actual <code>hr.job</code> or <code>hr.applicant.category</code> description on the recruitment position — not a generic rubric. Changing the job description changes what the AI evaluates, so the analysis always reflects the current requirements and no two job analyses use the same rubric.</p>
+      <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">Tailored to Each Role</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">This isn't generic scoring. Every analysis is measured against your actual job and its real requirements, so a sales role is judged like a sales role and an engineer like an engineer. Update the role and the AI instantly adapts — the fit you see is always the fit that matters.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">مرتبط بالوصف الوظيفي</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">يستند التحليل إلى الوصف الفعلي للوظيفة في <code>hr.job</code> أو <code>hr.applicant.category</code> — لا معيار عام. تغيير الوصف الوظيفي يغيّر ما يقيّمه الذكاء الاصطناعي، فلا تحليلان لوظيفتين يستخدمان نفس المعيار.</p>
+        <h3 style="margin:0 0 8px;color:#b45309;font-size:1.1em;">مفصّل لكل وظيفة</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">هذا ليس تقييماً عاماً. كل تحليل يُقاس مقابل وظيفتك الفعلية ومتطلباتها الحقيقية، فتُقيَّم وظيفة المبيعات كوظيفة مبيعات والمهندس كمهندس. حدّث الوظيفة فيتكيّف الذكاء الاصطناعي فوراً — الملاءمة التي تراها هي الملاءمة التي تهم.</p>
       </div>
     </div>
 
@@ -91,24 +91,24 @@
       <!-- EN steps -->
       <div style="flex:1 1 300px;">
         <ol style="margin:0;padding-left:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
-          <li>Recruiter posts a job position with a detailed description and requirements</li>
-          <li>Applicant applies and attaches their CV (PDF or DOCX)</li>
-          <li>Recruiter opens the applicant form and clicks "Analyse CV"</li>
-          <li>AI reads CV vs job description, returns score + breakdown + recommendation (stored on record)</li>
-          <li>Score appears on kanban card; recruiter reviews analysis HTML and decides next stage</li>
-          <li>Bulk action processes multiple applicants in background overnight</li>
+          <li>Post your job with the description and what you're looking for</li>
+          <li>Candidates apply and attach their CVs</li>
+          <li>Open an applicant and click Analyse</li>
+          <li>In seconds, get the score, the strengths and gaps, and a recommendation</li>
+          <li>Sort by score and interview your best fits first</li>
+          <li>Got a flood of applicants? Let it rank them all overnight</li>
         </ol>
       </div>
 
       <!-- AR steps -->
       <div style="flex:1 1 300px;" dir="rtl">
         <ol style="margin:0;padding-right:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
-          <li>يُنشر منصب وظيفي بوصف تفصيلي ومتطلبات</li>
-          <li>يتقدم مرشح ويرفق سيرته الذاتية (PDF أو DOCX)</li>
-          <li>يفتح المجنّد نموذج المتقدم ويضغط "تحليل السيرة الذاتية"</li>
-          <li>يقرأ الذكاء الاصطناعي السيرة مقابل الوصف الوظيفي ويُعيد درجة + تفصيل + توصية</li>
-          <li>تظهر الدرجة في بطاقة كانبان ويراجع المجنّد التحليل</li>
-          <li>الإجراء الجماعي يعالج متقدمين متعددين في الخلفية</li>
+          <li>انشر وظيفتك مع الوصف وما تبحث عنه</li>
+          <li>يتقدم المرشحون ويرفقون سيرهم الذاتية</li>
+          <li>افتح متقدماً واضغط تحليل</li>
+          <li>في ثوانٍ تحصل على الدرجة ونقاط القوة والثغرات وتوصية</li>
+          <li>رتّب حسب الدرجة وقابِل الأنسب أولاً</li>
+          <li>غمرتك الطلبات؟ دعه يرتّبها كلها بين عشية وضحاها</li>
         </ol>
       </div>
 
@@ -117,12 +117,12 @@
 
   <!-- INFO BOX -->
   <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:24px 26px;margin-bottom:28px;">
-    <h3 style="margin:0 0 10px;color:#b45309;font-size:1.1em;">⚡ Works with Any Odoo AI Provider</h3>
+    <h3 style="margin:0 0 10px;color:#b45309;font-size:1.1em;">⚡ Works With the AI You Already Trust</h3>
     <p style="margin:0 0 14px;font-size:.97em;line-height:1.7;">
-      The CV analysis uses whichever AI provider and model is configured on the ERA AI agent — OpenAI GPT-4o, Claude, Gemini, or a local model via <code>era_odoo_ai_ext</code>. No hardcoded provider dependency.
+      Use the AI you prefer — <b>OpenAI</b>, <b>Claude</b>, <b>Gemini</b>, or a private model kept fully in-house. You're never locked into one provider, so you stay in control of cost, quality, and where your candidate data lives.
     </p>
     <p dir="rtl" style="margin:0;font-size:.97em;line-height:1.7;border-top:1px solid #fde68a;padding-top:12px;">
-      يستخدم تحليل السيرة أي مزوّد AI مُكوَّن على وكيل ERA — OpenAI GPT-4o أو Claude أو Gemini أو نموذج محلي عبر <code>era_odoo_ai_ext</code>. لا يوجد ارتباط بمزوّد محدد.
+      استخدم الذكاء الاصطناعي الذي تفضّله — <b>OpenAI</b> أو <b>Claude</b> أو <b>Gemini</b> أو نموذجاً خاصاً يبقى لديك بالكامل. لست مقيّداً بمزوّد واحد، فتظل متحكّماً في التكلفة والجودة ومكان بيانات مرشحيك.
     </p>
   </div>
 

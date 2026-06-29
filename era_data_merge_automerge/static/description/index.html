@@ -6,10 +6,10 @@
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Data Merge — Auto-Merge</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">دمج التكرارات التلقائي من ERA</div>
     <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
-      A scheduled cron job that automatically processes confirmed duplicate groups from Odoo's <b>Data Cleaning</b> app — using only the built-in Odoo merge wizard, with configurable daily limits, dry-run simulation, and a full audit log.
+      A permanently clean database, with zero effort. Once you've approved a duplicate, it merges away on its own — safely and quietly — so messy double records never pile up again and your team stops wasting time tidying up by hand.
     </p>
     <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
-      مهمة مجدولة تدمج تلقائياً مجموعات التكرارات المؤكَّدة في تطبيق <b>تنظيف البيانات</b> — باستخدام معالج الدمج المدمج في أودو، مع حدود يومية قابلة للضبط ووضع محاكاة وسجل تدقيق كامل.
+      قاعدة بيانات نظيفة دائماً، بلا جهد. ما إن توافق على تكرار حتى يُدمج وحده — بأمان وهدوء — فلا تتراكم السجلات المكرّرة مجدداً ويتوقّف فريقك عن إضاعة الوقت في الترتيب اليدوي.
     </p>
   </div>
 
@@ -18,71 +18,71 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔄</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Automatic Merge Cron</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Runs on a configurable schedule (default: daily at 2 AM via <code>ir.cron</code>). Reads all <code>data_cleaning.record.group</code> records in the <em>to merge</em> state and processes them in batches using Odoo's standard ORM merge logic. Zero manual work is required after the initial setup — the cron handles everything silently in the background without any user intervention.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Cleans Up While You Sleep</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Set it once and forget it. Approved duplicates get merged automatically on a schedule you choose — overnight by default — so you wake up to a tidier database every morning. No buttons to push, no reminders to chase, no manual cleanup ever again.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">مهمة الدمج التلقائية</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعمل على جدول قابل للتخصيص (الافتراضي: يومياً الساعة 2 صباحاً). تقرأ جميع سجلات <code>data_cleaning.record.group</code> في حالة "جاهز للدمج" وتعالجها دفعةً دفعة عبر منطق الدمج المعياري في أودو. لا يلزم أي تدخل يدوي بعد الإعداد الأولي.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">ينظّف بينما تنام</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اضبطه مرة وانسَه. تُدمج التكرارات المعتمدة تلقائياً وفق جدول تختاره — ليلاً افتراضياً — فتستيقظ على قاعدة بيانات أنظف كل صباح. لا أزرار تُضغط ولا تذكيرات تُلاحَق ولا تنظيف يدوي بعد الآن.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Production-Safe Design</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Processes only groups that have been reviewed and confirmed by a human — never blindly merges raw auto-detections. The batch size is capped by the system parameter <code>era_data_merge.batch_size</code> (default 20) to prevent long-running database transactions that could lock tables. Only groups with <code>state = 'to_merge'</code> are touched; unreviewed detections are skipped.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Only Touches What You Approved</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Nothing is ever merged behind your back. Only duplicates a person has reviewed and confirmed get cleaned up — anything still in doubt is left completely alone. You keep the final say on every record, and the system simply carries out your decisions.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">تصميم آمن للإنتاج</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يعالج فقط المجموعات التي راجعها إنسان وأكّدها — لا يدمج الاكتشافات التلقائية الخام أبداً. حجم الدفعة محدود بمعامل النظام <code>era_data_merge.batch_size</code> (الافتراضي 20) لمنع المعاملات الطويلة التي قد تقفل الجداول. تُتجاهل الاكتشافات غير المراجعة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">يمسّ ما وافقت عليه فقط</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">لا يُدمج شيء من وراء ظهرك أبداً. تُنظَّف فقط التكرارات التي راجعها شخص وأكّدها — وما يبقى مشكوكاً فيه يُترك تماماً. تحتفظ بالقرار النهائي على كل سجل، والنظام ينفّذ قراراتك فحسب.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔍</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Dry-Run Mode</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Set the system parameter <code>era_data_merge.dry_run = True</code> under <b>Settings → Technical → Parameters → System Parameters</b> to simulate the run. The cron logs exactly what it <em>would</em> merge — group IDs, record counts, destination record — without touching any data. Ideal for validating configuration before going live in production or after schema changes.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Try It Risk-Free First</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Nervous about letting it run? Turn on preview mode and see exactly what would be merged — which records, which survivor — without changing a single thing. When you're comfortable it's making the right calls, switch it live with total confidence.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">وضع المحاكاة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اضبط <code>era_data_merge.dry_run = True</code> في معاملات النظام لتشغيل المحاكاة. تُسجّل المهمة ما ستدمجه تحديداً — معرّفات المجموعات، عدد السجلات، السجل الوجهة — دون المساس بأي بيانات. مثالي للتحقق من الإعداد قبل بدء الإنتاج.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">جرّبه بأمان أولاً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">قلق من تشغيله؟ فعّل وضع المعاينة لترى بالضبط ما سيُدمج — أي سجلات وأيها الباقي — دون تغيير أي شيء. وحين تطمئن أنه يتخذ القرارات الصحيحة، شغّله فعلياً بثقة تامة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📊</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Full Audit Log</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Every merge attempt — success or failure — is written to a dedicated <code>era.data.merge.log</code> model accessible under <b>Data Cleaning → Merge Log</b>. Each entry records the group ID, source records, destination record, merge timestamp, cron user, and any error traceback. Admins can filter the log by model, date range, or outcome (merged / failed).</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">A Full Record of Everything</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Every merge is logged, so you always know exactly what happened and when. Browse, filter, and review the full history any time — perfect for peace of mind, internal audits, and showing your records have been kept clean and accountable.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">سجل تدقيق كامل</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">كل محاولة دمج — ناجحة أو فاشلة — تُكتب في نموذج <code>era.data.merge.log</code> المتاح من <b>تنظيف البيانات → سجل الدمج</b>. يتضمن كل إدخال معرّف المجموعة والسجلات المصدر والوجهة والوقت والمستخدم وأي رسالة خطأ. يمكن تصفية السجل بالنموذج أو النطاق الزمني أو النتيجة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">سجل كامل لكل شيء</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُسجَّل كل دمج، فتعرف دائماً ما حدث ومتى بالضبط. تصفّح السجل الكامل وصفّه وراجعه متى شئت — مثالي للاطمئنان والتدقيق الداخلي وإثبات أن سجلاتك بقيت نظيفة وموثّقة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Configurable Limits</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Three system parameters drive all behaviour: <code>era_data_merge.batch_size</code> (max merges per cron run), <code>era_data_merge.max_age_days</code> (only process groups older than N days, keeping recent detections under review), and <code>era_data_merge.model_whitelist</code> (comma-separated list such as <code>res.partner,product.product</code>). All are live <code>ir.config_parameter</code> values — no code change or restart needed.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Tune It to Your Comfort</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">You stay in charge of the pace. Decide how much it cleans at a time, let recent records sit a while before they're merged, and choose exactly which kinds of data it should tidy. Adjust any of it instantly, whenever you like — no waiting, no downtime.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">حدود قابلة للتخصيص</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">ثلاثة معاملات نظام تتحكم في كل السلوك: حجم الدفعة، الحد الأقصى لعمر المجموعة بالأيام، وقائمة النماذج المسموح بمعالجتها (مثل <code>res.partner,product.product</code>). جميعها قيم <code>ir.config_parameter</code> مباشرة — لا تغيير في الكود ولا إعادة تشغيل مطلوبة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">اضبطه على راحتك</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تبقى متحكّماً في الوتيرة. قرّر كم ينظّف في المرة، ودع السجلات الحديثة تنتظر قليلاً قبل دمجها، واختر بالضبط أنواع البيانات التي يرتّبها. عدّل أيّاً منها فوراً متى شئت — بلا انتظار ولا توقّف.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔗</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Respects Odoo Merge Rules</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Uses the same ORM merge path that the Data Cleaning UI uses — archives duplicates, transfers related records, updates foreign key references, and triggers the standard <code>_merge()</code> hook on affected models. No custom SQL, no bypassed ORM constraints, no direct table writes. The result is identical to a human clicking Merge in the Data Cleaning interface.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">As Safe as Doing It Yourself</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">It merges duplicates the exact same trusted way you would by hand — keeping the right record, moving everything linked across, and breaking nothing. The result is identical to a careful manual merge, just done for you, every time, without the effort.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">يحترم قواعد الدمج في أودو</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يستخدم مسار الدمج عبر ORM المستخدم في واجهة تنظيف البيانات — يؤرشف التكرارات، ينقل السجلات المرتبطة، يُحدّث المراجع، ويُشغّل الخطاف <code>_merge()</code> على النماذج المتأثرة. لا SQL مخصص ولا تجاوز لقيود ORM. النتيجة مطابقة لضغط زر "دمج" في الواجهة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">آمن كأنك تفعله بنفسك</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يدمج التكرارات بنفس الطريقة الموثوقة التي تفعلها يدوياً — يبقي السجل الصحيح، وينقل كل المرتبط به، ولا يكسر شيئاً. النتيجة مطابقة لدمج يدوي دقيق، لكن يُنجَز نيابة عنك في كل مرة، بلا عناء.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fed7aa;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⏱️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Scheduled &amp; Unattended</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The cron is registered under <b>Settings → Technical → Automation → Scheduled Actions → ERA Data Merge</b>. The schedule interval, next execution date, and enabled state are all adjustable from that standard Odoo screen. No dedicated settings page is required — everything runs on standard Odoo <code>ir.cron</code> infrastructure with no extra dependencies.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">Runs Itself, Forever</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Pick the schedule that suits you — nightly, weekly, whatever fits — and it keeps your data clean from then on, with no babysitting. Pause it, speed it up, or change the timing any moment. It just keeps your database tidy in the background.</p>
       <div style="border-top:1px solid #fed7aa;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">مُجدوَلة وتعمل تلقائياً</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُسجَّل المهمة في <b>الإعدادات → تقني → الأتمتة → الإجراءات المجدولة → ERA Data Merge</b>. يمكن ضبط الجدول الزمني وتاريخ التنفيذ التالي وحالة التفعيل من تلك الشاشة المعيارية في أودو دون أي صفحة إعدادات إضافية.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#c2410c;">يعمل وحده، دائماً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">اختر الجدول الذي يناسبك — يومياً أو أسبوعياً أو ما يلائمك — ويُبقي بياناتك نظيفة من بعدها دون متابعة. أوقفه أو سرّعه أو غيّر توقيته في أي لحظة. يبقى يرتّب قاعدة بياناتك في الخلفية.</p>
       </div>
     </div>
 
@@ -94,21 +94,21 @@
       <div style="flex:1 1 340px;">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
         <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
-          <li>Install the <b>Data Cleaning</b> app + this module from <b>Apps</b>.</li>
-          <li>Data Cleaning automatically detects and groups duplicates across configured models.</li>
-          <li>A data manager opens <b>Data Cleaning → Deduplicate Records</b>, reviews each group, and marks ready ones as <em>To Merge</em>.</li>
-          <li>The ERA cron fires at its scheduled time, reads all <em>To Merge</em> groups, merges each batch via the ORM path, and writes a log entry per group.</li>
-          <li>Admins review the merge log under <b>Data Cleaning → Merge Log</b>; adjust <code>batch_size</code> or whitelist as needed.</li>
+          <li>Turn on <b>Data Cleaning</b> and this add-on from <b>Apps</b>.</li>
+          <li>Odoo spots and groups your duplicate records for you.</li>
+          <li>Glance through them and approve the ones to merge.</li>
+          <li>Sit back — approved duplicates merge away on their own.</li>
+          <li>Check the history any time to see what was cleaned up.</li>
         </ol>
       </div>
       <div style="flex:1 1 340px;" dir="rtl">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
         <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
-          <li>ثبّت تطبيق <b>تنظيف البيانات</b> وهذه الوحدة من <b>التطبيقات</b>.</li>
-          <li>يكتشف التطبيق التكرارات ويجمّعها تلقائياً عبر النماذج المُهيَّأة.</li>
-          <li>يفتح مدير البيانات <b>تنظيف البيانات → إلغاء التكرارات</b>، يراجع المجموعات، ويضع علامة "جاهز للدمج".</li>
-          <li>تُشغَّل المهمة في الوقت المحدد، تقرأ المجموعات الجاهزة، تدمجها دفعةً دفعة، وتكتب سجلاً لكل مجموعة.</li>
-          <li>يراجع المسؤولون سجل الدمج ويضبطون الإعدادات حسب الحاجة.</li>
+          <li>فعّل <b>تنظيف البيانات</b> وهذه الإضافة من <b>التطبيقات</b>.</li>
+          <li>يكتشف أودو سجلاتك المكرّرة ويجمّعها لك.</li>
+          <li>ألقِ نظرة عليها ووافق على ما يُدمج.</li>
+          <li>استرخِ — تُدمج التكرارات المعتمدة وحدها.</li>
+          <li>راجع السجل متى شئت لترى ما جرى تنظيفه.</li>
         </ol>
       </div>
     </div>
@@ -116,13 +116,13 @@
 
   <!-- TIP BOX -->
   <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:16px;padding:30px 34px;margin-bottom:24px;">
-    <h2 style="margin:0 0 18px;color:#c2410c;font-size:1.2em;">💡 Tip — Start with Dry-Run &nbsp;·&nbsp; <span dir="rtl">ابدأ بوضع المحاكاة</span></h2>
+    <h2 style="margin:0 0 18px;color:#c2410c;font-size:1.2em;">💡 Tip — Preview Before You Go Live &nbsp;·&nbsp; <span dir="rtl">عاين قبل التشغيل الفعلي</span></h2>
     <div style="display:flex;flex-wrap:wrap;gap:26px;">
       <div style="flex:1 1 340px;">
-        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">Before enabling the cron in production, set <code>era_data_merge.dry_run = True</code> and trigger the cron manually from the Scheduled Actions screen. Review the resulting log entries to confirm the correct groups are selected and the destination record choices look right. Then set <code>dry_run = False</code> to go live. The first production run should use a small <code>batch_size</code> (5–10) as an extra safety measure.</p>
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">New to it? Start in preview mode and let it run once. You'll see exactly which records it would merge and which one it keeps — all without touching your data. Once you're happy it's picking the right ones, switch it live. Starting small for the first real run is a nice extra safety net, and you can scale up the moment you trust it.</p>
       </div>
       <div dir="rtl" style="flex:1 1 340px;">
-        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">قبل تفعيل المهمة في الإنتاج، اضبط <code>era_data_merge.dry_run = True</code> وشغّل المهمة يدوياً من شاشة الإجراءات المجدولة. راجع إدخالات السجل للتأكد من صحة المجموعات المختارة وصحة السجلات الوجهة. ثم اضبط <code>dry_run = False</code> للبدء الفعلي مع حجم دفعة صغير (5–10) كإجراء أمان إضافي.</p>
+        <p style="margin:0;color:#374151;line-height:1.9;font-size:.97em;">جديد عليه؟ ابدأ بوضع المعاينة ودعه يعمل مرة. سترى بالضبط أي سجلات سيدمجها وأيها يُبقي — دون المساس ببياناتك. وحين تطمئن أنه يختار الصحيح، شغّله فعلياً. البدء بكمية صغيرة في أول تشغيل حقيقي شبكة أمان إضافية لطيفة، ويمكنك التوسّع فور أن تثق به.</p>
       </div>
     </div>
   </div>

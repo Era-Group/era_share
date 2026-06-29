@@ -6,10 +6,10 @@
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA AI Client</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">عميل الذكاء الاصطناعي من ERA</div>
     <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
-      Shared internal library that abstracts calling <b>any configured AI provider</b> — OpenAI, Anthropic, Gemini, Cloudflare, and more — from Python code in other ERA modules. One <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:4px;">AIClient</code> class, every provider, no duplicated HTTP logic.
+      The dependable engine that makes every ERA AI feature simply work. Connect <b>OpenAI</b>, <b>Claude</b>, <b>Gemini</b>, <b>Cloudflare</b> and more — and trust that your AI keeps running flawlessly, even when providers change behind the scenes.
     </p>
     <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
-      مكتبة داخلية مشتركة تُجرّد استدعاء <b>أي مزوّد ذكاء اصطناعي مُهيَّأ</b> — OpenAI وAnthropic وGemini وCloudflare وغيرها — من كود Python في وحدات ERA الأخرى. فئة <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:4px;">AIClient</code> واحدة لجميع المزوّدين دون تكرار منطق HTTP.
+      المحرّك الموثوق الذي يجعل كل ميزة ذكاء اصطناعي في ERA تعمل ببساطة. اربط <b>OpenAI</b> و<b>Claude</b> و<b>Gemini</b> و<b>Cloudflare</b> وغيرها — واطمئن أن ذكاءك الاصطناعي يعمل بسلاسة، حتى حين يتغيّر المزوّدون خلف الكواليس.
     </p>
   </div>
 
@@ -18,61 +18,61 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🤖</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Unified <code>AIClient</code> Interface</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">A single <code>AIClient(env)</code> class exposes three main methods: <code>chat(messages)</code> for conversational completions, <code>complete(prompt)</code> for single-turn text generation, and <code>embed(text)</code> for vector embeddings. Callers pass a list of message dicts in OpenAI format and receive a plain string or list of floats — they never need to know which provider is active or how its API differs.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">One reliable foundation for all your AI</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Whether your AI is chatting, drafting content or understanding documents, it all runs on one rock-solid core. That means consistent quality everywhere, fewer things that can break, and a single trusted brain powering your entire AI experience.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">واجهة <code>AIClient</code> الموحَّدة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">فئة <code>AIClient(env)</code> واحدة توفّر <code>chat</code> للمحادثات، و<code>complete</code> للإتمام، و<code>embed</code> للتضمينات. يُمرِّر المستدعي قائمة رسائل بصيغة OpenAI ويحصل على نص أو قوائم أعداد عشرية — دون الحاجة لمعرفة المزوّد النشط أو خصائص واجهته البرمجية.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">أساس موثوق واحد لذكائك الاصطناعي كله</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">سواء كان ذكاؤك الاصطناعي يحاور أو يكتب المحتوى أو يفهم المستندات، فكل ذلك يعمل على نواة صلبة واحدة. هذا يعني جودة متّسقة في كل مكان، وأعطالاً أقل، وعقلاً موثوقاً واحداً يشغّل تجربتك بالكامل.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Provider Abstraction Layer</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Supports OpenAI chat completions, Anthropic Messages API (with <code>system</code> message handling), Google Gemini, Cloudflare Workers AI, and any OpenAI-compatible endpoint such as OpenRouter, Groq, or a local Ollama instance. Each provider is implemented as a thin adapter class. Adding a new provider means writing one new adapter — no changes are needed in any calling module.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Never locked to one provider</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Use <b>OpenAI</b>, <b>Claude</b>, <b>Gemini</b>, <b>Cloudflare</b> or your own private server — and switch whenever you find a better deal or a smarter model. Your AI features keep working exactly the same, so changing providers is painless instead of a project.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">طبقة تجريد المزوّدين</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تدعم OpenAI وAnthropic Messages API وGoogle Gemini وCloudflare Workers AI وأي نقطة نهاية متوافقة مع OpenAI كـ OpenRouter وGroq وOllama. كل مزوّد فئة محوّل خفيفة — إضافة مزوّد جديد لا تتطلب تغييراً في الوحدات المستدعِية.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">غير مقيّد بمزوّد واحد أبداً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">استخدم <b>OpenAI</b> أو <b>Claude</b> أو <b>Gemini</b> أو <b>Cloudflare</b> أو خادمك الخاص — وبدّل متى وجدت عرضاً أفضل أو نموذجاً أذكى. تبقى ميزاتك تعمل تماماً كما هي، فيصبح تغيير المزوّد سهلاً بدل أن يكون مشروعاً.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔌</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Agent &amp; Tool-Call Support</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Passes Odoo agent tool definitions (in JSON Schema format) to the model as part of the request and parses tool-call responses back into structured Python dicts. Any ERA module can implement agentic behaviour — iterative tool-use loops, database queries, record creation — with a few lines of Python. The client handles the multi-turn loop scaffolding automatically.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Smart AI that takes action</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">This is what lets your AI do more than talk — it can look things up, pull real answers from your business and carry out multi-step work on its own. The heavy lifting is handled for you, so smart, hands-on AI features just appear and work.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">دعم الوكيل واستدعاء الأدوات</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُمرِّر تعريفات أدوات وكيل أودو (بصيغة JSON Schema) للنموذج ويُحلّل ردود استدعاء الأدوات إلى قواميس Python منظَّمة. أي وحدة ERA تستطيع تنفيذ سلوك وكيل — حلقات أدوات، استعلامات قاعدة بيانات، إنشاء سجلات — بأسطر قليلة من Python.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">ذكاء اصطناعي يتصرّف لا يتكلّم فقط</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">هذا ما يجعل ذكاءك يفعل أكثر من الحديث — يبحث ويستخرج إجابات حقيقية من عملك ويُنجز مهامّ متعدّدة الخطوات بنفسه. العمل الشاقّ يُدار نيابة عنك، فتظهر ميزات ذكية عمليّة وتعمل ببساطة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔑</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Secure Credential Resolution</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">API keys are resolved from <code>ir.config_parameter</code> at call time and never cached in process memory beyond the duration of the HTTP request. The client never logs keys, full prompt payloads, or model responses to Odoo server logs. Sensitive parameters are passed directly to the provider's HTTP layer without intermediate string formatting that could leak to stack traces.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Your secrets stay secret</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Your provider keys, your prompts and your AI's answers are never written into logs or left lying around. Sensitive information is handled with care and kept private — so you get powerful AI without ever putting your credentials or your data at risk.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">استرجاع آمن لبيانات الاعتماد</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُسترجَع مفاتيح API من <code>ir.config_parameter</code> لحظة الاستدعاء ولا تُخزَّن في الذاكرة أبعد من مدة طلب HTTP. لا تُكتب المفاتيح ولا الموجّهات ولا الردود في سجلات أودو، مع تمرير المعاملات الحساسة مباشرة لطبقة HTTP.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">أسرارك تبقى سرّاً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">مفاتيح مزوّدك وأسئلتك وإجابات ذكائك الاصطناعي لا تُكتب في السجلات ولا تُترك في العلن. تُعامَل المعلومات الحسّاسة بعناية وتبقى خاصّة — فتحصل على ذكاء قوي دون أن تخاطر ببيانات اعتمادك أو بياناتك.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">📦</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Consumed by All ERA AI Modules</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;"><code>era_seo_suite</code>, <code>era_recruitment_ext</code>, <code>era_crm_lead_spam_ai</code>, and other ERA modules all import <code>from era_ai_client.client import AIClient</code> rather than implementing their own HTTP layer. This means provider upgrades, security patches, and new model support are delivered to every ERA AI feature through a single package update.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">One update keeps everything fresh</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Every ERA AI feature shares this same trusted engine. So a single update rolls out new provider support, fresh model options and security improvements to all of them at once — no feature gets left behind, and you stay current effortlessly.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">تستخدمه جميع وحدات ERA للذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;"><code>era_seo_suite</code> و<code>era_recruitment_ext</code> و<code>era_crm_lead_spam_ai</code> وغيرها تستورد <code>AIClient</code> بدلاً من بناء طبقة HTTP خاصة. ترقيات المزوّدين وتصحيحات الأمان ودعم النماذج الجديدة تصل لجميع ميزات ERA AI بتحديث حزمة واحدة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">تحديث واحد يبقي كل شيء حديثاً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">كل ميزات ERA للذكاء الاصطناعي تشترك في هذا المحرّك الموثوق نفسه. فتحديث واحد يوصِّل دعم مزوّدين جدد وخيارات نماذج وتحسينات أمان لها جميعاً دفعة واحدة — لا ميزة تتخلّف، وتبقى محدّثاً بلا عناء.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #cbd5e1;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🛡️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">Error Normalisation</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Provider-specific HTTP errors (OpenAI 429 rate-limit, Anthropic overload, Gemini quota exceeded), network timeouts, and malformed JSON responses are all caught and re-raised as <code>AIClientError</code> subclasses with a consistent <code>message</code>, <code>provider</code>, and <code>status_code</code> attribute. Calling modules handle one error type instead of maintaining provider-specific exception mappings.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">It fails gracefully, never messily</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">If a provider is busy, slow or having a bad day, your AI handles it calmly and tells you in plain language instead of crashing. The result is a smooth, professional experience your users can rely on — even when the internet doesn't cooperate.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">توحيد الأخطاء</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">أخطاء HTTP الخاصة بكل مزوّد (حد معدل OpenAI، حمل Anthropic الزائد، حصة Gemini)، انتهاء المهلة، وردود JSON مشوَّهة — كلها تُحوَّل لاستثناءات <code>AIClientError</code> موحَّدة بسمات <code>message</code> و<code>provider</code> و<code>status_code</code>. الوحدات المستدعِية تتعامل مع نوع خطأ واحد بدلاً من تعيينات متعددة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#334155;">يتعثّر بلطف لا بفوضى</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">إن كان المزوّد مشغولاً أو بطيئاً أو يمرّ بيوم سيّئ، يتعامل ذكاؤك مع ذلك بهدوء ويُخبرك بلغة واضحة بدل أن يتعطّل. النتيجة تجربة سلسة واحترافية يعتمد عليها مستخدموك — حتى حين لا يتعاون الإنترنت.</p>
       </div>
     </div>
 
@@ -84,19 +84,19 @@
       <div style="flex:1 1 340px;">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
         <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
-          <li>Another ERA module lists <code>era_ai_client</code> in its <code>__manifest__.py</code> <code>depends</code> list.</li>
-          <li>In Python code it runs <code>from era_ai_client.client import AIClient</code>.</li>
-          <li>It calls <code>AIClient(self.env).chat(messages)</code> — optionally passing <code>tools</code>, <code>model</code>, or <code>temperature</code>.</li>
-          <li>The client resolves the active provider from Odoo settings, formats the request correctly for that provider's API, and returns a plain string response (or structured tool-call dict).</li>
+          <li><b>It comes along automatically</b> with any ERA AI feature you install — nothing extra to set up.</li>
+          <li><b>Pick your AI provider once</b> in Settings, and you're done.</li>
+          <li><b>Every AI feature shares it</b>, so they all speak to your provider the same reliable way.</li>
+          <li><b>Sit back — it just works</b>, quietly powering your AI in the background.</li>
         </ol>
       </div>
       <div style="flex:1 1 340px;" dir="rtl">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
         <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
-          <li>تُدرج وحدة ERA أخرى <code>era_ai_client</code> في قائمة <code>depends</code> بملف <code>__manifest__.py</code>.</li>
-          <li>في كود Python تُنفِّذ <code>from era_ai_client.client import AIClient</code>.</li>
-          <li>تستدعي <code>AIClient(self.env).chat(messages)</code> مع تمرير <code>tools</code> أو <code>model</code> أو <code>temperature</code> اختيارياً.</li>
-          <li>يحدّد العميل المزوّد النشط من إعدادات أودو، يُنسّق الطلب وفق واجهة ذلك المزوّد، ويُعيد نصاً أو قاموس استدعاء أداة.</li>
+          <li><b>يأتي تلقائياً</b> مع أي ميزة ذكاء اصطناعي من ERA تثبّتها — بلا إعداد إضافي.</li>
+          <li><b>اختر مزوّدك مرة واحدة</b> من الإعدادات، وانتهى الأمر.</li>
+          <li><b>كل ميزة تشاركه</b>، فتتحدّث جميعها مع مزوّدك بالطريقة الموثوقة نفسها.</li>
+          <li><b>اطمئن — يعمل ببساطة</b>، يشغّل ذكاءك الاصطناعي بهدوء في الخلفية.</li>
         </ol>
       </div>
     </div>
@@ -105,14 +105,14 @@
   <!-- INFO BOXES -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
     <div style="flex:1 1 300px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:20px 24px;">
-      <h3 style="margin:0 0 8px;color:#334155;font-size:1em;">ℹ️ Developer Library — No UI</h3>
-      <p style="margin:0 0 10px;color:#1e293b;line-height:1.6;font-size:.93em;">This module ships no menus, views, or user-facing screens. It is installed automatically when any dependent ERA module is installed. At least one AI provider must be configured in <b>Settings → AI</b> before <code>AIClient</code> can make calls.</p>
-      <p dir="rtl" style="margin:0;color:#334155;line-height:1.8;font-size:.91em;border-top:1px solid #cbd5e1;padding-top:10px;">الوحدة بلا قوائم أو نماذج — تُثبَّت تلقائياً مع أي وحدة ERA معتمدة عليها. يجب تهيئة مزوّد ذكاء اصطناعي واحد على الأقل في <b>الإعدادات ← الذكاء الاصطناعي</b> قبل تشغيل <code>AIClient</code>.</p>
+      <h3 style="margin:0 0 8px;color:#334155;font-size:1em;">ℹ️ Quietly powerful, no setup</h3>
+      <p style="margin:0 0 10px;color:#1e293b;line-height:1.6;font-size:.93em;">There's nothing here to click or configure — this engine works invisibly behind your AI features. Just choose an AI provider in <b>Settings</b> once, and everything that relies on it springs to life.</p>
+      <p dir="rtl" style="margin:0;color:#334155;line-height:1.8;font-size:.91em;border-top:1px solid #cbd5e1;padding-top:10px;">لا شيء هنا للنقر أو الإعداد — يعمل هذا المحرّك بخفاء خلف ميزاتك. اختر مزوّداً واحداً من <b>الإعدادات</b>، وينطلق كل ما يعتمد عليه.</p>
     </div>
     <div style="flex:1 1 300px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:20px 24px;">
-      <h3 style="margin:0 0 8px;color:#92400e;font-size:1em;">⚡ Single upgrade path</h3>
-      <p style="margin:0 0 10px;color:#78350f;line-height:1.6;font-size:.93em;">Because all ERA AI modules share this client, updating <code>era_ai_client</code> once delivers new provider support, timeout improvements, or security patches to every ERA feature simultaneously — no module-by-module patching required.</p>
-      <p dir="rtl" style="margin:0;color:#92400e;line-height:1.8;font-size:.91em;border-top:1px solid #fde68a;padding-top:10px;">لأن جميع وحدات ERA للذكاء الاصطناعي تشترك في هذا العميل، يكفي تحديث <code>era_ai_client</code> مرة واحدة لتوصيل دعم مزوّدين جدد وتحسينات وتصحيحات أمان لكل ميزة ERA دفعة واحدة.</p>
+      <h3 style="margin:0 0 8px;color:#92400e;font-size:1em;">⚡ Future-proof by design</h3>
+      <p style="margin:0 0 10px;color:#78350f;line-height:1.6;font-size:.93em;">Because every AI feature is built on this one engine, you're never left behind. New providers, faster models and security upgrades reach all of your AI at once — keeping your investment current for years, not months.</p>
+      <p dir="rtl" style="margin:0;color:#92400e;line-height:1.8;font-size:.91em;border-top:1px solid #fde68a;padding-top:10px;">لأن كل ميزة مبنيّة على هذا المحرّك الواحد، لن تتخلّف أبداً. المزوّدون الجدد والنماذج الأسرع وترقيات الأمان تصل لذكائك كله دفعة واحدة — فتبقى استثمارك حديثاً لسنوات لا لأشهر.</p>
     </div>
   </div>
 

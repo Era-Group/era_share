@@ -5,10 +5,10 @@
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA Enrich Base</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">القاعدة الأساسية لـ ERA Enrich</div>
     <p style="font-size:1.05em;margin:0 0 8px;color:rgba(255,255,255,.92);max-width:720px;margin-left:auto;margin-right:auto;">
-      The shared infrastructure module that all ERA Enrich add-ons depend on. It manages HTTP connections, stores credentials securely, enforces rate limits, exposes async callback endpoints, and provides a settings UI — so higher-level modules need no plumbing of their own.
+      The trusted engine behind your data enrichment — fast, safe, and always on. Set it up once with your account details, and every ERA Enrich app just works: secure, reliable, and ready in seconds. No tinkering, no surprises.
     </p>
     <p dir="rtl" style="font-size:1em;margin:0;color:rgba(255,255,255,.85);max-width:720px;margin-left:auto;margin-right:auto;">
-      الوحدة الأساسية المشتركة التي تعتمد عليها جميع إضافات ERA Enrich. تدير اتصالات HTTP وتخزّن بيانات الاعتماد بأمان وتُطبّق حدود المعدل وتُعرّض نقاط نهاية استدعاء رجعي غير متزامن — فلا تحتاج الوحدات العليا لأي تمديدات تحتية.
+      المحرّك الموثوق خلف إثراء بياناتك — سريع وآمن ويعمل دائماً. أعِدّه مرة واحدة ببيانات حسابك، وكل تطبيقات ERA Enrich تعمل من تلقاء نفسها: آمنة وموثوقة وجاهزة في ثوانٍ. بلا عبث وبلا مفاجآت.
     </p>
   </div>
 
@@ -18,55 +18,55 @@
     <!-- Card 1 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">🔌</div>
-      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Shared HTTP Client</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">A Python class <code>EraEnrichClient</code> wraps <code>requests.Session</code> with base URL, bearer token auth, retry logic (3 retries with exponential backoff), and a configurable timeout. All ERA Enrich modules import and instantiate this class — one implementation, zero duplication across the suite.</p>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">One Setup, Everything Connected</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Enter your enrichment account once, here, and every ERA Enrich app instantly knows how to reach the service. No repeated logins, no copying details between modules — connect once and the whole suite is live.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">عميل HTTP مشترك</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">فئة Python <code>EraEnrichClient</code> تلفّ <code>requests.Session</code> بعنوان URL الأساسي وتوثيق bearer وإعادة المحاولة (3 محاولات بتراجع أسي) ومهلة قابلة للضبط. جميع وحدات ERA Enrich تستورد هذه الفئة — تنفيذ واحد وصفر تكرار عبر المجموعة.</p>
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">إعداد واحد يربط كل شيء</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">أدخل حساب الإثراء مرة واحدة هنا، وكل تطبيقات ERA Enrich تعرف فوراً كيف تصل إلى الخدمة. لا تسجيلات دخول متكررة ولا نسخ بيانات بين الوحدات — اربط مرة واحدة وتعمل المجموعة كلها.</p>
       </div>
     </div>
 
     <!-- Card 2 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">⏱️</div>
-      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Rate Limit Controls</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">Two configurable limits: <code>era_enrich.rpm_limit</code> (requests per minute, default 60) and <code>era_enrich.bulk_max</code> (max records per bulk job). A token-bucket counter in Odoo's in-memory cache enforces the per-minute cap across all workers, preventing API throttling from the enrichment service.</p>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Stays Within Your Plan</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Set a comfortable pace and how much to process at once, and enrichment always plays by your rules. You stay inside your plan, avoid overage surprises, and never get cut off mid-job — predictable usage, predictable costs.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">ضوابط حد المعدل</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">حدان قابلان للضبط: <code>era_enrich.rpm_limit</code> (طلبات في الدقيقة، الافتراضي 60) و<code>era_enrich.bulk_max</code> (أقصى سجلات للوظيفة الجماعية). عداد دلو رمزي في ذاكرة أودو يُطبّق الحد عبر جميع العمّال، مما يمنع تقييد API من خدمة الإثراء.</p>
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">يبقى ضمن باقتك</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">اضبط وتيرة مريحة وكمية المعالجة في كل مرة، ويلتزم الإثراء دائماً بقواعدك. تبقى ضمن باقتك، وتتجنّب مفاجآت التجاوز، ولا تنقطع في منتصف العمل — استخدام متوقَّع وتكاليف متوقَّعة.</p>
       </div>
     </div>
 
     <!-- Card 3 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">📡</div>
-      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Async Callback Endpoints</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">Exposes <code>/era_enrich/callback/&lt;token&gt;</code> as a public JSON endpoint. The Era Enrich service POSTs enrichment results back to this URL after processing. The controller validates the token, finds the originating record, and writes the result — no polling, no open long-lived connections, no webhook delays.</p>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Results Land On Their Own</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Ask for enrichment and get on with your day — the answers arrive and fill themselves in the moment they are ready. No waiting on a spinning screen, no checking back, no refreshing. It just shows up, right where you need it.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">نقاط نهاية الاستدعاء الرجعي غير المتزامن</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">تُعرّض <code>/era_enrich/callback/&lt;token&gt;</code> كنقطة نهاية JSON عامة. تُرسل خدمة Era Enrich نتائج الإثراء عبر POST لهذا العنوان بعد المعالجة. يُتحقق المتحكم من الرمز، يجد السجل الأصلي، ويكتب النتيجة — بلا استطلاع ولا اتصالات مفتوحة مطوّلة.</p>
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">النتائج تصل من تلقاء نفسها</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">اطلب الإثراء وتابع يومك — تصل الإجابات وتملأ نفسها بنفسها لحظة جاهزيتها. بلا انتظار أمام شاشة تدور، وبلا مراجعة متكررة، وبلا تحديث. تظهر ببساطة حيث تحتاجها تماماً.</p>
       </div>
     </div>
 
     <!-- Card 4 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">⚙️</div>
-      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Settings UI</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;">A dedicated section in Settings → ERA Group → Enrich lets admins set the API base URL, bearer token, RPM limit, and bulk cap without touching system parameters or code. All settings changes take effect immediately and are reflected in the next API call.</p>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Everything in One Simple Screen</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Your account, your pace, your batch limits — all on one friendly settings page anyone on your team can manage. Change a setting and it takes effect immediately. No technical know-how required, and nothing hidden away.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">واجهة الإعدادات</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">قسم مخصص في الإعدادات ← مجموعة ERA ← Enrich يتيح للمسؤولين ضبط عنوان URL الأساسي ورمز bearer وحد RPM والحد الجماعي دون لمس معاملات النظام أو الكود. جميع التغييرات تسري فوراً وتنعكس في استدعاء API التالي.</p>
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">كل شيء في شاشة واحدة بسيطة</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">حسابك ووتيرتك وحدود دفعاتك — كلها في صفحة إعدادات واحدة سهلة يديرها أي فرد في فريقك. غيّر أي إعداد ويسري فوراً. لا حاجة لخبرة تقنية، ولا شيء مخبّأ.</p>
       </div>
     </div>
 
     <!-- Card 5 -->
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:8px;">🏗️</div>
-      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Foundation for Extensions</h3>
-      <p style="margin:0;font-size:.95em;line-height:1.6;"><code>era_spy_crm</code> and <code>era_spy_recruitment</code> both list <code>era_spy_base</code> in their <code>depends</code>. Install this module first; the extensions automatically gain the shared client, rate-limiter, and callback infrastructure without any additional configuration.</p>
+      <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">Ready for Every Enrich App</h3>
+      <p style="margin:0;font-size:.95em;line-height:1.6;">Add enrichment to your sales pipeline, your hiring, or both — they all plug straight into this one foundation and start working immediately. Grow into more apps whenever you like, with zero extra setup each time.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;margin-top:14px;" dir="rtl">
-        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">قاعدة للامتدادات</h3>
-        <p style="margin:0;font-size:.95em;line-height:1.6;">تدرج <code>era_spy_crm</code> و<code>era_spy_recruitment</code> كلتاهما <code>era_spy_base</code> في قائمة <code>depends</code>. ثبِّت هذه الوحدة أولاً؛ تكتسب الامتدادات تلقائياً العميل المشترك ومُقيّد المعدل وبنية الاستدعاء الرجعي دون أي تكوين إضافي.</p>
+        <h3 style="margin:0 0 8px;color:#374151;font-size:1.1em;">جاهز لكل تطبيقات الإثراء</h3>
+        <p style="margin:0;font-size:.95em;line-height:1.6;">أضِف الإثراء لمسار مبيعاتك أو لتوظيفك أو لكليهما — كلها تتصل مباشرة بهذه القاعدة الواحدة وتبدأ العمل فوراً. توسّع إلى تطبيقات أكثر متى شئت، بلا أي إعداد إضافي في كل مرة.</p>
       </div>
     </div>
 
@@ -80,24 +80,24 @@
       <!-- EN steps -->
       <div style="flex:1 1 300px;">
         <ol style="margin:0;padding-left:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
-          <li>Install <code>era_spy_base</code></li>
-          <li>Set API URL and bearer token in Settings → ERA Enrich</li>
-          <li>Set RPM and bulk limits as needed</li>
-          <li>Install <code>era_spy_crm</code> and/or <code>era_spy_recruitment</code></li>
-          <li>They use <code>EraEnrichClient</code> automatically — no additional setup</li>
-          <li>Enrichment results arrive via the callback URL and are written to records in real time</li>
+          <li>Install ERA Enrich Base</li>
+          <li>Enter your enrichment account details on the settings page</li>
+          <li>Choose a comfortable pace and how much to process at once</li>
+          <li>Add the enrichment apps you want — for sales, hiring, or both</li>
+          <li>They connect automatically — nothing else to set up</li>
+          <li>Enriched results arrive on their own and fill in, in real time</li>
         </ol>
       </div>
 
       <!-- AR steps -->
       <div style="flex:1 1 300px;" dir="rtl">
         <ol style="margin:0;padding-right:20px;line-height:1.9;font-size:.97em;color:#d1d5db;">
-          <li>ثبِّت <code>era_spy_base</code></li>
-          <li>اضبط عنوان API ورمز bearer في الإعدادات ← ERA Enrich</li>
-          <li>اضبط حدود RPM والجملة حسب الحاجة</li>
-          <li>ثبِّت <code>era_spy_crm</code> و/أو <code>era_spy_recruitment</code></li>
-          <li>تستخدمان <code>EraEnrichClient</code> تلقائياً — دون إعداد إضافي</li>
-          <li>تصل نتائج الإثراء عبر عنوان الاستدعاء الرجعي وتُكتب في السجلات فوراً</li>
+          <li>ثبِّت ERA Enrich Base</li>
+          <li>أدخل بيانات حساب الإثراء في صفحة الإعدادات</li>
+          <li>اختر وتيرة مريحة وكمية المعالجة في كل مرة</li>
+          <li>أضِف تطبيقات الإثراء التي تريدها — للمبيعات أو التوظيف أو كليهما</li>
+          <li>تتصل تلقائياً — لا شيء آخر لإعداده</li>
+          <li>تصل النتائج المُثراة من تلقاء نفسها وتُملأ فوراً</li>
         </ol>
       </div>
 
@@ -106,12 +106,12 @@
 
   <!-- INFO BOX -->
   <div style="background:#f9fafb;border:1.5px solid #d1d5db;border-radius:14px;padding:24px 26px;margin-bottom:28px;">
-    <h3 style="margin:0 0 10px;color:#374151;font-size:1.1em;">🔑 Install Once, Use Everywhere</h3>
+    <h3 style="margin:0 0 10px;color:#374151;font-size:1.1em;">🔑 Set It Up Once, Use It Everywhere</h3>
     <p style="margin:0 0 14px;font-size:.97em;line-height:1.7;">
-      <code>era_spy_base</code> is a technical dependency — install it once and every ERA Enrich extension shares the same credentials, rate limits, and callback infrastructure without any additional setup. Uninstalling an extension does not affect the base or other extensions.
+      This is the shared foundation for the whole ERA Enrich family. Configure your account here a single time, and every enrichment app shares it — same login, same limits, same reliability. Remove an app whenever you like and the rest keep humming along, untouched.
     </p>
     <p dir="rtl" style="margin:0;font-size:.97em;line-height:1.7;border-top:1px solid #d1d5db;padding-top:12px;">
-      <code>era_spy_base</code> تبعية تقنية — ثبِّتها مرة واحدة وكل امتداد ERA Enrich يشارك نفس بيانات الاعتماد وحدود المعدل وبنية الاستدعاء الرجعي دون إعداد إضافي. إلغاء تثبيت امتداد لا يؤثر على القاعدة أو الامتدادات الأخرى.
+      هذه هي القاعدة المشتركة لعائلة ERA Enrich كلها. اضبط حسابك هنا مرة واحدة، وكل تطبيقات الإثراء تشاركها — نفس الدخول ونفس الحدود ونفس الموثوقية. أزِل أي تطبيق متى شئت ويستمر الباقي في العمل دون أن يتأثر.
     </p>
   </div>
 

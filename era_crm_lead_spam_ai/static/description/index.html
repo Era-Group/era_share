@@ -6,10 +6,10 @@
     <h1 style="font-size:2.4em;margin:0 0 4px;font-weight:800;color:#fff;">ERA CRM Lead Spam AI</h1>
     <div dir="rtl" style="font-size:1.2em;margin:0 0 14px;font-weight:700;color:rgba(255,255,255,.9);">فلتر العملاء المحتملين بالذكاء الاصطناعي من ERA</div>
     <p style="font-size:1.1em;margin:0 0 8px;opacity:.95;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.5;">
-      Automatically classifies every new CRM lead as <b>genuine or spam</b> the moment it is created, using an Odoo AI agent. Spam leads are tagged and quarantined instantly — keeping your sales pipeline clean without any manual triage.
+      A spam-free pipeline, automatically. The moment a junk lead lands, it is spotted and set aside — so your sales team only ever sees <b>real opportunities</b>. No more wasted calls, no more chasing fake form-fills, no manual clean-up.
     </p>
     <p dir="rtl" style="font-size:1.05em;margin:0;opacity:.9;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.7;">
-      يُصنِّف تلقائياً كل عميل محتمل جديد في CRM بوصفه <b>حقيقياً أو بريداً مزعجاً</b> فور إنشائه باستخدام وكيل أودو للذكاء الاصطناعي. تُوسَم الفرص المزعجة وتُعزَل فوراً — يبقى مسار المبيعات نظيفاً دون أي فرز يدوي.
+      مسار مبيعات نظيف بلا عناء. في اللحظة التي يصل فيها عميل وهمي، يُكتشف ويُعزل تلقائياً — فلا يرى فريق مبيعاتك سوى <b>الفرص الحقيقية</b>. لا مكالمات مهدورة، ولا مطاردة لنماذج زائفة، ولا تنظيف يدوي.
     </p>
   </div>
 
@@ -18,61 +18,61 @@
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🤖</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">AI Lead Classification</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">On lead creation, an automated action fires and sends the lead's name, description, email domain, phone number, and any existing chatter content to a configured Odoo AI agent. The agent replies with a structured JSON verdict: <code>genuine</code>, <code>spam</code>, or <code>uncertain</code>. Only a <code>spam</code> verdict triggers automatic action — <code>uncertain</code> leads pass through to the salesperson for manual review.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Junk Spotted Instantly</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Every new lead is read and judged the second it arrives — is this a real buyer, or noise? Obvious spam is caught and quarantined on the spot. Anything genuinely unclear is left untouched and passed straight to your rep, so a promising lead is never lost to an over-eager filter.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">تصنيف العملاء المحتملين بالذكاء الاصطناعي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">عند إنشاء الفرصة، تُطلَق قاعدة أتمتة ترسل الاسم والوصف ونطاق الإيميل والهاتف ومحتوى المحادثة لوكيل AI مُهيَّأ. يردّ الوكيل بحكم JSON منظَّم: <code>genuine</code> أو <code>spam</code> أو <code>uncertain</code>. فقط حكم <code>spam</code> يُطلق الإجراء التلقائي — <code>uncertain</code> يمرّ لمندوب المبيعات للمراجعة اليدوية.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">كشف فوري للعملاء الوهميين</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُقرأ كل عميل محتمل جديد ويُقيَّم لحظة وصوله — هل هو مشترٍ حقيقي أم مجرد ضوضاء؟ تُلتقط الرسائل المزعجة الواضحة وتُعزل فوراً. أما الحالات غير المؤكدة فتمرّ كما هي إلى مندوبك، فلا تضيع فرصة واعدة أبداً بسبب فلتر متشدد.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🏷️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Auto SPAM Tag</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">A dedicated <b>SPAM</b> CRM tag is created automatically by the module's <code>post_init_hook</code> during installation. When the AI flags a lead, this tag is applied to the <code>crm.lead</code> record's <code>tag_ids</code> field. Sales managers can then filter the pipeline by the SPAM tag to bulk-archive flagged leads in a single click, or set up a Kanban column for quarantine.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Spam Set Aside in One Place</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Flagged leads are neatly bundled together, out of your reps' way but never gone for good. Sales managers can review the whole pile, clear it out in a single click, or keep it as a quarantine lane. Your active pipeline stays focused on people who actually want to buy.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">وسم SPAM التلقائي</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُنشئ الوحدة وسم CRM خاصاً <b>SPAM</b> تلقائياً عبر <code>post_init_hook</code> عند التثبيت. حين يُصنَّف عميل محتمل كبريد مزعج، يُضاف الوسم لحقل <code>tag_ids</code> في سجل <code>crm.lead</code>. يستطيع مديرو المبيعات تصفية المسار بوسم SPAM لأرشفة الفرص المُبلَّغ عنها بنقرة واحدة.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">عزل البريد المزعج في مكان واحد</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُجمَّع الفرص المُعلَّمة بترتيب في مكان واحد، بعيداً عن مندوبيك دون أن تُفقد نهائياً. يستطيع مديرو المبيعات مراجعتها كلها وتنظيفها بنقرة واحدة أو إبقاؤها كمسار حجر. ويبقى مسارك النشط مركَّزاً على من يريدون الشراء فعلاً.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⚡</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">On-Creation Trigger</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The base automation rule fires on the <code>lead.create</code> event with zero delay — no polling, no cron job, no scheduled action. Spam is flagged before a salesperson ever opens the record. This is critical for high-volume contact forms where dozens of spam submissions can accumulate within minutes of a campaign launch, burying genuine leads in noise.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Caught Before Anyone Sees It</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Spam is filtered before a salesperson ever opens the record — no waiting, no nightly batch. This matters most right after a campaign launches, when dozens of bot submissions can flood in within minutes. Your team feels the calm, not the storm.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">تشغيل لحظة الإنشاء</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تُطلَق قاعدة الأتمتة على حدث <code>lead.create</code> بلا تأخير — بلا استطلاع دوري أو مهمة مجدوَلة. يُبلَّغ عن البريد المزعج قبل أن يفتح أي مندوب السجل. أمر بالغ الأهمية لنماذج الاتصال ذات الحجم العالي حيث تتراكم عشرات الرسائل المزعجة في دقائق.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">يُعزَل قبل أن يراه أحد</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُفلتر البريد المزعج قبل أن يفتح أي مندوب السجل — بلا انتظار وبلا معالجة ليلية. وهذا أهم ما يكون فور إطلاق حملة، حين تتدفق عشرات الرسائل الآلية في دقائق. يشعر فريقك بالهدوء لا بالعاصفة.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🧹</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Clean Pipeline</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Genuine leads flow through the normal CRM stages without any disruption. Spam leads are quarantined the moment they arrive. The average signal-to-noise ratio in the CRM pipeline improves immediately after install, especially for businesses with public-facing contact forms, social media lead ads, or email alias-based lead capture that attract bot traffic.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Real Buyers Move Faster</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Genuine leads sail through your normal sales stages, while junk never gets in the way. From day one you spend less time sifting and more time selling — especially valuable if you run public contact forms, social lead ads, or open inboxes that attract bot traffic.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">مسار مبيعات نظيف</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تسير الفرص الحقيقية عبر مراحل CRM العادية دون انقطاع. تُعزَل الفرص المزعجة فور وصولها. تتحسّن نسبة الإشارة إلى الضوضاء في مسار CRM فوراً بعد التثبيت، خاصة للشركات ذات نماذج اتصال عامة أو إعلانات ليدز على وسائل التواصل الاجتماعي.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">المشترون الحقيقيون يتقدّمون أسرع</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تنساب الفرص الحقيقية عبر مراحل بيعك المعتادة، بينما لا يعترض البريد المزعج طريقها أبداً. منذ اليوم الأول تقضي وقتاً أقل في الفرز وأكثر في البيع — وهو أمر بالغ القيمة لمن لديهم نماذج اتصال عامة أو إعلانات ليدز أو صناديق بريد مفتوحة تجذب الحركة الآلية.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">⚙️</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Configurable AI Agent</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The AI agent is defined in <code>data/ai_agent.xml</code> and references a standard Odoo AI agent record. It can be swapped for any agent configured in the AI app via <b>AI → Agents</b>. The system prompt can be edited to tighten or relax the spam definition — for example, to allow leads from specific domains, accept certain phone number formats, or treat single-word descriptions as uncertain rather than spam.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Tuned to Your Business</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">What counts as spam is yours to decide. Trust certain domains, accept particular regions, or loosen the rules for short enquiries — adjust it in plain words and the change takes effect on the very next lead. The filter learns your definition of a good lead, not someone else's.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">وكيل AI قابل للتهيئة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُعرَّف وكيل AI في <code>data/ai_agent.xml</code> ويشير لسجل وكيل أودو قياسي. يمكن استبداله بأي وكيل مُهيَّأ في تطبيق AI عبر <b>AI ← الوكلاء</b>. يمكن تعديل موجّه النظام لتشديد أو تخفيف تعريف البريد المزعج حسب احتياجات العمل.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">مضبوط على عملك أنت</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">تعريف "البريد المزعج" قرارك أنت. وثّق نطاقات بعينها، أو اقبل مناطق محددة، أو خفّف القواعد للاستفسارات القصيرة — اضبطها بكلمات بسيطة ويسري التغيير على العميل التالي مباشرة. يتعلّم الفلتر تعريفك أنت للعميل الجيد، لا تعريف غيرك.</p>
       </div>
     </div>
 
     <div style="flex:1 1 290px;background:#fff;border:1.5px solid #fecdd3;border-radius:14px;padding:24px 22px;">
       <div style="font-size:2em;margin-bottom:10px;">🔍</div>
-      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Audit Trail in Chatter</h3>
-      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">The AI's verdict, confidence note, and reasoning summary are posted as an <b>internal chatter message</b> on the lead record immediately after classification. Sales managers can review exactly why a lead was flagged, manually remove the SPAM tag if the classification was incorrect, and the manual override is itself logged so the decision is traceable over time.</p>
+      <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">Always Know Why</h3>
+      <p style="margin:0 0 14px;color:#4b5563;line-height:1.6;font-size:.95em;">Every decision comes with a short, readable reason attached right to the lead, so nothing is a black box. Disagree with a call? Restore the lead in seconds — and that override is recorded too, giving managers a clear, trustworthy history of how leads are handled.</p>
       <div style="border-top:1px solid #f3f4f6;padding-top:12px;" dir="rtl">
-        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">سجل مراجعة في المحادثة</h3>
-        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يُنشر حكم AI وملاحظة الثقة وملخص التفكير كـ<b>رسالة محادثة داخلية</b> على سجل الفرصة فور التصنيف. يستطيع مديرو المبيعات مراجعة سبب التصنيف، وإزالة وسم SPAM يدوياً إن كان التصنيف خاطئاً، ويُسجَّل التجاوز اليدوي بدوره لضمان تتبع القرارات.</p>
+        <h3 style="margin:0 0 5px;font-size:1.05em;color:#be123c;">تعرف السبب دائماً</h3>
+        <p style="margin:0;color:#6b7280;line-height:1.8;font-size:.93em;">يأتي كل قرار مصحوباً بسبب قصير وواضح مرفق بالفرصة، فلا شيء يحدث في الخفاء. لا تتفق مع قرار؟ أعِد الفرصة في ثوانٍ — ويُسجَّل هذا التعديل أيضاً، ليحصل المديرون على سجل واضح وموثوق لكيفية التعامل مع الفرص.</p>
       </div>
     </div>
 
@@ -84,19 +84,19 @@
       <div style="flex:1 1 340px;">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">How it works</h2>
         <ol style="margin:0;padding-left:20px;line-height:2;font-size:.97em;">
-          <li>Install the module — it creates the <b>SPAM tag</b>, the <b>automation rule</b>, and the <b>AI agent</b> automatically.</li>
-          <li>A new lead arrives via web form, email alias, or manual entry.</li>
-          <li>The automation fires instantly — the AI agent reads lead name, description, email, phone, and chatter, then returns a verdict.</li>
-          <li>If verdict is <code>spam</code>: the SPAM tag is applied and the reasoning is posted to chatter. Genuine leads are untouched. Salespeople see a clean pipeline.</li>
+          <li>Install it — everything is ready to go, no setup steps to follow.</li>
+          <li>A new lead arrives, however it comes in: web form, email, or by hand.</li>
+          <li>It is checked instantly and either waved through or quietly set aside.</li>
+          <li>Your reps open a clean pipeline of real prospects — junk simply isn't there.</li>
         </ol>
       </div>
       <div style="flex:1 1 340px;" dir="rtl">
         <h2 style="color:#fff;margin:0 0 16px;font-size:1.4em;">كيف يعمل</h2>
         <ol style="margin:0;padding-right:20px;line-height:2;font-size:.97em;list-style-position:inside;">
-          <li>ثبّت الوحدة — تُنشئ تلقائياً <b>وسم SPAM</b> و<b>قاعدة الأتمتة</b> و<b>وكيل AI</b>.</li>
-          <li>يصل عميل محتمل جديد عبر نموذج ويب، أو بريد إلكتروني، أو إدخال يدوي.</li>
-          <li>تُطلَق الأتمتة فوراً — يقرأ وكيل AI الاسم والوصف والإيميل والهاتف والمحادثة ثم يُعيد حكماً.</li>
-          <li>إذا كان الحكم <code>spam</code>: يُطبَّق الوسم وتُنشر الأسباب في المحادثة. الفرص الحقيقية لا تُمَسّ. مندوبو المبيعات يرون مساراً نظيفاً.</li>
+          <li>ثبّت التطبيق — كل شيء جاهز للعمل بلا أي خطوات إعداد.</li>
+          <li>يصل عميل محتمل جديد بأي طريقة: نموذج ويب، أو بريد، أو إدخال يدوي.</li>
+          <li>يُفحص فوراً فإمّا يُمرَّر أو يُعزل بهدوء جانباً.</li>
+          <li>يفتح مندوبوك مساراً نظيفاً من الفرص الحقيقية — والبريد المزعج ببساطة غير موجود.</li>
         </ol>
       </div>
     </div>
@@ -105,14 +105,14 @@
   <!-- INFO BOXES -->
   <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:24px;">
     <div style="flex:1 1 300px;background:#fff1f2;border:1.5px solid #fecdd3;border-radius:14px;padding:20px 24px;">
-      <h3 style="margin:0 0 8px;color:#be123c;font-size:1em;">⚙️ Requirements</h3>
-      <p style="margin:0 0 10px;color:#9f1239;line-height:1.6;font-size:.93em;">Requires the <b>ai</b> (Odoo AI) app installed and at least one AI agent configured with a working provider in <b>AI → Agents</b>. The <code>post_init_hook</code> creates the SPAM tag automatically — do not delete it, as the automation rule references it by external ID. If accidentally deleted, reinstall the module to recreate it.</p>
-      <p dir="rtl" style="margin:0;color:#be123c;line-height:1.8;font-size:.91em;border-top:1px solid #fecdd3;padding-top:10px;">يتطلب تثبيت تطبيق <b>ai</b> (أودو AI) ووكيل AI واحد على الأقل مُهيَّأ بمزوّد يعمل في <b>AI ← الوكلاء</b>. يُنشئ <code>post_init_hook</code> وسم SPAM تلقائياً — لا تحذفه، لأن قاعدة الأتمتة تشير له بالمعرف الخارجي. إذا حُذف عن طريق الخطأ، أعد تثبيت الوحدة لإعادة إنشائه.</p>
+      <h3 style="margin:0 0 8px;color:#be123c;font-size:1em;">✅ Works the moment it's on</h3>
+      <p style="margin:0 0 10px;color:#9f1239;line-height:1.6;font-size:.93em;">There is nothing to wire up and nothing to babysit. From the instant it is installed, every new lead is protected — quietly, in the background, on every form and inbox you have. You get a cleaner pipeline today, not after a configuration project.</p>
+      <p dir="rtl" style="margin:0;color:#be123c;line-height:1.8;font-size:.91em;border-top:1px solid #fecdd3;padding-top:10px;">لا شيء لتوصيله ولا شيء لمراقبته. منذ لحظة التثبيت، يُحمى كل عميل محتمل جديد — بهدوء وفي الخلفية، على كل نموذج وصندوق بريد لديك. تحصل على مسار أنظف اليوم، لا بعد مشروع إعداد طويل.</p>
     </div>
     <div style="flex:1 1 300px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:20px 24px;">
-      <h3 style="margin:0 0 8px;color:#92400e;font-size:1em;">💡 Tuning the spam threshold</h3>
-      <p style="margin:0 0 10px;color:#78350f;line-height:1.6;font-size:.93em;">The AI agent's system prompt controls what counts as spam. Navigate to <b>AI → Agents</b>, open the spam classifier agent, and edit the system prompt to add trusted domains, adjust strictness for short descriptions, or change the language of the expected verdict format. Changes take effect on the next lead creation — no reinstall needed.</p>
-      <p dir="rtl" style="margin:0;color:#92400e;line-height:1.8;font-size:.91em;border-top:1px solid #fde68a;padding-top:10px;">موجّه النظام لوكيل AI يتحكم في تعريف البريد المزعج. اذهب إلى <b>AI ← الوكلاء</b>، افتح وكيل تصنيف البريد المزعج وعدّل الموجّه لإضافة نطاقات موثوقة أو تعديل الصرامة. تسري التغييرات على إنشاء الفرصة التالي — بلا إعادة تثبيت.</p>
+      <h3 style="margin:0 0 8px;color:#92400e;font-size:1em;">💡 Strict or relaxed — your call</h3>
+      <p style="margin:0 0 10px;color:#78350f;line-height:1.6;font-size:.93em;">Catching too much, or too little? Dial the sensitivity up or down in plain language whenever you like — add trusted senders, ease up on short messages, or tighten things during a noisy campaign. Your changes apply to the next lead right away, with nothing to reinstall.</p>
+      <p dir="rtl" style="margin:0;color:#92400e;line-height:1.8;font-size:.91em;border-top:1px solid #fde68a;padding-top:10px;">يلتقط كثيراً أو قليلاً؟ ارفع الحساسية أو اخفضها بكلمات بسيطة متى شئت — أضف مرسلين موثوقين، أو تساهل مع الرسائل القصيرة، أو شدّد أثناء حملة صاخبة. تسري تغييراتك على العميل التالي فوراً، دون أي إعادة تثبيت.</p>
     </div>
   </div>
 

@@ -1,0 +1,795 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_crm_ai_agents_enrichment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-29 08:38+0000\n"
+"PO-Revision-Date: 2026-06-29 08:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__success_unit
+msgid ""
+"1.0 on success else 0.0 — averaged in the pivot this IS the per-provider "
+"success rate."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                            <strong>WhatsApp presence transmits a mobile number to\n"
+"                            WhatsApp/Meta</strong> via the WAHA connector. It is\n"
+"                            separate from the master switch and OFF by default, and\n"
+"                            it additionally requires the WAHA connector to be\n"
+"                            available and per-record consent to pass (fail-closed).\n"
+"                            Enable only with a lawful basis (PDPL)."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid ""
+"A deliverability check older than this is re-verified by the cron. Never-"
+"checked records are always eligible."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cron_staleness_days
+msgid ""
+"A deliverability check older than this many days is re-verified by the "
+"scheduled cron. Never-checked records are always eligible."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__billable
+msgid "A real, chargeable vendor call happened."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_partner_form_crm_ai_enrich
+msgid "AI Deliverability"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__active
+msgid "Active"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__state__failed
+msgid "All providers failed"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__attempt_count
+msgid "Attempts"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__billable
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Billable"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__billing_mode
+msgid "Billing Mode"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_crm_ai_enrichment_agent
+msgid "CRM AI Enrichment Agent"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__cache_ttl_days
+msgid "Cache TTL (days)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__fields_filled
+msgid ""
+"Comma-separated fields/channels this provider fills (e.g. 'email' or "
+"'whatsapp' or 'name,website,sector'). Drives which providers the waterfall "
+"picks for the fields a record still needs."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__company_data
+msgid "Company data"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__state__done
+msgid "Completed"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_res_config_settings
+msgid "Config Settings"
+msgstr "تهيئة الإعدادات"
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_res_partner
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__partner_id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__partner_id
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__contactability
+msgid "Contactability"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cache_ttl_days
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Contactability cache (days)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__request_type__contactability
+msgid "Contactability check only"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__cost
+msgid "Cost (USD)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__cost_per_call
+msgid "Cost per call (USD)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__custom
+msgid "Custom API"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__crm_ai_deliverability_checked
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_users__crm_ai_deliverability_checked
+msgid "Deliverability checked"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_agent__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__provider_type
+msgid "Drives which handler runs and which fields/channels it can fill."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__email
+msgid "Email deliverability"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__email_valid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_users__email_valid
+msgid "Email deliverable"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_enabled
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Enable Enrichment"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_whatsapp_check_enabled
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Enable WhatsApp presence check"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__status
+msgid "Engine status for this attempt: success / no_data / unknown / error."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_partner_form_crm_ai_enrich
+msgid "Enrich"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.ui.menu,name:era_crm_ai_agents_enrichment.menu_crm_ai_enrichment_root
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Enrichment"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_crm_ai_enrichment_provider
+msgid "Enrichment Data Provider"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:crm.ai.agent,name:era_crm_ai_agents_enrichment.agent_era_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Enrichment Engine"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_provider_form
+msgid "Enrichment Provider"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_crm_ai_enrichment_attempt
+msgid "Enrichment Provider Attempt"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.actions.act_window,name:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_provider
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_provider_list
+msgid "Enrichment Providers"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model,name:era_crm_ai_agents_enrichment.model_crm_ai_enrichment_request
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_request_form
+msgid "Enrichment Request"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.actions.act_window,name:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_request
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_request_list
+msgid "Enrichment Requests"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.actions.act_window,name:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_settings
+msgid "Enrichment Settings"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.actions.server,name:era_crm_ai_agents_enrichment.ir_cron_enrich_stale_ir_actions_server
+msgid "Enrichment: Re-verify stale records"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__fields_enriched
+msgid "Fields Enriched"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__fields_filled
+msgid "Fields Filled"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__billing_mode__free
+msgid "Free — self-hosted (e.g. WAHA), no monetary cost"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__request_type__full
+msgid "Full enrichment"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Gate A. OFF by default; separate from the master switch."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__handler_key
+msgid "Handler Key"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid ""
+"How many stale partners the daily cron re-verifies per run. The run still "
+"stops early if the cost cap trips."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cron_batch_size
+msgid ""
+"How many stale partners the scheduled re-verification cron processes per "
+"run. The run still stops early if the cost cap trips."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__billing_mode
+msgid ""
+"How this provider bills. Default per_call: many verification APIs charge per"
+" attempt, so failed-before-success calls still cost."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_agent__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__providers_tried
+msgid "JSON: [{provider, status, billable, cost}]."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__fields_enriched
+msgid "JSON: fields filled this run."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__contactability
+msgid ""
+"JSON: {email:{valid}, phone:{valid}, whatsapp:{exists}}. WhatsApp is "
+"True/False/None (None = unknown / not checked)."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__lead_id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__lead_id
+msgid "Lead"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Master switch for the whole engine. OFF = no provider is ever queried."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_enabled
+msgid ""
+"Master switch for the whole enrichment engine. OFF = no provider is ever "
+"queried."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Month"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__name
+msgid "Name"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_web_search_model
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid ""
+"Native AI model used to extract structured data from web-search fallback "
+"results. Must exist in the Base rate card."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_attempt
+msgid "No enrichment attempts yet"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__has_whatsapp
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_users__has_whatsapp
+msgid "On WhatsApp"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_attempt
+msgid ""
+"Once the engine runs, each provider call is logged here. Use the\n"
+"               pivot to compare success rate and cost per provider."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__attempt_ids
+msgid ""
+"One row per provider call in this run — the queryable detail behind the "
+"providers_tried summary."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_whatsapp_check_enabled
+msgid ""
+"PDPL-sensitive: a presence check transmits an individual's mobile number to "
+"WhatsApp/Meta via the WAHA connector. OFF by default and separate from the "
+"master switch. Requires the WAHA connector to be available and per-record "
+"consent to pass."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__billing_mode__per_call
+msgid "Per call — billed on every attempt (success or fail)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__billing_mode__per_success
+msgid "Per success — billed only when data is returned"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_provider_form
+msgid "Performance"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__phone
+msgid "Phone / HLR"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_partner__mobile_valid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_users__mobile_valid
+msgid "Phone reachable"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__priority
+msgid "Priority"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__state__processing
+msgid "Processing"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__provider_id
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Provider"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__provider_name
+msgid "Provider (snapshot)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_list
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Provider Attempts"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.actions.act_window,name:era_crm_ai_agents_enrichment.action_crm_ai_enrichment_attempt
+#: model:ir.ui.menu,name:era_crm_ai_agents_enrichment.menu_crm_ai_enrichment_performance
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_graph
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_pivot
+msgid "Provider Performance"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__provider_type
+msgid "Provider Type"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__attempt_ids
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_request_form
+msgid "Provider attempts"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Provider type"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.ui.menu,name:era_crm_ai_agents_enrichment.menu_crm_ai_enrichment_providers
+msgid "Providers"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__providers_tried
+msgid "Providers Tried"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__state__queued
+msgid "Queued"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__request_id
+msgid "Request"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__request_type
+msgid "Request Type"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.ui.menu,name:era_crm_ai_agents_enrichment.menu_crm_ai_enrichment_requests
+msgid "Requests"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_request_form
+msgid "Result (JSON)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_provider_form
+msgid ""
+"Rule 03: store only the NAME of the environment variable\n"
+"                        that holds the token — never the token value."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cron_batch_size
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Scheduled batch size"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Scheduled re-verification"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__active
+msgid ""
+"Seeded OFF. A manager activates a provider once its token env var is set; an"
+" active source with a missing token is skipped."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__handler_key
+msgid ""
+"Selects the code handler that runs this provider. provider_type is too "
+"coarse — e.g. an email FINDER and an email VERIFIER are both 'email' but "
+"dispatch to different handlers. Known keys: zerobounce, hlr, waha (built so "
+"far). Empty falls back to provider_type; an unknown key means no handler -> "
+"the provider is skipped (safe)."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_partner_form_crm_ai_enrich
+msgid ""
+"Set automatically by the Enrichment engine. A flag\n"
+"                                is written only on a definite verdict; an unchecked\n"
+"                                record shows no \"Deliverability checked\" date."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_partner__mobile_valid
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_users__mobile_valid
+msgid ""
+"Set by the Enrichment engine from a phone/HLR-lookup provider. Verifies the "
+"partner's phone number (this CE has no separate mobile field)."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_partner__email_valid
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_users__email_valid
+msgid ""
+"Set by the Enrichment engine from an email-verification provider (e.g. "
+"ZeroBounce). See 'Deliverability checked' for recency."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_partner__has_whatsapp
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_users__has_whatsapp
+msgid ""
+"Set by the Enrichment engine from the gated, consent-checked WhatsApp-"
+"presence provider (WAHA). False can mean 'not present' OR 'never checked' — "
+"see 'Deliverability checked'."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.ui.menu,name:era_crm_ai_agents_enrichment.menu_crm_ai_enrichment_settings
+msgid "Settings"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__success_rate
+msgid "Share of attempts that returned a usable result."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__cache_ttl_days
+msgid ""
+"Skip (and don't re-bill) a re-check of the same value within this window. "
+"WAHA is monetarily free but rate/ban-limited, so cache it too."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cache_ttl_days
+msgid ""
+"Skip (and don't re-bill) re-checking the same email/number within this "
+"window."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid ""
+"Skip and don't re-bill re-checking the same email/number within this window."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__request_type__specific
+msgid "Specific fields only"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_cron_staleness_days
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Staleness window (days)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__state
+msgid "State"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__status
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Status"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_request__state__capped
+msgid "Stopped — cost cap"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__success
+msgid "Success"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__success_unit
+msgid "Success (unit)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__success_rate
+msgid "Success rate (%)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_search
+msgid "Successful"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__total_spend
+msgid "Sum of booked cost across this provider's attempts."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__env_key_param
+msgid ""
+"The NAME of the environment variable holding this provider's token. Rule 03:"
+" the token VALUE is never stored in code or the DB."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__success
+msgid "The provider returned a usable result (status = success)."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__token_present
+msgid "Token Present"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__env_key_param
+msgid "Token env var name"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_crm_ai_enrichment_attempt_list
+msgid "Total cost"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_request__total_cost
+msgid "Total cost (USD)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__attempt_count
+msgid "Total provider calls recorded for this provider."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__total_spend
+msgid "Total spend (USD)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_attempt__provider_type
+msgid "Type (snapshot)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.view_partner_form_crm_ai_enrich
+msgid "Verified contactability"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__priority
+msgid "Waterfall order — lower runs first."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__web_search
+msgid "Web search + LLM"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,field_description:era_crm_ai_agents_enrichment.field_res_config_settings__enrichment_web_search_model
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "Web-search extraction model"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_enrichment.res_config_settings_view_form_enrichment
+msgid "WhatsApp presence (PDPL-sensitive)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_enrichment.selection__crm_ai_enrichment_provider__provider_type__whatsapp
+msgid "WhatsApp presence (WAHA)"
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_partner__crm_ai_deliverability_checked
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_res_users__crm_ai_deliverability_checked
+msgid ""
+"When the last deliverability verification run wrote a flag on this record. "
+"Empty = never verified."
+msgstr ""
+
+#. module: era_crm_ai_agents_enrichment
+#: model:ir.model.fields,help:era_crm_ai_agents_enrichment.field_crm_ai_enrichment_provider__token_present
+msgid ""
+"Whether the named env var currently resolves (the value is never shown)."
+msgstr ""

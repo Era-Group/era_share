@@ -1,0 +1,909 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_crm_ai_agents_lead_gen
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-29 08:40+0000\n"
+"PO-Revision-Date: 2026-06-29 08:40+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"<i class=\"fa fa-balance-scale\"/>\n"
+"                            <strong>Activation requires legal review.</strong>\n"
+"                            There is no approved Era Group PDPL reference on file yet.\n"
+"                            These settings are deliberately conservative and DESIGN\n"
+"                            FOR compliance — they do not assert it. Do not enable lead\n"
+"                            generation (especially decision-maker fetching) until your\n"
+"                            legal/DPO review signs off."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                                PDPL: fetching named individuals processes personal\n"
+"                                data. Ensure you have a lawful basis before enabling."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+msgid ""
+"A source enters the waterfall only when it is\n"
+"                        <b>Active</b> AND its token environment variable resolves\n"
+"                        (<b>Token</b> = ✓). Activation is a legal/operational\n"
+"                        decision — review PDPL before enabling, especially for\n"
+"                        decision-maker (heavy) sources."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+msgid "Activation"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__active
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Active"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_block_source_without_token
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Active source with missing token"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_fetch_decision_makers
+msgid ""
+"Allow fetching named individuals (decision-makers). OFF (default) = only "
+"company-level data is gathered. This is the HEAVIEST part under PDPL; keep "
+"it off until a legal review approves it."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Allow gathering named individuals. The heaviest part under PDPL; keep OFF "
+"until a legal review approves it."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_apollo
+msgid "Apollo"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Audit a flag whenever a non-Saudi-local source is used, so cross-border "
+"movement is never silent."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_bing_search
+msgid "Bing Web Search"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_brave_search
+msgid "Brave Search API"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen_provider
+msgid "CRM AI Lead-Gen Source / Provider"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen_agent
+msgid "CRM AI Lead-Generation Agent"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model,name:era_crm_ai_agents_lead_gen.model_crm_ai_lead_gen
+msgid "CRM AI Lead-Generation Persistence"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__category
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Category"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__verification
+msgid "Channel / Email Verification"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+msgid "Classification"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_job_titles
+msgid ""
+"Comma-separated decision-maker titles to look for (e.g. 'CEO, Procurement "
+"Manager, CFO'). Used only when decision-maker fetching is enabled. Empty = "
+"no title filter."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_regions
+msgid ""
+"Comma-separated regions or cities (e.g. 'Jeddah, Riyadh, Dammam'). Empty = "
+"no region filter."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_sectors
+msgid ""
+"Comma-separated sectors/industries to prospect (e.g. 'Construction, "
+"Logistics, Healthcare'). Empty = no sector filter."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_company_size
+msgid ""
+"Comma-separated size bands to target (e.g. '11-50, 51-200'). Free text so "
+"the bands stay manager-editable. Empty = any size."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Comma-separated values. Leave a field empty to apply\n"
+"                                no filter on that dimension."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Companies"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Company"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Company / Individual"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__company
+msgid "Company Data"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model,name:era_crm_ai_agents_lead_gen.model_res_config_settings
+msgid "Config Settings"
+msgstr "تهيئة الإعدادات"
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model,name:era_crm_ai_agents_lead_gen.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__contact_data
+msgid "Contact-Data Provider"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__cost
+msgid "Cost"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_daily_cap
+msgid "Daily Fetch Cap (records/day)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Daily fetch cap"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Decision-Maker"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__category__decision_maker
+msgid "Decision-Maker (Individual)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Decision-Makers"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_consent
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Decision-maker consent"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_notice
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Decision-maker notice"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_agent__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_partner__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_enabled
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Enable Lead Generation"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Enable decision-maker fetching to set target job titles."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__cost
+msgid ""
+"Estimated cost per successful fetch from this source, in USD. Feeds the Rule"
+" 14 consumption tracking added in later tasks (cost must count BOTH the "
+"source-API call and any LLM-extraction call)."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Every record the engine creates is tagged\n"
+"                            (<code>by_lead_generator_agent</code>) and stamped with its\n"
+"                            source (<code>x_lead_gen_source</code>), so all\n"
+"                            externally-sourced records can be isolated or purged in one\n"
+"                            move (filter Contacts by that tag)."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
+#: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_sourced
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Externally-Sourced Records"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Externally-sourced records must pass the Compliance guard (#1) before any "
+"outreach."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Favour in-region sources (Saudi registries first) for data residency."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_fetch_decision_makers
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Fetch Decision-Makers (individuals)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__fields_filled
+msgid "Fields Filled"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_flag_egress
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Flag when data leaves the region"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__fields_filled
+msgid ""
+"Free-text note of which partner fields this source typically fills (e.g. "
+"'name, website, vat' or 'email, phone, job_title'). Documentation/targeting "
+"aid, not enforced here."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_google_cse
+msgid "Google Custom Search"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__pdpl_sensitivity__heavy
+msgid "Heavy (personal data)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_hunter
+msgid "Hunter"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_agent__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_partner__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Inactive"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#. odoo-python
+#: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen.py:0
+#: model:crm.ai.agent,name:era_crm_ai_agents_lead_gen.agent_lead_gen
+#: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_root
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Lead Generation"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_settings
+msgid "Lead Generation Settings"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.actions.server,name:era_crm_ai_agents_lead_gen.ir_cron_lead_gen_run_ir_actions_server
+msgid "Lead Generation: Scheduled fetch"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_partner__x_lead_gen_source
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_users__x_lead_gen_source
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Lead-Gen Source"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.actions.act_window,name:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_list
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Lead-Gen Sources"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_tag_name
+msgid "Lead-Gen Tag Name"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#. odoo-python
+#: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen_agent.py:0
+msgid "Lead-Gen agent is misconfigured (no tech name)."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Lead-Gen sourced"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Lead-Gen tag name"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__pdpl_sensitivity__light
+msgid "Light (B2B / company)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_linkedin
+msgid "LinkedIn"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__local_registry
+msgid "Local Business Registry"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_lusha
+msgid "Lusha"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__active
+msgid ""
+"Manual master toggle for THIS source (default OFF). An operational and legal"
+" decision that overrides everything: an inactive source is never used, even "
+"if its token is present. PDPL activation requires explicit review."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_enabled
+msgid ""
+"Master switch for the whole prospecting engine. OFF (default) = no source is"
+" ever queried, regardless of per-source toggles."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Master switch for the whole prospecting engine. OFF = no source is ever "
+"queried."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Max records created per day. 0 or less = unlimited. Checked before each "
+"source call and at each record creation."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_daily_cap
+msgid ""
+"Maximum records the engine may CREATE per day. Fail-safe like the cost cap: "
+"0 or negative = unlimited (explicit opt-out); a missing/unparseable value "
+"blocks fetching. Checked BEFORE each source call and again at each record "
+"creation."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_mobile_validation
+msgid "Mobile Number Validation"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__name
+msgid "Name"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_neverbounce
+msgid "NeverBounce (Email Verification)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
+msgid "No externally-sourced records yet."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
+msgid "No lead-gen sources found."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_consent__not_required
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_notice__not_required
+msgid "Not required"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_dedup_mode
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "On duplicate match"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_opencorporates
+msgid "OpenCorporates"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "PDPL & Compliance"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "PDPL Heavy"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "PDPL Sensitivity"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__pdpl_sensitivity
+msgid ""
+"PDPL weight of the data this source brings. Decision-maker / personal-data "
+"sources MUST be 'heavy'; they are gated behind the conservative people-fetch"
+" toggle (16.7)."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_tag_name
+msgid ""
+"Partner tag stamped on every record the engine CREATES, so externally-"
+"sourced contacts can be isolated or purged. Resolved by name; defaults to "
+"'by_lead_generator_agent'."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__pdpl_sensitivity
+msgid "Pdpl Sensitivity"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_notice
+msgid ""
+"Posture on giving individuals (decision-makers) a processing notice. "
+"Conservative default = required. Documented stance; Compliance enforces it "
+"before outreach."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Posture on giving individuals a processing notice. Conservative default = "
+"required."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Posture on obtaining consent before processing an individual's data. "
+"Conservative default = required."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_decision_maker_consent
+msgid ""
+"Posture on obtaining consent before processing an individual's personal "
+"data. Conservative default = required. Documented stance; Compliance "
+"enforces it before outreach."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_prefer_local
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Prefer local (in-region) sources"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__priority
+msgid "Priority"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__provider_type
+msgid "Provider Type"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__web_scrape
+msgid "Public-Page Scrape"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_public_scrape
+msgid "Public-Page Scrape (e.g. odoo.com customers)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_sourced_partners
+msgid ""
+"Records created by the Lead-Generation engine appear here, grouped\n"
+"               by source. They all carry the <b>by_lead_generator_agent</b> tag and\n"
+"               an <b>x_lead_gen_source</b> stamp, so they can be reviewed or purged\n"
+"               as a set."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_consent__required
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_decision_maker_notice__required
+msgid "Required"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_rocketreach
+msgid "RocketReach"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_require_compliance_check
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Route through Compliance before outreach"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_saudi_business_center
+msgid "Saudi Business Center"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_saudi_moc
+msgid "Saudi Ministry of Commerce"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_serpapi
+msgid "SerpAPI (Web Search)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_settings
+msgid "Settings"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_signalhire
+msgid "SignalHire"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_dedup_mode__skip
+msgid "Skip duplicates (leave existing untouched)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid ""
+"Skip duplicates or update blank fields on the existing partner. Never "
+"creates a duplicate."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_block_source_without_token__silent
+msgid "Skip silently (no audit)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__social
+msgid "Social Network"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_partner_lead_gen_search
+msgid "Source"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_form
+msgid "Source name"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.ui.menu,name:era_crm_ai_agents_lead_gen.menu_crm_ai_lead_gen_sources
+msgid "Sources"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_lead_gen.action_crm_ai_lead_gen_provider
+msgid ""
+"Sources are seeded on install (all inactive). Toggle a source\n"
+"               Active and set its token environment variable to bring it into the\n"
+"               prospecting waterfall."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Tag stamped on every record the engine creates."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_company_size
+msgid "Target Company Size"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_job_titles
+msgid "Target Job Titles (decision-makers)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_regions
+msgid "Target Regions / Cities"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_target_sectors
+msgid "Target Sectors"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "Targeting"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__env_key_param
+msgid ""
+"The NAME of the environment variable that holds this source's API token — "
+"never the secret itself (Rule 03). Leave empty for sources that need no "
+"token (e.g. some public scrapes)."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__provider_type
+msgid ""
+"The TECHNICAL kind of source. Drives which handler (added in 16.4) knows how"
+" to query it."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_partner__x_lead_gen_source
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_users__x_lead_gen_source
+msgid ""
+"The exact lead-generation provider this record was sourced from (e.g. "
+"'SerpAPI (Web Search)', 'OpenCorporates'). Set only on records the Lead-"
+"Generation agent CREATED; empty for everything else, so externally-sourced "
+"records can be isolated or purged."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_list
+msgid "Token"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__env_key_param
+msgid "Token Env Var Name"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,field_description:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__token_present
+msgid "Token Present"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__token_present
+msgid ""
+"True only if the environment variable named in 'Token Env Var Name' "
+"currently resolves to a non-empty value. Read straight from the process "
+"environment (os.getenv) — the secret is never stored or pulled through the "
+"DB, so no sudo elevation is involved."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Type"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#. odoo-python
+#: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen.py:0
+msgid "Unknown Company"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#. odoo-python
+#: code:addons/era_crm_ai_agents_lead_gen/models/crm_ai_lead_gen.py:0
+msgid "Unknown Contact"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_dedup_mode__update
+msgid "Update existing (fill blank fields only)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.view_crm_ai_lead_gen_provider_search
+msgid "Verification"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__res_config_settings__lead_gen_block_source_without_token__warn
+msgid "Warn & skip (audit the skip)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__priority
+msgid ""
+"Waterfall position — LOWER runs first. Sources are tried in this order until"
+" the needed data is found."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_lead_gen.selection__crm_ai_lead_gen_provider__provider_type__web_search
+msgid "Web Search API"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_crm_ai_lead_gen_provider__category
+msgid ""
+"What this source brings into the system. 'company' is lighter under PDPL; "
+"'decision_maker' (individuals) is the heaviest part and is gated behind a "
+"separate, off-by-default toggle."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_lead_gen.res_config_settings_view_form_lead_gen
+msgid "What to do when a source is active but its token env var is not set."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_block_source_without_token
+msgid ""
+"What to do when a source is active but its token env var is not set. 'warn' "
+"(default) skips the source AND writes an audit warning — never a silent skip"
+" (same philosophy as the Base's block_unpriced_model). 'silent' skips "
+"without auditing."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_dedup_mode
+msgid ""
+"What to do when an incoming record matches an existing partner. 'skip' "
+"(default) never touches existing data; 'update' fills only the BLANK fields "
+"on the match. Neither ever creates a duplicate."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_waha_presence
+msgid "WhatsApp Presence (WAHA)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_require_compliance_check
+msgid ""
+"When ON (default), externally-sourced records must pass the Compliance guard"
+" (#1) before ANY outreach. Lead Gen only creates records; this records the "
+"posture the Compliance layer enforces."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_flag_egress
+msgid ""
+"When ON (default), the engine writes an audit flag whenever a non-Saudi-"
+"local source is used, so cross-border data movement is never silent."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:ir.model.fields,help:era_crm_ai_agents_lead_gen.field_res_config_settings__lead_gen_data_residency_prefer_local
+msgid ""
+"When ON (default), the waterfall favours in-region sources (the Saudi "
+"registries sit at the top of the priority order) for data residency."
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:crm.ai.lead_gen.provider,name:era_crm_ai_agents_lead_gen.provider_zerobounce
+msgid "ZeroBounce (Email Verification)"
+msgstr ""
+
+#. module: era_crm_ai_agents_lead_gen
+#: model:res.partner.category,name:era_crm_ai_agents_lead_gen.tag_by_lead_generator_agent
+msgid "by_lead_generator_agent"
+msgstr ""

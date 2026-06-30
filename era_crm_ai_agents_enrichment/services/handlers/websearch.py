@@ -46,12 +46,30 @@ _TOOL = "WebSearch"
 
 # Human-readable hint per known capability token, so the model knows what to
 # extract. Unknown tokens fall back to the token itself — no hardcoded schema.
+# These are PUBLIC business facts about a COMPANY (the company's own published
+# contact details), never an individual's personal data.
 _FIELD_HINTS = {
     "name": "official registered company name",
     "website": "official website URL (full https://… address)",
-    "sector": "industry / business sector",
+    "email": "the company's official public contact email (e.g. info@domain)",
+    "phone": "the company's official public phone / switchboard number, "
+             "in international format (+country…)",
     "city": "city of the head office",
+    "country_id": "country of the head office (full English country name, "
+                  "e.g. 'Saudi Arabia')",
+    "industry_id": "primary industry / business sector (short English label, "
+                   "e.g. 'Information Technology')",
+    # legacy tokens kept so an old fields_filled still maps to a hint
+    "sector": "primary industry / business sector",
     "country": "country of the head office",
+}
+
+# Relational caps: the model returns a NAME string, which we resolve to a record
+# id before handing it to the engine (which writes the m2o by id). Unresolved ->
+# the field is silently dropped (never a bad write, never auto-create master data).
+_RELATIONAL = {
+    "country_id": "res.country",
+    "industry_id": "res.partner.industry",
 }
 
 _NULLISH = {"", "null", "none", "n/a", "na", "unknown", "not found", "-"}
@@ -103,7 +121,7 @@ class WebSearchHandler(ProviderHandler):
             _logger.warning("Web-search enrich failed (%s).", type(exc).__name__)
             return self._empty("error")
 
-        data = self._parse(reply, wanted)
+        data = self._resolve(self._parse(reply, wanted))
         # billable=False: the search runs on the CLI SUBSCRIPTION — there is no
         # external per-call charge. The LLM token consumption is metered by the
         # Base guard as a via_cli usage row; never double-booked as a dollar cost
@@ -115,6 +133,32 @@ class WebSearchHandler(ProviderHandler):
     @staticmethod
     def _empty(status):
         return {"data": {}, "channel": {}, "status": status, "billable": False}
+
+    def _resolve(self, raw):
+        """Turn model strings into engine-writable values: char fields pass
+        through; relational caps (country_id/industry_id) are looked up to an
+        existing record id. An unresolved relational value is dropped — never a
+        bad write, never auto-created master data."""
+        out = {}
+        for key, val in (raw or {}).items():
+            model = _RELATIONAL.get(key)
+            if not model:
+                out[key] = val
+                continue
+            rec = self._lookup(model, val)
+            if rec:
+                out[key] = rec.id
+        return out
+
+    def _lookup(self, model, value):
+        """Best-effort name/code lookup of an EXISTING master record (read-only)."""
+        Model = self.env[model]
+        rec = Model.search([("name", "=ilike", value)], limit=1)
+        if not rec and model == "res.country" and len(value) == 2:
+            rec = Model.search([("code", "=ilike", value)], limit=1)
+        if not rec:
+            rec = Model.search([("name", "ilike", value)], limit=1)
+        return rec[:1]
 
     def _partner_of(self, record):
         if record._name == "res.partner":
@@ -150,15 +194,20 @@ class WebSearchHandler(ProviderHandler):
             ident += "\nKnown website: %s" % domain
         system = (
             "You are a B2B data-research assistant. Use the web search tool to "
-            "find CURRENT public facts about the company. Return ONLY a single "
-            "JSON object — no prose, no code fences. Use null for any field you "
-            "cannot verify from a real source. Never invent values."
+            "find CURRENT public facts about the company, and fill in AS MANY of "
+            "the requested fields as you can confidently support. PREFER the "
+            "company's OWN official website and other authoritative public sources "
+            "(official directories, the company's verified profiles). Return ONLY a "
+            "single JSON object — no prose, no code fences. Use null for any field "
+            "you cannot confirm from a real source. Never invent or guess values."
         )
         prompt = (
             "Run a live web search and extract these fields for the company "
             "below.\n\n%s\n\nReturn STRICT JSON with EXACTLY these keys:\n%s\n\n"
-            "Rules: each value must come from a real search result; if unsure use "
-            "null; a website must be a full URL." % (ident, hints)
+            "Rules: fill every field you can support from a real source (maximise "
+            "coverage), but if a value is not confirmable use null; a website must "
+            "be a full URL; contact details must be the COMPANY's own official "
+            "public ones (not an individual's)." % (ident, hints)
         )
         return system, prompt
 

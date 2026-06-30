@@ -111,7 +111,11 @@
             <field name="provider_type">web_search</field>
             <field name="handler_key">websearch</field>
             <field name="priority">90</field>
-            <field name="fields_filled">name,website,sector,city,country</field>
+            <!-- Real res.partner fields the web-search handler fills from PUBLIC
+                 company sources. country_id / industry_id are relational: the
+                 handler resolves the model's country/industry NAME to an existing
+                 record id (unresolved -> silently dropped, never auto-created). -->
+            <field name="fields_filled">name,website,email,phone,city,country_id,industry_id</field>
             <!-- No external token: the search runs on the agent's Claude CLI
                  subscription (built-in WebSearch tool); it is gated by the manager
                  toggle era_crm_ai_agents_enrichment.websearch_provider_enabled. -->

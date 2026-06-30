@@ -27,8 +27,12 @@
                                  help="Skip and don't re-bill re-checking the same email/number within this window.">
                             <field name="enrichment_cache_ttl_days"/>
                         </setting>
-                        <setting string="Web-search extraction model"
-                                 help="Native AI model used to extract structured data from web-search fallback results. Must exist in the Base rate card.">
+                        <setting string="Enable web-search provider (CLI subscription)"
+                                 help="Master toggle for the 'Web Search + LLM' provider. OFF by default (fail-closed). When ON it runs a LIVE web search through the agent's Claude CLI subscription (built-in WebSearch tool, opted in per run) and extracts public COMPANY data via the agent's own transport model — no external search API/token and no per-call dollar cost.">
+                            <field name="enrichment_websearch_enabled"/>
+                        </setting>
+                        <setting string="Web-search extraction model (native-API path only)"
+                                 help="Used ONLY if the Enrichment agent is switched to the native-AI (OpenAI/Google) transport; on that path the code must exist in the Base rate card. IGNORED on the current default CLI/subscription transport.">
                             <field name="enrichment_web_search_model"/>
                         </setting>
                     </block>

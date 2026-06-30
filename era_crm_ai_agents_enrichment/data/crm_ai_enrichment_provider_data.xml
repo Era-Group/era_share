@@ -112,9 +112,14 @@
             <field name="handler_key">websearch</field>
             <field name="priority">90</field>
             <field name="fields_filled">name,website,sector,city,country</field>
-            <field name="env_key_param">ERA_ENRICH_WEBSEARCH</field>
-            <field name="billing_mode">per_call</field>
-            <field name="cost_per_call">0.005</field>
+            <!-- No external token: the search runs on the agent's Claude CLI
+                 subscription (built-in WebSearch tool); it is gated by the manager
+                 toggle era_crm_ai_agents_enrichment.websearch_provider_enabled. -->
+            <field name="env_key_param"></field>
+            <!-- free: a subscription search has no external per-call charge; the
+                 LLM token consumption is metered by the Base as a via_cli usage row. -->
+            <field name="billing_mode">free</field>
+            <field name="cost_per_call">0.0</field>
             <field name="cache_ttl_days">30</field>
             <field name="active" eval="False"/>
         </record>

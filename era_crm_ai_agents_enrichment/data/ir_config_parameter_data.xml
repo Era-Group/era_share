@@ -14,6 +14,13 @@
             <field name="key">era_crm_ai_agents_enrichment.whatsapp_check_enabled</field>
             <field name="value">False</field>
         </record>
+        <!-- NB: the web-search toggle (…websearch_provider_enabled) is deliberately
+             NOT seeded here. It is fail-closed by READ (a missing param is treated
+             as OFF by the handler) and persisted as 'False' by set_values once a
+             manager touches it, so it needs no seed row — and seeding it would
+             UniqueViolation on any install where a manager already created the
+             param at runtime (the data record's key collides with the existing
+             row). Absent-means-OFF is the safe, upgrade-proof default. -->
 
         <record id="param_enrichment_cache_ttl_days" model="ir.config_parameter">
             <field name="key">era_crm_ai_agents_enrichment.cache_ttl_days</field>

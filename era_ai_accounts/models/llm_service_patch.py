@@ -145,8 +145,14 @@ def _patch():
             timeout = int(_cfg(self.env, "ai.cli_timeout", "180"))
         except (TypeError, ValueError):
             timeout = 180
+        # Per-call tool opt-in via a generic context key. Defaults to "" so every
+        # existing caller keeps the historical "no tools" behaviour untouched; a
+        # caller that needs a built-in tool (e.g. WebSearch) sets
+        # with_context(cli_allowed_tools="WebSearch") for that single run only.
+        allowed_tools = self.env.context.get("cli_allowed_tools", "") or ""
         text = llm_cli_transport.cli_complete(
-            acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout)
+            acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout,
+            allowed_tools=allowed_tools)
         if not (text and text.strip()):
             raise UserError(_("The AI CLI returned an empty answer."))
         return [text], [], list(inputs or ())

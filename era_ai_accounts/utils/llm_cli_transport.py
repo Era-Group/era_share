@@ -185,12 +185,20 @@ def _record_call_end():
         pass
 
 
-def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
+def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180,
+                 allowed_tools=""):
     """Run a single chat completion through the local CLI and return the text.
 
     ``cfg`` is a plain dict (no ORM coupling):
         {account_id, cli_path, home_dir, extra_args,
          min_gap, gap_per_kb, max_gap, lock_wait}
+
+    ``allowed_tools`` is the value handed to the CLI ``--allowed-tools`` flag.
+    It DEFAULTS TO ``""`` (empty) so the CLI behaves as a pure chat completion
+    with every built-in tool disabled — the historical, all-agents behaviour. A
+    caller that explicitly opts in (e.g. ``"WebSearch"``) gets exactly that tool
+    whitelisted in this single headless ``-p`` run; in ``-p`` mode the allow-list
+    is the programmatic grant (no interactive prompt is possible).
     """
     binary = resolve_cli_binary(cfg.get("cli_path"))
     if not binary:
@@ -202,8 +210,9 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     args = [binary, "-p", "--output-format", "json"]
     if model:
         args += ["--model", model]
-    # Disable all built-in tools so this behaves as a pure chat completion.
-    args += ["--allowed-tools", ""]
+    # Built-in tools are disabled by default (allowed_tools=""), so this behaves
+    # as a pure chat completion. A caller may opt a tool in per-call.
+    args += ["--allowed-tools", allowed_tools or ""]
     if cfg.get("extra_args"):
         args += shlex.split(cfg["extra_args"])
 

@@ -40,12 +40,27 @@ class ResConfigSettings(models.TransientModel):
         config_parameter=PARAM_PREFIX + "cache_ttl_days",
         help="Skip (and don't re-bill) re-checking the same email/number within "
              "this window.")
+    enrichment_websearch_enabled = fields.Boolean(
+        string="Enable web-search provider (CLI subscription)",
+        default=False, groups=_MANAGER,
+        config_parameter=PARAM_PREFIX + "websearch_provider_enabled",
+        help="Master toggle for the 'Web Search + LLM' provider. OFF by default "
+             "(fail-closed). When ON, the provider runs a LIVE web search through "
+             "the Enrichment agent's Claude CLI SUBSCRIPTION (the built-in "
+             "WebSearch tool, opted in per run) and extracts public COMPANY data "
+             "via the agent's own transport model. No external search API or token "
+             "is required, and no per-call dollar cost is booked — the LLM token "
+             "consumption is metered by the Base as CLI usage.")
     enrichment_web_search_model = fields.Char(
-        string="Web-search extraction model",
+        string="Web-search extraction model (native-API path only)",
         default="gpt-4.1-mini", groups=_MANAGER,
         config_parameter=PARAM_PREFIX + "web_search_model",
-        help="Native AI model used to extract structured data from web-search "
-             "fallback results. Must exist in the Base rate card.")
+        help="Model used to extract structured data ONLY when the Enrichment "
+             "agent is switched to the native-AI (OpenAI/Google) transport. On "
+             "that path the code must exist in the Base rate card (Rule 14). It is "
+             "IGNORED on the current default CLI/subscription transport, which "
+             "uses the agent's own transport model — see 'Enable web-search "
+             "provider' above.")
     enrichment_cron_batch_size = fields.Integer(
         string="Scheduled batch size",
         default=50, groups=_MANAGER,

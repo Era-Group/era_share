@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>دليل المستخدم — وحدة الالتزام (Compliance)</title>
+<title>دليل المستخدم — وحدة الامتثال (Compliance)</title>
 <style>
   :root{
     --primary:#0f4c5c; --secondary:#1b6e7e; --accent:#c79a3a;
@@ -17,41 +17,42 @@
     font-family:"Segoe UI","Noto Naskh Arabic","Tahoma","Geeza Pro",sans-serif;
     line-height:1.95; font-size:17px;}
   .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
-  /* Cover */
   .cover{background:linear-gradient(135deg,var(--primary),var(--secondary));
     color:#fff; padding:54px 30px 46px; text-align:center;
     border-radius:0 0 26px 26px; box-shadow:0 6px 24px rgba(15,76,92,.18);}
   .cover .badge{display:inline-block; background:rgba(255,255,255,.16); color:#fff;
     padding:5px 16px; border-radius:30px; font-size:14px; margin-bottom:14px;}
   .cover h1{margin:6px 0 10px; font-size:33px; font-weight:800}
-  .cover p{margin:0 auto; max-width:640px; font-size:18px; opacity:.95}
+  .cover p{margin:0 auto; max-width:680px; font-size:18px; opacity:.95}
   .cover .ver{margin-top:16px; font-size:14px; opacity:.8}
-  /* Intro */
   .intro{background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:22px 26px; margin:26px 0; box-shadow:0 2px 10px rgba(0,0,0,.03);
     border-right:6px solid var(--accent);}
   .intro h2{margin:0 0 8px; color:var(--primary); font-size:22px}
-  /* Quick start — most prominent */
   .quickstart{background:var(--start-bg); border:2px solid var(--start-line);
     border-radius:18px; padding:26px 28px; margin:26px 0; box-shadow:0 4px 16px rgba(15,76,92,.10)}
   .quickstart h2{margin:0 0 6px; color:var(--primary); font-size:27px}
   .quickstart .sub{color:var(--secondary); margin:0 0 16px; font-size:16px}
-  /* TOC */
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:6px 0 4px; justify-content:center}
+  .flow .node{background:#fff; border:2px solid var(--start-line); color:var(--primary);
+    border-radius:12px; padding:8px 16px; font-weight:700; font-size:16px}
+  .flow .arr{color:var(--secondary); font-weight:800; font-size:20px}
   .toc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 24px; margin:24px 0}
   .toc h3{margin:0 0 10px; color:var(--secondary)}
   .toc ol{margin:0; padding-inline-start:22px}
   .toc a{color:var(--primary); text-decoration:none}
   .toc a:hover{text-decoration:underline}
-  /* Sections */
   section{background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:26px 28px; margin:22px 0; box-shadow:0 2px 10px rgba(0,0,0,.03)}
   section h2{color:var(--primary); font-size:24px; margin:0 0 6px;
     border-bottom:2px solid var(--line); padding-bottom:10px}
   section .intro-line{color:var(--muted); margin:0 0 12px}
+  h3.sub2{color:var(--secondary); font-size:19px; margin:22px 0 8px}
   .path{display:inline-block; background:var(--step-bg); border:1px solid var(--line);
     border-radius:8px; padding:3px 10px; font-size:15px; color:var(--primary);
-    margin:2px 0; font-weight:600}
-  /* Steps */
+    margin:2px 0; font-weight:600; direction:ltr}
+  .lbl-en{background:#eef2fb; border:1px solid #d4ddef; border-radius:6px; padding:0 7px;
+    font-size:14px; color:#2c4470; direction:ltr; display:inline-block; font-weight:600}
   ol.steps{counter-reset:step; list-style:none; padding:0; margin:14px 0}
   ol.steps li{counter-increment:step; position:relative; background:#fff;
     border:1px solid var(--line); border-radius:12px; padding:14px 60px 14px 16px; margin:10px 0}
@@ -60,34 +61,33 @@
     width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff;
     display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px}
   ol.steps li b{color:var(--primary)}
-  /* Option card: what / why / effect */
   .opt{border:1px solid var(--line); border-radius:14px; padding:8px 18px 16px; margin:16px 0; background:#fcfdfd}
   .opt h3{color:var(--secondary); font-size:19px; margin:14px 0 10px}
+  .opt h3 .lbl-en{font-size:15px}
   .opt .qa{display:flex; gap:10px; margin:8px 0; align-items:flex-start}
   .opt .qa .lbl{flex:0 0 96px; font-weight:700; font-size:14px; padding:3px 0; text-align:center; border-radius:8px}
   .opt .qa.what .lbl{background:#e7eff1; color:#0f4c5c}
   .opt .qa.why  .lbl{background:#eef6f3; color:#2e8b6f}
   .opt .qa.eff  .lbl{background:#fdf4e7; color:#9c6b16}
   .opt .qa .txt{flex:1}
-  .ex{background:#eef2fb; border-right:4px solid #3b5b9a; border-radius:10px; padding:10px 14px; margin:10px 0 2px; font-size:15px}
-  .ex b{color:#2c4470}
-  /* Callouts */
+  .opt .ex{background:#f0f5f6; border-radius:8px; padding:8px 12px; margin-top:8px; font-size:15px; color:var(--text)}
   .tip,.warn{border-radius:12px; padding:14px 18px; margin:16px 0; font-size:16px}
   .tip{background:var(--tip-bg); border-right:5px solid var(--tip-line)}
   .warn{background:var(--warn-bg); border-right:5px solid var(--warn-line)}
   .tip b,.warn b{display:block; margin-bottom:4px}
-  /* What-if */
   .whatif{border:1px solid var(--line); border-radius:12px; padding:6px 18px 14px; margin:12px 0; background:#fff}
   .whatif p{margin:12px 0}
   .whatif .q{font-weight:700; color:var(--primary)}
   .whatif .a{color:var(--text)}
-  /* Tables */
   table{width:100%; border-collapse:collapse; margin:16px 0; font-size:16px; background:#fff}
   th,td{border:1px solid var(--line); padding:11px 13px; text-align:right; vertical-align:top}
   th{background:var(--primary); color:#fff; font-weight:700}
   tr:nth-child(even) td{background:#fafcfc}
   .pill{display:inline-block; background:var(--tip-bg); color:var(--primary); border-radius:20px; padding:1px 10px; font-size:14px; font-weight:600}
-  /* Tech */
+  .badge-state{display:inline-block; border-radius:20px; padding:1px 12px; font-size:14px; font-weight:700}
+  .b-on{background:#e3f3ec; color:#1f7a55}
+  .b-pause{background:#fdf4e7; color:#9c6b16}
+  .b-cap{background:#fbe6e6; color:#a32b2b}
   .tech{background:#f1f3f4; border:1px dashed #b8c2c6; border-radius:12px; padding:16px 20px; margin-top:26px; font-size:15px; color:var(--muted)}
   .tech h3{color:#46555c; margin-top:0}
   .tech code{background:#fff; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-family:Consolas,monospace; direction:ltr; display:inline-block}
@@ -98,307 +98,322 @@
 
 <header class="cover">
   <span class="badge">Era Group · CRM AI Agents</span>
-  <h1>وحدة الالتزام — Compliance</h1>
-  <p>الحارس الذي يتأكد أن كل رسالة تصل عميلك بطريقة نظامية ومحترمة: في الوقت المناسب، وبموافقته، وبأسلوب لائق.</p>
+  <h1>وحدة الامتثال — Compliance</h1>
+  <p>«حارس» مشترك يقف أمام كل وكيل مُرسِل: قبل أن تغادر أي رسالة، يتأكّد من موافقة العميل (PDPL)، ومن أن الوقت مناسب (أوقات الصلاة والجمعة ورمضان والدوام)، ومن أن الأسلوب محترم — ثم <b>يسمح أو يمنع</b>. هو لا يُرسل بنفسه أبداً؛ يحرس فقط ويُسجّل كل قرار.</p>
   <div class="ver">الإصدار 19.0.1.0.0 · دليل المستخدم</div>
 </header>
 
 <div class="wrap">
 
   <div class="intro">
-    <h2>وش تسوّي لك هذه الوحدة؟ (بسطر واحد)</h2>
-    <p>هي طبقة حماية تشتغل في الخلفية: تمنع إرسال أي رسالة تسويقية لعميل ما وافق، توقف الإرسال في الأوقات غير المناسبة (الصلاة، الجمعة، رمضان، نهاية الأسبوع، خارج الدوام)، وتتأكد أن نص الرسالة محترم. أنت تضبط الإعدادات مرة وحدة، والباقي يصير تلقائيًا.</p>
+    <h2>وش تسوّي لك هذه الوحدة؟ (بسطرين)</h2>
+    <p>هي طبقة <b>عرضية</b> (cross-cutting) يمرّ بها كل وكيل قبل أن يرسل رسالة لعميل. فائدتها أنها تجمع كل قواعد «متى يجوز أن نراسل العميل وكيف» في مكان واحد — بدل تكرارها في كل وكيل — فتضمن أن أي رسالة تخرج من النظام <b>متوافقة مع نظام حماية البيانات السعودي (PDPL) ومع الأعراف الثقافية وأوقات السعودية</b>. ليست وكيلاً يعمل عملاً ظاهراً، بل بوابة قرار.</p>
   </div>
 
-  <!-- ===================== START HERE ===================== -->
+  <!-- ===================== QUICK PATH ===================== -->
   <div class="quickstart" id="start">
-    <h2>★ ابدأ من هنا</h2>
-    <p class="sub">إذا الوحدة لسّه مثبّتة وما تدري وش أول خطوة — اتبع هذا الترتيب بالضبط. يكفيك ٥ دقائق.</p>
-
+    <h2>★ كيف يعمل الحارس بنظرة سريعة</h2>
+    <p class="sub">قبل كل إرسال، تمرّ الرسالة على ثلاث بوابات؛ يكفي أن تسقط في واحدة ليُمنع الإرسال.</p>
+    <div class="flow">
+      <span class="node">موافقة العميل (PDPL)</span><span class="arr">←</span>
+      <span class="node">نافذة الإرسال (الوقت)</span><span class="arr">←</span>
+      <span class="node">الأعراف الثقافية</span><span class="arr">←</span>
+      <span class="node">سماح / منع</span>
+    </div>
     <ol class="steps">
-      <li><b>افتح صفحة الإعدادات.</b><br>
-        من القائمة: <span class="path">CRM AI Agent Base ← الإعدادات (Configuration) ← Compliance Settings</span>.<br>
-        <span style="color:var(--muted)">(هذي الشاشات تظهر فقط لمن عنده صلاحية «مدير وكلاء الذكاء».)</span></li>
-
-      <li><b>راجع الإعدادات الافتراضية — غالبًا ما تحتاج تغيّر شي.</b><br>
-        كل القواعد تجي <u>مفعّلة ومضبوطة للسوق السعودي</u>: الدوام 09:00–21:00، نهاية الأسبوع الجمعة والسبت، إيقاف أوقات الصلاة (30 دقيقة)، الجمعة، ورمضان. لو يناسبك الوضع الافتراضي، اتركه كما هو.</li>
-
-      <li><b>تأكد من مصدر أوقات الصلاة والمدينة الافتراضية.</b><br>
-        في قسم <b>Prayer-time Source</b>: المصدر الافتراضي «Live API» (يجيب أوقات الصلاة الحقيقية حسب مدينة كل عميل)، والمدينة الافتراضية «الرياض». غيّرها لو عملاؤك في مدينة ثانية غالبًا.</li>
-
-      <li><b>احفظ.</b><br>
-        اضغط زر الحفظ. القواعد صارت فعّالة.</li>
-
-      <li><b>افهم وضع الموافقة (مهم).</b><br>
-        من الآن، أي إرسال تسويقي راح يُمنع تلقائيًا لأي عميل <u>ما عنده موافقة مسجّلة</u> — وهذا <b>سلوك صحيح ومقصود</b> (حماية PDPL)، مو خطأ في النظام. اقرأ الملاحظة تحت لتعرف وش تسوّي.</li>
+      <li><b>موافقة العميل:</b> هل وافق العميل على الرسائل التسويقية ولم يُلغِ اشتراكه؟ إن لا → يُمنع.</li>
+      <li><b>نافذة الإرسال:</b> هل الوقت الآن مناسب بتوقيت العميل (ليس وقت صلاة/جمعة/رمضان/خارج الدوام/نهاية أسبوع)؟ إن لا → يُؤجَّل/يُمنع.</li>
+      <li><b>الأعراف الثقافية:</b> هل الرسالة فيها تحية ولقب محترم وأسلوب هادئ؟ إن لا → تُوقف لمراجعة بشرية.</li>
+      <li><b>القرار:</b> سماح فيمضي الإرسال، أو منع — وفي الحالتين يُكتب القرار في سجل التدقيق.</li>
     </ol>
-
     <div class="warn">
-      <b>الموافقة: ليش ما فيه شي يُرسل في البداية؟</b>
-      في البداية سجل الموافقات فاضي، فالنظام يمنع الرسائل التسويقية حمايةً للعميل. الموافقة تُسجَّل <b>تلقائيًا</b> لحظة التقاطها (نموذج تسجيل في الموقع، أو استيراد بيانات، أو خطوة الموافقة داخل وكيل الإرسال عند تفعيله لاحقًا). دورك هنا ليس «إضافة موافقة يدويًا»، بل:
-      <b style="display:block;margin-top:6px">• متابعة الموافقات في «Consent Log» &nbsp; • تنفيذ طلبات إلغاء الاشتراك &nbsp; • تنفيذ طلبات حقوق العميل (DSAR).</b>
-    </div>
-
-    <div class="tip">
-      <b>✅ وبكذا تكون ضبطت الوحدة بنجاح.</b>
-      كل قاعدة فعّلتها هنا راح تُطبَّق تلقائيًا على أي رسالة يحاول أي وكيل ذكاء إرسالها لعملائك — بدون أي خطوة إضافية منك.
+      <b>القاعدة الذهبية</b>
+      الوحدة <u>لا تُرسل شيئاً ولا توافق نيابةً عنك</u> — مهمتها «سماح أو منع» فقط، وتعمل بصلاحيات المستخدم (مندوب/مدير) لا كمستخدم جذري. عند نقص المعلومة (مثلاً تعذّر معرفة وقت الصلاة) <b>تمنع احتياطاً</b> ولا تُرسل «على البركة».
     </div>
   </div>
 
-  <div class="toc">
-    <h3>بقية الدليل — حسب اللي تبغى تسوّيه</h3>
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc">
+    <h3>محتويات الدليل</h3>
     <ol>
-      <li><a href="#prayer">أبي أوقف الإرسال وقت الصلاة</a></li>
-      <li><a href="#timing">أبي أتحكم في الدوام ونهاية الأسبوع والجمعة ورمضان</a></li>
-      <li><a href="#city">أبي أضبط أوقات الصلاة حسب مدينة العميل</a></li>
-      <li><a href="#norms">أبي أتأكد أن الرسائل فيها تحية وأسلوب محترم</a></li>
-      <li><a href="#words">أبي أعدّل قائمة كلمات التحية والألقاب</a></li>
-      <li><a href="#consent">أبي أتابع الموافقات وألغي اشتراك عميل</a></li>
-      <li><a href="#dsar">عميل طلب نسخة من بياناته أو حذفها (DSAR)</a></li>
-      <li><a href="#status">أبي أشوف الوضع العام بسرعة</a></li>
-      <li><a href="#whatif">ماذا لو…؟ (حل المشاكل الشائعة)</a></li>
-      <li><a href="#table">جدول مختصر: وش يسوّي كل إعداد</a></li>
+      <li><a href="#what">ما هي الوحدة ومن يستخدمها</a></li>
+      <li><a href="#concepts">مفاهيم تفهمها مرة واحدة</a></li>
+      <li><a href="#manager">للمدير: الإعداد خطوة بخطوة</a></li>
+      <li><a href="#screens">الشاشات شاشةً بشاشة (كل حقل بمعناه)</a></li>
+      <li><a href="#tasks">مهام يومية: إلغاء اشتراك + طلبات DSAR</a></li>
+      <li><a href="#test">كيف تجرّبها بنفسك خطوة بخطوة</a></li>
+      <li><a href="#summary">جدول مختصر: كل إعداد ووضعه الافتراضي</a></li>
+      <li><a href="#faq">أسئلة شائعة قصيرة</a></li>
     </ol>
-  </div>
+  </nav>
 
-  <!-- prayer -->
-  <section id="prayer">
-    <h2>أبي أوقف الإرسال وقت الصلاة</h2>
-    <p class="intro-line">المكان: <span class="path">Compliance Settings ← قسم Send Window ← Prayer times</span></p>
+  <!-- ===================== WHAT ===================== -->
+  <section id="what">
+    <h2>١) ما هي الوحدة ومن يستخدمها</h2>
+    <p class="intro-line">باختصار عملي قبل التفاصيل.</p>
+    <p>«الامتثال» ليست وكيلاً، بل <b>شرط مسبق</b> لكل وكيل مُرسِل (إحياء العملاء المفقودين، المؤهِّل الوارد، رسائل واتساب...). أي وكيل يريد أن يرسل، لا بد أن يمرّ من هنا أولاً. لهذا تُبنى مبكراً، حتى لا يُعاد تصميم أي وكيل لاحقاً. كل شاشاتها وإعداداتها <b>للمدير فقط</b> (صلاحية «مدير وكلاء الذكاء الاصطناعي» / <span class="lbl-en">AI Agents Manager</span>)، لأنها تضبط سياسة الشركة لا عملاً يومياً للمندوب.</p>
+    <div class="tip">
+      <b>الفكرة الأساسية في جملة</b>
+      كل رسالة صادرة تمرّ على ثلاث بوابات (موافقة + وقت + أسلوب)؛ تُسمح إن اجتازتها جميعاً، وتُمنع إن سقطت في أي واحدة — وكل قرار يُسجَّل في سجل التدقيق المشترك (القاعدة 20).
+    </div>
+  </section>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <section id="concepts">
+    <h2>٢) مفاهيم تفهمها مرة واحدة</h2>
+    <p class="intro-line">هذه المصطلحات تتكرّر في كل الشاشات.</p>
 
     <div class="opt">
-      <h3>خيار «Prayer times» (أوقات الصلاة)</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">مفتاح يمنع إرسال الرسائل أثناء أوقات الصلوات الخمس، مع مدة توقف لكل صلاة.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان ما تزعج العميل برسالة تسويقية وهو يصلّي — وهذا احترام مهم في السوق السعودي.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>وهو مفعّل:</b> أي محاولة إرسال وقت الصلاة تتأجّل لأقرب وقت مسموح بعد الصلاة. &nbsp; <b>لو طفّيته:</b> النظام بيرسل الرسائل حتى أثناء وقت الأذان والصلاة.</span></div>
-      <div class="ex"><b>مثال:</b> وكيل حاول يرسل عرضًا لعميل في جدة الساعة 6:50 مساءً ووقتها صلاة المغرب. لأن مدة التوقف 30 دقيقة، النظام يمنع الإرسال ويأجّله إلى ما بعد انتهاء الفترة.</div>
+      <h3>الموافقة <span class="lbl-en">Consent</span> (PDPL)</h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">إذن العميل بأن نراسله. نوعان: <span class="lbl-en">Marketing</span> (تسويقية) و<span class="lbl-en">Service</span> (خدمية). الحالة: لا يوجد / ممنوحة / مسحوبة.</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">نظام حماية البيانات السعودي يشترط موافقة صريحة قبل أي رسالة تسويقية. بلا موافقة = لا إرسال.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">تُلتقط الموافقة تلقائياً وتُسجَّل في «سجل الموافقات». السجل للقراءة فقط (لا يُعدَّل) حمايةً من العبث.</span></div>
     </div>
 
-    <h3 style="color:var(--secondary)">كيف أعدّله؟</h3>
+    <div class="opt">
+      <h3>نافذة الإرسال <span class="lbl-en">Send Window</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">الأوقات التي يُسمح فيها بالإرسال: داخل الدوام، وخارج أوقات الصلاة والجمعة وساعات رمضان الهادئة وأيام نهاية الأسبوع.</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">احترام العميل: لا رسالة وقت الصلاة، ولا في منتصف الليل، ولا في إجازته.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">تُحسب دائماً <b>بتوقيت ومدينة العميل نفسه</b>، لا بمدينتك. أي محاولة في وقت ممنوع تُؤجَّل لأقرب وقت مسموح.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>الأعراف الثقافية <span class="lbl-en">Cultural Norms</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">فحص أسلوب الرسالة: وجود تحية (السلام عليكم)، ولقب محترم (أستاذ/شيخ)، وخلوّها من نبرة حادة (صياح/تعجّب مفرط).</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">رسالة جافة بلا تحية تُسيء لانطباع الشركة؛ الفحص ينبّه قبل الإرسال.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الرسالة الناقصة تُوقَف لمراجعة بشرية. الكلمات المقبولة تُدار من «مفردات الأعراف».</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>إلغاء الاشتراك <span class="lbl-en">Opt-out</span> و طلبات صاحب البيانات <span class="lbl-en">DSAR</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">حقوق نظامية للعميل: سحب موافقته (إلغاء الاشتراك)، أو طلب نسخة من بياناته (<span class="lbl-en">Access</span>) أو محوها (<span class="lbl-en">Erasure</span>).</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">PDPL يلزمك بتنفيذها بسرعة؛ إلغاء الاشتراك يجب أن يُطبَّق خلال <b>72 ساعة</b>.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">مهمة مجدولة يومية «شبكة أمان» تضمن تطبيق أي إلغاء خلال المهلة حتى لو لم يُطبَّق فوراً.</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== MANAGER ===================== -->
+  <section id="manager">
+    <h2>٣) للمدير: الإعداد خطوة بخطوة</h2>
+    <p class="intro-line">كل الإعدادات في مكان واحد، والافتراضات مضبوطة على السوق السعودي — قد تكتفي بها دون تغيير.</p>
+    <p>افتحها من قائمة الامتثال أو من إعدادات أودو العامة:</p>
+    <p><span class="path">CRM AI Agent Base ← Compliance ← Compliance Settings</span> &nbsp;|&nbsp; أو <span class="path">Settings ← CRM AI Agents</span></p>
+    <p>تنقسم لأربع مجموعات (Blocks): <b>نافذة الإرسال</b>، <b>مصدر أوقات الصلاة</b>، <b>الأعراف الثقافية</b>، <b>الموافقة وإلغاء الاشتراك وDSAR</b>.</p>
+
+    <h3 class="sub2">أ) نافذة الإرسال <span class="lbl-en">Send Window</span></h3>
+    <div class="opt">
+      <h3>المفتاح الرئيسي للتوقيت <span class="lbl-en">Enforce send window</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المفتاح الكبير الذي يشغّل أو يوقف <u>كل</u> قواعد التوقيت دفعة واحدة.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">لإيقاف كل قيود الوقت مؤقتاً (مثل حملة عاجلة) بدل إطفاء كل خيار على حدة.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b> لو أطفأته: يُرسل في أي وقت — لا صلاة ولا دوام ولا نهاية أسبوع تمنعه.</span></div>
+    </div>
+    <div class="opt">
+      <h3>ساعات الدوام / نهاية الأسبوع / الصلاة / الجمعة / رمضان</h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">خيارات مستقلة، كلٌّ بمفتاحه وأوقاته: ساعات الدوام (افتراضياً 09:00–21:00)، نهاية الأسبوع (الجمعة والسبت)، أوقات الصلوات الخمس (إيقاف 30 دقيقة)، صلاة الجمعة (11:30–13:30)، وساعات رمضان الهادئة (16:30–21:00، يُكتشف رمضان تلقائياً من التقويم الهجري).</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">تتيح لك ضبط احترام وقت العميل بدقة حسب سياسة شركتك.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">أي محاولة في وقت ممنوع تُؤجَّل لأقرب وقت مسموح. القيم الافتراضية كلها مذكورة في «الجدول المختصر» أسفل الدليل.</span></div>
+      <div class="ex"><b>مثال:</b> رسالة جاهزة الساعة 11 ليلاً تتأجّل تلقائياً إلى 9 صباح اليوم التالي؛ ومحاولة وقت المغرب في جدة تتأجّل إلى ما بعد فترة الصلاة.</div>
+    </div>
+    <div class="opt">
+      <h3>المنطقة الزمنية الافتراضية <span class="lbl-en">Default timezone</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">المنطقة الزمنية المستخدمة فقط عندما لا يكون لدى العميل منطقة محفوظة (الافتراضي <span class="lbl-en">Asia/Riyadh</span>).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">النظام يحسب دائماً بتوقيت العميل؛ وهذا الخيار خطة بديلة عند نقص البيانات فقط.</span></div>
+    </div>
+
+    <h3 class="sub2">ب) مصدر أوقات الصلاة <span class="lbl-en">Prayer-time Source</span></h3>
+    <div class="opt">
+      <h3>المصدر <span class="lbl-en">Source</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">كيف يعرف النظام أوقات الصلاة: <span class="lbl-en">Live API</span> (أوقات حقيقية يومية حسب مدينة العميل) أو <span class="lbl-en">Fixed times</span> (أوقات ثابتة تكتبها أنت).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">أوقات الصلاة تختلف من مدينة لأخرى؛ <span class="lbl-en">Live API</span> يضمن الدقة لكل عميل حسب مدينته.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>الافتراضي Live API</b> بطريقة حساب <b>أم القرى</b> (رقم 4). عند اختيار <span class="lbl-en">Fixed</span> تظهر خانة الأوقات الثابتة بدلاً من المدينة الافتراضية.</span></div>
+      <div class="ex"><b>مثال:</b> ظهر جدة ≈ 12:23 والرياض ≈ 12:00؛ مع <span class="lbl-en">Live API</span> يفرّق النظام تلقائياً حسب مدينة كل عميل.</div>
+    </div>
+    <div class="opt">
+      <h3>المدينة / الدولة الافتراضية <span class="lbl-en">Default city / country</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">تُستخدم عندما لا يكون لدى العميل مدينة محفوظة (الافتراضي: الرياض / SA).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">العملاء بلا مدينة تُحسب أوقاتهم على هذه المدينة بدل تعليق النظام.</span></div>
+    </div>
+    <div class="tip"><b>ماذا لو تعذّر جلب الأوقات؟</b> يستخدم النظام آخر أوقات معروفة لنفس المدينة (فرق دقائق بسيط). وإن لم يتوفّر أي وقت إطلاقاً للمدينة، <b>يمنع الإرسال احتياطاً</b> — لا يرسل بلا تحقّق.</div>
+
+    <h3 class="sub2">ج) الأعراف الثقافية <span class="lbl-en">Cultural Norms</span></h3>
+    <div class="opt">
+      <h3>المفتاح الرئيسي + الفحوص الثلاثة</h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">مفتاح كبير <span class="lbl-en">Enforce cultural norms</span> يشغّل/يوقف الفحص كله، وتحته ثلاثة فحوص: <span class="lbl-en">Require greeting</span> (تحية)، <span class="lbl-en">Require honorific</span> (لقب)، <span class="lbl-en">Check tone</span> (نبرة).</span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">تضمن أن كل رسالة تبدأ بتحية ولقب محترم وبأسلوب هادئ.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>الأربعة مفعّلة افتراضياً.</b> الرسالة الناقصة تُوقَف لمراجعة بشرية. الكلمات المقبولة تُدار من <span class="lbl-en">Norm Vocabulary</span>.</span></div>
+      <div class="ex"><b>مثال:</b> «أرسل المبلغ» بلا تحية/لقب → تُوقَف وينبّه النظام أن فيها «تحية ناقصة» و«لقب ناقص». بينما «السلام عليكم أستاذ خالد، …» تمرّ.</div>
+    </div>
+
+    <h3 class="sub2">د) الموافقة وإلغاء الاشتراك وDSAR</h3>
+    <div class="opt">
+      <h3>نوع الموافقة المطلوب <span class="lbl-en">Required consent type</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">نوع الموافقة الذي يشترطه الحارس قبل الإرسال: <span class="lbl-en">Marketing</span> أو <span class="lbl-en">Service</span>.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>الافتراضي تسويقية (Marketing)</b> — لن تُرسل أي رسالة لعميل لم يمنح هذا النوع من الموافقة.</span></div>
+    </div>
+    <div class="opt">
+      <h3>مهلة تطبيق إلغاء الاشتراك <span class="lbl-en">Opt-out window (hours)</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">خلال كم ساعة يجب أن يُطبَّق إلغاء اشتراك العميل.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>الافتراضي 72 ساعة.</b> مهمة مجدولة يومية تضمن التطبيق ضمن المهلة.</span></div>
+    </div>
+    <div class="opt">
+      <h3>طريقة المحو في DSAR <span class="lbl-en">DSAR erasure mode</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">كيف تُمحى بيانات العميل عند طلبه: <span class="lbl-en">Anonymize</span> (إخفاء الهوية مع إبقاء أثر نظامي) أو <span class="lbl-en">Hard delete</span> (حذف نهائي).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>الافتراضي إخفاء الهوية</b> (مُوصى به). الحذف النهائي قد يتطلّب صلاحيات أعلى من مدير عادي.</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREENS ===================== -->
+  <section id="screens">
+    <h2>٤) الشاشات شاشةً بشاشة</h2>
+    <p class="intro-line">كل الشاشات تحت <span class="path">CRM AI Agent Base ← Compliance</span> وكلها للمدير فقط. شُحنت ترجمة عربية كاملة للواجهة؛ ونضع التسمية الإنجليزية بجانب كل اسم للتعرّف عليه أياً كانت لغتك.</p>
+
+    <h3 class="sub2">سجل الموافقات <span class="lbl-en">Consent Log</span></h3>
+    <p><span class="path">Compliance ← Consent Log</span> — يعرض كل حدث موافقة وسحب. للقراءة فقط (لا تعديل).</p>
+    <table>
+      <tr><th>العمود</th><th>معناه</th></tr>
+      <tr><td>التاريخ <span class="lbl-en">Created on</span></td><td>وقت تسجيل الحدث.</td></tr>
+      <tr><td>جهة الاتصال <span class="lbl-en">Contact</span></td><td>العميل صاحب الموافقة.</td></tr>
+      <tr><td>نوع الموافقة <span class="lbl-en">Consent Type</span></td><td>تسويقية / خدمية.</td></tr>
+      <tr><td>الحالة <span class="lbl-en">State</span></td><td>لا يوجد / ممنوحة / مسحوبة.</td></tr>
+      <tr><td>تاريخ المنح <span class="lbl-en">Granted On</span> / تاريخ الإلغاء <span class="lbl-en">Opt-out On</span></td><td>متى مُنحت ومتى سُحبت.</td></tr>
+      <tr><td>المصدر <span class="lbl-en">Source</span></td><td>من أين جاء الحدث (نموذج/استيراد/زر يدوي...).</td></tr>
+      <tr><td>مُمحى <span class="lbl-en">Erased</span></td><td>هل أُخفيت هويته ضمن طلب DSAR.</td></tr>
+    </table>
+    <p>فلاتر جاهزة: ممنوحة، مسحوبة، تسويقية، خدمية، مُمحاة؛ مع تجميع حسب الحالة/النوع/العميل/الشهر.</p>
+
+    <h3 class="sub2">حالة الامتثال <span class="lbl-en">Compliance Status</span></h3>
+    <p><span class="path">Compliance ← Compliance Status</span> — نظرة سريعة بمخطّط بياني (الموافقات حسب الحالة والنوع) وعرض محوري. مفيدة لتعرف بلمحة: كم عميل موافق، كم سحب، وتوزيع الأنواع — دون تقليب السجل سطراً سطراً.</p>
+
+    <h3 class="sub2">مفردات الأعراف <span class="lbl-en">Norm Vocabulary</span></h3>
+    <p><span class="path">Compliance ← Norm Vocabulary</span> — قائمة الكلمات التي يعتمد عليها فحص الأسلوب. قابلة للتحرير المباشر.</p>
+    <table>
+      <tr><th>العمود</th><th>معناه</th></tr>
+      <tr><td>التصنيف <span class="lbl-en">Category</span></td><td>تحية <span class="lbl-en">Greeting</span> / بداية غير رسمية <span class="lbl-en">Informal opener</span> / لقب <span class="lbl-en">Honorific</span>.</td></tr>
+      <tr><td>الكلمة <span class="lbl-en">Term</span></td><td>النص المقبول (مثل: السلام عليكم، أستاذ).</td></tr>
+      <tr><td>اللغة <span class="lbl-en">Language</span></td><td>عربية / إنجليزية / أي.</td></tr>
+      <tr><td>مفعّلة <span class="lbl-en">Active</span></td><td>أزل العلامة لإيقاف كلمة مؤقتاً بدل حذفها.</td></tr>
+    </table>
+    <div class="tip"><b>نصيحة</b> لقبول تحية مثل «صباح النور» أو لقب خاص بعملائك، أضِفه هنا فيُعتمد فوراً في الفحص.</div>
+
+    <h3 class="sub2">طلبات DSAR <span class="lbl-en">DSAR Requests</span></h3>
+    <p><span class="path">Compliance ← DSAR Requests</span> — نافذة تنفّذ حقّي العميل. اختر العميل ونوع الطلب: <span class="lbl-en">Access (export data)</span> أو <span class="lbl-en">Erasure (anonymize)</span> ثم اضغط <span class="lbl-en">Run DSAR</span> فتظهر النتيجة في نفس النافذة.</p>
+
+    <h3 class="sub2">تبويب العميل <span class="lbl-en">AI Consent &amp; PDPL</span></h3>
+    <p><span class="path">Contacts ← افتح عميلاً ← تبويب AI Consent &amp; PDPL</span> (للمدير). فيه زرّان وحقل وسجل مصغّر:</p>
+    <ul>
+      <li><b>زر</b> <span class="lbl-en">Apply Opt-out</span>: يسحب موافقة العميل التسويقية فوراً (مع تأكيد).</li>
+      <li><b>زر</b> <span class="lbl-en">DSAR…</span>: يفتح نافذة DSAR مهيّأة على هذا العميل.</li>
+      <li><b>حقل</b> <span class="lbl-en">AI Opt-out Requested On</span>: متى طُلب الإلغاء (تُحسب منه مهلة الـ72 ساعة).</li>
+      <li><b>سجل مصغّر</b> لموافقات هذا العميل (للقراءة فقط).</li>
+    </ul>
+  </section>
+
+  <!-- ===================== TASKS ===================== -->
+  <section id="tasks">
+    <h2>٥) مهام يومية: إلغاء اشتراك + طلبات DSAR</h2>
+    <p class="intro-line">أكثر إجراءين ستحتاجهما عملياً.</p>
+
+    <h3 class="sub2">عميل طلب إيقاف الرسائل (إلغاء اشتراك)</h3>
     <ol class="steps">
-      <li>افتح <span class="path">Compliance Settings</span> ← قسم <b>Send Window</b>.</li>
-      <li>عند <b>Prayer times</b>: خلّه مفعّلًا (لإيقاف الإرسال وقت الصلاة) أو أطفِه.</li>
-      <li>وهو مفعّل، عدّل حقل <b>مدة التوقف بالدقائق</b> (الافتراضي 30).</li>
-      <li>احفظ.</li>
+      <li>افتح بطاقة العميل في <span class="lbl-en">Contacts</span> ← تبويب <span class="lbl-en">AI Consent &amp; PDPL</span>.</li>
+      <li>اضغط <span class="lbl-en">Apply Opt-out</span> وأكّد.</li>
+      <li>تظهر رسالة نجاح، ويُسجَّل الحدث «مسحوبة» في سجل الموافقات، ويُختم تاريخ الطلب. لن تُرسل له رسائل تسويقية بعدها (مضمون خلال 72 ساعة كحدٍّ أقصى عبر شبكة الأمان المجدولة).</li>
     </ol>
-  </section>
 
-  <!-- timing -->
-  <section id="timing">
-    <h2>أبي أتحكم في الدوام ونهاية الأسبوع والجمعة ورمضان</h2>
-    <p class="intro-line">كلها في نفس المكان: <span class="path">Compliance Settings ← قسم Send Window</span></p>
-
-    <div class="opt">
-      <h3>«Enforce send window» — المفتاح الرئيسي للتوقيت</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المفتاح الكبير اللي يشغّل أو يوقف <u>كل</u> قواعد التوقيت دفعة وحدة.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">لو احتجت توقف كل قيود الوقت مؤقتًا (مثلاً حملة عاجلة)، بدل ما تطفّي كل خيار لحاله.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>لو طفّيته:</b> النظام يرسل في أي وقت — لا صلاة ولا دوام ولا نهاية أسبوع تمنعه.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>«Working hours» — أوقات الدوام</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يمنع الإرسال خارج ساعات العمل، مع خانتين لبداية ونهاية الدوام.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان ما توصل رسائل للعميل الساعة 2 الفجر.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>مفعّل (الافتراضي 09:00–21:00):</b> أي إرسال خارج هذا الوقت يتأجّل لبداية الدوام التالي. &nbsp; <b>لو طفّيته:</b> يرسل في أي ساعة.</span></div>
-      <div class="ex"><b>مثال:</b> رسالة جاهزة الساعة 11 ليلاً تتأجّل تلقائيًا إلى 9 صباح اليوم التالي.</div>
-    </div>
-
-    <div class="opt">
-      <h3>«Weekend» — نهاية الأسبوع</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يمنع الإرسال في أيام نهاية الأسبوع التي تحددها.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان تحترم إجازة العميل وما ترسله رسائل عمل في يوم راحته.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>مفعّل (الافتراضي: الجمعة والسبت):</b> الإرسال يتوقف هذي الأيام ويُؤجَّل. &nbsp; <b>لو طفّيته:</b> يرسل طوال الأسبوع.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>«Friday Jumu'ah» — صلاة الجمعة</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">إيقاف أطول حول وقت ظهر الجمعة (افتراضيًا 11:30–13:30).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">صلاة الجمعة تأخذ وقتًا أطول من الصلوات العادية، فتحتاج فترة احترام أوسع.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>مفعّل:</b> ما يُرسل شيء في تلك الفترة يوم الجمعة. &nbsp; <b>لو طفّيته:</b> يُعامل وقت الجمعة كأي وقت عادي.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>«Ramadan quiet hours» — ساعات رمضان الهادئة</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">فترة هدوء إضافية خلال شهر رمضان (افتراضيًا 16:30–21:00).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">وقت قرب الإفطار والمغرب والتراويح حسّاس؛ النظام يعرف رمضان تلقائيًا من التقويم الهجري.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>مفعّل:</b> الإرسال يهدأ في تلك الفترة طوال رمضان فقط. &nbsp; <b>لو طفّيته:</b> رمضان يُعامل كبقية الشهور.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>«Default timezone» — المنطقة الزمنية الافتراضية</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المنطقة الزمنية المستخدمة فقط لو العميل ما عنده منطقة محفوظة (الافتراضي Asia/Riyadh).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان حساب «الدوام» و«الصلاة» يكون بتوقيت صحيح حتى لو بيانات العميل ناقصة.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">النظام دائمًا يحسب بتوقيت العميل نفسه؛ وهذا الخيار هو خطة بديلة عند نقص البيانات فقط.</span></div>
-    </div>
-  </section>
-
-  <!-- city -->
-  <section id="city">
-    <h2>أبي أضبط أوقات الصلاة حسب مدينة العميل</h2>
-    <p class="intro-line">المكان: <span class="path">Compliance Settings ← قسم Prayer-time Source</span></p>
-
-    <div class="opt">
-      <h3>«Source» — مصدر أوقات الصلاة</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يحدد كيف يعرف النظام أوقات الصلاة: «Live API» (أوقات حقيقية حسب مدينة العميل) أو «Fixed times» (أوقات ثابتة تكتبها أنت).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">أوقات الصلاة تختلف من مدينة لأخرى؛ «Live API» يضمن دقة لكل عميل حسب مدينته.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>Live API (الافتراضي):</b> يجيب الأوقات الحقيقية يوميًا لمدينة العميل (طريقة أم القرى). &nbsp; <b>Fixed times:</b> يستخدم الأوقات الثابتة لكل العملاء.</span></div>
-      <div class="ex"><b>مثال:</b> صلاة الظهر في جدة الساعة 12:23، وفي الرياض حوالي 12:00. مع «Live API» يفرّق النظام بينهما تلقائيًا حسب مدينة كل عميل.</div>
-    </div>
-
-    <div class="opt">
-      <h3>«Default city / country» — المدينة الافتراضية</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المدينة التي يستخدمها النظام لو العميل ما عنده مدينة محفوظة (الافتراضي: الرياض / SA).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان ما يعلّق النظام لو بيانات عميل ناقصة — يرجع لمدينة منطقية.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">العملاء بدون مدينة تُحسب أوقاتهم على هذه المدينة.</span></div>
-    </div>
-
-    <div class="tip"><b>وش يصير لو تعذّر جلب الأوقات؟</b> لو ما قدر النظام يجيب أوقات اليوم لمدينة، يستخدم آخر أوقات معروفة لنفس المدينة (الفرق دقائق بسيطة). وإذا ما توفّر أي وقت إطلاقًا للمدينة، <b>يمنع الإرسال احتياطًا</b> — ما يرسل «على البركة» أبدًا.</div>
-  </section>
-
-  <!-- norms -->
-  <section id="norms">
-    <h2>أبي أتأكد أن الرسائل فيها تحية وأسلوب محترم</h2>
-    <p class="intro-line">المكان: <span class="path">Compliance Settings ← قسم Cultural Norms</span></p>
-
-    <div class="opt">
-      <h3>«Enforce cultural norms» — المفتاح الرئيسي للأسلوب</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">المفتاح الكبير اللي يشغّل/يوقف فحص أسلوب الرسالة كله.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">عشان ما تطلع رسالة للعميل بدون تحية أو بأسلوب جاف.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>لو طفّيته:</b> النظام ما يفحص أسلوب الرسائل إطلاقًا.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>الفحوص الثلاثة: «Require greeting» / «Require honorific» / «Check tone»</h3>
-      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">ثلاثة فحوص: وجود <b>تحية</b> (مثل: السلام عليكم)، ووجود <b>لقب محترم</b> (مثل: أستاذ، شيخ)، وخلوّ الرسالة من <b>نبرة حادة</b> (صياح/علامات تعجب كثيرة).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">رسالة بدون تحية أو لقب تعطي انطباعًا غير لائق؛ هذي الفحوص تنبّه قبل الإرسال.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>مفعّلة:</b> الرسالة الناقصة (مثلاً بدون لقب) تُوقف ليراجعها إنسان ويعدّلها. &nbsp; <b>لو طفّيت فحصًا:</b> النظام يتجاهل هذا الجانب تحديدًا.</span></div>
-      <div class="ex"><b>مثال:</b> رسالة «أرسل المبلغ» بدون تحية أو لقب → النظام يوقفها وينبّه أن فيها «تحية ناقصة» و«لقب ناقص». بينما «السلام عليكم أستاذ خالد، …» تمرّ.</div>
-    </div>
-  </section>
-
-  <!-- words -->
-  <section id="words">
-    <h2>أبي أعدّل قائمة كلمات التحية والألقاب</h2>
-    <p class="intro-line">المكان: <span class="path">الإعدادات ← Norm Vocabulary</span></p>
-
-    <div class="opt">
-      <h3>قائمة الكلمات (Norm Vocabulary)</h3>
-      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">القائمة التي يعتمد عليها النظام ليعرف ما هي «التحية» و«اللقب» المقبولان. تقدر تضيف وتعدّل وتوقف أي كلمة.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">لو تبغى النظام يقبل تحية مثل «صباح النور» أو لقبًا خاصًا بعملائك، تضيفه هنا.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">لحظة ما تضيف كلمة، النظام يبدأ يقبلها في فحص الرسائل. ولو أزلت علامة «Active» عن كلمة، النظام يتجاهلها بدون حذفها.</span></div>
-    </div>
-
-    <p>كل سطر فيه: <b>التصنيف</b> (تحية / لقب / بداية غير رسمية)، <b>الكلمة</b>، <b>اللغة</b>، و<b>مفعّلة؟</b>.</p>
+    <h3 class="sub2">عميل طلب نسخة من بياناته أو محوها (DSAR)</h3>
     <ol class="steps">
-      <li>افتح <span class="path">Norm Vocabulary</span>.</li>
-      <li>اضغط سطرًا جديدًا، اختر التصنيف، واكتب الكلمة.</li>
-      <li>احفظ — تُعتمد فورًا.</li>
+      <li>افتح <span class="path">Compliance ← DSAR Requests</span> (أو زر <span class="lbl-en">DSAR…</span> من بطاقة العميل).</li>
+      <li>اختر العميل ونوع الطلب: <span class="lbl-en">Access</span> (تصدير بياناته للاطّلاع) أو <span class="lbl-en">Erasure</span> (محو/إخفاء هويته).</li>
+      <li>اضغط <span class="lbl-en">Run DSAR</span> — تظهر النتيجة في نفس النافذة.</li>
     </ol>
-    <div class="tip"><b>نصيحة</b> لإيقاف كلمة مؤقتًا بدل حذفها، فقط أزل علامة <b>Active</b> — تقدر ترجّعها لاحقًا.</div>
+    <div class="tip"><b>نصيحة</b> أبقِ طريقة المحو على «إخفاء الهوية» (الافتراضي). «الحذف النهائي» موجود في الإعدادات لكنه قد يتطلّب صلاحيات أعلى من مدير عادي.</div>
   </section>
 
-  <!-- consent -->
-  <section id="consent">
-    <h2>أبي أتابع الموافقات وألغي اشتراك عميل</h2>
-    <p class="intro-line">المكان: <span class="path">الإعدادات ← Consent Log</span> &nbsp;|&nbsp; وبطاقة العميل ← تبويب <b>AI Consent &amp; PDPL</b></p>
-
-    <div class="opt">
-      <h3>سجل الموافقات (Consent Log)</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">سجل يعرض كل موافقة وسحب موافقة: العميل، نوع الموافقة، الحالة (موافق/مسحوب/لا يوجد)، المصدر، والتاريخ.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">لتعرف من يحق إرسال رسائل تسويقية له، ولتوثيق التزامك بنظام حماية البيانات.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">السجل <b>للعرض فقط</b> ولا يُعدَّل يدويًا (حمايةً من العبث). الموافقة تُسجَّل تلقائيًا لحظة التقاطها من العميل.</span></div>
-    </div>
-
-    <div class="opt">
-      <h3>زر «Apply Opt-out» — إلغاء اشتراك عميل</h3>
-      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">زر في بطاقة العميل (تبويب AI Consent &amp; PDPL) يسحب موافقة العميل التسويقية فورًا.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">لما عميل يطلب إيقاف الرسائل التسويقية — حق نظامي يجب تنفيذه بسرعة.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">بعد التأكيد، يصير العميل «مسحوب الموافقة» وما يُرسل له تسويق بعدها. النظام يضمن تطبيق أي إلغاء خلال <b>72 ساعة</b> (قابلة للتعديل من الإعدادات).</span></div>
-    </div>
+  <!-- ===================== TEST ===================== -->
+  <section id="test">
+    <h2>٦) كيف تجرّبها بنفسك خطوة بخطوة</h2>
+    <p class="intro-line">جرّبة عملية تقدر تسوّيها بنفسك. (الخطوات 1–5 تعمل على «الامتثال + القاعدة» وحدهما؛ الخطوة 6 تُظهر الحارس وهو يمنع إرسالاً فعلياً.)</p>
     <ol class="steps">
-      <li>افتح بطاقة العميل (Contacts) ← تبويب <b>AI Consent &amp; PDPL</b>.</li>
-      <li>اضغط <b>Apply Opt-out</b> وأكّد.</li>
+      <li><b>تأكّد أن القوائم ظهرت.</b><br>
+        كمدير، افتح <span class="lbl-en">CRM AI Agent Base</span> ← مجموعة <span class="lbl-en">Compliance</span>؛ يجب أن ترى خمس شاشات: <span class="lbl-en">Consent Log · Compliance Status · DSAR Requests · Norm Vocabulary · Compliance Settings</span>. <i>(إن لم تظهر، فصلاحيتك ليست «مدير وكلاء الذكاء».)</i></li>
+      <li><b>افحص الإعدادات الافتراضية.</b><br>
+        افتح <span class="lbl-en">Compliance Settings</span>: نافذة الإرسال مفعّلة (09:00–21:00)، نهاية الأسبوع الجمعة والسبت، أوقات الصلاة 30 دقيقة، مصدر الأوقات <span class="lbl-en">Live API</span> أم القرى، الأعراف مفعّلة، الموافقة المطلوبة «تسويقية»، ومهلة الإلغاء 72 ساعة.</li>
+      <li><b>افحص قائمة المفردات.</b><br>
+        افتح <span class="lbl-en">Norm Vocabulary</span>؛ ستجد كلمات تحية وألقاب مُهيّأة مسبقاً. جرّب إضافة كلمة جديدة، أو إيقاف واحدة بإزالة علامة <span class="lbl-en">Active</span> — يُعتمد فوراً.</li>
+      <li><b>جرّب إلغاء اشتراك عميل (اختبار ملموس).</b><br>
+        افتح أي عميل ← تبويب <span class="lbl-en">AI Consent &amp; PDPL</span> ← <span class="lbl-en">Apply Opt-out</span> ← أكّد. الآن افتح <span class="lbl-en">Consent Log</span> وستجد سطراً جديداً بحالة «مسحوبة» لهذا العميل، وتاريخ الطلب مختوماً في بطاقته.</li>
+      <li><b>جرّب طلب DSAR.</b><br>
+        من بطاقة العميل اضغط <span class="lbl-en">DSAR…</span> ← اختر <span class="lbl-en">Access</span> ← <span class="lbl-en">Run DSAR</span>؛ ستظهر بيانات موافقات العميل للاطّلاع. ثم راجع <span class="lbl-en">Compliance Status</span> لترى المخطّط يعكس التغييرات.</li>
+      <li><b>شاهد الحارس وهو يمنع (الصورة الكاملة).</b><br>
+        ثبّت وكيلاً مُرسِلاً (مثل <span class="lbl-en">Dead-Lead Resurrection</span>). جرّب أن يصوغ رسالة لعميل <u>لم تُسجَّل له موافقة</u> أو في <u>وقت صلاة</u>: سيمنع الحارس الإرسال، ويظهر القرار في سجل التدقيق المشترك (<span class="path">CRM AI Agent Base ← Configuration ← Audit Log</span>) كحدث <span class="lbl-en">blocked</span>. فعّل الموافقة وأعِد المحاولة في وقت مسموح فيمضي.</li>
     </ol>
-  </section>
-
-  <!-- dsar -->
-  <section id="dsar">
-    <h2>عميل طلب نسخة من بياناته أو حذفها (DSAR)</h2>
-    <p class="intro-line">المكان: <span class="path">الإعدادات ← DSAR Requests</span> &nbsp;|&nbsp; أو زر <b>DSAR…</b> في بطاقة العميل</p>
-
-    <div class="opt">
-      <h3>نافذة طلبات حقوق العميل</h3>
-      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">أداة تنفّذ حقّين للعميل: «Access» (تصدير بياناته للاطّلاع) و«Erasure» (محو بياناته).</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">نظام حماية البيانات يلزمك بتلبية هذي الطلبات عند طلب العميل.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt"><b>Access:</b> تظهر بيانات موافقات العميل للاطّلاع. &nbsp; <b>Erasure:</b> تُمحى بياناته (الطريقة الافتراضية «إخفاء الهوية» = فصل البيانات عن العميل مع إبقاء أثر نظامي).</span></div>
-    </div>
-    <ol class="steps">
-      <li>افتح <span class="path">DSAR Requests</span> (أو زر <b>DSAR…</b> من بطاقة العميل).</li>
-      <li>اختر العميل ونوع الطلب (Access أو Erasure).</li>
-      <li>اضغط <b>Run DSAR</b> — تظهر النتيجة في نفس النافذة.</li>
-    </ol>
-    <div class="tip"><b>نصيحة</b> أبقِ طريقة المحو على «إخفاء الهوية» (الافتراضي). خيار «الحذف النهائي» موجود في الإعدادات لكنه قد يتطلّب صلاحيات أعلى من مدير عادي.</div>
-  </section>
-
-  <!-- status -->
-  <section id="status">
-    <h2>أبي أشوف الوضع العام بسرعة</h2>
-    <div class="opt">
-      <h3>«Compliance Status» — لوحة الحالة</h3>
-      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">رسم بياني وجدول يلخّص الموافقات حسب الحالة والنوع.</span></div>
-      <div class="qa why"><span class="lbl">ليش / متى</span><span class="txt">نظرة سريعة: كم عميل موافق، كم سحب، توزيع الأنواع — بدون ما تقلّب السجل سطرًا سطرًا.</span></div>
-      <div class="qa eff"><span class="lbl">وش يصير</span><span class="txt">تفتح <span class="path">الإعدادات ← Compliance Status</span> فتشوف الصورة العامة مباشرة.</span></div>
+    <div class="tip">
+      <b>النتيجة المتوقّعة</b>
+      على «الامتثال وحده» تستطيع ضبط السياسات وتسجيل الموافقات/الإلغاءات وتشغيل DSAR. أمّا «المنع الفعلي للإرسال» فلا تراه إلا عندما يحاول وكيلٌ مُرسِلٌ أن يرسل — لأن الامتثال بوابة لغيره، لا مُرسِلاً بنفسه.
     </div>
   </section>
 
-  <!-- what if -->
-  <section id="whatif">
-    <h2>ماذا لو…؟ (حل المشاكل الشائعة)</h2>
-    <div class="whatif">
-      <p><span class="q">❓ ما تنرسل أي رسالة تسويقية إطلاقًا؟</span><br>
-        <span class="a">غالبًا <b>ما فيه موافقة مسجّلة</b> للعملاء. هذا طبيعي في البداية. الموافقة تُلتقط تلقائيًا من نماذج التسجيل/الاستيراد/تدفّق الإرسال. راجع «Consent Log» لتشوف حالة الموافقات.</span></p>
-      <p><span class="q">❓ قاعدة معيّنة (مثلاً نهاية الأسبوع) ما تشتغل؟</span><br>
-        <span class="a">تأكد أن مفتاحها <b>مفعّل</b> في «Compliance Settings»، وأن المفتاح الرئيسي «Enforce send window» مفعّل أيضًا (لو هو مطفّأ، كل قواعد التوقيت تتوقف).</span></p>
-      <p><span class="q">❓ الرسائل تتوقف في وقت غير متوقّع؟</span><br>
-        <span class="a">غالبًا وقت صلاة أو جمعة أو ساعة رمضان في مدينة العميل. النظام يحسب بتوقيت ومدينة العميل، مو مدينتك. راجع المدينة المحفوظة في بطاقة العميل.</span></p>
-      <p><span class="q">❓ النظام يقول إن الرسالة «ناقصة تحية/لقب»؟</span><br>
-        <span class="a">أضف التحية أو اللقب لنص الرسالة، أو أضِف الكلمة المستخدمة إلى «Norm Vocabulary» لو كانت تحية/لقبًا صحيحًا غير موجود في القائمة.</span></p>
-      <p><span class="q">❓ ما ألقى شاشات الالتزام في القائمة؟</span><br>
-        <span class="a">هذي الشاشات للمديرين فقط (صلاحية «مدير وكلاء الذكاء»). تواصل مع مسؤول النظام لإعطائك الصلاحية.</span></p>
-    </div>
-  </section>
-
-  <!-- table -->
-  <section id="table">
-    <h2>جدول مختصر: وش يسوّي كل إعداد</h2>
+  <!-- ===================== SUMMARY ===================== -->
+  <section id="summary">
+    <h2>٧) جدول مختصر: كل إعداد ووضعه الافتراضي</h2>
     <table>
       <tr><th>الإعداد</th><th>وش يسوّي</th><th>الوضع الافتراضي</th></tr>
       <tr><td>Enforce send window</td><td>المفتاح الرئيسي لكل قواعد التوقيت</td><td><span class="pill">مفعّل</span></td></tr>
       <tr><td>Working hours</td><td>يمنع الإرسال خارج ساعات العمل</td><td>مفعّل · 09:00–21:00</td></tr>
-      <tr><td>Weekend</td><td>يمنع الإرسال أيام نهاية الأسبوع</td><td>مفعّل · الجمعة والسبت</td></tr>
+      <tr><td>Weekend</td><td>يمنع الإرسال أيام نهاية الأسبوع</td><td>مفعّل · الجمعة والسبت (4,5)</td></tr>
       <tr><td>Prayer times</td><td>يوقف الإرسال وقت الصلوات الخمس</td><td>مفعّل · 30 دقيقة</td></tr>
       <tr><td>Friday Jumu'ah</td><td>إيقاف أطول وقت ظهر الجمعة</td><td>مفعّل · 11:30–13:30</td></tr>
-      <tr><td>Ramadan quiet hours</td><td>فترة هادئة في رمضان</td><td>مفعّل · 16:30–21:00</td></tr>
+      <tr><td>Ramadan quiet hours</td><td>فترة هادئة في رمضان (هجري تلقائي)</td><td>مفعّل · 16:30–21:00</td></tr>
       <tr><td>Default timezone</td><td>منطقة زمنية بديلة عند نقص بيانات العميل</td><td>Asia/Riyadh</td></tr>
-      <tr><td>Prayer-time Source</td><td>أوقات الصلاة حسب المدينة (API) أو ثابتة</td><td>Live API · أم القرى</td></tr>
+      <tr><td>Prayer-time Source</td><td>أوقات الصلاة حسب المدينة (API) أو ثابتة</td><td>Live API · أم القرى (طريقة 4)</td></tr>
       <tr><td>Default city / country</td><td>المدينة عند نقص بيانات العميل</td><td>الرياض / SA</td></tr>
+      <tr><td>Fixed prayer times</td><td>أوقات ثابتة عند اختيار المصدر «Fixed»</td><td>05:00,12:00,15:30,18:15,19:45</td></tr>
       <tr><td>Enforce cultural norms</td><td>المفتاح الرئيسي لفحص الأسلوب</td><td><span class="pill">مفعّل</span></td></tr>
       <tr><td>Require greeting / honorific / tone</td><td>يطلب تحية + لقب + نبرة محترمة</td><td>الثلاثة مفعّلة</td></tr>
       <tr><td>Required consent type</td><td>الموافقة المطلوبة قبل الإرسال</td><td>تسويقية (Marketing)</td></tr>
-      <tr><td>Opt-out enforcement window</td><td>خلال كم ساعة يُطبَّق إلغاء الاشتراك</td><td>72 ساعة</td></tr>
-      <tr><td>DSAR erasure mode</td><td>طريقة محو بيانات العميل</td><td>إخفاء الهوية</td></tr>
+      <tr><td>Opt-out window (hours)</td><td>خلال كم ساعة يُطبَّق إلغاء الاشتراك</td><td>72 ساعة</td></tr>
+      <tr><td>DSAR erasure mode</td><td>طريقة محو بيانات العميل</td><td>إخفاء الهوية (Anonymize)</td></tr>
     </table>
   </section>
 
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <h2>٨) أسئلة شائعة قصيرة</h2>
+    <div class="whatif">
+      <p><span class="q">لا تُرسَل أي رسالة تسويقية إطلاقاً — لماذا؟</span><br>
+        <span class="a">غالباً <b>لا توجد موافقة مسجّلة</b> للعملاء، وهذا طبيعي في البداية. الموافقة تُلتقط تلقائياً من نماذج التسجيل/الاستيراد/تدفّق الإرسال. راجع <span class="lbl-en">Consent Log</span>.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">قاعدة توقيت معيّنة (مثلاً نهاية الأسبوع) لا تعمل؟</span><br>
+        <span class="a">تأكّد أن مفتاحها مفعّل، وأن المفتاح الرئيسي <span class="lbl-en">Enforce send window</span> مفعّل أيضاً — لو هو مطفأ تتوقف كل قواعد التوقيت.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">الرسائل تتوقف في وقت غير متوقّع؟</span><br>
+        <span class="a">غالباً وقت صلاة أو جمعة أو ساعة رمضان في <u>مدينة العميل</u>. النظام يحسب بتوقيت ومدينة العميل لا مدينتك — راجع المدينة المحفوظة في بطاقته.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">النظام يقول إن الرسالة «ناقصة تحية/لقب»؟</span><br>
+        <span class="a">أضف التحية أو اللقب لنص الرسالة، أو أضِف الكلمة إلى <span class="lbl-en">Norm Vocabulary</span> إن كانت تحية/لقباً صحيحاً غير موجود.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">هل أستطيع منح موافقة لعميل يدوياً؟</span><br>
+        <span class="a">الموافقة تُلتقط تلقائياً عند حدوثها؛ والسجل للقراءة فقط حمايةً من العبث. الإجراءان اليدويان المتاحان في بطاقة العميل هما <span class="lbl-en">Apply Opt-out</span> و<span class="lbl-en">DSAR…</span>.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لا أجد شاشات الامتثال في القائمة؟</span><br>
+        <span class="a">كلها للمديرين فقط (صلاحية «مدير وكلاء الذكاء الاصطناعي»). اطلب من مسؤول النظام إضافتك للمجموعة.</span></p>
+    </div>
+  </section>
+
   <div class="tech">
-    <h3>للمختصين (اختياري)</h3>
-    <p>الإعدادات تُحفظ كـ <code>ir.config_parameter</code> تحت النطاق <code>era_crm_ai_agents_compliance.*</code>. أيام نهاية الأسبوع تُخزَّن بأرقام (الإثنين=0 … الأحد=6)؛ فـ <code>4,5</code> = الجمعة والسبت. النماذج: <code>crm.ai.consent</code> (سجل الموافقات، append-only)، <code>crm.ai.norm.term</code> (قائمة الكلمات)، <code>crm.ai.prayer.cache</code> (ذاكرة أوقات الصلاة). أوقات الصلاة من خدمة Aladhan (طريقة 4 = أم القرى) وتُرسل المدينة والتاريخ فقط — بدون أي بيانات شخصية. الشاشات مقصورة على مجموعة <code>AI Agents Manager</code>. الموافقة تُسجَّل برمجيًا عبر التقاطها (لا يوجد زر «منح موافقة» يدوي في هذه الشاشات).</p>
+    <h3>للمسؤول التقني (مرجع سريع)</h3>
+    <p>الوحدة: <code>era_crm_ai_agents_compliance</code> · الإصدار <code>19.0.1.0.0</code> · تعتمد على <code>era_crm_ai_agents_base</code> فقط. طبقة عرضية (cross-cutting) لا تطبيق مستقل؛ قوائمها تحت جذر القاعدة (مجموعة <code>Compliance</code>، مقصورة على <code>group_crm_ai_manager</code>).</p>
+    <p>الإعدادات تُحفظ كـ <code>ir.config_parameter</code> تحت النطاق <code>era_crm_ai_agents_compliance.*</code> (وتُكتب كنصوص <code>True/False</code> لتفادي إسقاط أي مفتاح مُطفأ). أيام نهاية الأسبوع بأرقام (الإثنين=0 … الأحد=6)، فـ <code>4,5</code> = الجمعة والسبت.</p>
+    <p>النماذج: <code>crm.ai.consent</code> (سجل الموافقات، append-only) · <code>crm.ai.norm.term</code> (المفردات) · <code>crm.ai.prayer.cache</code> (ذاكرة أوقات الصلاة) · معالج <code>crm.ai.dsar.wizard</code>. أوقات الصلاة من خدمة <code>Aladhan</code> (طريقة 4 = أم القرى) وتُرسل المدينة والتاريخ فقط — بلا أي بيانات شخصية.</p>
+    <p>المهام المجدولة: <code>CRM AI Compliance: Enforce 72h opt-out</code> (شبكة أمان يومية لإلغاء الاشتراك) و<code>CRM AI Compliance: Warm prayer-time cache</code> (تهيئة أوقات الصلاة مسبقاً). الحارس يعمل بصلاحيات المستخدم لا الجذري، ويُسجّل كل قرار سماح/منع في سجل التدقيق بالقاعدة (<code>crm.ai.audit.log</code>).</p>
   </div>
 
-  <footer>
-    Era Group · وحدة الالتزام (Compliance) · الإصدار 19.0.1.0.0<br>
-    هذا الدليل يصف الوظائف كما هي مبنيّة فعليًا في الوحدة.
-  </footer>
+  <footer>Era Group · CRM AI Agents — وحدة الامتثال (Compliance) · دليل المستخدم (إصدار 19.0.1.0.0)</footer>
 
 </div>
 </body>

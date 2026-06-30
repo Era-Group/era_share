@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل المستخدم — قاعدة وكلاء الذكاء الاصطناعي (Base)</title>
+<style>
+  :root{
+    --primary:#0f4c5c; --secondary:#1b6e7e; --accent:#c79a3a;
+    --bg:#f6f8f9; --card:#ffffff; --text:#1f2d33; --muted:#5d6f78;
+    --line:#e2e8ea; --tip-bg:#eef6f3; --tip-line:#2e8b6f;
+    --warn-bg:#fdf4e7; --warn-line:#c79a3a; --step-bg:#f0f5f6;
+    --start-bg:#eaf4f1; --start-line:#0f4c5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma","Geeza Pro",sans-serif;
+    line-height:1.95; font-size:17px;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
+  .cover{background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff; padding:54px 30px 46px; text-align:center;
+    border-radius:0 0 26px 26px; box-shadow:0 6px 24px rgba(15,76,92,.18);}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.16); color:#fff;
+    padding:5px 16px; border-radius:30px; font-size:14px; margin-bottom:14px;}
+  .cover h1{margin:6px 0 10px; font-size:33px; font-weight:800}
+  .cover p{margin:0 auto; max-width:680px; font-size:18px; opacity:.95}
+  .cover .ver{margin-top:16px; font-size:14px; opacity:.8}
+  .intro{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 26px; margin:26px 0; box-shadow:0 2px 10px rgba(0,0,0,.03);
+    border-right:6px solid var(--accent);}
+  .intro h2{margin:0 0 8px; color:var(--primary); font-size:22px}
+  .quickstart{background:var(--start-bg); border:2px solid var(--start-line);
+    border-radius:18px; padding:26px 28px; margin:26px 0; box-shadow:0 4px 16px rgba(15,76,92,.10)}
+  .quickstart h2{margin:0 0 6px; color:var(--primary); font-size:27px}
+  .quickstart .sub{color:var(--secondary); margin:0 0 16px; font-size:16px}
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:6px 0 4px; justify-content:center}
+  .flow .node{background:#fff; border:2px solid var(--start-line); color:var(--primary);
+    border-radius:12px; padding:8px 16px; font-weight:700; font-size:16px}
+  .flow .arr{color:var(--secondary); font-weight:800; font-size:20px}
+  .toc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 24px; margin:24px 0}
+  .toc h3{margin:0 0 10px; color:var(--secondary)}
+  .toc ol{margin:0; padding-inline-start:22px}
+  .toc a{color:var(--primary); text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  section{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:26px 28px; margin:22px 0; box-shadow:0 2px 10px rgba(0,0,0,.03)}
+  section h2{color:var(--primary); font-size:24px; margin:0 0 6px;
+    border-bottom:2px solid var(--line); padding-bottom:10px}
+  section .intro-line{color:var(--muted); margin:0 0 12px}
+  h3.sub2{color:var(--secondary); font-size:19px; margin:22px 0 8px}
+  .path{display:inline-block; background:var(--step-bg); border:1px solid var(--line);
+    border-radius:8px; padding:3px 10px; font-size:15px; color:var(--primary);
+    margin:2px 0; font-weight:600; direction:ltr}
+  .lbl-en{background:#eef2fb; border:1px solid #d4ddef; border-radius:6px; padding:0 7px;
+    font-size:14px; color:#2c4470; direction:ltr; display:inline-block; font-weight:600}
+  ol.steps{counter-reset:step; list-style:none; padding:0; margin:14px 0}
+  ol.steps li{counter-increment:step; position:relative; background:#fff;
+    border:1px solid var(--line); border-radius:12px; padding:14px 60px 14px 16px; margin:10px 0}
+  .quickstart ol.steps li{background:#fff}
+  ol.steps li::before{content:counter(step); position:absolute; right:14px; top:14px;
+    width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px}
+  ol.steps li b{color:var(--primary)}
+  .opt{border:1px solid var(--line); border-radius:14px; padding:8px 18px 16px; margin:16px 0; background:#fcfdfd}
+  .opt h3{color:var(--secondary); font-size:19px; margin:14px 0 10px}
+  .opt h3 .lbl-en{font-size:15px}
+  .opt .qa{display:flex; gap:10px; margin:8px 0; align-items:flex-start}
+  .opt .qa .lbl{flex:0 0 96px; font-weight:700; font-size:14px; padding:3px 0; text-align:center; border-radius:8px}
+  .opt .qa.what .lbl{background:#e7eff1; color:#0f4c5c}
+  .opt .qa.why  .lbl{background:#eef6f3; color:#2e8b6f}
+  .opt .qa.eff  .lbl{background:#fdf4e7; color:#9c6b16}
+  .opt .qa .txt{flex:1}
+  .tip,.warn{border-radius:12px; padding:14px 18px; margin:16px 0; font-size:16px}
+  .tip{background:var(--tip-bg); border-right:5px solid var(--tip-line)}
+  .warn{background:var(--warn-bg); border-right:5px solid var(--warn-line)}
+  .tip b,.warn b{display:block; margin-bottom:4px}
+  .whatif{border:1px solid var(--line); border-radius:12px; padding:6px 18px 14px; margin:12px 0; background:#fff}
+  .whatif p{margin:12px 0}
+  .whatif .q{font-weight:700; color:var(--primary)}
+  .whatif .a{color:var(--text)}
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:16px; background:#fff}
+  th,td{border:1px solid var(--line); padding:11px 13px; text-align:right; vertical-align:top}
+  th{background:var(--primary); color:#fff; font-weight:700}
+  tr:nth-child(even) td{background:#fafcfc}
+  .pill{display:inline-block; background:var(--tip-bg); color:var(--primary); border-radius:20px; padding:1px 10px; font-size:14px; font-weight:600}
+  .badge-state{display:inline-block; border-radius:20px; padding:1px 12px; font-size:14px; font-weight:700}
+  .b-on{background:#e3f3ec; color:#1f7a55}
+  .b-pause{background:#fdf4e7; color:#9c6b16}
+  .b-cap{background:#fbe6e6; color:#a32b2b}
+  .tech{background:#f1f3f4; border:1px dashed #b8c2c6; border-radius:12px; padding:16px 20px; margin-top:26px; font-size:15px; color:var(--muted)}
+  .tech h3{color:#46555c; margin-top:0}
+  .tech code{background:#fff; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-family:Consolas,monospace; direction:ltr; display:inline-block}
+  footer{text-align:center; color:var(--muted); font-size:14px; margin-top:30px}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <span class="badge">Era Group · CRM AI Agents</span>
+  <h1>قاعدة وكلاء الذكاء الاصطناعي — Base</h1>
+  <p>هي «غرفة التحكّم» المشتركة لكل وكلاء الذكاء الاصطناعي في النظام: تجمع التكلفة والحدود، وسجلّ التدقيق، وطابور الموافقات البشرية، وطبقات حماية البيانات (PDPL) في مكان واحد — لا تُرسل رسائل بنفسها، بل تحرس وتراقب كل وكيل آخر.</p>
+  <div class="ver">الإصدار 19.0.6.0.0 · دليل المستخدم</div>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <h2>وش يسوّي لك هذا الموديول؟ (بسطرين)</h2>
+    <p>هذا الموديول هو <b>الأساس</b> الذي يُبنى عليه كل وكيل ذكاء اصطناعي آخر (إحياء العملاء، الإثراء، توليد العملاء...). لوحده لا «يفعل» شيئاً ظاهراً للعميل، لكنه يوفّر لك أربعة أشياء تهمّك مباشرة: <b>سقف للتكلفة</b> حتى لا تتفاجأ بفاتورة، <b>طابور موافقات</b> فلا يخرج شيء للعميل دون قرار إنسان، <b>سجل تدقيق</b> يحفظ كل قرار حسّاس، و<b>حماية بيانات</b> تمنع تسريب بيانات عملائك للذكاء الاصطناعي. كل الوكلاء الآخرين يمرّون من هنا.</p>
+  </div>
+
+  <!-- ===================== QUICK PATH ===================== -->
+  <div class="quickstart" id="start">
+    <h2>★ خريطة القوائم بنظرة سريعة</h2>
+    <p class="sub">كل شيء تحت تطبيق واحد اسمه <span class="lbl-en">CRM AI Agent Base</span> (قاعدة وكلاء الذكاء الاصطناعي).</p>
+    <div class="flow">
+      <span class="node">لوحة المعلومات</span><span class="arr">←</span>
+      <span class="node">الوكلاء</span><span class="arr">←</span>
+      <span class="node">الاعتمادات</span><span class="arr">←</span>
+      <span class="node">الإعداد (نماذج · استهلاك · تدقيق)</span>
+    </div>
+    <ol class="steps">
+      <li><b>لوحة المعلومات <span class="lbl-en">Dashboard</span>:</b> كم استهلك كل وكيل هذا الشهر (رموز و/أو تكلفة) وما حالته.</li>
+      <li><b>الوكلاء <span class="lbl-en">Agents</span>:</b> قائمة كل الوكلاء المُسجَّلين، وحالة كل واحد، وإمكان إيقافه/تشغيله (للمدير).</li>
+      <li><b>الاعتمادات <span class="lbl-en">Approvals</span>:</b> الطابور المشترك لكل ما ينتظر موافقتك قبل أن يخرج للعميل.</li>
+      <li><b>الإعداد <span class="lbl-en">Configuration</span> (للمدير):</b> أسعار النماذج، سجل الاستهلاك، وسجل التدقيق.</li>
+    </ol>
+    <div class="warn">
+      <b>نقطة مهمة من البداية</b>
+      على تركيب «القاعدة وحدها» ستكون لوحة المعلومات والوكلاء <u>فارغة</u> — هذا طبيعي. تمتلئ تلقائياً بمجرد تثبيت أول وكيل فعلي (مثل الإثراء أو إحياء العملاء)، لأن كل وكيل يُسجّل نفسه هنا عند التركيب.
+    </div>
+  </div>
+
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc">
+    <h3>محتويات الدليل</h3>
+    <ol>
+      <li><a href="#what">ما هو الموديول ومن يستخدمه</a></li>
+      <li><a href="#concepts">٥ مفاهيم تفهمها مرة واحدة وتريحك</a></li>
+      <li><a href="#manager">للمدير: الإعداد خطوة بخطوة</a></li>
+      <li><a href="#screens">الشاشات شاشةً بشاشة (كل حقل بمعناه)</a></li>
+      <li><a href="#pdpl">تسجيل موافقة العميل على معالجة بياناته (PDPL)</a></li>
+      <li><a href="#test">كيف تجرّبه بنفسك خطوة بخطوة</a></li>
+      <li><a href="#limits">ملاحظات وحدود مهمة (بصدق)</a></li>
+      <li><a href="#faq">أسئلة شائعة قصيرة</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== WHAT ===================== -->
+  <section id="what">
+    <h2>١) ما هو الموديول ومن يستخدمه</h2>
+    <p class="intro-line">باختصار عملي قبل التفاصيل.</p>
+    <p>«القاعدة» ليست وكيلاً يعمل عملاً، بل <b>بنية مشتركة</b> يعتمد عليها كل وكلاء الذكاء الاصطناعي. تخيّلها لوحة قيادة السيارة: لا تقود بدلاً عنك، لكنها تُظهر لك السرعة والوقود وتحذّرك قبل المشاكل. فائدتها أنها تجعل كل الوكلاء <b>آمنين، خاضعين لميزانية، وقابلين للمراجعة</b> من مكان واحد بدل تكرار ذلك في كل وكيل.</p>
+
+    <table>
+      <tr><th>من أنت؟</th><th>ماذا يهمّك هنا؟</th><th>صلاحيتك</th></tr>
+      <tr>
+        <td><b>مندوب مبيعات</b><br><span class="lbl-en">AI Agents User</span></td>
+        <td>تشاهد لوحة المعلومات (حصتك أنت)، وتتصرّف في طابور <span class="lbl-en">Approvals</span> (الرسائل التي تنتظر موافقتك)، وتسجّل موافقة العميل على بياناته في بطاقته.</td>
+        <td>قراءة على معظم الشاشات + تصرّف على اعتماداتك أنت.</td>
+      </tr>
+      <tr>
+        <td><b>مدير</b><br><span class="lbl-en">AI Agents Manager</span></td>
+        <td>كل ما سبق + ضبط سقف التكلفة وطبقات الحماية وهوية التشغيل التلقائي، وإدارة أسعار النماذج، ومراجعة الاستهلاك وسجل التدقيق، وإيقاف/تشغيل الوكلاء.</td>
+        <td>تحكّم كامل بالإعدادات.</td>
+      </tr>
+    </table>
+    <div class="tip">
+      <b>الفكرة الأساسية في جملة</b>
+      كل نداء ذكاء اصطناعي في النظام يمرّ إجبارياً عبر «حارس» هذا الموديول: يفحص الموافقة، يخفي البيانات الشخصية، يطبّق سقف التكلفة، ويكتب قيداً في سجل التدقيق — قبل أن يغادر أي نص.
+    </div>
+  </section>
+
+  <!-- ===================== CONCEPTS ===================== -->
+  <section id="concepts">
+    <h2>٢) خمسة مفاهيم تفهمها مرة واحدة</h2>
+    <p class="intro-line">هذه المصطلحات تتكرّر في كل الشاشات؛ بعد فهمها يصبح كل شيء واضحاً.</p>
+
+    <div class="opt">
+      <h3>الوكيل <span class="lbl-en">Agent</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">برنامج صغير متخصّص بمهمة واحدة (مثلاً: إحياء العملاء المفقودين). كل وكيل يسجّل نفسه في قائمة <span class="lbl-en">Agents</span> تلقائياً عند تركيب موديوله.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">هنا ترى كل وكلائك في مكان واحد، وحالة كلٍّ منهم وتكلفته.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>طريقة الاتصال <span class="lbl-en">Transport</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">كيف يصل الوكيل للذكاء الاصطناعي. خياران: <span class="lbl-en">API</span> = عبر الذكاء الاصطناعي المدمج في أودو (OpenAI / Google)، و<span class="lbl-en">CLI</span> = عبر اشتراك Claude.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يحدّد كيف تُحسب التكلفة: مسار <span class="lbl-en">API</span> له <b>تكلفة بالدولار</b> لكل نداء، ومسار <span class="lbl-en">CLI</span> <b>بلا تكلفة دولارية</b> (اشتراك ثابت) ويُحكَم بعدد «الرموز» بدلاً من المال.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">لهذا ترى في اللوحة عمودين: «الرموز» و«التكلفة». وكيل CLI تكلفته الدولارية = 0، <u>وهذا لا يعني أنه مجاني</u>؛ استهلاكه يُقاس بالرموز.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>الرمز <span class="lbl-en">Token</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">وحدة قياس كمية النص التي يعالجها الذكاء الاصطناعي (تقريباً كلمة قصيرة ≈ رمز أو رمزان).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">هو «عدّاد الاستهلاك». الأرقام عندنا <b>تقديرية</b> (تقريباً رمز لكل 4 أحرف) — ميزانية تشغيلية للتحكّم، وليست فاتورة محاسبية دقيقة.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>حالة الوكيل <span class="lbl-en">State</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">وضع الوكيل الحالي، يظهر كشارة ملوّنة:
+        <span class="badge-state b-on">enabled مُفعَّل</span>
+        <span class="badge-state b-pause">paused موقوف</span>
+        <span class="badge-state b-cap">capped بلغ الحد</span></span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt"><b>مُفعَّل</b>: يعمل طبيعياً. <b>موقوف</b>: أوقفه مدير يدوياً. <b>بلغ الحد</b>: أوقفه النظام تلقائياً لأنه تجاوز حد الشهر — ويعود للعمل تلقائياً مع بداية الشهر التالي عندما ينخفض استهلاكه.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>سجل التدقيق <span class="lbl-en">Audit Log</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">دفتر «للقراءة فقط» يُسجَّل فيه كل قرار حسّاس (نداء ذكاء اصطناعي، منع، إرسال، طلب موافقة، تعطيل طبقة حماية...).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">هو مرجعك عند أي سؤال «من فعل ماذا ومتى؟». لا يمكن تعديله ولا حذفه — حتى تبقى المراجعة موثوقة (القاعدة 20).</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== MANAGER ===================== -->
+  <section id="manager">
+    <h2>٣) للمدير: الإعداد خطوة بخطوة</h2>
+    <p class="intro-line">كل ما يلي يظهر فقط لمن لديه صلاحية «مدير وكلاء الذكاء الاصطناعي» (AI Agents Manager). الإعدادات الافتراضية آمنة — كلها مفعّلة — وقد تكتفي بها.</p>
+
+    <h3 class="sub2">أ) طبقات الحماية والتحكّم (الإعدادات الرئيسية)</h3>
+    <p>تفتحها من إعدادات أودو العامة، وليس من قائمة الوكلاء:</p>
+    <p><span class="path">Settings (الإعدادات) ← CRM AI Agents</span></p>
+    <p>تجد ثلاث مجموعات:</p>
+
+    <div class="opt">
+      <h3>سقف تكلفة الذكاء الاصطناعي <span class="lbl-en">AI Cost Cap (Rule 14)</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يفرض حداً أقصى للإنفاق الشهري قبل أن يُصرف أي مبلغ على مسار <span class="lbl-en">API</span>.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">حمايتك من فاتورة مفاجئة: عند بلوغ الحد يتوقّف الوكيل تلقائياً (حالة <span class="lbl-en">capped</span>).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b> <u>قيمة</u> السقف نفسها (افتراضياً 100 دولار شهرياً) تُضبط في «معاملات النظام» — انظر صندوق المدير التقني أسفل هذا القسم.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>سجل التدقيق التفصيلي <span class="lbl-en">Detailed Audit Log (Rule 20)</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يكتب قيداً في سجل التدقيق لكل نداء وقرار ذكاء اصطناعي.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يمنحك أثراً كاملاً قابلاً للمراجعة. يُنصَح بإبقائه مفعّلاً دائماً.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b></span></div>
+    </div>
+
+    <div class="opt">
+      <h3>منع النماذج بلا سعر <span class="lbl-en">Block Unpriced Models</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يمنع أي نداء على مسار <span class="lbl-en">API</span> يستخدم نموذجاً ليس له سعر مُسجَّل في «بطاقة الأسعار».</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">حتى لا تُصرف تكلفة «غير محسوبة» بصمت ويتسرّب الإنفاق خارج السقف.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b> إن استخدم وكيل نموذجاً جديداً، أضف سعره في «النماذج» أولاً (انظر القسم 4).</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>إخفاء البيانات الشخصية <span class="lbl-en">PII Redaction</span> (PDPL)</h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يُخفي البيانات الشخصية (اسم/هاتف/بريد...) قبل إرسال النص لأي مزوّد ذكاء اصطناعي خارجي، ويعيدها في الرد.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">التزام بنظام حماية البيانات السعودي (PDPL): لا تغادر بيانات عميلك إلى الخارج بصيغتها الصريحة.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b> <u>إطفاؤه يرسل بيانات شخصية للخارج دون حماية ويُسجَّل في سجل التدقيق</u> باسم من أطفأه ومتى.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>التحقق من الموافقة <span class="lbl-en">Consent Check</span> (PDPL)</h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">يمنع أي نداء ذكاء اصطناعي يحمل بيانات عميل ما لم يكن العميل قد وافق على المعالجة الدولية لبياناته.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">يضمن أنك لا تعالج بيانات عميل دون إذنه.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>مفعّل افتراضياً.</b> إطفاؤه يُسجَّل في سجل التدقيق. (موافقة العميل تُسجَّل في بطاقته — انظر القسم 5.)</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>هوية تشغيل الوكلاء التلقائي <span class="lbl-en">Agent cron execution identity</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">باسم أي مستخدم تعمل المهام المجدولة لكل الوكلاء. خياران: مستخدم داخلي تختاره أنت (مُوصى به)، أو <span class="lbl-en">OdooBot</span> (المستخدم الجذري).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">المستخدم المحدّد الصلاحية يضمن أن الوكلاء التلقائية لا تتجاوز صلاحيات الوصول (القاعدة 09). <span class="lbl-en">OdooBot</span> يتجاوز كل الصلاحيات وفيه خطر على الخصوصية.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الافتراضي هو مستخدم محدود الصلاحية اسمه <span class="lbl-en">CRM AI Automation</span> يُنشأ تلقائياً. اتركه كما هو، أو وجّهه لمستخدم داخلي قائم لديك. <b>تجنّب OdooBot</b> إلا إن قبلت المخاطرة صراحةً.</span></div>
+    </div>
+
+    <div class="warn">
+      <b>عند إطفاء أي طبقة امتثال (إخفاء البيانات / الموافقة)</b>
+      أنت ترسل بيانات شخصية لمزوّد ذكاء اصطناعي غير سعودي دون حماية PDPL. كل تغيير من هذا النوع يُكتب في سجل التدقيق (من ومتى). لا تُطفئها إلا بقرار واعٍ وموثَّق.
+    </div>
+
+    <h3 class="sub2">ب) أسعار النماذج (بطاقة الأسعار)</h3>
+    <p><span class="path">CRM AI Agent Base ← Configuration ← Models</span></p>
+    <p>هذه ليست قائمة النماذج المتاحة (أودو يملكها)، بل <b>جدول أسعار</b> يربط كل نموذج بسعره لكل 1000 رمز، حتى يُحسب سقف التكلفة بدقة. مُهيّأ مسبقاً بأسعار GPT و Gemini. راجع الأسعار إذا غيّر المزوّد أسعاره أو أضاف أودو نموذجاً جديداً.</p>
+
+    <div class="tech">
+      <h3>للمدير التقني: قيمة السقف وحدوده</h3>
+      <p>واجهة الإعدادات فيها <b>مفاتيح تشغيل/إيقاف</b> فقط، أمّا <b>قيمة</b> السقف فتُضبط في معاملات النظام:</p>
+      <p><span class="path" style="direction:ltr">Settings ← Technical ← System Parameters</span></p>
+      <p>• سقف الدولار الشهري (مسار API): <code>era_crm_ai_agents.monthly_cost_cap</code> — الافتراضي <code>100</code> دولار.<br>
+      • حدّ الرموز الشهري (مسار CLI): <code>era_crm_ai_agents.monthly_token_limit</code> — الافتراضي <code>2,000,000</code>.<br>
+      • سقف خاص بوكيل واحد: أضف معاملاً باسم <code>era_crm_ai_agents.monthly_cost_cap.&lt;tech_name&gt;</code> أو <code>...monthly_token_limit.&lt;tech_name&gt;</code>.</p>
+      <p>تُراجَع الحدود يومياً بمهمة مجدولة (<code>CRM AI Agents: Check cost caps</code>) تنقل الوكيل تلقائياً بين <code>enabled</code> و<code>capped</code> حسب استهلاكه.</p>
+    </div>
+  </section>
+
+  <!-- ===================== SCREENS ===================== -->
+  <section id="screens">
+    <h2>٤) الشاشات شاشةً بشاشة</h2>
+    <p class="intro-line">كل القوائم تحت تطبيق <span class="lbl-en">CRM AI Agent Base</span>. الواجهة تُعرض بالعربية إذا كانت لغتك عربية (شُحنت ترجمة عربية كاملة)؛ ونضع بجانب كل اسم تسميته الإنجليزية ليسهل التعرّف عليه أياً كانت لغتك.</p>
+
+    <h3 class="sub2">لوحة المعلومات <span class="lbl-en">Dashboard</span></h3>
+    <p><span class="path">CRM AI Agent Base ← Dashboard</span> — متاحة للمندوب والمدير.</p>
+    <p>قائمة بكل وكيل وما استهلكه هذا الشهر، مع مخطّط يوزّع الوكلاء حسب الحالة. الأعمدة:</p>
+    <table>
+      <tr><th>العمود</th><th>معناه</th></tr>
+      <tr><td>الاسم <span class="lbl-en">Name</span></td><td>اسم الوكيل.</td></tr>
+      <tr><td>طريقة الاتصال <span class="lbl-en">Transport</span></td><td>API أو CLI.</td></tr>
+      <tr><td>النموذج <span class="lbl-en">Model</span></td><td>رمز النموذج المستخدم.</td></tr>
+      <tr><td>الحالة <span class="lbl-en">State</span></td><td>شارة ملوّنة: مُفعَّل / موقوف / بلغ الحد.</td></tr>
+      <tr><td>آخر تشغيل <span class="lbl-en">Last Run</span></td><td>متى عمل الوكيل آخر مرة.</td></tr>
+      <tr><td>إجمالي الرموز (الشهر) <span class="lbl-en">Total Tokens</span></td><td>استهلاك الرموز هذا الشهر، مع مجموع في أسفل العمود.</td></tr>
+      <tr><td>إجمالي الإنفاق (الشهر) <span class="lbl-en">Total Spend</span></td><td>التكلفة بالدولار هذا الشهر، مع المجموع.</td></tr>
+    </table>
+    <div class="tip">
+      <b>ماذا أرى أنا؟</b>
+      المندوب يرى <u>حصّته هو</u> من التكلفة؛ المدير يرى <u>الإجماليات</u> لكل المستخدمين. تذكّر: وكيل CLI تكلفته بالدولار صفر، لكنه يستهلك رموزاً — انظر عمود الرموز لا عمود التكلفة.
+    </div>
+
+    <h3 class="sub2">الوكلاء <span class="lbl-en">Agents</span></h3>
+    <p><span class="path">CRM AI Agent Base ← Agents</span></p>
+    <p>القائمة الكاملة للوكلاء المُسجَّلين. المندوب يقرأ فقط؛ المدير يفتح بطاقة الوكيل ويستطيع <b>إيقافه أو تفعيله</b> بزرّي <span class="lbl-en">Pause</span> / <span class="lbl-en">Enable</span> أعلى البطاقة. أهم الحقول في البطاقة:</p>
+    <table>
+      <tr><th>الحقل</th><th>معناه</th></tr>
+      <tr><td>الاسم التقني <span class="lbl-en">Tech Name</span></td><td>المعرّف الثابت للوكيل (مثل <span class="lbl-en">era_dead_lead</span>) — لا يُغيَّر.</td></tr>
+      <tr><td>طريقة الاتصال <span class="lbl-en">Transport</span></td><td>اختيار API أو CLI؛ تتغيّر الحقول التالية حسب اختيارك.</td></tr>
+      <tr><td>النموذج <span class="lbl-en">Model</span> / النموذج المتقدّم</td><td>(لمسار API) رمز النموذج الأساسي، واختياري نموذج أقوى للمهام الحسّاسة.</td></tr>
+      <tr><td>حساب Claude / نموذج CLI</td><td>(لمسار CLI) حساب الاشتراك ورمز النموذج (مثل <span class="lbl-en">opus</span>).</td></tr>
+      <tr><td>الاستهلاك (هذا الشهر)</td><td>التكلفة (لمسار API)، عدد الرموز، وآخر تشغيل.</td></tr>
+    </table>
+    <p>فلاتر البحث تتيح التصفية حسب الحالة (مُفعَّل/موقوف/بلغ الحد) أو طريقة الاتصال أو النموذج.</p>
+
+    <h3 class="sub2">الاعتمادات <span class="lbl-en">Approvals</span></h3>
+    <p><span class="path">CRM AI Agent Base ← Approvals</span> — الطابور المشترك لكل الوكلاء المُرسِلة.</p>
+    <p>يعرض افتراضياً ما هو <b>معلّق (بانتظار قرارك)</b> فقط. كل سطر هو مُخرَج ذكاء اصطناعي ينتظر موافقة إنسان (مثل رسالة عربية قبل إرسالها). الأعمدة: التاريخ، الوكيل، السجل المرتبط <span class="lbl-en">Record</span>، المراجِع، الحالة، وتاريخ القرار. عند فتح السطر:</p>
+    <ol class="steps">
+      <li><b>اقرأ المحتوى المقترح</b> <span class="lbl-en">Proposed Content</span> (للقراءة فقط).</li>
+      <li><b>عدّل عند الحاجة</b> في حقل <span class="lbl-en">Edited Content</span> — <u>النص المُعدَّل هو ما يُعتمد ويُرسَل</u> (يَجُبّ المقترح). اتركه فارغاً للموافقة على المقترح كما هو.</li>
+      <li><b>اضغط</b> <span class="lbl-en">Approve</span> للاعتماد (ينفّذ الوكيل الإجراء)، أو <span class="lbl-en">Reject</span> للرفض (لا يحدث شيء).</li>
+    </ol>
+    <div class="tip">
+      <b>فلتر مفيد</b>
+      استخدم <span class="lbl-en">My Queue</span> لرؤية ما هو موجَّه إليك أنت فقط. كل قرار (موافقة/رفض) يُسجَّل في سجل التدقيق.
+    </div>
+
+    <h3 class="sub2">الإعداد ← الاستهلاك <span class="lbl-en">Usage</span></h3>
+    <p><span class="path">CRM AI Agent Base ← Configuration ← Usage</span> — للمدير، للقراءة فقط.</p>
+    <p>كل نداء ذكاء اصطناعي يترك سطراً هنا. مفيد لتتبّع من يستهلك وكم. الأعمدة: التاريخ، الوكيل، النموذج، رموز المدخلات/المخرجات/الإجمالي (مع مجاميع)، مصدر العدّ <span class="lbl-en">Token Source</span> (مُقدَّر/مقيس)، علامة <span class="lbl-en">CLI</span>، التكلفة، وعلامة «بلا سعر» <span class="lbl-en">Unpriced</span>. هناك أيضاً عرض «محوري» <span class="lbl-en">Pivot</span> (الوكيل × الشهر). فلاتر جاهزة: هذا الشهر، CLI، API المُسعَّر، بلا سعر.</p>
+
+    <h3 class="sub2">الإعداد ← سجل التدقيق <span class="lbl-en">Audit Log</span></h3>
+    <p><span class="path">CRM AI Agent Base ← Configuration ← Audit Log</span> — للمدير، للقراءة فقط ولا يُحذف.</p>
+    <p>الأعمدة: التاريخ، نوع الحدث <span class="lbl-en">Event Type</span>، الوكيل، المستخدم، السجل المرتبط. افتح القيد لترى «قبل» و«بعد». أهم أنواع الأحداث:</p>
+    <table>
+      <tr><th>الحدث</th><th>معناه</th></tr>
+      <tr><td><span class="lbl-en">ai_request</span></td><td>نداء ذكاء اصطناعي مسموح تمّ تنفيذه.</td></tr>
+      <tr><td><span class="lbl-en">blocked</span></td><td>نداء مُنِع (موافقة ناقصة، تجاوز حد، نموذج بلا سعر...).</td></tr>
+      <tr><td><span class="lbl-en">approval_requested</span></td><td>أُنشئ طلب موافقة بشري.</td></tr>
+      <tr><td><span class="lbl-en">send</span></td><td>أُرسلت رسالة فعلاً لعميل.</td></tr>
+      <tr><td><span class="lbl-en">cost_cap_exceeded</span></td><td>تجاوز سقف التكلفة.</td></tr>
+      <tr><td><span class="lbl-en">compliance_disabled</span></td><td>أطفأ مديرٌ طبقة حماية (مع من ومتى).</td></tr>
+    </table>
+
+    <h3 class="sub2">الإعداد ← النماذج <span class="lbl-en">Models</span></h3>
+    <p>سبق شرحها في قسم المدير (بطاقة الأسعار): الأعمدة هي الاسم، الرمز <span class="lbl-en">Code</span>، المزوّد، سعر المدخلات/المخرجات لكل 1000 رمز.</p>
+  </section>
+
+  <!-- ===================== PDPL ===================== -->
+  <section id="pdpl">
+    <h2>٥) تسجيل موافقة العميل على معالجة بياناته (PDPL)</h2>
+    <p class="intro-line">خطوة بسيطة تفتح الباب للوكلاء كي تعالج بيانات هذا العميل بأمان.</p>
+    <p>يضيف هذا الموديول تبويباً جديداً في بطاقة كل عميل/جهة اتصال:</p>
+    <p><span class="path">Contacts ← افتح عميلاً ← تبويب AI &amp; PDPL</span></p>
+    <div class="opt">
+      <h3>الموافقة على المعالجة الدولية <span class="lbl-en">AI Int'l Processing Consent</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">مفتاح تؤكّد به أن هذا العميل وافق على معالجة بياناته عبر مزوّد ذكاء اصطناعي دولي.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">إذا كانت طبقة «التحقق من الموافقة» مفعّلة (وهي كذلك افتراضياً)، فلن تعالج الوكلاء بيانات هذا العميل ما لم تُفعّل هذا المفتاح.</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">بمجرد تفعيله يظهر حقل <span class="lbl-en">AI Consent Date</span> (تاريخ الموافقة) تلقائياً. هذا ما يقرأه الحارس قبل كل نداء.</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== TEST ===================== -->
+  <section id="test">
+    <h2>٦) كيف تجرّبه بنفسك خطوة بخطوة</h2>
+    <p class="intro-line">جرّبة عملية على تركيب نظيف — كلها خطوات تقدر تسوّيها بنفسك بدون أدوات تقنية. (الخطوات 1–5 تعمل على «القاعدة وحدها»؛ الخطوة 6 تُظهر النظام كاملاً.)</p>
+    <ol class="steps">
+      <li><b>تأكّد أن القوائم ظهرت.</b><br>
+        افتح تطبيق <span class="lbl-en">CRM AI Agent Base</span>. كمدير ترى: <span class="lbl-en">Dashboard · Agents · Approvals · Configuration</span>. كمندوب ترى الثلاثة الأولى فقط. <i>(إن لم تظهر القوائم، فصلاحيتك ليست ضمن مجموعة الوكلاء — اطلب من المدير إضافتك.)</i></li>
+      <li><b>افحص بطاقة الأسعار.</b><br>
+        <span class="path">Configuration ← Models</span>. يجب أن ترى صفوفاً مُهيّأة مسبقاً مثل <span class="lbl-en">gpt-4.1-mini</span>، <span class="lbl-en">gpt-4o</span>، <span class="lbl-en">gemini-2.5-flash</span>، <span class="lbl-en">gemini-2.5-pro</span> مع أسعارها. وجودها يعني أن سقف التكلفة جاهز للحساب.</li>
+      <li><b>افتح الإعدادات وتأكّد أن الحماية مفعّلة.</b><br>
+        <span class="path">Settings ← CRM AI Agents</span>. الخمسة مفاتيح يجب أن تكون مفعّلة، وهوية التشغيل = <span class="lbl-en">CRM AI Automation</span>.</li>
+      <li><b>جرّب أن سجل التدقيق يعمل فعلاً (اختبار ملموس).</b><br>
+        في نفس شاشة الإعدادات، أطفئ مؤقتاً مفتاح <span class="lbl-en">Consent Check</span> ثم احفظ. الآن افتح <span class="path">Configuration ← Audit Log</span> وستجد قيداً جديداً نوعه <span class="lbl-en">compliance_disabled</span> باسمك ووقت التغيير. <b>أعِد تفعيل المفتاح بعد التجربة.</b> هذا يثبت لك أن طبقة التدقيق حيّة.</li>
+      <li><b>سجّل موافقة عميل تجريبي.</b><br>
+        افتح أي عميل في <span class="lbl-en">Contacts</span> ← تبويب <span class="lbl-en">AI &amp; PDPL</span> ← فعّل <span class="lbl-en">AI Int'l Processing Consent</span> ← احفظ. لاحظ ظهور تاريخ الموافقة تلقائياً.</li>
+      <li><b>شغّل النظام كاملاً (اختياري لكنه الأوضح).</b><br>
+        ثبّت أحد وكلاء العمل (مثل <span class="lbl-en">Enrichment</span> أو <span class="lbl-en">Dead-Lead Resurrection</span>) ثم ارجع هنا: سيظهر الوكيل تلقائياً في <span class="lbl-en">Agents</span> و<span class="lbl-en">Dashboard</span>. شغّله، وستمتلئ <span class="lbl-en">Usage</span> بأسطر استهلاك، و<span class="lbl-en">Audit Log</span> بقيود، و(لوكيل مُرسِل) <span class="lbl-en">Approvals</span> برسائل تنتظر موافقتك.</li>
+    </ol>
+    <div class="tip">
+      <b>النتيجة المتوقّعة</b>
+      على «القاعدة وحدها»: القوائم تظهر، بطاقة الأسعار مليئة، الإعدادات مفعّلة، وسجل التدقيق يلتقط تغييراتك. لوحة المعلومات والوكلاء فارغة <u>حتى</u> تثبّت أول وكيل — وهذا هو السلوك الصحيح.
+    </div>
+  </section>
+
+  <!-- ===================== LIMITS ===================== -->
+  <section id="limits">
+    <h2>٧) ملاحظات وحدود مهمة (بصدق)</h2>
+    <p class="intro-line">حتى لا يُفهم أكثر مما هو موجود فعلاً.</p>
+    <ul>
+      <li><b>القاعدة لا «تفعل» شيئاً ظاهراً وحدها.</b> هي بنية تحتية؛ القيمة تظهر عند تثبيت وكيل فعلي. لوحة فارغة على تركيب نظيف = أمر طبيعي.</li>
+      <li><b>أرقام الرموز تقديرية.</b> تُحسب بالطول (تقريباً رمز لكل 4 أحرف) لأن المزوّد لا يُرجِع عدّاً دقيقاً عند هذه النقطة — فاعتبرها ميزانية تشغيلية للتحكّم، لا فاتورة محاسبية.</li>
+      <li><b>قيمة السقف ليست في شاشة الإعدادات.</b> الإعدادات فيها مفاتيح فقط؛ القيمة (100 دولار / 2 مليون رمز افتراضياً) في «معاملات النظام» — انظر صندوق المدير التقني.</li>
+      <li><b>المهمة المجدولة الجديدة قد تحتاج إعادة تشغيل الخادم</b> لتُسجَّل بعد التركيب (ملاحظة تشغيلية لمسؤول النظام).</li>
+      <li><b>طبقة إخفاء البيانات تستهدف الصيغ الشائعة</b> للأسماء والهواتف والبريد والهوية؛ ابقِها مفعّلة دائماً، ولا تعتمد إطفاءها كحلّ.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <h2>٨) أسئلة شائعة قصيرة</h2>
+    <div class="whatif">
+      <p><span class="q">لماذا لوحة المعلومات وقائمة الوكلاء فارغة؟</span><br>
+        <span class="a">لأنك ثبّت «القاعدة» فقط ولم تثبّت أي وكيل بعد. كل وكيل يسجّل نفسه تلقائياً عند تركيبه.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">ما الفرق بين «موقوف» و«بلغ الحد»؟</span><br>
+        <span class="a"><span class="lbl-en">paused</span> = أوقفه مدير يدوياً. <span class="lbl-en">capped</span> = أوقفه النظام تلقائياً لتجاوزه حدّ الشهر، ويعود وحده مع الشهر الجديد.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">وكيل CLI تكلفته صفر — هل يعني أنه مجاني؟</span><br>
+        <span class="a">لا. مسار CLI لا تكلفة دولارية لكل نداء (اشتراك ثابت)، لكنه يستهلك «رموزاً» يُحكَم بها عبر حدّ الرموز. راقب عمود الرموز.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">عدّلت نص رسالة في الاعتمادات — أيّهما يُعتمد؟</span><br>
+        <span class="a">النص المُعدَّل (<span class="lbl-en">Edited Content</span>) هو الذي يُعتمد ويُرسل؛ يَجُبّ المقترح. اتركه فارغاً للموافقة على المقترح كما هو.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لماذا مُنِع نداء ذكاء اصطناعي؟</span><br>
+        <span class="a">افتح سجل التدقيق وابحث عن حدث <span class="lbl-en">blocked</span>؛ السبب عادةً: العميل لم يوافق (PDPL)، أو بلغ الوكيل سقفه، أو النموذج بلا سعر في بطاقة الأسعار.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لماذا لا أرى قائمة «الإعداد» (Configuration)؟</span><br>
+        <span class="a">لأنها للمدير فقط (AI Agents Manager). المندوب يرى لوحة المعلومات والوكلاء والاعتمادات فقط.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">كيف أمنع معالجة بيانات عميل معيّن نهائياً؟</span><br>
+        <span class="a">لا تفعّل «الموافقة على المعالجة الدولية» في بطاقته (تبويب AI &amp; PDPL). مع بقاء «التحقق من الموافقة» مفعّلاً، لن تعالج الوكلاء بياناته.</span></p>
+    </div>
+  </section>
+
+  <div class="tech">
+    <h3>للمسؤول التقني (مرجع سريع)</h3>
+    <p>الوحدة: <code>era_crm_ai_agents_base</code> · الإصدار <code>19.0.6.0.0</code> · تعتمد على <code>base, mail, crm, ai, era_ai_accounts</code>. هي «الموديول 0» الذي تعتمد عليه كل وكلاء المنظومة.</p>
+    <p>النماذج الأساسية: <code>crm.ai.agent</code> (سجل الوكلاء) · <code>crm.ai.agent.mixin</code> (يُورَّث في كل وكيل) · <code>crm.ai.usage</code> (الاستهلاك والحدود) · <code>crm.ai.audit.log</code> (سجل تدقيق غير قابل للتعديل) · <code>crm.ai.approval</code> (بوابة الموافقة) · <code>crm.ai.model</code> (بطاقة الأسعار).</p>
+    <p>الحارس: <code>services/ai_compliance_guard.py</code> — يلتفّ حول النداء العام <code>request_llm</code> للذكاء الاصطناعي المدمج، فيكون الطبقة الأبعد: إخفاء البيانات + فحص الموافقة + سقف التكلفة + سجل التدقيق، قبل أن يغادر أي نص.</p>
+    <p>المجموعات: <code>group_crm_ai_user</code> (مندوب) و<code>group_crm_ai_manager</code> (مدير). معاملات الحدود: <code>era_crm_ai_agents.monthly_cost_cap</code> (100$) و<code>monthly_token_limit</code> (2M). المهمة المجدولة: <code>CRM AI Agents: Check cost caps</code> يومياً.</p>
+    <p>الاختبارات: <code>tests/</code> — 22 اختباراً (إخفاء عربي، نطاق الحارس، المسار المُسعَّر/غير المُسعَّر، مسار CLI والرموز، اختبار انحراف توقيعات الذكاء المدمج).</p>
+  </div>
+
+  <footer>Era Group · CRM AI Agents — قاعدة وكلاء الذكاء الاصطناعي · دليل المستخدم (إصدار 19.0.6.0.0)</footer>
+
+</div>
+</body>
+</html>

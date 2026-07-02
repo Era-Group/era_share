@@ -189,6 +189,67 @@
             text-align: center;
         }
 
+        .how {
+            margin-top: 20px;
+            border-radius: 16px;
+            background: linear-gradient(140deg, #0f4c5c 0%, #113643 100%);
+            padding: 24px 18px;
+            text-align: center;
+            animation: lift-in 0.8s ease;
+        }
+
+        .how h2 {
+            margin: 0 0 14px;
+            color: #ffffff;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            text-align: center;
+        }
+
+        .step {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            padding: 14px 12px;
+            background: rgba(255, 255, 255, 0.06);
+            text-align: center;
+        }
+
+        .step strong {
+            display: block;
+            color: var(--accent);
+            font-size: 17px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .step span {
+            color: #dce9ee;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding: 18px 12px 4px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
         .cta {
             margin-top: 20px;
             border: 1px solid #efd28f;
@@ -244,7 +305,8 @@
         @media (max-width: 900px) {
             .hero-grid,
             .cards,
-            .impact-grid {
+            .impact-grid,
+            .how-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -264,10 +326,10 @@
     <section class="hero" align="center" style="text-align: center !important;">
         <div class="hero-grid" align="center" style="text-align: center !important;">
             <div class="hero-copy" align="center" style="text-align: center !important;">
-                <span class="badge" style="text-align: center !important;">الأفضل لفرق الموارد البشرية والعلاقات الحكومية · A Best-Seller for HR &amp; PRO Teams</span>
-                <h1 style="text-align: center !important;">أدِر الإقامات والخدمات الحكومية دون أن تغادر Odoo</h1>
-                <p style="text-align: center !important;">امتثال أسرع، وتنقّل أقل بين البوابات الحكومية، وتحكّم كامل من شاشة واحدة. أصدر الإقامات والتأشيرات وتابع تقارير مقيم من مكانك — وودّع الإدخال المزدوج وأخطاء النسخ.</p>
-                <p style="text-align: center !important;"><strong>Manage iqamas and government services from inside Odoo</strong><br>Faster compliance, no portal hopping, fewer errors — all in one place.</p>
+                <span class="badge" style="text-align: center !important;">صُمم لفرق الموارد البشرية والعلاقات الحكومية · Built for HR &amp; PRO Teams</span>
+                <h1 style="text-align: center !important;">كل خدمات مقيم — من شاشة Odoo واحدة</h1>
+                <p dir="rtl" style="text-align: center !important;">سئمت التنقّل بين البوابات وإدخال البيانات نفسها مرة بعد مرة؟ تلك الأيام انتهت. أصدر الإقامة وجدّدها، واطبع تأشيرات موظفيك، واسحب تقرير مقيم — من الشاشة نفسها التي يعمل عليها فريقك كل صباح. امتثال أسرع، أخطاء أقل، وسيطرة كاملة تجعلك دائماً مطمئناً.</p>
+                <p style="text-align: center !important;"><strong>Every Muqeem service, one Odoo screen</strong><br>Done with portal hopping and double entry? Issue iqamas, print visas, and pull Muqeem reports without ever leaving Odoo — your team moves faster, your compliance stays airtight, your errors disappear.</p>
             </div>
             <div class="hero-image" align="center" style="text-align: center !important;">
                 <img src="jawazat.png" alt="Muqeem integration workflow" style="width: 100%; max-width: 420px; height: auto; border-radius: 12px; border: 2px solid #c9dbe1; background: #ffffff; padding: 6px; box-shadow: 0 8px 24px rgba(12, 56, 69, 0.12);">
@@ -277,46 +339,68 @@
 
     <section class="cards" align="center" style="text-align: center !important;">
         <article class="card" align="center" style="text-align: center !important;">
-            <h3 style="text-align: center !important;">إقامات بلا متاعب</h3>
-            <p style="text-align: center !important;">أصدر الإقامة وجدّدها، وانقل الخدمات، وحدّث بيانات الجواز في دقائق — بأقل إدخال يدوي وأقل احتمال للخطأ. وفّر وقت فريقك واحمِ شركتك من الغرامات.</p>
+            <h3 style="text-align: center !important;">إقامات بلا متاعب · Iqamas, Zero Hassle</h3>
+            <p dir="rtl" style="text-align: center !important;">أصدر الإقامة وجدّدها، وانقل الخدمات، وحدّث بيانات الجواز في دقائق معدودة — بلا إدخال مزدوج وبلا أخطاء نسخ. استرد ساعات فريقك، واحمِ شركتك من الغرامات قبل أن تقع.<br><strong>Issue, renew, transfer, and update passports in minutes — no double entry, no copy-paste slips. Win back your team's hours and shield your company from fines before they ever happen.</strong></p>
         </article>
         <article class="card" align="center" style="text-align: center !important;">
-            <h3 style="text-align: center !important;">تأشيرات في لحظات</h3>
-            <p style="text-align: center !important;">أصدر تأشيرات الخروج والعودة والخروج النهائي ومدّدها وألغها وأعد طباعتها من مكانك — دون فتح بوابة منفصلة أو انتظار. كل ما يحتاجه موظفوك جاهز بضغطات.</p>
+            <h3 style="text-align: center !important;">تأشيرات في لحظات · Visas in Moments</h3>
+            <p dir="rtl" style="text-align: center !important;">أصدر تأشيرات الخروج والعودة والخروج النهائي، ومدّدها وألغها وأعد طباعتها — من مقعدك، بضغطات، بلا بوابة منفصلة وبلا انتظار. موظفوك يحصلون على ما يحتاجونه اليوم، لا الأسبوع القادم.<br><strong>Issue, extend, cancel, and reprint exit re-entry and final exit visas from your desk — a few clicks, no separate portal, no waiting. Your employees get what they need today, not next week.</strong></p>
         </article>
         <article class="card" align="center" style="text-align: center !important;">
-            <h3 style="text-align: center !important;">متابعة دقيقة وتقارير جاهزة</h3>
-            <p style="text-align: center !important;">احصل على تقرير مقيم وتقارير يومية بما أُنجز ومن أنجزه — لمراجعة أسرع وصورة واضحة لأداء فريقك في أي لحظة.</p>
+            <h3 style="text-align: center !important;">كل شيء أمام عينيك · See Everything, Instantly</h3>
+            <p dir="rtl" style="text-align: center !important;">اسحب تقرير مقيم وتقارير يومية تُظهر ما أُنجز ومن أنجزه — فتراجع في دقائق بدل ساعات، وتعرف أداء فريقك في أي لحظة دون أن تسأل أحداً.<br><strong>Pull the Muqeem report plus daily digests of what got done and who did it — review in minutes instead of hours, and know exactly where your team stands without asking anyone.</strong></p>
         </article>
         <article class="card" align="center" style="text-align: center !important;">
-            <h3 style="text-align: center !important;">جاهز للعمل من اليوم الأول</h3>
-            <p style="text-align: center !important;">واجهة واضحة، وصلاحيات مرنة لكل موظف، وتدفّق عمل عملي صُمّم خصيصاً لشركات الموارد البشرية والخدمات الإدارية. ابدأ الإنتاج فوراً.</p>
+            <h3 style="text-align: center !important;">جاهز من اليوم الأول · Ready on Day One</h3>
+            <p dir="rtl" style="text-align: center !important;">واجهة يفهمها فريقك فوراً، وصلاحيات دقيقة لكل موظف، وتدفّق عمل صُمّم خصيصاً لشركات الموارد البشرية والخدمات الإدارية. لا خبرة تقنية، لا تدريب طويل — ابدأ اليوم واقطف النتائج غداً.<br><strong>An interface your team masters on sight, precise permissions per user, and a workflow built for HR and PRO firms. No tech expertise, no long training — start today, see results tomorrow.</strong></p>
         </article>
     </section>
 
     <section class="impact" align="center" style="text-align: center !important;">
-        <h2 style="text-align: center !important;">لماذا يحبّه العملاء · Why Customers Love It</h2>
+        <h2 style="text-align: center !important;">لماذا ستحبّه · Why You'll Love It</h2>
         <div class="impact-grid" align="center" style="text-align: center !important;">
             <div class="metric" align="center" style="text-align: center !important;">
-                <strong style="text-align: center !important;">مكان واحد</strong>
-                <span style="text-align: center !important;">كل خدمات مقيم تُدار من داخل Odoo مباشرة، فلا تشتيت ولا تنقّل.</span>
+                <strong style="text-align: center !important;">شاشة واحدة · One Screen</strong>
+                <span dir="rtl" style="text-align: center !important;">كل خدمات مقيم من داخل Odoo — لا تبويبات، لا بوابات، لا تشتيت.<br>Every Muqeem service inside Odoo — no tabs, no portals, no distractions.</span>
             </div>
             <div class="metric" align="center" style="text-align: center !important;">
-                <strong style="text-align: center !important;">جهد أقل</strong>
-                <span style="text-align: center !important;">إدخال أقل تكراراً واعتماد أقل على البوابات الخارجية — وقت أكثر لما يهم.</span>
+                <strong style="text-align: center !important;">جهد أقل · Less Grind</strong>
+                <span dir="rtl" style="text-align: center !important;">ودّع الإدخال المزدوج نهائياً واسترد ساعات فريقك لما يصنع الفرق فعلاً.<br>Kill double entry for good and give your team its hours back for work that matters.</span>
             </div>
             <div class="metric" align="center" style="text-align: center !important;">
-                <strong style="text-align: center !important;">جاهز للتدقيق</strong>
-                <span style="text-align: center !important;">سجل كامل لكل عملية ومن نفّذها ومتى — حوكمة أوضح وراحة بال أكبر.</span>
+                <strong style="text-align: center !important;">جاهز للتدقيق · Audit-Ready</strong>
+                <span dir="rtl" style="text-align: center !important;">سجل كامل لكل عملية: من نفّذها ومتى — فتجتاز أي مراجعة بثقة وتنام مرتاح البال.<br>A complete trail of every action, who ran it and when — breeze through any audit and sleep easy.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="how" dir="rtl" align="center" style="text-align: center !important;">
+        <h2 style="text-align: center !important;">أربع خطوات وتنطلق · Four Steps and You're Live</h2>
+        <div class="how-grid" align="center" style="text-align: center !important;">
+            <div class="step" align="center" style="text-align: center !important;">
+                <strong style="text-align: center !important;">١ · اشترك · Subscribe</strong>
+                <span dir="rtl" style="text-align: center !important;">فعّل اشتراك منشأتك في منصة مقيم — خطوة تقوم بها مرة واحدة فقط.<br>Activate your company's Muqeem subscription — you do this once.</span>
+            </div>
+            <div class="step" align="center" style="text-align: center !important;">
+                <strong style="text-align: center !important;">٢ · فعّل الباقة · Activate</strong>
+                <span dir="rtl" style="text-align: center !important;">احصل على باقة التكامل من مجموعة ارى — وفريقنا يجهّز كل شيء معك.<br>Get the ERA integration package — our team sets everything up with you.</span>
+            </div>
+            <div class="step" align="center" style="text-align: center !important;">
+                <strong style="text-align: center !important;">٣ · جهّز فريقك · Set Up Your Team</strong>
+                <span dir="rtl" style="text-align: center !important;">امنح كل موظف الصلاحيات المناسبة له في دقائق — لا أكثر ولا أقل.<br>Give each user exactly the access they need, in minutes.</span>
+            </div>
+            <div class="step" align="center" style="text-align: center !important;">
+                <strong style="text-align: center !important;">٤ · انطلق · Go Live</strong>
+                <span dir="rtl" style="text-align: center !important;">نفّذ خدمات الإقامات والتأشيرات واسحب تقاريرك — كل ذلك من Odoo.<br>Run iqama and visa services and pull your reports — all from Odoo.</span>
             </div>
         </div>
     </section>
 
     <section class="cta" align="center" style="text-align: center !important;">
-        <h2 style="text-align: center !important;">ابدأ التشغيل الآن</h2>
-        <p style="text-align: center !important;">لتفعيل هذا الحل يلزم اشتراك في منصة مقيم مع اشتراك التكامل من مجموعة ارى.</p>
-        <a href="https://era.net.sa/hr-muqeem" style="text-align: center !important;">https://era.net.sa/hr-muqeem</a>
-        <p class="small-note" style="text-align: center !important;">For pricing and onboarding, contact ERA Group and activate your package.</p>
+        <h2 style="text-align: center !important;">ابدأ التشغيل الآن · Go Live Now</h2>
+        <p dir="rtl" style="text-align: center !important;">خطوة واحدة تفصلك عن إدارة مقيم بالكامل من Odoo: اشتراك في منصة مقيم مع باقة التكامل من مجموعة ارى — ونحن نتولى الباقي.<br>One step between you and running Muqeem entirely from Odoo: a Muqeem subscription plus the ERA integration package — we handle the rest.</p>
+        <a href="https://era.net.sa/hr-muqeem" style="text-align: center !important;">ابدأ الآن · Start Now — era.net.sa/hr-muqeem</a>
+        <p class="small-note" dir="rtl" style="text-align: center !important;">للتسعير والتفعيل، تواصل مع مجموعة ارى اليوم وانطلق بلا تعقيد · For pricing and onboarding, contact ERA Group today — activation is fast and friction-free.</p>
     </section>
 
     <section class="hero" align="center" style="margin-top: 20px; text-align: center !important;">
@@ -325,13 +409,18 @@
                 <img src="muqeem_services.png" alt="Muqeem services" style="width: 100%; max-width: 420px; height: auto; border-radius: 12px; border: 2px solid #c9dbe1; background: #ffffff; padding: 6px; box-shadow: 0 8px 24px rgba(12, 56, 69, 0.12);">
             </div>
             <div class="hero-copy" align="center" style="text-align: center !important;">
-                <span class="badge" style="text-align: center !important;">موثوق · جاهز للإنتاج</span>
-                <h1 style="font-size: 28px; text-align: center !important;">الخيار الموثوق للشركات ذات الحجم الكبير من العمليات</h1>
-                <p style="text-align: center !important;">إذا كنت تتعامل مع عدد كبير من الإقامات والتأشيرات، فهذا الحل يمنحك تنفيذاً سريعاً ومتابعة دقيقة وتحكّماً كاملاً في كل دورة — دون فوضى أو تأخير.</p>
-                <p style="text-align: center !important;">وإن كنت شريك خدمات، قدّمه لعملائك كخدمة عالية القيمة داخل بيئة Odoo — وعزّز مكانتك.</p>
+                <span class="badge" style="text-align: center !important;">موثوق تحت الضغط · Reliable Under Pressure</span>
+                <h1 style="font-size: 28px; text-align: center !important;">كلما كبر حجم عملك، كبر الفرق · Built for High Volume</h1>
+                <p dir="rtl" style="text-align: center !important;">تدير عشرات أو مئات الإقامات والتأشيرات كل شهر؟ هنا يظهر الفرق: تنفيذ سريع، ومتابعة لحظية، وسيطرة كاملة على كل دورة — بلا فوضى، بلا تأخير، بلا مفاجآت.<br><strong>Handling dozens or hundreds of iqamas and visas a month? This is where you win: rapid execution, live tracking, and total control over every cycle — no chaos, no delays, no surprises.</strong></p>
+                <p dir="rtl" style="text-align: center !important;">شريك خدمات؟ حوّله إلى مصدر دخل: قدّمه لعملائك كخدمة عالية القيمة داخل Odoo، واجعلهم يتمسكون بك أكثر.<br><strong>Service partner? Turn it into revenue — offer it to your clients as a premium service inside Odoo, and give them one more reason to stay with you.</strong></p>
             </div>
         </div>
     </section>
+
+    <footer class="footer" dir="rtl" align="center" style="text-align: center !important;">
+        <p dir="rtl" style="margin: 0 0 4px; text-align: center !important;">مجموعة ارى — شريكك لإدارة الخدمات الحكومية من داخل Odoo · ERA Group — your partner for running government services inside Odoo</p>
+        <p style="margin: 0; text-align: center !important;"><a href="https://era.net.sa" style="text-align: center !important;">era.net.sa</a></p>
+    </footer>
 </div>
 </body>
 </html>

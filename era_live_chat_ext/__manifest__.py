@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Live Chat Extensions",
-    "version": "19.0.2.1.7",
+    "version": "19.0.2.1.8",
     "category": "Website/Live Chat",
     "summary": "Fatoratec livechat UX tweaks: hide 'Ask Human' button + fix RTL horizontal overflow",
     "description": (
@@ -39,6 +39,7 @@
         "im_livechat.assets_embed_core": [
             "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
             "era_live_chat_ext/static/src/js/hide_ask_human.js",
+            "era_live_chat_ext/static/src/js/mobile_autopopup.js",
         ],
         # Backend Discuss (operators reviewing AI-managed conversations) —
         # SCSS only; core embed JS is not loaded in the backend web client.

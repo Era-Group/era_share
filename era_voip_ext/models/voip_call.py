@@ -787,6 +787,8 @@ class VoipCall(models.Model):
 
     def action_reanalyze_call(self):
         self.ensure_one()
+        if not self.env.user.has_group("voip.group_voip_admin"):
+            raise UserError(_("Only VoIP managers can re-analyze a call."))
         if self.analysis_status == "queued":
             raise UserError(_("This call is already being analyzed."))
         if not self.transcript:

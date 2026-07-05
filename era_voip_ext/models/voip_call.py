@@ -127,6 +127,29 @@ class VoipCall(models.Model):
         help="Lead whose chatter received this call's analysis.",
     )
 
+    # ------------------------------------------------------------------
+    # Record protection: only VoIP managers (voip.group_voip_admin) — and
+    # the system/superuser (which covers telephony + analysis crons) — may
+    # delete call records. Everyone else gets a read-only form; telephony,
+    # transcription and analysis still write in the background via ORM
+    # method calls, which the view-level lock does not affect.
+    # ------------------------------------------------------------------
+    def _is_voip_manager(self):
+        return self.env.su or self.env.user.has_group("voip.group_voip_admin")
+
+    def unlink(self):
+        if not self._is_voip_manager():
+            raise UserError(_("Only VoIP managers can delete call records."))
+        return super().unlink()
+
+    @api.model
+    def _get_view(self, view_id=None, view_type="form", **options):
+        arch, view = super()._get_view(view_id, view_type=view_type, **options)
+        if view_type in ("form", "list", "tree") and not self._is_voip_manager():
+            arch.set("edit", "0")
+            arch.set("delete", "0")
+        return arch, view
+
     def _commit_if_needed(self):
         if not modules.module.current_test:
             self.env.cr.commit()

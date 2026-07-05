@@ -735,6 +735,8 @@ class VoipCall(models.Model):
 
     def action_retranscript(self):
         self.ensure_one()
+        if not self.env.user.has_group("voip.group_voip_admin"):
+            raise UserError(_("Only VoIP managers can retranscript a call."))
         if self.transcription_status == "queued":
             raise UserError(_("This call is already being processed."))
         self._transcribe_call(self)

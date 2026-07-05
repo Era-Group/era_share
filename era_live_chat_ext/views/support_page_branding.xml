@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Rebrand the standalone livechat support page footer.
+
+        Core im_livechat.support_page (im_livechat/views/im_livechat_channel_templates.xml)
+        renders a fixed credit line:
+            <div>Website Live Chat Powered by <strong>Odoo</strong>.</div>
+        This inherit swaps it for Era Group branding. The h1 sibling
+        (channel name) is left untouched — we only target the credit <div>.
+    -->
+    <template id="support_page_branding" inherit_id="im_livechat.support_page">
+        <xpath expr="//div[@class='main']/div" position="replace">
+            <div>Smart chat by <strong>Era Group</strong>.</div>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Live Chat Extensions",
-    "version": "19.0.2.1.5",
+    "version": "19.0.2.1.7",
     "category": "Website/Live Chat",
     "summary": "Fatoratec livechat UX tweaks: hide 'Ask Human' button + fix RTL horizontal overflow",
     "description": (
@@ -21,22 +21,27 @@
     "depends": ["im_livechat", "website"],
     "data": [
         "views/livechat_history_views.xml",
+        "views/support_page_branding.xml",
     ],
-    # Register in every bundle the livechat widget might mount under. Odoo
-    # 19 renders the embedded popup against `im_livechat.assets_embed`; the
-    # public-page widgets (the button + the floating panel on plain website
-    # pages) load from `web.assets_frontend`. Listing in both is harmless —
-    # the same file just gets included twice — and guarantees the rules
-    # apply wherever the chat mounts.
+    # Register once in the shared livechat *core* bundle. In Odoo 19 there is
+    # no `im_livechat.assets_embed` bundle (the old target was a silent no-op).
+    # `im_livechat.assets_embed_core` is `('include')`-ed into BOTH:
+    #   - `web.assets_frontend`            → the button + floating panel on
+    #                                        plain website pages (e.g. the home
+    #                                        page), and
+    #   - `im_livechat.assets_embed_external` (and `_cors`) → the standalone
+    #                                        `/im_livechat/support/<id>` page and
+    #                                        cross-origin embeds.
+    # Putting our overrides in core is what makes them apply on the support
+    # page too — previously the "Ask a Human" button was only hidden on the
+    # frontend and stayed visible at /im_livechat/support/<id>.
     "assets": {
-        "web.assets_frontend": [
+        "im_livechat.assets_embed_core": [
             "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
             "era_live_chat_ext/static/src/js/hide_ask_human.js",
         ],
-        "im_livechat.assets_embed": [
-            "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
-            "era_live_chat_ext/static/src/js/hide_ask_human.js",
-        ],
+        # Backend Discuss (operators reviewing AI-managed conversations) —
+        # SCSS only; core embed JS is not loaded in the backend web client.
         "mail.assets_messaging": [
             "era_live_chat_ext/static/src/scss/livechat_overrides.scss",
         ],

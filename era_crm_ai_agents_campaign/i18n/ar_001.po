@@ -1,0 +1,1253 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_crm_ai_agents_campaign
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-06 06:12+0000\n"
+"PO-Revision-Date: 2026-07-06 06:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/services/campaign_engine.py:0
+msgid "(failed)"
+msgstr "(فشلت)"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_kanban
+msgid "<i class=\"fa fa-envelope-o\" title=\"Mailing\" role=\"img\" aria-label=\"Mailing\"/>"
+msgstr "<i class=\"fa fa-envelope-o\" title=\"مراسلة\" role=\"img\" aria-label=\"مراسلة\"/>"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                                <strong>PDPL guard disabled.</strong>\n"
+"                                The agent will send marketing emails WITHOUT consent\n"
+"                                verification and without LLM data-minimization. This\n"
+"                                shifts full legal/compliance responsibility under the\n"
+"                                Saudi PDPL to you, the operator. See the manager\n"
+"                                manual (docs/MANAGER_MANUAL.md) before leaving this off."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"<strong>حارس نظام حماية البيانات الشخصية (PDPL) مُعطَّل.</strong>\n"
+"سيُرسل الوكيل رسائل تسويقية دون التحقق من الموافقة ودون تقليل البيانات المُرسَلة "
+"إلى نموذج اللغة، وهذا ينقل كامل المسؤولية القانونية والامتثال بموجب نظام حماية "
+"البيانات الشخصية السعودي إليك بصفتك المُشغِّل. راجع دليل المدير "
+"(docs/MANAGER_MANUAL.md) قبل ترك هذا الخيار مُعطَّلاً."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"                                Approval is required but no approver is configured —\n"
+"                                every campaign will FAIL CLOSED and nothing will be sent."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"/>\n"
+"الاعتماد مطلوب لكن لم يُعيَّن أي مُعتمِد — ستُغلَق كل حملة إغلاقاً آمناً ولن "
+"يُرسَل أي شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.constraint,message:era_crm_ai_agents_campaign.constraint_crm_ai_campaign_category_name_uniq
+msgid "A campaign service category with this name already exists."
+msgstr "توجد بالفعل فئة خدمة حملات بهذا الاسم."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__email_pattern
+msgid ""
+"A full email address ('someone@acme.com') or a domain ('acme.com' / "
+"'@acme.com'). Matched case-insensitively against the partner's email "
+"address."
+msgstr ""
+"عنوان بريد إلكتروني كامل ('someone@acme.com') أو نطاق ('acme.com' / "
+"'@acme.com')، تتم مطابقته مع عنوان بريد الشريك دون حساسية لحالة الأحرف."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_cooldown_days
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"A partner emailed by this agent is not targeted again for this many days."
+msgstr ""
+"لن يُستهدَف الشريك الذي راسله هذا الوكيل مرة أخرى طوال هذا العدد من الأيام."
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/crm_ai_campaign_suppression.py:0
+msgid ""
+"A suppression entry needs a partner or an email pattern (or both) — an empty"
+" entry would suppress nothing."
+msgstr ""
+"يجب أن يتضمن مدخل الاستبعاد شريكاً أو نمط بريد إلكتروني (أو كليهما) — فالمدخل "
+"الفارغ لن يستبعد شيئاً."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__ab_variant
+msgid "A/B Variant (future)"
+msgstr "متغيّر A/B (مستقبلاً)"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/services/campaign_engine.py:0
+msgid "AI Campaign %(date)s %(suffix)s"
+msgstr "حملة الذكاء الاصطناعي %(date)s %(suffix)s"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Absolute max campaign emails per partner per calendar month, across ALL "
+"campaigns."
+msgstr ""
+"الحد الأقصى المطلق لرسائل الحملات لكل شريك في الشهر الميلادي، عبر جميع "
+"الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_monthly_frequency_cap
+msgid ""
+"Absolute maximum campaign emails per partner per calendar month, across ALL "
+"campaigns."
+msgstr ""
+"الحد الأقصى المطلق لرسائل الحملات لكل شريك في الشهر الميلادي، عبر جميع "
+"الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__active
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__active
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__active
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__applied_playbook_ids
+msgid "Applied Playbooks"
+msgstr "أدلة التوجيه المُطبَّقة"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Approve & Send"
+msgstr "اعتماد وإرسال"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Approve this campaign and hand it to Email Marketing for sending?"
+msgstr "هل تريد اعتماد هذه الحملة وتسليمها إلى التسويق عبر البريد الإلكتروني للإرسال؟"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__approved
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__state__approved
+msgid "Approved"
+msgstr "مُعتمَد"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/crm_ai_campaign.py:0
+msgid ""
+"Approved outside the allowed send window — the hand-off is deferred to the "
+"next scheduled run inside the window."
+msgstr ""
+"تم الاعتماد خارج نافذة الإرسال المسموح بها — سيؤجَّل التسليم إلى التشغيل "
+"المجدوَل التالي داخل النافذة."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__lang__ar
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__res_config_settings__campaign_default_lang__ar
+msgid "Arabic"
+msgstr "العربية"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_catalog_form
+msgid "Archived"
+msgstr "مؤرشَف"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_blackout_days
+msgid "Blackout Days"
+msgstr "أيام الحظر"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Blackout days"
+msgstr "أيام الحظر"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Both transports run through the base egress seam (AI Compliance Guard). 'Era"
+" AI Accounts' fails closed when unavailable."
+msgstr ""
+"تمر كلتا وسيلتي النقل عبر منفذ الخروج الأساسي (حارس امتثال الذكاء الاصطناعي). "
+"وتفشل 'حسابات Era AI' إغلاقاً آمناً عند عدم توفرها."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_agent
+msgid "CRM AI Campaign Agent"
+msgstr "وكيل حملات الذكاء الاصطناعي في CRM"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_line
+msgid "CRM AI Campaign Line (one targeted partner)"
+msgstr "سطر حملة الذكاء الاصطناعي (شريك مستهدَف واحد)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_playbook
+msgid "CRM AI Campaign Playbook"
+msgstr "دليل توجيه حملة الذكاء الاصطناعي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_service_catalog
+msgid "CRM AI Campaign Service Catalog"
+msgstr "كتالوج خدمات حملة الذكاء الاصطناعي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_category
+msgid "CRM AI Campaign Service Category"
+msgstr "فئة خدمة حملة الذكاء الاصطناعي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign_suppression
+msgid "CRM AI Campaign Suppression List"
+msgstr "قائمة استبعاد حملة الذكاء الاصطناعي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_crm_ai_campaign
+msgid "CRM AI Daily Campaign"
+msgstr "حملة الذكاء الاصطناعي اليومية في CRM"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__campaign_id
+msgid "Campaign"
+msgstr "الحملة"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/crm_ai_campaign.py:0
+msgid "Campaign '%(name)s' is not pending approval."
+msgstr "الحملة '%(name)s' ليست بانتظار الاعتماد."
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/services/campaign_engine.py:0
+msgid "Campaign '%(name)s' is ready for review (%(count)d recipients)."
+msgstr "الحملة '%(name)s' جاهزة للمراجعة (%(count)d مستلِمين)."
+
+#. module: era_crm_ai_agents_campaign
+#: model:crm.ai.agent,name:era_crm_ai_agents_campaign.agent_campaign
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_root
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Campaign Agent"
+msgstr "وكيل الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_settings
+msgid "Campaign Agent Settings"
+msgstr "إعدادات وكيل الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.server,name:era_crm_ai_agents_campaign.ir_cron_campaign_daily_run_ir_actions_server
+msgid "Campaign Agent: Daily campaign run"
+msgstr "وكيل الحملات: التشغيل اليومي للحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_approver_user_ids
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Campaign Approvers"
+msgstr "مُعتمِدو الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_email_from
+msgid "Campaign Sender Address"
+msgstr "عنوان مُرسِل الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Campaign sender address"
+msgstr "عنوان مُرسِل الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_campaigns
+msgid "Campaigns"
+msgstr "الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__category_id
+msgid "Category"
+msgstr "الفئة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_blackout_days
+msgid ""
+"Comma-separated weekdays on which the agent never runs or sends: "
+"mon,tue,wed,thu,fri,sat,sun. Default 'fri,sat' (KSA weekend). Empty = no "
+"blackout day."
+msgstr ""
+"أيام الأسبوع مفصولة بفواصل التي لا يعمل فيها الوكيل أو يُرسل أبداً: "
+"mon,tue,wed,thu,fri,sat,sun. الافتراضي 'fri,sat' (عطلة نهاية الأسبوع في "
+"السعودية). فارغ = لا يوجد يوم حظر."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Comma-separated weekdays the agent never runs or sends (mon..sun). Default "
+"fri,sat."
+msgstr ""
+"أيام الأسبوع مفصولة بفواصل التي لا يعمل فيها الوكيل أو يُرسل (mon..sun). "
+"الافتراضي fri,sat."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_confidence_threshold
+msgid "Confidence Threshold"
+msgstr "عتبة الثقة"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Confidence threshold"
+msgstr "عتبة الثقة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model,name:era_crm_ai_agents_campaign.model_res_config_settings
+msgid "Config Settings"
+msgstr "تهيئة الإعدادات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_config
+msgid "Configuration"
+msgstr "الإعداد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_service_catalog__service_type__core_product
+msgid "Core Product"
+msgstr "منتج أساسي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__create_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__create_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_daily_limit
+msgid "Daily Partner Limit"
+msgstr "الحد اليومي للشركاء"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Daily partner limit"
+msgstr "الحد اليومي للشركاء"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__date
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_search
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_default_lang
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Default Language"
+msgstr "اللغة الافتراضية"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_catalog_form
+msgid "Description (grounds the LLM)"
+msgstr "الوصف (يوجِّه نموذج اللغة)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__res_config_settings__campaign_llm_transport__token
+msgid "Direct token (native API, env-only key)"
+msgstr "الرمز المباشر (واجهة برمجة أصلية، مفتاح من متغيرات البيئة فقط)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_agent__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__display_name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_default_lang
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Drafting language for partners whose own language is not set."
+msgstr "لغة الصياغة للشركاء الذين لم تُحدَّد لغتهم الخاصة."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__email_pattern
+msgid "Email / Domain Pattern"
+msgstr "نمط البريد الإلكتروني / النطاق"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__mailing_id
+msgid "Email Marketing Mailing"
+msgstr "مراسلة التسويق عبر البريد الإلكتروني"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_agent_enabled
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Enable Campaign Agent"
+msgstr "تفعيل وكيل الحملات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__lang__en
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__res_config_settings__campaign_default_lang__en
+msgid "English"
+msgstr "الإنجليزية"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__res_config_settings__campaign_llm_transport__era_ai_accounts
+msgid "Era AI Accounts (editor subscription)"
+msgstr "حسابات Era AI (اشتراك المحرِّر)"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Era Marketing <marketing@era.net.sa>"
+msgstr "Era Marketing <marketing@era.net.sa>"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__sequence
+msgid "Evaluation order: lower sequences are injected first."
+msgstr "ترتيب التقييم: التسلسلات الأقل تُحقَن أولاً."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Every campaign waits for an approver before anything is sent. Lines under "
+"the confidence threshold force review even when this is off."
+msgstr ""
+"تنتظر كل حملة مُعتمِداً قبل إرسال أي شيء. والسطور الأقل من عتبة الثقة تُفرَض "
+"عليها المراجعة حتى عند إيقاف هذا الخيار."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__instruction
+msgid ""
+"Extra guidance injected into the LLM prompt for matching partners, e.g. "
+"'Recipient is new to Odoo; open with a short intro to what Odoo is before "
+"presenting the service.'"
+msgstr ""
+"إرشادات إضافية تُحقَن في موجِّه نموذج اللغة للشركاء المطابِقين، مثل: 'المستلِم "
+"جديد على أودو؛ ابدأ بمقدمة قصيرة عن ماهية أودو قبل عرض الخدمة.'"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__failed
+msgid "Failed"
+msgstr "فشلت"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_service_catalog__service_type__featured_module
+msgid "Featured Module"
+msgstr "وحدة مميّزة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_follower_ids
+msgid "Followers"
+msgstr "المتابِعون"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابِعون (الشركاء)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_email_from
+msgid ""
+"From address for campaign emails (e.g. 'Era Marketing "
+"<marketing@era.net.sa>'). Empty = use the company's email, then the running "
+"user's. If none can be resolved the hand-off FAILS CLOSED — nothing is sent "
+"from an undefined address."
+msgstr ""
+"عنوان المُرسِل لرسائل الحملات (مثل 'Era Marketing <marketing@era.net.sa>'). "
+"فارغ = استخدام بريد الشركة، ثم بريد المستخدم المُنفِّذ. وإذا تعذّر تحديد أي "
+"منها يفشل التسليم إغلاقاً آمناً — فلا يُرسَل شيء من عنوان غير محدَّد."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"From address for campaign emails. Empty = company email, then the running "
+"user's; none resolvable = the hand-off fails closed."
+msgstr ""
+"عنوان المُرسِل لرسائل الحملات. فارغ = بريد الشركة، ثم بريد المستخدم المُنفِّذ؛ "
+"وتعذُّر تحديد أي منها = فشل التسليم إغلاقاً آمناً."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__generated_body
+msgid "Generated Body"
+msgstr "النص المُولَّد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__generated_subject
+msgid "Generated Subject"
+msgstr "الموضوع المُولَّد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_tz
+msgid ""
+"IANA timezone the send window and blackout days are evaluated in. Default "
+"Asia/Riyadh."
+msgstr ""
+"المنطقة الزمنية (IANA) التي تُقيَّم بها نافذة الإرسال وأيام الحظر. الافتراضي "
+"Asia/Riyadh."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_agent__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم التحديد، فإن الرسائل الجديدة تتطلب انتباهك."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_error
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم التحديد، فإن بعض الرسائل بها خطأ في التسليم."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__in_progress
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__instruction
+msgid "Instruction"
+msgstr "التعليمات"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_playbook_form
+msgid "Instruction (injected into the LLM prompt)"
+msgstr "التعليمات (تُحقَن في موجِّه نموذج اللغة)"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/crm_ai_campaign.py:0
+msgid ""
+"Internal error: hand-off requested for campaign '%(name)s' which is not "
+"approved."
+msgstr ""
+"خطأ داخلي: طُلب تسليم الحملة '%(name)s' وهي غير معتمدة."
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/res_config_settings.py:0
+msgid ""
+"Invalid blackout day(s): %(bad)s. Use comma-separated codes from: %(codes)s."
+msgstr ""
+"أيام حظر غير صحيحة: %(bad)s. استخدم رموزاً مفصولة بفواصل من: %(codes)s."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_is_follower
+msgid "Is Follower"
+msgstr "متابِع"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_llm_daily_call_cap
+msgid "LLM Daily Call Cap"
+msgstr "الحد اليومي لاستدعاءات نموذج اللغة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_llm_transport
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "LLM Transport"
+msgstr "وسيلة نقل نموذج اللغة"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "LLM daily call cap"
+msgstr "الحد اليومي لاستدعاءات نموذج اللغة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__match_confidence
+msgid ""
+"LLM-reported confidence (0..1) that the matched service fits this partner. "
+"Lines below the configured threshold are always forced into human review."
+msgstr ""
+"درجة الثقة التي يُبلغ عنها نموذج اللغة (0..1) بأن الخدمة المطابَقة تناسب هذا "
+"الشريك. والسطور الأقل من العتبة المضبوطة تُفرَض عليها دائماً المراجعة البشرية."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__lang
+msgid "Lang"
+msgstr "اللغة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__write_uid
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__write_date
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__line_ids
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Lines below this LLM match confidence are ALWAYS forced into human review."
+msgstr ""
+"السطور الأقل من درجة ثقة المطابقة هذه تُفرَض عليها دائماً المراجعة البشرية."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_confidence_threshold
+msgid ""
+"Lines whose LLM match confidence is below this value are FORCED into human "
+"review, regardless of the approval toggle."
+msgstr ""
+"السطور التي تقل درجة ثقة مطابقتها عن هذه القيمة تُفرَض عليها المراجعة البشرية، "
+"بصرف النظر عن مفتاح الاعتماد."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__llm_called
+msgid "Llm Called"
+msgstr "تم استدعاء نموذج اللغة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_agent_enabled
+msgid ""
+"Master switch. OFF (default) = the daily cron is a no-op and nothing is ever"
+" selected, drafted or sent."
+msgstr ""
+"المفتاح الرئيسي. إيقاف (الافتراضي) = المهمة المجدوَلة اليومية بلا تأثير ولا "
+"يُختار أو يُصاغ أو يُرسَل أي شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Master switch. OFF = the daily run is a no-op; nothing is selected, drafted "
+"or sent."
+msgstr ""
+"المفتاح الرئيسي. إيقاف = التشغيل اليومي بلا تأثير؛ لا يُختار أو يُصاغ أو "
+"يُرسَل أي شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__match_confidence
+msgid "Match Confidence"
+msgstr "درجة ثقة المطابقة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__matched_service_id
+msgid "Matched Service"
+msgstr "الخدمة المطابَقة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_max_daily_campaigns
+msgid "Max Campaigns / Day"
+msgstr "الحد الأقصى للحملات / اليوم"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Max LLM calls per day; reaching it halts further generation (fail closed)."
+msgstr ""
+"الحد الأقصى لاستدعاءات نموذج اللغة يومياً؛ وبلوغه يوقف مزيداً من التوليد "
+"(إغلاق آمن)."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Max campaigns per day"
+msgstr "الحد الأقصى للحملات في اليوم"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Max partners targeted per day across all campaigns."
+msgstr "الحد الأقصى للشركاء المستهدَفين يومياً عبر جميع الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_llm_daily_call_cap
+msgid ""
+"Maximum LLM calls per day. Reaching it halts further generation for the day "
+"(fail closed); remaining partners are skipped with a recorded reason."
+msgstr ""
+"الحد الأقصى لاستدعاءات نموذج اللغة يومياً. وبلوغه يوقف مزيداً من التوليد لبقية "
+"اليوم (إغلاق آمن)؛ ويُتخطى الشركاء المتبقون مع تسجيل السبب."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_max_daily_campaigns
+msgid "Maximum number of campaigns the agent may build per day."
+msgstr "الحد الأقصى لعدد الحملات التي يجوز للوكيل بناؤها في اليوم."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_daily_limit
+msgid "Maximum partners targeted per day across all campaigns."
+msgstr "الحد الأقصى للشركاء المستهدَفين يومياً عبر جميع الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_monthly_frequency_cap
+msgid "Monthly Frequency Cap"
+msgstr "الحد الأقصى للتكرار الشهري"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Monthly frequency cap"
+msgstr "الحد الأقصى للتكرار الشهري"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_category__name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__name
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_campaign.action_crm_ai_campaign
+msgid "No campaigns yet"
+msgstr "لا توجد حملات بعد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__partner_count
+msgid "Number of partners actually targeted (skipped lines excluded)."
+msgstr "عدد الشركاء المستهدَفين فعلياً (باستثناء السطور المتخطاة)."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_pdpl_guard_enabled
+msgid ""
+"ON (default): consent is verified before selection, the LLM receives "
+"minimized business attributes only (no name/email/phone), and PDPL decisions"
+" are audited. OFF: ALL PDPL guards are skipped INCLUDING consent — marketing"
+" is sent WITHOUT consent verification and full legal/compliance "
+"responsibility shifts to the operator (see the manager manual)."
+msgstr ""
+"تشغيل (الافتراضي): يتم التحقق من الموافقة قبل الاختيار، ويتلقى نموذج اللغة "
+"سمات العمل المُصغَّرة فقط (بلا اسم/بريد/هاتف)، وتُدقَّق قرارات نظام حماية "
+"البيانات الشخصية. إيقاف: تُتخطى جميع حراس نظام حماية البيانات الشخصية بما في "
+"ذلك الموافقة — فتُرسَل الرسائل التسويقية دون التحقق من الموافقة وتنتقل كامل "
+"المسؤولية القانونية والامتثال إلى المُشغِّل (راجع دليل المدير)."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_require_human_approval
+msgid ""
+"ON (default): every campaign stops at 'Pending Approval' and waits for a "
+"configured approver. OFF: campaigns whose lines are all above the confidence"
+" threshold are handed off automatically."
+msgstr ""
+"تشغيل (الافتراضي): تتوقف كل حملة عند 'بانتظار الاعتماد' وتنتظر مُعتمِداً "
+"مُعيَّناً. إيقاف: الحملات التي تتجاوز جميع سطورها عتبة الثقة تُسلَّم تلقائياً."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"ON: consent verified, LLM payload minimized (no name/email/phone), PDPL "
+"decisions audited."
+msgstr ""
+"تشغيل: يتم التحقق من الموافقة، وتُصغَّر حمولة نموذج اللغة (بلا اسم/بريد/هاتف)، "
+"وتُدقَّق قرارات نظام حماية البيانات الشخصية."
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/crm_ai_campaign.py:0
+msgid ""
+"Only a configured campaign approver may approve or reject a campaign. Ask an"
+" AI Agents Manager to add you in Campaign Agent Settings."
+msgstr ""
+"لا يجوز اعتماد الحملة أو رفضها إلا لمُعتمِد حملات مُعيَّن. اطلب من مدير وكلاء "
+"الذكاء الاصطناعي إضافتك في إعدادات وكيل الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "PDPL"
+msgstr "نظام حماية البيانات الشخصية (PDPL)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_pdpl_guard_enabled
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "PDPL Guard"
+msgstr "حارس نظام حماية البيانات الشخصية"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__partner_id
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__partner_id
+msgid "Partner"
+msgstr "الشريك"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__partner_count
+msgid "Partner Count"
+msgstr "عدد الشركاء"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__target_tag_ids
+msgid ""
+"Partner tags this service is aimed at. Empty = suitable for any segment. "
+"Used to pre-filter which services are offered to the LLM for a given "
+"customer."
+msgstr ""
+"وسوم الشركاء التي تستهدفها هذه الخدمة. فارغ = مناسبة لأي شريحة. تُستخدَم "
+"للتصفية المسبقة للخدمات المعروضة على نموذج اللغة لعميل معيّن."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__trigger_tag_ids
+msgid ""
+"Partners carrying ANY of these tags get this playbook's instruction injected"
+" into their drafting prompt. A playbook with no trigger tags never fires."
+msgstr ""
+"الشركاء الذين يحملون أياً من هذه الوسوم تُحقَن تعليمات دليل التوجيه هذا في "
+"موجِّه صياغتهم. ودليل التوجيه بلا وسوم تحفيز لا يعمل أبداً."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__pending_approval
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_search
+msgid "Pending Approval"
+msgstr "بانتظار الاعتماد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_cooldown_days
+msgid "Per-Partner Cooldown (days)"
+msgstr "فترة التهدئة لكل شريك (أيام)"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Per-partner cooldown (days)"
+msgstr "فترة التهدئة لكل شريك (أيام)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_playbook
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_playbook
+msgid "Playbooks"
+msgstr "أدلة التوجيه"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Quality & Safety"
+msgstr "الجودة والأمان"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__skip_reason
+msgid ""
+"Reference code for why this partner was skipped (e.g. 'suppressed', "
+"'cooldown', 'no_consent_guard'). Codes only — never personal data."
+msgstr ""
+"رمز مرجعي لسبب تخطي هذا الشريك (مثل 'suppressed' أو 'cooldown' أو "
+"'no_consent_guard'). رموز فقط — دون أي بيانات شخصية أبداً."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_form
+msgid "Reject this campaign? Nothing will be sent."
+msgstr "هل تريد رفض هذه الحملة؟ لن يُرسَل أي شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__rejected
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_require_human_approval
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Require Human Approval"
+msgstr "اشتراط الاعتماد البشري"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__lang
+msgid ""
+"Resolved drafting language: the partner's language when set, else the "
+"configured default."
+msgstr ""
+"لغة الصياغة المحدَّدة: لغة الشريك عند ضبطها، وإلا الافتراضي المضبوط."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.server,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_run_now
+msgid "Run Campaign Agent Now"
+msgstr "تشغيل وكيل الحملات الآن"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Runs and sends are allowed only between these hours in the send timezone; "
+"outside the window everything defers."
+msgstr ""
+"لا يُسمَح بالتشغيل والإرسال إلا بين هاتين الساعتين في منطقة زمن الإرسال؛ "
+"وخارج النافذة يؤجَّل كل شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسائل النصية"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_tz
+msgid "Send Timezone"
+msgstr "المنطقة الزمنية للإرسال"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_window_end
+msgid "Send Window End (hour)"
+msgstr "نهاية نافذة الإرسال (الساعة)"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_window_start
+msgid "Send Window Start (hour)"
+msgstr "بداية نافذة الإرسال (الساعة)"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Send window"
+msgstr "نافذة الإرسال"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid "Sending & Scheduling"
+msgstr "الإرسال والجدولة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_window_start
+msgid ""
+"Sends (and generation runs) are allowed from this hour, in the configured "
+"send timezone. Outside the window the run defers."
+msgstr ""
+"يُسمَح بالإرسال (وعمليات التوليد) بدءاً من هذه الساعة، في منطقة زمن الإرسال "
+"المضبوطة. وخارج النافذة يؤجَّل التشغيل."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_send_window_end
+msgid "Sends are allowed until this hour, in the configured send timezone."
+msgstr "يُسمَح بالإرسال حتى هذه الساعة، في منطقة زمن الإرسال المضبوطة."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign__state__sent
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__state__sent
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_search
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__sent_date
+msgid "Sent Date"
+msgstr "تاريخ الإرسال"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_service_catalog__service_type__service
+msgid "Service"
+msgstr "خدمة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_catalog
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_catalog
+msgid "Service Catalog"
+msgstr "كتالوج الخدمات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_category
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_category
+msgid "Service Categories"
+msgstr "فئات الخدمات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_settings
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__skip_reason
+msgid "Skip Reason"
+msgstr "سبب التخطي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields.selection,name:era_crm_ai_agents_campaign.selection__crm_ai_campaign_line__state__skipped
+msgid "Skipped"
+msgstr "تم التخطي"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__state
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__state
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__partner_id
+msgid ""
+"Suppress exactly this partner. Optional — an entry may instead (or "
+"additionally) match by email pattern."
+msgstr ""
+"استبعاد هذا الشريك تحديداً. اختياري — يمكن للمدخل بدلاً من ذلك (أو إضافةً) أن "
+"يطابق بنمط البريد الإلكتروني."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.actions.act_window,name:era_crm_ai_agents_campaign.action_crm_ai_campaign_suppression
+#: model:ir.ui.menu,name:era_crm_ai_agents_campaign.menu_crm_ai_campaign_suppression
+msgid "Suppression List"
+msgstr "قائمة الاستبعاد"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__target_tag_ids
+msgid "Target Segments (partner tags)"
+msgstr "الشرائح المستهدَفة (وسوم الشركاء)"
+
+#. module: era_crm_ai_agents_campaign
+#. odoo-python
+#: code:addons/era_crm_ai_agents_campaign/models/res_config_settings.py:0
+msgid ""
+"The 'Era AI Accounts' transport is selected but the era_ai_accounts module "
+"is not installed. Install it or select the direct-token transport (fail "
+"closed)."
+msgstr ""
+"تم اختيار وسيلة نقل 'حسابات Era AI' لكن وحدة era_ai_accounts غير مثبَّتة. "
+"ثبِّتها أو اختر وسيلة نقل الرمز المباشر (إغلاق آمن)."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.actions.act_window,help:era_crm_ai_agents_campaign.action_crm_ai_campaign
+msgid ""
+"The Campaign Agent builds campaigns daily once it is enabled\n"
+"               in Campaign Agent Settings."
+msgstr ""
+"يبني وكيل الحملات حملاتٍ يومياً بمجرد تفعيله\n"
+"في إعدادات وكيل الحملات."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"The never-email suppression list is managed under\n"
+"                            Campaign Agent → Configuration → Suppression List."
+msgstr ""
+"تُدار قائمة الاستبعاد (عدم المراسلة أبداً) ضمن\n"
+"وكيل الحملات ← الإعداد ← قائمة الاستبعاد."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__mailing_id
+msgid ""
+"The official Email Marketing record this campaign was handed to at the final"
+" step."
+msgstr ""
+"سجل التسويق عبر البريد الإلكتروني الرسمي الذي سُلِّمت إليه هذه الحملة في "
+"الخطوة الأخيرة."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_playbook__trigger_tag_ids
+msgid "Trigger Tags"
+msgstr "وسوم التحفيز"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__llm_called
+msgid ""
+"True once an LLM call was attempted for this line — the counter behind the "
+"daily LLM call cap."
+msgstr ""
+"يصبح صحيحاً بمجرد محاولة استدعاء نموذج اللغة لهذا السطر — وهو العدّاد وراء "
+"الحد اليومي لاستدعاءات نموذج اللغة."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__service_type
+msgid "Type"
+msgstr "النوع"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.res_config_settings_view_form_campaign
+msgid ""
+"Users allowed to approve/reject campaigns. Approval required + empty list = "
+"campaigns fail closed."
+msgstr ""
+"المستخدمون المسموح لهم باعتماد/رفض الحملات. الاعتماد مطلوب + قائمة فارغة = "
+"تفشل الحملات إغلاقاً آمناً."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_approver_user_ids
+msgid ""
+"Users allowed to approve/reject campaigns. FAIL CLOSED: when approval is "
+"required and this list is empty, campaigns are marked 'failed' and nothing "
+"is sent."
+msgstr ""
+"المستخدمون المسموح لهم باعتماد/رفض الحملات. الإغلاق الآمن: عندما يكون الاعتماد "
+"مطلوباً وتكون هذه القائمة فارغة، تُعلَّم الحملات بأنها 'فشلت' ولا يُرسَل أي "
+"شيء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,field_description:era_crm_ai_agents_campaign.field_crm_ai_campaign__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع الإلكتروني"
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign__website_message_ids
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع الإلكتروني"
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_catalog_form
+msgid ""
+"What this offering is and who it helps — the LLM reads this text to match "
+"services to customers."
+msgstr ""
+"ما هذا العرض ومَن يفيد — يقرأ نموذج اللغة هذا النص لمطابقة الخدمات بالعملاء."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_service_catalog__description
+msgid ""
+"What this offering is and who it helps. This text grounds the LLM's service "
+"matching — write it for the model as much as for a colleague."
+msgstr ""
+"ما هذا العرض ومَن يفيد. يوجِّه هذا النص مطابقة الخدمات لدى نموذج اللغة — اكتبه "
+"للنموذج بقدر ما تكتبه لزميل."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_line__sent_date
+msgid ""
+"When the hand-off queued this partner's email. Drives the per-partner "
+"cooldown and the monthly frequency cap."
+msgstr ""
+"وقت إدراج بريد هذا الشريك في قائمة الإرسال عند التسليم. يحكم فترة التهدئة لكل "
+"شريك والحد الأقصى للتكرار الشهري."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_res_config_settings__campaign_llm_transport
+msgid ""
+"Which transport the agent's LLM calls take. Both run through the base egress"
+" seam (AI Compliance Guard). Default: 'Era AI Accounts' (editor "
+"subscription). It is runtime-optional: when selected but unavailable, every "
+"run FAILS CLOSED. The direct-token transport remains fully selectable."
+msgstr ""
+"وسيلة النقل التي تسلكها استدعاءات نموذج اللغة لدى الوكيل. تمر كلتاهما عبر منفذ "
+"الخروج الأساسي (حارس امتثال الذكاء الاصطناعي). الافتراضي: 'حسابات Era AI' "
+"(اشتراك المحرِّر). وهي اختيارية عند التشغيل: عند اختيارها مع عدم توفرها يفشل "
+"كل تشغيل إغلاقاً آمناً. وتظل وسيلة نقل الرمز المباشر قابلة للاختيار بالكامل."
+
+#. module: era_crm_ai_agents_campaign
+#: model:ir.model.fields,help:era_crm_ai_agents_campaign.field_crm_ai_campaign_suppression__reason
+msgid ""
+"Why this entry exists (complaint, legal request, bounce, ...). Keep it "
+"reference-only — no free-text personal data beyond what the entry itself "
+"needs."
+msgstr ""
+"سبب وجود هذا المدخل (شكوى، طلب قانوني، ارتداد، ...). أبقِه مرجعياً فقط — دون "
+"بيانات شخصية بنص حر بما يتجاوز ما يحتاجه المدخل نفسه."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_playbook_form
+msgid ""
+"e.g. Recipient is new to Odoo; open with a short intro to what Odoo is "
+"before presenting the service."
+msgstr ""
+"مثال: المستلِم جديد على أودو؛ ابدأ بمقدمة قصيرة عن ماهية أودو قبل عرض الخدمة."
+
+#. module: era_crm_ai_agents_campaign
+#: model_terms:ir.ui.view,arch_db:era_crm_ai_agents_campaign.view_crm_ai_campaign_kanban
+msgid "recipients"
+msgstr "مستلِمون"

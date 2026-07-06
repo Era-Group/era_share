@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Daily campaign run.
+
+             Execution identity is SUITE-WIDE and configurable, not hardcoded
+             here (Rule 09): the code resolves the run user at run time via the
+             Base resolver crm.ai.agent._get_cron_run_user() (default: the
+             least-privilege CRM AI Automation account) and applies it with
+             with_user(). The static user_id below is only the safe bootstrap
+             identity — never root unless a manager explicitly opts in.
+
+             Governance is the master toggle: the cron ships active=True but
+             the engine no-ops immediately while campaign_agent_enabled is
+             False, so it is fully inert until a manager opts in. Every other
+             gate (send window, blackout, transport, approvers, caps, PDPL)
+             is enforced inside the engine — FAIL CLOSED, never here.
+
+             New ir.cron records need a full server RESTART to register (see
+             Dev Environment Notes) — a module upgrade alone is not enough. -->
+        <record id="ir_cron_campaign_daily_run" model="ir.cron">
+            <field name="name">Campaign Agent: Daily campaign run</field>
+            <field name="model_id" ref="model_crm_ai_campaign_agent"/>
+            <field name="user_id" ref="era_crm_ai_agents_base.user_crm_ai_automation"/>
+            <field name="state">code</field>
+            <field name="code">model.with_user(env['crm.ai.agent']._get_cron_run_user())._cron_run_daily_campaign()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 06:30:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

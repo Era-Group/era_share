@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pre-seed the Campaign agent's registry row so runtime stays read-only
+         for users (the mixin's _get_or_create_agent then just reads it).
+         transport=api (the 'token' setting default) with a model that IS in
+         the Base rate card, so drafting is priced (Rule 14). Saving the
+         Campaign Settings with the era_ai_accounts transport re-points this
+         row at the CLI transport. noupdate="1" so manager edits survive
+         upgrades. -->
+    <data noupdate="1">
+        <record id="agent_campaign" model="crm.ai.agent">
+            <field name="name">Campaign Agent</field>
+            <field name="tech_name">era_campaign</field>
+            <field name="transport">api</field>
+            <field name="model_code">gpt-4.1-mini</field>
+        </record>
+    </data>
+</odoo>

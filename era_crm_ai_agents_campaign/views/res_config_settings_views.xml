@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Suite settings convention: a SELF-CONTAINED functional module keeps
+         its settings in its OWN app block — a SIBLING of the Base "CRM AI
+         Agents" app on the unified Odoo 19 Settings page (a standalone
+         res.config.settings form is rejected by the framework). Gated to
+         group_crm_ai_manager so every policy here stays manager-only. -->
+    <record id="res_config_settings_view_form_campaign" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crm.ai.campaign</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Campaign Agent" string="Campaign Agent"
+                     name="era_crm_ai_agents_campaign"
+                     logo="/era_crm_ai_agents_campaign/static/description/icon.png"
+                     groups="era_crm_ai_agents_base.group_crm_ai_manager">
+
+                    <block title="Campaign Agent" name="crm_ai_campaign_core">
+
+                        <setting string="Enable Campaign Agent"
+                                 help="Master switch. OFF = the daily run is a no-op; nothing is selected, drafted or sent.">
+                            <field name="campaign_agent_enabled"/>
+                        </setting>
+
+                        <setting string="LLM Transport"
+                                 help="Both transports run through the base egress seam (AI Compliance Guard). 'Era AI Accounts' fails closed when unavailable.">
+                            <field name="campaign_llm_transport"/>
+                        </setting>
+
+                        <setting string="Require Human Approval"
+                                 help="Every campaign waits for an approver before anything is sent. Lines under the confidence threshold force review even when this is off.">
+                            <field name="campaign_require_human_approval"/>
+                        </setting>
+
+                        <setting string="Campaign Approvers"
+                                 help="Users allowed to approve/reject campaigns. Approval required + empty list = campaigns fail closed.">
+                            <field name="campaign_approver_user_ids" widget="many2many_tags"/>
+                            <div class="text-danger mt-2"
+                                 invisible="campaign_approver_user_ids or not campaign_require_human_approval">
+                                <i class="fa fa-exclamation-triangle"/>
+                                Approval is required but no approver is configured —
+                                every campaign will FAIL CLOSED and nothing will be sent.
+                            </div>
+                        </setting>
+
+                        <setting string="Default Language"
+                                 help="Drafting language for partners whose own language is not set.">
+                            <field name="campaign_default_lang"/>
+                        </setting>
+
+                    </block>
+
+                    <block title="PDPL" name="crm_ai_campaign_pdpl">
+
+                        <setting string="PDPL Guard"
+                                 help="ON: consent verified, LLM payload minimized (no name/email/phone), PDPL decisions audited.">
+                            <field name="campaign_pdpl_guard_enabled"/>
+                            <div class="alert alert-danger mt-2" role="alert"
+                                 invisible="campaign_pdpl_guard_enabled">
+                                <i class="fa fa-exclamation-triangle"/>
+                                <strong>PDPL guard disabled.</strong>
+                                The agent will send marketing emails WITHOUT consent
+                                verification and without LLM data-minimization. This
+                                shifts full legal/compliance responsibility under the
+                                Saudi PDPL to you, the operator. See the manager
+                                manual (docs/MANAGER_MANUAL.md) before leaving this off.
+                            </div>
+                        </setting>
+
+                    </block>
+
+                    <block title="Sending &amp; Scheduling" name="crm_ai_campaign_sending">
+
+                        <setting string="Daily partner limit"
+                                 help="Max partners targeted per day across all campaigns.">
+                            <field name="campaign_daily_limit"/>
+                        </setting>
+                        <setting string="Max campaigns per day">
+                            <field name="campaign_max_daily_campaigns"/>
+                        </setting>
+                        <setting string="Per-partner cooldown (days)"
+                                 help="A partner emailed by this agent is not targeted again for this many days.">
+                            <field name="campaign_cooldown_days"/>
+                        </setting>
+                        <setting string="Monthly frequency cap"
+                                 help="Absolute max campaign emails per partner per calendar month, across ALL campaigns.">
+                            <field name="campaign_monthly_frequency_cap"/>
+                        </setting>
+                        <setting string="Send window"
+                                 help="Runs and sends are allowed only between these hours in the send timezone; outside the window everything defers.">
+                            <div class="row">
+                                <label for="campaign_send_window_start" class="col-lg-4"/>
+                                <field name="campaign_send_window_start" widget="float_time"/>
+                            </div>
+                            <div class="row">
+                                <label for="campaign_send_window_end" class="col-lg-4"/>
+                                <field name="campaign_send_window_end" widget="float_time"/>
+                            </div>
+                            <div class="row">
+                                <label for="campaign_send_tz" class="col-lg-4"/>
+                                <field name="campaign_send_tz"/>
+                            </div>
+                        </setting>
+                        <setting string="Campaign sender address"
+                                 help="From address for campaign emails. Empty = company email, then the running user's; none resolvable = the hand-off fails closed.">
+                            <field name="campaign_email_from"
+                                   placeholder="Era Marketing &lt;marketing@era.net.sa&gt;"/>
+                        </setting>
+                        <setting string="Blackout days"
+                                 help="Comma-separated weekdays the agent never runs or sends (mon..sun). Default fri,sat.">
+                            <field name="campaign_blackout_days"/>
+                        </setting>
+
+                    </block>
+
+                    <block title="Quality &amp; Safety" name="crm_ai_campaign_quality">
+
+                        <setting string="Confidence threshold"
+                                 help="Lines below this LLM match confidence are ALWAYS forced into human review.">
+                            <field name="campaign_confidence_threshold"/>
+                        </setting>
+                        <setting string="LLM daily call cap"
+                                 help="Max LLM calls per day; reaching it halts further generation (fail closed).">
+                            <field name="campaign_llm_daily_call_cap"/>
+                        </setting>
+                        <div class="text-muted mt-2">
+                            The never-email suppression list is managed under
+                            Campaign Agent → Configuration → Suppression List.
+                        </div>
+
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

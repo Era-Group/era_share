@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================= -->
+        <!-- Security for era_crm_ai_agents_campaign                        -->
+        <!--                                                               -->
+        <!-- Groups: reuses the Base's AI Agents User / Manager. Who may   -->
+        <!-- do what is enforced by ir.model.access.csv:                   -->
+        <!--   - AI Agents User    -> read the catalogs; read/write/create -->
+        <!--                          campaigns+lines (the least-privilege -->
+        <!--                          cron identity builds them)           -->
+        <!--   - AI Agents Manager -> full CRUD on everything here         -->
+        <!--   - everyone else     -> no access (no ACL row)               -->
+        <!--                                                               -->
+        <!-- APPROVER ENFORCEMENT (why there is no record rule for it):    -->
+        <!-- the approver list is a manager SETTING                        -->
+        <!-- (campaign_approver_user_ids), and a record-rule domain cannot -->
+        <!-- read ir.config_parameter. A state-scoped write rule would     -->
+        <!-- also break the cron identity, which must legitimately write   -->
+        <!-- campaigns in every non-approval state (build, hand-off).      -->
+        <!-- Enforcement is therefore SERVER-SIDE IN CODE (Rule 19), at    -->
+        <!-- two layers in models/crm_ai_campaign.py:                      -->
+        <!--   1. crm.ai.campaign.write() blocks ANY transition out of     -->
+        <!--      'pending_approval' unless the writer is a configured     -->
+        <!--      approver — this covers direct writes, not just buttons.  -->
+        <!--   2. action_approve()/action_reject() re-validate membership. -->
+        <!-- The buttons are additionally hidden from non-managers in the  -->
+        <!-- form view; the write() override is the authoritative gate.    -->
+        <!-- ============================================================= -->
+
+        <!-- The suppression list is compliance-sensitive: users may READ
+             (the engine checks it on their behalf) but only managers edit.
+             Same for the service catalog, categories and playbooks — they
+             steer what the LLM is allowed to say. See ir.model.access.csv. -->
+
+    </data>
+</odoo>

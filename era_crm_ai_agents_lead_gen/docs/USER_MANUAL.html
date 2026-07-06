@@ -1,547 +1,386 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lead Generation — User Manual / دليل المستخدم</title>
+<title>دليل المستخدم — وحدة توليد العملاء المحتملين (Lead Generation)</title>
 <style>
   :root{
-    --accent:#0f766e; --accent-d:#0b4f4a; --ink:#1f2933; --muted:#52606d;
-    --line:#e2e8f0; --bg:#f7f9fb; --sidebar:#0b2e2b; --sidebar-ink:#cfe8e4;
-    --code-bg:#eef2f4; --warn-bg:#fff4e5; --warn-bd:#e8920c;
-    --tip-bg:#eafaf3; --tip-bd:#12a36b; --note-bg:#eef4ff; --note-bd:#3b6fe0;
+    --primary:#0f4c5c; --secondary:#1b6e7e; --accent:#c79a3a;
+    --bg:#f6f8f9; --card:#ffffff; --text:#1f2d33; --muted:#5d6f78;
+    --line:#e2e8ea; --tip-bg:#eef6f3; --tip-line:#2e8b6f;
+    --warn-bg:#fdf4e7; --warn-line:#c79a3a; --step-bg:#f0f5f6;
+    --start-bg:#eaf4f1; --start-line:#0f4c5c;
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0; background:var(--bg); color:var(--ink);
-    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Noto Naskh Arabic","Segoe UI",Tahoma,sans-serif;}
-  /* ---------- language switch ---------- */
-  .langbar{position:sticky; top:0; z-index:50; display:flex; gap:8px; align-items:center;
-    justify-content:flex-end; padding:10px 20px; background:#08211f; color:#cfe8e4;
-    border-bottom:1px solid #0b4f4a}
-  .langbar .brand{margin-inline-end:auto; font-weight:700; color:#fff; letter-spacing:.02em}
-  .langbar button{font:inherit; font-size:14px; font-weight:700; cursor:pointer;
-    border:1px solid #2c6e67; background:transparent; color:#cfe8e4; padding:6px 16px; border-radius:999px}
-  .langbar button.active{background:var(--accent); color:#fff; border-color:var(--accent)}
-  .langbar button:hover{border-color:#5e9a93}
-  /* ---------- layout ---------- */
-  .doc{display:none}
-  .doc.show{display:block}
-  .wrap{display:flex; align-items:flex-start}
-  nav.toc{position:sticky; top:49px; align-self:flex-start;
-    width:290px; min-width:290px; height:calc(100vh - 49px); overflow-y:auto;
-    background:var(--sidebar); color:var(--sidebar-ink); padding:24px 18px; font-size:14px}
-  nav.toc h2{color:#fff; font-size:15px; letter-spacing:.04em; margin:0 0 4px}
-  nav.toc .sub{color:#7fb8b1; font-size:12px; margin:0 0 18px}
-  nav.toc a{display:block; color:var(--sidebar-ink); text-decoration:none; padding:6px 10px; border-radius:6px; margin:1px 0}
-  nav.toc a:hover{background:rgba(255,255,255,.08); color:#fff}
-  nav.toc ol{list-style:none; margin:0; padding:0; counter-reset:s}
-  nav.toc ol li a::before{counter-increment:s; content:counter(s) ".  "; color:#5e9a93; font-variant-numeric:tabular-nums}
-  main{flex:1; min-width:0; padding:42px 56px; max-width:980px; margin:0 auto}
-  /* ---------- typography ---------- */
-  h1{font-size:30px; margin:0 0 4px; color:var(--accent-d); line-height:1.25}
-  .lead{color:var(--muted); font-size:17px; margin:0 0 8px}
-  .stamp{color:var(--muted); font-size:13px; border-bottom:1px solid var(--line); padding-bottom:18px; margin-bottom:8px}
-  section{padding-top:28px; margin-top:14px; border-top:1px solid var(--line)}
-  section:first-of-type{border-top:none}
-  h2{font-size:23px; color:var(--accent-d); margin:.2em 0 .5em}
-  h2 .n{color:var(--accent); font-weight:700; margin-inline-end:.4em}
-  h3{font-size:18px; color:var(--ink); margin:1.4em 0 .4em}
-  p{margin:.6em 0}
-  ul,ol{margin:.5em 0 .8em; padding-inline-start:1.4em}
-  li{margin:.25em 0}
-  strong{color:var(--accent-d)}
-  /* ---------- inline code: ALWAYS ltr-isolated, even inside RTL ---------- */
-  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
-    background:var(--code-bg); color:#0b4f4a; padding:1px 6px; border-radius:5px; font-size:.88em;
-    white-space:nowrap; direction:ltr; unicode-bidi:isolate; display:inline-block}
-  /* ---------- tables ---------- */
-  table{border-collapse:collapse; width:100%; margin:1em 0; font-size:14.5px; background:#fff;
-    border:1px solid var(--line); border-radius:10px; overflow:hidden}
-  th,td{text-align:start; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
-  th{background:#0f766e0d; color:var(--accent-d); font-weight:700}
-  tr:last-child td{border-bottom:none}
-  td code{white-space:normal}
-  .ok{color:#0b7a4b; font-weight:700}.no{color:#b3261e; font-weight:700}.part{color:#b6740a; font-weight:700}
-  /* ---------- callouts ---------- */
-  .callout{border-inline-start:5px solid; border-radius:8px; padding:14px 18px; margin:1.1em 0; font-size:15px}
-  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
-  .callout .h{font-weight:700; display:block; margin-bottom:4px}
-  .warn{background:var(--warn-bg); border-color:var(--warn-bd)}.warn .h{color:#9a5b00}
-  .tip{background:var(--tip-bg); border-color:var(--tip-bd)}.tip .h{color:#0b6e49}
-  .note{background:var(--note-bg); border-color:var(--note-bd)}.note .h{color:#274bb0}
-  /* ---------- misc ---------- */
-  .pill{display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:999px}
-  .pill.off{background:#fde2e1; color:#b3261e}.pill.on{background:#d8f3e6; color:#0b7a4b}
-  .steps{counter-reset:st; list-style:none; padding-inline-start:0}
-  .steps>li{position:relative; padding:4px 0; padding-inline-start:44px; margin:.4em 0}
-  .steps>li::before{counter-increment:st; content:counter(st); position:absolute; inset-inline-start:0; top:2px;
-    width:30px; height:30px; border-radius:50%; background:var(--accent); color:#fff;
-    font-weight:700; display:flex; align-items:center; justify-content:center; font-size:14px}
-  footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px}
-  @media (max-width:900px){
-    .wrap{flex-direction:column}
-    nav.toc{position:static; width:100%; min-width:0; height:auto}
-    nav.toc ol{columns:2}
-    main{padding:26px 18px}
-  }
-  @media print{
-    .langbar,nav.toc{display:none}
-    body{background:#fff}
-    main{max-width:none; padding:0}
-    section{break-inside:avoid; border-top:1px solid #ccc}
-    .callout,table{break-inside:avoid}
-    a{color:inherit; text-decoration:none}
-  }
+  body{margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma","Geeza Pro",sans-serif;
+    line-height:1.95; font-size:17px;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px}
+  .cover{background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff; padding:54px 30px 46px; text-align:center;
+    border-radius:0 0 26px 26px; box-shadow:0 6px 24px rgba(15,76,92,.18);}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.16); color:#fff;
+    padding:5px 16px; border-radius:30px; font-size:14px; margin-bottom:14px;}
+  .cover h1{margin:6px 0 10px; font-size:33px; font-weight:800}
+  .cover p{margin:0 auto; max-width:680px; font-size:18px; opacity:.95}
+  .cover .ver{margin-top:16px; font-size:14px; opacity:.8}
+  .intro{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 26px; margin:26px 0; box-shadow:0 2px 10px rgba(0,0,0,.03);
+    border-right:6px solid var(--accent);}
+  .intro h2{margin:0 0 8px; color:var(--primary); font-size:22px}
+  .quickstart{background:var(--start-bg); border:2px solid var(--start-line);
+    border-radius:18px; padding:26px 28px; margin:26px 0; box-shadow:0 4px 16px rgba(15,76,92,.10)}
+  .quickstart h2{margin:0 0 6px; color:var(--primary); font-size:27px}
+  .quickstart .sub{color:var(--secondary); margin:0 0 16px; font-size:16px}
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:6px 0 4px; justify-content:center}
+  .flow .node{background:#fff; border:2px solid var(--start-line); color:var(--primary);
+    border-radius:12px; padding:8px 16px; font-weight:700; font-size:16px}
+  .flow .arr{color:var(--secondary); font-weight:800; font-size:20px}
+  .toc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 24px; margin:24px 0}
+  .toc h3{margin:0 0 10px; color:var(--secondary)}
+  .toc ol{margin:0; padding-inline-start:22px}
+  .toc a{color:var(--primary); text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  section{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:26px 28px; margin:22px 0; box-shadow:0 2px 10px rgba(0,0,0,.03)}
+  section h2{color:var(--primary); font-size:24px; margin:0 0 6px;
+    border-bottom:2px solid var(--line); padding-bottom:10px}
+  section .intro-line{color:var(--muted); margin:0 0 12px}
+  h3.sub2{color:var(--secondary); font-size:19px; margin:22px 0 8px}
+  .path{display:inline-block; background:var(--step-bg); border:1px solid var(--line);
+    border-radius:8px; padding:3px 10px; font-size:15px; color:var(--primary);
+    margin:2px 0; font-weight:600; direction:ltr}
+  .lbl-en{background:#eef2fb; border:1px solid #d4ddef; border-radius:6px; padding:0 7px;
+    font-size:14px; color:#2c4470; direction:ltr; display:inline-block; font-weight:600}
+  ol.steps{counter-reset:step; list-style:none; padding:0; margin:14px 0}
+  ol.steps li{counter-increment:step; position:relative; background:#fff;
+    border:1px solid var(--line); border-radius:12px; padding:14px 60px 14px 16px; margin:10px 0}
+  .quickstart ol.steps li{background:#fff}
+  ol.steps li::before{content:counter(step); position:absolute; right:14px; top:14px;
+    width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px}
+  ol.steps li b{color:var(--primary)}
+  .opt{border:1px solid var(--line); border-radius:14px; padding:8px 18px 16px; margin:16px 0; background:#fcfdfd}
+  .opt h3{color:var(--secondary); font-size:19px; margin:14px 0 10px}
+  .opt h3 .lbl-en{font-size:15px}
+  .opt .qa{display:flex; gap:10px; margin:8px 0; align-items:flex-start}
+  .opt .qa .lbl{flex:0 0 96px; font-weight:700; font-size:14px; padding:3px 0; text-align:center; border-radius:8px}
+  .opt .qa.what .lbl{background:#e7eff1; color:#0f4c5c}
+  .opt .qa.why  .lbl{background:#eef6f3; color:#2e8b6f}
+  .opt .qa.eff  .lbl{background:#fdf4e7; color:#9c6b16}
+  .opt .qa .txt{flex:1}
+  .opt .ex{background:#f0f5f6; border-radius:8px; padding:8px 12px; margin-top:8px; font-size:15px; color:var(--text)}
+  .tip,.warn{border-radius:12px; padding:14px 18px; margin:16px 0; font-size:16px}
+  .tip{background:var(--tip-bg); border-right:5px solid var(--tip-line)}
+  .warn{background:var(--warn-bg); border-right:5px solid var(--warn-line)}
+  .tip b,.warn b{display:block; margin-bottom:4px}
+  .whatif{border:1px solid var(--line); border-radius:12px; padding:6px 18px 14px; margin:12px 0; background:#fff}
+  .whatif p{margin:12px 0}
+  .whatif .q{font-weight:700; color:var(--primary)}
+  .whatif .a{color:var(--text)}
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:16px; background:#fff}
+  th,td{border:1px solid var(--line); padding:11px 13px; text-align:right; vertical-align:top}
+  th{background:var(--primary); color:#fff; font-weight:700}
+  tr:nth-child(even) td{background:#fafcfc}
+  .pill{display:inline-block; background:var(--tip-bg); color:var(--primary); border-radius:20px; padding:1px 10px; font-size:14px; font-weight:600}
+  .pill.off{background:#fcebea; color:#c0392b}
+  .badge-pdpl{display:inline-block; border-radius:20px; padding:1px 12px; font-size:14px; font-weight:700}
+  .b-light{background:#e3f3ec; color:#1f7a55}
+  .b-heavy{background:#fbe6e6; color:#a32b2b}
+  .tech{background:#f1f3f4; border:1px dashed #b8c2c6; border-radius:12px; padding:16px 20px; margin-top:26px; font-size:15px; color:var(--muted)}
+  .tech h3{color:#46555c; margin-top:0}
+  .tech code{background:#fff; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-family:Consolas,monospace; direction:ltr; display:inline-block}
+  footer{text-align:center; color:var(--muted); font-size:14px; margin-top:30px}
 </style>
 </head>
 <body>
 
-<div class="langbar">
-  <span class="brand">Lead Generation · توليد العملاء المحتملين</span>
-  <button id="btn-en" class="active" onclick="setLang('en')">English</button>
-  <button id="btn-ar" onclick="setLang('ar')">العربية</button>
-</div>
+<header class="cover">
+  <span class="badge">Era Group · CRM AI Agents</span>
+  <h1>توليد العملاء المحتملين — Lead Generation</h1>
+  <p>المحرّك الذي يجلب شركات B2B وصنّاع قرار <b>جدداً تماماً</b> من مصادر خارجية إلى نظامك: يبحث بالمواصفات التي تحدّدها، يزيل التكرار، ينشئ السجلات موسومةً بمصدرها، ثم يسلّمها للإثراء والامتثال — <u>ولا يرسل أي رسالة بنفسه</u>.</p>
+  <div class="ver">الإصدار 19.0.1.1.0 · دليل المستخدم</div>
+</header>
 
-<!-- ================= ENGLISH ================= -->
-<div class="doc show" id="doc-en" lang="en" dir="ltr">
 <div class="wrap">
+
+  <div class="intro">
+    <h2>وش تسوّي لك هذه الوحدة؟ (بسطرين)</h2>
+    <p>على عكس «الإثراء» الذي يُكمل سجلات <b>موجودة</b>، هذه الوحدة تقف على <b>رأس القمع</b> وتجلب عملاء <b>جدداً</b> لا وجود لهم عندك: شركات (وأحياناً صنّاع قرار) من سجلات تجارية ومصادر بحث عامة، حسب القطاعات والمناطق التي تستهدفها. كل سجلّ تنشئه يُوسَم بـ<span class="lbl-en">by_lead_generator_agent</span> ويُختَم بمصدره، فيمكن عزل أو حذف كل ما جاء من الخارج بضغطة. ثم تُسلَّم السجلات للإثراء (لإكمالها) وللامتثال (لحراستها) قبل أي تواصل.</p>
+  </div>
+
+  <!-- ===================== QUICK PATH ===================== -->
+  <div class="quickstart" id="start">
+    <h2>★ خط الأنابيب بنظرة سريعة</h2>
+    <p class="sub">توليد العملاء أول حلقة؛ يُنشئ فقط، ثم يسلّم. لا تواصل يخرج من هنا.</p>
+    <div class="flow">
+      <span class="node">مصادر خارجية</span><span class="arr">←</span>
+      <span class="node">جلب + استخراج</span><span class="arr">←</span>
+      <span class="node">إزالة تكرار</span><span class="arr">←</span>
+      <span class="node">إنشاء (موسوم)</span><span class="arr">←</span>
+      <span class="node">إثراء + امتثال</span>
+    </div>
+    <ol class="steps">
+      <li><b>الجلب:</b> يمرّ على المصادر المُفعّلة بالترتيب (الشلال) ويجلب شركات مطابقة لمواصفاتك.</li>
+      <li><b>إزالة التكرار:</b> يقارن الوارد بجهات الاتصال الموجودة — لا ينشئ مكرّراً أبداً (تخطّي أو تعبئة الفراغات فقط).</li>
+      <li><b>الإنشاء:</b> ينشئ الشركات الجديدة (وصنّاع القرار إن فُعّل) موسومةً ومختومةً بمصدرها.</li>
+      <li><b>التسليم:</b> يُمرّرها للإثراء (يكملها/يتحقّق) وللامتثال (يحرسها) — والتواصل الفعلي وظيفة وكلاء آخرين.</li>
+    </ol>
+    <div class="warn">
+      <b>نقطتان مهمّتان من البداية</b>
+      الوحدة <u>مُطفأة بالكامل افتراضياً</u>، و<b>جلب صنّاع القرار (الأفراد) مُطفأ بمفتاح منفصل</b> — لأنه الأثقل وفق نظام حماية البيانات (PDPL). لا يحدث شيء حتى يفعّلها مدير <b>ويفعّل مصدراً واحداً على الأقل متوفّراً له توكن</b>. هذا تصميم آمن مقصود.
+    </div>
+  </div>
+
+  <!-- ===================== TOC ===================== -->
   <nav class="toc">
-    <h2>Lead Generation</h2><p class="sub">User &amp; Manager Manual</p>
+    <h3>محتويات الدليل</h3>
     <ol>
-      <li><a href="#en-overview">Overview</a></li>
-      <li><a href="#en-before">Before you start</a></li>
-      <li><a href="#en-config">Configuration</a></li>
-      <li><a href="#en-providers">Activating data providers</a></li>
-      <li><a href="#en-manual">Running a discovery (manual)</a></li>
-      <li><a href="#en-cron">Running automatically (cron)</a></li>
-      <li><a href="#en-handoff">The Enrichment hand-off</a></li>
-      <li><a href="#en-caps">Caps &amp; cost control</a></li>
-      <li><a href="#en-audit">Audit &amp; monitoring</a></li>
-      <li><a href="#en-pdpl">PDPL &amp; compliance</a></li>
-      <li><a href="#en-faq">Troubleshooting / FAQ</a></li>
-      <li><a href="#en-glossary">Glossary</a></li>
+      <li><a href="#what">ما هي الوحدة ومن يستخدمها</a></li>
+      <li><a href="#concepts">مفاهيم تفهمها مرة واحدة</a></li>
+      <li><a href="#manager">للمدير: الإعداد والتفعيل خطوة بخطوة</a></li>
+      <li><a href="#screens">الشاشات شاشةً بشاشة (كل حقل بمعناه)</a></li>
+      <li><a href="#flow">خط التسليم: من الجلب إلى الإثراء والامتثال</a></li>
+      <li><a href="#test">كيف تجرّبها بنفسك خطوة بخطوة</a></li>
+      <li><a href="#limits">ملاحظات وحدود مهمة (بصدق)</a></li>
+      <li><a href="#faq">أسئلة شائعة قصيرة</a></li>
     </ol>
   </nav>
-  <main>
-    <h1>Lead Generation — User Manual</h1>
-    <p class="lead">Net-new B2B company &amp; decision-maker discovery for the Era Group CRM AI Agents suite.</p>
-    <p class="stamp">Module: <code>era_crm_ai_agents_lead_gen</code> · Audience: managers &amp; administrators · Scope: configuration &amp; day-to-day operation</p>
 
-    <section id="en-overview"><h2><span class="n">1.</span>Overview</h2>
-      <p>Lead Generation is the <strong>top of the sales funnel</strong>. Its job is to bring <strong>net-new companies</strong> (and, optionally, their decision-makers) <em>into</em> the CRM from external data sources, de-duplicate them, tag them so they are traceable, and leave them ready for the rest of the suite.</p>
-      <h3>What it does</h3>
-      <ul>
-        <li>Queries external sources (search APIs, business registries) in priority order to <strong>discover companies</strong> matching your targeting (sectors, regions, size).</li>
-        <li>Uses the suite's AI to read each source's raw response and extract structured firmographics.</li>
-        <li><strong>De-duplicates before creating</strong>, then creates a <code>res.partner</code> company, tags it <code>by_lead_generator_agent</code>, and stamps the source on <code>x_lead_gen_source</code>.</li>
-        <li>Optionally discovers <strong>decision-makers</strong> and links them to their company — only when explicitly enabled.</li>
-        <li>Runs daily inside hard daily and cost caps, with every decision written to the audit log.</li>
-      </ul>
-      <h3>What it does <em>not</em> do</h3>
-      <ul>
-        <li>It is <strong>not Enrichment (#2)</strong>. Enrichment <em>completes</em> existing records; Lead Generation <em>brings in records that do not exist yet</em>.</li>
-        <li>It sends no outreach — it only creates records.</li>
-        <li>It does not guarantee data quality; expect a company name and website far more reliably than a VAT number.</li>
-      </ul>
-      <div class="callout note"><span class="h">ℹ️ Honest expectations (read this)</span>
-        <p>With the right API tokens this module reliably finds <strong>companies</strong>. The <strong>decision-maker (people) side is intentionally limited today</strong> — most contact-data providers are not yet implemented and LinkedIn is a deferred stub (see §4). Treat the company feed as a "suggested companies" list a human reviews.</p></div>
-    </section>
+  <!-- ===================== WHAT ===================== -->
+  <section id="what">
+    <h2>١) ما هي الوحدة ومن يستخدمها</h2>
+    <p class="intro-line">باختصار عملي قبل التفاصيل.</p>
+    <p>«توليد العملاء» محرّك تنقيب (prospecting) يجلب سجلات <b>جديدة</b> إلى قاعدتك من الخارج، بدل الاكتفاء بملاحقة الموجود. يفيدك حين تريد توسيع السوق: شركات في قطاع/منطقة معيّنة لم تتعامل معها بعد. الإعداد والشاشات <b>للمدير فقط</b> (<span class="lbl-en">AI Agents Manager</span>)، لأن تفعيل المصادر وضبط استهداف الأفراد قرار قانوني/تشغيلي حسّاس.</p>
+    <div class="tip">
+      <b>الفرق عن «الإثراء»</b>
+      الإثراء يُكمل سجلاً <u>موجوداً</u>؛ توليد العملاء يُنشئ سجلاً <u>جديداً</u> من الخارج. الأول لا ينشئ، والثاني لا يُكمل — وهما متكاملان في نفس خط الأنابيب.
+    </div>
+  </section>
 
-    <section id="en-before"><h2><span class="n">2.</span>Before you start — prerequisites</h2>
-      <ul>
-        <li><strong>Base module installed.</strong> Depends on <code>era_crm_ai_agents_base</code> — the only hard dependency.</li>
-        <li><strong>Python <code>requests</code></strong> available on the server (ships with Odoo).</li>
-        <li><strong>A manager role.</strong> Configuration and the source list are visible only to the AI Agents Manager group; salespeople see sources read-only.</li>
-        <li><strong>API tokens in the server environment</strong> for any source you use — never in the database (§4).</li>
-      </ul>
-      <div class="callout warn"><span class="h">⚠️ Everything ships OFF by default — deliberately</span>
-        <p>On a fresh install the master switch <code>era_crm_ai_agents_lead_gen.enabled</code> is <span class="pill off">OFF</span>, <strong>all 18 seeded sources are inactive</strong> (<code>active = False</code>), and decision-maker fetching is <span class="pill off">OFF</span>. Nothing queries the network, spends money, or creates records until a manager turns it on. This is the review-first posture required by PDPL (§10).</p></div>
-    </section>
+  <!-- ===================== CONCEPTS ===================== -->
+  <section id="concepts">
+    <h2>٢) مفاهيم تفهمها مرة واحدة</h2>
+    <p class="intro-line">هذه المصطلحات تتكرّر في كل الشاشات.</p>
 
-    <section id="en-config"><h2><span class="n">3.</span>Configuration (manager-facing)</h2>
-      <p>All settings live on the global <strong>Settings</strong> page, under the <strong>CRM AI Agents → Lead Generation</strong> block (manager-only), or via <strong>CRM AI Agent Base → Lead Generation → Settings</strong>. Each field is backed by an <code>ir.config_parameter</code> key under <code>era_crm_ai_agents_lead_gen.*</code>.</p>
-      <h3>Master &amp; PDPL toggles</h3>
-      <table><thead><tr><th>Setting / config key</th><th>Default</th><th>Controls</th><th>Recommended</th></tr></thead><tbody>
-        <tr><td>Enable Lead Generation<br><code>…lead_gen.enabled</code></td><td><span class="pill off">False</span></td><td>Master switch. While OFF the engine does nothing — no source is queried.</td><td>OFF until ready; then ON.</td></tr>
-        <tr><td>Fetch Decision-Makers<br><code>…fetch_decision_makers</code></td><td><span class="pill off">False</span></td><td>Separate gate for discovering individuals — heaviest under PDPL.</td><td>OFF unless legal review approves.</td></tr>
-        <tr><td>Route through Compliance<br><code>…require_compliance_check</code></td><td>True</td><td>Posture: created records must pass Compliance (#1) before outreach.</td><td>Leave True.</td></tr>
-        <tr><td>Decision-maker notice<br><code>…decision_maker_notice</code></td><td><code>required</code></td><td>Stance on processing notice (<code>required</code>/<code>not_required</code>).</td><td>Leave <code>required</code>.</td></tr>
-        <tr><td>Decision-maker consent<br><code>…decision_maker_consent</code></td><td><code>required</code></td><td>Stance on consent before processing personal data.</td><td>Leave <code>required</code>.</td></tr>
-      </tbody></table>
-      <h3>Targeting</h3>
-      <table><thead><tr><th>Setting / config key</th><th>Default</th><th>Controls</th><th>Recommended</th></tr></thead><tbody>
-        <tr><td>Target Sectors<br><code>…target_sectors</code></td><td>(empty)</td><td>Comma-separated industries, e.g. <code>Construction, Logistics</code>.</td><td>Set your ICP; empty = no filter.</td></tr>
-        <tr><td>Target Regions<br><code>…target_regions</code></td><td>(empty)</td><td>Comma-separated cities, e.g. <code>Riyadh, Jeddah</code>.</td><td>Set your KSA cities.</td></tr>
-        <tr><td>Target Company Size<br><code>…target_company_size</code></td><td>(empty)</td><td>Free-text bands, e.g. <code>11-50, 51-200</code>.</td><td>Optional.</td></tr>
-        <tr><td>Target Job Titles<br><code>…target_job_titles</code></td><td>(empty)</td><td>Titles, e.g. <code>CEO, Procurement Manager</code> — used only with people-fetch ON.</td><td>Set if you enable people-fetch.</td></tr>
-      </tbody></table>
-      <h3>Caps, de-dup, residency &amp; provenance</h3>
-      <table><thead><tr><th>Setting / config key</th><th>Default</th><th>Controls</th><th>Recommended</th></tr></thead><tbody>
-        <tr><td>Daily Fetch Cap<br><code>…daily_cap</code></td><td><code>50</code></td><td>Max records created/day. <code>0</code> = unlimited; empty = blocks (fail-safe). Dual-enforced (§8).</td><td>Start 25–50.</td></tr>
-        <tr><td>On duplicate match<br><code>…dedup_mode</code></td><td><code>skip</code></td><td><code>skip</code> = leave existing; <code>update</code> = fill blank fields. Never duplicates.</td><td>Leave <code>skip</code>.</td></tr>
-        <tr><td>Default jurisdiction<br><code>…default_jurisdiction</code></td><td><code>sa</code></td><td>Registry jurisdiction when targeting gives none — keeps searches KSA-scoped.</td><td>Leave <code>sa</code>.</td></tr>
-        <tr><td>Missing-token policy<br><code>…block_source_without_token</code></td><td><code>warn</code></td><td><code>warn</code> = skip token-less source + audit; <code>silent</code> = skip without audit.</td><td>Leave <code>warn</code>.</td></tr>
-        <tr><td>Prefer local sources<br><code>…data_residency_prefer_local</code></td><td>True</td><td>Favours in-region registries (already in source priorities).</td><td>Leave True.</td></tr>
-        <tr><td>Flag data leaving region<br><code>…data_residency_flag_egress</code></td><td>True</td><td>Audits a flag whenever a non-Saudi-local source is used.</td><td>Leave True.</td></tr>
-        <tr><td>Lead-Gen tag name<br><code>…tag_name</code></td><td><code>by_lead_generator_agent</code></td><td>Partner tag stamped on every created record.</td><td>Leave as is.</td></tr>
-      </tbody></table>
-      <div class="callout note"><span class="h">ℹ️ The cost cap is shared, not local</span>
-        <p>Spending is governed by the suite-wide <code>era_crm_ai_agents.monthly_cost_cap</code> (default <code>100.0</code> USD), optionally overridden per agent via <code>era_crm_ai_agents.monthly_cost_cap.era_lead_gen</code>. The daily cap limits <em>record volume</em>; the monthly cap limits <em>spend</em> (§8).</p></div>
-    </section>
+    <div class="opt">
+      <h3>المصدر والشلال <span class="lbl-en">Source / Waterfall</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">قائمة مصادر خارجية مرتّبة بالأولوية (سجلات تجارية، محرّكات بحث، مزوّدو بيانات). يمرّ عليها المحرّك بالترتيب.</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">الترتيب يحدّد من يُسأل أولاً؛ والمصادر المحلية (السعودية) تُفضَّل لأسباب سيادة البيانات.</span></div>
+    </div>
 
-    <section id="en-providers"><h2><span class="n">4.</span>Activating data providers</h2>
-      <p>A <strong>provider</strong> is one external data service. The engine queries a source only when <strong>all three</strong> hold:</p>
-      <ol>
-        <li><strong>Active</strong> — toggled <code>active = True</code> (everything ships inactive).</li>
-        <li><strong>Token present</strong> — the environment variable named in <code>env_key_param</code> resolves on the server. The secret is <strong>never stored in Odoo</strong> — only the variable's name.</li>
-        <li><strong>In scope</strong> — decision-maker sources also need <code>fetch_decision_makers</code> ON.</li>
-      </ol>
-      <p>An <strong>active source with a missing token is skipped — never silently</strong>: a <code>blocked</code> audit entry is written (unless the policy is <code>silent</code>). Manage sources under <strong>Lead Generation → Sources</strong>.</p>
-      <div class="callout tip"><span class="h">💡 How to switch a source on</span>
-        <p>1) Put the key in the server environment under the variable the source names (e.g. <code>ERA_LEADGEN_SERPAPI_KEY</code>) and restart the server. 2) Open the source, confirm <strong>Token = ✓</strong>, toggle <strong>Active</strong>. 3) Ensure the master toggle is ON.</p></div>
-      <h3>What actually works today</h3>
-      <table><thead><tr><th>Source</th><th>Type</th><th>Status</th><th>Notes</th></tr></thead><tbody>
-        <tr><td>SerpAPI, Brave, Google CSE, Bing</td><td>web search</td><td class="ok">Functional</td><td>Query from targeting → API → AI extracts companies. Need their key in env. Google CSE also needs <code>ERA_LEADGEN_GOOGLE_CSE_CX</code>.</td></tr>
-        <tr><td>OpenCorporates</td><td>registry</td><td class="ok">Functional</td><td>Public registry API, scoped by <code>default_jurisdiction</code>.</td></tr>
-        <tr><td>Saudi MoC, Saudi Business Center</td><td>registry</td><td class="part">Needs provisioning</td><td>No public API; handler calls a manager URL (<code>ERA_LEADGEN_SAUDI_MOC_URL</code> / <code>…_BUSINESS_CENTER_URL</code>); else skips honestly.</td></tr>
-        <tr><td>Public-Page Scrape</td><td>scrape</td><td class="part">Opt-in, fragile</td><td>Fetches <code>ERA_LEADGEN_SCRAPE_URL</code> and lets the AI read it.</td></tr>
-        <tr><td>Hunter</td><td>contact data</td><td class="part">Partial</td><td>GET, but needs a known company domain — useful <em>after</em> a company exists.</td></tr>
-        <tr><td>Apollo, Lusha, RocketReach, SignalHire</td><td>contact data</td><td class="no">Not implemented</td><td>POST people-search; current seam is GET-only, so they skip honestly. Deferred.</td></tr>
-        <tr><td>LinkedIn</td><td>social</td><td class="no">Stub (deferred)</td><td>ToS-restricted; a declared stub that never runs and never blocks.</td></tr>
-        <tr><td>ZeroBounce, NeverBounce, WAHA, Mobile Validation</td><td>verification</td><td class="no">Not used in discovery</td><td>They verify existing data; discovery only walks company &amp; decision-maker sources.</td></tr>
-      </tbody></table>
-      <div class="callout warn"><span class="h">⚠️ The people-discovery sources are the limited ones</span>
-        <p>The providers that turn "a company" into "a named person to call" are exactly the ones not yet active. Plan around company discovery today.</p></div>
-    </section>
+    <div class="opt">
+      <h3>التصنيف <span class="lbl-en">Category</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">دور المصدر: <span class="lbl-en">Company</span> (بيانات شركات)، <span class="lbl-en">Decision-Maker</span> (أفراد صنّاع قرار)، <span class="lbl-en">Verification</span> (تحقّق من بريد/قناة).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">مصادر «صنّاع القرار» لا تعمل إلا إذا فعّلت المفتاح المنفصل الخاص بها.</span></div>
+    </div>
 
-    <section id="en-manual"><h2><span class="n">5.</span>Running a discovery — manual run</h2>
-      <ol class="steps">
-        <li><strong>Set targeting</strong> in Settings (e.g. <code>Construction</code> / <code>Riyadh, Jeddah</code>).</li>
-        <li><strong>Activate a working source</strong> with its token present (§4) — e.g. SerpAPI or OpenCorporates.</li>
-        <li><strong>Turn the master toggle ON.</strong> Leave Fetch Decision-Makers OFF for a company-only run.</li>
-        <li><strong>Trigger a run</strong> — same code path as the cron.</li>
-        <li><strong>Find results in CRM:</strong> new companies carry the <code>by_lead_generator_agent</code> tag + an <code>x_lead_gen_source</code> stamp. Use <strong>Lead Generation → Externally-Sourced Records</strong>, grouped by source.</li>
-      </ol>
-      <div class="callout note"><span class="h">ℹ️ The waterfall, briefly</span>
-        <p>The engine tries eligible sources <strong>by priority and stops at the first that returns results</strong>. Expect a handful of companies per run, not hundreds.</p></div>
-    </section>
+    <div class="opt">
+      <h3>حسّاسية PDPL <span class="lbl-en">PDPL Sensitivity</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">تصنيف خطورة المصدر على الخصوصية:
+        <span class="badge-pdpl b-light">Light — بيانات شركات (B2B)</span>
+        <span class="badge-pdpl b-heavy">Heavy — بيانات أفراد</span></span></div>
+      <div class="qa why"><span class="lbl">ليش تهمك</span><span class="txt">المصادر «Heavy» تمسّ بيانات أشخاص طبيعيين — تحتاج مراجعة قانونية قبل التفعيل.</span></div>
+    </div>
 
-    <section id="en-cron"><h2><span class="n">6.</span>Running automatically — the daily cron</h2>
-      <p>The scheduled action <strong>"Lead Generation: Scheduled fetch"</strong> runs <strong>once per day</strong> and calls the same entry point, unattended.</p>
-      <ul>
-        <li><strong>Runs under a shared, least-privilege execution identity</strong> — by default the internal <em>CRM AI Automation</em> account (login <code>crm_ai_automation</code>), which is <strong>not</strong> a superuser, so scheduled work obeys normal access rules. A manager can point this at any existing internal user in Settings, or (with a clear warning) switch it to OdooBot — see the note on execution identity below.</li>
-        <li><strong>Gated by the master toggle</strong> — if disabled it exits immediately.</li>
-        <li><strong>Respects both caps</strong> (§8).</li>
-        <li><strong>Never errors out</strong> — any guard block becomes a <strong>skip-with-audit</strong>.</li>
-      </ul>
-      <div class="callout note"><span class="h">ℹ️ After install</span><p>New scheduled actions require a <strong>full server restart</strong> to register.</p></div>
-    </section>
+    <div class="opt">
+      <h3>التوكن <span class="lbl-en">Token</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">مفتاح وصول المصدر، يُخزَّن في متغيّر بيئة على الخادم (يُحفظ <u>اسمه فقط</u> — القاعدة 03).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">المصدر يدخل الشلال فقط إذا كان <b>Active</b> <u>و</u> عمود <span class="lbl-en">Token</span> = ✓ (المتغيّر مضبوط فعلاً).</span></div>
+    </div>
 
-    <section id="en-handoff"><h2><span class="n">7.</span>The Enrichment hand-off</h2>
-      <p>Lead Generation does not call Enrichment directly — the hand-off is <strong>soft and dependency-free</strong>. Every created record is already <strong>tagged</strong> (<code>by_lead_generator_agent</code>) and <strong>source-stamped</strong> (<code>x_lead_gen_source</code>); that tag/stamp <em>is</em> the hand-off. Enrichment (#2), once present, scans for them on its own schedule. No direct call, no coupling.</p>
-    </section>
+    <div class="opt">
+      <h3>الوسم والختم <span class="lbl-en">Tag &amp; Source-stamp</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">كل سجلّ يُنشَأ يحمل وسم <span class="lbl-en">by_lead_generator_agent</span> وختم <span class="lbl-en">x_lead_gen_source</span> (اسم المصدر الدقيق).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمك</span><span class="txt">تقدر تعزل أو تحذف كل ما جاء من الخارج <b>كمجموعة واحدة</b> بضغطة — شفافية وتحكّم كاملان.</span></div>
+    </div>
 
-    <section id="en-caps"><h2><span class="n">8.</span>Caps &amp; cost control</h2>
-      <h3>Daily record cap (<code>…daily_cap</code>, default 50)</h3>
-      <p>Limits records created per day, <strong>dual-enforced</strong>: before each source call (zero spend if already met) and again at each creation. Fail-safe: <code>0</code> = unlimited; missing = blocks.</p>
-      <h3>Monthly cost cap (suite-wide)</h3>
-      <p>Bounded by <code>era_crm_ai_agents.monthly_cost_cap</code> (default <code>100.0</code> USD). The engine re-checks it <strong>before each source call</strong>. Each run records both halves: source (<code>usage_type = source_api</code>) and AI (<code>usage_type = llm</code>).</p>
-      <h3>When a cap is hit</h3>
-      <ul>
-        <li><strong>Attended (manual) over the cost cap:</strong> fails fast with a clear error.</li>
-        <li><strong>Unattended (cron) over a cap:</strong> <strong>skips with audit</strong> (<code>cost_cap_exceeded</code>) and finishes cleanly.</li>
-      </ul>
-    </section>
+    <div class="opt">
+      <h3>إزالة التكرار <span class="lbl-en">De-duplication</span></h3>
+      <div class="qa what"><span class="lbl">وش هي</span><span class="txt">مقارنة الوارد بالموجود قبل الإنشاء. سلوكان: <span class="lbl-en">skip</span> (تخطّي، لا يلمس الموجود) أو <span class="lbl-en">update</span> (تعبئة الحقول الفارغة فقط).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>لا يُنشئ مكرّراً أبداً</b> في كلا الوضعين.</span></div>
+    </div>
+  </section>
 
-    <section id="en-audit"><h2><span class="n">9.</span>Audit &amp; monitoring</h2>
-      <p>Every decision goes to the append-only audit log (<strong>CRM AI Agents → Configuration → Audit Log</strong>, manager-only):</p>
-      <table><thead><tr><th>Event type</th><th>When</th></tr></thead><tbody>
-        <tr><td><code>external_contact</code></td><td>A company/decision-maker was created (links to the record; an individual's name is not stored).</td></tr>
-        <tr><td><code>blocked</code></td><td>An active source skipped for a missing token.</td></tr>
-        <tr><td><code>source_fetch_failed</code></td><td>A source call failed — only host + error type logged, never the URL or token.</td></tr>
-        <tr><td><code>cost_cap_exceeded</code></td><td>A run/creation stopped by the daily or cost cap.</td></tr>
-        <tr><td><code>ai_request</code> / <code>other</code></td><td>Per-attempt outcomes &amp; run start/end summaries.</td></tr>
-      </tbody></table>
-      <div class="callout tip"><span class="h">💡 Quick health check</span><p>Many <code>blocked</code> rows means active sources are missing tokens. A healthy run shows "run start", attempts, <code>external_contact</code> rows, and "run end".</p></div>
-    </section>
+  <!-- ===================== MANAGER ===================== -->
+  <section id="manager">
+    <h2>٣) للمدير: الإعداد والتفعيل خطوة بخطوة</h2>
+    <p class="intro-line">الافتراضات محافِظة عمداً: كل شيء مُطفأ، لا استهداف مفترض — لا يعمل شيء حتى تُراجع وتُفعّل.</p>
+    <p>كل شيء تحت تطبيق <span class="lbl-en">Lead Generation</span> المستقل في شريط التطبيقات (للمدير فقط).</p>
 
-    <section id="en-pdpl"><h2><span class="n">10.</span>PDPL &amp; compliance</h2>
-      <div class="callout warn"><span class="h">⚠️ Read before enabling decision-maker discovery</span>
-        <p>Discovering decision-makers means processing personal data of individuals who <strong>have not consented</strong>, and extraction sends source content to an international AI provider. <strong>A lawful basis must be reviewed and approved by your legal/DPO function before enabling it.</strong></p></div>
-      <p>The module is <strong>designed for compliance but does not assert it</strong>:</p>
-      <ul>
-        <li>Defaults are conservative — master toggle, people-fetch, and every source are OFF on install.</li>
-        <li>People-fetch sits behind a separate toggle so it cannot be switched on by accident.</li>
-        <li>Individuals are stored as linked contacts so retention/erasure applies separately.</li>
-        <li>Cross-border movement is flagged in the audit.</li>
-        <li>Notice/consent posture settings record your stance; Compliance (#1) enforces "no outreach without consent" downstream.</li>
-      </ul>
-      <div class="callout warn"><span class="h">⚠️ Enabling is not the same as being compliant</span>
-        <p>Turning toggles on does not make the behaviour lawful. The conservative defaults exist so the decision is a deliberate, reviewed one. There is no approved Era Group PDPL reference wired in; that review is yours.</p></div>
-    </section>
+    <h3 class="sub2">أ) الإعدادات</h3>
+    <p><span class="path">Lead Generation ← Settings</span> (أو <span class="path">Settings ← Lead Generation</span>).</p>
 
-    <section id="en-faq"><h2><span class="n">11.</span>Troubleshooting / FAQ</h2>
-      <h3>"I enabled it but no leads appear."</h3>
-      <p>Usually no source is eligible. Check: is a source <strong>Active</strong>? Token = ✓ (env var set + server restarted)? Is it a <em>company</em> source (verification sources never run in discovery)? Is the <strong>daily cap</strong> already met? The audit shows <code>blocked</code> or <code>cost_cap_exceeded</code> rows that explain it.</p>
-      <h3>"A specific provider isn't running."</h3>
-      <p>Apollo/Lusha/RocketReach/SignalHire and LinkedIn are not implemented yet (§4). Saudi registries need their <code>…_URL</code> env var. Web-search needs the key (and Google CSE the <code>…_CX</code> id). A token-less active source logs <code>blocked</code>.</p>
-      <h3>"The daily cron didn't run / created nothing."</h3>
-      <p>(1) master toggle OFF; (2) server not restarted after install; (3) a cap was hit (<code>cost_cap_exceeded</code>). The cron never throws — it always finishes with a trail.</p>
-      <h3>"I hit the daily cap."</h3>
-      <p>Expected and safe. Raise <code>…daily_cap</code>, set <code>0</code> for unlimited (not recommended early), or wait for the next day.</p>
-      <h3>"A new company looks dropped as a duplicate."</h3>
-      <p>De-dup matches on email, domain, VAT, or name+region; a bare name alone never blocks. In <code>skip</code> mode nothing changes; use <code>update</code> to fill blank fields.</p>
-      <h3>"Could a source call leak our API key into the logs?"</h3>
-      <p>No — on failure only the host and error type are logged, never the URL, query string, or token.</p>
-    </section>
+    <div class="opt">
+      <h3>المفتاحان الرئيسيان <span class="lbl-en">Master toggles</span></h3>
+      <div class="qa what"><span class="lbl">وش هما</span><span class="txt"><span class="lbl-en">Enable Lead Generation</span> (المحرّك كله)، و<span class="lbl-en">Fetch Decision-Makers</span> (جلب الأفراد صنّاع القرار).</span></div>
+      <div class="qa why"><span class="lbl">ليش يهمّان</span><span class="txt">الأول يشغّل كل شيء؛ الثاني يفتح أثقل جزء وفق PDPL (بيانات أشخاص).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt"><b>كلاهما OFF افتراضياً.</b> وهما مطفآن: لا مصدر يُسأل، ولا فرد يُجلب. فعّل الأول أولاً؛ ولا تفعّل الثاني إلا بعد مراجعة قانونية.</span></div>
+    </div>
 
-    <section id="en-glossary"><h2><span class="n">12.</span>Glossary</h2>
-      <ul>
-        <li><strong>Provider / source</strong> — one external data service.</li>
-        <li><strong>Token-presence</strong> — a source is used only when its named env var resolves; the secret is never stored, only the name (<code>env_key_param</code>).</li>
-        <li><strong>Waterfall</strong> — trying sources by priority and stopping at the first that returns results.</li>
-        <li><strong>Skip-with-audit</strong> — skipping a step and writing an audit entry instead of failing; never silent.</li>
-        <li><strong>Dual enforcement</strong> — the daily cap is checked before fetching and again at creation.</li>
-        <li><strong>Soft hand-off</strong> — passing records to Enrichment purely via the tag + source stamp.</li>
-        <li><strong>Execution identity</strong> — the user a scheduled run authenticates as. The suite-wide default is the least-privilege <em>CRM AI Automation</em> account (runs under normal access rules); a manager may repoint it to any internal user, or opt in to OdooBot (superuser — bypasses access rules, with a PDPL caution).</li>
-      </ul>
-    </section>
+    <div class="opt">
+      <h3>الاستهداف <span class="lbl-en">Targeting</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">حقول نصّية (مفصولة بفواصل) تحدّد من تبحث عنه: <span class="lbl-en">Sectors</span> (قطاعات)، <span class="lbl-en">Regions/Cities</span> (مناطق)، <span class="lbl-en">Company Size</span> (حجم)، <span class="lbl-en">Job Titles</span> (مناصب صنّاع القرار).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الحقل الفارغ = بلا قيد على ذلك البُعد. مثال: القطاعات «Construction, Logistics» + المناطق «Jeddah, Riyadh».</span></div>
+    </div>
 
-    <footer>Era Group — CRM AI Agents · Lead Generation (<code>era_crm_ai_agents_lead_gen</code>). Every config key and default here is taken from the module source.</footer>
-  </main>
-</div>
-</div>
+    <div class="opt">
+      <h3>الإنشاء وإزالة التكرار <span class="lbl-en">Creation</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt"><span class="lbl-en">Lead-Gen Tag Name</span> (الوسم المطبوع على كل سجلّ، افتراضياً <span class="lbl-en">by_lead_generator_agent</span>)، و<span class="lbl-en">On duplicate match</span> (عند تطابق مكرّر: تخطّي / تعبئة الفراغات).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الافتراضي <span class="lbl-en">skip</span> — لا يمسّ بيانات موجودة.</span></div>
+    </div>
 
-<!-- ================= ARABIC ================= -->
-<div class="doc" id="doc-ar" lang="ar" dir="rtl">
-<div class="wrap">
-  <nav class="toc">
-    <h2>توليد العملاء المحتملين</h2><p class="sub">دليل المستخدم والمدير</p>
-    <ol>
-      <li><a href="#ar-overview">نظرة عامة</a></li>
-      <li><a href="#ar-before">قبل أن تبدأ</a></li>
-      <li><a href="#ar-config">الإعدادات</a></li>
-      <li><a href="#ar-providers">تفعيل مصادر البيانات</a></li>
-      <li><a href="#ar-manual">تشغيل عملية اكتشاف (يدويًا)</a></li>
-      <li><a href="#ar-cron">التشغيل التلقائي (المجدوِل)</a></li>
-      <li><a href="#ar-handoff">التسليم إلى الإثراء</a></li>
-      <li><a href="#ar-caps">الحدود والتحكّم بالتكلفة</a></li>
-      <li><a href="#ar-audit">التدقيق والمراقبة</a></li>
-      <li><a href="#ar-pdpl">حماية البيانات والامتثال</a></li>
-      <li><a href="#ar-faq">استكشاف الأخطاء / الأسئلة الشائعة</a></li>
-      <li><a href="#ar-glossary">مسرد المصطلحات</a></li>
+    <div class="opt">
+      <h3>موقف الامتثال والخصوصية <span class="lbl-en">PDPL posture</span></h3>
+      <div class="qa what"><span class="lbl">وش هو</span><span class="txt">مواقف موثّقة يفرضها الامتثال لاحقاً: <span class="lbl-en">Route through Compliance before outreach</span> (ON)، <span class="lbl-en">Decision-maker notice</span> (مطلوب)، <span class="lbl-en">Decision-maker consent</span> (مطلوب)، تفضيل المصادر المحلية (ON)، والإشارة عند خروج البيانات من المنطقة (ON).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">توليد العملاء يُنشئ فقط؛ هذه المواقف <b>تُطبَّق فعلياً في طبقة الامتثال (#1)</b> قبل أي تواصل.</span></div>
+    </div>
+
+    <div class="opt">
+      <h3>الحد اليومي وسياسة التوكن الناقص</h3>
+      <div class="qa what"><span class="lbl">وش هما</span><span class="txt"><span class="lbl-en">Daily Fetch Cap</span> (أقصى سجلات تُنشأ يومياً، افتراضياً 50)، و<span class="lbl-en">Active source with missing token</span> (مصدر مفعّل بلا توكن: تحذير وتخطّي / تخطّي صامت).</span></div>
+      <div class="qa eff"><span class="lbl">الأثر</span><span class="txt">الحدّ 0 أو أقل = بلا حد (تعطيل صريح)؛ قيمة ناقصة/غير صالحة = <b>يمنع الجلب</b> (fail-safe). الافتراضي في التوكن الناقص: <b>تحذير + تدقيق</b> (لا تخطّي صامت).</span></div>
+    </div>
+
+    <h3 class="sub2">ب) تفعيل المصادر</h3>
+    <p><span class="path">Lead Generation ← Sources</span>. تأتي الوحدة بـ18 مصدراً مُهيّأً <u>وكلها غير مفعّلة</u>، مرتّبة بالأولوية:</p>
+    <table>
+      <tr><th>الفئة</th><th>أمثلة المصادر</th><th>حسّاسية PDPL</th></tr>
+      <tr><td>شركات — سجلات محلية</td><td>وزارة التجارة السعودية · المركز السعودي للأعمال · OpenCorporates</td><td><span class="badge-pdpl b-light">Light</span></td></tr>
+      <tr><td>شركات — بحث/كشط ويب</td><td>SerpAPI · Brave · Google Custom Search · Bing · Public-Page Scrape</td><td><span class="badge-pdpl b-light">Light</span></td></tr>
+      <tr><td>تحقّق (قناة/بريد)</td><td>ZeroBounce · NeverBounce · Mobile Number Validation · WhatsApp (WAHA)</td><td><span class="badge-pdpl b-heavy">Heavy</span></td></tr>
+      <tr><td>صنّاع القرار (أفراد)</td><td>Apollo · Hunter · Lusha · RocketReach · SignalHire · LinkedIn</td><td><span class="badge-pdpl b-heavy">Heavy</span></td></tr>
+    </table>
+    <ol class="steps">
+      <li>افتح المصدر المطلوب، وتأكّد أن له توكناً (عمود <span class="lbl-en">Token</span> = ✓).</li>
+      <li>فعّل مفتاح <span class="lbl-en">Active</span> — <b>قرار قانوني/تشغيلي، راجع PDPL أولاً</b> (خصوصاً مصادر Heavy).</li>
+      <li>اضبط ترتيبه بالسحب من مقبض الأولوية (الأقل رقماً يعمل أولاً).</li>
     </ol>
-  </nav>
-  <main>
-    <h1>توليد العملاء المحتملين — دليل المستخدم</h1>
-    <p class="lead">اكتشاف شركات (B2B) وصنّاع قرار جُدد بالكامل ضمن منظومة وكلاء الذكاء الاصطناعي لمجموعة Era.</p>
-    <p class="stamp">الوحدة: <code>era_crm_ai_agents_lead_gen</code> · الجمهور: المديرون والمسؤولون · النطاق: الإعداد والتشغيل اليومي</p>
+    <div class="tip">
+      <b>الفحص التلقائي: متى يعمل؟</b>
+      مهمة مجدولة باسم <span class="lbl-en">Lead Generation: Scheduled fetch</span> تعمل تحت مستخدم محدود الصلاحية (لا مدير ولا جذري) — ولا تعمل إطلاقاً ما لم يكن <span class="lbl-en">Enable Lead Generation</span> مفعّلاً.
+    </div>
+  </section>
 
-    <section id="ar-overview"><h2><span class="n">١.</span>نظرة عامة</h2>
-      <p>توليد العملاء المحتملين هو <strong>رأس قُمع المبيعات</strong>. مهمته جلب <strong>شركات جديدة بالكامل</strong> (واختياريًا صنّاع القرار فيها) <em>إلى</em> نظام إدارة العلاقات من مصادر بيانات خارجية، ثم منع التكرار، ووسمها لتكون قابلة للتتبّع، وتركها جاهزة لبقية المنظومة.</p>
-      <h3>ما الذي يقوم به</h3>
-      <ul>
-        <li>يستعلم من مصادر خارجية (واجهات بحث، سجلات تجارية) بترتيب الأولوية <strong>لاكتشاف الشركات</strong> المطابقة لاستهدافك (القطاعات، المناطق، الحجم).</li>
-        <li>يستخدم الذكاء الاصطناعي للمنظومة لقراءة الاستجابة الخام لكل مصدر واستخراج بيانات الشركات بشكل منظّم.</li>
-        <li><strong>يمنع التكرار قبل الإنشاء</strong>، ثم ينشئ سجل شركة <code>res.partner</code>، ويسمه <code>by_lead_generator_agent</code>، ويختم المصدر في <code>x_lead_gen_source</code>.</li>
-        <li>يكتشف اختياريًا <strong>صنّاع القرار</strong> ويربطهم بشركاتهم — فقط عند تفعيل ذلك صراحةً.</li>
-        <li>يعمل يوميًا ضمن حدود يومية وحدود تكلفة صارمة، مع تدوين كل قرار في سجل التدقيق.</li>
-      </ul>
-      <h3>ما الذي <em>لا</em> يقوم به</h3>
-      <ul>
-        <li>إنه <strong>ليس وحدة الإثراء (#2)</strong>. الإثراء <em>يُكمل</em> السجلات الموجودة؛ أما توليد العملاء فيُدخل <em>سجلات غير موجودة بعد</em>.</li>
-        <li>لا يُرسل أي تواصل — يكتفي بإنشاء السجلات.</li>
-        <li>لا يضمن جودة البيانات؛ توقّع اسم الشركة وموقعها الإلكتروني بموثوقية أعلى بكثير من الرقم الضريبي.</li>
-      </ul>
-      <div class="callout note"><span class="h">ℹ️ توقّعات صادقة (يُرجى قراءتها)</span>
-        <p>بوجود مفاتيح الواجهات الصحيحة يجد هذا النظام <strong>الشركات</strong> بموثوقية. أمّا جانب <strong>صنّاع القرار (الأشخاص) فمحدود عمدًا اليوم</strong> — فمعظم مزوّدي بيانات التواصل غير مُنفَّذين بعد، وLinkedIn مؤجَّل (انظر القسم ٤). تعامَل مع تغذية الشركات كقائمة «شركات مقترحة» يراجعها إنسان.</p></div>
-    </section>
+  <!-- ===================== SCREENS ===================== -->
+  <section id="screens">
+    <h2>٤) الشاشات شاشةً بشاشة</h2>
+    <p class="intro-line">ثلاث شاشات تحت تطبيق <span class="lbl-en">Lead Generation</span> (للمدير). شُحنت ترجمة عربية كاملة؛ ونضع التسمية الإنجليزية بجانب كل اسم.</p>
 
-    <section id="ar-before"><h2><span class="n">٢.</span>قبل أن تبدأ — المتطلبات</h2>
-      <ul>
-        <li><strong>تثبيت الوحدة الأساسية.</strong> تعتمد على <code>era_crm_ai_agents_base</code> — وهي الاعتماد الوحيد الإلزامي.</li>
-        <li><strong>توفّر مكتبة <code>requests</code></strong> على الخادم (تأتي مع أودو).</li>
-        <li><strong>صلاحية مدير.</strong> الإعدادات وقائمة المصادر مرئية فقط لمجموعة «مدير وكلاء الذكاء الاصطناعي»؛ ويرى مندوبو المبيعات المصادر للقراءة فقط.</li>
-        <li><strong>مفاتيح الواجهات في بيئة الخادم</strong> لأي مصدر تستخدمه — وليس في قاعدة البيانات أبدًا (القسم ٤).</li>
-      </ul>
-      <div class="callout warn"><span class="h">⚠️ كل شيء مُعطَّل افتراضيًا — وذلك عن قصد</span>
-        <p>عند التثبيت الجديد يكون المفتاح الرئيسي <code>era_crm_ai_agents_lead_gen.enabled</code> <span class="pill off">معطّلاً</span>، وكل المصادر الـ18 المزروعة <strong>غير نشطة</strong> (<code>active = False</code>)، وجلب صنّاع القرار <span class="pill off">معطّلاً</span>. لا شيء يتصل بالشبكة أو يُنفق مالًا أو ينشئ سجلات حتى يفعّله المدير. هذا هو الموقف «المراجعة أولًا» الذي يتطلبه نظام حماية البيانات (القسم ١٠).</p></div>
-    </section>
+    <h3 class="sub2">المصادر <span class="lbl-en">Sources</span></h3>
+    <p><span class="path">Lead Generation ← Sources</span> — قائمة مرتّبة بالسحب مع تفعيل مباشر.</p>
+    <table>
+      <tr><th>العمود</th><th>معناه</th></tr>
+      <tr><td>الأولوية <span class="lbl-en">Priority</span></td><td>مقبض سحب يحدّد ترتيب الشلال.</td></tr>
+      <tr><td>الاسم / النوع <span class="lbl-en">Type</span></td><td>اسم المصدر ونوعه (سجل محلي/بحث ويب/كشط/مزوّد بيانات/شبكة اجتماعية).</td></tr>
+      <tr><td>الفئة <span class="lbl-en">Category</span></td><td>شركة / صانع قرار / تحقّق.</td></tr>
+      <tr><td>حسّاسية PDPL <span class="lbl-en">PDPL</span></td><td>Light (شركات) أو Heavy (أفراد).</td></tr>
+      <tr><td>متغيّر التوكن / التوكن <span class="lbl-en">Env key / Token</span></td><td>اسم متغيّر البيئة، وهل هو مضبوط فعلاً (✓).</td></tr>
+      <tr><td>مفعّل <span class="lbl-en">Active</span></td><td>تشغيل/إيقاف المصدر في الشلال.</td></tr>
+    </table>
+    <p>بطاقة المصدر تضيف: <span class="lbl-en">Fields filled</span> (الحقول التي يملؤها) و<span class="lbl-en">Cost</span>. القاعدة الذهبية مكتوبة في البطاقة: يدخل الشلال فقط عند <b>Active</b> ووجود التوكن (✓).</p>
 
-    <section id="ar-config"><h2><span class="n">٣.</span>الإعدادات (للمدير)</h2>
-      <p>تقع كل الإعدادات في صفحة <strong>الإعدادات</strong> العامة، ضمن كتلة <strong>وكلاء CRM الذكية ← توليد العملاء المحتملين</strong> (للمدير فقط)، أو عبر <strong>القائمة ← توليد العملاء المحتملين ← الإعدادات</strong>. كل حقل مرتبط بمفتاح <code>ir.config_parameter</code> ضمن النطاق <code>era_crm_ai_agents_lead_gen.*</code>.</p>
-      <h3>المفاتيح الرئيسية ومفاتيح حماية البيانات</h3>
-      <table><thead><tr><th>الإعداد / المفتاح</th><th>الافتراضي</th><th>ما يتحكّم به</th><th>المُوصى به</th></tr></thead><tbody>
-        <tr><td>تفعيل توليد العملاء<br><code>…lead_gen.enabled</code></td><td><span class="pill off">False</span></td><td>المفتاح الرئيسي. عند الإيقاف لا يفعل المحرّك شيئًا — لا يُستعلَم أي مصدر.</td><td>أوقفه حتى الجاهزية ثم فعّله.</td></tr>
-        <tr><td>جلب صنّاع القرار<br><code>…fetch_decision_makers</code></td><td><span class="pill off">False</span></td><td>بوابة منفصلة لاكتشاف الأفراد — الأثقل تحت حماية البيانات.</td><td>أبقِه معطّلًا ما لم تعتمده المراجعة القانونية.</td></tr>
-        <tr><td>المرور عبر الامتثال<br><code>…require_compliance_check</code></td><td>True</td><td>موقف: يجب أن تمرّ السجلات عبر الامتثال (#1) قبل أي تواصل.</td><td>اتركه True.</td></tr>
-        <tr><td>إشعار صانع القرار<br><code>…decision_maker_notice</code></td><td><code>required</code></td><td>الموقف من إشعار المعالجة (<code>required</code>/<code>not_required</code>).</td><td>اتركه <code>required</code>.</td></tr>
-        <tr><td>موافقة صانع القرار<br><code>…decision_maker_consent</code></td><td><code>required</code></td><td>الموقف من الموافقة قبل معالجة البيانات الشخصية.</td><td>اتركه <code>required</code>.</td></tr>
-      </tbody></table>
-      <h3>الاستهداف</h3>
-      <table><thead><tr><th>الإعداد / المفتاح</th><th>الافتراضي</th><th>ما يتحكّم به</th><th>المُوصى به</th></tr></thead><tbody>
-        <tr><td>القطاعات المستهدفة<br><code>…target_sectors</code></td><td>(فارغ)</td><td>قطاعات مفصولة بفواصل، مثل <code>Construction, Logistics</code>.</td><td>اضبط شريحتك المثالية؛ الفراغ = بلا تصفية.</td></tr>
-        <tr><td>المناطق المستهدفة<br><code>…target_regions</code></td><td>(فارغ)</td><td>مدن مفصولة بفواصل، مثل <code>Riyadh, Jeddah</code>.</td><td>اضبط مدنك في المملكة.</td></tr>
-        <tr><td>حجم الشركة المستهدف<br><code>…target_company_size</code></td><td>(فارغ)</td><td>نطاقات نصّية حرة، مثل <code>11-50, 51-200</code>.</td><td>اختياري.</td></tr>
-        <tr><td>المسمّيات الوظيفية<br><code>…target_job_titles</code></td><td>(فارغ)</td><td>مسمّيات مثل <code>CEO, Procurement Manager</code> — تُستخدم فقط عند تفعيل جلب الأشخاص.</td><td>اضبطها عند تفعيل جلب الأشخاص.</td></tr>
-      </tbody></table>
-      <h3>الحدود ومنع التكرار وإقامة البيانات والمصدر</h3>
-      <table><thead><tr><th>الإعداد / المفتاح</th><th>الافتراضي</th><th>ما يتحكّم به</th><th>المُوصى به</th></tr></thead><tbody>
-        <tr><td>الحد اليومي للجلب<br><code>…daily_cap</code></td><td><code>50</code></td><td>أقصى عدد سجلات تُنشأ يوميًا. <code>0</code> = بلا حد؛ الفراغ = يحظر (آمن بالفشل). مزدوج التطبيق (القسم ٨).</td><td>ابدأ بـ٢٥–٥٠.</td></tr>
-        <tr><td>عند تطابق مكرر<br><code>…dedup_mode</code></td><td><code>skip</code></td><td><code>skip</code> = اترك الموجود؛ <code>update</code> = املأ الحقول الفارغة فقط. لا يُنشئ تكرارًا أبدًا.</td><td>اتركه <code>skip</code>.</td></tr>
-        <tr><td>الولاية القضائية الافتراضية<br><code>…default_jurisdiction</code></td><td><code>sa</code></td><td>ولاية السجل عند غياب الاستهداف — يُبقي البحث ضمن نطاق المملكة.</td><td>اتركه <code>sa</code>.</td></tr>
-        <tr><td>سياسة فقدان المفتاح<br><code>…block_source_without_token</code></td><td><code>warn</code></td><td><code>warn</code> = تخطّي المصدر بلا مفتاح مع توثيق؛ <code>silent</code> = تخطٍّ بلا توثيق.</td><td>اتركه <code>warn</code>.</td></tr>
-        <tr><td>تفضيل المصادر المحلية<br><code>…data_residency_prefer_local</code></td><td>True</td><td>يفضّل السجلات داخل المنطقة (مُضمَّن في أولويات المصادر).</td><td>اتركه True.</td></tr>
-        <tr><td>وسم خروج البيانات من المنطقة<br><code>…data_residency_flag_egress</code></td><td>True</td><td>يوثّق علامة عند استخدام مصدر غير محلي سعودي.</td><td>اتركه True.</td></tr>
-        <tr><td>اسم وسم التوليد<br><code>…tag_name</code></td><td><code>by_lead_generator_agent</code></td><td>الوسم المختوم على كل سجل مُنشأ.</td><td>اتركه كما هو.</td></tr>
-      </tbody></table>
-      <div class="callout note"><span class="h">ℹ️ حدّ التكلفة مشترك وليس محليًا</span>
-        <p>يُحكَم الإنفاق بحدّ التكلفة الشهري على مستوى المنظومة <code>era_crm_ai_agents.monthly_cost_cap</code> (الافتراضي <code>100.0</code> دولار)، مع إمكان تجاوزه لكل وكيل عبر <code>era_crm_ai_agents.monthly_cost_cap.era_lead_gen</code>. الحد اليومي يحدّ <em>عدد السجلات</em>، أمّا الشهري فيحدّ <em>الإنفاق</em> (القسم ٨).</p></div>
-    </section>
+    <h3 class="sub2">السجلات من مصادر خارجية <span class="lbl-en">Externally-Sourced Records</span></h3>
+    <p><span class="path">Lead Generation ← Externally-Sourced Records</span> — كل ما أنشأه المحرّك، مُجمَّعاً حسب المصدر.</p>
+    <p>يعرض جهات الاتصال التي تحمل ختم <span class="lbl-en">x_lead_gen_source</span> (والوسم <span class="lbl-en">by_lead_generator_agent</span>). فلاتر: شركات / صنّاع قرار / حسب المصدر. من هنا تقدر <b>تراجع أو تحذف المجموعة كلها</b> كوحدة واحدة.</p>
 
-    <section id="ar-providers"><h2><span class="n">٤.</span>تفعيل مصادر البيانات</h2>
-      <p><strong>المصدر</strong> هو خدمة بيانات خارجية واحدة. يستعلم المحرّك من المصدر فقط عند تحقّق <strong>الشروط الثلاثة</strong>:</p>
-      <ol>
-        <li><strong>نشِط</strong> — مُفعَّل <code>active = True</code> (كل شيء يأتي غير نشط).</li>
-        <li><strong>المفتاح موجود</strong> — متغيّر البيئة المذكور في <code>env_key_param</code> يُحلّ إلى قيمة على الخادم. السر <strong>لا يُخزَّن في أودو</strong> أبدًا — فقط اسم المتغيّر.</li>
-        <li><strong>ضمن النطاق</strong> — مصادر صنّاع القرار تتطلب أيضًا تفعيل <code>fetch_decision_makers</code>.</li>
-      </ol>
-      <p>المصدر <strong>النشِط بلا مفتاح يُتخطّى — وليس بصمت</strong>: تُكتب علامة تدقيق <code>blocked</code> (ما لم تكن السياسة <code>silent</code>). تُدار المصادر من <strong>توليد العملاء ← المصادر</strong>.</p>
-      <div class="callout tip"><span class="h">💡 كيف تُفعّل مصدرًا</span>
-        <p>١) ضَع المفتاح في بيئة الخادم باسم المتغيّر الذي يذكره المصدر (مثل <code>ERA_LEADGEN_SERPAPI_KEY</code>) وأعِد تشغيل الخادم. ٢) افتح المصدر وتأكّد من <strong>المفتاح = ✓</strong> وفعّل <strong>نشِط</strong>. ٣) تأكّد أن المفتاح الرئيسي مُفعَّل.</p></div>
-      <h3>ما الذي يعمل فعليًا اليوم</h3>
-      <table><thead><tr><th>المصدر</th><th>النوع</th><th>الحالة</th><th>ملاحظات</th></tr></thead><tbody>
-        <tr><td>SerpAPI, Brave, Google CSE, Bing</td><td>بحث ويب</td><td class="ok">يعمل</td><td>استعلام من الاستهداف ← الواجهة ← الذكاء يستخرج الشركات. يحتاج مفتاحه في البيئة. وGoogle CSE يحتاج أيضًا <code>ERA_LEADGEN_GOOGLE_CSE_CX</code>.</td></tr>
-        <tr><td>OpenCorporates</td><td>سجل</td><td class="ok">يعمل</td><td>واجهة سجل عامة، تُحصَر بـ<code>default_jurisdiction</code>.</td></tr>
-        <tr><td>وزارة التجارة، المركز السعودي للأعمال</td><td>سجل</td><td class="part">يحتاج تهيئة</td><td>لا واجهة عامة؛ يستدعي المعالِج عنوانًا يحدّده المدير (<code>ERA_LEADGEN_SAUDI_MOC_URL</code> / <code>…_BUSINESS_CENTER_URL</code>)؛ وإلا يتخطّى بصدق.</td></tr>
-        <tr><td>كشط الصفحات العامة</td><td>كشط</td><td class="part">اختياري وهشّ</td><td>يجلب <code>ERA_LEADGEN_SCRAPE_URL</code> ويدع الذكاء يقرؤه.</td></tr>
-        <tr><td>Hunter</td><td>بيانات تواصل</td><td class="part">جزئي</td><td>عبر GET، لكنه يحتاج نطاق شركة معروفًا — مفيد <em>بعد</em> وجود الشركة.</td></tr>
-        <tr><td>Apollo, Lusha, RocketReach, SignalHire</td><td>بيانات تواصل</td><td class="no">غير مُنفَّذ</td><td>بحث أشخاص عبر POST؛ والمنفذ الحالي GET فقط، فتتخطّى بصدق. مؤجَّلة.</td></tr>
-        <tr><td>LinkedIn</td><td>اجتماعي</td><td class="no">شاهد (مؤجَّل)</td><td>مقيَّد بالشروط؛ شاهد مُعلَن لا يعمل ولا يحجب الوحدة.</td></tr>
-        <tr><td>ZeroBounce, NeverBounce, WAHA, التحقق من الجوال</td><td>تحقّق</td><td class="no">لا يُستخدم في الاكتشاف</td><td>تتحقّق من بيانات موجودة؛ والاكتشاف يمرّ على مصادر الشركات وصنّاع القرار فقط.</td></tr>
-      </tbody></table>
-      <div class="callout warn"><span class="h">⚠️ مصادر اكتشاف الأشخاص هي المحدودة</span>
-        <p>المزوّدون الذين يحوّلون «شركة» إلى «شخص باسمه للاتصال» هم تحديدًا غير النشطين بعد. خطّط حول اكتشاف الشركات اليوم.</p></div>
-    </section>
+    <h3 class="sub2">الإعدادات <span class="lbl-en">Settings</span></h3>
+    <p>تفتح كتلة «Lead Generation» في صفحة الإعدادات (شُرحت في قسم المدير: المفاتيح، الاستهداف، الإنشاء، موقف الامتثال، الحد اليومي، سياسة التوكن).</p>
+  </section>
 
-    <section id="ar-manual"><h2><span class="n">٥.</span>تشغيل عملية اكتشاف — يدويًا</h2>
-      <ol class="steps">
-        <li><strong>اضبط الاستهداف</strong> في الإعدادات (مثل <code>Construction</code> / <code>Riyadh, Jeddah</code>).</li>
-        <li><strong>فعّل مصدرًا عاملًا</strong> مع توفّر مفتاحه (القسم ٤) — مثل SerpAPI أو OpenCorporates.</li>
-        <li><strong>فعّل المفتاح الرئيسي.</strong> اترك جلب صنّاع القرار معطّلًا لتشغيل خاص بالشركات.</li>
-        <li><strong>شغّل عملية</strong> — نفس مسار الكود للمجدوِل.</li>
-        <li><strong>اعثر على النتائج في CRM:</strong> الشركات الجديدة تحمل الوسم <code>by_lead_generator_agent</code> وختم <code>x_lead_gen_source</code>. استخدم <strong>توليد العملاء ← السجلات الخارجية المصدر</strong>، مجمّعة حسب المصدر.</li>
-      </ol>
-      <div class="callout note"><span class="h">ℹ️ آلية «التسلسل الشلالي» باختصار</span>
-        <p>يجرّب المحرّك المصادر المؤهّلة <strong>حسب الأولوية ويتوقف عند أول مصدر يعيد نتائج</strong>. توقّع حفنة شركات لكل تشغيل لا المئات.</p></div>
-    </section>
+  <!-- ===================== FLOW ===================== -->
+  <section id="flow">
+    <h2>٥) خط التسليم: من الجلب إلى الإثراء والامتثال</h2>
+    <p class="intro-line">توليد العملاء حلقة واحدة في سلسلة — يعرف حدوده.</p>
+    <ul>
+      <li><b>يُنشئ فقط.</b> يجلب ويُنشئ سجلات جديدة (شركات، واختيارياً صنّاع قرار مرتبطين بشركتهم عبر <span class="lbl-en">parent_id</span>). <u>لا يرسل أي رسالة</u>.</li>
+      <li><b>يسلّم للإثراء (#2):</b> السجل الجديد يُمرَّر لوحدة الإثراء لإكمال بياناته والتحقّق من قابلية التوصيل.</li>
+      <li><b>يسلّم للامتثال (#1):</b> قبل أي تواصل، تُطبَّق مواقف الخصوصية (موافقة/إشعار صانع القرار، الموافقة التسويقية، نوافذ الإرسال) في طبقة الامتثال.</li>
+      <li><b>كل قرار مُسجَّل</b> في سجل التدقيق بالقاعدة (القاعدة 20)، ويعمل بصلاحيات المستخدم لا الجذري (القاعدة 09).</li>
+    </ul>
+    <div class="tip">
+      <b>التكامل runtime لا اعتماد صلب</b>
+      توليد العملاء لا يعتمد على الإثراء/الامتثال كـdepends صلبة — التسليم عبر الوسوم والنداءات وقت التشغيل، فيبقى مثبَّتاً ويعمل حتى لو غاب أحدهما.
+    </div>
+  </section>
 
-    <section id="ar-cron"><h2><span class="n">٦.</span>التشغيل التلقائي — المجدوِل اليومي</h2>
-      <p>الإجراء المجدوَل <strong>«Lead Generation: Scheduled fetch»</strong> يعمل <strong>مرة يوميًا</strong> ويستدعي نفس نقطة الدخول دون إشراف.</p>
-      <ul>
-        <li><strong>يعمل بهوية تنفيذ مشتركة ذات أقل الامتيازات</strong> — افتراضيًا حساب <em>CRM AI Automation</em> الداخلي (الدخول <code>crm_ai_automation</code>)، وهو <strong>ليس</strong> مستخدمًا خارق الصلاحيات، فيلتزم العمل المجدوَل بقواعد الوصول العادية. ويمكن للمدير توجيهه إلى أي مستخدم داخلي قائم من الإعدادات، أو تبديله (مع تحذير واضح) إلى OdooBot — راجع ملاحظة هوية التنفيذ أدناه.</li>
-        <li><strong>محكوم بالمفتاح الرئيسي</strong> — إن كان معطّلًا يخرج فورًا.</li>
-        <li><strong>يحترم الحدّين</strong> (القسم ٨).</li>
-        <li><strong>لا يفشل أبدًا</strong> — أي حجب من الحارس يصبح <strong>تخطّيًا مع توثيق</strong>.</li>
-      </ul>
-      <div class="callout note"><span class="h">ℹ️ بعد التثبيت</span><p>تتطلب الإجراءات المجدوَلة الجديدة <strong>إعادة تشغيل كاملة للخادم</strong> كي تُسجَّل.</p></div>
-    </section>
+  <!-- ===================== TEST ===================== -->
+  <section id="test">
+    <h2>٦) كيف تجرّبها بنفسك خطوة بخطوة</h2>
+    <p class="intro-line">الخطوات 1–4 تعمل دائماً؛ 5–6 تتطلّبان تفعيلاً وتوكناً حقيقياً.</p>
+    <ol class="steps">
+      <li><b>تأكّد أن التطبيق ظهر.</b><br>
+        كمدير، افتح تطبيق <span class="lbl-en">Lead Generation</span>؛ يجب أن ترى: <span class="lbl-en">Sources · Externally-Sourced Records · Settings</span>.</li>
+      <li><b>افحص الإعدادات الافتراضية.</b><br>
+        <span class="lbl-en">Settings</span>: المحرّك <u>مُطفأ</u>، جلب صنّاع القرار <u>مُطفأ</u>، الحد اليومي 50، «التوجيه عبر الامتثال» مفعّل، وتفضيل المصادر المحلية مفعّل. هذا هو الوضع الآمن الصحيح.</li>
+      <li><b>افحص المصادر.</b><br>
+        <span class="lbl-en">Sources</span>: 18 مصدراً، كلها غير مفعّلة، مرتّبة بالأولوية (السجلات السعودية أعلى). لاحظ عمود <span class="lbl-en">Token</span> وعمود <span class="lbl-en">PDPL</span> (Light/Heavy).</li>
+      <li><b>تأكّد أن قائمة السجلات فارغة.</b><br>
+        <span class="lbl-en">Externally-Sourced Records</span> فارغة على تركيب نظيف — طبيعي، تمتلئ بعد أول تشغيلة ناجحة.</li>
+      <li><b>فعّل للتجربة (يتطلّب توكناً).</b><br>
+        فعّل <span class="lbl-en">Enable Lead Generation</span>، اضبط قطاعاً/منطقة في الاستهداف، ثم فعّل مصدر شركات واحداً <u>متوفّراً له توكن</u> (ابدأ بمصدر Light).</li>
+      <li><b>شغّل الجلب وراجع النتيجة.</b><br>
+        الجلب يعمل عبر المهمة المجدولة <span class="lbl-en">Lead Generation: Scheduled fetch</span> (أو تشغيلها يدوياً من إعدادات المهام المجدولة). بعدها ستمتلئ <span class="lbl-en">Externally-Sourced Records</span> بالشركات الجديدة الموسومة، وتظهر قيود في سجل التدقيق بالقاعدة.</li>
+    </ol>
+    <div class="tip">
+      <b>النتيجة المتوقّعة</b>
+      على تركيب نظيف بلا توكنات: التطبيق والشاشات تظهر، المصادر مُهيّأة لكن غير مفعّلة، والمحرّك خامل. هذا هو السلوك الصحيح حتى يوفّر المدير التوكنات ويُراجع PDPL ويفعّل ما يلزم.
+    </div>
+  </section>
 
-    <section id="ar-handoff"><h2><span class="n">٧.</span>التسليم إلى الإثراء</h2>
-      <p>لا يستدعي توليد العملاء وحدة الإثراء مباشرة — فالتسليم <strong>غير مباشر وبلا اعتماد</strong>. كل سجل مُنشأ يكون مُسبقًا <strong>موسومًا</strong> (<code>by_lead_generator_agent</code>) و<strong>مختوم المصدر</strong> (<code>x_lead_gen_source</code>)؛ وهذا الوسم/الختم <em>هو</em> التسليم. وحدة الإثراء (#2)، عند وجودها، تمسح هذه السجلات وفق جدولها الخاص. لا استدعاء مباشر ولا اقتران.</p>
-    </section>
+  <!-- ===================== LIMITS ===================== -->
+  <section id="limits">
+    <h2>٧) ملاحظات وحدود مهمة (بصدق)</h2>
+    <p class="intro-line">حتى لا يُفهم أكثر مما هو موجود فعلاً.</p>
+    <ul>
+      <li><b>يحتاج توكنات حقيقية.</b> المصادر لن تُرجِع بيانات بلا مفاتيح وصول مضبوطة في بيئة الخادم؛ على تركيب نظيف كل شيء خامل بالتصميم.</li>
+      <li><b>يُنشئ لا يُرسل.</b> توليد العملاء لا يرسل أي رسالة؛ التواصل يمرّ عبر الامتثال ثم وكيل مُرسِل (مثل إحياء العملاء).</li>
+      <li><b>صنّاع القرار مُطفأ افتراضياً.</b> جلب الأفراد أثقل جزء وفق PDPL — يبقى خلف مفتاحه المنفصل حتى مراجعة قانونية.</li>
+      <li><b>مواقف الخصوصية «تصميم للامتثال» لا تأكيد له.</b> الإعدادات تسجّل الموقف؛ التطبيق الفعلي (لا تواصل بلا موافقة) في طبقة الامتثال (#1).</li>
+      <li><b>الحد اليومي يفشل-بالإغلاق:</b> قيمة ناقصة/غير صالحة تمنع الجلب — لا جلب «على البركة».</li>
+    </ul>
+  </section>
 
-    <section id="ar-caps"><h2><span class="n">٨.</span>الحدود والتحكّم بالتكلفة</h2>
-      <h3>الحد اليومي للسجلات (<code>…daily_cap</code>، الافتراضي ٥٠)</h3>
-      <p>يحدّ السجلات المُنشأة يوميًا، و<strong>مزدوج التطبيق</strong>: قبل كل استدعاء مصدر (لا إنفاق إن بُلغ الحد) ومجددًا عند كل إنشاء. آمن بالفشل: <code>0</code> = بلا حد؛ الغياب = يحظر.</p>
-      <h3>حدّ التكلفة الشهري (على مستوى المنظومة)</h3>
-      <p>محدود بـ<code>era_crm_ai_agents.monthly_cost_cap</code> (الافتراضي <code>100.0</code> دولار). يعيد المحرّك فحصه <strong>قبل كل استدعاء مصدر</strong>. يسجّل كل تشغيل نصفي التكلفة: المصدر (<code>usage_type = source_api</code>) والذكاء (<code>usage_type = llm</code>).</p>
-      <h3>عند بلوغ حدّ</h3>
-      <ul>
-        <li><strong>تشغيل يدوي تجاوز حدّ التكلفة:</strong> يفشل سريعًا برسالة واضحة.</li>
-        <li><strong>تشغيل مجدوَل تجاوز حدًّا:</strong> <strong>يتخطّى مع توثيق</strong> (<code>cost_cap_exceeded</code>) وينتهي بنظافة.</li>
-      </ul>
-    </section>
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <h2>٨) أسئلة شائعة قصيرة</h2>
+    <div class="whatif">
+      <p><span class="q">فعّلت المصدر ولا يُجلب شيء؟</span><br>
+        <span class="a">تأكّد من: <span class="lbl-en">Enable Lead Generation</span> مفعّل، والمصدر <span class="lbl-en">Active</span> وعمود <span class="lbl-en">Token</span> = ✓، وأن الحد اليومي لم يُستنفد.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لا يجلب أي أفراد (صنّاع قرار)؟</span><br>
+        <span class="a">لأن <span class="lbl-en">Fetch Decision-Makers</span> مُطفأ افتراضياً (الأثقل وفق PDPL). فعّله فقط بعد مراجعة قانونية، ومصدر Heavy مفعّل بتوكن.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">كيف أعزل أو أحذف كل ما جاء من الخارج؟</span><br>
+        <span class="a">من <span class="lbl-en">Externally-Sourced Records</span> — كلها موسومة ومختومة بمصدرها، فتراجعها أو تحذفها كمجموعة واحدة.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">هل يُنشئ سجلات مكرّرة؟</span><br>
+        <span class="a">لا. يقارن الوارد بالموجود دائماً؛ إمّا يتخطّى أو يملأ الفراغات فقط — لا مكرّر أبداً.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">هل يرسل رسائل للعملاء الجدد؟</span><br>
+        <span class="a">لا إطلاقاً. مهمته الإنشاء فقط؛ أي تواصل يمرّ عبر الامتثال ووكيل مُرسِل منفصل.</span></p>
+    </div>
+    <div class="whatif">
+      <p><span class="q">لا أجد تطبيق توليد العملاء؟</span><br>
+        <span class="a">هو للمديرين فقط (صلاحية «مدير وكلاء الذكاء»). تواصل مع مسؤول النظام لإضافتك.</span></p>
+    </div>
+  </section>
 
-    <section id="ar-audit"><h2><span class="n">٩.</span>التدقيق والمراقبة</h2>
-      <p>كل قرار يُكتب في سجل التدقيق غير القابل للتعديل (<strong>وكلاء CRM الذكية ← الإعداد ← سجل التدقيق</strong>، للمدير فقط):</p>
-      <table><thead><tr><th>نوع الحدث</th><th>متى</th></tr></thead><tbody>
-        <tr><td><code>external_contact</code></td><td>إنشاء شركة/صانع قرار (يرتبط بالسجل؛ ولا يُخزَّن اسم الفرد).</td></tr>
-        <tr><td><code>blocked</code></td><td>تخطّي مصدر نشِط لفقدان مفتاحه.</td></tr>
-        <tr><td><code>source_fetch_failed</code></td><td>فشل استدعاء مصدر — يُسجَّل المضيف ونوع الخطأ فقط، لا الرابط ولا المفتاح.</td></tr>
-        <tr><td><code>cost_cap_exceeded</code></td><td>إيقاف تشغيل/إنشاء بسبب الحد اليومي أو حدّ التكلفة.</td></tr>
-        <tr><td><code>ai_request</code> / <code>other</code></td><td>نتائج المحاولات وملخّصات بداية/نهاية التشغيل.</td></tr>
-      </tbody></table>
-      <div class="callout tip"><span class="h">💡 فحص صحّة سريع</span><p>كثرة صفوف <code>blocked</code> تعني أن مصادر نشطة تفتقد مفاتيحها. التشغيل السليم يُظهر «بداية تشغيل»، ومحاولات، وصفوف <code>external_contact</code>، و«نهاية تشغيل».</p></div>
-    </section>
+  <div class="tech">
+    <h3>للمسؤول التقني (مرجع سريع)</h3>
+    <p>الوحدة: <code>era_crm_ai_agents_lead_gen</code> · الإصدار <code>19.0.1.1.0</code> · تعتمد على <code>era_crm_ai_agents_base</code> فقط؛ الإثراء (#2) والامتثال (#1) تكاملات runtime (وسوم + نداءات)، لا depends صلبة. تطبيق مستقل (web_icon PNG)، مقصور على <code>group_crm_ai_manager</code>.</p>
+    <p>النماذج: <code>crm.ai.lead_gen.agent</code> (المحرّك، <code>_agent_tech_name='era_lead_gen'</code>، الدالة العامة <code>run_lead_generation</code>) · <code>crm.ai.lead_gen.provider</code> (المصادر/الشلال) · <code>crm.ai.lead_gen</code> (المنطق + حقل <code>x_lead_gen_source</code> على <code>res.partner</code>).</p>
+    <p>الإعدادات: <code>ir.config_parameter</code> تحت <code>era_crm_ai_agents_lead_gen.*</code> (بذرة كاملة + كتابة <code>True/False</code> صريحة). التوكنات في متغيّرات بيئة — الاسم فقط (القاعدة 03). الحد اليومي fail-safe (ناقص→منع، ≤0→بلا حد). كل نداء مصدر عبر منفذ واحد باستخدام <code>requests</code>.</p>
+    <p>المهمة المجدولة: <code>Lead Generation: Scheduled fetch</code> (تحت مستخدم least-privilege عبر <code>crm.ai.agent._get_cron_run_user()</code>؛ خاملة حتى يُفعَّل المحرّك). الوسم <code>by_lead_generator_agent</code> يُطبع على كل سجلّ مُنشأ.</p>
+  </div>
 
-    <section id="ar-pdpl"><h2><span class="n">١٠.</span>حماية البيانات والامتثال</h2>
-      <div class="callout warn"><span class="h">⚠️ اقرأ قبل تفعيل اكتشاف صنّاع القرار</span>
-        <p>اكتشاف صنّاع القرار يعني معالجة بيانات شخصية لأفراد <strong>لم يوافقوا</strong>، كما يُرسل الاستخراج محتوى المصدر إلى مزوّد ذكاء اصطناعي دولي. <strong>يجب مراجعة أساس قانوني واعتماده من الجهة القانونية/مسؤول حماية البيانات قبل التفعيل.</strong></p></div>
-      <p>الوحدة <strong>مصمَّمة للامتثال لكنها لا تدّعيه</strong>:</p>
-      <ul>
-        <li>الافتراضات متحفّظة — المفتاح الرئيسي وجلب الأشخاص وكل مصدر مُعطَّلة عند التثبيت.</li>
-        <li>جلب الأشخاص خلف مفتاح منفصل كي لا يُفعَّل سهوًا.</li>
-        <li>يُخزَّن الأفراد كجهات اتصال مرتبطة كي يُطبَّق عليهم الاحتفاظ/المحو على حدة.</li>
-        <li>تُوسَم حركة البيانات عبر الحدود في التدقيق.</li>
-        <li>إعدادات موقف الإشعار/الموافقة تُوثّق موقفك؛ والامتثال (#1) يفرض «لا تواصل دون موافقة» لاحقًا.</li>
-      </ul>
-      <div class="callout warn"><span class="h">⚠️ التفعيل ليس امتثالًا بذاته</span>
-        <p>تفعيل المفاتيح لا يجعل السلوك مشروعًا. تُوجد الافتراضات المتحفّظة كي يكون القرار متعمَّدًا ومُراجَعًا. لا يوجد مرجع PDPL معتمَد لمجموعة Era مُضمَّن؛ تلك المراجعة مسؤوليتك.</p></div>
-    </section>
+  <footer>Era Group · CRM AI Agents — توليد العملاء المحتملين (Lead Generation) · دليل المستخدم (إصدار 19.0.1.1.0)</footer>
 
-    <section id="ar-faq"><h2><span class="n">١١.</span>استكشاف الأخطاء / الأسئلة الشائعة</h2>
-      <h3>«فعّلتها لكن لا تظهر عملاء.»</h3>
-      <p>غالبًا لا يوجد مصدر مؤهّل. تحقّق: هل من مصدر <strong>نشِط</strong>؟ هل المفتاح = ✓ (المتغيّر مضبوط والخادم أُعيد تشغيله)؟ هل هو مصدر <em>شركات</em> (مصادر التحقّق لا تعمل في الاكتشاف)؟ هل بُلغ <strong>الحد اليومي</strong>؟ يُظهر التدقيق صفوف <code>blocked</code> أو <code>cost_cap_exceeded</code> التي تفسّر ذلك.</p>
-      <h3>«مزوّد معيّن لا يعمل.»</h3>
-      <p>Apollo/Lusha/RocketReach/SignalHire وLinkedIn غير مُنفَّذة بعد (القسم ٤). السجلات السعودية تحتاج متغيّر <code>…_URL</code>. بحث الويب يحتاج المفتاح (وGoogle CSE معرّف <code>…_CX</code>). المصدر النشِط بلا مفتاح يسجّل <code>blocked</code>.</p>
-      <h3>«المجدوِل اليومي لم يعمل / لم ينشئ شيئًا.»</h3>
-      <p>(١) المفتاح الرئيسي معطّل؛ (٢) لم يُعَد تشغيل الخادم بعد التثبيت؛ (٣) بُلغ حدّ (<code>cost_cap_exceeded</code>). المجدوِل لا يرمي خطأ — ينتهي دائمًا تاركًا أثرًا.</p>
-      <h3>«بلغت الحد اليومي.»</h3>
-      <p>متوقّع وآمن. ارفع <code>…daily_cap</code>، أو اضبطه <code>0</code> لبلا حد (لا يُنصح مبكرًا)، أو انتظر اليوم التالي.</p>
-      <h3>«شركة جديدة بدت محذوفة كتكرار.»</h3>
-      <p>يطابق منع التكرار على البريد أو النطاق أو الرقم الضريبي أو الاسم+المنطقة؛ والاسم وحده لا يحجب أبدًا. في وضع <code>skip</code> لا يتغيّر شيء؛ استخدم <code>update</code> لملء الحقول الفارغة.</p>
-      <h3>«هل يمكن أن يُسرّب استدعاء مصدر مفتاحنا إلى السجلات؟»</h3>
-      <p>لا — عند الفشل يُسجَّل المضيف ونوع الخطأ فقط، لا الرابط ولا سلسلة الاستعلام ولا المفتاح.</p>
-    </section>
-
-    <section id="ar-glossary"><h2><span class="n">١٢.</span>مسرد المصطلحات</h2>
-      <ul>
-        <li><strong>المصدر / المزوّد</strong> — خدمة بيانات خارجية واحدة.</li>
-        <li><strong>وجود المفتاح</strong> — يُستخدم المصدر فقط عند تحلّل متغيّره؛ والسر لا يُخزَّن، بل الاسم فقط (<code>env_key_param</code>).</li>
-        <li><strong>التسلسل الشلالي</strong> — تجربة المصادر بالأولوية والتوقف عند أول مصدر يعيد نتائج.</li>
-        <li><strong>التخطّي مع التوثيق</strong> — تخطّي خطوة وكتابة علامة تدقيق بدل الفشل؛ ليس بصمت أبدًا.</li>
-        <li><strong>التطبيق المزدوج</strong> — فحص الحد اليومي قبل الجلب ومجددًا عند الإنشاء.</li>
-        <li><strong>التسليم غير المباشر</strong> — تمرير السجلات للإثراء عبر الوسم وختم المصدر فقط.</li>
-        <li><strong>هوية التنفيذ</strong> — المستخدم الذي يصادق به التشغيل المجدوَل. الافتراضي على مستوى الحزمة هو حساب <em>CRM AI Automation</em> ذو أقل الامتيازات (يعمل ضمن قواعد الوصول العادية)؛ ويمكن للمدير توجيهه إلى أي مستخدم داخلي، أو تفعيل OdooBot (خارق الصلاحيات — يتجاوز قواعد الوصول، مع تنبيه بشأن حماية البيانات الشخصية).</li>
-      </ul>
-    </section>
-
-    <footer>مجموعة Era — وكلاء CRM الذكية · توليد العملاء المحتملين (<code>era_crm_ai_agents_lead_gen</code>). كل مفتاح إعداد وقيمة افتراضية هنا مأخوذ من مصدر الوحدة.</footer>
-  </main>
 </div>
-</div>
-
-<script>
-  function setLang(l){
-    var en=document.getElementById('doc-en'), ar=document.getElementById('doc-ar');
-    var be=document.getElementById('btn-en'), ba=document.getElementById('btn-ar');
-    var arabic = (l==='ar');
-    en.classList.toggle('show', !arabic);
-    ar.classList.toggle('show', arabic);
-    be.classList.toggle('active', !arabic);
-    ba.classList.toggle('active', arabic);
-    document.documentElement.lang = arabic ? 'ar' : 'en';
-    document.documentElement.dir  = arabic ? 'rtl' : 'ltr';
-    try{ localStorage.setItem('leadgen_manual_lang', l); }catch(e){}
-  }
-  (function(){
-    var saved;
-    try{ saved = localStorage.getItem('leadgen_manual_lang'); }catch(e){}
-    var q = (location.search.match(/[?&]lang=(ar|en)/)||[])[1];
-    setLang(q || saved || 'en');
-  })();
-</script>
 </body>
 </html>

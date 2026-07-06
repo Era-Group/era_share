@@ -17,6 +17,7 @@ MANAGER_GROUP = "era_ai_accounts.group_ai_account_manager"
 # each tier the connected account supports, so they never go stale across version
 # bumps. Full ids (e.g. claude-opus-4-8) also work if you prefer pinning.
 CLAUDE_CLI_MODELS = [
+    ("fable", "Claude Fable (latest)"),
     ("opus", "Claude Opus (latest)"),
     ("sonnet", "Claude Sonnet (latest)"),
     ("haiku", "Claude Haiku (latest)"),

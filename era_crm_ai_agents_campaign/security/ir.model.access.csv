@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_ai_campaign_category_user,crm.ai.campaign.category user (read),model_crm_ai_campaign_category,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_campaign_category_manager,crm.ai.campaign.category manager (full),model_crm_ai_campaign_category,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_campaign_catalog_user,crm.ai.campaign.service.catalog user (read),model_crm_ai_campaign_service_catalog,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_campaign_catalog_manager,crm.ai.campaign.service.catalog manager (full),model_crm_ai_campaign_service_catalog,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_campaign_playbook_user,crm.ai.campaign.playbook user (read),model_crm_ai_campaign_playbook,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_campaign_playbook_manager,crm.ai.campaign.playbook manager (full),model_crm_ai_campaign_playbook,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_campaign_suppression_user,crm.ai.campaign.suppression user (read),model_crm_ai_campaign_suppression,era_crm_ai_agents_base.group_crm_ai_user,1,0,0,0
+access_crm_ai_campaign_suppression_manager,crm.ai.campaign.suppression manager (full),model_crm_ai_campaign_suppression,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_campaign_user,crm.ai.campaign user (rwc),model_crm_ai_campaign,era_crm_ai_agents_base.group_crm_ai_user,1,1,1,0
+access_crm_ai_campaign_manager,crm.ai.campaign manager (full),model_crm_ai_campaign,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1
+access_crm_ai_campaign_line_user,crm.ai.campaign.line user (rwc),model_crm_ai_campaign_line,era_crm_ai_agents_base.group_crm_ai_user,1,1,1,0
+access_crm_ai_campaign_line_manager,crm.ai.campaign.line manager (full),model_crm_ai_campaign_line,era_crm_ai_agents_base.group_crm_ai_manager,1,1,1,1

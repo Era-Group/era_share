@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============== Service Catalog ============== -->
+    <record id="view_crm_ai_campaign_catalog_list" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.service.catalog.list</field>
+        <field name="model">crm.ai.campaign.service.catalog</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="service_type"/>
+                <field name="category_id"/>
+                <field name="target_tag_ids" widget="many2many_tags"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_campaign_catalog_form" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.service.catalog.form</field>
+        <field name="model">crm.ai.campaign.service.catalog</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="service_type"/>
+                            <field name="category_id"/>
+                        </group>
+                        <group>
+                            <field name="target_tag_ids" widget="many2many_tags"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Description (grounds the LLM)">
+                        <field name="description" nolabel="1"
+                               placeholder="What this offering is and who it helps — the LLM reads this text to match services to customers."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_campaign_catalog" model="ir.actions.act_window">
+        <field name="name">Service Catalog</field>
+        <field name="res_model">crm.ai.campaign.service.catalog</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============== Categories ============== -->
+    <record id="view_crm_ai_campaign_category_list" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.category.list</field>
+        <field name="model">crm.ai.campaign.category</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_campaign_category" model="ir.actions.act_window">
+        <field name="name">Service Categories</field>
+        <field name="res_model">crm.ai.campaign.category</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ============== Playbooks ============== -->
+    <record id="view_crm_ai_campaign_playbook_list" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.playbook.list</field>
+        <field name="model">crm.ai.campaign.playbook</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger_tag_ids" widget="many2many_tags"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_campaign_playbook_form" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.playbook.form</field>
+        <field name="model">crm.ai.campaign.playbook</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="trigger_tag_ids" widget="many2many_tags"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Instruction (injected into the LLM prompt)">
+                        <field name="instruction" nolabel="1"
+                               placeholder="e.g. Recipient is new to Odoo; open with a short intro to what Odoo is before presenting the service."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_campaign_playbook" model="ir.actions.act_window">
+        <field name="name">Playbooks</field>
+        <field name="res_model">crm.ai.campaign.playbook</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============== Suppression list ============== -->
+    <record id="view_crm_ai_campaign_suppression_list" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.suppression.list</field>
+        <field name="model">crm.ai.campaign.suppression</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="partner_id"/>
+                <field name="email_pattern"/>
+                <field name="reason"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_campaign_suppression" model="ir.actions.act_window">
+        <field name="name">Suppression List</field>
+        <field name="res_model">crm.ai.campaign.suppression</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

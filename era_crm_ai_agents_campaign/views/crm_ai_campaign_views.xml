@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= crm.ai.campaign ================= -->
+
+    <record id="view_crm_ai_campaign_kanban" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.kanban</field>
+        <field name="model">crm.ai.campaign</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold"><field name="name"/></div>
+                        <div class="text-muted">
+                            <field name="date"/> · <field name="partner_count"/> recipients
+                        </div>
+                        <div t-if="record.mailing_id.raw_value">
+                            <i class="fa fa-envelope-o" title="Mailing" role="img" aria-label="Mailing"/> <field name="mailing_id"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_campaign_list" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.list</field>
+        <field name="model">crm.ai.campaign</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="partner_count"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'sent'"
+                       decoration-info="state in ('approved', 'ready')"
+                       decoration-warning="state == 'pending_approval'"
+                       decoration-danger="state in ('failed', 'rejected')"/>
+                <field name="mailing_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_campaign_form" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.form</field>
+        <field name="model">crm.ai.campaign</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Buttons are convenience UI; the AUTHORITATIVE gate is
+                         server-side (write() override + action checks). -->
+                    <button name="action_approve" type="object"
+                            string="Approve &amp; Send"
+                            class="oe_highlight"
+                            invisible="state != 'pending_approval'"
+                            confirm="Approve this campaign and hand it to Email Marketing for sending?"/>
+                    <button name="action_reject" type="object"
+                            string="Reject"
+                            invisible="state != 'pending_approval'"
+                            confirm="Reject this campaign? Nothing will be sent."/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="in_progress,ready,pending_approval,approved,sent"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="partner_count"/>
+                        </group>
+                        <group>
+                            <field name="mailing_id" readonly="1"/>
+                            <field name="ab_variant" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="partner_id"/>
+                                    <field name="matched_service_id"/>
+                                    <field name="match_confidence" widget="percentage"/>
+                                    <field name="lang"/>
+                                    <field name="generated_subject"/>
+                                    <field name="applied_playbook_ids" widget="many2many_tags"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'sent'"
+                                           decoration-warning="state == 'pending'"
+                                           decoration-danger="state in ('rejected', 'skipped')"/>
+                                    <field name="skip_reason"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="partner_id"/>
+                                            <field name="matched_service_id"/>
+                                            <field name="match_confidence" widget="percentage"/>
+                                            <field name="lang"/>
+                                        </group>
+                                        <group>
+                                            <field name="state"/>
+                                            <field name="skip_reason"/>
+                                            <field name="sent_date"/>
+                                            <field name="applied_playbook_ids" widget="many2many_tags"/>
+                                        </group>
+                                    </group>
+                                    <group string="Draft">
+                                        <field name="generated_subject"/>
+                                        <field name="generated_body"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_crm_ai_campaign_search" model="ir.ui.view">
+        <field name="name">crm.ai.campaign.search</field>
+        <field name="model">crm.ai.campaign</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="filter_pending" string="Pending Approval"
+                        domain="[('state', '=', 'pending_approval')]"/>
+                <filter name="filter_sent" string="Sent"
+                        domain="[('state', '=', 'sent')]"/>
+                <group>
+                    <filter name="group_state" string="State"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_crm_ai_campaign" model="ir.actions.act_window">
+        <field name="name">Campaigns</field>
+        <field name="res_model">crm.ai.campaign</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No campaigns yet</p>
+            <p>The Campaign Agent builds campaigns daily once it is enabled
+               in Campaign Agent Settings.</p>
+        </field>
+    </record>
+
+    <!-- Manual run (manager utility — same entrypoint as the cron, attended). -->
+    <record id="action_crm_ai_campaign_run_now" model="ir.actions.server">
+        <field name="name">Run Campaign Agent Now</field>
+        <field name="model_id" ref="model_crm_ai_campaign_agent"/>
+        <field name="state">code</field>
+        <field name="code">env['crm.ai.campaign.agent'].run_daily_campaign()</field>
+        <field name="group_ids" eval="[(4, ref('era_crm_ai_agents_base.group_crm_ai_manager'))]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed every Campaign setting so the param always EXISTS from install
+         (first-OFF-lost fix). Booleans use the 'True'/'False' STRING form the
+         suite expects — NEVER a bare False (set_param would delete the row).
+         Defaults are FAIL-CLOSED: agent OFF, approval ON, PDPL guard ON.
+         noupdate="1" so manager edits survive upgrades. -->
+    <data noupdate="1">
+
+        <!-- Core -->
+        <record id="cfg_campaign_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.enabled</field>
+            <field name="value">False</field>
+        </record>
+        <!-- Default transport: era_ai_accounts (editor subscription). Fail
+             closed when unavailable; 'token' stays fully selectable. On a
+             fresh install the seeded agent row is transport=api until a
+             manager saves Campaign Settings (which re-points it to the CLI
+             account) — until then runs fail closed by the transport gate. -->
+        <record id="cfg_campaign_llm_transport" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.llm_transport</field>
+            <field name="value">era_ai_accounts</field>
+        </record>
+        <record id="cfg_campaign_require_human_approval" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.require_human_approval</field>
+            <field name="value">True</field>
+        </record>
+        <!-- Empty approver list = FAIL CLOSED while approval is required.
+             Seeded as a single space (an empty value would drop the row). -->
+        <record id="cfg_campaign_approver_user_ids" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.approver_user_ids</field>
+            <field name="value"> </field>
+        </record>
+
+        <!-- PDPL master toggle — ON (fail closed). Turning it OFF disables
+             ALL PDPL guards INCLUDING consent verification; see
+             docs/MANAGER_MANUAL.md for the honest statement of what that means. -->
+        <record id="cfg_campaign_pdpl_guard_enabled" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.pdpl_guard_enabled</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- Sending & scheduling -->
+        <record id="cfg_campaign_daily_limit" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.daily_limit</field>
+            <field name="value">50</field>
+        </record>
+        <record id="cfg_campaign_max_daily_campaigns" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.max_daily_campaigns</field>
+            <field name="value">5</field>
+        </record>
+        <record id="cfg_campaign_cooldown_days" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.cooldown_days</field>
+            <field name="value">30</field>
+        </record>
+        <record id="cfg_campaign_monthly_frequency_cap" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.monthly_frequency_cap</field>
+            <field name="value">2</field>
+        </record>
+        <record id="cfg_campaign_send_window_start" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.send_window_start</field>
+            <field name="value">9.0</field>
+        </record>
+        <record id="cfg_campaign_send_window_end" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.send_window_end</field>
+            <field name="value">17.0</field>
+        </record>
+        <record id="cfg_campaign_send_tz" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.send_tz</field>
+            <field name="value">Asia/Riyadh</field>
+        </record>
+        <!-- KSA weekend by default; manager-configurable. -->
+        <record id="cfg_campaign_blackout_days" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.blackout_days</field>
+            <field name="value">fri,sat</field>
+        </record>
+
+        <!-- Sender address: empty = derive (company email, then user);
+             underivable at hand-off = fail closed. Seeded as a space so the
+             row exists from install. -->
+        <record id="cfg_campaign_email_from" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.email_from</field>
+            <field name="value"> </field>
+        </record>
+
+        <!-- Quality & safety -->
+        <record id="cfg_campaign_confidence_threshold" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.confidence_threshold</field>
+            <field name="value">0.7</field>
+        </record>
+        <record id="cfg_campaign_llm_daily_call_cap" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.llm_daily_call_cap</field>
+            <field name="value">200</field>
+        </record>
+
+        <!-- Personalization -->
+        <record id="cfg_campaign_default_lang" model="ir.config_parameter">
+            <field name="key">era_crm_ai_agents_campaign.default_lang</field>
+            <field name="value">ar</field>
+        </record>
+
+    </data>
+</odoo>

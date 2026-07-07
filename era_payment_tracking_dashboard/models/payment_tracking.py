@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.date_utils import parse_date
 
 
 class PaymentTracking(models.Model):
@@ -107,6 +108,13 @@ class PaymentTracking(models.Model):
     )
     last_payment_date = fields.Date(
         string='تاريخ آخر دفعة', compute='_compute_dates', store=True,
+    )
+    # آخر نشاط على السجل: الأكبر بين تاريخ آخر تعديل، أو أحدث نشاط (activity)،
+    # أو أحدث رسالة/ملاحظة في الشاتر. حقل غير مخزَّن وله دالة بحث مخصّصة تُشغّل
+    # فلاتر «محدثة خلال يوم / محدثة هذا الأسبوع».
+    last_activity_on = fields.Datetime(
+        string='آخر نشاط', compute='_compute_last_activity_on',
+        search='_search_last_activity_on',
     )
 
     # ------------------------------------------------------------------
@@ -287,6 +295,40 @@ class PaymentTracking(models.Model):
         for rec in self:
             session = rec.company_id.default_whatsapp_session_id if has_field else False
             rec.waha_session_active = bool(session) and session.status == 'working'
+
+    def _compute_last_activity_on(self):
+        """أحدث لحظة نشاط = الأكبر بين: تاريخ آخر تعديل (write_date)،
+        وأحدث رسالة/ملاحظة في الشاتر، وأحدث نشاط (activity)."""
+        for rec in self:
+            candidates = [rec.write_date]
+            message_dates = rec.message_ids.mapped('date')
+            if message_dates:
+                candidates.append(max(message_dates))
+            activity_dates = rec.activity_ids.mapped('write_date')
+            if activity_dates:
+                candidates.append(max(activity_dates))
+            candidates = [d for d in candidates if d]
+            rec.last_activity_on = max(candidates) if candidates else rec.write_date
+
+    def _search_last_activity_on(self, operator, value):
+        """يبحث عبر المصادر الثلاثة معًا: تعديل السجل، أو نشاط، أو رسالة في الشاتر.
+        تُحوّل النواة التعبير الزمني النسبي (مثل '-1d') مسبقًا لأن الحقل مباشر،
+        ونحوّله يدويًا احتياطًا إن وصل كنص (المسارات المنقّطة لا تُحوَّل تلقائيًا).
+
+        بما أن last_activity_on = القيمة القصوى للمصادر الثلاثة، فإن «أحدث من/منذ»
+        (>= و >) تُكافئ OR على المصادر — وهي العوامل التي تستخدمها الفلاتر.
+        للعوامل الأخرى (غير المستخدمة) نكتفي بتاريخ آخر تعديل كتقريب آمن، تفاديًا
+        لتركيبة OR غير الصحيحة على مصادر متعددة (سجلات بلا رسائل/أنشطة)."""
+        if isinstance(value, str):
+            value = parse_date(value, self.env)
+        if operator in ('>=', '>'):
+            return [
+                '|', '|',
+                ('write_date', operator, value),
+                ('message_ids.date', operator, value),
+                ('activity_ids.write_date', operator, value),
+            ]
+        return [('write_date', operator, value)]
 
     # ==================================================================
     # توليد الأقساط

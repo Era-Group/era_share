@@ -47,6 +47,7 @@
                        decoration-danger="state == 'overdue'"
                        decoration-warning="state == 'in_progress'"
                        decoration-info="state == 'pending'"/>
+                <field name="last_activity_on" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
             </list>
         </field>
@@ -298,6 +299,11 @@
                         domain="[('next_payment_date', '&gt;=', 'today'), ('next_payment_date', '&lt;', '=week_start +1w')]"/>
                 <filter name="due_this_month" string="دفعة قادمة هذا الشهر"
                         domain="[('next_payment_date', '&gt;=', 'today'), ('next_payment_date', '&lt;', '=1d +1m')]"/>
+                <separator/>
+                <filter name="updated_last_day" string="محدثة خلال يوم"
+                        domain="[('last_activity_on', '&gt;=', '-1d')]"/>
+                <filter name="updated_this_week" string="محدثة هذا الأسبوع"
+                        domain="[('last_activity_on', '&gt;=', '=week_start')]"/>
                 <separator/>
                 <filter name="high_priority" string="أولوية عالية"
                         domain="[('priority', 'in', ['2', '3'])]"/>

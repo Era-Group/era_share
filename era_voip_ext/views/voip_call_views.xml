@@ -60,6 +60,21 @@
             <xpath expr="//tree|//list" position="inside">
                 <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
                 <field name="sales_evaluation" string="تقييم" optional="show"/>
+                <field name="transcription_status" string="حالة التفريغ" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_voip_call_search_transcription_retry" model="ir.ui.view">
+        <field name="name">voip.call.search.transcription.retry</field>
+        <field name="model">voip.call</field>
+        <field name="inherit_id" ref="voip.voip_call_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='last_7_days']" position="after">
+                <separator/>
+                <filter string="بحاجة لإعادة تفريغ (أطول من 30 ثانية)"
+                        name="needs_transcription_retry"
+                        domain="[('needs_transcription_retry', '=', True)]"/>
             </xpath>
         </field>
     </record>

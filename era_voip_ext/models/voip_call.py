@@ -21,6 +21,13 @@ _MIN_RECORDING_SECONDS = 20.0
 _MIN_ANALYSIS_TRANSCRIPT_CHARS = 200
 _MIN_ANALYSIS_SUMMARY_CHARS = 40
 
+# Minimum call duration (seconds) worth re-attempting transcription for.
+_MIN_RETRY_DURATION_SECONDS = 30.0
+# Transcription outcomes the cron will pick up again (see
+# _get_next_pending_transcription_call). Excludes 'done' (success),
+# 'queued' (in progress), and the terminal 'unsupported'/'too_big_to_process'.
+_RETRYABLE_TRANSCRIPTION_STATUSES = ("pending", "no_audio", "error")
+
 
 def _ogg_duration_seconds(data: bytes) -> float:
     """Return duration in seconds of an OGG/Opus or OGG/Vorbis stream, or 0.0 on failure."""
@@ -85,6 +92,29 @@ class VoipCall(models.Model):
         selection_add=[("unsupported", "Unsupported audio")],
         ondelete={"unsupported": "set default"},
     )
+
+    # True for calls that still need transcription: not yet transcribed,
+    # retryable (not a terminal outcome), and long enough (> 30s) to be worth
+    # re-attempting. Stored + indexed so it can back a search-view filter
+    # (the base 'duration' field is a non-stored compute and cannot be searched).
+    needs_transcription_retry = fields.Boolean(
+        string="بحاجة لإعادة تفريغ",
+        compute="_compute_needs_transcription_retry",
+        store=True,
+        index=True,
+        help="مكالمة لم يتم تفريغها، مدتها أكثر من 30 ثانية، وقابلة لإعادة المحاولة.",
+    )
+
+    @api.depends("transcription_status", "start_date", "end_date")
+    def _compute_needs_transcription_retry(self):
+        for call in self:
+            duration_seconds = 0.0
+            if call.start_date and call.end_date:
+                duration_seconds = (call.end_date - call.start_date).total_seconds()
+            call.needs_transcription_retry = bool(
+                call.transcription_status in _RETRYABLE_TRANSCRIPTION_STATUSES
+                and duration_seconds > _MIN_RETRY_DURATION_SECONDS
+            )
 
     analysis_status = fields.Selection(
         [

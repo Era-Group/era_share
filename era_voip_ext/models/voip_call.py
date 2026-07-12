@@ -77,6 +77,15 @@ class VoipCall(models.Model):
         sanitize=False,
     )
 
+    # Terminal transcription outcome for recordings that can never be
+    # transcribed (unsupported container, too short, silent/empty result).
+    # Unlike 'no_audio'/'error' — which the pending-selection query retries —
+    # 'unsupported' is never re-picked, so the cron stops reprocessing them.
+    transcription_status = fields.Selection(
+        selection_add=[("unsupported", "Unsupported audio")],
+        ondelete={"unsupported": "set default"},
+    )
+
     analysis_status = fields.Selection(
         [
             ("pending", "Pending"),
@@ -353,7 +362,7 @@ class VoipCall(models.Model):
             if "too short" in err_msg or "file format" in err_msg:
                 _logger.warning("Call %s: transcription skipped – %s", call.id, e)
                 self._commit_if_needed()
-                self._safe_write(call, {"transcription_status": "no_audio"})
+                self._safe_write(call, {"transcription_status": "unsupported"})
                 return
             _logger.exception("Call %s: transcription failed", call.id)
             self._commit_if_needed()
@@ -369,12 +378,12 @@ class VoipCall(models.Model):
         text = (text or "").strip()
         if not text or re.fullmatch(r"[.\s]+", text):
             _logger.warning("Call %s: empty/placeholder transcript", call.id)
-            self._safe_write(call, {"transcription_status": "error"})
+            self._safe_write(call, {"transcription_status": "unsupported"})
             return
         lines = [line.strip() for line in text.splitlines() if line.strip()]
         if lines and all(re.fullmatch(r"Speaker\s*\d+:[.\s]*", line) for line in lines):
             _logger.warning("Call %s: placeholder-only transcript", call.id)
-            self._safe_write(call, {"transcription_status": "error"})
+            self._safe_write(call, {"transcription_status": "unsupported"})
             return
 
         if re.search(r"Speaker\s*\d+:", text):
@@ -428,6 +437,16 @@ class VoipCall(models.Model):
             _logger.exception("Call %s: transcript formatting failed", self.id)
         return "..."
 
+    # Keys the analysis agent is contracted to return (see ai_agent.xml).
+    _ANALYSIS_KEYS = (
+        "is_meaningful",
+        "summary",
+        "obstacles",
+        "recommendations",
+        "sales_rating",
+        "sales_rating_reason",
+    )
+
     def _parse_analysis_json(self, raw):
         if not raw:
             return None
@@ -437,10 +456,45 @@ class VoipCall(models.Model):
         match = re.search(r"\{.*\}", text, flags=re.DOTALL)
         if not match:
             return None
+        blob = match.group(0)
         try:
-            return json.loads(match.group(0))
+            return json.loads(blob)
         except (ValueError, JSONDecodeError):
+            # The model frequently emits Arabic values containing raw (") quotes
+            # that break strict JSON. Fall back to key-anchored extraction, which
+            # tolerates inner quotes because it never anchors on them.
+            return self._lenient_analysis_fields(blob)
+
+    def _lenient_analysis_fields(self, blob):
+        """Best-effort recovery of the analysis object from near-JSON text.
+
+        Each known key's value runs from ``"key":`` up to the next known key
+        (or the closing brace). Because the boundaries are the schema keys —
+        not quote characters — unescaped quotes inside the Arabic prose no
+        longer corrupt the parse.
+        """
+        key_alt = "|".join(self._ANALYSIS_KEYS)
+        data = {}
+        for key in self._ANALYSIS_KEYS:
+            pattern = r'"%s"\s*:\s*(.*?)(?=\s*,\s*"(?:%s)"\s*:|\s*}\s*$)' % (
+                re.escape(key), key_alt,
+            )
+            m = re.search(pattern, blob, flags=re.DOTALL)
+            if m:
+                data[key] = self._coerce_json_scalar(m.group(1))
+        return data or None
+
+    @staticmethod
+    def _coerce_json_scalar(raw):
+        val = raw.strip().rstrip(",").strip()
+        low = val.lower()
+        if low in ("true", "false"):
+            return low == "true"
+        if low == "null":
             return None
+        if len(val) >= 2 and val[0] == '"' and val[-1] == '"':
+            val = val[1:-1]
+        return val.replace('\\"', '"').replace("\\n", "\n").replace("\\/", "/").strip()
 
     @staticmethod
     def _coerce_analysis_text(value):
@@ -488,20 +542,37 @@ class VoipCall(models.Model):
             self._safe_write(call, {"analysis_status": "error"})
             return False
 
-        try:
-            odoobot = self.env.ref('base.user_root')
-            response = ai_agent.with_user(odoobot).get_direct_response(prompt=clean)
-        except (RequestException, JSONDecodeError, UserError, ValueError):
-            _logger.exception("Call %s: analysis call failed", call.id)
+        # The model occasionally answers conversationally ("please paste the
+        # transcript…") instead of JSON. Retry once with an explicit reminder
+        # before giving up, so a single formatting slip doesn't discard the call.
+        _JSON_REMINDER = (
+            "\n\nأعد فقط كائن JSON صالحًا يحتوي المفاتيح المطلوبة، بدون أي نص أو شرح "
+            'خارج JSON، وبدون أسوار كود (```). اجعل كل علامات الاقتباس داخل النص '
+            'مهرّبة (\\").'
+        )
+        odoobot = self.env.ref('base.user_root')
+        data = None
+        raw = ""
+        max_attempts = 2
+        for attempt in range(1, max_attempts + 1):
+            prompt = clean if attempt == 1 else clean + _JSON_REMINDER
+            try:
+                response = ai_agent.with_user(odoobot).get_direct_response(prompt=prompt)
+            except (RequestException, JSONDecodeError, UserError, ValueError):
+                _logger.exception("Call %s: analysis call failed (attempt %s)", call.id, attempt)
+                self._commit_if_needed()
+                self._safe_write(call, {"analysis_status": "error"})
+                return False
             self._commit_if_needed()
-            self._safe_write(call, {"analysis_status": "error"})
-            return False
-
-        self._commit_if_needed()
-        raw = response[0] if response else ""
-        data = self._parse_analysis_json(raw)
+            raw = response[0] if response else ""
+            data = self._parse_analysis_json(raw)
+            if data:
+                break
+            _logger.warning(
+                "Call %s: analysis response unparsable (attempt %s/%s): %r",
+                call.id, attempt, max_attempts, raw[:300],
+            )
         if not data:
-            _logger.warning("Call %s: analysis response unparsable: %r", call.id, raw[:300])
             self._safe_write(call, {"analysis_status": "error"})
             return False
 

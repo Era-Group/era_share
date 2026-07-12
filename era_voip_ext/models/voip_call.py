@@ -444,7 +444,45 @@ class VoipCall(models.Model):
             vals["summary"] = summary
         if not self._safe_write(call, vals):
             return
+        self._cleanup_ai_recording_copy(call)
         self._analyze_call(call, text1 or text)
+
+    def _cleanup_ai_recording_copy(self, call):
+        """Delete the redundant voip_ai transcription copy once transcribed.
+
+        The browser uploads the same recording twice: the base 'voip' module
+        keeps it in the call's chatter (recording.webm/.ogg), and 'voip_ai'
+        stores a second byte-identical copy named 'call_recording.ogg' purely
+        to feed transcription. Once we have the transcript that copy is dead
+        weight, so remove it to reclaim disk — but only when the base chatter
+        recording still exists, so we never delete the call's last audio.
+        """
+        Att = self.env["ir.attachment"].sudo()
+        ai_copies = Att.search([
+            ("res_model", "=", "voip.call"),
+            ("res_id", "=", call.id),
+            ("name", "=", "call_recording.ogg"),
+        ])
+        if not ai_copies:
+            return
+        base_audio = Att.search_count([
+            ("res_model", "=", "voip.call"),
+            ("res_id", "=", call.id),
+            ("id", "not in", ai_copies.ids),
+            "|", ("mimetype", "=ilike", "audio/%"), ("name", "=ilike", "%.webm"),
+        ])
+        if not base_audio:
+            _logger.info(
+                "Call %s: keeping call_recording.ogg — no other audio attachment to fall back on",
+                call.id,
+            )
+            return
+        count = len(ai_copies)
+        try:
+            ai_copies.unlink()
+            _logger.info("Call %s: removed %d redundant AI recording copy", call.id, count)
+        except Exception as exc:
+            _logger.warning("Call %s: could not remove AI recording copy: %s", call.id, exc)
 
     def _format_transcript_with_agent(self, text):
         if not text:

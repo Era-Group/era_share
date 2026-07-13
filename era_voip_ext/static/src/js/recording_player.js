@@ -48,7 +48,7 @@ class VoipRecordingPlayer extends Component {
                 t-att-title="title"
                 t-att-disabled="state.loading"
                 t-on-click.stop.prevent="onClick">
-            <i t-att-class="'fa ' + iconClass" style="font-size: 1.7rem;"/>
+            <i t-att-class="'fa ' + iconClass"/>
         </button>`;
     static props = { ...standardWidgetProps };
 

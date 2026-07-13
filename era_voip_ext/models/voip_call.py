@@ -1180,6 +1180,28 @@ class VoipCall(models.Model):
                     return summary
         return False
 
+    def action_play_recording(self):
+        """Row action: resolve and open this single call's recording.
+
+        Kept as an on-click action (not a list column) so the recording lookup
+        — which runs several searches — happens once for the clicked row, never
+        once per row on list render.
+        """
+        self.ensure_one()
+        url = self.recording_url  # computed lazily, for this one record only
+        if not url:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Recording"),
+                    "message": _("No recording available for this call."),
+                    "type": "warning",
+                    "sticky": False,
+                },
+            }
+        return {"type": "ir.actions.act_url", "url": url, "target": "new"}
+
     def _compute_recording_url(self):
         base_url = (
             self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""

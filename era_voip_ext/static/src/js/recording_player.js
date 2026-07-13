@@ -51,6 +51,11 @@ class VoipRecordingPlayer extends Component {
             <i t-att-class="'fa ' + (state.loading ? 'fa-spinner fa-spin' : 'fa-play-circle')"/>
         </button>`;
     static props = { ...standardWidgetProps };
+    // Pin the list column to the button width. A widget column with no width /
+    // listViewWidth defaults to minWidth=80 with NO max, so it expands to
+    // absorb the table's leftover space (web list column_width_hook). A Number
+    // here sets min=max=<n>px — a narrow, fixed icon column.
+    static listViewWidth = 46;
 
     setup() {
         this.orm = useService("orm");

@@ -110,5 +110,5 @@ registry.category("view_widgets").add("era_voip_recording_player", {
     // web list column_width_hook.js); without it the widget column defaults to
     // an expandable minWidth=80 that absorbs the table's leftover space. A
     // Number sets min=max=<n>px — a narrow, fixed icon column.
-    listViewWidth: 46,
+    listViewWidth: 25,
 });

@@ -334,6 +334,20 @@ class EraAiAccount(models.Model):
     cli_oauth_label = fields.Char(
         string="Linked account", compute="_compute_cli_oauth_linked",
     )
+    cli_link_state = fields.Selection(
+        selection=[
+            ("none", "Not linked"),
+            ("active", "Linked"),
+            ("stale", "Linked (renewing)"),
+            ("expired", "Link expired — re-link required"),
+        ],
+        string="Link status", compute="_compute_cli_oauth_linked",
+        help="On-disk state of the linked subscription credentials. "
+             "'stale' means the short-lived access token lapsed but a refresh "
+             "token remains, so the CLI renews it in place. 'expired' means the "
+             "login is dead and a manager must re-link — the server will NOT fall "
+             "back to its own local login for an account that was linked.",
+    )
 
     # --- Models catalog ------------------------------------------------------
     model_ids = fields.One2many("era.ai.model", "account_id", string="Models")
@@ -393,16 +407,25 @@ class EraAiAccount(models.Model):
                 info = rec.sudo()._cli_oauth_info()
             else:
                 info = {}
+            state = info.get("state") or "none"
+            rec.cli_link_state = state
             rec.cli_oauth_linked = bool(info.get("linked"))
-            if not info.get("linked"):
+            renewing = state == "stale"
+            if state == "none":
                 rec.cli_oauth_label = ""
+            elif state == "expired":
+                # A dead link is surfaced explicitly (red banner in the form) so
+                # it gets re-linked instead of silently drifting onto the
+                # server's own login.
+                rec.cli_oauth_label = _("Link expired — re-link required")
             elif rec.provider == "openai":
                 plan = info.get("subscription") or ""
-                rec.cli_oauth_label = (
-                    _("ChatGPT %s linked", plan) if plan else _("ChatGPT account linked"))
+                base = _("ChatGPT %s linked", plan) if plan else _("ChatGPT account linked")
+                rec.cli_oauth_label = _("%s (renewing)", base) if renewing else base
             else:
                 sub = info.get("subscription") or "subscription"
-                rec.cli_oauth_label = _("Claude %s linked", sub)
+                base = _("Claude %s linked", sub)
+                rec.cli_oauth_label = _("%s (renewing)", base) if renewing else base
 
     # ----------------------------------------------------------------- onchange
     @api.onchange("provider")
@@ -847,38 +870,83 @@ class EraAiAccount(models.Model):
         return os.path.join(self._cli_managed_config_dir(), self._cli_profile()["cred_file"])
 
     def _cli_oauth_info(self):
-        """Read the linked credentials; return {linked, subscription, expires_at}."""
+        """Read the linked credentials; return {state, linked, subscription, ...}.
+
+        ``state`` is the single source of truth for how the account is linked:
+
+        * ``active``  — a usable access token is present (and unexpired);
+        * ``stale``   — the short-lived access token lapsed/emptied but a refresh
+                        token remains, so the first-party CLI can renew it in
+                        place. Still counts as linked and still routes to the
+                        managed dir (that renewal is exactly how a link stays
+                        alive across the access token's ~hourly expiry);
+        * ``expired`` — the credential file exists (this account WAS linked) but
+                        nothing usable remains — a manager must re-link;
+        * ``none``    — no credential file was ever written (the account uses the
+                        server's ambient login on purpose).
+
+        ``linked`` is kept for existing callers/views as ``state in
+        {active, stale}``.
+        """
         self.ensure_one()
         try:
             with open(self._cli_credentials_path(), "r") as f:
                 data = json.load(f)
         except (OSError, ValueError):
-            return {"linked": False}
+            return {"state": "none", "linked": False}
         if not isinstance(data, dict):
-            return {"linked": False}
-        if self.provider == "openai":
-            return self._codex_oauth_info(data)
-        oauth = data.get("claudeAiOauth") or {}
-        if not oauth.get("accessToken"):
-            return {"linked": False}
+            return {"state": "none", "linked": False}
+        info = (self._codex_oauth_info(data) if self.provider == "openai"
+                else self._anthropic_oauth_info(data))
+        info["linked"] = info.get("state") in ("active", "stale")
+        return info
+
+    @staticmethod
+    def _anthropic_oauth_info(data):
+        """Interpret a Claude Code ``.credentials.json`` into a link ``state``."""
+        oauth = data.get("claudeAiOauth")
+        if not isinstance(oauth, dict):
+            # A file in some other shape: treat as never-linked (ambient login).
+            return {"state": "none"}
+        access = oauth.get("accessToken") or ""
+        refresh = oauth.get("refreshToken") or ""
+        expires_at = oauth.get("expiresAt") or 0
+        now_ms = time.time() * 1000
+        if access and (not expires_at or expires_at > now_ms):
+            state = "active"
+        elif refresh:
+            # Access token gone/expired but renewable: the CLI refreshes on use.
+            state = "stale"
+        else:
+            state = "expired"
         return {
-            "linked": True,
+            "state": state,
             "subscription": oauth.get("subscriptionType") or "",
-            "expires_at": oauth.get("expiresAt") or 0,
+            "expires_at": expires_at,
+            "refresh_expires_at": oauth.get("refreshTokenExpiresAt") or 0,
         }
 
     @staticmethod
     def _codex_oauth_info(data):
-        """Interpret a Codex ``auth.json``: ChatGPT-mode tokens => linked."""
+        """Interpret a Codex ``auth.json`` into a link ``state``."""
         tokens = data.get("tokens") or {}
-        if not isinstance(tokens, dict) or not tokens.get("access_token"):
-            return {"linked": False}
         # auth_mode is "chatgpt" for subscription auth; absent on some older
         # files — only an explicit API-key mode disqualifies.
-        if (data.get("auth_mode") or "chatgpt") != "chatgpt":
-            return {"linked": False}
+        if not isinstance(tokens, dict) or (data.get("auth_mode") or "chatgpt") != "chatgpt":
+            return {"state": "none"}
+        access = tokens.get("access_token") or ""
+        refresh = tokens.get("refresh_token") or ""
+        if access:
+            state = "active"
+        elif refresh:
+            # codex renews the access token itself from the refresh token.
+            state = "stale"
+        elif tokens:
+            state = "expired"  # a ChatGPT login that lost its tokens
+        else:
+            state = "none"
         return {
-            "linked": True,
+            "state": state,
             "subscription": _codex_plan_from_id_token(tokens.get("id_token") or ""),
             "expires_at": 0,  # codex tracks freshness itself via last_refresh
         }
@@ -886,6 +954,10 @@ class EraAiAccount(models.Model):
     def _cli_is_linked(self):
         self.ensure_one()
         return bool(self.sudo()._cli_oauth_info().get("linked"))
+
+    def _cli_link_state(self):
+        self.ensure_one()
+        return self.sudo()._cli_oauth_info().get("state") or "none"
 
     def _cli_write_credentials(self, creds):
         """Atomically write `.credentials.json` (mode 0600) for the linked account."""
@@ -1242,14 +1314,37 @@ class EraAiAccount(models.Model):
         concurrency = max(1, _i("ai.cli_max_concurrency", 1))
 
         # A linked subscription account routes through its own isolated
-        # credentials dir; otherwise fall back to the ambient HOME-based login.
-        if self._cli_is_linked():
+        # credentials dir; a never-linked account falls back to the ambient
+        # HOME-based login on purpose. The one case we must NOT treat as
+        # "ambient" is a link that was established and then died ('expired'):
+        # silently borrowing the server operator's own login there hides the
+        # dead link and spends the wrong subscription. Fail loudly instead so a
+        # manager re-links (an ICP escape hatch keeps the old fall-back if a
+        # site truly wants zero-downtime while a re-link is pending).
+        link_state = self._cli_link_state()
+        if link_state in ("active", "stale"):
             home_dir = self._cli_managed_home()
             # create=True: guarantee the dir exists for CLAUDE_CONFIG_DIR /
             # CODEX_HOME even if it was removed out from under us between the
             # link check and the call.
             config_dir = self._cli_managed_config_dir(create=True)
-        else:
+        elif link_state == "expired":
+            if _b("era_ai_accounts.cli_link_strict", True):
+                raise UserError(_(
+                    "The linked subscription for AI account '%s' has expired and "
+                    "can no longer sign in. An AI Account Manager must re-link it "
+                    "(open the account and click “Login with Claude” / “Re-link "
+                    "account”). The server is intentionally not falling back to "
+                    "its own local login for a shared account that was linked.",
+                    self.name))
+            _logger.warning(
+                "era_ai_accounts: account '%s' (id=%s) has an EXPIRED link; "
+                "falling back to the ambient login at %s because "
+                "era_ai_accounts.cli_link_strict is off. Re-link it to restore "
+                "the shared account.", self.name, self.id, self.cli_home_dir or "/opt/odoo")
+            home_dir = self.cli_home_dir or "/opt/odoo"
+            config_dir = False
+        else:  # "none" — never linked; use the server's ambient login by design.
             home_dir = self.cli_home_dir or "/opt/odoo"
             config_dir = False
 

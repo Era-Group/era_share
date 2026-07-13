@@ -54,11 +54,20 @@
 
                     <group string="CLI proxy" invisible="auth_mode != 'cli_proxy'">
                         <field name="cli_oauth_linked" invisible="1"/>
+                        <field name="cli_link_state" invisible="1"/>
                         <div colspan="2">
                             <div invisible="not cli_oauth_linked"
                                  class="alert alert-success d-flex align-items-center mb-2" role="status">
                                 <i class="fa fa-check-circle me-2" title="Linked"/>
                                 <span><field name="cli_oauth_label" readonly="1" nolabel="1"/> — used by every user, no API key.</span>
+                            </div>
+                            <div invisible="cli_link_state != 'expired'"
+                                 class="alert alert-danger d-flex align-items-center mb-2" role="alert">
+                                <i class="fa fa-exclamation-triangle me-2" title="Expired"/>
+                                <span>This account was linked but its subscription login has <b>expired</b>.
+                                Click <b>Login with Claude</b> / <b>Connect ChatGPT account</b> below to re-link it.
+                                Until then, AI calls through this account fail — the server does <b>not</b> fall
+                                back to its own local login for a shared account that was linked.</span>
                             </div>
                             <button name="action_ai_claude_login" type="object" class="btn-primary"
                                     string="Login with Claude" icon="fa-sign-in"

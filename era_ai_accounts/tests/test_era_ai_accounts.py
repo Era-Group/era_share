@@ -549,6 +549,41 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(cfg["home_dir"], tmp)
         self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".claude"))
 
+    def test_stale_link_still_routes_to_managed_dir(self):
+        # Access token lapsed/emptied but a refresh token remains: the account
+        # is still "linked" and must keep using the managed dir so the CLI can
+        # renew it in place — NOT silently drop to the server's ambient login.
+        acc, tmp = self._linked_cli_account()
+        acc.sudo()._cli_write_credentials(
+            {"claudeAiOauth": {"accessToken": "", "refreshToken": "rt", "expiresAt": 1}})
+        self.assertEqual(acc._cli_link_state(), "stale")
+        self.assertTrue(acc._cli_is_linked())
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["home_dir"], tmp)
+        self.assertEqual(cfg["config_dir"], os.path.join(tmp, ".claude"))
+
+    def test_expired_link_fails_loudly_and_does_not_borrow_ambient(self):
+        # A link that was established and then died must not silently fall back
+        # to the server's own login (that hides the dead link and spends the
+        # wrong subscription). Strict mode (default) raises so a manager re-links.
+        acc, tmp = self._linked_cli_account()
+        acc.sudo()._cli_write_credentials(
+            {"claudeAiOauth": {"accessToken": "", "refreshToken": "", "subscriptionType": "max"}})
+        self.assertEqual(acc._cli_link_state(), "expired")
+        self.assertFalse(acc._cli_is_linked())
+        acc.invalidate_recordset(["cli_link_state", "cli_oauth_linked", "cli_oauth_label"])
+        self.assertEqual(acc.cli_link_state, "expired")
+        self.assertFalse(acc.cli_oauth_linked)
+        with self.assertRaises(UserError):
+            acc._cli_cfg()
+        # Escape hatch: sites that want zero-downtime while a re-link is pending
+        # can opt back into the ambient fall-back.
+        self.env["ir.config_parameter"].sudo().set_param(
+            "era_ai_accounts.cli_link_strict", "False")
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["home_dir"], "/opt/odoo")
+        self.assertFalse(cfg["config_dir"])
+
     def test_oauth_logout_removes_credentials(self):
         acc, tmp = self._linked_cli_account()
         acc._oauth_start()

@@ -156,6 +156,27 @@ Cloudflare/OpenAI for those).
 5. On an **AI Agent**, set **AI Account** + **Account Model**. Responses are then
    generated through the account.
 
+### Link health (linked subscriptions)
+
+A linked subscription has four on-disk states, shown on the account form
+(`cli_link_state`):
+
+- **Linked** (`active`) — a usable access token is present.
+- **Linked (renewing)** (`stale`) — the short-lived access token lapsed but a
+  refresh token remains; the first-party CLI renews it in place on the next
+  call. Still fully usable, still routed to the linked account — the module
+  keeps using the managed credential dir so that renewal can happen (this is how
+  a link survives the access token's ~hourly expiry).
+- **Link expired** (`expired`) — the login is dead (no refresh possible). A red
+  banner asks a manager to **re-link**. By default (`era_ai_accounts.cli_link_strict`)
+  AI calls through the account **fail loudly** rather than silently borrowing the
+  server's own ambient login — so a dead shared link is fixed, not hidden.
+- **Not linked** (`none`) — no in-app link; the CLI uses the server's ambient
+  `~/.claude` / `~/.codex` login under the account's *CLI HOME*, on purpose.
+
+> After re-linking (browser OAuth for Claude / device-code or `auth.json` for
+> ChatGPT), the state returns to *active* for every user immediately.
+
 ## Compliance note
 
 Using a **subscription** (Claude Pro/Max or ChatGPT Plus/Pro/…) through the
@@ -216,6 +237,7 @@ off to keep an account strictly single-shot chat).
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |
 | `ai.openai_image_timeout` | 300 | OpenAI image-generation HTTP timeout (s) — high-quality `gpt-image-1` renders can take minutes |
 | `ai.openai_transcribe_timeout` | 120 | OpenAI speech-to-text HTTP timeout (s) for `account.transcribe()` — raise it for long recordings |
+| `era_ai_accounts.cli_link_strict` | True | If a **linked** subscription expires, fail the call (True) instead of silently using the server's own ambient login. Set to `False` only for a temporary zero-downtime window while a manager re-links. |
 
 All of the `ai.cli_*` settings above are editable in the UI: **Settings ▸ AI ▸ "AI
 CLI rate protection"** (no redeploy needed). They apply to both CLI providers.

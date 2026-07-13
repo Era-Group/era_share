@@ -469,8 +469,7 @@ class VoipCall(models.Model):
             ("res_model", "=", "voip.call"),
             ("res_id", "=", call.id),
             ("id", "not in", ai_copies.ids),
-            "|", ("mimetype", "=ilike", "audio/%"), ("name", "=ilike", "%.webm"),
-        ])
+        ] + self._audio_attachment_domain_leaf())
         if not base_audio:
             _logger.info(
                 "Call %s: keeping call_recording.ogg — no other audio attachment to fall back on",
@@ -791,9 +790,9 @@ class VoipCall(models.Model):
         pool = active_rows or rows
         if len(pool) > 1:
             _logger.info(
-                "Call %s: phone %s matches multiple leads %s — abstaining to "
+                "Call %s: call number matches multiple leads %s — abstaining to "
                 "avoid posting analysis to the wrong lead",
-                call.id, call.phone_number, [row[0] for row in pool],
+                call.id, [row[0] for row in pool],
             )
             return False
         return Lead.browse(pool[0][0])
@@ -1026,16 +1025,22 @@ class VoipCall(models.Model):
 
     
 
+    @staticmethod
+    def _audio_attachment_domain_leaf():
+        """Domain leaf matching an audio recording by mimetype or .webm name.
+
+        Shared by the recording lookup and the AI-copy cleanup so "what counts
+        as an audio attachment" is defined once.
+        """
+        return ["|", ("mimetype", "=ilike", "audio/%"), ("name", "=ilike", "%.webm")]
+
     def _find_recording_attachment(self):
         self.ensure_one()
         Attachment = self.env["ir.attachment"].sudo()
         audio_domain = [
             ("res_model", "=", self._name),
             ("res_id", "=", self.id),
-            "|",
-            ("mimetype", "ilike", "audio/"),
-            ("name", "=ilike", "%.webm"),
-        ]
+        ] + self._audio_attachment_domain_leaf()
         attachment = Attachment.search(
             audio_domain, order="create_date desc, id desc", limit=1
         )
@@ -1100,13 +1105,9 @@ class VoipCall(models.Model):
         )
         if attachment:
             return attachment
-        attachment = Attachment.search(
-            [("name", "=ilike", "recording.webm")],
-            order="create_date desc, id desc",
-            limit=1,
-        )
-        if attachment:
-            return attachment
+        # No res-unbound fallback here: a bare "recording.webm" name search
+        # would return an arbitrary call's recording (and defeat the per-user
+        # access rule). Better to report "no recording" than the wrong one.
         return False
 
     def _find_realtime_summary(self):
@@ -1253,8 +1254,10 @@ class VoipCall(models.Model):
                     url = f"/voip_call/recording/{call.id}"
             call.recording_url = _absolute_url(url)
             if call.recording_url:
-                call.recording_link_html = (
-                    f'<a href="{call.recording_url}" target="_blank">▶️</a>'
-                )
+                # sanitize=False on the field; escape the URL ourselves so the
+                # markup stays safe even if the URL source ever changes.
+                call.recording_link_html = Markup(
+                    '<a href="%s" target="_blank">▶️</a>'
+                ) % call.recording_url
             else:
                 call.recording_link_html = ""

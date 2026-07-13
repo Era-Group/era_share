@@ -58,7 +58,9 @@
         <field name="inherit_id" ref="voip.voip_call_tree_view"/>
         <field name="arch" type="xml">
             <xpath expr="//tree|//list" position="inside">
-                <field name="recording_link_html" widget="html" string="Recording" class="voip-recording-link"/>
+                <!-- recording_link_html deliberately omitted from the list: its
+                     compute runs several searches per row (N+1 on large lists).
+                     The recording link stays available on the call form. -->
                 <field name="sales_evaluation" string="تقييم" optional="show"/>
                 <field name="transcription_status" string="حالة التفريغ" optional="hide"/>
             </xpath>

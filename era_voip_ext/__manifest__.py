@@ -14,7 +14,6 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "era_voip_ext/static/src/scss/voip_call.scss",
             "era_voip_ext/static/src/js/recording_quality.js",
         ],
     },

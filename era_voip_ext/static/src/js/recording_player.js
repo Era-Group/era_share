@@ -1,95 +1,72 @@
 /** @odoo-module **/
 
-import { Component, onWillUnmount, reactive, useState, xml } from "@odoo/owl";
+import { Component, onWillUnmount, useRef, useState, xml } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { Dialog } from "@web/core/dialog/dialog";
 import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
 
-// A single shared audio element so only one recording plays at a time across
-// rows. `playingId` is reactive and drives every row's icon; the actual
-// HTMLAudioElement is kept out of the reactive graph (it is a DOM object).
-// `currentToken` identifies the widget instance that started playback, so that
-// instance can stop the audio when it is destroyed (e.g. the user navigates
-// away from the list) — otherwise playback would keep going across pages.
-const playerState = reactive({ playingId: null });
-let currentAudio = null;
-let currentToken = null;
-let tokenSeq = 0;
+// Floating (draggable) player window. It owns its own <audio> element, so
+// closing the dialog — via the X, Escape, the close button, or navigating
+// away (which unmounts it) — pauses and releases the audio. Nothing keeps
+// playing in the background.
+class RecordingPlayerDialog extends Component {
+    static components = { Dialog };
+    static template = xml`
+        <Dialog title="props.title" size="'md'">
+            <audio t-ref="audio" t-att-src="props.url" controls="controls"
+                   autoplay="autoplay" preload="auto" style="width: 100%;"/>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="onClose">إغلاق</button>
+            </t>
+        </Dialog>`;
+    static props = { url: String, title: String, close: Function };
 
-function stopPlayback() {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.removeAttribute("src");
-        currentAudio.load();
-        currentAudio = null;
+    setup() {
+        this.audioRef = useRef("audio");
+        onWillUnmount(() => {
+            const audio = this.audioRef.el;
+            if (audio) {
+                audio.pause();
+                audio.removeAttribute("src");
+                audio.load();
+            }
+        });
     }
-    currentToken = null;
-    playerState.playingId = null;
+
+    onClose() {
+        this.props.close();
+    }
 }
 
-function startPlayback(id, url) {
-    stopPlayback();
-    const token = ++tokenSeq;
-    currentToken = token;
-    const audio = new Audio(url);
-    currentAudio = audio;
-    playerState.playingId = id;
-    audio.addEventListener("ended", stopPlayback);
-    audio.addEventListener("error", stopPlayback);
-    // Promise rejects if the browser blocks playback; caller handles it.
-    return { token, promise: audio.play() };
-}
+// Keep at most one player window open at a time.
+let closeCurrentDialog = null;
 
 class VoipRecordingPlayer extends Component {
     static template = xml`
-        <button type="button"
-                t-att-class="'btn btn-link p-0 ' + (isPlaying ? 'text-danger' : 'text-primary')"
-                t-att-title="title"
-                t-att-disabled="state.loading"
+        <button type="button" class="btn btn-link p-0 text-primary"
+                t-att-title="title" t-att-disabled="state.loading"
                 t-on-click.stop.prevent="onClick">
-            <i t-att-class="'fa ' + iconClass"/>
+            <i t-att-class="'fa ' + (state.loading ? 'fa-spinner fa-spin' : 'fa-play-circle')"/>
         </button>`;
     static props = { ...standardWidgetProps };
 
     setup() {
         this.orm = useService("orm");
+        this.dialog = useService("dialog");
         this.notification = useService("notification");
         this.state = useState({ loading: false });
-        // Subscribe this row to the shared player so its icon reflects
-        // start/stop triggered from any row (or when playback ends).
-        this.player = useState(playerState);
-        this._playToken = null;
-        // Stop playback when the widget that started it is destroyed, so the
-        // audio doesn't keep playing after leaving the list / changing view.
-        onWillUnmount(() => {
-            if (this._playToken && this._playToken === currentToken) {
-                stopPlayback();
-            }
-        });
     }
 
     get resId() {
         return this.props.record.resId;
     }
-    get isPlaying() {
-        return this.player.playingId === this.resId;
-    }
     get title() {
-        return this.isPlaying ? _t("إيقاف") : _t("تشغيل التسجيل");
-    }
-    get iconClass() {
-        if (this.state.loading) {
-            return "fa-spinner fa-spin";
-        }
-        return this.isPlaying ? "fa-stop-circle" : "fa-play-circle";
+        return _t("تشغيل التسجيل");
     }
 
     async onClick() {
-        if (this.isPlaying) {
-            stopPlayback();
-            return;
-        }
         const id = this.resId;
         if (!id) {
             return;
@@ -103,11 +80,22 @@ class VoipRecordingPlayer extends Component {
                 });
                 return;
             }
-            const { token, promise } = startPlayback(id, url);
-            this._playToken = token;
-            await promise;
+            if (typeof closeCurrentDialog === "function") {
+                closeCurrentDialog();
+            }
+            const remove = this.dialog.add(
+                RecordingPlayerDialog,
+                { url, title: _t("تسجيل المكالمة") },
+                {
+                    onClose: () => {
+                        if (closeCurrentDialog === remove) {
+                            closeCurrentDialog = null;
+                        }
+                    },
+                }
+            );
+            closeCurrentDialog = remove;
         } catch (error) {
-            stopPlayback();
             this.notification.add(_t("تعذّر تشغيل التسجيل."), { type: "danger" });
         } finally {
             this.state.loading = false;

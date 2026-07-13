@@ -58,12 +58,11 @@
         <field name="inherit_id" ref="voip.voip_call_tree_view"/>
         <field name="arch" type="xml">
             <xpath expr="//tree|//list" position="inside">
-                <!-- Recording as a per-row on-click button instead of a computed
-                     column: the lookup (several searches) runs only when the user
-                     clicks a specific row, never once per row on list render. -->
-                <button name="action_play_recording" type="object"
-                        icon="fa-play-circle" string="تشغيل"
-                        title="تشغيل التسجيل" class="btn-link text-primary"/>
+                <!-- Recording as a per-row OWL player widget: renders a static
+                     play icon (no query on list render) and, on click, fetches
+                     this one row's URL and plays the audio inline — no browser
+                     tab, and no per-row lookup on list load. -->
+                <widget name="era_voip_recording_player"/>
                 <field name="sales_evaluation" string="تقييم" optional="show"/>
                 <field name="transcription_status" string="حالة التفريغ" optional="hide"/>
             </xpath>

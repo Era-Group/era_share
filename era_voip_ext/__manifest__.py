@@ -15,6 +15,7 @@
     "assets": {
         "web.assets_backend": [
             "era_voip_ext/static/src/js/recording_quality.js",
+            "era_voip_ext/static/src/js/recording_player.js",
         ],
     },
     "post_init_hook": "post_init_hook",

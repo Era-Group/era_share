@@ -1180,27 +1180,17 @@ class VoipCall(models.Model):
                     return summary
         return False
 
-    def action_play_recording(self):
-        """Row action: resolve and open this single call's recording.
+    def get_recording_url(self):
+        """Return this call's recording URL (or False).
 
-        Kept as an on-click action (not a list column) so the recording lookup
-        — which runs several searches — happens once for the clicked row, never
-        once per row on list render.
+        Called on demand by the list-view player widget when a row's play
+        button is clicked, so the recording lookup (several searches) runs for
+        one record on click — never once per row on list render. Access is
+        enforced by voip.call's record rules on read, and again by the
+        access-checked recording endpoint the URL points to.
         """
         self.ensure_one()
-        url = self.recording_url  # computed lazily, for this one record only
-        if not url:
-            return {
-                "type": "ir.actions.client",
-                "tag": "display_notification",
-                "params": {
-                    "title": _("Recording"),
-                    "message": _("No recording available for this call."),
-                    "type": "warning",
-                    "sticky": False,
-                },
-            }
-        return {"type": "ir.actions.act_url", "url": url, "target": "new"}
+        return self.recording_url or False
 
     def _compute_recording_url(self):
         base_url = (

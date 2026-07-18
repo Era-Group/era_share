@@ -1,0 +1,134 @@
+/** @odoo-module **/
+
+import { Component, useState, onWillStart } from "@odoo/owl";
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
+
+export class CsDashboard extends Component {
+    static template = "era_customer_success.CsDashboard";
+    static props = ["*"];
+
+    setup() {
+        this.orm = useService("orm");
+        this.action = useService("action");
+        this.state = useState({
+            loading: true,
+            kpi: {
+                accounts: 0, avgHealth: 0, atRisk: 0, mrr: 0,
+                renewals: 0, avgCsat: 0, avgSentiment: 0, upsell: 0,
+            },
+            engineers: [],
+            atRisk: [],
+        });
+        onWillStart(() => this.loadData());
+    }
+
+    get atRiskDomain() {
+        return ["|", ["churn_risk", "=", true], ["health_status", "in", ["at_risk", "critical"]]];
+    }
+
+    async loadData() {
+        this.state.loading = true;
+        const M = "cs.account";
+
+        // Global aggregates (single group)
+        const aggFields = [
+            "health_score:avg", "mrr:sum", "upsell_revenue:sum",
+            "csat_latest:avg", "sentiment_score:avg",
+        ];
+        const agg = await this.orm.call(M, "read_group", [[], aggFields, []], { lazy: false });
+        const g = agg[0] || {};
+        const k = this.state.kpi;
+        k.accounts = g.__count || 0;
+        k.avgHealth = Math.round(g.health_score || 0);
+        k.mrr = Math.round(g.mrr || 0);
+        k.upsell = Math.round(g.upsell_revenue || 0);
+        k.avgCsat = Math.round((g.csat_latest || 0) * 10) / 10;
+        k.avgSentiment = Math.round(g.sentiment_score || 0);
+        k.atRisk = await this.orm.searchCount(M, this.atRiskDomain);
+        k.renewals = await this.orm.searchCount(M, [["renewal_soon", "=", true]]);
+
+        // Per-engineer leaderboard
+        const rows = await this.orm.call(
+            M, "read_group",
+            [[["csm_user_id", "!=", false]],
+             ["health_score:avg", "mrr:sum", "upsell_revenue:sum", "sentiment_score:avg"],
+             ["csm_user_id"]],
+            { lazy: false }
+        );
+        const eng = [];
+        for (const r of rows) {
+            const atRisk = await this.orm.searchCount(
+                M, [["csm_user_id", "=", r.csm_user_id[0]], ...this.atRiskDomain]
+            );
+            eng.push({
+                id: r.csm_user_id[0],
+                name: r.csm_user_id[1],
+                accounts: r.csm_user_id_count || r.__count || 0,
+                health: Math.round(r.health_score || 0),
+                mrr: Math.round(r.mrr || 0),
+                upsell: Math.round(r.upsell_revenue || 0),
+                sentiment: Math.round(r.sentiment_score || 0),
+                atRisk,
+            });
+        }
+        eng.sort((a, b) => b.health - a.health);
+        this.state.engineers = eng;
+
+        // At-risk accounts
+        this.state.atRisk = await this.orm.searchRead(
+            M, this.atRiskDomain,
+            ["partner_id", "csm_user_id", "health_score", "health_status",
+             "open_tickets_count", "sentiment_label", "days_to_renewal"],
+            { limit: 15, order: "health_score asc" }
+        );
+        this.state.loading = false;
+    }
+
+    get tiles() {
+        const k = this.state.kpi;
+        return [
+            { key: "accounts", icon: "fa-users", color: "primary", label: "Accounts", value: k.accounts, domain: [] },
+            { key: "health", icon: "fa-heartbeat", color: "success", label: "Avg Health", value: k.avgHealth, domain: [] },
+            { key: "atRisk", icon: "fa-exclamation-triangle", color: "danger", label: "At Risk", value: k.atRisk, domain: this.atRiskDomain },
+            { key: "renewals", icon: "fa-refresh", color: "warning", label: "Renewals < 90d", value: k.renewals, domain: [["renewal_soon", "=", true]] },
+            { key: "mrr", icon: "fa-money", color: "info", label: "MRR", value: k.mrr, domain: [["mrr", ">", 0]] },
+            { key: "csat", icon: "fa-star", color: "success", label: "Avg CSAT", value: k.avgCsat, domain: [] },
+            { key: "sentiment", icon: "fa-smile-o", color: "primary", label: "Avg Sentiment", value: k.avgSentiment, domain: [] },
+            { key: "upsell", icon: "fa-line-chart", color: "info", label: "Upsell Won", value: k.upsell, domain: [["upsell_revenue", ">", 0]] },
+        ];
+    }
+
+    moodEmoji(label) {
+        return { positive: "🙂", neutral: "😐", negative: "🙁" }[label] || "";
+    }
+
+    onTile(tile) {
+        this.openAccounts(tile.label, tile.domain);
+    }
+
+    openAccounts(name, domain) {
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Customer Success — " + name,
+            res_model: "cs.account",
+            domain: domain || [],
+            views: [[false, "list"], [false, "kanban"], [false, "form"]],
+        });
+    }
+
+    openEngineer(eng) {
+        this.openAccounts(eng.name, [["csm_user_id", "=", eng.id]]);
+    }
+
+    openAccount(id) {
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cs.account",
+            res_id: id,
+            views: [[false, "form"]],
+        });
+    }
+}
+
+registry.category("actions").add("cs_dashboard", CsDashboard);

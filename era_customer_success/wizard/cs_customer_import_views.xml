@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cs_customer_import_view_form" model="ir.ui.view">
+        <field name="name">cs.customer.import.form</field>
+        <field name="model">cs.customer.import</field>
+        <field name="arch" type="xml">
+            <form string="Smart Customer Import">
+                <div class="alert alert-info" role="status">
+                    <i class="fa fa-magic me-1" title="Smart import"/>
+                    Imports companies that already had dealings with us (tickets or projects)
+                    and are not yet managed, then assigns them to CSM engineers.
+                </div>
+                <group>
+                    <group>
+                        <field name="source" widget="radio"/>
+                        <field name="limit"/>
+                    </group>
+                    <group>
+                        <field name="assign_engineers"/>
+                        <field name="use_ai_tier"/>
+                        <field name="candidate_count" readonly="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_import" type="object" string="Import Customers" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cs_customer_import" model="ir.actions.act_window">
+        <field name="name">Smart Customer Import</field>
+        <field name="res_model">cs.customer.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

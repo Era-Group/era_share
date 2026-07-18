@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cs_stage_onboarding" model="cs.stage">
+        <field name="name">Onboarding (0-30)</field>
+        <field name="sequence">10</field>
+        <field name="is_onboarding" eval="True"/>
+        <field name="day_window_start">0</field>
+        <field name="day_window_end">30</field>
+        <field name="color">4</field>
+        <field name="description">First 30 days: understand the customer, set up, verify usage.</field>
+    </record>
+    <record id="cs_stage_engage" model="cs.stage">
+        <field name="name">Engage (30-60)</field>
+        <field name="sequence">20</field>
+        <field name="is_onboarding" eval="True"/>
+        <field name="day_window_start">30</field>
+        <field name="day_window_end">60</field>
+        <field name="color">5</field>
+        <field name="description">Days 30-60: regular meetings, adoption, close support requests.</field>
+    </record>
+    <record id="cs_stage_grow" model="cs.stage">
+        <field name="name">Grow (60-90)</field>
+        <field name="sequence">30</field>
+        <field name="is_onboarding" eval="True"/>
+        <field name="day_window_start">60</field>
+        <field name="day_window_end">90</field>
+        <field name="color">10</field>
+        <field name="description">Days 60-90: business review, upsell discovery, renewal path.</field>
+    </record>
+    <record id="cs_stage_steady" model="cs.stage">
+        <field name="name">Steady</field>
+        <field name="sequence">40</field>
+        <field name="color">10</field>
+        <field name="description">Active customer in steady-state cadence (weekly / monthly).</field>
+    </record>
+    <record id="cs_stage_at_risk" model="cs.stage">
+        <field name="name">At Risk</field>
+        <field name="sequence">50</field>
+        <field name="is_at_risk" eval="True"/>
+        <field name="color">2</field>
+        <field name="description">Health dropped – needs intervention to prevent churn.</field>
+    </record>
+    <record id="cs_stage_churned" model="cs.stage">
+        <field name="name">Churned</field>
+        <field name="sequence">60</field>
+        <field name="is_churned" eval="True"/>
+        <field name="fold" eval="True"/>
+        <field name="color">1</field>
+        <field name="description">Customer lost.</field>
+    </record>
+</odoo>

@@ -1,0 +1,3362 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_customer_success
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-22 08:13+0000\n"
+"PO-Revision-Date: 2026-06-22 08:13+0000\n"
+"Last-Translator: Era Group\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
+msgid "# Accounts"
+msgstr "عدد الحسابات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__call_count
+msgid "# Calls"
+msgstr "عدد المكالمات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__sla_failed_count
+msgid "# Failed SLA"
+msgstr "عدد SLA المتجاوزة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__meeting_count
+msgid "# Meetings"
+msgstr "عدد الاجتماعات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__offering_count
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__offering_count
+msgid "# Offerings"
+msgstr "عدد العروض"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__open_tickets_count
+msgid "# Open Tickets"
+msgstr "عدد التذاكر المفتوحة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__opportunity_count
+msgid "# Opportunities"
+msgstr "عدد الفرص"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__project_count
+msgid "# Projects"
+msgstr "عدد المشاريع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__subscription_count
+msgid "# Subscriptions"
+msgstr "عدد الاشتراكات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__survey_count
+msgid "# Surveys"
+msgstr "عدد الاستبيانات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__ticket_total_count
+msgid "# Tickets (All)"
+msgstr "عدد التذاكر (الكل)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__whatsapp_count
+msgid "# WhatsApp"
+msgstr "عدد رسائل واتساب"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "%(a)s <b>WhatsApp</b>: %(t)s"
+msgstr "%(a)s <b>واتساب</b>: %(t)s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "%(m)s 🎫 <b>Ticket closed</b>: %(name)s (resolution %(h).1f h)"
+msgstr "%(m)s 🎫 <b>أُغلقت التذكرة</b>: %(name)s (زمن الحل %(h).1f ساعة)"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"- feature 1\n"
+"- feature 2…"
+msgstr ""
+"- ميزة 1\n"
+"- ميزة 2…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid ""
+"<i class=\"fa fa-magic me-1\" title=\"Smart import\"/>\n"
+"                    Imports companies that already had dealings with us (tickets or projects)\n"
+"                    and are not yet managed, then assigns them to CSM engineers."
+msgstr ""
+"<i class=\"fa fa-magic me-1\" title=\"جلب ذكي\"/>\n"
+"                    يجلب الشركات التي سبق أن تعاملت معنا (تذاكر أو مشاريع)\n"
+"                    وليست مُدارة بعد، ثم يُسندها لمهندسي نجاح العملاء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"<i class=\"fa fa-magic me-2\" title=\"AI Next Best Action\"/>\n"
+"                            <b class=\"me-2\">Next Best Action:</b>"
+msgstr ""
+"<i class=\"fa fa-magic me-2\" title=\"الإجراء التالي الأنسب بالذكاء\"/>\n"
+"                            <b class=\"me-2\">الإجراء التالي الأنسب:</b>"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "<i class=\"fa fa-refresh\" title=\"Days to Renewal\"/>"
+msgstr "<i class=\"fa fa-refresh\" title=\"أيام حتى التجديد\"/>"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "<i class=\"fa fa-ticket\" title=\"Open Tickets\"/>"
+msgstr "<i class=\"fa fa-ticket\" title=\"التذاكر المفتوحة\"/>"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "<i class=\"fa fa-user-circle me-1\" title=\"AI profile summary\"/>"
+msgstr "<i class=\"fa fa-user-circle me-1\" title=\"AI profile summary\"/>"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid ""
+"<span class=\"o_stat_text\">Customer</span>\n"
+"                        <span class=\"o_stat_text\">Success</span>"
+msgstr ""
+"<span class=\"o_stat_text\">نجاح</span>\n"
+"                        <span class=\"o_stat_text\">العميل</span>"
+
+#. module: era_customer_success
+#: model:ir.model.constraint,message:era_customer_success.constraint_cs_account_partner_uniq
+msgid "A Customer Success account already exists for this customer."
+msgstr "يوجد بالفعل حساب نجاح عميل لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"A daily job builds a renewal play (which lever to pull plus dated steps) for"
+" every customer inside the 90-day renewal window."
+msgstr ""
+"مهمة يومية تبني خطة تجديد (الرافعة المناسبة وخطوات مؤرّخة) لكل عميل داخل "
+"نافذة التجديد (90 يوماً)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"A daily job predicts each customer's churn probability at 30/60/90 days "
+"(with the top drivers) from its situation and KPI history, for all active "
+"customers."
+msgstr ""
+"مهمة يومية تتنبّأ باحتمال فقدان كل عميل عند 30/60/90 يوماً (مع أهم الأسباب) "
+"من وضعه وتاريخ مؤشراته، لكل العملاء النشطين."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"A daily job recommends the next best action per customer based on their "
+"situation and history. The customer snapshot is sent to the configured AI "
+"provider."
+msgstr ""
+"مهمة يومية تقترح الإجراء التالي الأنسب لكل عميل بناءً على وضعه وتاريخه. "
+"تُرسَل لقطة العميل إلى مزوّد الذكاء المُهيّأ."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "A ready-to-send suggested message to a customer…"
+msgstr "رسالة مقترحة جاهزة للإرسال للعميل…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"A scheduled job gradually generates a short AI profile summary (situation, "
+"scope, field of work, tenure) shown under each customer's name. The customer"
+" snapshot is sent to the AI provider."
+msgstr ""
+"مهمة مجدولة تولّد تدريجياً ملخصاً ذكياً قصيراً (الوضع، السكوب، مجال العمل، "
+"مدة التعامل) يظهر تحت اسم كل عميل. تُرسَل لقطة العميل إلى مزوّد الذكاء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"A weekly job delivers each CSM a ranked worklist of the accounts in their "
+"portfolio that need attention this week."
+msgstr ""
+"مهمة أسبوعية تُسلّم كل مهندس CSM قائمة عمل مرتّبة بالحسابات التي تحتاج "
+"اهتماماً هذا الأسبوع من محفظته."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_churn_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_churn_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Churn Forecast"
+msgstr "تنبّؤ الفقدان بالذكاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__ai_enriched_on
+msgid "AI Enriched On"
+msgstr "أُثري بالذكاء في"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_followup_compose
+msgid "AI Follow-up / Reply Composer"
+msgstr "مُحرِّر المتابعة/الردود بالذكاء"
+
+#. module: era_customer_success
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_action
+msgid "AI Next Action"
+msgstr "إجراء الذكاء التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_next_action_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_next_action_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Next Best Action"
+msgstr "الإجراء التالي الأنسب بالذكاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_call_briefing
+msgid "AI Pre-Call / Meeting Briefing"
+msgstr "تحضير ما قبل المكالمة/الاجتماع بالذكاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__ai_summary
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_summary_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_summary_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Profile Summary"
+msgstr "ملخص ذكي للعميل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_renewal_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_renewal_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Renewal Strategy"
+msgstr "استراتيجية التجديد بالذكاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_sentiment_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_sentiment_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Sentiment Analysis"
+msgstr "تحليل المشاعر بالذكاء الاصطناعي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_log_ids
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "AI Suggestions History"
+msgstr "سجل اقتراحات الذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "AI Summary"
+msgstr "ملخص ذكي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_digest_enabled
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_digest_enabled
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "AI Weekly Worklist"
+msgstr "قائمة العمل الأسبوعية بالذكاء"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "AI extraction failed. Check the AI provider configuration."
+msgstr "فشل استخراج الذكاء. تحقّق من إعداد مزوّد الذكاء."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+msgid "AI pitch generation failed. Check the AI provider configuration."
+msgstr "فشل توليد العرض بالذكاء. تحقّق من إعداد مزوّد الذكاء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Accept → Create Opportunity"
+msgstr "قبول ← إنشاء فرصة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__cs_account_id
+msgid "Account"
+msgstr "الحساب"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "Account Copilot"
+msgstr "مساعد الحساب الذكي"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Accounts"
+msgstr "الحسابات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_date
+msgid "Action By"
+msgstr "الإجراء بحلول"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_needaction
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_needaction
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_needaction
+msgid "Action Needed"
+msgstr "يتطلب إجراءً"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_priority
+msgid "Action Priority"
+msgstr "أولوية الإجراء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_reason
+msgid "Action Reason"
+msgstr "سبب الإجراء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__active
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__active
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__usage_signal__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__is_active_customer
+msgid "Active Customer"
+msgstr "عميل نشط"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "Active Customers"
+msgstr "العملاء النشطون"
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_steady
+msgid "Active customer in steady-state cadence (weekly / monthly)."
+msgstr "عميل نشط بإيقاع مستقر (أسبوعي/شهري)."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__activities
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__calls_made
+msgid "Calls Made"
+msgstr "المكالمات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__activities_done
+msgid "Activities Done"
+msgstr "الأنشطة المنجزة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_exception_decoration
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_state
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_type_icon
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_service
+msgid "Add a template service to the catalog"
+msgstr "أضف خدمة نموذجية إلى الكتالوج"
+
+#. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_accounts
+msgid "All Accounts"
+msgstr "كل الحسابات"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_customer_import.py:0
+msgid "All matching customers are already in the list — nothing to import."
+msgstr "كل العملاء المطابقين موجودون بالفعل في القائمة — لا شيء للاستيراد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"Analyse support ticket sentiment with the AI agent to feed the health score "
+"and trigger service-recovery alerts. Ticket text is sent to the configured "
+"AI provider."
+msgstr ""
+"تحليل مشاعر تذاكر الدعم عبر وكيل الذكاء لتغذية مؤشر الصحة وإطلاق تنبيهات "
+"استرداد الخدمة. يُرسَل نص التذكرة إلى مزوّد الذكاء المُهيّأ."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__answer
+msgid "Answer"
+msgstr "الإجابة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Artificial Intelligence"
+msgstr "الذكاء الاصطناعي"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Ask AI"
+msgstr "اسأل الذكاء"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "Ask a question first."
+msgstr "اطرح سؤالاً أولاً."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_customer_import__use_ai_tier
+msgid ""
+"Ask the AI agent to classify each customer's tier from its engagement (falls"
+" back to a rule-based tier if AI is unavailable)."
+msgstr ""
+"اطلب من وكيل الذكاء تصنيف شريحة كل عميل بناءً على تفاعله (مع بديل قائم على "
+"قواعد عند تعذّر الذكاء)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Ask the AI for the single best next action for this customer, based on their"
+" situation, history and last suggestion."
+msgstr ""
+"اطلب من الذكاء أفضل خطوة تالية لهذا العميل، بناءً على وضعه وتاريخه وآخر "
+"اقتراح."
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_account_all
+msgid "Assign each customer to a CSM engineer and follow up in one place."
+msgstr "أسنِد كل عميل لمهندس نجاح عملاء وتابعه في مكان واحد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Assignment"
+msgstr "الإسناد"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+#: model:cs.stage,name:era_customer_success.cs_stage_at_risk
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__health_status__at_risk
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_risk__at_risk
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "At Risk"
+msgstr "معرّض للخطر"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "At Risk / Churn"
+msgstr "معرّض للخطر / فقدان"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "At-Risk Customers"
+msgstr "العملاء المعرّضون للخطر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__is_at_risk
+msgid "At-Risk Stage"
+msgstr "مرحلة الخطر"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "At-risk intervention – health dropped to %s"
+msgstr "تدخّل خطر – انخفضت الصحة إلى %s"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_ir_attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_attachment_count
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_attachment_count
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Avg Health"
+msgstr "متوسط الصحة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__avg_resolution_hours
+msgid "Avg Resolution (h)"
+msgstr "متوسط الحل (ساعة)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__avg_resolution_hours
+msgid "Avg Resolution Hours"
+msgstr "متوسط ساعات الحل"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__biweekly
+msgid "Bi-weekly"
+msgstr "كل أسبوعين"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__briefing
+msgid "Briefing"
+msgstr "الموجز التحضيري"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__source
+msgid "Bring customers having"
+msgstr "جلب العملاء الذين لديهم"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Build an AI renewal play: which lever to pull (collections-first / pitch-"
+"first / re-engage) plus dated countdown steps for this renewal."
+msgstr ""
+"ابنِ خطة تجديد بالذكاء: أي رافعة تُستخدم (التحصيل أولاً / العرض أولاً / "
+"إعادة التفاعل) مع خطوات مؤرّخة تنازلياً لهذا التجديد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "By"
+msgstr "بحلول"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_account_copilot
+msgid "CS Account Copilot (ask anything about a customer)"
+msgstr "مساعد حساب نجاح العملاء (اسأل أي شيء عن العميل)"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_graph
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_pivot
+msgid "CS KPIs"
+msgstr "مؤشرات نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_csm_kpi_snapshot
+msgid "CS KPIs & Reporting"
+msgstr "مؤشرات وتقارير نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__cs_timeline_synced
+#: model:ir.model.fields,field_description:era_customer_success.field_sadeem_waha_whatsapp_message__cs_timeline_synced
+#: model:ir.model.fields,field_description:era_customer_success.field_survey_user_input__cs_timeline_synced
+#: model:ir.model.fields,field_description:era_customer_success.field_voip_call__cs_timeline_synced
+msgid "CS Timeline Synced"
+msgstr "تمت مزامنة التايملاين"
+
+#. module: era_customer_success
+#: model:crm.tag,name:era_customer_success.crm_tag_cs_upsell
+msgid "CS Upsell"
+msgstr "توسّع نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_advance_lifecycle_ir_actions_server
+msgid "CS: Advance lifecycle & flag at-risk"
+msgstr "نجاح العملاء: تقديم دورة الحياة وتمييز الخطر"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_analyze_sentiment_ir_actions_server
+msgid "CS: Analyse ticket sentiment (AI)"
+msgstr "نجاح العملاء: تحليل مشاعر التذاكر (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_build_snapshot_ir_actions_server
+msgid "CS: Build monthly KPI snapshot"
+msgstr "نجاح العملاء: بناء لقطة المؤشرات الشهرية"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_renewal_strategy_ir_actions_server
+msgid "CS: Build renewal strategy (AI)"
+msgstr "نجاح العملاء: بناء استراتيجية التجديد (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_forecast_churn_ir_actions_server
+msgid "CS: Forecast churn probability (AI)"
+msgstr "نجاح العملاء: التنبّؤ باحتمال الفقدان (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_profile_summary_ir_actions_server
+msgid "CS: Generate AI profile summaries (gradual)"
+msgstr "نجاح العملاء: توليد ملخصات ذكية للعملاء (تدريجي)"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_recompute_metrics_ir_actions_server
+msgid "CS: Recompute account metrics & health"
+msgstr "نجاح العملاء: إعادة حساب مقاييس الحساب والصحة"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_renewal_escalation_ir_actions_server
+msgid "CS: Renewal reminders & overdue escalation"
+msgstr "نجاح العملاء: تذكيرات التجديد وتصعيد المتأخرات"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_cadence_ir_actions_server
+msgid "CS: Schedule follow-up cadence"
+msgstr "نجاح العملاء: جدولة إيقاع المتابعة"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_next_action_ir_actions_server
+msgid "CS: Suggest next best action (AI)"
+msgstr "نجاح العملاء: اقتراح الإجراء التالي الأنسب (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_sync_touchpoints_ir_actions_server
+msgid "CS: Sync touchpoints into account timeline"
+msgstr "نجاح العملاء: مزامنة نقاط التواصل في تايملاين الحساب"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.cron_cs_weekly_digest_ir_actions_server
+msgid "CS: Weekly CSM worklist digest (AI)"
+msgstr "نجاح العملاء: ملخص قائمة العمل الأسبوعية للمهندس (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__csat
+msgid "CSAT (1-5)"
+msgstr "رضا العميل (1-5)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__csm_user_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__csm_user_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__csm_user_id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_partner__csm_user_id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_users__csm_user_id
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "CSM Engineer"
+msgstr "مهندس نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_call_briefing__purpose__call
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__call
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_call
+msgid "Call"
+msgstr "مكالمة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Call %s"
+msgstr "اتصال بـ %s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Calls"
+msgstr "المكالمات"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__candidate_count
+msgid "Candidates found"
+msgstr "المرشّحون المُكتشَفون"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model:ir.model,name:era_customer_success.model_cs_capture_request
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Capture Customer Request"
+msgstr "التقاط طلب العميل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Capture Request"
+msgstr "التقاط طلب"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Capture a customer request and route it as a support ticket or an "
+"upsell/renewal opportunity."
+msgstr "التقط طلب العميل ووجّهه كتذكرة دعم أو فرصة بيع/تجديد."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__service_id
+msgid "Catalog Service"
+msgstr "خدمة الكتالوج"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__channel
+msgid "Channel"
+msgstr "القناة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Churn 30/60/90d"
+msgstr "الفقدان 30/60/90 يوم"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_prob_30
+msgid "Churn 30d (%)"
+msgstr "فقدان 30 يوم (%)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_prob_60
+msgid "Churn 60d (%)"
+msgstr "فقدان 60 يوم (%)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__churn_probability
+msgid "Churn 90d (%)"
+msgstr "فقدان 90 يوم (%)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_factors
+msgid "Churn Drivers"
+msgstr "أسباب الفقدان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_forecast_date
+msgid "Churn Forecast On"
+msgstr "وُلّد التنبّؤ في"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_probability
+msgid "Churn Probability 90d (%)"
+msgstr "احتمال الفقدان 90 يوم (%)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_risk
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Churn Risk"
+msgstr "خطر الفقدان"
+
+#. module: era_customer_success
+#: model:cs.stage,name:era_customer_success.cs_stage_churned
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__churned
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "Churned"
+msgstr "مفقود"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__is_churned
+msgid "Churned Stage"
+msgstr "مرحلة الفقدان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__use_ai_tier
+msgid "Classify tier with AI"
+msgstr "تصنيف الشريحة بالذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid ""
+"Click 'Suggest Pitch (AI)' to generate a message tailored to this customer's"
+" situation…"
+msgstr "انقر «Suggest Pitch (AI)» لتوليد رسالة مخصّصة لوضع هذا العميل…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Collections"
+msgstr "التحصيلات"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_lever__collections_first
+msgid "Collections first"
+msgstr "التحصيل أولاً"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__color
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__color
+msgid "Color"
+msgstr "اللون"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__company_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__company_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Compose (AI)"
+msgstr "إنشاء رسالة (ذكاء)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Compose Follow-up (AI)"
+msgstr "إنشاء رسالة متابعة (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__concise
+msgid "Concise"
+msgstr "موجزة"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__purpose
+msgid "Context"
+msgstr "السياق"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "Copilot Q:"
+msgstr "سؤال المساعد:"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Could not fetch the URL: %s"
+msgstr "تعذّر جلب الرابط: %s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+msgid "Could not generate a briefing right now. Please try again."
+msgstr "تعذّر توليد الموجز الآن. حاول مرة أخرى."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Could not generate a draft right now. Please try again."
+msgstr "تعذّر توليد المسودة الآن. حاول مرة أخرى."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "Could not get an answer right now. Please try again."
+msgstr "تعذّر الحصول على إجابة الآن. حاول مرة أخرى."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Create"
+msgstr "إنشاء"
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_account_all
+msgid "Create your first Customer Success account"
+msgstr "أنشئ أول حساب نجاح عميل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__create_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__create_date
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__health_status__critical
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_risk__critical
+msgid "Critical"
+msgstr "حرِج"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Critical Health"
+msgstr "صحة حرِجة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__crm_lead__cs_upsell_type__cross_sell
+msgid "Cross-sell"
+msgstr "بيع متقاطع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__currency_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__currency_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__currency_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__partner_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__partner_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/res_partner.py:0
+#: model:ir.module.category,name:era_customer_success.module_category_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_root
+#: model:res.groups.privilege,name:era_customer_success.privilege_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_graph
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_pivot
+msgid "Customer Success"
+msgstr "نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_account
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_partner__cs_account_id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_users__cs_account_id
+msgid "Customer Success Account"
+msgstr "حساب نجاح العميل"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_account_all
+msgid "Customer Success Accounts"
+msgstr "حسابات نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__csm_user_id
+msgid "Customer Success Engineer"
+msgstr "مهندس نجاح العملاء"
+
+#. module: era_customer_success
+#: model:res.groups,name:era_customer_success.group_era_cs_user
+msgid "Customer Success Engineer (CSM)"
+msgstr "مهندس نجاح العملاء (CSM)"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_csm_kpi_snapshot
+msgid "Customer Success KPI Snapshot"
+msgstr "لقطة مؤشرات نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_stage
+msgid "Customer Success Lifecycle Stage"
+msgstr "مرحلة دورة حياة نجاح العميل"
+
+#. module: era_customer_success
+#: model:res.groups,name:era_customer_success.group_era_cs_manager
+msgid "Customer Success Manager"
+msgstr "مدير نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_next_action
+msgid "Customer Success Next Best Action (AI)"
+msgstr "الإجراء التالي الأنسب لنجاح العملاء (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_csm_offering
+msgid "Customer Success Offering"
+msgstr "عرض نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_service
+msgid "Customer Success Service Catalog"
+msgstr "كتالوج خدمات نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_crm_lead__cs_is_upsell
+msgid "Customer Success Upsell"
+msgstr "توسّع نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_whatsapp_provider
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_whatsapp_provider
+msgid "Customer Success WhatsApp Channel"
+msgstr "قناة واتساب لنجاح العملاء"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Customer Success kickoff – welcome the customer"
+msgstr "انطلاقة نجاح العميل – رحّب بالعميل"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Customer Success — Executive Dashboard"
+msgstr "نجاح العملاء — اللوحة التنفيذية"
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_churned
+msgid "Customer lost."
+msgstr "عميل مفقود."
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_engage
+msgid "Days 30-60: regular meetings, adoption, close support requests."
+msgstr "الأيام 30-60: اجتماعات دورية، تبنّي، وإغلاق طلبات الدعم."
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_grow
+msgid "Days 60-90: business review, upsell discovery, renewal path."
+msgstr "الأيام 60-90: مراجعة أعمال، اكتشاف فرص توسّع، ومسار التجديد."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__days_since_touch
+msgid "Days Since Last Touch"
+msgstr "أيام منذ آخر تواصل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__days_since_touch
+msgid "Days Since Touch"
+msgstr "أيام منذ التواصل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__days_to_renewal
+msgid "Days to Renewal"
+msgstr "أيام حتى التجديد"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__decision_points
+msgid "Decision-support Notes"
+msgstr "ملاحظات دعم القرار"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__description
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__short_description
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Details..."
+msgstr "تفاصيل..."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Dismiss"
+msgstr "تجاهل"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__state__dismissed
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__state__dismissed
+msgid "Dismissed"
+msgstr "مُستبعَد"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_ir_attachment__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_res_partner__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_sadeem_waha_whatsapp_message__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_survey_user_input__display_name
+#: model:ir.model.fields,field_description:era_customer_success.field_voip_call__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_customer_import__assign_engineers
+msgid ""
+"Distribute the imported customers randomly across users that have the "
+"Customer Success Engineer (CSM) permission."
+msgstr ""
+"توزيع العملاء المستوردين عشوائياً على المستخدمين الذين لديهم صلاحية مهندس "
+"نجاح العملاء (CSM)."
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__state__done
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__state__done
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_list
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "Done"
+msgstr "تم"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__draft
+msgid "Draft Message"
+msgstr "مسودة الرسالة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Draft a ready-to-send WhatsApp, SMS or email message (or a reply to the last"
+" message) with AI — then edit the tone and send it."
+msgstr ""
+"صُغ بالذكاء رسالة واتساب أو SMS أو إيميل جاهزة للإرسال (أو رداً على آخر "
+"رسالة) — ثم عدّل النبرة وأرسلها."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_followup_compose__reply_to_last
+msgid ""
+"Draft a reply to the customer's most recent message using the recent "
+"timeline."
+msgstr "اكتب رداً على آخر رسالة من العميل بالاعتماد على آخر التفاعلات."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Drafted %s follow-up:"
+msgstr "مسودة متابعة عبر %s:"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__email
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__channel__email
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__email
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__mail_template_id
+msgid "Email on Entry"
+msgstr "بريد عند الدخول"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Email…"
+msgstr "البريد الإلكتروني…"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_stage__day_window_end
+msgid ""
+"End of the onboarding day window. The lifecycle cron promotes the account to"
+" the next onboarding stage once this many days have elapsed."
+msgstr ""
+"نهاية نافذة أيام التهيئة. تنقل المهمة المجدولة الحساب إلى مرحلة التهيئة "
+"التالية بعد انقضاء هذا العدد من الأيام."
+
+#. module: era_customer_success
+#: model:cs.stage,name:era_customer_success.cs_stage_engage
+msgid "Engage (30-60)"
+msgstr "تفاعل (30-60)"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Engineer"
+msgstr "المهندس"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Engineer Leaderboard"
+msgstr "ترتيب المهندسين"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.action_server_enroll_cs
+msgid "Enroll in Customer Success"
+msgstr "تسجيل في نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.actions.client,name:era_customer_success.action_cs_executive_dashboard
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_executive_dashboard
+msgid "Executive Dashboard"
+msgstr "اللوحة التنفيذية"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__crm_lead__cs_upsell_type__expansion
+msgid "Expansion"
+msgstr "توسّع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__expected_revenue
+msgid "Expected Revenue"
+msgstr "الإيراد المتوقع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__expected_value
+msgid "Expected Value"
+msgstr "القيمة المتوقعة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__cadence
+msgid ""
+"Expected follow-up rhythm. Drives the cadence reminder and the follow-up-"
+"level evaluation."
+msgstr "إيقاع المتابعة المتوقع. يقود تذكير الكادينس وتقييم مستوى المتابعة."
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_onboarding
+msgid "First 30 days: understand the customer, set up, verify usage."
+msgstr "أول 30 يوم: فهم العميل، التهيئة، والتأكد من الاستخدام."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__fold
+msgid "Folded in Kanban"
+msgstr "مطوي في الكانبان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_stage__fold
+msgid ""
+"Folded stages (e.g. Churned) are collapsed by default in the Kanban view."
+msgstr "المراحل المطوية (مثل المفقود) تُطوى افتراضياً في عرض الكانبان."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Follow-up"
+msgstr "المتابعة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__cadence
+msgid "Follow-up Cadence"
+msgstr "إيقاع المتابعة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__followup_status
+msgid "Follow-up Status"
+msgstr "حالة المتابعة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Follow-up from ERA"
+msgstr "متابعة من إيرا"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Follow-up meeting – %s"
+msgstr "اجتماع متابعة – %s"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_follower_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_follower_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_partner_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_partner_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__activity_type_icon
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Forecast Churn"
+msgstr "تنبّؤ بالفقدان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__churn_confidence
+msgid "Forecast Confidence"
+msgstr "ثقة التنبّؤ"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__formal
+msgid "Formal"
+msgstr "رسمية"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__friendly
+msgid "Friendly"
+msgstr "ودّية"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__day_window_start
+msgid "From Day"
+msgstr "من اليوم"
+
+#. module: era_customer_success
+#: model:ir.actions.server,name:era_customer_success.action_cs_weekly_digest_run
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_weekly_digest
+msgid "Generate Weekly Suggestions Now"
+msgstr "ولّد الاقتراحات الأسبوعية الآن"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+msgid "Generate a briefing first."
+msgstr "ولّد موجزاً أولاً."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Generate a short AI profile summary (situation, scope, field of work, "
+"tenure) shown under the customer's name."
+msgstr ""
+"ولّد ملخصاً قصيراً بالذكاء (الوضع، النطاق، مجال العمل، مدة التعامل) يظهر تحت"
+" اسم العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Generate an AI pre-call/meeting briefing: a quick snapshot, talking points, "
+"risks to handle, and the suggested goal of the contact."
+msgstr ""
+"ولّد موجزاً تحضيرياً بالذكاء قبل المكالمة/الاجتماع: لمحة سريعة، نقاط للطرح، "
+"مخاطر للتعامل معها، والهدف المقترح للتواصل."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Generate or write a draft first."
+msgstr "ولّد أو اكتب مسودة أولاً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Generated %(items)s weekly suggestions for %(csms)s CSM(s)."
+msgstr "تم توليد %(items)s اقتراحاً أسبوعياً لـ %(csms)s مهندس(ين)."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__generated_by
+msgid "Generated By"
+msgstr "وُلّد بواسطة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__generated_on
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__generated_on
+msgid "Generated On"
+msgstr "وُلّد في"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__health_status__good
+msgid "Good"
+msgstr "جيد"
+
+#. module: era_customer_success
+#: model:cs.stage,name:era_customer_success.cs_stage_grow
+msgid "Grow (60-90)"
+msgstr "نمو (60-90)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__recommended_action
+msgid "Guidance"
+msgstr "التوجيه"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__has_message
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__has_message
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__has_message
+msgid "Has Message"
+msgstr "يوجد رسالة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Has Overdue Invoices"
+msgstr "لديه فواتير متأخرة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__health_status
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__health_score
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Health"
+msgstr "الصحة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__health_score
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__health_score
+msgid "Health Score"
+msgstr "مؤشر الصحة"
+
+#. module: era_customer_success
+#: model:cs.stage,description:era_customer_success.cs_stage_at_risk
+msgid "Health dropped – needs intervention to prevent churn."
+msgstr "انخفضت الصحة – يحتاج تدخّلاً لمنع الفقدان."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__team_id
+msgid "Helpdesk Team"
+msgstr "فريق الدعم"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_helpdesk_ticket
+msgid "Helpdesk Ticket"
+msgstr "تذكرة الدعم"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__churn_confidence__high
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__next_action_priority__high
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__priority__high
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__priority__high
+msgid "High"
+msgstr "عالية"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "High Churn (≥60%)"
+msgstr "فقدان مرتفع (≥60%)"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "High Churn Forecast (≥60%)"
+msgstr "تنبّؤ فقدان مرتفع (≥60%)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_crm_lead__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__id
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__id
+#: model:ir.model.fields,field_description:era_customer_success.field_ir_attachment__id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_company__id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_partner__id
+#: model:ir.model.fields,field_description:era_customer_success.field_sadeem_waha_whatsapp_message__id
+#: model:ir.model.fields,field_description:era_customer_success.field_survey_user_input__id
+#: model:ir.model.fields,field_description:era_customer_success.field_voip_call__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_exception_icon
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__activity_exception_icon
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى نشاط استثنائي."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__message_needaction
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__message_needaction
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__message_has_error
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__message_has_sms_error
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__message_has_error
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__message_has_sms_error
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__message_has_error
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، بعض الرسائل بها خطأ في التسليم."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid "Import Customers"
+msgstr "استيراد العملاء"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_customer_import.py:0
+msgid "Imported Customers (%s)"
+msgstr "العملاء المستوردون (%s)"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__usage_signal__inactive
+msgid "Inactive"
+msgstr "متوقف"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_is_follower
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_is_follower
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_kpis
+msgid "KPIs"
+msgstr "المؤشرات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__kanban_color
+msgid "Kanban Color"
+msgstr "لون الكانبان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__features
+msgid "Key Features / Benefits"
+msgstr "المميزات / الفوائد الرئيسية"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__last_touch_date
+msgid "Last Touch"
+msgstr "آخر تواصل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__write_uid
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__write_date
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__csat_latest
+msgid "Latest CSAT (1-5)"
+msgstr "آخر رضا (1-5)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__nps_latest
+msgid "Latest Survey Score (%)"
+msgstr "آخر نتيجة استبيان (%)"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_crm_lead
+msgid "Lead"
+msgstr "عميل محتمل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__lifecycle_stage_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__lifecycle_stage_id
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "Lifecycle Stage"
+msgstr "مرحلة دورة الحياة"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_stage
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_stages
+msgid "Lifecycle Stages"
+msgstr "مراحل دورة الحياة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_risk__likely
+msgid "Likely"
+msgstr "مُرجَّح"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Loading Customer Success dashboard…"
+msgstr "جارٍ تحميل لوحة نجاح العملاء…"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Log Meeting"
+msgstr "تسجيل اجتماع"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Log to Timeline"
+msgstr "تسجيل في السجل الزمني"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__churn_confidence__low
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__next_action_priority__low
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__usage_signal__low
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__priority__low
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__priority__low
+msgid "Low"
+msgstr "منخفض"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__mrr
+msgid "MRR"
+msgstr "MRR"
+
+#. module: era_customer_success
+#: model:ir.module.category,description:era_customer_success.module_category_customer_success
+msgid "Manage customer success accounts, follow-up and KPIs."
+msgstr "إدارة حسابات نجاح العملاء والمتابعة والمؤشرات."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_partner__is_cs_managed
+#: model:ir.model.fields,field_description:era_customer_success.field_res_users__is_cs_managed
+msgid "Managed by Customer Success"
+msgstr "مُدار بواسطة نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_dashboard
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_dashboard
+msgid "Manager Dashboard"
+msgstr "لوحة المدير"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Mark Done"
+msgstr "تحديد كمنجز"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Mark Presented"
+msgstr "وضع كمُقدّم"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_stage__is_onboarding
+msgid ""
+"Marks a stage that belongs to the 0-90 days onboarding journey. The "
+"lifecycle cron advances onboarding accounts through these stages."
+msgstr ""
+"يحدّد مرحلة ضمن رحلة التهيئة 0-90 يوم. تنقل المهمة المجدولة حسابات التهيئة "
+"عبر هذه المراحل."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_crm_lead__cs_is_upsell
+msgid ""
+"Marks an opportunity generated by the Customer Success team (expansion / "
+"cross-sell / renewal)."
+msgstr "يحدّد فرصة أنشأها فريق نجاح العملاء (توسّع/بيع متقاطع/تجديد)."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__limit
+msgid "Max customers"
+msgstr "أقصى عدد عملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__churn_confidence__medium
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__next_action_priority__medium
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__priority__medium
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__priority__medium
+msgid "Medium"
+msgstr "متوسطة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_call_briefing__purpose__meeting
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__meeting
+msgid "Meeting"
+msgstr "اجتماع"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__meetings
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Meetings"
+msgstr "الاجتماعات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_has_error
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_has_error
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ تسليم الرسالة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Messaging"
+msgstr "المراسلة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__monthly
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_kpi_snapshot__period_type__month
+msgid "Monthly"
+msgstr "شهري"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__mrr
+msgid "Mrr"
+msgstr "MRR"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__my_activity_date_deadline
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي النهائي"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_account_my
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_my_customers
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "My Customers"
+msgstr "عملائي"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__res_company__cs_whatsapp_provider__native
+msgid "Native (Meta Cloud API)"
+msgstr "الأصلي (Meta Cloud API)"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__sentiment_label__negative
+#: model:ir.model.fields.selection,name:era_customer_success.selection__helpdesk_ticket__cs_sentiment_label__negative
+msgid "Negative"
+msgstr "سلبي"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__sentiment_label__neutral
+#: model:ir.model.fields.selection,name:era_customer_success.selection__helpdesk_ticket__cs_sentiment_label__neutral
+msgid "Neutral"
+msgstr "محايد"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_capture_request.py:0
+msgid "New request captured \"%(name)s\" → %(label)s #%(id)s"
+msgstr "تم التقاط طلب جديد \"%(name)s\" ← %(label)s #%(id)s"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_calendar_event_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "حدث تقويم النشاط التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_date_deadline
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_summary
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_type_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action
+msgid "Next Best Action"
+msgstr "الإجراء التالي الأنسب"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_touch_date
+msgid "Next Planned Touch"
+msgstr "التواصل المخطط التالي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_date
+msgid "Next Renewal"
+msgstr "التجديد التالي"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "No WhatsApp channel is configured."
+msgstr "لم تُهيّأ أي قناة واتساب."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "No assigned accounts yet."
+msgstr "لا توجد حسابات مُسندة بعد."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "No at-risk customers 🎉"
+msgstr "لا عملاء معرّضون للخطر 🎉"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_customer_import.py:0
+msgid "No new customers with ticket/project history were found."
+msgstr "لم يُعثر على عملاء جدد لهم سجل تذاكر أو مشاريع."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__notes
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Notes about the offering..."
+msgstr "ملاحظات عن العرض..."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_needaction_counter
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_needaction_counter
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_has_error_counter
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_has_error_counter
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__message_needaction_counter
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__message_needaction_counter
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__message_has_error_counter
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__message_has_error_counter
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل بها خطأ تسليم"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__name
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_offering
+msgid "Offering"
+msgstr "العرض"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+msgid "Offering \"%s\" presented to the customer."
+msgstr "العرض \"%s\" قُدّم للعميل."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__offering_date
+msgid "Offering Date"
+msgstr "تاريخ العرض"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+msgid "Offering accepted – opportunity %s created."
+msgstr "قُبل العرض – أُنشئت الفرصة %s."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Offering name..."
+msgstr "اسم العرض..."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: code:addons/era_customer_success/models/cs_service.py:0
+#: model:ir.actions.act_window,name:era_customer_success.action_csm_offering
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__offering_ids
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_offerings
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Offerings"
+msgstr "العروض"
+
+#. module: era_customer_success
+#: model:cs.stage,name:era_customer_success.cs_stage_onboarding
+msgid "Onboarding (0-30)"
+msgstr "التهيئة (0-30)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__is_onboarding
+msgid "Onboarding Stage"
+msgstr "مرحلة التهيئة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__onboarding_start_date
+msgid "Onboarding Start"
+msgstr "بداية التهيئة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_list
+msgid "Open"
+msgstr "فتح"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Open Customer"
+msgstr "فتح العميل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__open_tickets
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open Tickets"
+msgstr "التذاكر المفتوحة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open offering form"
+msgstr "فتح فورم العرض"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Open the Account Copilot: ask any natural-language question about this "
+"customer and get an answer grounded in its data and timeline."
+msgstr ""
+"افتح مساعد الحساب: اطرح أي سؤال بلغة طبيعية عن هذا العميل واحصل على إجابة "
+"مستندة إلى بياناته وسجلّه الزمني."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open the service offerings presented to this customer."
+msgstr "افتح العروض الخدمية المُقدّمة لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's CRM opportunities (including upsell/cross-sell)."
+msgstr "افتح فرص هذا العميل في CRM (بما فيها البيع الإضافي/المتقاطع)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's WhatsApp conversation/messages."
+msgstr "افتح محادثة/رسائل واتساب لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's implementation projects."
+msgstr "افتح مشاريع التطبيق لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's invoices and overdue balance."
+msgstr "افتح فواتير هذا العميل ورصيد المتأخرات."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's logged VoIP calls."
+msgstr "افتح مكالمات VoIP المسجّلة لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's meetings (calendar events)."
+msgstr "افتح اجتماعات هذا العميل (أحداث التقويم)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's satisfaction survey responses (CSAT/NPS)."
+msgstr "افتح ردود استبيانات رضا هذا العميل (CSAT/NPS)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's subscriptions (recurring revenue)."
+msgstr "افتح اشتراكات هذا العميل (الإيراد المتكرر)."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Open this customer's support tickets (Helpdesk)."
+msgstr "افتح تذاكر دعم هذا العميل (مكتب المساعدة)."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Opportunities"
+msgstr "الفرص"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_capture_request.py:0
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__opportunity_id
+msgid "Opportunity"
+msgstr "الفرصة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_stage__mail_template_id
+msgid ""
+"Optional email automatically sent to the customer when an account enters "
+"this stage."
+msgstr "بريد اختياري يُرسَل تلقائياً للعميل عند دخول الحساب هذه المرحلة."
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__overdue_amount
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Overdue"
+msgstr "متأخر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__overdue_amount
+msgid "Overdue Amount"
+msgstr "المبلغ المتأخر"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Overdue Follow-up"
+msgstr "متابعة متأخرة"
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_service
+msgid ""
+"Paste the service URL and click \"Read from URL (AI)\" to auto-fill its "
+"features and details."
+msgstr ""
+"الصق رابط الخدمة وانقر «Read from URL (AI)» لملء مميزاتها وتفاصيلها "
+"تلقائياً."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__period_start
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "Period"
+msgstr "الفترة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__period_type
+msgid "Period Type"
+msgstr "نوع الفترة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_voip_call
+msgid "Phone call"
+msgstr "مكالمة هاتفية"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Phone…"
+msgstr "الهاتف…"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_lever__pitch_first
+msgid "Pitch / Value first"
+msgstr "العرض/القيمة أولاً"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Please set the service URL first."
+msgstr "يرجى تعيين رابط الخدمة أولاً."
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__sentiment_label__positive
+#: model:ir.model.fields.selection,name:era_customer_success.selection__helpdesk_ticket__cs_sentiment_label__positive
+msgid "Positive"
+msgstr "إيجابي"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid "Pre-Call Briefing (AI)"
+msgstr "موجز تحضيري للمكالمة (ذكاء)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+msgid "Pre-contact briefing:"
+msgstr "موجز تحضيري قبل التواصل:"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Predict this customer's churn probability at 30/60/90 days with the top "
+"drivers, from their situation and KPI history. A safety floor keeps hard "
+"risk signals from being hidden."
+msgstr ""
+"تنبّأ باحتمال فقدان هذا العميل عند 30/60/90 يوماً مع أهم الأسباب، من وضعه "
+"وتاريخ مؤشراته. حاجز أمان يمنع إخفاء إشارات الخطر القوية."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Prepare (AI)"
+msgstr "تحضير (ذكاء)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Present New Offering"
+msgstr "تقديم عرض جديد"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Present Offering"
+msgstr "تقديم عرض"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Present a tailored service offering to this customer (with an AI-"
+"personalised pitch) and track whether it is accepted."
+msgstr ""
+"قدّم عرضاً خدمياً مخصّصاً لهذا العميل (برسالة مخصّصة بالذكاء) وتابع قبوله من"
+" عدمه."
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__presented
+msgid "Presented"
+msgstr "مُقدّم"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__csm_user_id
+msgid "Presented By"
+msgstr "قدّمه"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__channel
+msgid "Presented Via"
+msgstr "قُدّم عبر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__decision_points
+msgid ""
+"Pricing model, value proposition and anything that helps decide whether to "
+"offer this to a customer."
+msgstr ""
+"نموذج التسعير والقيمة المقترحة وكل ما يساعد على قرار عرض هذه الخدمة على "
+"العميل."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__priority
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__priority
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__rank
+msgid "Priority Order"
+msgstr "ترتيب الأولوية"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__product_details
+msgid "Product Details"
+msgstr "تفاصيل المنتج"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__product_tmpl_ids
+msgid "Products / Services"
+msgstr "المنتجات / الخدمات"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Projects"
+msgstr "المشاريع"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_customer_import__source__projects
+msgid "Projects only"
+msgstr "المشاريع فقط"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__url
+msgid "Public page describing the service."
+msgstr "صفحة عامة تصف الخدمة."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__purpose
+msgid "Purpose / Intent"
+msgstr "الغرض / المقصد"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__quarterly
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_kpi_snapshot__period_type__quarter
+msgid "Quarterly"
+msgstr "ربع سنوي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__question
+msgid "Question"
+msgstr "السؤال"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__assign_engineers
+msgid "Randomly assign to CSM engineers"
+msgstr "إسناد عشوائي لمهندسي نجاح العملاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__rating_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__rating_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_lever__re_engage
+msgid "Re-engage / Recover"
+msgstr "إعادة التفاعل/الاستعادة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Read from URL (AI)"
+msgstr "قراءة من الرابط (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__name
+msgid "Recommended Action"
+msgstr "الإجراء الموصى به"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__product_tmpl_ids
+msgid "Related Products"
+msgstr "المنتجات المرتبطة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__crm_lead__cs_upsell_type__renewal
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_capture_request__request_type__renewal
+msgid "Renewal"
+msgstr "تجديد"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Renewal < 90 days"
+msgstr "تجديد < 90 يوم"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_lever
+msgid "Renewal Lever"
+msgstr "رافعة التجديد"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_risk
+msgid "Renewal Outlook"
+msgstr "توقّع التجديد"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_soon
+msgid "Renewal Soon (<90d)"
+msgstr "تجديد قريب (<90 يوم)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_strategy
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Renewal Strategy"
+msgstr "استراتيجية التجديد"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_call_briefing__purpose__renewal
+msgid "Renewal conversation"
+msgstr "محادثة تجديد"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Renewal in %s days – prepare renewal for %s"
+msgstr "تجديد خلال %s يوم – جهّز تجديد %s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Renewal play (%s) – %s"
+msgstr "خطة تجديد (%s) – %s"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Reopen"
+msgstr "إعادة فتح"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__reply_to_last
+msgid "Reply to last message"
+msgstr "رد على آخر رسالة"
+
+#. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_reporting
+msgid "Reporting"
+msgstr "التقارير"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_user_id
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Revenue & Renewal"
+msgstr "الإيراد والتجديد"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__request_type
+msgid "Route As"
+msgstr "التوجيه كـ"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__channel__sms
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_sms
+msgid "SMS"
+msgstr "رسالة نصية"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_has_sms_error
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__message_has_sms_error
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ تسليم الرسالة النصية"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Schedule Follow-up"
+msgstr "جدولة متابعة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Scheduled %s follow-up"
+msgstr "متابعة %s مجدولة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__tier
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__tier
+msgid "Segment / Tier"
+msgstr "الشريحة / التصنيف"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Send / Open Channel"
+msgstr "إرسال / فتح القناة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Send Email"
+msgstr "إرسال بريد إلكتروني"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "Send SMS"
+msgstr "إرسال رسالة نصية"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Send WhatsApp"
+msgstr "إرسال واتساب"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__sentiment_label
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__cs_sentiment_label
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "Sentiment"
+msgstr "المشاعر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__sentiment
+msgid "Sentiment (-100..100)"
+msgstr "المشاعر (-100..100)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__cs_sentiment_analyzed
+msgid "Sentiment Analyzed"
+msgstr "تم تحليل المشاعر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__cs_sentiment_reason
+msgid "Sentiment Reason"
+msgstr "سبب المشاعر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_helpdesk_ticket__cs_sentiment_score
+msgid "Sentiment Score"
+msgstr "درجة المشاعر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__sentiment_score
+msgid "Sentiment Score (-100..100)"
+msgstr "درجة المشاعر (-100..100)"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_csm_sentiment_trend
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_sentiment_trend
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_sentiment_trend_graph
+msgid "Sentiment Trend"
+msgstr "اتجاه المشاعر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__name
+msgid "Service"
+msgstr "الخدمة"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_service
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_service_catalog
+msgid "Service Catalog"
+msgstr "كتالوج الخدمات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__url
+msgid "Service URL"
+msgstr "رابط الخدمة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Service name (e.g. Muqeem integration)…"
+msgstr "اسم الخدمة (مثل: ربط مقيم)…"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_call_briefing__purpose__recovery
+msgid "Service recovery"
+msgstr "معالجة خدمة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Service recovery – low survey score"
+msgstr "استرداد الخدمة – نتيجة استبيان منخفضة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/helpdesk_ticket.py:0
+msgid "Service recovery – negative sentiment on ticket %s"
+msgstr "استرداد الخدمة – مشاعر سلبية على التذكرة %s"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_config_settings
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_settings
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Short description…"
+msgstr "وصف مختصر…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Short subject of the request..."
+msgstr "موضوع مختصر للطلب..."
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_customer_import
+#: model:ir.model,name:era_customer_success.model_cs_customer_import
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_customer_import
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid "Smart Customer Import"
+msgstr "جلب العملاء بذكاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__name
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_lever__standard
+msgid "Standard renewal"
+msgstr "تجديد اعتيادي"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_stage__day_window_start
+msgid ""
+"Start of the onboarding day window (relative to onboarding start date)."
+msgstr "بداية نافذة أيام التهيئة (نسبةً لتاريخ بدء التهيئة)."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__state
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__state
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__state
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__activity_state
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: تجاوز الموعد النهائي\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: era_customer_success
+#: model:cs.stage,name:era_customer_success.cs_stage_steady
+msgid "Steady"
+msgstr "مستقر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__renewal_strategy_date
+msgid "Strategy Generated On"
+msgstr "وُلّدت الاستراتيجية في"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_capture_request__name
+msgid "Subject"
+msgstr "الموضوع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__subscription_churned
+msgid "Subscription Churned"
+msgstr "اشتراك مفقود"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Subscriptions"
+msgstr "الاشتراكات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__team_id
+msgid "Success Team"
+msgstr "فريق النجاح"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Suggest Next Step (AI)"
+msgstr "اقترح الخطوة التالية (ذكاء)"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Suggest Pitch (AI)"
+msgstr "اقترح صيغة العرض (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__state__suggested
+msgid "Suggested"
+msgstr "مُقترَح"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__suggested_date
+msgid "Suggested Date"
+msgstr "التاريخ المقترح"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_generated_on
+msgid "Suggested On"
+msgstr "اقتُرح في"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__pitch_template
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Suggested Pitch"
+msgstr "العرض المقترح"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__pitch_message
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Suggested Pitch (AI)"
+msgstr "العرض المقترح (ذكاء)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__ai_summary_date
+msgid "Summary Generated On"
+msgstr "وُلّد الملخص في"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Support & Satisfaction"
+msgstr "الدعم والرضا"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_capture_request__request_type__support
+msgid "Support Issue"
+msgstr "مشكلة دعم"
+
+#. module: era_customer_success
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_survey
+msgid "Survey"
+msgstr "استبيان"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__nps
+msgid "Survey Score (%)"
+msgstr "نتيجة الاستبيان (%)"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_survey_user_input
+msgid "Survey User Input"
+msgstr "مدخلات المستخدم في الاستبيان"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Surveys"
+msgstr "الاستبيانات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__usage_signal
+msgid "System Usage"
+msgstr "استخدام النظام"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__target_audience
+msgid "Target Audience"
+msgstr "الفئة المستهدفة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Team"
+msgstr "الفريق"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid "The AI briefing appears here…"
+msgstr "يظهر موجز الذكاء هنا…"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "The AI did not return usable data."
+msgstr "لم يُرجِع الذكاء بيانات قابلة للاستخدام."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "The AI draft appears here — edit freely before sending…"
+msgstr "تظهر مسودة الذكاء هنا — عدّلها بحرية قبل الإرسال…"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "The AI returned an empty answer. Rephrase and try again."
+msgstr "أعاد الذكاء إجابة فارغة. أعد الصياغة وحاول مجدداً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+msgid "The AI returned an empty briefing. Please try again."
+msgstr "أعاد الذكاء موجزاً فارغاً. حاول مرة أخرى."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "The AI returned an empty draft. Adjust the purpose and try again."
+msgstr "أعاد الذكاء مسودة فارغة. عدّل الغرض وحاول مجدداً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "The Account Copilot AI agent is not available."
+msgstr "وكيل مساعد الحساب بالذكاء غير متاح."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__csm_user_id
+#: model:ir.model.fields,help:era_customer_success.field_cs_next_action__csm_user_id
+#: model:ir.model.fields,help:era_customer_success.field_cs_weekly_suggestion__csm_user_id
+#: model:ir.model.fields,help:era_customer_success.field_res_partner__csm_user_id
+#: model:ir.model.fields,help:era_customer_success.field_res_users__csm_user_id
+msgid "The CSM engineer responsible for following up with this customer."
+msgstr "مهندس نجاح العملاء المسؤول عن متابعة هذا العميل."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_partner__cs_account_id
+#: model:ir.model.fields,help:era_customer_success.field_res_users__cs_account_id
+msgid "The Customer Success account managing this customer."
+msgstr "حساب نجاح العملاء الذي يدير هذا العميل."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The Next Best Action AI agent is not available."
+msgstr "وكيل الإجراء التالي الأنسب بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+msgid "The call-briefing AI agent is not available."
+msgstr "وكيل الموجز التحضيري بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The churn-forecast AI agent is not available."
+msgstr "وكيل تنبّؤ الفقدان بالذكاء غير متاح."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__partner_id
+#: model:ir.model.fields,help:era_customer_success.field_cs_next_action__partner_id
+#: model:ir.model.fields,help:era_customer_success.field_cs_weekly_suggestion__partner_id
+msgid ""
+"The customer company managed by Customer Success. One account per company; "
+"child contacts are aggregated automatically."
+msgstr ""
+"شركة العميل المُدارة بواسطة نجاح العملاء. حساب واحد لكل شركة؛ تُجمَّع جهات "
+"الاتصال الفرعية تلقائياً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "The follow-up composer AI agent is not available."
+msgstr "وكيل مُحرِّر المتابعة بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "The page returned no readable text."
+msgstr "لم تُرجِع الصفحة نصاً قابلاً للقراءة."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+msgid "The pitch AI agent is not available."
+msgstr "وكيل صياغة العرض بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The profile-summary AI agent is not available."
+msgstr "وكيل الملخص الذكي غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The renewal-strategy AI agent is not available."
+msgstr "وكيل استراتيجية التجديد بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "The service-extraction AI agent is not available."
+msgstr "وكيل استخراج الخدمة بالذكاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The weekly-worklist AI agent is not available."
+msgstr "وكيل قائمة العمل الأسبوعية بالذكاء غير متاح."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "This Year"
+msgstr "هذا العام"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_capture_request.py:0
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_ticket
+msgid "Ticket"
+msgstr "تذكرة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Tickets"
+msgstr "التذاكر"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_customer_import__source__tickets
+msgid "Tickets only"
+msgstr "التذاكر فقط"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_customer_import__source__both
+msgid "Tickets or Projects"
+msgstr "التذاكر أو المشاريع"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_kpi_snapshot_search
+msgid "Tier"
+msgstr "التصنيف"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__day_window_end
+msgid "To Day"
+msgstr "إلى اليوم"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__state__open
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "To Do"
+msgstr "للتنفيذ"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__tone
+msgid "Tone"
+msgstr "النبرة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+msgid "Type a question first."
+msgstr "اكتب سؤالاً أولاً."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__activity_exception_decoration
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي على السجل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
+msgid "Unassigned"
+msgstr "غير مُسند"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_capture_request__request_type__upsell
+msgid "Upsell / Cross-sell"
+msgstr "توسّع / بيع متقاطع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__upsell_revenue
+msgid "Upsell Revenue"
+msgstr "إيراد التوسّع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__upsell_revenue
+msgid "Upsell Revenue (Won)"
+msgstr "إيراد التوسّع (المكسوب)"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_crm_lead__cs_upsell_type
+msgid "Upsell Type"
+msgstr "نوع التوسّع"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/csm_offering.py:0
+msgid "Upsell: %s"
+msgstr "توسّع: %s"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__next_action_priority__urgent
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__priority__urgent
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__priority__urgent
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "Urgent"
+msgstr "عاجلة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Value proposition, pricing model, triggers to offer it…"
+msgstr "القيمة المقترحة، نموذج التسعير، ومحفّزات عرضها…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "View Opportunity"
+msgstr "عرض الفرصة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__res_company__cs_whatsapp_provider__waha
+msgid "WAHA"
+msgstr "WAHA"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__warm
+msgid "Warm / Empathetic"
+msgstr "دافئة / متعاطفة"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__health_status__watch
+msgid "Watch"
+msgstr "مراقبة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__website_message_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__website_message_ids
+#: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__website_message_ids
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__website_message_ids
+#: model:ir.model.fields,help:era_customer_success.field_csm_offering__website_message_ids
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
+msgid "Week"
+msgstr "الأسبوع"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__week
+msgid "Week of"
+msgstr "أسبوع"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__weekly
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_kpi_snapshot__period_type__week
+msgid "Weekly"
+msgstr "أسبوعي"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_weekly_suggestion
+msgid "Weekly Customer Success Suggestion"
+msgstr "اقتراح نجاح العملاء الأسبوعي"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Weekly Suggestion"
+msgstr "الاقتراح الأسبوعي"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_weekly_suggestion_my
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_weekly_suggestions_my
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_list
+msgid "Weekly Suggestions"
+msgstr "الاقتراحات الأسبوعية"
+
+#. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_weekly_suggestion_all
+msgid "Weekly Suggestions (All CSMs)"
+msgstr "الاقتراحات الأسبوعية (كل المهندسين)"
+
+#. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_weekly_suggestions_all
+msgid "Weekly Suggestions (All)"
+msgstr "الاقتراحات الأسبوعية (الكل)"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "What it does, integrations, requirements…"
+msgstr "ماذا تفعل، التكاملات، المتطلبات…"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_followup_compose__purpose
+msgid ""
+"What this message is about, e.g. periodic check-in, renewal nudge, thank-you"
+" after resolution. Leave empty for a general follow-up."
+msgstr ""
+"موضوع الرسالة، مثل: متابعة دورية، تذكير بالتجديد، شكر بعد حل مشكلة. اتركه "
+"فارغاً لمتابعة عامة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid "What this stage means..."
+msgstr "ماذا تعني هذه المرحلة..."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__channel__whatsapp
+#: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__whatsapp
+#: model:mail.message.subtype,name:era_customer_success.mt_cs_whatsapp
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "WhatsApp Channel"
+msgstr "قناة واتساب"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_sadeem_waha_whatsapp_message
+msgid "WhatsApp Message"
+msgstr "رسالة واتساب"
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_next_action_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_next_action_enabled
+msgid ""
+"When enabled, a daily job asks the AI agent to recommend the next best "
+"action for each customer based on their situation and history. NOTE: the "
+"customer snapshot is sent to the configured AI provider."
+msgstr ""
+"عند التفعيل، تطلب مهمة يومية من وكيل الذكاء اقتراح الإجراء التالي الأنسب لكل"
+" عميل بناءً على وضعه وتاريخه. ملاحظة: تُرسَل لقطة العميل إلى مزوّد الذكاء "
+"المُهيّأ."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_renewal_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_renewal_enabled
+msgid ""
+"When enabled, a daily job builds a renewal play (which lever to pull plus "
+"dated steps) for every customer inside the 90-day renewal window. NOTE: the "
+"customer snapshot is sent to the AI provider."
+msgstr ""
+"عند التفعيل، تبني مهمة يومية خطة تجديد (الرافعة المناسبة وخطوات مؤرّخة) لكل "
+"عميل داخل نافذة التجديد (90 يوماً). ملاحظة: يُرسَل ملخّص العميل إلى مزوّد "
+"الذكاء."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_churn_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_churn_enabled
+msgid ""
+"When enabled, a daily job predicts each customer's churn probability at "
+"30/60/90 days (with the top drivers) from its situation and KPI history, for"
+" all active customers. NOTE: snapshots are sent to the AI provider."
+msgstr ""
+"عند التفعيل، تتنبّأ مهمة يومية باحتمال فقدان كل عميل عند 30/60/90 يوماً (مع "
+"أهم الأسباب) من وضعه وتاريخ مؤشراته، لكل العملاء النشطين. ملاحظة: تُرسَل "
+"اللقطات إلى مزوّد الذكاء."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_summary_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_summary_enabled
+msgid ""
+"When enabled, a scheduled job gradually generates a short AI profile summary"
+" (situation, scope, field of work, tenure) shown under each customer's name."
+" NOTE: the customer snapshot is sent to the AI provider."
+msgstr ""
+"عند التفعيل، تولّد مهمة مجدولة تدريجياً ملخصاً ذكياً قصيراً (الوضع، السكوب، "
+"مجال العمل، مدة التعامل) يظهر تحت اسم كل عميل. ملاحظة: تُرسَل لقطة العميل "
+"إلى مزوّد الذكاء."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_digest_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_digest_enabled
+msgid ""
+"When enabled, a weekly job delivers each CSM a ranked worklist of the "
+"accounts in their portfolio that need attention this week. NOTE: portfolio "
+"signals are sent to the AI provider."
+msgstr ""
+"عند التفعيل، تُسلّم مهمة أسبوعية كل مهندس CSM قائمة عمل مرتّبة بالحسابات "
+"التي تحتاج اهتماماً هذا الأسبوع من محفظته. ملاحظة: تُرسَل مؤشرات المحفظة إلى"
+" مزوّد الذكاء."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_sentiment_enabled
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_ai_sentiment_enabled
+msgid ""
+"When enabled, customer support tickets are analysed by the AI agent to score"
+" sentiment, which feeds the customer health score and triggers service-"
+"recovery alerts on negative sentiment. NOTE: ticket text is sent to the "
+"configured AI provider."
+msgstr ""
+"عند التفعيل، تُحلَّل تذاكر دعم العملاء عبر وكيل الذكاء لتقييم المشاعر، ما "
+"يغذّي مؤشر صحة العميل ويُطلق تنبيهات استرداد الخدمة عند المشاعر السلبية. "
+"ملاحظة: يُرسَل نص التذكرة إلى مزوّد الذكاء المُهيّأ."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__usage_signal
+msgid "Whether the customer is using the system correctly / actively."
+msgstr "ما إذا كان العميل يستخدم النظام بشكل صحيح/نشط."
+
+#. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_res_company__cs_whatsapp_provider
+#: model:ir.model.fields,help:era_customer_success.field_res_config_settings__cs_whatsapp_provider
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Which WhatsApp channel the Customer Success quick action uses."
+msgstr "أي قناة واتساب يستخدمها إجراء نجاح العملاء السريع."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__reason
+msgid "Why"
+msgstr "السبب"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "cs_account_id"
+msgstr "حساب نجاح العميل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "d"
+msgstr "ي"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "e.g. periodic check-in, renewal nudge…"
+msgstr "مثل: متابعة دورية، تذكير بالتجديد…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "https://…"
+msgstr "https://…"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_kanban
+msgid "offers"
+msgstr "عروض"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "partner_id"
+msgstr "العميل"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "partner_ids"
+msgstr "العملاء"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "service_id"
+msgstr "الخدمة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_kanban
+msgid "· MRR"
+msgstr "· MRR"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "· suggested"
+msgstr "· اقتُرح"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "التوجيه / Guidance"
+msgstr "التوجيه / Guidance"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "السبب / Why"
+msgstr "السبب / Why"
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_weekly_suggestion_my
+msgid ""
+"تظهر هنا الحسابات التي تحتاج اهتمامك هذا الأسبوع مع التوجيه المقترح. تُحدَّث"
+" كل سبت صباحاً."
+msgstr ""
+"تظهر هنا الحسابات التي تحتاج اهتمامك هذا الأسبوع مع التوجيه المقترح. تُحدَّث"
+" كل سبت صباحاً."
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_weekly_suggestion_my
+msgid "لا توجد اقتراحات أسبوعية بعد"
+msgstr "لا توجد اقتراحات أسبوعية بعد"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "مثال: ليش صحة هذا العميل منخفضة؟ متى آخر تواصل؟ هل فيه فرص بيع؟"
+msgstr "مثال: ليش صحة هذا العميل منخفضة؟ متى آخر تواصل؟ هل فيه فرص بيع؟"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid ""
+"— اسأل أي سؤال عن هذا العميل (الوضع، الصحة، المخاطر، التجديد، آخر "
+"التفاعلات…)"
+msgstr ""
+"— اسأل أي سؤال عن هذا العميل (الوضع، الصحة، المخاطر، التجديد، آخر "
+"التفاعلات…)"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__tier__long_tail
+msgid "▫️ Long Tail"
+msgstr "▫️ عملاء صغار"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "⚠️ Follow-up overdue since %s."
+msgstr "⚠️ المتابعة متأخرة منذ %s."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "✨ Generate with AI"
+msgstr "✨ توليد بالذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "✨ اسأل الذكاء"
+msgstr "✨ اسأل الذكاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__tier__core
+msgid "⭐ Core"
+msgstr "⭐ أساسي"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__tier__growth
+msgid "⭐⭐ Growth"
+msgstr "⭐⭐ نمو"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__tier__strategic
+msgid "⭐⭐⭐ Strategic"
+msgstr "⭐⭐⭐ استراتيجي"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "📊 <b>Survey response</b>: %(s)s – score %(p).0f%%"
+msgstr "📊 <b>رد استبيان</b>: %(s)s – النتيجة %(p).0f%%"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "📞 <b>Call</b> (%(dir)s) – %(mins).0f min. %(sum)s"
+msgstr "📞 <b>مكالمة</b> (%(dir)s) – %(mins).0f دقيقة. %(sum)s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "📞 Call scheduled for today."
+msgstr "📞 جُدولت مكالمة لليوم."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid "🔄 Regenerate"
+msgstr "🔄 إعادة التوليد"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/helpdesk_ticket.py:0
+msgid "🙁 <b>Negative sentiment</b> detected on ticket \"%(name)s\". %(reason)s"
+msgstr "🙁 رُصدت <b>مشاعر سلبية</b> على التذكرة \"%(name)s\". %(reason)s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "🤖 <b>Next best action</b> [%(p)s]: %(a)s<br/>%(r)s (by %(d)s)"
+msgstr "🤖 <b>الإجراء التالي الأنسب</b> [%(p)s]: %(a)s<br/>%(r)s (بحلول %(d)s)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "🤖 Service details enriched from %s"
+msgstr "🤖 أُثريت تفاصيل الخدمة من %s"

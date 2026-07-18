@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- 30-60-90 day onboarding journey, launchable from the account Activity widget -->
+    <record id="cs_plan_onboarding" model="mail.activity.plan">
+        <field name="name">CS Onboarding 30-60-90</field>
+        <field name="res_model">cs.account</field>
+    </record>
+
+    <record id="cs_plan_tmpl_kickoff" model="mail.activity.plan.template">
+        <field name="plan_id" ref="cs_plan_onboarding"/>
+        <field name="sequence">10</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_call"/>
+        <field name="summary">Welcome call &amp; kickoff</field>
+        <field name="responsible_type">on_demand</field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+    </record>
+    <record id="cs_plan_tmpl_usage" model="mail.activity.plan.template">
+        <field name="plan_id" ref="cs_plan_onboarding"/>
+        <field name="sequence">20</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Verify correct system usage / access</field>
+        <field name="responsible_type">on_demand</field>
+        <field name="delay_count">14</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+    </record>
+    <record id="cs_plan_tmpl_30" model="mail.activity.plan.template">
+        <field name="plan_id" ref="cs_plan_onboarding"/>
+        <field name="sequence">30</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">30-day review + send CSAT survey</field>
+        <field name="responsible_type">on_demand</field>
+        <field name="delay_count">30</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+    </record>
+    <record id="cs_plan_tmpl_60" model="mail.activity.plan.template">
+        <field name="plan_id" ref="cs_plan_onboarding"/>
+        <field name="sequence">40</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_call"/>
+        <field name="summary">60-day business review + NPS survey</field>
+        <field name="responsible_type">on_demand</field>
+        <field name="delay_count">60</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+    </record>
+    <record id="cs_plan_tmpl_90" model="mail.activity.plan.template">
+        <field name="plan_id" ref="cs_plan_onboarding"/>
+        <field name="sequence">50</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">90-day success review → move to Steady + upsell discovery</field>
+        <field name="responsible_type">on_demand</field>
+        <field name="delay_count">90</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+    </record>
+</odoo>

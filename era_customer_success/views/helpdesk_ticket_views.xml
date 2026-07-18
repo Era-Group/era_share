@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="helpdesk_ticket_view_form_cs" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.cs.sentiment</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="cs_sentiment_analyzed" invisible="1"/>
+                <field name="cs_sentiment_label" widget="badge"
+                       invisible="not cs_sentiment_analyzed"
+                       decoration-success="cs_sentiment_label == 'positive'"
+                       decoration-warning="cs_sentiment_label == 'neutral'"
+                       decoration-danger="cs_sentiment_label == 'negative'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

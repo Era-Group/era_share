@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csm_kpi_snapshot_pivot" model="ir.ui.view">
+        <field name="name">csm.kpi.snapshot.pivot</field>
+        <field name="model">csm.kpi.snapshot</field>
+        <field name="arch" type="xml">
+            <pivot string="CS KPIs">
+                <field name="csm_user_id" type="row"/>
+                <field name="period_start" interval="month" type="col"/>
+                <field name="activities" type="measure"/>
+                <field name="calls_made" type="measure"/>
+                <field name="activities_done" type="measure"/>
+                <field name="health_score" type="measure"/>
+                <field name="mrr" type="measure"/>
+                <field name="csat" type="measure"/>
+                <field name="nps" type="measure"/>
+                <field name="open_tickets" type="measure"/>
+                <field name="sentiment" type="measure"/>
+                <field name="avg_resolution_hours" type="measure"/>
+                <field name="meetings" type="measure"/>
+                <field name="upsell_revenue" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_csm_kpi_snapshot_graph" model="ir.ui.view">
+        <field name="name">csm.kpi.snapshot.graph</field>
+        <field name="model">csm.kpi.snapshot</field>
+        <field name="arch" type="xml">
+            <graph string="CS KPIs" type="bar">
+                <field name="csm_user_id"/>
+                <field name="health_score" type="measure"/>
+                <field name="mrr" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_csm_kpi_snapshot_list" model="ir.ui.view">
+        <field name="name">csm.kpi.snapshot.list</field>
+        <field name="model">csm.kpi.snapshot</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="period_start"/>
+                <field name="period_type"/>
+                <field name="csm_user_id"/>
+                <field name="partner_id"/>
+                <field name="lifecycle_stage_id" optional="show"/>
+                <field name="health_score"/>
+                <field name="mrr" widget="monetary"/>
+                <field name="csat"/>
+                <field name="nps"/>
+                <field name="open_tickets"/>
+                <field name="sentiment" optional="show"/>
+                <field name="avg_resolution_hours"/>
+                <field name="meetings"/>
+                <field name="calls_made" optional="show"/>
+                <field name="activities_done" optional="show"/>
+                <field name="activities" optional="show"/>
+                <field name="upsell_revenue" widget="monetary"/>
+                <field name="overdue_amount" widget="monetary" optional="hide"/>
+                <field name="churned" optional="hide"/>
+                <field name="is_active_customer" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_csm_kpi_snapshot_search" model="ir.ui.view">
+        <field name="name">csm.kpi.snapshot.search</field>
+        <field name="model">csm.kpi.snapshot</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="csm_user_id"/>
+                <field name="partner_id"/>
+                <filter name="this_year" string="This Year"
+                        domain="[('period_start', '&gt;=', context_today().strftime('%Y-01-01'))]"/>
+                <filter name="churned" string="Churned" domain="[('churned', '=', True)]"/>
+                <filter name="active_cust" string="Active Customers" domain="[('is_active_customer', '=', True)]"/>
+                <group>
+                    <filter name="g_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="g_period" string="Period" context="{'group_by': 'period_start:month'}"/>
+                    <filter name="g_stage" string="Lifecycle Stage" context="{'group_by': 'lifecycle_stage_id'}"/>
+                    <filter name="g_tier" string="Tier" context="{'group_by': 'tier'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_csm_sentiment_trend_graph" model="ir.ui.view">
+        <field name="name">csm.kpi.snapshot.sentiment.graph</field>
+        <field name="model">csm.kpi.snapshot</field>
+        <field name="arch" type="xml">
+            <graph string="Sentiment Trend" type="line" sample="1">
+                <field name="period_start" interval="month"/>
+                <field name="sentiment" type="measure"/>
+                <field name="csat" type="measure"/>
+                <field name="health_score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_csm_sentiment_trend" model="ir.actions.act_window">
+        <field name="name">Sentiment Trend</field>
+        <field name="res_model">csm.kpi.snapshot</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_csm_sentiment_trend_graph"/>
+        <field name="search_view_id" ref="view_csm_kpi_snapshot_search"/>
+    </record>
+
+    <record id="action_csm_kpi_snapshot" model="ir.actions.act_window">
+        <field name="name">CS KPIs &amp; Reporting</field>
+        <field name="res_model">csm.kpi.snapshot</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_csm_kpi_snapshot_search"/>
+    </record>
+</odoo>

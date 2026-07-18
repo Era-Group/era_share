@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_customer_success.CsSentimentBadge">
+        <span t-if="value" class="badge" t-att-class="badgeClass"
+              style="cursor: help;"
+              data-tooltip-template="era_customer_success.CsSentimentTooltip"
+              t-att-data-tooltip-info="tooltipInfo">
+            <t t-esc="emoji"/> <t t-esc="text"/>
+        </span>
+        <span t-else="" class="text-muted">—</span>
+    </t>
+
+    <t t-name="era_customer_success.CsSentimentTooltip">
+        <div class="o_cs_sentiment_tooltip">
+            <t t-esc="text"/>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,33 @@
+.o_cs_dashboard {
+    background: #f6f7fb;
+    min-height: 100%;
+    overflow: auto;
+}
+.o_cs_dashboard .o_cs_tile {
+    cursor: pointer;
+    transition: transform .08s ease, box-shadow .08s ease;
+}
+.o_cs_dashboard .o_cs_tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .12) !important;
+}
+.o_cs_dashboard .o_cs_row {
+    cursor: pointer;
+}
+
+/* Shorten the phone-widget SMS label (default Arabic "الرسائل النصية القصيرة" wraps) -> "سمس" */
+.o_field_phone_sms small {
+    font-size: 0;
+}
+.o_field_phone_sms small::after {
+    content: "سمس";
+    font-size: 0.75rem;
+}
+
+/* Sentiment badge hover tooltip — preserve the per-ticket breakdown line breaks. */
+.o_cs_sentiment_tooltip {
+    white-space: pre-line;
+    max-width: 360px;
+    text-align: start;
+    line-height: 1.45;
+}

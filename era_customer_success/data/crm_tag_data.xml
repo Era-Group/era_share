@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="crm_tag_cs_upsell" model="crm.tag">
+        <field name="name">CS Upsell</field>
+        <field name="color">4</field>
+    </record>
+</odoo>

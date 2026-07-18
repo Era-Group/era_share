@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_service_list" model="ir.ui.view">
+        <field name="name">cs.service.list</field>
+        <field name="model">cs.service</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="image_128" widget="image" class="oe_avatar" optional="show"/>
+                <field name="name"/>
+                <field name="target_audience" optional="show"/>
+                <field name="url" widget="url" optional="show"/>
+                <field name="offering_count" optional="show"/>
+                <field name="ai_enriched_on" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_service_kanban" model="ir.ui.view">
+        <field name="name">cs.service.kanban</field>
+        <field name="model">cs.service</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <templates>
+                    <t t-name="card" class="d-flex">
+                        <field name="image_128" widget="image" class="o_image_64_contain me-2"
+                               invisible="not image_128" alt="Service"/>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <field name="name" class="fw-bold fs-5"/>
+                                <span class="badge text-bg-secondary"><field name="offering_count"/> offers</span>
+                            </div>
+                            <field name="target_audience" class="text-muted"/>
+                            <div class="mt-1 text-truncate"><field name="short_description"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_cs_service_form" model="ir.ui.view">
+        <field name="name">cs.service.form</field>
+        <field name="model">cs.service</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_enrich_from_url" type="object"
+                            string="Read from URL (AI)" icon="fa-magic" class="btn-primary"
+                            invisible="not url"
+                            groups="era_customer_success.group_era_cs_manager"/>
+                    <button name="action_create_whatsapp_template" type="object"
+                            string="إنشاء قالب واتساب" icon="fa-whatsapp" class="btn-secondary"
+                            invisible="whatsapp_template_id"
+                            groups="era_customer_success.group_era_cs_manager"/>
+                    <button name="action_create_whatsapp_template" type="object"
+                            string="فتح قالب واتساب" icon="fa-whatsapp"
+                            invisible="not whatsapp_template_id"
+                            groups="era_customer_success.group_era_cs_manager"/>
+                    <field name="whatsapp_template_id" invisible="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift">
+                            <field name="offering_count" widget="statinfo" string="Offerings"/>
+                        </button>
+                    </div>
+                    <field name="image_1920" widget="image" class="oe_avatar"
+                           options="{'preview_image': 'image_128'}"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Service name (e.g. Muqeem integration)…"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="url" widget="url" placeholder="https://…"/>
+                            <field name="target_audience"/>
+                        </group>
+                        <group>
+                            <field name="ai_enriched_on" readonly="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details" name="details">
+                            <group>
+                                <field name="short_description" placeholder="Short description…"/>
+                                <field name="features" placeholder="- feature 1&#10;- feature 2…"/>
+                                <field name="product_details" placeholder="What it does, integrations, requirements…"/>
+                                <field name="decision_points" placeholder="Value proposition, pricing model, triggers to offer it…"/>
+                            </group>
+                        </page>
+                        <page string="Suggested Pitch" name="pitch">
+                            <field name="pitch_template" placeholder="A ready-to-send suggested message to a customer…"/>
+                        </page>
+                        <page string="Products" name="products">
+                            <field name="product_tmpl_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cs_service" model="ir.actions.act_window">
+        <field name="name">Service Catalog</field>
+        <field name="res_model">cs.service</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a template service to the catalog</p>
+            <p>Paste the service URL and click "Read from URL (AI)" to auto-fill its features and details.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Live manager views on cs.account (portfolio performance) -->
+    <record id="view_cs_account_graph" model="ir.ui.view">
+        <field name="name">cs.account.graph</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <graph string="Customer Success" type="bar" sample="1">
+                <field name="csm_user_id"/>
+                <field name="health_score" type="measure"/>
+                <field name="mrr" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_cs_account_pivot" model="ir.ui.view">
+        <field name="name">cs.account.pivot</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <pivot string="Customer Success" sample="1">
+                <field name="csm_user_id" type="row"/>
+                <field name="lifecycle_stage_id" type="col"/>
+                <field name="health_score" type="measure"/>
+                <field name="churn_probability" type="measure"/>
+                <field name="mrr" type="measure"/>
+                <field name="upsell_revenue" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_cs_dashboard" model="ir.actions.act_window">
+        <field name="name">Manager Dashboard</field>
+        <field name="res_model">cs.account</field>
+        <field name="view_mode">graph,pivot,kanban,list</field>
+        <field name="search_view_id" ref="view_cs_account_search"/>
+        <field name="context">{'search_default_group_csm': 1}</field>
+    </record>
+</odoo>

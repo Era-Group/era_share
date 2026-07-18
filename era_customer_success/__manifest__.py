@@ -1,0 +1,73 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "Era Customer Success",
+    'summary': "Customer Success platform: 360° customer follow-up, CSM assignment, "
+               "health scoring, unified timeline (WhatsApp/SMS/Calls/Tickets), "
+               "lifecycle (30-60-90) and a manager KPI dashboard.",
+    'description': "A thin orchestration layer over Helpdesk, VoIP, WhatsApp "
+                   "(native), Subscriptions, Surveys, CRM and Accounting "
+                   "Follow-up: a Customer Success Account per customer assigned to a "
+                   "CSM engineer, a unified 360 timeline, an automatic health score, "
+                   "a 30-60-90 lifecycle, and a manager KPI dashboard.",
+    'author': "Era Group",
+    'website': "https://www.era.net.sa",
+    'category': 'Services/Customer Success',
+    'version': '19.0.14.6.1',
+    'license': 'LGPL-3',
+    'depends': [
+        'base',
+        'base_setup',
+        'mail',
+        'ai',
+        'contacts',
+        'crm',
+        'sales_team',
+        'project',
+        'helpdesk',
+        'sale_subscription',
+        'account_followup',
+        'survey',
+        'calendar',
+        'voip',
+        'whatsapp',
+    ],
+    'data': [
+        'security/cs_security.xml',
+        'security/ir.model.access.csv',
+        'data/cs_message_subtype_data.xml',
+        'data/cs_stage_data.xml',
+        'data/crm_tag_data.xml',
+        'data/ai_agent_data.xml',
+        'data/cs_service_data.xml',
+        'data/mail_activity_plan_data.xml',
+        'data/ir_cron_data.xml',
+        'wizard/cs_capture_request_views.xml',
+        'wizard/cs_customer_import_views.xml',
+        'wizard/cs_followup_compose_views.xml',
+        'wizard/cs_call_briefing_views.xml',
+        'wizard/cs_account_copilot_views.xml',
+        'views/cs_account_views.xml',
+        'views/cs_stage_views.xml',
+        'views/csm_offering_views.xml',
+        'views/cs_service_views.xml',
+        'views/csm_kpi_snapshot_views.xml',
+        'views/cs_weekly_suggestion_views.xml',
+        'views/cs_dashboard_views.xml',
+        'views/cs_dashboard_client.xml',
+        'views/res_partner_views.xml',
+        'views/helpdesk_ticket_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/cs_menus.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'era_customer_success/static/src/css/cs_dashboard.css',
+            'era_customer_success/static/src/js/cs_dashboard.js',
+            'era_customer_success/static/src/js/cs_sentiment_field.js',
+            'era_customer_success/static/src/xml/cs_dashboard.xml',
+            'era_customer_success/static/src/xml/cs_sentiment_field.xml',
+        ],
+    },
+    'application': True,
+    'installable': True,
+}

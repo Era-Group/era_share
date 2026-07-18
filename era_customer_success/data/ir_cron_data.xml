@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_cs_recompute_metrics" model="ir.cron">
+        <field name="name">CS: Recompute account metrics &amp; health</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_recompute_metrics()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=1, minute=2, second=0))"/>
+    </record>
+
+    <record id="cron_cs_advance_lifecycle" model="ir.cron">
+        <field name="name">CS: Advance lifecycle &amp; flag at-risk</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_advance_lifecycle()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=2, minute=7, second=0))"/>
+    </record>
+
+    <record id="cron_cs_renewal_escalation" model="ir.cron">
+        <field name="name">CS: Renewal reminders &amp; overdue escalation</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_renewal_and_escalation()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=3, minute=12, second=0))"/>
+    </record>
+
+    <record id="cron_cs_cadence" model="ir.cron">
+        <field name="name">CS: Schedule follow-up cadence</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_schedule_cadence()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=4, minute=17, second=0))"/>
+    </record>
+
+    <record id="cron_cs_sync_touchpoints" model="ir.cron">
+        <field name="name">CS: Sync touchpoints into account timeline</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_touchpoints()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=1, minute=27, second=0))"/>
+    </record>
+
+    <record id="cron_cs_analyze_sentiment" model="ir.cron">
+        <field name="name">CS: Analyse ticket sentiment (AI)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_analyze_sentiment()</field>
+        <field name="interval_number">2</field>
+        <field name="interval_type">hours</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=6, minute=32, second=0))"/>
+    </record>
+
+    <record id="cron_cs_next_action" model="ir.cron">
+        <field name="name">CS: Suggest next best action (AI)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_suggest_next_steps()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=7, minute=42, second=0))"/>
+    </record>
+
+    <record id="cron_cs_profile_summary" model="ir.cron">
+        <field name="name">CS: Generate AI profile summaries (gradual)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_summaries()</field>
+        <field name="interval_number">3</field>
+        <field name="interval_type">hours</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=8, minute=37, second=0))"/>
+    </record>
+
+    <record id="cron_cs_forecast_churn" model="ir.cron">
+        <field name="name">CS: Forecast churn probability (AI)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_forecast_churn()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=9, minute=47, second=0))"/>
+    </record>
+
+    <record id="cron_cs_weekly_digest" model="ir.cron">
+        <field name="name">CS: Weekly CSM worklist digest (AI)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_weekly_digest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(weekday=5, hour=7, minute=0, second=0))"/>
+    </record>
+
+    <record id="cron_cs_renewal_strategy" model="ir.cron">
+        <field name="name">CS: Build renewal strategy (AI)</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_renewal_strategy()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=10, minute=52, second=0))"/>
+    </record>
+
+    <record id="cron_cs_build_snapshot" model="ir.cron">
+        <field name="name">CS: Build monthly KPI snapshot</field>
+        <field name="model_id" ref="model_csm_kpi_snapshot"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_build_snapshot('month')</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=5, minute=22, second=0))"/>
+    </record>
+</odoo>

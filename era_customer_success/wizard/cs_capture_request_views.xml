@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cs_capture_request_view_form" model="ir.ui.view">
+        <field name="name">cs.capture.request.form</field>
+        <field name="model">cs.capture.request</field>
+        <field name="arch" type="xml">
+            <form string="Capture Customer Request">
+                <group>
+                    <group>
+                        <field name="partner_id" readonly="1"/>
+                        <field name="cs_account_id" invisible="1"/>
+                        <field name="request_type" widget="radio"/>
+                    </group>
+                    <group>
+                        <field name="team_id" invisible="request_type != 'support'"/>
+                        <field name="expected_revenue" invisible="request_type == 'support'"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="name" placeholder="Short subject of the request..."/>
+                    <field name="description" placeholder="Details..."/>
+                </group>
+                <footer>
+                    <button name="action_submit" type="object" string="Create" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

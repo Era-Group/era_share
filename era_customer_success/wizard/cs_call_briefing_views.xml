@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_call_briefing_form" model="ir.ui.view">
+        <field name="name">cs.call.briefing.form</field>
+        <field name="model">cs.call.briefing</field>
+        <field name="arch" type="xml">
+            <form string="Pre-Call Briefing (AI)">
+                <group>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="purpose"/>
+                </group>
+                <field name="briefing" nolabel="1" widget="text"
+                       placeholder="The AI briefing appears here…" readonly="1"/>
+                <field name="cs_account_id" invisible="1"/>
+                <footer>
+                    <button name="action_regenerate" type="object" string="🔄 Regenerate"
+                            class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_stage_list" model="ir.ui.view">
+        <field name="name">cs.stage.list</field>
+        <field name="model">cs.stage</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="day_window_start"/>
+                <field name="day_window_end"/>
+                <field name="is_onboarding"/>
+                <field name="is_at_risk"/>
+                <field name="is_churned"/>
+                <field name="fold"/>
+                <field name="account_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_stage_form" model="ir.ui.view">
+        <field name="name">cs.stage.form</field>
+        <field name="model">cs.stage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="fold"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group>
+                            <field name="is_onboarding"/>
+                            <field name="day_window_start" invisible="not is_onboarding"/>
+                            <field name="day_window_end" invisible="not is_onboarding"/>
+                            <field name="is_at_risk"/>
+                            <field name="is_churned"/>
+                            <field name="mail_template_id"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="What this stage means..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cs_stage" model="ir.actions.act_window">
+        <field name="name">Lifecycle Stages</field>
+        <field name="res_model">cs.stage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

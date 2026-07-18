@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_weekly_suggestion_list" model="ir.ui.view">
+        <field name="name">cs.weekly.suggestion.list</field>
+        <field name="model">cs.weekly.suggestion</field>
+        <field name="arch" type="xml">
+            <list string="Weekly Suggestions" default_order="rank"
+                  decoration-danger="priority == 'urgent'"
+                  decoration-warning="priority == 'high'"
+                  decoration-muted="state in ('done','dismissed')">
+                <field name="priority" widget="badge"
+                       decoration-danger="priority == 'urgent'"
+                       decoration-warning="priority == 'high'"
+                       decoration-info="priority == 'medium'"/>
+                <field name="partner_id"/>
+                <field name="csm_user_id" optional="show"/>
+                <field name="health_score" optional="show"/>
+                <field name="churn_probability" optional="show"
+                       decoration-danger="churn_probability &gt;= 60"
+                       decoration-warning="churn_probability &gt;= 35 and churn_probability &lt; 60"/>
+                <field name="reason" optional="hide"/>
+                <field name="recommended_action"/>
+                <field name="week" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-muted="state == 'dismissed'"/>
+                <button name="action_open_account" type="object" string="Open" icon="fa-folder-open-o"/>
+                <button name="action_mark_done" type="object" string="Done" icon="fa-check"
+                        invisible="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_weekly_suggestion_form" model="ir.ui.view">
+        <field name="name">cs.weekly.suggestion.form</field>
+        <field name="model">cs.weekly.suggestion</field>
+        <field name="arch" type="xml">
+            <form string="Weekly Suggestion">
+                <header>
+                    <button name="action_open_account" type="object" string="Open Customer" class="btn-primary" icon="fa-folder-open-o"/>
+                    <button name="action_mark_done" type="object" string="Mark Done" invisible="state == 'done'"/>
+                    <button name="action_dismiss" type="object" string="Dismiss" invisible="state == 'dismissed'"/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state == 'open'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="csm_user_id" readonly="1"/>
+                            <field name="priority" widget="badge"/>
+                            <field name="week" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="health_score" readonly="1"/>
+                            <field name="churn_probability" readonly="1"/>
+                            <field name="generated_on" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="السبب / Why">
+                        <field name="reason" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="التوجيه / Guidance">
+                        <field name="recommended_action" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cs_weekly_suggestion_search" model="ir.ui.view">
+        <field name="name">cs.weekly.suggestion.search</field>
+        <field name="model">cs.weekly.suggestion</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="csm_user_id"/>
+                <filter name="open" string="To Do" domain="[('state', '=', 'open')]"/>
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="urgent" string="Urgent" domain="[('priority', '=', 'urgent')]"/>
+                <filter name="high_churn" string="High Churn (≥60%)" domain="[('churn_probability', '&gt;=', 60)]"/>
+                <group>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="group_priority" string="Priority" context="{'group_by': 'priority'}"/>
+                    <filter name="group_week" string="Week" context="{'group_by': 'week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Engineer: my weekly suggestions -->
+    <record id="action_cs_weekly_suggestion_my" model="ir.actions.act_window">
+        <field name="name">Weekly Suggestions</field>
+        <field name="res_model">cs.weekly.suggestion</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_weekly_suggestion_search"/>
+        <!-- Empty domain on purpose: the record rule scopes it (engineer = own, manager = all CSMs).
+             Must be set explicitly to [] — an absent field is not cleared on upgrade. -->
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">لا توجد اقتراحات أسبوعية بعد</p>
+            <p>تظهر هنا الحسابات التي تحتاج اهتمامك هذا الأسبوع مع التوجيه المقترح. تُحدَّث كل سبت صباحاً.</p>
+        </field>
+    </record>
+
+    <!-- Manager: all CSMs' suggestions -->
+    <record id="action_cs_weekly_suggestion_all" model="ir.actions.act_window">
+        <field name="name">Weekly Suggestions (All CSMs)</field>
+        <field name="res_model">cs.weekly.suggestion</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_weekly_suggestion_search"/>
+        <field name="context">{'search_default_open': 1, 'search_default_group_csm': 1}</field>
+    </record>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Timeline subtypes. NO description: the message body already carries an
+         emoji + bold label, so a subtype description would render as a redundant
+         line above every message in the chatter. eval="False" actively clears any
+         description set by an earlier version on upgrade. -->
+    <record id="mt_cs_call" model="mail.message.subtype">
+        <field name="name">Call</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_whatsapp" model="mail.message.subtype">
+        <field name="name">WhatsApp</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_sms" model="mail.message.subtype">
+        <field name="name">SMS</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_ticket" model="mail.message.subtype">
+        <field name="name">Ticket</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_survey" model="mail.message.subtype">
+        <field name="name">Survey</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_offering" model="mail.message.subtype">
+        <field name="name">Offering</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+    <record id="mt_cs_action" model="mail.message.subtype">
+        <field name="name">AI Next Action</field>
+        <field name="res_model">cs.account</field>
+        <field name="default" eval="False"/>
+        <field name="description" eval="False"/>
+    </record>
+</odoo>

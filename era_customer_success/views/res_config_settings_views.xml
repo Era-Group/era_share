@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_cs" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.cs</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Customer Success" string="Customer Success" name="era_customer_success">
+                    <block title="Artificial Intelligence" id="cs_ai_block">
+                        <setting string="AI Sentiment Analysis"
+                                 help="Analyse support ticket sentiment with the AI agent to feed the health score and trigger service-recovery alerts. Ticket text is sent to the configured AI provider.">
+                            <field name="cs_ai_sentiment_enabled"/>
+                        </setting>
+                        <setting string="AI Next Best Action"
+                                 help="A daily job recommends the next best action per customer based on their situation and history. The customer snapshot is sent to the configured AI provider.">
+                            <field name="cs_ai_next_action_enabled"/>
+                        </setting>
+                        <setting string="AI Profile Summary"
+                                 help="A scheduled job gradually generates a short AI profile summary (situation, scope, field of work, tenure) shown under each customer's name. The customer snapshot is sent to the AI provider.">
+                            <field name="cs_ai_summary_enabled"/>
+                        </setting>
+                        <setting string="AI Churn Forecast"
+                                 help="A daily job predicts each customer's churn probability at 30/60/90 days (with the top drivers) from its situation and KPI history, for all active customers.">
+                            <field name="cs_ai_churn_enabled"/>
+                        </setting>
+                        <setting string="AI Renewal Strategy"
+                                 help="A daily job builds a renewal play (which lever to pull plus dated steps) for every customer inside the 90-day renewal window.">
+                            <field name="cs_ai_renewal_enabled"/>
+                        </setting>
+                        <setting string="AI Weekly Worklist"
+                                 help="A weekly job delivers each CSM a ranked worklist of the accounts in their portfolio that need attention this week.">
+                            <field name="cs_ai_digest_enabled"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_cs_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'era_customer_success'}</field>
+    </record>
+</odoo>

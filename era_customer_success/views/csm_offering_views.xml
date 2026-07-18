@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csm_offering_list" model="ir.ui.view">
+        <field name="name">csm.offering.list</field>
+        <field name="model">csm.offering</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user"/>
+                <field name="offering_date"/>
+                <field name="channel"/>
+                <field name="expected_value" widget="monetary"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'accepted'"
+                       decoration-danger="state == 'rejected'"
+                       decoration-info="state == 'presented'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_csm_offering_form" model="ir.ui.view">
+        <field name="name">csm.offering.form</field>
+        <field name="model">csm.offering</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_suggest_pitch" type="object" string="Suggest Pitch (AI)"
+                            icon="fa-magic" class="btn-secondary"/>
+                    <button name="action_send_service_whatsapp" type="object"
+                            string="إرسال قالب الخدمة (واتساب)" icon="fa-whatsapp"
+                            class="btn-secondary" invisible="not service_id"/>
+                    <button name="action_send_service_email" type="object"
+                            string="إرسال إيميل" icon="fa-envelope"
+                            class="btn-secondary" invisible="not service_id"/>
+                    <button name="action_present" type="object" string="Mark Presented"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_accept" type="object" string="Accept → Create Opportunity"
+                            class="btn-primary" invisible="state not in ('draft','presented')"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state not in ('draft','presented')"/>
+                    <button name="action_open_opportunity" type="object" string="View Opportunity"
+                            invisible="not opportunity_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
+                </header>
+                <sheet>
+                    <field name="service_image" widget="image" class="oe_avatar"
+                           invisible="not service_id" readonly="1"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Offering name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="cs_account_id"/>
+                            <field name="csm_user_id" widget="many2one_avatar_user"/>
+                        </group>
+                        <group>
+                            <field name="service_id"/>
+                            <field name="offering_date"/>
+                            <field name="channel"/>
+                            <field name="expected_value" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="opportunity_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="product_tmpl_ids" widget="many2many_tags"/>
+                    <notebook>
+                        <page string="Suggested Pitch (AI)" name="pitch">
+                            <field name="pitch_message" placeholder="Click 'Suggest Pitch (AI)' to generate a message tailored to this customer's situation…"/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes about the offering..." nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_csm_offering" model="ir.actions.act_window">
+        <field name="name">Offerings</field>
+        <field name="res_model">csm.offering</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_followup_compose_form" model="ir.ui.view">
+        <field name="name">cs.followup.compose.form</field>
+        <field name="model">cs.followup.compose</field>
+        <field name="arch" type="xml">
+            <form string="Compose Follow-up (AI)">
+                <group>
+                    <group>
+                        <field name="partner_id" readonly="1"/>
+                        <field name="channel"/>
+                        <field name="tone"/>
+                    </group>
+                    <group>
+                        <field name="purpose" placeholder="e.g. periodic check-in, renewal nudge…"/>
+                        <field name="reply_to_last"/>
+                        <field name="service_id"/>
+                    </group>
+                </group>
+                <field name="service_image" widget="image" class="oe_avatar"
+                       invisible="not service_id" readonly="1"/>
+                <group>
+                    <button name="action_generate" type="object" string="✨ Generate with AI"
+                            class="btn-primary"/>
+                </group>
+                <field name="draft" nolabel="1" placeholder="The AI draft appears here — edit freely before sending…"
+                       widget="text" options="{'resizable': true}"/>
+                <field name="cs_account_id" invisible="1"/>
+                <footer>
+                    <button name="action_send" type="object" string="Send / Open Channel"
+                            class="btn-primary" invisible="not draft"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

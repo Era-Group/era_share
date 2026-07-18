@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_cs_root" name="Customer Success"
+              web_icon="era_customer_success,static/description/icon.png"
+              sequence="50"
+              groups="group_era_cs_user"/>
+
+    <menuitem id="menu_cs_my_customers" name="My Customers"
+              parent="menu_cs_root" action="action_cs_account_my" sequence="10"/>
+
+    <menuitem id="menu_cs_weekly_suggestions_my" name="Weekly Suggestions"
+              parent="menu_cs_root" action="action_cs_weekly_suggestion_my" sequence="15"/>
+
+    <menuitem id="menu_cs_offerings" name="Offerings"
+              parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
+
+    <menuitem id="menu_cs_service_catalog" name="Service Catalog"
+              parent="menu_cs_root" action="action_cs_service" sequence="35"/>
+
+
+    <!-- Reporting -->
+    <menuitem id="menu_cs_reporting" name="Reporting"
+              parent="menu_cs_root" sequence="80"
+              groups="group_era_cs_manager"/>
+    <menuitem id="menu_cs_executive_dashboard" name="Executive Dashboard"
+              parent="menu_cs_reporting" action="action_cs_executive_dashboard" sequence="5"/>
+    <menuitem id="menu_cs_dashboard" name="Manager Dashboard"
+              parent="menu_cs_reporting" action="action_cs_dashboard" sequence="10"/>
+    <menuitem id="menu_cs_kpis" name="KPIs"
+              parent="menu_cs_reporting" action="action_csm_kpi_snapshot" sequence="20"/>
+    <menuitem id="menu_cs_sentiment_trend" name="Sentiment Trend"
+              parent="menu_cs_reporting" action="action_csm_sentiment_trend" sequence="30"/>
+
+    <menuitem id="menu_cs_weekly_suggestions_all" name="Weekly Suggestions (All)"
+              parent="menu_cs_reporting" action="action_cs_weekly_suggestion_all" sequence="15"/>
+
+    <record id="action_cs_weekly_digest_run" model="ir.actions.server">
+        <field name="name">Generate Weekly Suggestions Now</field>
+        <field name="model_id" ref="model_cs_account"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_run_weekly_digest_now()</field>
+    </record>
+    <menuitem id="menu_cs_weekly_digest" name="Generate Weekly Suggestions Now"
+              parent="menu_cs_reporting" action="action_cs_weekly_digest_run" sequence="40"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_cs_config" name="Configuration"
+              parent="menu_cs_root" sequence="90"
+              groups="group_era_cs_manager"/>
+    <menuitem id="menu_cs_stages" name="Lifecycle Stages"
+              parent="menu_cs_config" action="action_cs_stage" sequence="10"/>
+    <menuitem id="menu_cs_customer_import" name="Smart Customer Import"
+              parent="menu_cs_config" action="action_cs_customer_import" sequence="15"
+              groups="group_era_cs_manager"/>
+    <menuitem id="menu_cs_settings" name="Settings"
+              parent="menu_cs_config" action="action_cs_config_settings" sequence="20"/>
+</odoo>

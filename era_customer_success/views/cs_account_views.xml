@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============ KANBAN (lifecycle board) ============ -->
+    <record id="view_cs_account_kanban" model="ir.ui.view">
+        <field name="name">cs.account.kanban</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="lifecycle_stage_id" sample="1">
+                <field name="kanban_color"/>
+                <field name="health_status"/>
+                <field name="health_score"/>
+                <field name="open_tickets_count"/>
+                <field name="days_to_renewal"/>
+                <field name="churn_risk"/>
+                <field name="sentiment_label"/>
+                <progressbar field="health_status"
+                             colors='{"good": "success", "watch": "warning", "at_risk": "danger", "critical": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between">
+                            <field name="partner_id" class="fw-bold fs-5"/>
+                            <span t-attf-class="badge rounded-pill #{record.health_status.raw_value === 'good' ? 'text-bg-success' : (record.health_status.raw_value === 'watch' ? 'text-bg-warning' : 'text-bg-danger')}">
+                                <t t-out="record.health_score.value"/>
+                            </span>
+                        </div>
+                        <div class="text-muted">
+                            <field name="tier"/> · MRR <field name="mrr" widget="monetary"/>
+                        </div>
+                        <div class="mt-1">
+                            <span t-if="record.sentiment_label.raw_value" class="me-2" title="Sentiment">
+                                <t t-out="{'positive':'🙂','neutral':'😐','negative':'🙁'}[record.sentiment_label.raw_value]"/>
+                            </span>
+                            <span t-if="record.open_tickets_count.raw_value &gt; 0" class="me-2">
+                                <i class="fa fa-ticket" title="Open Tickets"/> <t t-out="record.open_tickets_count.value"/>
+                            </span>
+                            <span t-if="record.days_to_renewal.raw_value &gt; 0 &amp;&amp; record.days_to_renewal.raw_value &lt; 90" class="me-2 text-warning">
+                                <i class="fa fa-refresh" title="Days to Renewal"/> <t t-out="record.days_to_renewal.value"/>d
+                            </span>
+                            <span t-if="record.churn_risk.raw_value" class="badge text-bg-danger">At Risk</span>
+                        </div>
+                        <footer class="pt-1 mt-0">
+                            <div class="d-flex mt-auto">
+                                <field name="activity_ids" widget="kanban_activity"/>
+                            </div>
+                            <field name="csm_user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============ LIST ============ -->
+    <record id="view_cs_account_list" model="ir.ui.view">
+        <field name="name">cs.account.list</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="health_status == 'critical'"
+                  decoration-warning="health_status == 'at_risk'"
+                  decoration-muted="lifecycle_stage_id and not active">
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user"/>
+                <field name="lifecycle_stage_id"/>
+                <field name="tier" optional="show"/>
+                <field name="health_score" widget="progressbar"/>
+                <field name="health_status" widget="badge"
+                       decoration-success="health_status == 'good'"
+                       decoration-warning="health_status == 'watch'"
+                       decoration-danger="health_status in ('at_risk','critical')"/>
+                <field name="mrr" widget="monetary" optional="show"/>
+                <field name="open_tickets_count" optional="show"/>
+                <field name="renewal_date" optional="show"/>
+                <field name="overdue_amount" widget="monetary" optional="hide"/>
+                <field name="csat_latest" optional="hide"/>
+                <field name="last_touch_date" optional="hide"/>
+                <field name="next_touch_date" optional="show"/>
+                <field name="churn_risk" optional="hide" widget="boolean_toggle"/>
+                <field name="churn_probability" optional="show"
+                       decoration-danger="churn_probability &gt;= 60"
+                       decoration-warning="churn_probability &gt;= 35 and churn_probability &lt; 60"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ FORM (Customer 360) ============ -->
+    <record id="view_cs_account_form" model="ir.ui.view">
+        <field name="name">cs.account.form</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_suggest_next_step" type="object" string="Suggest Next Step (AI)" icon="fa-magic" class="btn-secondary"
+                            help="Ask the AI for the single best next action for this customer, based on their situation, history and last suggestion."/>
+                    <button name="action_account_copilot" type="object" string="Ask AI" icon="fa-comments" class="btn-secondary"
+                            help="Open the Account Copilot: ask any natural-language question about this customer and get an answer grounded in its data and timeline."/>
+                    <button name="action_compose_followup" type="object" string="Compose (AI)" icon="fa-pencil-square-o" class="btn-secondary"
+                            help="Draft a ready-to-send WhatsApp, SMS or email message (or a reply to the last message) with AI — then edit the tone and send it."/>
+                    <button name="action_call_briefing" type="object" string="Prepare (AI)" icon="fa-id-card-o" class="btn-secondary"
+                            help="Generate an AI pre-call/meeting briefing: a quick snapshot, talking points, risks to handle, and the suggested goal of the contact."/>
+                    <button name="action_cs_present_offering" type="object" string="Present Offering" class="btn-primary"
+                            help="Present a tailored service offering to this customer (with an AI-personalised pitch) and track whether it is accepted."/>
+                    <button name="action_cs_capture_request" type="object" string="Capture Request" class="btn-secondary"
+                            help="Capture a customer request and route it as a support ticket or an upsell/renewal opportunity."/>
+                    <button name="action_generate_summary" type="object" string="AI Summary" icon="fa-user-circle" class="btn-link" groups="era_customer_success.group_era_cs_manager"
+                            help="Generate a short AI profile summary (situation, scope, field of work, tenure) shown under the customer's name."/>
+                    <button name="action_forecast_churn" type="object" string="Forecast Churn" icon="fa-line-chart" class="btn-link" groups="era_customer_success.group_era_cs_manager"
+                            help="Predict this customer's churn probability at 30/60/90 days with the top drivers, from their situation and KPI history. A safety floor keeps hard risk signals from being hidden."/>
+                    <button name="action_renewal_strategy" type="object" string="Renewal Strategy" icon="fa-refresh" class="btn-link" groups="era_customer_success.group_era_cs_manager"
+                            invisible="not renewal_soon"
+                            help="Build an AI renewal play: which lever to pull (collections-first / pitch-first / re-engage) plus dated countdown steps for this renewal."/>
+                    <field name="lifecycle_stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_tickets" icon="fa-ticket"
+                                help="Open this customer's support tickets (Helpdesk).">
+                            <field name="open_tickets_count" widget="statinfo" string="Open Tickets"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_subscriptions" icon="fa-refresh"
+                                help="Open this customer's subscriptions (recurring revenue).">
+                            <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_invoices" icon="fa-money"
+                                help="Open this customer's invoices and overdue balance.">
+                            <field name="overdue_amount" widget="statinfo" string="Overdue"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_opportunities" icon="fa-star"
+                                help="Open this customer's CRM opportunities (including upsell/cross-sell).">
+                            <field name="opportunity_count" widget="statinfo" string="Opportunities"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_calls" icon="fa-phone"
+                                help="Open this customer's logged VoIP calls.">
+                            <field name="call_count" widget="statinfo" string="Calls"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_whatsapp" icon="fa-whatsapp"
+                                help="Open this customer's WhatsApp conversation/messages.">
+                            <field name="whatsapp_count" widget="statinfo" string="WhatsApp"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_meetings" icon="fa-calendar"
+                                help="Open this customer's meetings (calendar events).">
+                            <field name="meeting_count" widget="statinfo" string="Meetings"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_surveys" icon="fa-bar-chart"
+                                help="Open this customer's satisfaction survey responses (CSAT/NPS).">
+                            <field name="survey_count" widget="statinfo" string="Surveys"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_projects" icon="fa-folder"
+                                help="Open this customer's implementation projects.">
+                            <field name="project_count" widget="statinfo" string="Projects"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift"
+                                help="Open the service offerings presented to this customer.">
+                            <field name="offering_count" widget="statinfo" string="Offerings"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>
+                    <div class="oe_title">
+                        <h1><field name="partner_id" options="{'no_create': True}"/></h1>
+                        <div class="text-muted fst-italic mt-1 mb-2" invisible="not ai_summary">
+                            <i class="fa fa-user-circle me-1" title="AI profile summary"/>
+                            <field name="ai_summary" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="o_row d-flex flex-wrap gap-3 align-items-center">
+                            <field name="phone" widget="phone" placeholder="Phone…"/>
+                            <field name="email" widget="email" placeholder="Email…"/>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mb-2" role="status" invisible="not next_action">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fa fa-magic me-2" title="AI Next Best Action"/>
+                            <b class="me-2">Next Best Action:</b>
+                            <field name="next_action_priority" widget="badge"
+                                   decoration-danger="next_action_priority == 'urgent'"
+                                   decoration-warning="next_action_priority in ('high','medium')"
+                                   decoration-info="next_action_priority == 'low'"/>
+                            <field name="next_action" class="ms-2 fw-bold" readonly="1" nolabel="1"/>
+                        </div>
+                        <field name="next_action_reason" readonly="1" nolabel="1"/>
+                        <div class="text-muted small mt-1">
+                            By <field name="next_action_date" readonly="1" nolabel="1" class="oe_inline"/>
+                            · suggested <field name="next_action_generated_on" readonly="1" nolabel="1" class="oe_inline"/>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Assignment">
+                            <field name="csm_user_id" widget="many2one_avatar_user"/>
+                            <field name="team_id"/>
+                            <field name="tier"/>
+                            <field name="cadence"/>
+                            <field name="onboarding_start_date"/>
+                        </group>
+                        <group string="Health">
+                            <field name="health_score" widget="progressbar"/>
+                            <field name="health_status" widget="badge"
+                                   decoration-success="health_status == 'good'"
+                                   decoration-warning="health_status == 'watch'"
+                                   decoration-danger="health_status in ('at_risk','critical')"/>
+                            <field name="churn_risk"/>
+                            <field name="churn_probability" widget="progressbar"
+                                   invisible="not churn_forecast_date"/>
+                            <label for="churn_prob_30" string="Churn 30/60/90d"
+                                   invisible="not churn_forecast_date"/>
+                            <div invisible="not churn_forecast_date">
+                                <field name="churn_prob_30" class="oe_inline"/>% /
+                                <field name="churn_prob_60" class="oe_inline"/>% /
+                                <field name="churn_probability" class="oe_inline"/>%
+                                · <field name="churn_confidence" class="oe_inline"/>
+                            </div>
+                            <field name="churn_factors" readonly="1" invisible="not churn_factors"/>
+                            <field name="churn_forecast_date" invisible="not churn_forecast_date"/>
+                            <field name="usage_signal"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Revenue &amp; Renewal">
+                            <field name="mrr" widget="monetary"/>
+                            <field name="renewal_date"/>
+                            <field name="days_to_renewal"/>
+                            <field name="subscription_churned"/>
+                            <field name="renewal_lever" widget="badge" invisible="not renewal_lever"
+                                   decoration-danger="renewal_risk == 'critical'"
+                                   decoration-warning="renewal_risk == 'at_risk'"
+                                   decoration-success="renewal_risk == 'likely'"/>
+                            <field name="renewal_risk" invisible="not renewal_lever"/>
+                            <field name="renewal_strategy" readonly="1" invisible="not renewal_strategy"/>
+                            <field name="renewal_strategy_date" invisible="not renewal_strategy_date"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Support &amp; Satisfaction">
+                            <field name="open_tickets_count"/>
+                            <field name="sla_failed_count"/>
+                            <field name="avg_resolution_hours"/>
+                            <field name="csat_latest"/>
+                            <field name="nps_latest"/>
+                            <field name="sentiment_label" widget="cs_sentiment_badge"
+                                   help="Hover the badge to see the per-ticket analysis behind this score."/>
+                            <field name="sentiment_score"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Collections">
+                            <field name="overdue_amount" widget="monetary"/>
+                            <field name="followup_status"/>
+                        </group>
+                        <group string="Follow-up">
+                            <field name="last_touch_date"/>
+                            <field name="next_touch_date"/>
+                            <field name="days_since_touch"/>
+                            <field name="meeting_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Offerings" name="offerings">
+                            <field name="offering_ids" context="{'default_partner_id': partner_id, 'default_csm_user_id': csm_user_id}">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="offering_date"/>
+                                    <field name="channel"/>
+                                    <field name="expected_value" widget="monetary"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'accepted'"
+                                           decoration-danger="state == 'rejected'"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <button name="action_open_form" type="object"
+                                            icon="fa-expand" title="Open offering form"
+                                            invisible="not id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="AI Suggestions History" name="ai_history">
+                            <field name="next_action_log_ids" readonly="1">
+                                <list>
+                                    <field name="generated_on"/>
+                                    <field name="name"/>
+                                    <field name="priority" widget="badge"
+                                           decoration-danger="priority == 'urgent'"
+                                           decoration-warning="priority in ('high','medium')"/>
+                                    <field name="suggested_date"/>
+                                    <field name="reason" optional="hide"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ SEARCH ============ -->
+    <record id="view_cs_account_search" model="ir.ui.view">
+        <field name="name">cs.account.search</field>
+        <field name="model">cs.account</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="csm_user_id"/>
+                <field name="lifecycle_stage_id"/>
+                <filter name="my_accounts" string="My Customers" domain="[('csm_user_id', '=', uid)]"/>
+                <filter name="unassigned" string="Unassigned" domain="[('csm_user_id', '=', False)]"/>
+                <separator/>
+                <filter name="at_risk" string="At Risk / Churn" domain="[('churn_risk', '=', True)]"/>
+                <filter name="critical" string="Critical Health" domain="[('health_status', '=', 'critical')]"/>
+                <filter name="high_churn" string="High Churn Forecast (≥60%)" domain="[('churn_probability', '&gt;=', 60)]"/>
+                <filter name="overdue_followup" string="Overdue Follow-up"
+                        domain="[('next_touch_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="renewal_90" string="Renewal &lt; 90 days" domain="[('renewal_soon', '=', True)]"/>
+                <filter name="has_overdue" string="Has Overdue Invoices" domain="[('overdue_amount', '&gt;', 0)]"/>
+                <separator/>
+                <group>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="group_stage" string="Lifecycle Stage" context="{'group_by': 'lifecycle_stage_id'}"/>
+                    <filter name="group_tier" string="Tier" context="{'group_by': 'tier'}"/>
+                    <filter name="group_health" string="Health" context="{'group_by': 'health_status'}"/>
+                    <filter name="group_team" string="Team" context="{'group_by': 'team_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ ACTIONS ============ -->
+    <record id="action_cs_account_all" model="ir.actions.act_window">
+        <field name="name">Customer Success Accounts</field>
+        <field name="res_model">cs.account</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_cs_account_search"/>
+        <field name="context">{'search_default_group_stage': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first Customer Success account</p>
+            <p>Assign each customer to a CSM engineer and follow up in one place.</p>
+        </field>
+    </record>
+
+    <record id="action_cs_account_my" model="ir.actions.act_window">
+        <field name="name">My Customers</field>
+        <field name="res_model">cs.account</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_cs_account_search"/>
+        <field name="context">{'search_default_my_accounts': 1, 'search_default_group_stage': 1}</field>
+    </record>
+</odoo>

@@ -36,6 +36,11 @@ WAHA_KNOWN_STATUSES = frozenset({'starting', 'scan_qr_code', 'working', 'failed'
 WAHA_TYPING_MIN_SECONDS = 2.0
 WAHA_TYPING_MAX_SECONDS = 6.0
 WAHA_TYPING_CHARS_PER_SECOND = 20.0
+# Reconcile (gap catch-up after a disconnection): scan the most-recent chats from WAHA's
+# chat overview and backfill any we're behind on, bounded to activity within this window
+# so we never re-import ancient conversations.
+WAHA_RECONCILE_WINDOW_HOURS = 72
+WAHA_RECONCILE_MAX_CHATS = 300
 
 
 class WhatsappAccount(models.Model):
@@ -632,8 +637,21 @@ class WhatsappAccount(models.Model):
 
     def _waha_uid_exists(self, uid):
         """Single source of truth for msg_uid idempotency: True if a whatsapp.message with
-        this uid already exists. Used by the webhook dedup lock and the history backfill."""
-        return bool(uid) and bool(self.env['whatsapp.message'].sudo().search_count([('msg_uid', '=', uid)]))
+        this uid already exists. Used by the webhook dedup lock and the history backfill.
+
+        Matches the full serialized id OR its trailing hash segment, because the same
+        message is stored under different id shapes: live outbound as the bare send-response
+        HASH, inbound under its `@lid` serialized id, while the chat/messages and overview
+        APIs return the full `fromMe_remoteJid_HASH` (often with a `@c.us` remoteJid). The
+        HASH is the globally-unique part, so this is the reliable key — WITHOUT it, outbound
+        (and @lid-vs-@c.us inbound) read as unknown and the reconcile re-imports duplicates.
+        (Mirrors the fallback in `_waha_find_message`.)"""
+        if not uid:
+            return False
+        uids = [uid]
+        if '_' in uid:
+            uids.append(uid.rsplit('_', 1)[-1])
+        return bool(self.env['whatsapp.message'].sudo().search_count([('msg_uid', 'in', uids)]))
 
     def _waha_message_known(self, waha_message):
         return self._waha_uid_exists(self._waha_extract_id(waha_message.get('id')))
@@ -838,15 +856,63 @@ class WhatsappAccount(models.Model):
                 _logger.exception("WAHA: failed importing message %s", uid)
         return count
 
+    def _waha_fetch_overview(self, limit=WAHA_RECONCILE_MAX_CHATS):
+        """WAHA chat overview: the most-recently-active chats, each with its last message.
+        Used to discover conversations to catch up on — including numbers that first
+        messaged during an outage (which have no Discuss channel yet)."""
+        self.ensure_one()
+        data = self._waha_request(
+            f'{self.waha_session}/chats/overview', 'GET', params={'limit': limit})
+        return data if isinstance(data, list) else []
+
+    def _waha_reconcile_overview(self):
+        """Catch-up sync driven by WAHA's chat overview. For every 1:1 chat with recent
+        activity whose newest message we don't have, ensure a channel exists and backfill
+        the gap. This is the reliable recovery for messages missed while the session was
+        disconnected: the live `message` webhook can drop events during an outage and
+        never fires at all for a number that first messaged during it, so scanning the
+        overview (not just existing channels) is what closes both gaps. Idempotent."""
+        self.ensure_one()
+        try:
+            overview = self._waha_fetch_overview()
+        except Exception:
+            _logger.exception("WAHA: chat overview fetch failed for %s", self.waha_session)
+            return 0
+        cutoff = int((fields.Datetime.now() - timedelta(hours=WAHA_RECONCILE_WINDOW_HOURS)).timestamp())
+        imported = 0
+        for chat in overview:
+            chat_id = (chat or {}).get('id') or ''
+            if not chat_id.endswith('@c.us'):
+                continue  # 1:1 chats only — skip groups (@g.us), status, @lid
+            last = chat.get('lastMessage') or {}
+            ts = last.get('timestamp')
+            if ts and int(ts) < cutoff:
+                continue  # no recent activity — not an outage gap
+            if not last or self._waha_message_known(last):
+                continue  # already in sync (newest message known)
+            number = re.sub(r'\D', '', chat_id.split('@')[0])
+            if not number:
+                continue
+            try:
+                formatted = self._format_incoming_from_number(number)
+                channel = self._find_active_channel(
+                    formatted, sender_name=chat.get('name'), create_if_not_found=True)
+                if not channel:
+                    continue
+                self._waha_grant_members(channel)
+                imported += self._waha_sync_channel_history(channel, deep=False)
+            except Exception:
+                _logger.exception("WAHA: reconcile-overview failed for chat %s", chat_id)
+        if imported:
+            _logger.info("WAHA: reconcile imported %s missed message(s) for %s", imported, self.waha_session)
+        return imported
+
     def _waha_reconcile_channels(self):
-        for account in self.filtered(lambda a: a.provider == 'waha'):
-            channels = self.env['discuss.channel'].sudo().search([
-                ('channel_type', '=', 'whatsapp'), ('wa_account_id', '=', account.id)])
-            for channel in channels:
-                try:
-                    account._waha_sync_channel_history(channel, deep=False)
-                except Exception:
-                    _logger.exception("WAHA: reconcile failed for channel %s", channel.id)
+        for account in self.filtered(lambda a: a.provider == 'waha' and a.waha_status == 'working'):
+            try:
+                account._waha_reconcile_overview()
+            except Exception:
+                _logger.exception("WAHA: reconcile failed for account %s", account.id)
 
     # ------------------------------------------------------------------
     # Account protection (anti-ban send guards)

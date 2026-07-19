@@ -1,7 +1,7 @@
 # Part of Era Group custom addons.
 {
     'name': 'Era WAHA WhatsApp Integration',
-    'version': '19.0.1.10.0',
+    'version': '19.0.1.11.0',
     'category': 'Productivity/WhatsApp',
     'summary': 'Two-way WAHA (WhatsApp Web) messaging inside Odoo Discuss',
     'description': """

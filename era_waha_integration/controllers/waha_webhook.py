@@ -1,4 +1,5 @@
 # Part of Era Group custom addons.
+import base64
 import hashlib
 import hmac
 import json
@@ -11,6 +12,19 @@ from odoo.http import request
 from odoo.tools import consteq
 
 _logger = logging.getLogger(__name__)
+
+
+def _waha_hmac_candidates(secret, raw):
+    """Every plausible way WAHA might sign the webhook body, so verification matches
+    whichever it actually uses (WAHA's exact algorithm/encoding isn't documented and has
+    caused false rejections). Keyed by a label for diagnostics."""
+    key = secret.encode()
+    return {
+        'sha512-hex': hmac.new(key, raw, hashlib.sha512).hexdigest(),
+        'sha256-hex': hmac.new(key, raw, hashlib.sha256).hexdigest(),
+        'sha512-b64': base64.b64encode(hmac.new(key, raw, hashlib.sha512).digest()).decode(),
+        'sha256-b64': base64.b64encode(hmac.new(key, raw, hashlib.sha256).digest()).decode(),
+    }
 
 
 class WahaWebhook(http.Controller):
@@ -41,10 +55,14 @@ class WahaWebhook(http.Controller):
 
         secret = account.sudo().waha_webhook_secret
         if secret:
-            signature = request.httprequest.headers.get('X-Webhook-Hmac', '')
-            expected = hmac.new(secret.encode(), raw, hashlib.sha512).hexdigest()
-            if not signature or not consteq(signature, expected):
-                _logger.warning("WAHA webhook: invalid HMAC signature for session %s", session_name)
+            received = request.httprequest.headers.get('X-Webhook-Hmac', '')
+            candidates = _waha_hmac_candidates(secret, raw)
+            if not received or not any(consteq(received, c) for c in candidates.values()):
+                # Log enough to reverse-engineer WAHA's exact format if none matched.
+                _logger.warning(
+                    "WAHA webhook HMAC mismatch for %s: received=%r bodylen=%s candidates=%s",
+                    session_name, received[:64], len(raw),
+                    {k: v[:24] for k, v in candidates.items()})
                 raise Forbidden()
 
         try:

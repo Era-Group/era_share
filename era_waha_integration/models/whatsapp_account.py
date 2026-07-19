@@ -816,7 +816,7 @@ class WhatsappAccount(models.Model):
             if recent and all(self._waha_message_known(m) for m in recent):
                 return 0  # in sync
         max_import = limit or self.waha_history_limit or 200
-        offset, page, imported, separated = 0, 100, 0, False
+        offset, page, imported = 0, 100, 0
         while offset < 5000:
             batch = self._waha_fetch_messages(chat_id, limit=page, offset=offset)
             if not batch:
@@ -824,12 +824,9 @@ class WhatsappAccount(models.Model):
             fresh = [m for m in batch if not self._waha_message_known(m)]
             if not fresh:
                 break  # reached the already-synced region
-            if not separated and channel.message_ids:
-                channel.sudo().message_post(
-                    body=plaintext2html('— %s —' % _("Imported earlier conversation")),
-                    message_type='notification', subtype_xmlid='mail.mt_note',
-                    author_id=self.env.ref('base.partner_root').id)
-                separated = True
+            # No "imported earlier conversation" separator: with WAHA channels now ordered
+            # by message date (thread_patch.js), imported messages slot into their correct
+            # chronological position, so a separator note would be misplaced and confusing.
             imported += self._waha_import_messages(channel, list(reversed(fresh)))
             if imported >= max_import:
                 break

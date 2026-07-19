@@ -46,6 +46,10 @@ WAHA_TYPING_CHARS_PER_SECOND = 20.0
 # so we never re-import ancient conversations.
 WAHA_RECONCILE_WINDOW_HOURS = 72
 WAHA_RECONCILE_MAX_CHATS = 300
+# Per recently-active chat, inspect this many of the newest messages (not just the last
+# one): a message missed during an outage often sits BELOW a later reply, so a
+# last-message-only check would skip the chat and leave the gap.
+WAHA_RECONCILE_TAIL = 20
 
 
 class WhatsappAccount(models.Model):
@@ -873,11 +877,13 @@ class WhatsappAccount(models.Model):
 
     def _waha_reconcile_overview(self):
         """Catch-up sync driven by WAHA's chat overview. For every 1:1 chat with recent
-        activity whose newest message we don't have, ensure a channel exists and backfill
-        the gap. This is the reliable recovery for messages missed while the session was
-        disconnected: the live `message` webhook can drop events during an outage and
-        never fires at all for a number that first messaged during it, so scanning the
-        overview (not just existing channels) is what closes both gaps. Idempotent."""
+        activity that has any un-imported message in its recent tail, ensure a channel
+        exists and backfill the gap. This is the reliable recovery for messages missed
+        while the session was disconnected: the live `message` webhook can drop events
+        during an outage and never fires at all for a number that first messaged during
+        it, so scanning the overview (not just existing channels) closes both gaps. Checks
+        the recent TAIL (not only the last message) so a gap sitting below a later reply is
+        still caught. Idempotent."""
         self.ensure_one()
         try:
             overview = self._waha_fetch_overview()
@@ -887,18 +893,27 @@ class WhatsappAccount(models.Model):
         cutoff = int((fields.Datetime.now() - timedelta(hours=WAHA_RECONCILE_WINDOW_HOURS)).timestamp())
         imported = 0
         for chat in overview:
-            chat_id = (chat or {}).get('id') or ''
-            if not chat_id.endswith('@c.us'):
+            chat_id_raw = (chat or {}).get('id') or ''
+            if not chat_id_raw.endswith('@c.us'):
                 continue  # 1:1 chats only — skip groups (@g.us), status, @lid
             last = chat.get('lastMessage') or {}
             ts = last.get('timestamp')
             if ts and int(ts) < cutoff:
                 continue  # no recent activity — not an outage gap
-            if not last or self._waha_message_known(last):
-                continue  # already in sync (newest message known)
-            number = re.sub(r'\D', '', chat_id.split('@')[0])
+            number = re.sub(r'\D', '', chat_id_raw.split('@')[0])
             if not number:
                 continue
+            chat_id = self._waha_chat_id(number)
+            # Inspect the recent TAIL, not just the last message: a message missed during an
+            # outage often sits BELOW a later (known) reply, so a last-message-only check
+            # would skip the whole chat and leave the gap unrecovered.
+            try:
+                tail = self._waha_fetch_messages(chat_id, limit=WAHA_RECONCILE_TAIL, offset=0)
+            except Exception:
+                _logger.exception("WAHA: reconcile tail fetch failed for %s", chat_id)
+                continue
+            if not tail or all(self._waha_message_known(m) for m in tail):
+                continue  # fully in sync
             try:
                 formatted = self._format_incoming_from_number(number)
                 channel = self._find_active_channel(
@@ -906,9 +921,9 @@ class WhatsappAccount(models.Model):
                 if not channel:
                     continue
                 self._waha_grant_members(channel)
-                imported += self._waha_sync_channel_history(channel, deep=False)
+                imported += self._waha_sync_channel_history(channel, deep=True)
             except Exception:
-                _logger.exception("WAHA: reconcile-overview failed for chat %s", chat_id)
+                _logger.exception("WAHA: reconcile-overview failed for chat %s", chat_id_raw)
         if imported:
             _logger.info("WAHA: reconcile imported %s missed message(s) for %s", imported, self.waha_session)
         return imported

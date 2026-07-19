@@ -94,8 +94,9 @@
                                 <field name="waha_status" readonly="1"/>
                             </setting>
                             <setting string="Default Users (access)"
-                                     help="These users see ALL of this account's conversations and can send through it — without being WhatsApp administrators. Manage account access here.">
-                                <xpath expr="//div[@id='tocontrol']//field[@name='notify_user_ids']" position="move"/>
+                                     help="These users see ALL of this account's conversations and can send through it — without being WhatsApp administrators.">
+                                <field name="notify_user_ids" widget="many2many_tags"
+                                       placeholder="Select users who get full access to this account"/>
                             </setting>
                             <setting string="Webhook Secret"
                                      help="Optional HMAC secret. When set, WAHA signs each webhook and Odoo verifies the signature.">
@@ -214,6 +215,30 @@
                             <setting string="Error %"
                                      help="Share of outbound messages that failed to send.">
                                 <field name="waha_kpi_error_rate" readonly="1"/>
+                            </setting>
+                        </div>
+                        <div class="o_horizontal_separator mt-4 mb-2 text-uppercase fw-bolder small">Delivery scoring</div>
+                        <div class="text-muted small mb-2">
+                            Tune how much low delivery affects the score. WAHA delivery receipts are
+                            unreliable, so these are lenient by default. Set a threshold or its penalty
+                            to 0 to switch that tier off.
+                        </div>
+                        <div class="row o_settings_container">
+                            <setting string="Warn below (%)"
+                                     help="Below this confirmed-delivery %, subtract the warn penalty. 0 disables.">
+                                <field name="waha_health_deliv_warn_pct"/>
+                            </setting>
+                            <setting string="Warn penalty (points)"
+                                     help="Points removed when delivery is below the warn threshold.">
+                                <field name="waha_health_deliv_warn_penalty"/>
+                            </setting>
+                            <setting string="Critical below (%)"
+                                     help="Below this confirmed-delivery %, subtract the larger critical penalty instead. 0 disables.">
+                                <field name="waha_health_deliv_crit_pct"/>
+                            </setting>
+                            <setting string="Critical penalty (points)"
+                                     help="Points removed when delivery is below the critical threshold.">
+                                <field name="waha_health_deliv_crit_penalty"/>
                             </setting>
                         </div>
                         <div class="text-muted small">

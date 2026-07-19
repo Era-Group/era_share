@@ -122,6 +122,25 @@ class WhatsappAccount(models.Model):
     waha_kpi_error_rate = fields.Float(string='Error %', compute='_compute_waha_health')
     waha_health_reason = fields.Html(string='Why this score', compute='_compute_waha_health', sanitize=False)
 
+    # ---- Health scoring tuning (delivery penalty) ----
+    # WAHA's unofficial delivery receipts are unreliable, so these default lenient.
+    # A tier is disabled by setting its threshold OR its penalty to 0.
+    waha_health_deliv_warn_pct = fields.Integer(
+        string='Delivery warn below (%)', default=50,
+        help="If confirmed-delivery %% over the last 7 days is below this, subtract the warn "
+             "penalty from the health score. Kept low by default because WAHA delivery receipts "
+             "are often delayed. Set 0 to disable this tier.")
+    waha_health_deliv_warn_penalty = fields.Integer(
+        string='Delivery warn penalty (points)', default=5,
+        help="Points removed from the health score when delivery is below the warn threshold.")
+    waha_health_deliv_crit_pct = fields.Integer(
+        string='Delivery critical below (%)', default=30,
+        help="If confirmed-delivery %% is below this, the larger critical penalty applies instead "
+             "of the warn one. Set 0 to disable this tier.")
+    waha_health_deliv_crit_penalty = fields.Integer(
+        string='Delivery critical penalty (points)', default=15,
+        help="Points removed from the health score when delivery is below the critical threshold.")
+
     # Relax Meta-required fields so WAHA accounts can be saved without Meta credentials.
     # Odoo merges field attributes across _inherit, so groups/strings are preserved.
     app_uid = fields.Char(required=False)
@@ -989,15 +1008,21 @@ class WhatsappAccount(models.Model):
         if outbound >= 5:
             # WAHA (unofficial) delivery receipts (ack 2) are frequently delayed or never
             # arrive, so many genuinely-delivered messages stay at 'sent'. A moderate
-            # confirmed-delivery rate is therefore NORMAL and is NOT penalized — only a
-            # genuinely low rate (broken session, invalid/blocked numbers) docks points,
-            # and gently. (The KPI itself stays honest: it shows confirmed deliveries.)
-            if delivered_rate < 0.3:
-                score -= 15
-                reasons.append((-15, _("Very low delivery: only %.0f%% of sent messages were confirmed delivered.", delivered_rate * 100)))
-            elif delivered_rate < 0.5:
-                score -= 5
-                reasons.append((-5, _("Few delivery confirmations: %(pct).0f%% (note: WAHA delivery receipts are often delayed, so actual delivery is usually higher).", pct=delivered_rate * 100)))
+            # confirmed-delivery rate is therefore NORMAL. The two tiers below (thresholds
+            # and penalties) are CONFIGURABLE per account on the Health page; each tier is
+            # disabled by setting its threshold or its penalty to 0. Defaults are lenient.
+            # (The KPI itself stays honest: it shows confirmed deliveries.)
+            dr_pct = delivered_rate * 100
+            crit_pct = self.waha_health_deliv_crit_pct or 0
+            crit_pen = self.waha_health_deliv_crit_penalty or 0
+            warn_pct = self.waha_health_deliv_warn_pct or 0
+            warn_pen = self.waha_health_deliv_warn_penalty or 0
+            if crit_pct and crit_pen and dr_pct < crit_pct:
+                score -= crit_pen
+                reasons.append((-crit_pen, _("Very low delivery: only %.0f%% of sent messages were confirmed delivered.", dr_pct)))
+            elif warn_pct and warn_pen and dr_pct < warn_pct:
+                score -= warn_pen
+                reasons.append((-warn_pen, _("Few delivery confirmations: %(pct).0f%% (note: WAHA delivery receipts are often delayed, so actual delivery is usually higher).", pct=dr_pct)))
         flap_pen = min(20, (self.waha_flap_count or 0) * 5)
         if flap_pen:
             score -= flap_pen
@@ -1012,7 +1037,9 @@ class WhatsappAccount(models.Model):
             'reasons': reasons,
         }
 
-    @api.depends('waha_status', 'waha_flap_count')
+    @api.depends('waha_status', 'waha_flap_count', 'waha_health_deliv_warn_pct',
+                 'waha_health_deliv_warn_penalty', 'waha_health_deliv_crit_pct',
+                 'waha_health_deliv_crit_penalty')
     def _compute_waha_health(self):
         for account in self:
             if account.provider != 'waha':

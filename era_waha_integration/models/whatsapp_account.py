@@ -643,6 +643,17 @@ class WhatsappAccount(models.Model):
                 content['attachments'] = [attachment]
         if caption:
             content['body'] = plaintext2html(caption)
+        # Stamp the message with WAHA's own timestamp (not "now") so live AND imported
+        # messages sort chronologically — a message delivered late (e.g. a webhook retry
+        # after downtime, or a gap backfill) keeps its real send time instead of jumping to
+        # the bottom. This is what the WAHA-channel date ordering (thread_patch.js) relies on.
+        ts = payload.get('timestamp')
+        if ts:
+            try:
+                content['date'] = fields.Datetime.to_string(
+                    datetime.fromtimestamp(int(ts), tz=timezone.utc).replace(tzinfo=None))
+            except (ValueError, TypeError, OSError):
+                pass
         return content
 
     def _waha_uid_exists(self, uid):

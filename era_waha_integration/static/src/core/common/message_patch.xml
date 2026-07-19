@@ -16,4 +16,17 @@
         </xpath>
     </t>
 
+    <!-- Failed-post warning icon: replace the generic "Failed to post…" tooltip with the
+         actual reason when one is known (e.g. a WAHA account-protection block). The getter
+         falls back to the standard text for every other failure. -->
+    <t t-name="era_waha_integration.MessagePendingStatus" t-inherit="mail.Message.pendingStatus" t-inherit-mode="extension">
+        <xpath expr="//button" position="replace">
+            <button t-if="message.postFailRedo" class="btn p-0"
+                    t-att-title="wahaPendingTitle"
+                    t-on-click="() => message.postFailRedo?.()">
+                <i class="fa fa-fw fa-warning text-warning"/>
+            </button>
+        </xpath>
+    </t>
+
 </templates>

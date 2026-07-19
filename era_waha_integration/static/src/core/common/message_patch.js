@@ -1,4 +1,5 @@
 import { Message } from "@mail/core/common/message";
+import { _t } from "@web/core/l10n/translation";
 import { patch } from "@web/core/utils/patch";
 
 // WhatsApp-style delivery/read ticks for outbound WhatsApp messages:
@@ -28,5 +29,10 @@ patch(Message.prototype, {
             return "text-danger";
         }
         return "text-muted";
+    },
+    // Failed-post tooltip: show the WAHA block reason when present (set by
+    // Store.doMessagePost), else the standard generic text.
+    get wahaPendingTitle() {
+        return this.message.wahaBlockReason || _t("Failed to post the message. Click to retry");
     },
 });

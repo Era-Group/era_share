@@ -1025,3 +1025,9 @@ msgstr "ملاحظة: ترتفع الدرجة مع خروج الأخطاء ال�
 #: code:addons/era_waha_integration/models/whatsapp_account.py:0
 msgid "Why this score"
 msgstr "لماذا هذه الدرجة"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/core/common/message_post_reason_patch.js:0
+msgid "WhatsApp message not sent"
+msgstr "لم تُرسل رسالة الواتساب"

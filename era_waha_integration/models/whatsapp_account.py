@@ -967,8 +967,13 @@ class WhatsappAccount(models.Model):
         delivered = cnt([('message_type', '=', 'outbound'), ('state', 'in', ('delivered', 'read'))])
         read = cnt([('message_type', '=', 'outbound'), ('state', '=', 'read')])
         error = cnt([('message_type', '=', 'outbound'), ('state', 'in', ('error', 'bounced'))])
+        # Delivered % and Read % are one funnel over the SAME base (messages WhatsApp
+        # accepted = sent_plus). Since read ⊆ delivered ⊆ sent_plus, this guarantees
+        # read_rate <= delivered_rate <= 1 — i.e. Read can never look higher than
+        # Delivered. (Read used to divide by `delivered`, a different denominator, which
+        # made a conditional 'of-delivered' rate that could exceed Delivered %.)
         delivered_rate = (delivered / sent_plus) if sent_plus else (0.0 if outbound else 1.0)
-        read_rate = (read / delivered) if delivered else 0.0
+        read_rate = (read / sent_plus) if sent_plus else 0.0
         error_rate = (error / outbound) if outbound else 0.0
 
         score = 100

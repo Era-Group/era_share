@@ -385,7 +385,7 @@ class VoipCall(models.Model):
         try:
             account = self._openai_api_key_account()
             svc_env = (
-                self.env.with_context(era_ai_account_id=account.id)
+                self.with_context(era_ai_account_id=account.id).env
                 if account else self.env
             )
             text = LLMApiService(svc_env).get_transcription(

@@ -138,7 +138,20 @@ timestamp, reaction{messageId,text}`. `@lid` JIDs resolve via `GET {s}/lids/{lid
   the **bare HASH**. Acks/reactions reference the full serialized id, so
   `_waha_find_message` matches the full id then falls back to the trailing hash
   segment (`uid.rsplit('_',1)[-1]`). Without this, ticks stick at 'sent' and
-  reactions on our messages are dropped.
+  reactions on our messages are dropped. **`_waha_uid_exists` (the idempotency/known
+  check used by dedup, the history import and the reconcile) MUST use the same
+  full-id-OR-trailing-hash match** — the chat/overview APIs return the full
+  `fromMe_remoteJid_HASH` (often `@c.us`), but we store outbound as the bare HASH and
+  inbound under its `@lid` id, so an exact-only match reads them as unknown and the
+  reconcile re-imports **duplicates**. The HASH is the globally-unique key.
+- **Gap recovery after a disconnection (reconcile):** `_waha_reconcile_overview` scans
+  WAHA's `chats/overview` (most-recently-active chats, each with its last message),
+  and for every 1:1 chat within `WAHA_RECONCILE_WINDOW_HOURS` (72h) whose newest
+  message is unknown, ensures a channel exists (so **numbers that first messaged during
+  the outage — with no channel yet — are discovered**) and backfills via
+  `_waha_sync_channel_history`. Idempotent. Runs every 15 min (cron) + on reconnect
+  (`_waha_apply_status` `_trigger`s the cron when status goes non-working→working). The
+  earlier version scanned only existing channels (missed new numbers) and ran daily.
 - **Serialization failures:** Odoo requests run in REPEATABLE READ, so concurrent
   writes to the `whatsapp_account` row (session.status webhook + QR/refresh)
   abort with "could not serialize access due to concurrent update" and exhaust

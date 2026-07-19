@@ -56,14 +56,24 @@ class WahaWebhook(http.Controller):
         secret = account.sudo().waha_webhook_secret
         if secret:
             received = request.httprequest.headers.get('X-Webhook-Hmac', '')
-            candidates = _waha_hmac_candidates(secret, raw)
-            if not received or not any(consteq(received, c) for c in candidates.values()):
-                # Log enough to reverse-engineer WAHA's exact format if none matched.
+            if received:
+                # WAHA sent a signature — verify it (against every common format, since
+                # WAHA's exact algorithm/encoding isn't documented).
+                candidates = _waha_hmac_candidates(secret, raw)
+                if not any(consteq(received, c) for c in candidates.values()):
+                    _logger.warning(
+                        "WAHA webhook HMAC mismatch for %s: received=%r bodylen=%s candidates=%s",
+                        session_name, received[:64], len(raw),
+                        {k: v[:24] for k, v in candidates.items()})
+                    raise Forbidden()
+            else:
+                # A secret is set but WAHA sent NO signature. This WAHA server does not sign
+                # webhooks (verified: the header is always empty), so HMAC cannot be enforced.
+                # Accept anyway — dropping these would be a silent TOTAL reception outage — and
+                # warn, so a secret set by mistake never takes messaging down again.
                 _logger.warning(
-                    "WAHA webhook HMAC mismatch for %s: received=%r bodylen=%s candidates=%s",
-                    session_name, received[:64], len(raw),
-                    {k: v[:24] for k, v in candidates.items()})
-                raise Forbidden()
+                    "WAHA webhook: secret set but WAHA sent no signature — this WAHA does not "
+                    "sign webhooks, so HMAC is not enforced (session %s).", session_name)
 
         try:
             if event in ('message', 'message.any'):

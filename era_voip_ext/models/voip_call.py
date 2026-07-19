@@ -424,7 +424,7 @@ class VoipCall(models.Model):
         if re.search(r"Speaker\s*\d+:", text):
             text = re.sub(r"\s*(Speaker\s*\d+:)", r"\n\1", text).strip()
 
-        text1 = self._format_transcript_with_agent(text) or ""
+        text1 = call._format_transcript_with_agent(text) or ""
         self._commit_if_needed()
         transcript = text1 + "\n ------------ \n" + text
 
@@ -491,7 +491,12 @@ class VoipCall(models.Model):
             account = Account.sudo().browse(int(acc_id)).exists()
         except (TypeError, ValueError):
             return None
-        return account if (account and account.active) else None
+        # Only api_key accounts expose a usable HTTP key; a cli_proxy account
+        # falls through to the (empty) native key and fails. Reject it so the
+        # caller falls back to a real OpenAI API-key account.
+        if account and account.active and account.auth_mode == "api_key":
+            return account
+        return None
 
     def _transcription_account(self):
         """AI account for speech-to-text: the configured transcription account,

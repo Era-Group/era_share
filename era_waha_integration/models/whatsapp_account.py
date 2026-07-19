@@ -26,6 +26,11 @@ WAHA_WEBHOOK_PATH = '/era/waha/webhook'
 # Events we subscribe to on the WAHA session. We use 'message' (inbound only),
 # NOT 'message.any', to avoid receiving echoes of our own outbound messages.
 WAHA_WEBHOOK_EVENTS = ['message', 'message.ack', 'message.reaction', 'session.status']
+# Retry failed webhook deliveries so a brief Odoo unavailability (a deploy restart, a
+# blip) does NOT silently drop inbound messages: WAHA re-delivers until we answer, which
+# keeps the live feed — and therefore message ordering — intact. Our webhook handler is
+# idempotent (advisory lock + msg_uid dedup), so retries never duplicate. ~linear backoff.
+WAHA_WEBHOOK_RETRIES = {'policy': 'linear', 'delaySeconds': 2, 'attempts': 15}
 WAHA_REQUEST_TIMEOUT = 30
 # A WhatsApp QR is only scannable briefly; past this it is stale and must not be shown.
 WAHA_QR_TTL_SECONDS = 60
@@ -313,7 +318,8 @@ class WhatsappAccount(models.Model):
     # Session / QR management
     # ------------------------------------------------------------------
     def _waha_webhook_config(self):
-        webhook = {'url': self.get_base_url() + WAHA_WEBHOOK_PATH, 'events': WAHA_WEBHOOK_EVENTS}
+        webhook = {'url': self.get_base_url() + WAHA_WEBHOOK_PATH, 'events': WAHA_WEBHOOK_EVENTS,
+                   'retries': WAHA_WEBHOOK_RETRIES}
         if self.waha_webhook_secret:
             webhook['hmac'] = {'key': self.waha_webhook_secret}
         return {

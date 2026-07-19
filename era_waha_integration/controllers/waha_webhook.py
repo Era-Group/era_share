@@ -59,6 +59,14 @@ class WahaWebhook(http.Controller):
             else:
                 _logger.debug("WAHA webhook: unhandled event %s", event)
         except Exception:
-            _logger.exception("WAHA webhook: error processing event %s", event)
+            # Return a RETRYABLE status so WAHA re-delivers instead of dropping the message.
+            # A processing error is usually transient (a DB serialization blip, a brief lock);
+            # WAHA's retry then succeeds. This is safe because every handler is idempotent
+            # (inbound: advisory lock + msg_uid dedup; ack/reaction/status: no-op if already
+            # applied), so a retry of an event that actually landed never duplicates. Roll
+            # back first so the retry reprocesses from a clean state.
+            _logger.exception("WAHA webhook: error processing event %s (asking WAHA to retry)", event)
+            request.env.cr.rollback()
+            return request.make_response('error', status=500)
 
         return request.make_response('ok')

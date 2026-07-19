@@ -1,0 +1,18 @@
+// Give the WAHA composer's rich message box a comfortable, larger height.
+.o_waha_composer_body {
+    .odoo-editor-editable,
+    .note-editable,
+    textarea {
+        min-height: 220px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    // Keep the editor visually bounded like a text area.
+    .o_field_html,
+    &.o_field_html {
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 6px;
+        padding: 4px 8px;
+    }
+}

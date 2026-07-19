@@ -1,0 +1,170 @@
+// WhatsApp brand palette
+$o-era-wa-green: #25d366;
+$o-era-wa-header: #075e54;
+$o-era-wa-header-hover: #0a7163;
+
+// Float above the navbar/systray (sticky ~1030) but below modals (1050+).
+$o-era-wa-zindex: 1041;
+
+.o_era_wa_float {
+    z-index: $o-era-wa-zindex;
+    width: 760px;
+    height: 600px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    min-width: 420px;
+    min-height: 360px;
+    background-color: var(--o-mail-Discuss-background, #fff);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 10px;
+    overflow: hidden;
+
+    .o_era_wa_float_header {
+        height: 48px;
+        padding: 0 .5rem 0 1rem;
+        background-color: $o-era-wa-header;
+        color: #fff;
+        cursor: grab;
+        user-select: none;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        .o_era_wa_float_title {
+            font-size: 1rem;
+        }
+
+        // Account-health pill (score + coloured status dot).
+        .o_era_wa_float_health {
+            font-size: .8rem;
+            font-weight: 600;
+            padding: .1rem .55rem;
+            border-radius: 999px;
+            background-color: rgba(255, 255, 255, .18);
+            color: #fff;
+            line-height: 1.2;
+            white-space: nowrap;
+
+            .o_era_wa_float_health_dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-right: .4rem;
+                display: inline-block;
+                background-color: #adb5bd;
+            }
+
+            &.o-health-good .o_era_wa_float_health_dot { background-color: #25D366; }
+            &.o-health-warning .o_era_wa_float_health_dot { background-color: #f0ad4e; }
+            &.o-health-critical .o_era_wa_float_health_dot { background-color: #dc3545; }
+
+            // Tint the whole pill for degraded states so it draws the eye.
+            &.o-health-warning { background-color: rgba(240, 173, 78, .32); }
+            &.o-health-critical { background-color: rgba(220, 53, 69, .42); }
+        }
+
+        .o_era_wa_float_btn {
+            color: rgba(255, 255, 255, .85);
+            border: 0;
+            box-shadow: none;
+            cursor: pointer;
+
+            &:hover {
+                color: #fff;
+                background-color: $o-era-wa-header-hover;
+            }
+
+            &.o-active {
+                color: #fff;
+                background-color: $o-era-wa-header-hover;
+            }
+        }
+    }
+
+    // WAHA / standard list toggle bar.
+    .o_era_wa_float_filter {
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+        background-color: var(--o-mail-Discuss-background, #fff);
+
+        .o_era_wa_float_seg {
+            border: 1px solid var(--border-color, #dee2e6);
+            color: var(--body-color, #495057);
+            background-color: transparent;
+            box-shadow: none;
+            line-height: 1;
+            padding: .2rem .6rem;
+
+            &:hover {
+                background-color: rgba($o-era-wa-green, .12);
+            }
+
+            &.o-active {
+                color: #fff;
+                background-color: $o-era-wa-green;
+                border-color: $o-era-wa-green;
+            }
+        }
+    }
+
+    .o_era_wa_float_body {
+        min-height: 0;
+    }
+
+    .o-discuss-ChannelMemberList {
+        flex: 0 0 auto !important;
+        width: var(--o-era-wa-members-width, 240px) !important;
+        min-width: 0 !important;
+        max-width: 55% !important;
+
+        .o-mail-ActionPanel {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+        }
+    }
+
+    &.o-era-members-hidden .o-discuss-ChannelMemberList {
+        display: none !important;
+    }
+
+    .o_era_wa_float_sidebar {
+        width: 280px;
+        min-width: 220px;
+        border-inline-end: 1px solid var(--border-color, #dee2e6);
+    }
+
+    .o_era_wa_float_content {
+        min-width: 0;
+        min-height: 0;
+
+        .o-mail-Discuss {
+            height: 100%;
+            width: 100%;
+            border-top: 0 !important;
+        }
+    }
+
+    .o_era_wa_float_resize {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline-end: 0;
+        width: 16px;
+        height: 16px;
+        cursor: nwse-resize;
+        z-index: 1;
+        background: linear-gradient(
+            135deg,
+            transparent 0 50%,
+            var(--border-color, #adb5bd) 50% 60%,
+            transparent 60% 70%,
+            var(--border-color, #adb5bd) 70% 80%,
+            transparent 80%
+        );
+
+        &:dir(rtl) {
+            cursor: nesw-resize;
+            transform: scaleX(-1);
+        }
+    }
+}

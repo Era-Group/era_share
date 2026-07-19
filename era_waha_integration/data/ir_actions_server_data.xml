@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="action_waha_import_history" model="ir.actions.server">
+        <field name="name">WAHA: Import previous conversation</field>
+        <field name="model_id" ref="mail.model_discuss_channel"/>
+        <field name="binding_model_id" ref="mail.model_discuss_channel"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+waha_channels = records.filtered(lambda c: c.channel_type == 'whatsapp' and c.wa_account_id.provider == 'waha')
+if waha_channels:
+    waha_channels.action_waha_import_history()
+        </field>
+    </record>
+
+</odoo>

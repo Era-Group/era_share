@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_waha_integration.FloatWindow">
+      <!-- Whole widget is visible to WhatsApp users only. -->
+      <t t-if="state.allowed">
+        <div t-if="state.open and !state.minimized"
+             class="o_era_wa_float position-fixed d-flex flex-column d-print-none shadow-lg"
+             t-att-class="{ 'o-era-members-hidden': layout.membersHidden }"
+             t-ref="root"
+             t-attf-style="top:{{position.top}};left:{{position.left}};bottom:{{position.bottom}};right:{{position.right}};width:{{position.width}}px;height:{{position.height}}px;">
+            <div class="o_era_wa_float_header d-flex align-items-center flex-shrink-0">
+                <i class="fa fa-whatsapp me-2"/>
+                <span class="o_era_wa_float_title text-truncate fw-bold">WhatsApp</span>
+                <span t-if="health.score !== null"
+                      class="o_era_wa_float_health d-inline-flex align-items-center ms-2"
+                      t-att-class="'o-health-' + health.label"
+                      t-attf-title="Account health — {{health.name}}: {{health.label}} ({{health.score}}/100)">
+                    <span class="o_era_wa_float_health_dot"/>
+                    <i class="fa fa-heartbeat me-1"/>
+                    <span t-esc="health.score"/>
+                </span>
+                <span class="flex-grow-1"/>
+                <button class="o_era_wa_float_btn btn btn-sm"
+                        t-att-class="{ 'o-active': !layout.membersHidden }"
+                        t-on-click="toggleMembers"
+                        title="Show/hide members">
+                    <i class="fa fa-users"/>
+                </button>
+                <button class="o_era_wa_float_btn btn btn-sm" t-on-click="onMinimize"
+                        title="Minimize">
+                    <i class="fa fa-chevron-down"/>
+                </button>
+                <button class="o_era_wa_float_btn btn btn-sm" t-on-click="onClose" title="Close">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+
+            <!-- WAHA / standard list toggle. -->
+            <div class="o_era_wa_float_filter d-flex align-items-center flex-shrink-0 gap-1 px-2 py-1">
+                <button class="o_era_wa_float_seg btn btn-sm"
+                        t-att-class="{ 'o-active': state.listMode === 'all' }"
+                        t-on-click="() => this.setListMode('all')">All</button>
+                <button class="o_era_wa_float_seg btn btn-sm"
+                        t-att-class="{ 'o-active': state.listMode === 'waha' }"
+                        t-on-click="() => this.setListMode('waha')">WAHA</button>
+                <button class="o_era_wa_float_seg btn btn-sm"
+                        t-att-class="{ 'o-active': state.listMode === 'standard' }"
+                        t-on-click="() => this.setListMode('standard')">Standard</button>
+            </div>
+
+            <div class="o_era_wa_float_body d-flex flex-grow-1 overflow-hidden">
+                <!-- Conversation list, reusing native sidebar items. -->
+                <div class="o_era_wa_float_sidebar o-mail-DiscussSidebar o-mail-discussSidebarBgColor d-flex flex-column overflow-auto o-scrollbar-thin flex-shrink-0 py-1">
+                    <t t-if="!conversationThreads.length">
+                        <div class="o_era_wa_float_empty text-muted text-center small p-3">
+                            No conversations yet.
+                        </div>
+                    </t>
+                    <t t-foreach="conversationThreads" t-as="thread" t-key="thread.localId">
+                        <DiscussSidebarChannel thread="thread"/>
+                    </t>
+                </div>
+
+                <!-- Genuine Discuss content pane (thread + composer). -->
+                <div class="o_era_wa_float_content flex-grow-1 d-flex overflow-hidden">
+                    <Discuss hasSidebar="false"/>
+                </div>
+            </div>
+
+            <!-- Resize grip. -->
+            <div class="o_era_wa_float_resize" t-on-pointerdown="onResizePointerDown"/>
+        </div>
+      </t>
+    </t>
+
+</templates>

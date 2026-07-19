@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="whatsapp_account_view_form_waha" model="ir.ui.view">
+        <field name="name">whatsapp.account.form.waha</field>
+        <field name="model">whatsapp.account</field>
+        <field name="inherit_id" ref="whatsapp.whatsapp_account_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Provider selector -->
+            <xpath expr="//div[@id='title']" position="after">
+                <group>
+                    <field name="provider" widget="radio" options="{'horizontal': true}"/>
+                </group>
+                <!-- Account health factor, surfaced at the top of the form (all tabs) -->
+                <group invisible="provider != 'waha'">
+                    <label for="waha_health_score" string="Account health"/>
+                    <div class="o_row" style="align-items:center; gap:10px;">
+                        <field name="waha_health_score" widget="progressbar" nolabel="1"/>
+                        <field name="waha_health_label" widget="badge" nolabel="1"
+                               decoration-success="waha_health_label == 'good'"
+                               decoration-warning="waha_health_label == 'warning'"
+                               decoration-danger="waha_health_label == 'critical'"/>
+                        <span class="text-muted">/ 100</span>
+                    </div>
+                </group>
+            </xpath>
+
+            <!-- Meta credentials are not required for WAHA accounts -->
+            <xpath expr="//field[@name='phone_uid']" position="attributes">
+                <attribute name="required">provider == 'meta'</attribute>
+            </xpath>
+
+            <!-- Hide Meta-only sections when using WAHA -->
+            <xpath expr="//div[@id='app_setup']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='api_setup']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='toreceive_msg']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+
+            <!-- Hide the standard section separators (empty for WAHA) + the notifications
+                 block; Default Users is relocated into the notebook below. These run BEFORE
+                 the notebook is inserted (below), so tocontrol's preceding separator still
+                 resolves. Target each separator as the nearest one before its content div. -->
+            <xpath expr="//div[@id='app_setup']/preceding-sibling::div[hasclass('o_horizontal_separator')][1]" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='toreceive_msg']/preceding-sibling::div[hasclass('o_horizontal_separator')][1]" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='tocontrol']/preceding-sibling::div[hasclass('o_horizontal_separator')][1]" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='tocontrol']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+
+            <!-- Hide Meta-only buttons when using WAHA -->
+            <xpath expr="//button[@name='button_test_connection']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_sync_whatsapp_account_templates']" position="attributes">
+                <attribute name="invisible">provider == 'waha'</attribute>
+            </xpath>
+
+            <!-- All WAHA settings, organised into a notebook -->
+            <xpath expr="//div[@id='tocontrol']" position="before">
+                <notebook invisible="provider != 'waha'" class="mt-3">
+
+                    <page string="Connection" name="waha_connection">
+                        <div class="row mt16 o_settings_container">
+                            <setting string="Server URL"
+                                     help="Base URL of your WAHA server (e.g. http://localhost:3000).">
+                                <field name="waha_server_url" placeholder="e.g. http://localhost:3000"/>
+                            </setting>
+                            <setting string="API Key"
+                                     help="Secret X-Api-Key sent with every request to WAHA. Keep it confidential.">
+                                <field name="waha_api_key" password="True"/>
+                            </setting>
+                            <setting string="Session"
+                                     help="Dedicated WAHA session name for this account. Never share the same session with another module.">
+                                <field name="waha_session" placeholder="e.g. era_support"/>
+                            </setting>
+                            <setting string="Engine"
+                                     help="WAHA engine that backs the session. NOWEB is recommended.">
+                                <field name="waha_engine"/>
+                            </setting>
+                            <setting string="Status"
+                                     help="Live session state reported by WAHA: working, starting, scan_qr_code, stopped or failed.">
+                                <field name="waha_status" readonly="1"/>
+                            </setting>
+                            <setting string="Default Users (access)"
+                                     help="These users see ALL of this account's conversations and can send through it — without being WhatsApp administrators. Manage account access here.">
+                                <xpath expr="//div[@id='tocontrol']//field[@name='notify_user_ids']" position="move"/>
+                            </setting>
+                            <setting string="Webhook Secret"
+                                     help="Optional HMAC secret. When set, WAHA signs each webhook and Odoo verifies the signature.">
+                                <field name="waha_webhook_secret" password="True"/>
+                            </setting>
+                            <setting string="Webhook URL"
+                                     help="Register this URL in WAHA so incoming WhatsApp events are delivered to Odoo.">
+                                <field name="callback_url" widget="CopyClipboardURL"/>
+                            </setting>
+                            <setting string="Max attachment (MB)"
+                                     help="Reject outbound attachments larger than this before they hit the WAHA host's proxy limit. The host's nginx client_max_body_size must be at least ~1.33x this value (base64 inflation). 0 = no check.">
+                                <field name="waha_max_media_mb"/>
+                            </setting>
+                            <setting string="Session actions"
+                                     help="Start creates or links the session, Get QR shows the code to scan, Refresh re-reads the live status, Stop ends the session. Only the actions valid for the current status are shown.">
+                                <div class="btn-group" role="group">
+                                    <!-- Start: only when there is no live session (stopped/failed/never started) -->
+                                    <button name="action_waha_start_session" type="object" string="Start"
+                                            icon="fa-play" class="btn btn-primary"
+                                            invisible="waha_status in ('working', 'starting', 'scan_qr_code')"/>
+                                    <!-- Get QR: only while the session is waiting to be linked by scanning -->
+                                    <button name="action_waha_get_qr" type="object" string="Get QR"
+                                            icon="fa-qrcode" class="btn btn-primary"
+                                            invisible="waha_status not in ('starting', 'scan_qr_code')"/>
+                                    <!-- Refresh: always useful -->
+                                    <button name="action_waha_refresh_status" type="object" string="Refresh"
+                                            icon="fa-refresh" class="btn btn-secondary"/>
+                                    <!-- Stop: only when a session is live -->
+                                    <button name="action_waha_stop_session" type="object" string="Stop"
+                                            icon="fa-stop" class="btn btn-secondary"
+                                            invisible="waha_status not in ('working', 'starting', 'scan_qr_code')"/>
+                                </div>
+                            </setting>
+                            <setting string="QR Code" invisible="not waha_qr_valid"
+                                     help="Scan this code from WhatsApp on the phone (Linked devices) to link the session. Shown only while it is fresh and scannable.">
+                                <field name="waha_qr_valid" invisible="1"/>
+                                <field name="waha_qr_image" widget="image" nolabel="1" class="oe_avatar"/>
+                            </setting>
+                        </div>
+                    </page>
+
+                    <page string="Protection" name="waha_protection">
+                        <div class="alert alert-info" role="alert">
+                            Anti-ban limits. Sends beyond these are blocked with an error and the user is
+                            offered the official WhatsApp instead — nothing is recorded as failed in chat.
+                        </div>
+                        <div class="row mt16 o_settings_container">
+                            <setting string="New numbers / user / day"
+                                     help="Max brand-new numbers each user may first-contact per day. Beyond it the send is blocked and the user is redirected to the official WhatsApp. 0 = no limit.">
+                                <field name="waha_new_number_daily_limit"/>
+                            </setting>
+                            <setting string="Cold re-send lock (hours)"
+                                     help="A contact who has never replied can be messaged again only once per this many hours.">
+                                <field name="waha_cold_resend_hours"/>
+                            </setting>
+                            <setting string="Send/receive ratio"
+                                     help="Maximum outbound messages per inbound message over the window. Grows automatically as the account ages.">
+                                <field name="waha_balance_ratio"/>
+                            </setting>
+                            <setting string="Balance base allowance"
+                                     help="Outbound messages always allowed regardless of inbound (covers initial seed outreach).">
+                                <field name="waha_balance_base"/>
+                            </setting>
+                            <setting string="Balance window (hours)"
+                                     help="Length of the rolling window used to measure the send/receive balance.">
+                                <field name="waha_balance_window_hours"/>
+                            </setting>
+                            <setting string="Max ratio"
+                                     help="Upper bound the send/receive ratio may grow to over time.">
+                                <field name="waha_balance_ratio_max"/>
+                            </setting>
+                            <setting string="Ratio step / week"
+                                     help="Weekly automatic increase of the send/receive ratio as the account matures.">
+                                <field name="waha_balance_ratio_step"/>
+                            </setting>
+                            <setting string="Working since"
+                                     help="First time the session became working; used to age the sending balance.">
+                                <field name="waha_working_since" readonly="1"/>
+                            </setting>
+                        </div>
+                    </page>
+
+                    <page string="Health" name="waha_health">
+                        <div class="border rounded p-3 mb-2 bg-view">
+                            <field name="waha_health_reason" nolabel="1"/>
+                        </div>
+                        <div class="row mt16 o_settings_container">
+                            <setting string="Health Score"
+                                     help="Proxy account-health score from 0 to 100. WAHA gives no official quality rating, so this is derived from the signals below.">
+                                <field name="waha_health_score" widget="progressbar"/>
+                            </setting>
+                            <setting string="Health"
+                                     help="good (score 80 and above), warning (50 and above) or critical (below 50).">
+                                <field name="waha_health_label"/>
+                            </setting>
+                            <setting string="Status flaps (today)"
+                                     help="Number of session-status changes today. Frequent flapping signals instability and lowers the score.">
+                                <field name="waha_flap_count" readonly="1"/>
+                            </setting>
+                            <setting string="Outbound (7d)"
+                                     help="Live outbound messages sent in the last 7 days. Imported history is excluded.">
+                                <field name="waha_kpi_outbound" readonly="1"/>
+                            </setting>
+                            <setting string="Inbound (7d)"
+                                     help="Messages received from contacts in the last 7 days.">
+                                <field name="waha_kpi_inbound" readonly="1"/>
+                            </setting>
+                            <setting string="Delivered %"
+                                     help="Share of sent messages that reached the recipient (delivered or read).">
+                                <field name="waha_kpi_delivered_rate" readonly="1"/>
+                            </setting>
+                            <setting string="Read %"
+                                     help="Share of delivered messages that were read.">
+                                <field name="waha_kpi_read_rate" readonly="1"/>
+                            </setting>
+                            <setting string="Error %"
+                                     help="Share of outbound messages that failed to send.">
+                                <field name="waha_kpi_error_rate" readonly="1"/>
+                            </setting>
+                        </div>
+                        <div class="text-muted small">
+                            Score is a proxy: WAHA exposes no official quality rating. It drops on session
+                            downtime, outbound errors, poor delivery, and status flapping. A degraded score
+                            notifies the account's responsible users.
+                        </div>
+                    </page>
+
+                    <page string="History" name="waha_history">
+                        <div class="row mt16 o_settings_container">
+                            <setting string="Auto-import history on new channel"
+                                     help="When a channel is first created from an inbound message, import the recent conversation so the operator has context.">
+                                <field name="waha_auto_import_history"/>
+                            </setting>
+                            <setting string="History import limit"
+                                     help="How many recent messages to import on that first automatic backfill.">
+                                <field name="waha_history_limit"/>
+                            </setting>
+                            <setting string="Reconcile on reconnect"
+                                     help="After the session reconnects, check active channels and backfill any messages missed during the outage.">
+                                <field name="waha_reconcile_on_reconnect"/>
+                            </setting>
+                        </div>
+                    </page>
+
+                </notebook>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

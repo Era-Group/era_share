@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_waha_integration.FloatSystray">
+        <div t-if="state.allowed" class="o_era_wa_systray dropdown">
+            <button class="btn"
+                    t-att-class="{ 'o-active': state.open and !state.minimized }"
+                    t-on-click="onClick"
+                    title="WhatsApp conversations">
+                <i class="fa fa-whatsapp fa-lg"/>
+            </button>
+        </div>
+    </t>
+
+</templates>

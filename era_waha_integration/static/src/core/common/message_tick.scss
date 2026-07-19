@@ -1,0 +1,11 @@
+// WhatsApp-style delivery/read ticks (see message_patch.js/.xml).
+.o-waha-tick {
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: -2px;
+    white-space: nowrap;
+
+    &.o-waha-tick-read {
+        color: #34B7F1; // WhatsApp "read" blue
+    }
+}

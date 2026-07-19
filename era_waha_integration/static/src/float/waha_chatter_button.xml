@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+<t t-name="era_waha_integration.ChatterPatch" t-inherit="mail.Chatter" t-inherit-mode="extension">
+    <xpath expr="//span[hasclass('o-mail-Chatter-topbarGrow')]" position="before">
+        <button t-if="waButtonVisible"
+                class="o-mail-Chatter-whatsappFloat btn btn-secondary text-nowrap me-1"
+                t-att-class="{ 'my-2': !props.compactHeight }"
+                t-on-click="openWhatsappFromChatter"
+                title="Open WhatsApp conversation">
+            <i class="fa fa-whatsapp" aria-hidden="true"/>
+        </button>
+    </xpath>
+</t>
+
+</templates>

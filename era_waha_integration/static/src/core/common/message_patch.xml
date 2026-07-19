@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Replace EE's plain green WhatsApp icon with WhatsApp-style delivery/read ticks
+         for OUTBOUND messages; keep the icon for inbound (received) messages. -->
+    <t t-name="era_waha_integration.Message" t-inherit="mail.Message" t-inherit-mode="extension">
+        <xpath expr="//span[hasclass('fa-whatsapp')]" position="replace">
+            <t t-if="isWahaOutboundStatus">
+                <span class="ms-1 o-waha-tick" t-att-class="wahaTickClass"
+                      t-att-title="getWhatsappStatusTitle()" t-esc="wahaTickMarks"/>
+            </t>
+            <t t-else="">
+                <span class="fa fa-whatsapp ms-1" t-att-class="getWhatsappStatusClass()"
+                      t-att-title="getWhatsappStatusTitle()"/>
+            </t>
+        </xpath>
+    </t>
+
+</templates>

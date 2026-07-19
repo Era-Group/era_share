@@ -1,0 +1,1027 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_waha_integration
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-18 19:01+0000\n"
+"PO-Revision-Date: 2026-07-18 19:01+0000\n"
+"Last-Translator: Era Group <agent@era.net.sa>\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_cold_resend_hours
+msgid ""
+"A contact that never replied can only be messaged once per this many hours."
+msgstr "جهة اتصال لم تردّ مطلقاً يمكن مراسلتها مرة واحدة فقط خلال هذا العدد من الساعات."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"A contact who has never replied can be messaged again only once per this "
+"many hours."
+msgstr "جهة الاتصال التي لم تردّ مطلقاً يمكن مراسلتها مجدداً مرة واحدة فقط خلال هذا العدد من الساعات."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "API Key"
+msgstr "مفتاح API"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__token
+msgid "Access Token"
+msgstr "رمز الوصول"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__account_uid
+msgid "Account ID"
+msgstr "معرّف الحساب"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"After the session reconnects, check active channels and backfill any "
+"messages missed during the outage."
+msgstr "بعد إعادة اتصال الجلسة، تُفحص القنوات النشطة وتُستورد أي رسائل فاتت أثناء الانقطاع."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "All"
+msgstr "الكل"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Anti-ban limits. Sends beyond these are blocked with an error and the user is\n"
+"                            offered the official WhatsApp instead — nothing is recorded as failed in chat."
+msgstr "حدود الحماية من الحظر. الرسائل التي تتجاوز هذه الحدود تُمنع مع إظهار خطأ، ويُعرض على المستخدم استخدام واتساب الرسمي بدلاً منها — ولا يُسجَّل شيء كرسالة فاشلة في المحادثة."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__app_uid
+msgid "App ID"
+msgstr "معرّف التطبيق"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__app_secret
+msgid "App Secret"
+msgstr "سر التطبيق"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_message.py:0
+msgid "Attachment '%(name)s' is too large (%(size).1f MB, max %(cap)s MB)."
+msgstr "المرفق '%(name)s' كبير جداً (%(size).1f ميجابايت، الحد الأقصى %(cap)s ميجابايت)."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__waha_attachment_name
+msgid "Attachment Filename"
+msgstr "اسم ملف المرفق"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_auto_import_history
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Auto-import history on new channel"
+msgstr "استيراد السجل تلقائياً عند إنشاء قناة جديدة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__provider
+msgid "Backend used to send/receive messages for this account."
+msgstr "الواجهة الخلفية المستخدمة لإرسال/استقبال الرسائل لهذا الحساب."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_balance_base
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Balance base allowance"
+msgstr "الحد الأساسي المسموح للإرسال"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_balance_window_hours
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Balance window (hours)"
+msgstr "نافذة التوازن (ساعات)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Base URL of your WAHA server (e.g. http://localhost:3000)."
+msgstr "الرابط الأساسي لخادم WAHA (مثال: http://localhost:3000)."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_cold_resend_hours
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Cold re-send lock (hours)"
+msgstr "قفل إعادة الإرسال لغير المتجاوبين (ساعات)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Connection"
+msgstr "الاتصال"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_health_label__critical
+msgid "Critical"
+msgstr "حرجة"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+#: code:addons/era_waha_integration/wizard/whatsapp_composer.py:0
+msgid ""
+"Daily new-number limit reached and no official WhatsApp account is "
+"configured. Please try again later."
+msgstr "تم بلوغ الحد اليومي للأرقام الجديدة ولا يوجد حساب واتساب رسمي مُهيّأ. يُرجى المحاولة لاحقاً."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Dedicated WAHA session name for this account. Never share the same session "
+"with another module."
+msgstr "اسم جلسة WAHA مخصّص لهذا الحساب. لا تُشارك الجلسة نفسها مع موديول آخر إطلاقاً."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_kpi_delivered_rate
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Delivered %"
+msgstr "نسبة التسليم %"
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_discuss_channel
+msgid "Discussion Channel"
+msgstr "قناة المحادثة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_discuss_channel__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_compose_message__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_message__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_res_users_settings__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__display_name
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_message__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "معالج إنشاء البريد الإلكتروني"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Engine"
+msgstr "المحرّك"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/whatsapp_composer.py:0
+msgid "Enter a message or attach a file."
+msgstr "أدخل رسالة أو أرفق ملفاً."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_kpi_error_rate
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Error %"
+msgstr "نسبة الأخطاء %"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Failed to reach WAHA server: %s"
+msgstr "تعذّر الوصول إلى خادم WAHA: %s"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_working_since
+msgid ""
+"First time the session became 'working'; used to age the sending balance."
+msgstr "أول مرة أصبحت فيها الجلسة 'working'؛ تُستخدم لاحتساب عمر توازن الإرسال."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"First time the session became working; used to age the sending balance."
+msgstr "أول مرة أصبحت فيها الجلسة تعمل؛ تُستخدم لاحتساب عمر توازن الإرسال."
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_engine__gows
+msgid "GOWS"
+msgstr "GOWS"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Get QR"
+msgstr "عرض رمز QR"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_health_label__good
+msgid "Good"
+msgstr "جيدة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_label
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Health"
+msgstr "الصحة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_score
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Health Score"
+msgstr "درجة الصحة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "History"
+msgstr "السجل"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_history_limit
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "History import limit"
+msgstr "حدّ استيراد السجل"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "How many recent messages to import on that first automatic backfill."
+msgstr "عدد الرسائل الحديثة التي تُستورد في أول تعبئة تلقائية للسجل."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_discuss_channel__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_compose_message__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_message__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_res_users_settings__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__id
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_message__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_res_users_settings__is_discuss_sidebar_category_waha_open
+msgid "If checked, the WAHA category is open in the discuss sidebar."
+msgstr "إذا كان مُفعّلاً، تكون فئة WAHA مفتوحة في الشريط الجانبي للمحادثات."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__waha_attachment
+msgid "Image / File"
+msgstr "صورة / ملف"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Imported earlier conversation"
+msgstr "تم استيراد المحادثة السابقة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_kpi_inbound
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Inbound (7d)"
+msgstr "الوارد (7 أيام)"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/whatsapp_composer.py:0
+msgid "Invalid phone number."
+msgstr "رقم هاتف غير صالح."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__is_waha
+msgid "Is Waha"
+msgstr "من نوع WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_discuss_channel__is_waha_channel
+msgid "Is Waha Channel"
+msgstr "قناة WAHA"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Length of the rolling window used to measure the send/receive balance."
+msgstr "طول النافذة المتحركة المستخدمة لقياس توازن الإرسال/الاستقبال."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Live outbound messages sent in the last 7 days. Imported history is "
+"excluded."
+msgstr "الرسائل الصادرة الحيّة المُرسَلة خلال آخر 7 أيام. السجل المُستورد مستبعَد."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Live session state reported by WAHA: working, starting, scan_qr_code, "
+"stopped or failed."
+msgstr "حالة الجلسة الحيّة كما يبلّغ عنها WAHA: working أو starting أو scan_qr_code أو stopped أو failed."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_max_media_mb
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Max attachment (MB)"
+msgstr "الحد الأقصى للمرفق (ميجابايت)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_new_number_daily_limit
+msgid ""
+"Max brand-new numbers each user may first-contact per day on this "
+"(unofficial) account. Beyond it, they are redirected to official WhatsApp. 0"
+" = no limit."
+msgstr "الحد الأقصى للأرقام الجديدة كلياً التي يمكن لكل مستخدم التواصل معها لأول مرة يومياً على هذا الحساب (غير الرسمي). بعد تجاوزه، يُحوّلون إلى واتساب الرسمي. 0 = بلا حد."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Max brand-new numbers each user may first-contact per day. Beyond it the "
+"send is blocked and the user is redirected to the official WhatsApp. 0 = no "
+"limit."
+msgstr "الحد الأقصى للأرقام الجديدة كلياً التي يمكن لكل مستخدم التواصل معها لأول مرة يومياً. بعد تجاوزه يُمنع الإرسال ويُحوّل المستخدم إلى واتساب الرسمي. 0 = بلا حد."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_balance_ratio
+msgid ""
+"Max outbound per inbound over the balance window (grows automatically with "
+"account age)."
+msgstr "الحد الأقصى للرسائل الصادرة مقابل كل رسالة واردة خلال نافذة التوازن (يزداد تلقائياً مع عمر الحساب)."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_balance_ratio_max
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Max ratio"
+msgstr "أقصى نسبة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Maximum outbound messages per inbound message over the window. Grows "
+"automatically as the account ages."
+msgstr "الحد الأقصى للرسائل الصادرة مقابل كل رسالة واردة خلال النافذة. يزداد تلقائياً مع تقدّم عمر الحساب."
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_mail_message
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__waha_body
+msgid "Message"
+msgstr "رسالة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Messages received from contacts in the last 7 days."
+msgstr "الرسائل الواردة من جهات الاتصال خلال آخر 7 أيام."
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__provider__meta
+msgid "Meta Cloud API"
+msgstr "Meta Cloud API"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Meta accounts require: %(fields)s"
+msgstr "حسابات Meta تتطلّب: %(fields)s"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_engine__noweb
+msgid "NOWEB"
+msgstr "NOWEB"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_new_number_daily_limit
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "New numbers / user / day"
+msgstr "أرقام جديدة / مستخدم / يوم"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "No conversations yet."
+msgstr "لا توجد محادثات بعد."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+msgid "No recipient has a phone number to reach on WhatsApp."
+msgstr "لا يوجد مستلم لديه رقم هاتف للتواصل عبر واتساب."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Number of session-status changes today. Frequent flapping signals "
+"instability and lowers the score."
+msgstr "عدد تغيّرات حالة الجلسة اليوم. التذبذب المتكرر يدل على عدم الاستقرار ويخفض الدرجة."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_chatter_button.xml:0
+msgid "Open WhatsApp conversation"
+msgstr "فتح محادثة واتساب"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Optional HMAC secret. When set, WAHA signs each webhook and Odoo verifies "
+"the signature."
+msgstr "سر HMAC اختياري. عند تعيينه، يوقّع WAHA كل Webhook ويتحقق أودو من التوقيع."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_webhook_secret
+msgid ""
+"Optional shared secret. When set, WAHA signs webhooks with this key "
+"(X-Webhook-Hmac, sha512) and the controller verifies the signature."
+msgstr "سر مشترك اختياري. عند تعيينه، يوقّع WAHA الـ Webhooks بهذا المفتاح (X-Webhook-Hmac، sha512) ويتحقق المتحكّم من التوقيع."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_kpi_outbound
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Outbound (7d)"
+msgstr "الصادر (7 أيام)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_balance_base
+msgid ""
+"Outbound messages allowed regardless of inbound (covers seed outreach)."
+msgstr "الرسائل الصادرة المسموح بها بغض النظر عن الوارد (تغطي التواصل الأولي)."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Outbound messages always allowed regardless of inbound (covers initial seed "
+"outreach)."
+msgstr "الرسائل الصادرة المسموح بها دائماً بغض النظر عن الوارد (تغطي التواصل الأولي)."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__phone_uid
+msgid "Phone Number ID"
+msgstr "معرّف رقم الهاتف"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Protection"
+msgstr "الحماية"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__provider
+msgid "Provider"
+msgstr "المزوّد"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Proxy account-health score from 0 to 100. WAHA gives no official quality "
+"rating, so this is derived from the signals below."
+msgstr "درجة صحة تقريبية للحساب من 0 إلى 100. لا يوفّر WAHA تقييم جودة رسمياً، لذا تُشتقّ هذه الدرجة من المؤشرات أدناه."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "QR Code"
+msgstr "رمز QR"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_balance_ratio_step
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Ratio step / week"
+msgstr "خطوة النسبة / أسبوع"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_kpi_read_rate
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Read %"
+msgstr "نسبة القراءة %"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_reconcile_on_reconnect
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Reconcile on reconnect"
+msgstr "المطابقة عند إعادة الاتصال"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Register this URL in WAHA so incoming WhatsApp events are delivered to Odoo."
+msgstr "سجّل هذا الرابط في WAHA لتُسلَّم أحداث واتساب الواردة إلى أودو."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Reject outbound attachments larger than this before they hit the WAHA host's"
+" proxy limit. The host's nginx client_max_body_size must be at least ~1.33x "
+"this value (base64 inflation). 0 = no check."
+msgstr "رفض المرفقات الصادرة الأكبر من هذا قبل بلوغها حد الوكيل على خادم WAHA. يجب أن يكون client_max_body_size في nginx على الخادم لا يقل عن ~1.33 ضعف هذه القيمة (بسبب تضخّم base64). 0 = بلا فحص."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_max_media_mb
+msgid ""
+"Reject outbound attachments whose file size exceeds this, with a clear "
+"error, before they hit the WAHA host's reverse-proxy body limit (a raw 413)."
+" Because base64 inflates the HTTP body ~33%, the WAHA host's nginx "
+"client_max_body_size must be at least ~1.33x this value (e.g. cap 16 -> "
+"nginx >= 22m). 0 = no check."
+msgstr "رفض المرفقات الصادرة التي يتجاوز حجمها هذا الحد، مع إظهار خطأ واضح، قبل بلوغها حد جسم الطلب في الوكيل العكسي على خادم WAHA (خطأ 413 خام). ولأن base64 يضخّم جسم HTTP بنحو 33%، يجب أن يكون client_max_body_size في nginx على خادم WAHA لا يقل عن ~1.33 ضعف هذه القيمة (مثال: حد 16 ← nginx ≥ 22m). 0 = بلا فحص."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Scan this code from WhatsApp on the phone (Linked devices) to link the "
+"session."
+msgstr "امسح هذا الرمز من واتساب على الهاتف (الأجهزة المرتبطة) لربط الجلسة."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Score is a proxy: WAHA exposes no official quality rating. It drops on session\n"
+"                            downtime, outbound errors, poor delivery, and status flapping. A degraded score\n"
+"                            notifies the account's responsible users."
+msgstr "الدرجة تقريبية: لا يوفّر WAHA تقييم جودة رسمياً. تنخفض عند تعطّل الجلسة، وأخطاء الإرسال، وضعف التسليم، وتذبذب الحالة. وعند تدنّي الدرجة يُخطَر المستخدمون المسؤولون عن الحساب."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/core/public_web/discuss_app_model_patch.js:0
+msgid "Search WAHA Channel"
+msgstr "بحث في قنوات WAHA"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Secret X-Api-Key sent with every request to WAHA. Keep it confidential."
+msgstr "مفتاح X-Api-Key السري المُرسَل مع كل طلب إلى WAHA. حافظ على سريّته."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+msgid "Select a WAHA WhatsApp account."
+msgstr "اختر حساب واتساب WAHA."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_composer__wa_account_id
+msgid "Send From"
+msgstr "الإرسال من"
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_whatsapp_composer
+msgid "Send WhatsApp Wizard"
+msgstr "معالج إرسال واتساب"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+#: code:addons/era_waha_integration/wizard/whatsapp_composer.py:0
+msgid "Send via Official WhatsApp"
+msgstr "إرسال عبر واتساب الرسمي"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_balance_ratio
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Send/receive ratio"
+msgstr "نسبة الإرسال/الاستقبال"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Server URL"
+msgstr "رابط الخادم"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Session actions"
+msgstr "إجراءات الجلسة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Share of delivered messages that were read."
+msgstr "نسبة الرسائل المُسلَّمة التي تمت قراءتها."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Share of outbound messages that failed to send."
+msgstr "نسبة الرسائل الصادرة التي فشل إرسالها."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Share of sent messages that reached the recipient (delivered or read)."
+msgstr "نسبة الرسائل المُرسَلة التي وصلت إلى المستلم (مُسلَّمة أو مقروءة)."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "Show/hide members"
+msgstr "إظهار/إخفاء الأعضاء"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "Standard"
+msgstr "القياسي"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Start"
+msgstr "بدء"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Start creates or links the session, Get QR shows the code to scan, Refresh "
+"re-reads the live status, Stop ends the session. Only the actions valid for "
+"the current status are shown."
+msgstr "بدء: ينشئ الجلسة أو يربطها. عرض رمز QR: يعرض الرمز للمسح. تحديث: يعيد قراءة الحالة الحيّة. إيقاف: ينهي الجلسة. تظهر فقط الإجراءات المناسبة للحالة الحالية."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_flap_count
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Status flaps (today)"
+msgstr "تذبذبات الحالة (اليوم)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Stop"
+msgstr "إيقاف"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+msgid "The message body is empty."
+msgstr "متن الرسالة فارغ."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/mail_compose_message.py:0
+msgid "The message is empty after removing the signature."
+msgstr "الرسالة فارغة بعد إزالة التوقيع."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid ""
+"This WhatsApp number has reached its safe sending balance for now "
+"(protecting it from being blocked). It allows more as customers reply — "
+"meanwhile, send via the official WhatsApp."
+msgstr "بلغ رقم الواتساب هذا حدّ توازن الإرسال الآمن حالياً (حمايةً له من الحظر). وسيسمح بالمزيد كلما ردّ العملاء — وفي هذه الأثناء، أرسل عبر واتساب الرسمي."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/discuss_channel.py:0
+msgid "This action is only available on WAHA WhatsApp channels."
+msgstr "هذا الإجراء متاح فقط على قنوات واتساب WAHA."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid ""
+"This contact hasn't replied yet. To keep the WhatsApp number safe, you can "
+"message it again after %(hours)s hours — or send now via the official "
+"WhatsApp."
+msgstr "لم تردّ جهة الاتصال هذه بعد. للحفاظ على أمان رقم الواتساب، يمكنك مراسلتها مجدداً بعد %(hours)s ساعة — أو الإرسال الآن عبر واتساب الرسمي."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_composer_view_form_waha
+msgid "Type your message..."
+msgstr "اكتب رسالتك..."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Upper bound the send/receive ratio may grow to over time."
+msgstr "الحد الأعلى الذي قد تصل إليه نسبة الإرسال/الاستقبال بمرور الوقت."
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_res_users_settings
+msgid "User Settings"
+msgstr "إعدادات المستخدم"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/core/public_web/discuss_app_model_patch.js:0
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+msgid "WAHA"
+msgstr "WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__provider__waha
+msgid "WAHA (WhatsApp Web)"
+msgstr "WAHA (واتساب ويب)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_api_key
+msgid "WAHA API Key"
+msgstr "مفتاح WAHA API"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "WAHA API error %(code)s: %(body)s"
+msgstr "خطأ WAHA API ‏%(code)s: %(body)s"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_res_users_settings__is_discuss_sidebar_category_waha_open
+msgid "WAHA Category Open"
+msgstr "فئة WAHA مفتوحة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_engine
+msgid "WAHA Engine"
+msgstr "محرّك WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_qr_image
+msgid "WAHA QR Code"
+msgstr "رمز QR الخاص بـ WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_server_url
+msgid "WAHA Server URL"
+msgstr "رابط خادم WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_session
+msgid "WAHA Session"
+msgstr "جلسة WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_status
+msgid "WAHA Status"
+msgstr "حالة WAHA"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.mail_compose_message_view_form_waha
+msgid "WAHA account"
+msgstr "حساب WAHA"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "WAHA accounts require a server URL and a session name."
+msgstr "حسابات WAHA تتطلّب رابط خادم واسم جلسة."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "WAHA engine that backs the session. NOWEB is recommended."
+msgstr "محرّك WAHA الذي يشغّل الجلسة. يُنصح بـ NOWEB."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_session
+msgid ""
+"WAHA session name. Must be unique and dedicated to this integration (do not "
+"share a session with another module)."
+msgstr "اسم جلسة WAHA. يجب أن يكون فريداً ومخصّصاً لهذا التكامل (لا تُشارك الجلسة مع موديول آخر)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "WAHA session status: %s"
+msgstr "حالة جلسة WAHA: %s"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "WAHA start session failed %(code)s: %(body)s"
+msgstr "فشل بدء جلسة WAHA ‏%(code)s: %(body)s"
+
+#. module: era_waha_integration
+#: model:ir.actions.server,name:era_waha_integration.ir_cron_waha_health_check_ir_actions_server
+msgid "WAHA: Account health check"
+msgstr "WAHA: فحص صحة الحساب"
+
+#. module: era_waha_integration
+#: model:ir.actions.server,name:era_waha_integration.ir_cron_waha_age_adjust_ir_actions_server
+msgid "WAHA: Age-adjust send/receive ratio"
+msgstr "WAHA: ضبط نسبة الإرسال/الاستقبال حسب العمر"
+
+#. module: era_waha_integration
+#: model:ir.actions.server,name:era_waha_integration.action_waha_import_history
+msgid "WAHA: Import previous conversation"
+msgstr "WAHA: استيراد المحادثة السابقة"
+
+#. module: era_waha_integration
+#: model:ir.actions.server,name:era_waha_integration.ir_cron_waha_reconcile_ir_actions_server
+msgid "WAHA: Reconcile channel history"
+msgstr "WAHA: مطابقة سجل القناة"
+
+#. module: era_waha_integration
+#: model:ir.actions.server,name:era_waha_integration.ir_cron_waha_refresh_status_ir_actions_server
+msgid "WAHA: Refresh session status"
+msgstr "WAHA: تحديث حالة الجلسة"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_engine__webjs
+msgid "WEBJS"
+msgstr "WEBJS"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_compose_message__waha_available
+msgid "Waha Available"
+msgstr "‏WAHA متاح"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_alerted
+msgid "Waha Health Alerted"
+msgstr "تم التنبيه لصحة WAHA"
+
+#. module: era_waha_integration
+#: model:ir.model.fields.selection,name:era_waha_integration.selection__whatsapp_account__waha_health_label__warning
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_webhook_secret
+msgid "Webhook HMAC Secret"
+msgstr "سر Webhook HMAC"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Webhook Secret"
+msgstr "سر الـ Webhook"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Webhook URL"
+msgstr "رابط الـ Webhook"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_balance_ratio_step
+msgid ""
+"Weekly automatic increase of the send/receive ratio as the account ages."
+msgstr "الزيادة الأسبوعية التلقائية لنسبة الإرسال/الاستقبال مع تقدّم عمر الحساب."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Weekly automatic increase of the send/receive ratio as the account matures."
+msgstr "الزيادة الأسبوعية التلقائية لنسبة الإرسال/الاستقبال مع نضج الحساب."
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float.xml:0
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.mail_compose_message_view_form_waha
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_mail_compose_message__wa_account_id
+msgid "WhatsApp Account"
+msgstr "حساب واتساب"
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_whatsapp_account
+msgid "WhatsApp Business Account"
+msgstr "حساب واتساب للأعمال"
+
+#. module: era_waha_integration
+#: model:ir.model,name:era_waha_integration.model_whatsapp_message
+msgid "WhatsApp Messages"
+msgstr "رسائل واتساب"
+
+#. module: era_waha_integration
+#. odoo-javascript
+#: code:addons/era_waha_integration/static/src/float/waha_float_systray.xml:0
+msgid "WhatsApp conversations"
+msgstr "محادثات واتساب"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/wizard/whatsapp_composer.py:0
+msgid "WhatsApp message sent —"
+msgstr "تم إرسال رسالة واتساب —"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_message.py:0
+msgid ""
+"WhatsApp session is not connected (status: %s). Reconnect the WAHA session, "
+"then resend."
+msgstr "جلسة واتساب غير متصلة (الحالة: %s). أعد ربط جلسة WAHA ثم أعد الإرسال."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_auto_import_history
+msgid ""
+"When a channel is first created from an inbound message, import the recent "
+"conversation history so the operator has context."
+msgstr "عند إنشاء قناة لأول مرة من رسالة واردة، استورد سجل المحادثة الحديث ليكون لدى الموظف السياق."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"When a channel is first created from an inbound message, import the recent "
+"conversation so the operator has context."
+msgstr "عند إنشاء قناة لأول مرة من رسالة واردة، استورد المحادثة الحديثة ليكون لدى الموظف السياق."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_reconcile_on_reconnect
+msgid ""
+"When the session comes back to 'working' after a disconnection, check active"
+" channels and backfill any missed messages."
+msgstr "عندما تعود الجلسة إلى 'working' بعد انقطاع، تُفحص القنوات النشطة وتُستورد أي رسائل فائتة."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_working_since
+msgid "Working Since"
+msgstr "تعمل منذ"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Working since"
+msgstr "تعمل منذ"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid ""
+"You've reached today's limit of %(limit)s new WhatsApp numbers on this "
+"(unofficial) account. Please contact new numbers via the official WhatsApp."
+msgstr "لقد بلغت حدّ اليوم البالغ %(limit)s رقم واتساب جديد على هذا الحساب (غير الرسمي). يُرجى التواصل مع الأرقام الجديدة عبر واتساب الرسمي."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "e.g. era_support"
+msgstr "مثال: era_support"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "e.g. http://localhost:3000"
+msgstr "مثال: http://localhost:3000"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"good (score 80 and above), warning (50 and above) or critical (below 50)."
+msgstr "جيدة (الدرجة 80 فأعلى)، أو تحذير (50 فأعلى)، أو حرجة (أقل من 50)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "%(pct).0f%% of the last 7 days' outbound messages failed (%(err)s of %(out)s)."
+msgstr "%(pct).0f%% من الرسائل الصادرة خلال آخر 7 أيام فشلت (%(err)s من %(out)s)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "All good — session connected, deliveries healthy, no errors."
+msgstr "كل شيء جيد — الجلسة متصلة، والتسليم سليم، ولا أخطاء."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Delivery below target: %.0f%% delivered (aim for 80%%+)."
+msgstr "التسليم دون الهدف: %.0f%% مُسلَّمة (الهدف 80%%+)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Low delivery: only %.0f%% of sent messages reached the recipient."
+msgstr "تسليم منخفض: فقط %.0f%% من الرسائل المُرسَلة وصلت إلى المستلم."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Score %(score)s/100 — starts at 100, then:"
+msgstr "الدرجة %(score)s/100 — تبدأ من 100، ثم:"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Session flapped %s time(s) today (connection unstable)."
+msgstr "تذبذبت الجلسة %s مرة اليوم (الاتصال غير مستقر)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Session is not connected (status: %s)."
+msgstr "الجلسة غير متصلة (الحالة: %s)."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Tip: it improves as recent errors age out of the 7-day window and as new messages deliver cleanly."
+msgstr "ملاحظة: ترتفع الدرجة مع خروج الأخطاء الحديثة من نافذة الـ7 أيام ومع تسليم الرسائل الجديدة بنجاح."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Why this score"
+msgstr "لماذا هذه الدرجة"

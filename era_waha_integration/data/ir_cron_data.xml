@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="ir_cron_waha_refresh_status" model="ir.cron">
+        <field name="name">WAHA: Refresh session status</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_waha_refresh_status()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="ir_cron_waha_age_adjust" model="ir.cron">
+        <field name="name">WAHA: Age-adjust send/receive ratio</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_waha_age_adjust()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="ir_cron_waha_health_check" model="ir.cron">
+        <field name="name">WAHA: Account health check</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_waha_health_check()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="ir_cron_waha_reconcile" model="ir.cron">
+        <field name="name">WAHA: Reconcile channel history</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_waha_reconcile()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <!-- Active so reconnect-triggered runs (_trigger) are picked up; runs at most daily otherwise. -->
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

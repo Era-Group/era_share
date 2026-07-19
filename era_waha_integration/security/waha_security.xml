@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- A WAHA account's users (notify_user_ids / "Default Users") may read the account's
+         whatsapp.message records (status / read-ticks), on top of the standard "own
+         messages" rule they already get from base.group_user (rules for the same model
+         are OR-ed, so non-users are unaffected). Conversation visibility itself comes from
+         channel membership, kept in sync in whatsapp_account.py. -->
+    <record id="waha_rule_message_member" model="ir.rule">
+        <field name="name">WAHA: account users see their accounts' messages</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_message"/>
+        <field name="domain_force">[('wa_account_id.notify_user_ids', 'in', user.id)]</field>
+        <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

@@ -127,7 +127,7 @@ class WhatsappAccount(models.Model):
     # A tier is disabled by setting its threshold OR its penalty to 0.
     waha_health_deliv_warn_pct = fields.Integer(
         string='Delivery warn below (%)', default=50,
-        help="If confirmed-delivery %% over the last 7 days is below this, subtract the warn "
+        help="If confirmed-delivery % over the last 7 days is below this, subtract the warn "
              "penalty from the health score. Kept low by default because WAHA delivery receipts "
              "are often delayed. Set 0 to disable this tier.")
     waha_health_deliv_warn_penalty = fields.Integer(
@@ -135,7 +135,7 @@ class WhatsappAccount(models.Model):
         help="Points removed from the health score when delivery is below the warn threshold.")
     waha_health_deliv_crit_pct = fields.Integer(
         string='Delivery critical below (%)', default=30,
-        help="If confirmed-delivery %% is below this, the larger critical penalty applies instead "
+        help="If confirmed-delivery % is below this, the larger critical penalty applies instead "
              "of the warn one. Set 0 to disable this tier.")
     waha_health_deliv_crit_penalty = fields.Integer(
         string='Delivery critical penalty (points)', default=15,

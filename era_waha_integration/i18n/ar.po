@@ -1043,3 +1043,125 @@ msgstr "تسليم منخفض جداً: %.0f%% فقط من الرسائل الم
 #: code:addons/era_waha_integration/models/whatsapp_account.py:0
 msgid "Few delivery confirmations: %(pct).0f%% (note: WAHA delivery receipts are often delayed, so actual delivery is usually higher)."
 msgstr "تأكيدات تسليم قليلة: %(pct).0f%% (ملاحظة: إشعارات التسليم في WAHA كثيراً ما تتأخّر، فالتسليم الفعلي غالباً أعلى)."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Delivery scoring"
+msgstr "احتساب التسليم في الدرجة"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Warn below (%)"
+msgstr "تحذير تحت (%)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Warn penalty (points)"
+msgstr "عقوبة التحذير (نقاط)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Critical below (%)"
+msgstr "حرج تحت (%)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Critical penalty (points)"
+msgstr "عقوبة الحرج (نقاط)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_deliv_warn_pct
+msgid "Delivery warn below (%)"
+msgstr "تحذير التسليم تحت (%)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_deliv_warn_penalty
+msgid "Delivery warn penalty (points)"
+msgstr "عقوبة تحذير التسليم (نقاط)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_deliv_crit_pct
+msgid "Delivery critical below (%)"
+msgstr "تسليم حرج تحت (%)"
+
+#. module: era_waha_integration
+#: model:ir.model.fields,field_description:era_waha_integration.field_whatsapp_account__waha_health_deliv_crit_penalty
+msgid "Delivery critical penalty (points)"
+msgstr "عقوبة التسليم الحرجة (نقاط)"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Below this confirmed-delivery %, subtract the warn penalty. 0 disables."
+msgstr "تحت نسبة التسليم المؤكَّد هذه، تُخصَم عقوبة التحذير. 0 يُعطّل."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Below this confirmed-delivery %, subtract the larger critical penalty "
+"instead. 0 disables."
+msgstr "تحت نسبة التسليم المؤكَّد هذه، تُخصَم العقوبة الحرجة الأكبر بدلاً منها. 0 يُعطّل."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Points removed when delivery is below the warn threshold."
+msgstr "النقاط المخصومة عندما يكون التسليم تحت عتبة التحذير."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Points removed when delivery is below the critical threshold."
+msgstr "النقاط المخصومة عندما يكون التسليم تحت العتبة الحرجة."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_health_deliv_warn_penalty
+msgid ""
+"Points removed from the health score when delivery is below the warn "
+"threshold."
+msgstr "النقاط المخصومة من درجة الصحة عندما يكون التسليم تحت عتبة التحذير."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_health_deliv_crit_penalty
+msgid ""
+"Points removed from the health score when delivery is below the critical "
+"threshold."
+msgstr "النقاط المخصومة من درجة الصحة عندما يكون التسليم تحت العتبة الحرجة."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_health_deliv_warn_pct
+msgid ""
+"If confirmed-delivery % over the last 7 days is below this, subtract the "
+"warn penalty from the health score. Kept low by default because WAHA "
+"delivery receipts are often delayed. Set 0 to disable this tier."
+msgstr "إذا كانت نسبة التسليم المؤكَّد خلال آخر 7 أيام تحت هذه القيمة، تُخصَم عقوبة التحذير من درجة الصحة. القيمة منخفضة افتراضياً لأن إشعارات تسليم WAHA كثيراً ما تتأخّر. اضبطها على 0 لتعطيل هذه الطبقة."
+
+#. module: era_waha_integration
+#: model:ir.model.fields,help:era_waha_integration.field_whatsapp_account__waha_health_deliv_crit_pct
+msgid ""
+"If confirmed-delivery % is below this, the larger critical penalty applies "
+"instead of the warn one. Set 0 to disable this tier."
+msgstr "إذا كانت نسبة التسليم المؤكَّد تحت هذه القيمة، تُطبَّق العقوبة الحرجة الأكبر بدلاً من التحذير. اضبطها على 0 لتعطيل هذه الطبقة."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"Tune how much low delivery affects the score. WAHA delivery receipts are\n"
+"                            unreliable, so these are lenient by default. Set a threshold or its penalty\n"
+"                            to 0 to switch that tier off."
+msgstr "اضبط مدى تأثير ضعف التسليم على الدرجة. إشعارات تسليم WAHA غير موثوقة، لذا هذه القيم متساهلة افتراضياً. اضبط العتبة أو عقوبتها على 0 لإيقاف تلك الطبقة."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid ""
+"These users see ALL of this account's conversations and can send through it "
+"— without being WhatsApp administrators."
+msgstr "يرى هؤلاء المستخدمون كل محادثات هذا الحساب ويمكنهم الإرسال عبره — دون أن يكونوا مديري واتساب."
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Select users who get full access to this account"
+msgstr "اختر المستخدمين الذين يحصلون على وصول كامل لهذا الحساب"
+
+#. module: era_waha_integration
+#: model_terms:ir.ui.view,arch_db:era_waha_integration.whatsapp_account_view_form_waha
+msgid "Default Users (access)"
+msgstr "المستخدمون الافتراضيون (وصول)"

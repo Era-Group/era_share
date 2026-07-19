@@ -131,6 +131,18 @@ Webhook envelope: `{event, session, payload}`. We subscribe to
 timestamp, reaction{messageId,text}`. `@lid` JIDs resolve via `GET {s}/lids/{lid}`
 → `pn`.
 
+**Webhook reliability (critical):** the webhook config includes
+`retries: {policy:'linear', delaySeconds:2, attempts:15}` (`WAHA_WEBHOOK_RETRIES`).
+Without retries WAHA drops any message that arrives while Odoo is briefly unavailable —
+notably the ~30s restart on EVERY deploy — which silently loses messages. With retries
+WAHA re-delivers until we answer, so the live feed (and message ordering) stays intact.
+The controller returns **500 + rollback** on a processing exception (not 200) so WAHA
+retries; safe because handlers are idempotent (advisory lock + `_waha_uid_exists` dedup).
+`PUT sessions/{s}` updates the webhook config without restarting the session; re-apply
+to a running session via **Start Session** (its 422→PUT path). This is the primary fix
+for chronological order — live-captured messages get ascending ids in the right order,
+unlike a later API backfill (see §10).
+
 ## 6. Critical implementation notes (do not regress)
 
 - **Message id matching:** inbound `msg_uid` is WAHA's full serialized id

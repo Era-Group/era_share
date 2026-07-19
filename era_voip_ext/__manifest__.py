@@ -2,15 +2,16 @@
     "name": "CRM VoIP Call Insights",
     "summary": "Track VoIP calls, transcripts, and AI formatting in CRM.",
     "description": "Adds VoIP call counts to CRM leads and enhances call transcripts with AI formatting.",
-    "version": "19.0.1.0.5",
+    "version": "19.0.1.0.6",
     "author": "Era Group",
     "license": "LGPL-3",
-    "depends": ["crm", "voip", "voip_ai", "voip_hr_recruitment"],
+    "depends": ["crm", "voip", "voip_ai", "voip_hr_recruitment", "era_ai_accounts"],
     "data": [
         "data/ai_agent.xml",
         "data/ir_cron.xml",
         "views/crm_lead_views.xml",
         "views/voip_call_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     "assets": {
         "web.assets_backend": [

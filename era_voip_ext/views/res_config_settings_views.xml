@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_era_voip" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.era.voip.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='integration']" position="inside">
+                <setting id="era_voip_transcription_account"
+                         string="VoIP: Transcription AI Account"
+                         help="AI account (OpenAI, API key) used for call speech-to-text (Whisper). Keeps the key out of the native AI settings field."
+                         groups="base.group_system">
+                    <field name="era_voip_transcription_account_id"/>
+                </setting>
+                <setting id="era_voip_text_account"
+                         string="VoIP: Summary &amp; Formatting AI Account"
+                         help="AI account used to format the call transcript and generate the one-line summary. Leave empty to fall back to the first OpenAI API-key account."
+                         groups="base.group_system">
+                    <field name="era_voip_text_account_id"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

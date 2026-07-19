@@ -383,7 +383,7 @@ class VoipCall(models.Model):
         self._commit_if_needed()
 
         try:
-            account = self._openai_api_key_account()
+            account = self._transcription_account()
             svc_env = (
                 self.with_context(era_ai_account_id=account.id).env
                 if account else self.env
@@ -434,6 +434,9 @@ class VoipCall(models.Model):
             ai_agent = self.env.ref("voip_ai.voip_call_summary_agent", raise_if_not_found=False)
             if ai_agent and transcript:
                 odoobot = self.env.ref('base.user_root')
+                text_account = self._text_account()
+                if text_account:
+                    ai_agent = ai_agent.with_context(era_ai_account_id=text_account.id)
                 summary_response = ai_agent.with_user(odoobot).get_direct_response(prompt=text)
                 if summary_response:
                     summary = summary_response[0]
@@ -474,6 +477,37 @@ class VoipCall(models.Model):
             ],
             order="id",
             limit=1,
+        )
+
+    def _config_ai_account(self, param):
+        """Resolve a configured era.ai.account from an ir.config_parameter id."""
+        Account = self.env.get("era.ai.account")
+        if Account is None:
+            return None
+        acc_id = self.env["ir.config_parameter"].sudo().get_param(param)
+        if not acc_id:
+            return None
+        try:
+            account = Account.sudo().browse(int(acc_id)).exists()
+        except (TypeError, ValueError):
+            return None
+        return account if (account and account.active) else None
+
+    def _transcription_account(self):
+        """AI account for speech-to-text: the configured transcription account,
+        else the first OpenAI API-key account, else None (native key/env)."""
+        return (
+            self._config_ai_account("era_voip_ext.transcription_account_id")
+            or self._openai_api_key_account()
+        )
+
+    def _text_account(self):
+        """AI account for transcript formatting and the one-line summary: the
+        configured text account, else the first OpenAI API-key account, else
+        None (each agent then uses its own account / the native key)."""
+        return (
+            self._config_ai_account("era_voip_ext.text_account_id")
+            or self._openai_api_key_account()
         )
 
     def _cleanup_ai_recording_copy(self, call):
@@ -524,6 +558,9 @@ class VoipCall(models.Model):
             if not ai_agent:
                 return text
             odoobot = self.env.ref('base.user_root')
+            text_account = self._text_account()
+            if text_account:
+                ai_agent = ai_agent.with_context(era_ai_account_id=text_account.id)
             response = ai_agent.with_user(odoobot).get_direct_response(prompt=f"{prompt}\n\n{text}")
             if response:
                 formatted = response[0]

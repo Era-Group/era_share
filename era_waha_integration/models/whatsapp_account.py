@@ -987,12 +987,17 @@ class WhatsappAccount(models.Model):
             reasons.append((-err_pen, _("%(pct).0f%% of the last 7 days' outbound messages failed (%(err)s of %(out)s).",
                                         pct=error_rate * 100, err=error, out=outbound)))
         if outbound >= 5:
-            if delivered_rate < 0.5:
-                score -= 20
-                reasons.append((-20, _("Low delivery: only %.0f%% of sent messages reached the recipient.", delivered_rate * 100)))
-            elif delivered_rate < 0.8:
-                score -= 10
-                reasons.append((-10, _("Delivery below target: %.0f%% delivered (aim for 80%%+).", delivered_rate * 100)))
+            # WAHA (unofficial) delivery receipts (ack 2) are frequently delayed or never
+            # arrive, so many genuinely-delivered messages stay at 'sent'. A moderate
+            # confirmed-delivery rate is therefore NORMAL and is NOT penalized — only a
+            # genuinely low rate (broken session, invalid/blocked numbers) docks points,
+            # and gently. (The KPI itself stays honest: it shows confirmed deliveries.)
+            if delivered_rate < 0.3:
+                score -= 15
+                reasons.append((-15, _("Very low delivery: only %.0f%% of sent messages were confirmed delivered.", delivered_rate * 100)))
+            elif delivered_rate < 0.5:
+                score -= 5
+                reasons.append((-5, _("Few delivery confirmations: %(pct).0f%% (note: WAHA delivery receipts are often delayed, so actual delivery is usually higher).", pct=delivered_rate * 100)))
         flap_pen = min(20, (self.waha_flap_count or 0) * 5)
         if flap_pen:
             score -= flap_pen

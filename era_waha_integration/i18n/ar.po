@@ -1031,3 +1031,15 @@ msgstr "لماذا هذه الدرجة"
 #: code:addons/era_waha_integration/static/src/core/common/message_post_reason_patch.js:0
 msgid "WhatsApp message not sent"
 msgstr "لم تُرسل رسالة الواتساب"
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Very low delivery: only %.0f%% of sent messages were confirmed delivered."
+msgstr "تسليم منخفض جداً: %.0f%% فقط من الرسائل المُرسَلة تأكّد تسليمها."
+
+#. module: era_waha_integration
+#. odoo-python
+#: code:addons/era_waha_integration/models/whatsapp_account.py:0
+msgid "Few delivery confirmations: %(pct).0f%% (note: WAHA delivery receipts are often delayed, so actual delivery is usually higher)."
+msgstr "تأكيدات تسليم قليلة: %(pct).0f%% (ملاحظة: إشعارات التسليم في WAHA كثيراً ما تتأخّر، فالتسليم الفعلي غالباً أعلى)."

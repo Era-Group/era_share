@@ -9,7 +9,13 @@ _logger = logging.getLogger(__name__)
 
 
 def _is_waha_channel(channel):
-    return channel.channel_type == 'whatsapp' and channel.wa_account_id.provider == 'waha'
+    # Read `provider` via sudo: this predicate feeds computed fields
+    # (is_waha_channel / whatsapp_channel_valid_until) that Odoo evaluates while
+    # serializing the channel to EACH of its members. WhatsApp contacts are channel
+    # members and are usually portal users, who have no read access to whatsapp.account
+    # — a non-sudo read there raises AccessError and aborts the whole send/post.
+    # `provider` is non-sensitive routing metadata, safe to expose to a channel member.
+    return channel.channel_type == 'whatsapp' and channel.wa_account_id.sudo().provider == 'waha'
 
 
 class DiscussChannel(models.Model):
@@ -35,8 +41,7 @@ class DiscussChannel(models.Model):
         composer stays enabled (composer_patch.js early-returns on a falsy value). A
         far-future datetime must NOT be used: it makes the composer schedule a clamped
         ~1ms setTimeout loop and spin the CPU."""
-        waha = self.filtered(
-            lambda c: c.channel_type == 'whatsapp' and c.wa_account_id.provider == 'waha')
+        waha = self.filtered(_is_waha_channel)
         for channel in waha:
             channel.whatsapp_channel_valid_until = False
         super(DiscussChannel, self - waha)._compute_whatsapp_channel_valid_until()

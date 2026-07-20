@@ -705,6 +705,18 @@ class WhatsappAccount(models.Model):
         self._waha_grant_members(channel)
         was_empty = not channel.message_ids
         content = self._waha_build_content(payload)
+        if not content.get('body') and not content.get('attachments'):
+            if payload.get('hasMedia'):
+                # Real media we could not fetch — keep it visible rather than losing it.
+                content['body'] = plaintext2html('[%s]' % _("media message could not be downloaded"))
+            else:
+                # Nothing renderable: a WhatsApp protocol/system notification (E2E session
+                # setup, a revoked-message stub, an unsupported type) — not a real message.
+                # Posting it would create an EMPTY message, which Discuss renders as
+                # "This message has been removed", cluttering the chat with phantom entries.
+                _logger.debug("WAHA: skipping content-less message %s (type=%s)",
+                              msg_uid, payload.get('type'))
+                return
         try:
             with self.env.cr.savepoint():
                 channel.message_post(
@@ -844,6 +856,13 @@ class WhatsappAccount(models.Model):
             if not uid or self._waha_uid_exists(uid):
                 continue
             content = dict(self._waha_build_content(waha_message))
+            if not content.get('body') and not content.get('attachments'):
+                if waha_message.get('hasMedia'):
+                    content['body'] = plaintext2html('[%s]' % _("media message could not be downloaded"))
+                else:
+                    # Same rule as the live path: never import a content-less protocol/system
+                    # entry, which would show up as "This message has been removed".
+                    continue
             ts = waha_message.get('timestamp')
             if ts:
                 try:

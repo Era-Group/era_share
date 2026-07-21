@@ -849,7 +849,12 @@ class WhatsappAccount(models.Model):
         """Import a list of WAHA messages (already oldest-first) into a Discuss channel
         without re-sending them. Returns the number actually imported."""
         self.ensure_one()
-        operator = self.notify_user_ids[:1].partner_id or self.env.ref('base.partner_root')
+        # Messages sent from the WhatsApp number itself (from the phone / before the
+        # integration) carry NO sender identity — WhatsApp never tells us which employee
+        # sent them. Crediting an arbitrary user (this used to be the first Default User)
+        # falsely attributes everyone's history to one person, so attribute imported
+        # outbound messages to OdooBot, making clear they came from the WAHA number.
+        operator = self.env.ref('base.partner_root')
         count = 0
         for waha_message in waha_messages:
             uid = self._waha_extract_id(waha_message.get('id'))

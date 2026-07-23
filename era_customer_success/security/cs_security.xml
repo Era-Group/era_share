@@ -157,4 +157,22 @@
         <field name="model_id" ref="model_cs_success_milestone"/>
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
+
+    <record id="cs_support_wallet_rule_own" model="ir.rule">
+        <field name="name">CS Support Wallet: own (CSM)</field>
+        <field name="model_id" ref="model_cs_support_wallet"/>
+        <field name="domain_force">[('csm_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_user'))]"/>
+    </record>
+    <record id="cs_support_wallet_rule_manager" model="ir.rule">
+        <field name="name">CS Support Wallet: all (Manager)</field>
+        <field name="model_id" ref="model_cs_support_wallet"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_support_wallet_rule_company" model="ir.rule">
+        <field name="name">CS Support Wallet: allowed companies</field>
+        <field name="model_id" ref="model_cs_support_wallet"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 </odoo>

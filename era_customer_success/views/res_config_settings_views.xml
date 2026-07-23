@@ -37,6 +37,29 @@
                             <field name="cs_ai_success_plan_enabled"/>
                         </setting>
                     </block>
+                    <block title="Support Hours Automation" id="cs_support_hours_block">
+                        <setting string="Support Hours Products"
+                                 help="Select prepaid time products that represent support-hour packages. Packages already used on Helpdesk tickets are detected automatically.">
+                            <field name="cs_support_product_tmpl_ids" widget="many2many_tags"
+                                   domain="[('invoice_policy', '=', 'order'), ('service_type', '=', 'timesheet')]"/>
+                        </setting>
+                        <setting string="Package Validity"
+                                 help="Default validity from the confirmed order date when monitoring package expiry.">
+                            <field name="cs_support_validity_days" class="oe_inline"/> days
+                        </setting>
+                        <setting string="Balance Alerts"
+                                 help="Create Customer Success attention signals before prepaid support hours run out.">
+                            <div class="content-group">
+                                <label for="cs_support_low_threshold"/> <field name="cs_support_low_threshold" class="oe_inline"/>%
+                                <br/>
+                                <label for="cs_support_critical_threshold"/> <field name="cs_support_critical_threshold" class="oe_inline"/>%
+                            </div>
+                        </setting>
+                        <setting string="Expiry Warning"
+                                 help="Warn the CSM this many days before the support package expires.">
+                            <field name="cs_support_expiry_warning_days" class="oe_inline"/> days
+                        </setting>
+                    </block>
                 </app>
             </xpath>
         </field>

@@ -4,6 +4,12 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.17.0.0 — Automated Support Hours
+- Added a read-only Customer Success wallet over Odoo's native prepaid Sales/Timesheet balance; no hours are duplicated or manually maintained.
+- Support packages already linked to Helpdesk are detected automatically, while managers can configure additional prepaid time products and company-level validity/alert thresholds.
+- Added live purchased, used, remaining, expiry and balance-status visibility per customer. Exhausted, expired, critical, low and expiring packages feed one prioritized item into `My Work Today`.
+- Added a one-click `Explore Need` path that starts a draft support-hours offering with the current usage evidence. It creates no CRM opportunity until the customer confirms interest and the CSM qualifies it.
+
 ## 19.0.16.0.0 — Customer Success Plans
 - Added one easy-to-open success plan per customer with business objectives, current challenges, desired outcomes, measurable success criteria and ERA's next value plan.
 - Added a stakeholder map linked only to known customer contacts, including role, influence and relationship strength.

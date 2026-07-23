@@ -157,6 +157,10 @@
                                 help="Open the shared customer success objectives, stakeholders and milestones.">
                             <field name="open_success_milestone_count" widget="statinfo" string="Success Plan"/>
                         </button>
+                        <button class="oe_stat_button" type="object" name="action_view_support_wallets" icon="fa-clock-o"
+                                help="View prepaid support-hour packages and their live Timesheet consumption.">
+                            <field name="support_hours_remaining" widget="statinfo" string="Support Hours"/>
+                        </button>
                     </div>
                     <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>
                     <div class="oe_title">
@@ -240,6 +244,10 @@
                             <field name="sentiment_label" widget="cs_sentiment_badge"
                                    help="Hover the badge to see the per-ticket analysis behind this score."/>
                             <field name="sentiment_score"/>
+                            <field name="support_wallet_status" widget="badge"/>
+                            <field name="support_hours_purchased"/>
+                            <field name="support_hours_used"/>
+                            <field name="support_hours_remaining"/>
                         </group>
                     </group>
                     <group>

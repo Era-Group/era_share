@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_support_wallet_list" model="ir.ui.view">
+        <field name="name">cs.support.wallet.list</field>
+        <field name="model">cs.support.wallet</field>
+        <field name="arch" type="xml">
+            <list string="Support Hours"
+                  decoration-danger="status in ('exhausted','expired')"
+                  decoration-warning="status in ('critical','low','expiring')">
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="product_id"/>
+                <field name="purchased_hours" sum="Total"/>
+                <field name="used_hours" sum="Total"/>
+                <field name="remaining_hours" sum="Total"/>
+                <field name="remaining_percentage" widget="progressbar" optional="show"/>
+                <field name="order_date" optional="hide"/>
+                <field name="last_usage_date" optional="hide"/>
+                <field name="expiry_date"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'healthy'"
+                       decoration-warning="status in ('expiring','low')"
+                       decoration-danger="status in ('critical','exhausted','expired')"/>
+                <button name="action_explore_support_need" type="object"
+                        string="Explore Need" icon="fa-comments"/>
+                <button name="action_open_sale_order" type="object"
+                        string="Source" icon="fa-external-link" groups="era_customer_success.group_era_cs_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_support_wallet_form" model="ir.ui.view">
+        <field name="name">cs.support.wallet.form</field>
+        <field name="model">cs.support.wallet</field>
+        <field name="arch" type="xml">
+            <form string="Support Hours" create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_explore_support_need" type="object"
+                            string="Explore Additional Support Need" class="btn-primary"/>
+                    <button name="action_open_sale_order" type="object"
+                            string="Open Source Order" groups="era_customer_success.group_era_cs_manager"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="product_id"/></h1>
+                        <h2><field name="partner_id"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="purchased_hours"/>
+                            <field name="used_hours"/>
+                            <field name="remaining_hours"/>
+                            <field name="remaining_percentage" widget="progressbar"/>
+                        </group>
+                        <group>
+                            <field name="expiry_date"/>
+                            <field name="order_date"/>
+                            <field name="last_usage_date"/>
+                            <field name="csm_user_id" widget="many2one_avatar_user"/>
+                            <field name="order_id" groups="era_customer_success.group_era_cs_manager"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="status">
+                        راجع قيمة الدعم المقدمة والاحتياج القادم مع العميل قبل تحويله إلى فرصة مؤهلة.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cs_support_wallet_search" model="ir.ui.view">
+        <field name="name">cs.support.wallet.search</field>
+        <field name="model">cs.support.wallet</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="csm_user_id"/>
+                <filter name="needs_attention" string="Needs Attention"
+                        domain="[('attention_rank', '&gt;', 0)]"/>
+                <filter name="exhausted" string="Exhausted / Expired"
+                        domain="[('status', 'in', ('exhausted','expired'))]"/>
+                <group>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_product" string="Package" context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cs_support_wallet" model="ir.actions.act_window">
+        <field name="name">Support Hours</field>
+        <field name="res_model">cs.support.wallet</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_support_wallet_search"/>
+    </record>
+</odoo>

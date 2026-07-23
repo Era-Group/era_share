@@ -11,6 +11,9 @@
     <menuitem id="menu_cs_weekly_suggestions_my" name="My Work Today"
                parent="menu_cs_root" action="action_cs_weekly_suggestion_my" sequence="15"/>
 
+    <menuitem id="menu_cs_support_wallets" name="Support Hours"
+              parent="menu_cs_root" action="action_cs_support_wallet" sequence="20"/>
+
     <menuitem id="menu_cs_offerings" name="Offerings"
               parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
 

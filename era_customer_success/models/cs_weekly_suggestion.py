@@ -37,6 +37,7 @@ class CsWeeklySuggestion(models.Model):
     action_type = fields.Selection([
         ('risk_recovery', 'Risk Recovery'),
         ('support_recovery', 'Support Recovery'),
+        ('support_hours', 'Support Hours'),
         ('relationship', 'Relationship Follow-up'),
         ('renewal', 'Renewal Follow-up'),
         ('value', 'Deliver Value'),

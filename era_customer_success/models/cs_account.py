@@ -199,6 +199,23 @@ class CsAccount(models.Model):
     ticket_total_count = fields.Integer(string='# Tickets (All)', compute='_compute_counts')
     avg_resolution_hours = fields.Float(string='Avg Resolution (h)', compute='_compute_counts')
     sla_failed_count = fields.Integer(string='# Failed SLA', compute='_compute_counts')
+    support_wallet_count = fields.Integer(
+        string='Support Packages', compute='_compute_support_wallet_metrics')
+    support_hours_purchased = fields.Float(
+        string='Support Hours Purchased', compute='_compute_support_wallet_metrics')
+    support_hours_used = fields.Float(
+        string='Support Hours Used', compute='_compute_support_wallet_metrics')
+    support_hours_remaining = fields.Float(
+        string='Support Hours Remaining', compute='_compute_support_wallet_metrics')
+    support_wallet_status = fields.Selection([
+        ('none', 'No Package'),
+        ('healthy', 'Healthy'),
+        ('expiring', 'Expiring Soon'),
+        ('low', 'Low Balance'),
+        ('critical', 'Critical Balance'),
+        ('exhausted', 'Exhausted'),
+        ('expired', 'Expired'),
+    ], string='Support Hours Status', compute='_compute_support_wallet_metrics')
 
     # ------------------------------------------------------------------
     # Satisfaction (rating / survey)
@@ -316,6 +333,33 @@ class CsAccount(models.Model):
             account.open_success_milestone_count = len(milestones)
             dates = milestones.mapped('target_date')
             account.next_success_milestone_date = min(dates) if dates else False
+
+    @api.depends('partner_id', 'company_id')
+    def _compute_support_wallet_metrics(self):
+        Wallet = self.env['cs.support.wallet'].sudo()
+        status_rank = {
+            'none': -1, 'healthy': 0, 'expiring': 1, 'low': 2,
+            'critical': 3, 'expired': 4, 'exhausted': 5,
+        }
+        wallets_by_account = {account.id: Wallet.browse() for account in self}
+        for wallet in Wallet.search([('cs_account_id', 'in', self.ids)]):
+            wallets_by_account[wallet.cs_account_id.id] |= wallet
+        today = fields.Date.context_today(self)
+        for account in self:
+            wallets = wallets_by_account[account.id]
+            active_wallets = wallets.filtered(
+                lambda wallet: wallet.expiry_date >= today and wallet.remaining_hours > 0)
+            attention_wallets = (
+                active_wallets.filtered('attention_rank')
+                if active_wallets else wallets.filtered('attention_rank'))
+            status_wallets = attention_wallets or active_wallets or wallets
+            account.support_wallet_count = len(wallets)
+            account.support_hours_purchased = sum(active_wallets.mapped('purchased_hours'))
+            account.support_hours_used = sum(active_wallets.mapped('used_hours'))
+            account.support_hours_remaining = sum(active_wallets.mapped('remaining_hours'))
+            account.support_wallet_status = max(
+                status_wallets.mapped('status'), key=lambda status: status_rank.get(status, 0),
+                default='none')
 
     @api.depends('partner_id')
     def _compute_counts(self):
@@ -953,6 +997,17 @@ class CsAccount(models.Model):
             'target': 'current',
         }
 
+    def action_view_support_wallets(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Support Hours'),
+            'res_model': 'cs.support.wallet',
+            'view_mode': 'list,form',
+            'domain': [('cs_account_id', '=', self.id)],
+            'context': {'search_default_needs_attention': 1},
+        }
+
     def action_cs_present_offering(self):
         self.ensure_one()
         return {
@@ -1533,12 +1588,40 @@ class CsAccount(models.Model):
                 'reason': _('Negative sentiment or a failed support SLA may damage customer trust.'),
                 'recommended_action': _('Review the support issue, contact the customer with a clear update, and record the recovery commitment.'),
             }
+        wallets = self.env['cs.support.wallet'].sudo().search([
+            ('cs_account_id', '=', self.id),
+        ], order='order_date desc, id desc')
+        active_wallets = wallets.filtered(
+            lambda item: item.expiry_date >= today and item.remaining_hours > 0)
+        candidates = (
+            active_wallets.filtered('attention_rank')
+            if active_wallets else wallets.filtered('attention_rank'))
+        wallet = max(candidates, key=lambda item: item.attention_rank, default=False)
+        if wallet:
+            urgent = wallet.status in ('exhausted', 'expired')
+            return {
+                'source': 'automation',
+                'action_type': 'support_hours',
+                'priority': 'high' if urgent else 'medium',
+                'rank': 3,
+                'due_date': today,
+                'reason': _(
+                    'Support package "%(package)s" has %(remaining).1f hours remaining '
+                    '(%(percent).0f%%); status: %(status)s.',
+                    package=wallet.product_id.display_name,
+                    remaining=wallet.remaining_hours,
+                    percent=wallet.remaining_percentage,
+                    status=wallet.status),
+                'recommended_action': _(
+                    'Review delivered support value and upcoming needs with the customer. '
+                    'Create a qualified support-hours need only after confirming interest.'),
+            }
         if self.renewal_date and 0 <= self.days_to_renewal <= 90:
             return {
                 'source': 'automation',
                 'action_type': 'renewal',
                 'priority': 'high' if self.days_to_renewal <= 30 else 'medium',
-                'rank': 3,
+                'rank': 4,
                 'due_date': today,
                 'reason': _('The customer is within the renewal attention window.'),
                 'recommended_action': _('Review delivered value and customer concerns before handing any commercial need to the responsible team.'),
@@ -1556,7 +1639,7 @@ class CsAccount(models.Model):
                 'action_type': 'success_milestone',
                 'priority': 'urgent' if milestone.state == 'blocked' else (
                     'high' if overdue else milestone.priority),
-                'rank': 4,
+                'rank': 5,
                 'due_date': min(milestone.target_date, today),
                 'reason': _(
                     'Success milestone "%(milestone)s" is %(timing)s.',
@@ -1572,7 +1655,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'relationship',
                 'priority': 'high' if self.days_since_touch >= overdue_days * 2 else 'medium',
-                'rank': 5,
+                'rank': 6,
                 'due_date': today,
                 'reason': _('Customer contact is missing or overdue for the agreed follow-up cadence.'),
                 'recommended_action': _('Make a value-led check-in, confirm current priorities, and agree on the next contact date.'),
@@ -1582,7 +1665,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'value',
                 'priority': 'medium',
-                'rank': 6,
+                'rank': 7,
                 'due_date': today,
                 'reason': _('Low system usage indicates that the customer may not be realizing enough value.'),
                 'recommended_action': _('Identify the adoption blocker and offer a targeted enablement, training, or support action.'),

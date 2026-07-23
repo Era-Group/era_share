@@ -361,6 +361,146 @@ msgid "What value should ERA deliver next?"
 msgstr "ما القيمة التالية التي ينبغي أن تقدمها إيرا؟"
 
 #. module: era_customer_success
+msgid "Support Hours"
+msgstr "ساعات الدعم"
+
+#. module: era_customer_success
+msgid "Support Package"
+msgstr "باقة الدعم"
+
+#. module: era_customer_success
+msgid "Support Packages"
+msgstr "باقات الدعم"
+
+#. module: era_customer_success
+msgid "Purchased Hours"
+msgstr "الساعات المشتراة"
+
+#. module: era_customer_success
+msgid "Used Hours"
+msgstr "الساعات المستخدمة"
+
+#. module: era_customer_success
+msgid "Remaining Hours"
+msgstr "الساعات المتبقية"
+
+#. module: era_customer_success
+msgid "Remaining %"
+msgstr "نسبة الرصيد المتبقي"
+
+#. module: era_customer_success
+msgid "Expires On"
+msgstr "تنتهي في"
+
+#. module: era_customer_success
+msgid "Support Hours Purchased"
+msgstr "ساعات الدعم المشتراة"
+
+#. module: era_customer_success
+msgid "Support Hours Used"
+msgstr "ساعات الدعم المستخدمة"
+
+#. module: era_customer_success
+msgid "Support Hours Remaining"
+msgstr "ساعات الدعم المتبقية"
+
+#. module: era_customer_success
+msgid "Support Hours Status"
+msgstr "حالة ساعات الدعم"
+
+#. module: era_customer_success
+msgid "No Package"
+msgstr "لا توجد باقة"
+
+#. module: era_customer_success
+msgid "Expiring Soon"
+msgstr "تنتهي قريباً"
+
+#. module: era_customer_success
+msgid "Low Balance"
+msgstr "رصيد منخفض"
+
+#. module: era_customer_success
+msgid "Critical Balance"
+msgstr "رصيد حرج"
+
+#. module: era_customer_success
+msgid "Exhausted"
+msgstr "نفدت"
+
+#. module: era_customer_success
+msgid "Expired"
+msgstr "منتهية"
+
+#. module: era_customer_success
+msgid "Explore Need"
+msgstr "استكشاف الاحتياج"
+
+#. module: era_customer_success
+msgid "Explore Additional Support Need"
+msgstr "استكشاف احتياج دعم إضافي"
+
+#. module: era_customer_success
+msgid "Additional Support Hours - %s"
+msgstr "ساعات دعم إضافية - %s"
+
+#. module: era_customer_success
+msgid "Need Type"
+msgstr "نوع الاحتياج"
+
+#. module: era_customer_success
+msgid "ERA Module"
+msgstr "موديول من إيرا"
+
+#. module: era_customer_success
+msgid "Current Support Package"
+msgstr "باقة الدعم الحالية"
+
+#. module: era_customer_success
+msgid "Needs Attention"
+msgstr "تحتاج اهتماماً"
+
+#. module: era_customer_success
+msgid "Exhausted / Expired"
+msgstr "نافدة أو منتهية"
+
+#. module: era_customer_success
+msgid "Support Hours Products"
+msgstr "منتجات ساعات الدعم"
+
+#. module: era_customer_success
+msgid "Support Package Validity (Days)"
+msgstr "صلاحية باقة الدعم بالأيام"
+
+#. module: era_customer_success
+msgid "Low Support Balance (%)"
+msgstr "حد الرصيد المنخفض (%)"
+
+#. module: era_customer_success
+msgid "Critical Support Balance (%)"
+msgstr "حد الرصيد الحرج (%)"
+
+#. module: era_customer_success
+msgid "Support Expiry Warning (Days)"
+msgstr "التنبيه قبل انتهاء الدعم بالأيام"
+
+#. module: era_customer_success
+msgid "Support Hours Automation"
+msgstr "أتمتة ساعات الدعم"
+
+#. module: era_customer_success
+msgid "Package Validity"
+msgstr "صلاحية الباقة"
+
+#. module: era_customer_success
+msgid "Balance Alerts"
+msgstr "تنبيهات الرصيد"
+
+#. module: era_customer_success
+msgid "Expiry Warning"
+msgstr "تنبيه الانتهاء"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

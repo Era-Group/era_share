@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class ResCompany(models.Model):
@@ -41,3 +42,42 @@ class ResCompany(models.Model):
         help="When enabled, CSMs can ask AI to draft customer objectives, success "
              "criteria, stakeholders and milestones from the customer snapshot. "
              "Drafts require human review before activation.")
+    cs_support_product_tmpl_ids = fields.Many2many(
+        'product.template', 'res_company_cs_support_product_rel',
+        'company_id', 'product_tmpl_id', string='Support Hours Products',
+        help="Prepaid time products treated as customer support-hour wallets. "
+             "Packages already linked to Helpdesk tickets are detected automatically.")
+    cs_support_validity_days = fields.Integer(
+        string='Support Package Validity (Days)', default=365)
+    cs_support_low_threshold = fields.Float(
+        string='Low Support Balance (%)', default=25.0)
+    cs_support_critical_threshold = fields.Float(
+        string='Critical Support Balance (%)', default=10.0)
+    cs_support_expiry_warning_days = fields.Integer(
+        string='Support Expiry Warning (Days)', default=30)
+
+    @api.constrains(
+        'cs_support_low_threshold', 'cs_support_critical_threshold',
+        'cs_support_validity_days', 'cs_support_expiry_warning_days')
+    def _check_support_wallet_settings(self):
+        for company in self:
+            if not 0 <= company.cs_support_critical_threshold <= company.cs_support_low_threshold <= 100:
+                raise ValidationError(_(
+                    'Support balance thresholds must be between 0 and 100, and the '
+                    'critical threshold cannot exceed the low threshold.'))
+            if company.cs_support_validity_days <= 0:
+                raise ValidationError(_('Support package validity must be greater than zero days.'))
+            if company.cs_support_expiry_warning_days < 0:
+                raise ValidationError(_('Support expiry warning days cannot be negative.'))
+
+    @api.constrains('cs_support_product_tmpl_ids')
+    def _check_support_wallet_products(self):
+        hour = self.env.ref('uom.product_uom_hour')
+        for company in self:
+            invalid = company.cs_support_product_tmpl_ids.filtered(
+                lambda product: product.service_policy != 'ordered_prepaid'
+                or not product.uom_id._has_common_reference(hour))
+            if invalid:
+                raise ValidationError(_(
+                    'Support wallet products must be prepaid services measured in time: %s',
+                    ', '.join(invalid.mapped('display_name'))))

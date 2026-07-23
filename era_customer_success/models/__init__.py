@@ -15,3 +15,4 @@ from . import survey_user_input
 from . import ir_attachment
 from . import cs_weekly_suggestion
 from . import cs_success_profile
+from . import cs_support_wallet

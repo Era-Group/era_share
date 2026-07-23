@@ -58,6 +58,8 @@
                         </group>
                         <group>
                             <field name="service_id"/>
+                            <field name="need_type"/>
+                            <field name="support_sale_line_id" invisible="need_type != 'support_hours'"/>
                             <field name="offering_date"/>
                             <field name="channel"/>
                             <field name="expected_value" widget="monetary"/>

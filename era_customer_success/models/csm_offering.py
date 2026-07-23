@@ -12,9 +12,13 @@ class CsmOffering(models.Model):
     _description = 'Customer Success Offering'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'offering_date desc, id desc'
+    _check_company_auto = True
 
     name = fields.Char(string='Offering', required=True, tracking=True)
-    cs_account_id = fields.Many2one('cs.account', string='Customer Success Account', ondelete='cascade')
+    cs_account_id = fields.Many2one('cs.account', string='Customer Success Account',
+                                    ondelete='cascade', check_company=True)
+    company_id = fields.Many2one('res.company', required=True, index=True,
+                                 default=lambda self: self.env.company)
     partner_id = fields.Many2one('res.partner', string='Customer', required=True, tracking=True)
     csm_user_id = fields.Many2one(
         'res.users', string='Presented By', default=lambda self: self.env.user, tracking=True)
@@ -84,6 +88,7 @@ class CsmOffering(models.Model):
     @api.onchange('cs_account_id')
     def _onchange_cs_account_id(self):
         if self.cs_account_id:
+            self.company_id = self.cs_account_id.company_id
             if not self.partner_id:
                 self.partner_id = self.cs_account_id.partner_id
             if not self.csm_user_id:
@@ -92,10 +97,11 @@ class CsmOffering(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if not vals.get('partner_id') and vals.get('cs_account_id'):
+            if vals.get('cs_account_id'):
                 account = self.env['cs.account'].browse(vals['cs_account_id'])
-                vals['partner_id'] = account.partner_id.id
+                vals.setdefault('partner_id', account.partner_id.id)
                 vals.setdefault('csm_user_id', account.csm_user_id.id)
+                vals.setdefault('company_id', account.company_id.id)
         return super().create(vals_list)
 
     def action_present(self):

@@ -7,11 +7,14 @@ class CsNextAction(models.Model):
     _description = 'Customer Success Next Best Action (AI)'
     _order = 'generated_on desc, id desc'
     _rec_name = 'name'
+    _check_company_auto = True
 
     cs_account_id = fields.Many2one(
-        'cs.account', string='Account', required=True, ondelete='cascade', index=True)
+        'cs.account', string='Account', required=True, ondelete='cascade', index=True,
+        check_company=True)
     partner_id = fields.Many2one(related='cs_account_id.partner_id', store=True, string='Customer')
     csm_user_id = fields.Many2one(related='cs_account_id.csm_user_id', store=True, string='CSM Engineer')
+    company_id = fields.Many2one(related='cs_account_id.company_id', store=True, index=True)
     name = fields.Char(string='Recommended Action', required=True)
     reason = fields.Text(string='Reason')
     priority = fields.Selection([

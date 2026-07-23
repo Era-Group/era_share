@@ -77,6 +77,7 @@ class CsAccount(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'health_score asc, next_touch_date asc, id desc'
     _rec_name = 'partner_id'
+    _check_company_auto = True
 
     # ------------------------------------------------------------------
     # Core / assignment
@@ -88,7 +89,8 @@ class CsAccount(models.Model):
              "One account per company; child contacts are aggregated automatically.")
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(
-        'res.company', string='Company', default=lambda self: self.env.company)
+        'res.company', string='Company', required=True, index=True,
+        default=lambda self: self.env.company)
     currency_id = fields.Many2one(related='company_id.currency_id')
     # Contact channels (phone uses the VoIP click-to-dial widget)
     phone = fields.Char(related='partner_id.phone', string='Phone', readonly=False)
@@ -133,7 +135,7 @@ class CsAccount(models.Model):
     churn_risk = fields.Boolean(string='Churn Risk', tracking=True, readonly=True)
     kanban_color = fields.Integer(string='Kanban Color', readonly=True)
     # AI churn forecast (predictive, grounded on snapshot history + situation)
-    churn_probability = fields.Integer(string='Churn Probability 90d (%)', readonly=True, tracking=True, aggregator='avg')
+    churn_probability = fields.Integer(string='Churn Probability 90d (%)', readonly=True, aggregator='avg')
     churn_prob_30 = fields.Integer(string='Churn 30d (%)', readonly=True, aggregator='avg')
     churn_prob_60 = fields.Integer(string='Churn 60d (%)', readonly=True, aggregator='avg')
     churn_confidence = fields.Selection([
@@ -370,21 +372,26 @@ class CsAccount(models.Model):
     # ==================================================================
     @api.model_create_multi
     def create(self, vals_list):
+        if not self.env.user.has_group('era_customer_success.group_era_cs_manager'):
+            for vals in vals_list:
+                if vals.get('csm_user_id') not in (False, self.env.user.id):
+                    raise UserError(_('Only a Customer Success Manager can assign accounts to another user.'))
         accounts = super().create(vals_list)
         accounts._sync_partner_link()
         accounts._mirror_csm_to_partner()
-        accounts._ensure_csm_in_group()
         accounts._recompute_account_metrics()
         accounts._launch_kickoff()
         return accounts
 
     def write(self, vals):
+        if ('csm_user_id' in vals
+                and not self.env.user.has_group('era_customer_success.group_era_cs_manager')):
+            raise UserError(_('Only a Customer Success Manager can change the assigned CSM.'))
         res = super().write(vals)
         if 'partner_id' in vals:
             self._sync_partner_link()
         if 'csm_user_id' in vals and not self.env.context.get('skip_cs_mirror'):
             self._mirror_csm_to_partner()
-            self._ensure_csm_in_group()
         if 'lifecycle_stage_id' in vals:
             self._on_stage_change()
         # Auto-refresh the stored metrics after any change to the record. This is a
@@ -412,19 +419,6 @@ class CsAccount(models.Model):
             if 'followup_responsible_id' in acc.partner_id._fields:
                 vals['followup_responsible_id'] = acc.csm_user_id.id
             acc.partner_id.with_context(skip_cs_mirror=True).sudo().write(vals)
-
-    def _ensure_csm_in_group(self):
-        """Assigning an account to an engineer must let them see it: ensure the CSM
-        user belongs to the Customer Success Engineer group (assignment alone does not
-        grant it, so an assigned engineer would otherwise see neither the app nor the
-        account). Additive only — never removes a group."""
-        group = self.env.ref('era_customer_success.group_era_cs_user', raise_if_not_found=False)
-        if not group:
-            return
-        users = self.mapped('csm_user_id').filtered(
-            lambda u: u and not u.has_group('era_customer_success.group_era_cs_user'))
-        if users:
-            users.sudo().write({'group_ids': [(4, group.id)]})
 
     def _on_stage_change(self):
         for acc in self:
@@ -465,6 +459,10 @@ class CsAccount(models.Model):
     # ==================================================================
     # AI – Next Best Action
     # ==================================================================
+    @api.model
+    def _ai_enabled_company_ids(self, setting):
+        return self.env['res.company'].search([(setting, '=', True)]).ids
+
     def _build_situation_summary(self):
         """Textual snapshot of the customer (situation + history + last suggestion)
         fed to the Next-Best-Action AI agent."""
@@ -562,11 +560,13 @@ class CsAccount(models.Model):
     def _cron_suggest_next_steps(self, limit=20):
         """Generate next-best-action suggestions for active accounts (opt-in),
         worst-health first, skipping those suggested in the last 7 days."""
-        if not self.env['res.company'].search_count([('cs_ai_next_action_enabled', '=', True)]):
+        company_ids = self._ai_enabled_company_ids('cs_ai_next_action_enabled')
+        if not company_ids:
             return
         stale = fields.Datetime.now() - timedelta(days=7)
         accounts = self.search([
             ('lifecycle_stage_id.is_churned', '=', False),
+            ('company_id', 'in', company_ids),
             ('csm_user_id', '!=', False),
             '|', ('next_action_generated_on', '=', False),
             ('next_action_generated_on', '<', stale),
@@ -1024,6 +1024,8 @@ class CsAccount(models.Model):
         today = fields.Date.context_today(self)
         onboarding_stages = self.env['cs.stage'].search(
             [('is_onboarding', '=', True)], order='sequence')
+        steady_stage = self.env.ref(
+            'era_customer_success.cs_stage_steady', raise_if_not_found=False)
         risk_stage = self.env['cs.stage'].search([('is_at_risk', '=', True)], limit=1)
         for acc in self.search([('lifecycle_stage_id.is_onboarding', '=', True)]):
             if not acc.onboarding_start_date:
@@ -1035,6 +1037,8 @@ class CsAccount(models.Model):
                     nxt = onboarding_stages.filtered(lambda s: s.sequence > stage.sequence)[:1]
                     if nxt:
                         target = nxt
+                    elif steady_stage:
+                        target = steady_stage
             if target and target != acc.lifecycle_stage_id:
                 acc.lifecycle_stage_id = target
         # Flag at-risk accounts
@@ -1067,14 +1071,6 @@ class CsAccount(models.Model):
                     summary=_('Renewal in %s days – prepare renewal for %s',
                               window, acc.partner_id.name),
                     user_id=acc.csm_user_id.id)
-        # Overdue follow-up escalation
-        overdue_accounts = self.search([
-            ('next_touch_date', '<', today), ('csm_user_id', '!=', False)])
-        for acc in overdue_accounts:
-            acc.message_post(
-                body=_('⚠️ Follow-up overdue since %s.', acc.next_touch_date),
-                partner_ids=acc.csm_user_id.partner_id.ids)
-
     @api.model
     def _cron_schedule_cadence(self):
         today = fields.Date.context_today(self)
@@ -1235,10 +1231,12 @@ class CsAccount(models.Model):
     @api.model
     def _cron_generate_summaries(self, limit=15):
         """Gradually generate the AI profile summary for all accounts (opt-in)."""
-        if not self.env['res.company'].search_count([('cs_ai_summary_enabled', '=', True)]):
+        company_ids = self._ai_enabled_company_ids('cs_ai_summary_enabled')
+        if not company_ids:
             return
         stale = fields.Datetime.now() - timedelta(days=30)
         accounts = self.search([
+            ('company_id', 'in', company_ids),
             '|', ('ai_summary', '=', False), ('ai_summary_date', '<', stale),
         ], order='ai_summary_date asc, id asc', limit=limit)
         if accounts:
@@ -1370,9 +1368,11 @@ class CsAccount(models.Model):
         serialization conflict can't roll back a long multi-account run. `batch` is kept for
         backward compatibility with the cron action signature and is no longer used.
         """
-        if not self.env['res.company'].search_count([('cs_ai_churn_enabled', '=', True)]):
+        company_ids = self._ai_enabled_company_ids('cs_ai_churn_enabled')
+        if not company_ids:
             return
-        accounts = self.search([('lifecycle_stage_id.is_churned', '=', False)],
+        accounts = self.search([('company_id', 'in', company_ids),
+                                ('lifecycle_stage_id.is_churned', '=', False)],
                                order='health_score asc, id asc')
         self._run_ai_cron_per_account(accounts, 'action_forecast_churn')
 
@@ -1442,9 +1442,11 @@ class CsAccount(models.Model):
         concurrent-update serialization conflict aborting the whole run. `batch` is kept
         for backward compatibility with the cron action signature and is no longer used.
         """
-        if not self.env['res.company'].search_count([('cs_ai_renewal_enabled', '=', True)]):
+        company_ids = self._ai_enabled_company_ids('cs_ai_renewal_enabled')
+        if not company_ids:
             return
         accounts = self.search([
+            ('company_id', 'in', company_ids),
             ('renewal_soon', '=', True),
             ('lifecycle_stage_id.is_churned', '=', False),
         ], order='renewal_date asc, id asc')
@@ -1476,12 +1478,17 @@ class CsAccount(models.Model):
         valid_prio = ('urgent', 'high', 'medium', 'low')
         week = week or fields.Date.context_today(self)
         now = fields.Datetime.now()
+        company_ids = self._ai_enabled_company_ids('cs_ai_digest_enabled')
+        if not company_ids:
+            return 0, 0
         csms = self.search([
+            ('company_id', 'in', company_ids),
             ('csm_user_id', '!=', False),
             ('lifecycle_stage_id.is_churned', '=', False)]).mapped('csm_user_id')
         n_csm, n_items = 0, 0
         for csm in csms:
             accs = self.search([
+                ('company_id', 'in', company_ids),
                 ('csm_user_id', '=', csm.id),
                 ('lifecycle_stage_id.is_churned', '=', False)])
             if not accs:
@@ -1497,7 +1504,8 @@ class CsAccount(models.Model):
                 continue
             items = data.get('items') or []
             # Replace this CSM's suggestions for the week (fresh worklist).
-            Sugg.search([('csm_user_id', '=', csm.id), ('week', '=', week)]).unlink()
+            Sugg.search([('company_id', 'in', company_ids),
+                         ('csm_user_id', '=', csm.id), ('week', '=', week)]).unlink()
             for rank, it in enumerate(items):
                 if not isinstance(it, dict):
                     continue
@@ -1537,7 +1545,7 @@ class CsAccount(models.Model):
         keeps its own cursor and commits per CSM, so progress survives an interruption,
         and a session advisory lock prevents two runs from overlapping.
         """
-        if not self.env['res.company'].search_count([('cs_ai_digest_enabled', '=', True)]):
+        if not self._ai_enabled_company_ids('cs_ai_digest_enabled'):
             return
         threading.Thread(
             target=self._weekly_digest_detached,
@@ -1583,12 +1591,14 @@ class CsAccount(models.Model):
     @api.model
     def _cron_analyze_sentiment(self, limit=20):
         """Analyse sentiment of unprocessed tickets for managed customers (opt-in)."""
-        if not self.env['res.company'].search_count([('cs_ai_sentiment_enabled', '=', True)]):
+        company_ids = self._ai_enabled_company_ids('cs_ai_sentiment_enabled')
+        if not company_ids:
             return
         tickets = self.env['helpdesk.ticket'].sudo().search([
             ('cs_sentiment_analyzed', '=', False),
             ('partner_id', '!=', False),
             ('partner_id.cs_account_id', '!=', False),
+            ('partner_id.cs_account_id.company_id', 'in', company_ids),
         ], order='create_date desc', limit=limit)
         if tickets:
             self._run_ai_cron_per_account(tickets, '_cs_analyze_sentiment')

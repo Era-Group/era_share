@@ -39,6 +39,10 @@
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
     </record>
+    <record id="cs_account_rule_company" model="ir.rule">
+        <field name="name">CS Account: allowed companies</field><field name="model_id" ref="model_cs_account"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 
     <record id="cs_offering_rule_own" model="ir.rule">
         <field name="name">CS Offering: own (CSM)</field>
@@ -53,6 +57,34 @@
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
     </record>
+    <record id="cs_offering_rule_company" model="ir.rule">
+        <field name="name">CS Offering: allowed companies</field><field name="model_id" ref="model_csm_offering"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="cs_next_action_rule_own" model="ir.rule">
+        <field name="name">CS Next Action: own accounts (CSM)</field><field name="model_id" ref="model_cs_next_action"/>
+        <field name="domain_force">[('csm_user_id', '=', user.id)]</field><field name="groups" eval="[(4, ref('group_era_cs_user'))]"/>
+    </record>
+    <record id="cs_next_action_rule_manager" model="ir.rule">
+        <field name="name">CS Next Action: all accounts (Manager)</field><field name="model_id" ref="model_cs_next_action"/>
+        <field name="domain_force">[(1, '=', 1)]</field><field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_next_action_rule_company" model="ir.rule">
+        <field name="name">CS Next Action: allowed companies</field><field name="model_id" ref="model_cs_next_action"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="cs_kpi_snapshot_rule_own" model="ir.rule">
+        <field name="name">CS KPI Snapshot: own accounts (CSM)</field><field name="model_id" ref="model_csm_kpi_snapshot"/>
+        <field name="domain_force">[('csm_user_id', '=', user.id)]</field><field name="groups" eval="[(4, ref('group_era_cs_user'))]"/>
+    </record>
+    <record id="cs_kpi_snapshot_rule_manager" model="ir.rule">
+        <field name="name">CS KPI Snapshot: all accounts (Manager)</field><field name="model_id" ref="model_csm_kpi_snapshot"/>
+        <field name="domain_force">[(1, '=', 1)]</field><field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_kpi_snapshot_rule_company" model="ir.rule">
+        <field name="name">CS KPI Snapshot: allowed companies</field><field name="model_id" ref="model_csm_kpi_snapshot"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 
     <record id="cs_weekly_suggestion_rule_own" model="ir.rule">
         <field name="name">CS Weekly Suggestion: own (CSM)</field>
@@ -66,5 +98,9 @@
         <field name="model_id" ref="model_cs_weekly_suggestion"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_weekly_suggestion_rule_company" model="ir.rule">
+        <field name="name">CS Weekly Suggestion: allowed companies</field><field name="model_id" ref="model_cs_weekly_suggestion"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 </odoo>

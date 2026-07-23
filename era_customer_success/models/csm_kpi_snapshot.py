@@ -9,6 +9,7 @@ class CsmKpiSnapshot(models.Model):
     _description = 'Customer Success KPI Snapshot'
     _order = 'period_start desc, csm_user_id'
     _rec_name = 'period_start'
+    _check_company_auto = True
 
     period_start = fields.Date(string='Period', required=True, index=True)
     period_type = fields.Selection([
@@ -16,10 +17,12 @@ class CsmKpiSnapshot(models.Model):
         ('month', 'Monthly'),
         ('quarter', 'Quarterly'),
     ], default='month', required=True)
-    cs_account_id = fields.Many2one('cs.account', string='Account', ondelete='cascade', index=True)
+    cs_account_id = fields.Many2one('cs.account', string='Account', ondelete='cascade',
+                                    index=True, check_company=True)
     partner_id = fields.Many2one('res.partner', string='Customer')
     csm_user_id = fields.Many2one('res.users', string='CSM Engineer', index=True)
-    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, index=True,
+                                 default=lambda self: self.env.company)
     currency_id = fields.Many2one(related='company_id.currency_id')
     lifecycle_stage_id = fields.Many2one('cs.stage', string='Lifecycle Stage')
     tier = fields.Selection(related='cs_account_id.tier', store=True)
@@ -110,6 +113,7 @@ class CsmKpiSnapshot(models.Model):
                 'cs_account_id': acc.id,
                 'partner_id': acc.partner_id.id,
                 'csm_user_id': acc.csm_user_id.id,
+                'company_id': acc.company_id.id,
                 'lifecycle_stage_id': acc.lifecycle_stage_id.id,
                 'health_score': acc.health_score,
                 'mrr': acc.mrr,

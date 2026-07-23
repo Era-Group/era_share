@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_suggestion_complete_form" model="ir.ui.view">
+        <field name="name">cs.suggestion.complete.form</field>
+        <field name="model">cs.suggestion.complete</field>
+        <field name="arch" type="xml">
+            <form string="Record Outcome">
+                <group>
+                    <field name="suggestion_id" invisible="1"/>
+                    <field name="dismiss" invisible="1"/>
+                    <field name="partner_id"/>
+                    <field name="recommended_action"/>
+                    <field name="outcome"/>
+                    <field name="outcome_note" placeholder="What happened, and what did the customer say?"/>
+                </group>
+                <group string="Next Step">
+                    <field name="next_step" placeholder="Leave empty when no follow-up is needed"/>
+                    <field name="next_step_date" invisible="not next_step" required="next_step"/>
+                    <field name="schedule_activity" invisible="not next_step"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Save Outcome" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

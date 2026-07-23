@@ -12,7 +12,7 @@
     'author': "Era Group",
     'website': "https://www.era.net.sa",
     'category': 'Services/Customer Success',
-    'version': '19.0.14.6.3',
+    'version': '19.0.15.0.1',
     'license': 'LGPL-3',
     'depends': [
         'base',
@@ -46,6 +46,7 @@
         'wizard/cs_followup_compose_views.xml',
         'wizard/cs_call_briefing_views.xml',
         'wizard/cs_account_copilot_views.xml',
+        'wizard/cs_suggestion_complete_views.xml',
         'views/cs_account_views.xml',
         'views/cs_stage_views.xml',
         'views/csm_offering_views.xml',

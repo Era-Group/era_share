@@ -8,8 +8,8 @@
     <menuitem id="menu_cs_my_customers" name="My Customers"
               parent="menu_cs_root" action="action_cs_account_my" sequence="10"/>
 
-    <menuitem id="menu_cs_weekly_suggestions_my" name="Weekly Suggestions"
-              parent="menu_cs_root" action="action_cs_weekly_suggestion_my" sequence="15"/>
+    <menuitem id="menu_cs_weekly_suggestions_my" name="My Work Today"
+               parent="menu_cs_root" action="action_cs_weekly_suggestion_my" sequence="15"/>
 
     <menuitem id="menu_cs_offerings" name="Offerings"
               parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
@@ -31,8 +31,8 @@
     <menuitem id="menu_cs_sentiment_trend" name="Sentiment Trend"
               parent="menu_cs_reporting" action="action_csm_sentiment_trend" sequence="30"/>
 
-    <menuitem id="menu_cs_weekly_suggestions_all" name="Weekly Suggestions (All)"
-              parent="menu_cs_reporting" action="action_cs_weekly_suggestion_all" sequence="15"/>
+    <menuitem id="menu_cs_weekly_suggestions_all" name="Team Worklist"
+               parent="menu_cs_reporting" action="action_cs_weekly_suggestion_all" sequence="15"/>
 
     <record id="action_cs_weekly_digest_run" model="ir.actions.server">
         <field name="name">Generate Weekly Suggestions Now</field>

@@ -18,3 +18,4 @@ access_cs_call_briefing_user,cs.call.briefing.user,model_cs_call_briefing,group_
 access_cs_account_copilot_user,cs.account.copilot.user,model_cs_account_copilot,group_era_cs_user,1,1,1,1
 access_cs_weekly_suggestion_user,cs.weekly.suggestion.user,model_cs_weekly_suggestion,group_era_cs_user,1,1,0,0
 access_cs_weekly_suggestion_manager,cs.weekly.suggestion.manager,model_cs_weekly_suggestion,group_era_cs_manager,1,1,1,1
+access_cs_suggestion_complete_user,cs.suggestion.complete.user,model_cs_suggestion_complete,group_era_cs_user,1,1,1,1

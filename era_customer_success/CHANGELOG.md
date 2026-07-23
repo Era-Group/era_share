@@ -4,6 +4,15 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.15.0.1 — Keep Today's worklist focused
+- Open work items from previous weeks are now dismissed automatically as superseded when the daily list is built. Their history and outcome remain available, while `My Work Today` stays limited to actionable current work.
+
+## 19.0.15.0.0 — Daily Customer Success work center
+- Added a deterministic daily worklist that prioritizes risk recovery, support recovery, renewal attention, overdue relationship cadence, and low adoption. It works without AI; the existing weekly AI worklist enriches the same durable records when enabled.
+- Weekly generation no longer deletes completed work history. One work item per customer/week is updated only while open.
+- Completing or dismissing an item now requires a concise outcome. A next step can be recorded and scheduled automatically as a native Odoo activity.
+- Added `My Work Today` and manager `Team Worklist` views with Today, Overdue, priority, work-type, owner, outcome, and next-step visibility.
+
 ## Current: 19.0.14.6.1
 
 ### 19.0.14.6.1 — Fix: WhatsApp send from the AI composer crashed

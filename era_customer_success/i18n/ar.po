@@ -17,6 +17,146 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_customer_success
+msgid "My Work Today"
+msgstr "عملي اليوم"
+
+#. module: era_customer_success
+msgid "Team Worklist"
+msgstr "قائمة عمل الفريق"
+
+#. module: era_customer_success
+msgid "Customer Success Worklist"
+msgstr "قائمة عمل نجاح العملاء"
+
+#. module: era_customer_success
+msgid "Customer Success Work Item"
+msgstr "مهمة نجاح العميل"
+
+#. module: era_customer_success
+msgid "Record Outcome"
+msgstr "تسجيل النتيجة"
+
+#. module: era_customer_success
+msgid "Save Outcome"
+msgstr "حفظ النتيجة"
+
+#. module: era_customer_success
+msgid "What Happened?"
+msgstr "ماذا حدث؟"
+
+#. module: era_customer_success
+msgid "What happened, and what did the customer say?"
+msgstr "ماذا حدث، وماذا كان رد العميل؟"
+
+#. module: era_customer_success
+msgid "Outcome"
+msgstr "النتيجة"
+
+#. module: era_customer_success
+msgid "Outcome Note"
+msgstr "تفاصيل النتيجة"
+
+#. module: era_customer_success
+msgid "Next Step"
+msgstr "الخطوة التالية"
+
+#. module: era_customer_success
+msgid "Next Step Date"
+msgstr "تاريخ الخطوة التالية"
+
+#. module: era_customer_success
+msgid "Schedule Follow-up Automatically"
+msgstr "جدولة المتابعة تلقائياً"
+
+#. module: era_customer_success
+msgid "Leave empty when no follow-up is needed"
+msgstr "اتركه فارغاً إذا لم تكن هناك متابعة مطلوبة"
+
+#. module: era_customer_success
+msgid "Work Type"
+msgstr "نوع العمل"
+
+#. module: era_customer_success
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: era_customer_success
+msgid "Overdue"
+msgstr "متأخر"
+
+#. module: era_customer_success
+msgid "Today"
+msgstr "اليوم"
+
+#. module: era_customer_success
+msgid "Automation"
+msgstr "أتمتة"
+
+#. module: era_customer_success
+msgid "Risk Recovery"
+msgstr "إنقاذ عميل معرض للخطر"
+
+#. module: era_customer_success
+msgid "Support Recovery"
+msgstr "استعادة رضا العميل"
+
+#. module: era_customer_success
+msgid "Relationship Follow-up"
+msgstr "متابعة العلاقة"
+
+#. module: era_customer_success
+msgid "Renewal Follow-up"
+msgstr "متابعة التجديد"
+
+#. module: era_customer_success
+msgid "Deliver Value"
+msgstr "تقديم قيمة"
+
+#. module: era_customer_success
+msgid "Explore Need"
+msgstr "استكشاف احتياج"
+
+#. module: era_customer_success
+msgid "Customer Contacted"
+msgstr "تم التواصل مع العميل"
+
+#. module: era_customer_success
+msgid "Issue Resolved"
+msgstr "تم حل المشكلة"
+
+#. module: era_customer_success
+msgid "Value Delivered"
+msgstr "تم تقديم قيمة"
+
+#. module: era_customer_success
+msgid "Need Discovered"
+msgstr "تم اكتشاف احتياج"
+
+#. module: era_customer_success
+msgid "Follow-up Required"
+msgstr "تحتاج متابعة"
+
+#. module: era_customer_success
+msgid "No Response"
+msgstr "لا يوجد رد"
+
+#. module: era_customer_success
+msgid "Not Relevant"
+msgstr "غير مناسب"
+
+#. module: era_customer_success
+msgid "Completed On"
+msgstr "تاريخ الإنجاز"
+
+#. module: era_customer_success
+msgid "Completed By"
+msgstr "أنجزها"
+
+#. module: era_customer_success
+msgid "Superseded automatically by the current worklist."
+msgstr "أُغلقت تلقائياً بعد إنشاء قائمة العمل الحالية."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

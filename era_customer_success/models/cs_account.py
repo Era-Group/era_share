@@ -1468,6 +1468,66 @@ class CsAccount(models.Model):
         return "CSM: %s\nCustomers (%s):\n%s\n\nReturn this week's ranked worklist as JSON." % (
             csm.name, len(accs), "\n".join(lines))
 
+    def _daily_work_item_values(self, today=None):
+        """Return the single highest-value intervention for this account today."""
+        self.ensure_one()
+        today = today or fields.Date.context_today(self)
+        if self.subscription_churned or (self.lifecycle_stage_id and self.lifecycle_stage_id.is_churned):
+            return False
+        if self.health_status == 'critical' or self.churn_probability >= 60:
+            return {
+                'source': 'automation',
+                'action_type': 'risk_recovery',
+                'priority': 'urgent',
+                'rank': 1,
+                'due_date': today,
+                'reason': _('Critical customer health or high churn probability requires immediate attention.'),
+                'recommended_action': _('Contact the customer, identify the immediate cause, and agree on a dated recovery step.'),
+            }
+        if self.sentiment_label == 'negative' or self.sla_failed_count:
+            return {
+                'source': 'automation',
+                'action_type': 'support_recovery',
+                'priority': 'high',
+                'rank': 2,
+                'due_date': today,
+                'reason': _('Negative sentiment or a failed support SLA may damage customer trust.'),
+                'recommended_action': _('Review the support issue, contact the customer with a clear update, and record the recovery commitment.'),
+            }
+        if self.renewal_date and 0 <= self.days_to_renewal <= 90:
+            return {
+                'source': 'automation',
+                'action_type': 'renewal',
+                'priority': 'high' if self.days_to_renewal <= 30 else 'medium',
+                'rank': 3,
+                'due_date': today,
+                'reason': _('The customer is within the renewal attention window.'),
+                'recommended_action': _('Review delivered value and customer concerns before handing any commercial need to the responsible team.'),
+            }
+        cadence_days = {'weekly': 7, 'biweekly': 14, 'monthly': 30, 'quarterly': 90}
+        overdue_days = cadence_days.get(self.cadence, 30)
+        if not self.last_touch_date or self.days_since_touch >= overdue_days:
+            return {
+                'source': 'automation',
+                'action_type': 'relationship',
+                'priority': 'high' if self.days_since_touch >= overdue_days * 2 else 'medium',
+                'rank': 4,
+                'due_date': today,
+                'reason': _('Customer contact is missing or overdue for the agreed follow-up cadence.'),
+                'recommended_action': _('Make a value-led check-in, confirm current priorities, and agree on the next contact date.'),
+            }
+        if self.usage_signal in ('low', 'inactive'):
+            return {
+                'source': 'automation',
+                'action_type': 'value',
+                'priority': 'medium',
+                'rank': 5,
+                'due_date': today,
+                'reason': _('Low system usage indicates that the customer may not be realizing enough value.'),
+                'recommended_action': _('Identify the adoption blocker and offer a targeted enablement, training, or support action.'),
+            }
+        return False
+
     def _generate_weekly_suggestions(self, week=None):
         """Regenerate each CSM's weekly suggestion records. Returns (csms, items) counts."""
         agent = self.env.ref('era_customer_success.cs_worklist_agent', raise_if_not_found=False)
@@ -1477,7 +1537,6 @@ class CsAccount(models.Model):
         Sugg = self.env['cs.weekly.suggestion'].sudo()
         valid_prio = ('urgent', 'high', 'medium', 'low')
         week = week or fields.Date.context_today(self)
-        now = fields.Datetime.now()
         company_ids = self._ai_enabled_company_ids('cs_ai_digest_enabled')
         if not company_ids:
             return 0, 0
@@ -1503,9 +1562,6 @@ class CsAccount(models.Model):
             if not isinstance(data, dict):
                 continue
             items = data.get('items') or []
-            # Replace this CSM's suggestions for the week (fresh worklist).
-            Sugg.search([('company_id', 'in', company_ids),
-                         ('csm_user_id', '=', csm.id), ('week', '=', week)]).unlink()
             for rank, it in enumerate(items):
                 if not isinstance(it, dict):
                     continue
@@ -1519,17 +1575,15 @@ class CsAccount(models.Model):
                 prio = (it.get('priority') or 'medium').lower()
                 if prio not in valid_prio:
                     prio = 'medium'
-                Sugg.create({
-                    'cs_account_id': acc.id,
-                    'week': week,
+                Sugg._upsert_automated_item(acc, {
+                    'source': 'ai',
                     'rank': rank,
                     'priority': prio,
+                    'action_type': 'relationship',
+                    'due_date': week + timedelta(days=4),
                     'reason': (it.get('reason') or '')[:1000],
                     'recommended_action': (it.get('action') or '')[:1000],
-                    'health_score': acc.health_score,
-                    'churn_probability': acc.churn_probability,
-                    'generated_on': now,
-                })
+                }, week=week)
                 n_items += 1
             n_csm += 1
             self.env.cr.commit()

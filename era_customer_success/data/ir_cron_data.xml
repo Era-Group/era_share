@@ -120,6 +120,18 @@
         <field name="nextcall" eval="(DateTime.now() + relativedelta(weekday=5, hour=7, minute=0, second=0))"/>
     </record>
 
+    <record id="cron_cs_daily_worklist" model="ir.cron">
+        <field name="name">CS: Build daily worklist</field>
+        <field name="model_id" ref="model_cs_weekly_suggestion"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_build_daily_worklist()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=6, minute=5, second=0))"/>
+    </record>
+
     <record id="cron_cs_renewal_strategy" model="ir.cron">
         <field name="name">CS: Build renewal strategy (AI)</field>
         <field name="model_id" ref="model_cs_account"/>

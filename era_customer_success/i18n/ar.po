@@ -501,6 +501,146 @@ msgid "Expiry Warning"
 msgstr "تنبيه الانتهاء"
 
 #. module: era_customer_success
+msgid "Value Reviews"
+msgstr "مراجعات قيمة العميل"
+
+#. module: era_customer_success
+msgid "Customer Value Review"
+msgstr "مراجعة قيمة العميل"
+
+#. module: era_customer_success
+msgid "Value Review"
+msgstr "مراجعة القيمة"
+
+#. module: era_customer_success
+msgid "Open Value Reviews"
+msgstr "مراجعات القيمة المفتوحة"
+
+#. module: era_customer_success
+msgid "Next Value Review"
+msgstr "مراجعة القيمة القادمة"
+
+#. module: era_customer_success
+msgid "Review Date"
+msgstr "تاريخ المراجعة"
+
+#. module: era_customer_success
+msgid "Prepared"
+msgstr "جاهزة"
+
+#. module: era_customer_success
+msgid "Held"
+msgstr "تم عقدها"
+
+#. module: era_customer_success
+msgid "Closed"
+msgstr "مغلقة"
+
+#. module: era_customer_success
+msgid "Prepare Review"
+msgstr "تحضير المراجعة"
+
+#. module: era_customer_success
+msgid "Draft Agenda (AI)"
+msgstr "إعداد جدول الأعمال بالذكاء"
+
+#. module: era_customer_success
+msgid "Mark Held"
+msgstr "تسجيل عقد المراجعة"
+
+#. module: era_customer_success
+msgid "Close Review"
+msgstr "إغلاق المراجعة"
+
+#. module: era_customer_success
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: era_customer_success
+msgid "Participants"
+msgstr "المشاركون"
+
+#. module: era_customer_success
+msgid "Frozen KPI Snapshot"
+msgstr "لقطة المؤشرات المحفوظة"
+
+#. module: era_customer_success
+msgid "Customer Objectives"
+msgstr "أهداف العميل"
+
+#. module: era_customer_success
+msgid "Success Criteria"
+msgstr "معايير النجاح"
+
+#. module: era_customer_success
+msgid "Milestone Progress"
+msgstr "تقدم مراحل النجاح"
+
+#. module: era_customer_success
+msgid "Support Summary"
+msgstr "ملخص الدعم"
+
+#. module: era_customer_success
+msgid "Agenda"
+msgstr "جدول الأعمال"
+
+#. module: era_customer_success
+msgid "Data Observations"
+msgstr "ملاحظات البيانات"
+
+#. module: era_customer_success
+msgid "Questions to Discuss"
+msgstr "أسئلة للنقاش"
+
+#. module: era_customer_success
+msgid "Value and Evidence"
+msgstr "القيمة والأدلة"
+
+#. module: era_customer_success
+msgid "Customer-Confirmed Value"
+msgstr "القيمة التي أكدها العميل"
+
+#. module: era_customer_success
+msgid "Customer Priorities"
+msgstr "أولويات العميل"
+
+#. module: era_customer_success
+msgid "Risks and Commitments"
+msgstr "المخاطر والالتزامات"
+
+#. module: era_customer_success
+msgid "Risks and Blockers"
+msgstr "المخاطر والعوائق"
+
+#. module: era_customer_success
+msgid "Agreed Commitments"
+msgstr "الالتزامات المتفق عليها"
+
+#. module: era_customer_success
+msgid "Needs to Validate"
+msgstr "احتياجات تحتاج تحققاً"
+
+#. module: era_customer_success
+msgid "Follow-up"
+msgstr "المتابعة"
+
+#. module: era_customer_success
+msgid "AI Value Review Drafts"
+msgstr "مسودات مراجعة القيمة بالذكاء"
+
+#. module: era_customer_success
+msgid "Needs Preparation"
+msgstr "تحتاج تحضيراً"
+
+#. module: era_customer_success
+msgid "Due / Overdue"
+msgstr "مستحقة أو متأخرة"
+
+#. module: era_customer_success
+msgid "My Reviews"
+msgstr "مراجعاتي"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

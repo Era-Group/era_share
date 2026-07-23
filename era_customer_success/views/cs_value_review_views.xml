@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_value_review_list" model="ir.ui.view">
+        <field name="name">cs.value.review.list</field>
+        <field name="model">cs.value.review</field>
+        <field name="arch" type="xml">
+            <list string="Value Reviews" default_order="review_date"
+                  decoration-danger="review_date &lt;= context_today() and state not in ('closed','cancelled')"
+                  decoration-success="state == 'closed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="review_date"/>
+                <field name="period_start" optional="hide"/>
+                <field name="period_end" optional="hide"/>
+                <field name="health_score_snapshot" optional="show"/>
+                <field name="next_review_date" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'prepared'"
+                       decoration-warning="state == 'held'"
+                       decoration-success="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_value_review_form" model="ir.ui.view">
+        <field name="name">cs.value.review.form</field>
+        <field name="model">cs.value.review</field>
+        <field name="arch" type="xml">
+            <form string="Customer Value Review">
+                <header>
+                    <button name="action_prepare" type="object" string="Prepare Review"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_generate_ai_draft" type="object"
+                            string="Draft Agenda (AI)" icon="fa-magic"
+                            invisible="state != 'prepared' or not ai_value_review_enabled"/>
+                    <button name="action_mark_held" type="object" string="Mark Held"
+                            class="btn-primary" invisible="state != 'prepared'"/>
+                    <button name="action_close" type="object" string="Close Review"
+                            class="btn-primary" invisible="state != 'held'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed','cancelled')"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,prepared,held,closed,cancelled"/>
+                </header>
+                <sheet>
+                    <field name="ai_value_review_enabled" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                        <h2><field name="partner_id" readonly="1"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cs_account_id"/>
+                            <field name="csm_user_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="stakeholder_ids" widget="many2many_tags"
+                                   domain="[('cs_account_id', '=', cs_account_id)]"/>
+                        </group>
+                        <group>
+                            <field name="review_date"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="next_review_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prepare" name="prepare">
+                            <group string="Frozen KPI Snapshot">
+                                <group>
+                                    <field name="health_score_snapshot"/>
+                                    <field name="csat_snapshot"/>
+                                    <field name="nps_snapshot"/>
+                                    <field name="sentiment_snapshot"/>
+                                </group>
+                                <group>
+                                    <field name="open_tickets_snapshot"/>
+                                    <field name="sla_failed_snapshot"/>
+                                    <field name="snapshot_captured_on"/>
+                                    <field name="ai_generated_on" invisible="not ai_generated_on"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="objectives_snapshot"/>
+                                <field name="success_criteria_snapshot"/>
+                                <field name="milestones_snapshot"/>
+                                <field name="support_snapshot"/>
+                            </group>
+                            <group>
+                                <field name="agenda" placeholder="Review agenda..."/>
+                                <field name="data_observations" placeholder="Grounded observations from Odoo data..."/>
+                                <field name="discussion_questions" placeholder="Questions to validate with the customer..."/>
+                            </group>
+                        </page>
+                        <page string="Value and Evidence" name="value">
+                            <group>
+                                <field name="value_realized" placeholder="Value confirmed by the customer..."/>
+                                <field name="evidence" placeholder="Metrics, examples, or customer statements..."/>
+                                <field name="customer_priorities" placeholder="Customer priorities for the next period..."/>
+                            </group>
+                            <group string="Support Hours Snapshot">
+                                <field name="support_purchased_snapshot"/>
+                                <field name="support_used_snapshot"/>
+                                <field name="support_remaining_snapshot"/>
+                            </group>
+                        </page>
+                        <page string="Risks and Commitments" name="commitments">
+                            <group>
+                                <field name="risks_and_blockers"/>
+                                <field name="commitments" placeholder="Agreed commitments, owners, and dates..."/>
+                                <field name="potential_needs" placeholder="Needs to validate; this does not create an opportunity..."/>
+                            </group>
+                            <group string="Follow-up">
+                                <field name="next_step"/>
+                                <field name="next_step_date" required="next_step"/>
+                            </group>
+                        </page>
+                        <page string="Audit" name="audit">
+                            <group>
+                                <field name="prepared_on"/>
+                                <field name="prepared_by_id" widget="many2one_avatar_user"/>
+                                <field name="held_on"/>
+                                <field name="closed_on"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cs_value_review_search" model="ir.ui.view">
+        <field name="name">cs.value.review.search</field>
+        <field name="model">cs.value.review</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="csm_user_id"/>
+                <filter name="open" string="Open"
+                        domain="[('state', 'not in', ('closed','cancelled'))]"/>
+                <filter name="needs_preparation" string="Needs Preparation"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="due" string="Due / Overdue"
+                        domain="[('state', 'not in', ('closed','cancelled')), ('review_date', '&lt;=', context_today())]"/>
+                <separator/>
+                <filter name="my_reviews" string="My Reviews" domain="[('csm_user_id', '=', uid)]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="group_month" string="Review Month" context="{'group_by': 'review_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cs_value_review" model="ir.actions.act_window">
+        <field name="name">Value Reviews</field>
+        <field name="res_model">cs.value.review</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_value_review_search"/>
+        <field name="context">{'search_default_open': 1, 'search_default_my_reviews': 1}</field>
+    </record>
+</odoo>

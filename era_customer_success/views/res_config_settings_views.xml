@@ -36,6 +36,10 @@
                                  help="Let CSMs generate a reviewable draft of customer objectives, success criteria, known stakeholders and milestones. The customer snapshot is sent to the configured AI provider.">
                             <field name="cs_ai_success_plan_enabled"/>
                         </setting>
+                        <setting string="AI Value Review Drafts"
+                                 help="Draft a grounded agenda, observations, questions, risks, and needs to validate from the frozen review snapshot. Confirmed value and commitments remain manual.">
+                            <field name="cs_ai_value_review_enabled"/>
+                        </setting>
                     </block>
                     <block title="Support Hours Automation" id="cs_support_hours_block">
                         <setting string="Support Hours Products"

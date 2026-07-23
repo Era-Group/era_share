@@ -175,4 +175,22 @@
         <field name="model_id" ref="model_cs_support_wallet"/>
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
+
+    <record id="cs_value_review_rule_own" model="ir.rule">
+        <field name="name">CS Value Review: own (CSM)</field>
+        <field name="model_id" ref="model_cs_value_review"/>
+        <field name="domain_force">[('csm_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_user'))]"/>
+    </record>
+    <record id="cs_value_review_rule_manager" model="ir.rule">
+        <field name="name">CS Value Review: all (Manager)</field>
+        <field name="model_id" ref="model_cs_value_review"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_value_review_rule_company" model="ir.rule">
+        <field name="name">CS Value Review: allowed companies</field>
+        <field name="model_id" ref="model_cs_value_review"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 </odoo>

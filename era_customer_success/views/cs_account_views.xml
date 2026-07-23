@@ -161,6 +161,10 @@
                                 help="View prepaid support-hour packages and their live Timesheet consumption.">
                             <field name="support_hours_remaining" widget="statinfo" string="Support Hours"/>
                         </button>
+                        <button class="oe_stat_button" type="object" name="action_view_value_reviews" icon="fa-line-chart"
+                                help="Prepare and record periodic customer value reviews.">
+                            <field name="open_value_review_count" widget="statinfo" string="Value Reviews"/>
+                        </button>
                     </div>
                     <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>
                     <div class="oe_title">
@@ -259,6 +263,7 @@
                             <field name="last_touch_date"/>
                             <field name="next_touch_date"/>
                             <field name="next_success_milestone_date"/>
+                            <field name="next_value_review_date"/>
                             <field name="days_since_touch"/>
                             <field name="meeting_count"/>
                         </group>

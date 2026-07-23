@@ -15,6 +15,7 @@ Reuses (does not reinvent): `helpdesk`, `voip` (+ `era_voip_ext` AI), `whatsapp`
 - `doc/FEATURES_AR.md` — full feature reference.
 - `doc/USER_GUIDE_AR.md` — usage guide for manager + engineer.
 - `doc/IMPROVEMENTS_AR.md` — improvement roadmap (AI sentiment, etc.).
+- `doc/PROJECT_MEMORY_AR.md` — persistent project memory, decisions, releases, deployment workflow, and current roadmap. Update it with every release.
 
 ## Key models
 `cs.account` · `cs.stage` · `csm.offering` · `csm.kpi.snapshot` · `cs.capture.request`

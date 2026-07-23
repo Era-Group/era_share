@@ -42,6 +42,11 @@ class ResCompany(models.Model):
         help="When enabled, CSMs can ask AI to draft customer objectives, success "
              "criteria, stakeholders and milestones from the customer snapshot. "
              "Drafts require human review before activation.")
+    cs_ai_value_review_enabled = fields.Boolean(
+        string='AI Value Review Drafts', default=False,
+        help="When enabled, CSMs can ask AI to draft a grounded value-review "
+             "agenda, observations, questions, risks, and needs to validate. "
+             "Customer-confirmed value and commitments always remain manual.")
     cs_support_product_tmpl_ids = fields.Many2many(
         'product.template', 'res_company_cs_support_product_rel',
         'company_id', 'product_tmpl_id', string='Support Hours Products',

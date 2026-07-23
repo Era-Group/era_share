@@ -14,6 +14,9 @@
     <menuitem id="menu_cs_support_wallets" name="Support Hours"
               parent="menu_cs_root" action="action_cs_support_wallet" sequence="20"/>
 
+    <menuitem id="menu_cs_value_reviews" name="Value Reviews"
+              parent="menu_cs_root" action="action_cs_value_review" sequence="25"/>
+
     <menuitem id="menu_cs_offerings" name="Offerings"
               parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
 

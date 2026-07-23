@@ -124,6 +124,12 @@ class CsAccount(models.Model):
         string='Next Success Milestone', compute='_compute_success_plan_metrics')
     ai_success_plan_enabled = fields.Boolean(
         related='company_id.cs_ai_success_plan_enabled', readonly=True)
+    value_review_ids = fields.One2many(
+        'cs.value.review', 'cs_account_id', string='Value Reviews')
+    open_value_review_count = fields.Integer(
+        string='Open Value Reviews', compute='_compute_value_review_metrics')
+    next_value_review_date = fields.Date(
+        string='Next Value Review', compute='_compute_value_review_metrics')
 
     lifecycle_stage_id = fields.Many2one(
         'cs.stage', string='Lifecycle Stage', tracking=True, index=True,
@@ -360,6 +366,15 @@ class CsAccount(models.Model):
             account.support_wallet_status = max(
                 status_wallets.mapped('status'), key=lambda status: status_rank.get(status, 0),
                 default='none')
+
+    @api.depends('value_review_ids.state', 'value_review_ids.review_date')
+    def _compute_value_review_metrics(self):
+        for account in self:
+            reviews = account.value_review_ids.filtered(
+                lambda review: review.state not in ('closed', 'cancelled'))
+            account.open_value_review_count = len(reviews)
+            dates = reviews.mapped('review_date')
+            account.next_value_review_date = min(dates) if dates else False
 
     @api.depends('partner_id')
     def _compute_counts(self):
@@ -1008,6 +1023,20 @@ class CsAccount(models.Model):
             'context': {'search_default_needs_attention': 1},
         }
 
+    def action_view_value_reviews(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Value Reviews'),
+            'res_model': 'cs.value.review',
+            'view_mode': 'list,form',
+            'domain': [('cs_account_id', '=', self.id)],
+            'context': {
+                'default_cs_account_id': self.id,
+                'default_review_date': fields.Date.context_today(self),
+            },
+        }
+
     def action_cs_present_offering(self):
         self.ensure_one()
         return {
@@ -1648,6 +1677,26 @@ class CsAccount(models.Model):
                 'recommended_action': _(
                     'Move the milestone forward, record evidence or blockers, and agree the next customer step.'),
             }
+        value_review = self.env['cs.value.review'].sudo().search([
+            ('cs_account_id', '=', self.id),
+            ('state', 'in', ('draft', 'prepared', 'held')),
+            ('review_date', '<=', today + timedelta(days=14)),
+        ], order='review_date, id', limit=1)
+        if value_review:
+            overdue = value_review.review_date <= today
+            return {
+                'source': 'automation',
+                'action_type': 'value_review',
+                'priority': 'high' if overdue else 'medium',
+                'rank': 6,
+                'due_date': min(value_review.review_date, today),
+                'reason': _(
+                    'Customer value review "%(review)s" is %(timing)s.',
+                    review=value_review.name,
+                    timing=_('due or overdue') if overdue else _('due within 14 days')),
+                'recommended_action': _(
+                    'Prepare the evidence and objectives, hold the customer review, and record confirmed value and commitments.'),
+            }
         cadence_days = {'weekly': 7, 'biweekly': 14, 'monthly': 30, 'quarterly': 90}
         overdue_days = cadence_days.get(self.cadence, 30)
         if not self.last_touch_date or self.days_since_touch >= overdue_days:
@@ -1655,7 +1704,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'relationship',
                 'priority': 'high' if self.days_since_touch >= overdue_days * 2 else 'medium',
-                'rank': 6,
+                'rank': 7,
                 'due_date': today,
                 'reason': _('Customer contact is missing or overdue for the agreed follow-up cadence.'),
                 'recommended_action': _('Make a value-led check-in, confirm current priorities, and agree on the next contact date.'),
@@ -1665,7 +1714,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'value',
                 'priority': 'medium',
-                'rank': 7,
+                'rank': 8,
                 'due_date': today,
                 'reason': _('Low system usage indicates that the customer may not be realizing enough value.'),
                 'recommended_action': _('Identify the adoption blocker and offer a targeted enablement, training, or support action.'),

@@ -132,6 +132,18 @@
         <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=6, minute=5, second=0))"/>
     </record>
 
+    <record id="cron_cs_prepare_value_reviews" model="ir.cron">
+        <field name="name">CS: Prepare upcoming value reviews</field>
+        <field name="model_id" ref="model_cs_value_review"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_prepare_upcoming_reviews()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hours=6, minute=20, second=0))"/>
+    </record>
+
     <record id="cron_cs_renewal_strategy" model="ir.cron">
         <field name="name">CS: Build renewal strategy (AI)</field>
         <field name="model_id" ref="model_cs_account"/>

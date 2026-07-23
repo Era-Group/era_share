@@ -4,6 +4,14 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.18.0.0 — Customer Value Reviews (QBR)
+- Added periodic value reviews that freeze health, satisfaction, support hours, objectives, criteria and milestone progress at preparation time.
+- Added a value-led workflow: Draft → Prepared → Held → Closed, requiring customer-confirmed value, commitments and the next review date before closure.
+- Closing a review updates the active success-plan review date and schedules one native Odoo follow-up activity when a next step is agreed. It never creates an offering or CRM opportunity.
+- Added an idempotent daily cron that creates upcoming reviews from active success plans 14 days before their review date and routes them into `My Work Today`.
+- Added an independent opt-in AI drafter for grounded agendas, observations, questions, risks and needs to validate. AI cannot populate confirmed value or commitments.
+- Added persistent `doc/PROJECT_MEMORY_AR.md` and made updating it part of the release checklist.
+
 ## 19.0.17.0.0 — Automated Support Hours
 - Added a read-only Customer Success wallet over Odoo's native prepaid Sales/Timesheet balance; no hours are duplicated or manually maintained.
 - Support packages already linked to Helpdesk are detected automatically, while managers can configure additional prepaid time products and company-level validity/alert thresholds.

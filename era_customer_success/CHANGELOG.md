@@ -4,6 +4,12 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.16.0.0 — Customer Success Plans
+- Added one easy-to-open success plan per customer with business objectives, current challenges, desired outcomes, measurable success criteria and ERA's next value plan.
+- Added a stakeholder map linked only to known customer contacts, including role, influence and relationship strength.
+- Added owned, dated success milestones with evidence, blockers and lifecycle. Overdue or near-term milestones automatically enter `My Work Today` as the account's highest relevant intervention.
+- Added an opt-in Odoo AI agent that drafts only missing plan content, links only known contacts, proposes 3-5 reviewable milestones, and never overwrites or duplicates existing work.
+
 ## 19.0.15.0.1 — Keep Today's worklist focused
 - Open work items from previous weeks are now dismissed automatically as superseded when the daily list is built. Their history and outcome remain available, while `My Work Today` stays limited to actionable current work.
 

@@ -40,6 +40,7 @@ class CsWeeklySuggestion(models.Model):
         ('relationship', 'Relationship Follow-up'),
         ('renewal', 'Renewal Follow-up'),
         ('value', 'Deliver Value'),
+        ('success_milestone', 'Success Milestone'),
         ('growth', 'Explore Need'),
     ], string='Work Type', default='relationship', required=True)
     due_date = fields.Date(string='Due Date', required=True, default=fields.Date.context_today, index=True)
@@ -145,9 +146,8 @@ class CsWeeklySuggestion(models.Model):
         item = self.sudo().search([
             ('cs_account_id', '=', account.id),
             ('week', '=', week),
-        ], order='state, id desc', limit=1)
-        if item and item.state != 'open':
-            return item
+            ('state', '=', 'open'),
+        ], order='id desc', limit=1)
         vals = {
             **values,
             'cs_account_id': account.id,

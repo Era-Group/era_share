@@ -32,6 +32,10 @@
                                  help="A weekly job delivers each CSM a ranked worklist of the accounts in their portfolio that need attention this week.">
                             <field name="cs_ai_digest_enabled"/>
                         </setting>
+                        <setting string="AI Success Plan Drafts"
+                                 help="Let CSMs generate a reviewable draft of customer objectives, success criteria, known stakeholders and milestones. The customer snapshot is sent to the configured AI provider.">
+                            <field name="cs_ai_success_plan_enabled"/>
+                        </setting>
                     </block>
                 </app>
             </xpath>

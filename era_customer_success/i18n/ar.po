@@ -157,6 +157,210 @@ msgid "Superseded automatically by the current worklist."
 msgstr "أُغلقت تلقائياً بعد إنشاء قائمة العمل الحالية."
 
 #. module: era_customer_success
+msgid "Customer Success Plan"
+msgstr "خطة نجاح العميل"
+
+#. module: era_customer_success
+msgid "Customer Success Plans"
+msgstr "خطط نجاح العملاء"
+
+#. module: era_customer_success
+msgid "Success Plan"
+msgstr "خطة النجاح"
+
+#. module: era_customer_success
+msgid "Success Profile"
+msgstr "ملف نجاح العميل"
+
+#. module: era_customer_success
+msgid "Customer Business Objectives"
+msgstr "أهداف العميل التجارية"
+
+#. module: era_customer_success
+msgid "Current Challenges"
+msgstr "التحديات الحالية"
+
+#. module: era_customer_success
+msgid "Desired Outcomes"
+msgstr "النتائج المستهدفة"
+
+#. module: era_customer_success
+msgid "How We Measure Success"
+msgstr "كيف نقيس النجاح"
+
+#. module: era_customer_success
+msgid "ERA Value Plan"
+msgstr "خطة القيمة من إيرا"
+
+#. module: era_customer_success
+msgid "Next Plan Review"
+msgstr "مراجعة الخطة القادمة"
+
+#. module: era_customer_success
+msgid "Last Reviewed On"
+msgstr "آخر مراجعة"
+
+#. module: era_customer_success
+msgid "Draft Plan (AI)"
+msgstr "إعداد مسودة بالذكاء"
+
+#. module: era_customer_success
+msgid "AI Success Plan Drafts"
+msgstr "مسودات خطط النجاح بالذكاء"
+
+#. module: era_customer_success
+msgid "Stakeholders"
+msgstr "أصحاب العلاقة"
+
+#. module: era_customer_success
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_customer_success
+msgid "Champion"
+msgstr "الداعم الداخلي"
+
+#. module: era_customer_success
+msgid "Executive Sponsor"
+msgstr "الراعي التنفيذي"
+
+#. module: era_customer_success
+msgid "Decision Maker"
+msgstr "صاحب القرار"
+
+#. module: era_customer_success
+msgid "Economic Buyer"
+msgstr "صاحب القرار المالي"
+
+#. module: era_customer_success
+msgid "System Administrator"
+msgstr "مسؤول النظام"
+
+#. module: era_customer_success
+msgid "Key User"
+msgstr "مستخدم رئيسي"
+
+#. module: era_customer_success
+msgid "Influencer"
+msgstr "مؤثر"
+
+#. module: era_customer_success
+msgid "Influence"
+msgstr "درجة التأثير"
+
+#. module: era_customer_success
+msgid "Relationship Status"
+msgstr "قوة العلاقة"
+
+#. module: era_customer_success
+msgid "Strong"
+msgstr "قوية"
+
+#. module: era_customer_success
+msgid "Weak"
+msgstr "ضعيفة"
+
+#. module: era_customer_success
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: era_customer_success
+msgid "Primary Contact"
+msgstr "جهة الاتصال الرئيسية"
+
+#. module: era_customer_success
+msgid "Last Contact"
+msgstr "آخر تواصل"
+
+#. module: era_customer_success
+msgid "Success Milestones"
+msgstr "مراحل نجاح العميل"
+
+#. module: era_customer_success
+msgid "Success Milestone"
+msgstr "مرحلة نجاح العميل"
+
+#. module: era_customer_success
+msgid "Open Success Milestones"
+msgstr "مراحل النجاح المفتوحة"
+
+#. module: era_customer_success
+msgid "Next Success Milestone"
+msgstr "مرحلة النجاح القادمة"
+
+#. module: era_customer_success
+msgid "Evidence of Success"
+msgstr "دليل تحقق النجاح"
+
+#. module: era_customer_success
+msgid "Owner"
+msgstr "المسؤول"
+
+#. module: era_customer_success
+msgid "Planned"
+msgstr "مخطط لها"
+
+#. module: era_customer_success
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#. module: era_customer_success
+msgid "Achieved"
+msgstr "تم تحقيقها"
+
+#. module: era_customer_success
+msgid "Blocked"
+msgstr "متعثرة"
+
+#. module: era_customer_success
+msgid "Cancelled"
+msgstr "ملغاة"
+
+#. module: era_customer_success
+msgid "Evidence"
+msgstr "الدليل"
+
+#. module: era_customer_success
+msgid "Blocker"
+msgstr "العائق"
+
+#. module: era_customer_success
+msgid "Activate"
+msgstr "تفعيل"
+
+#. module: era_customer_success
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: era_customer_success
+msgid "Revise Plan"
+msgstr "مراجعة الخطة"
+
+#. module: era_customer_success
+msgid "The success plan no longer requires this work item."
+msgstr "لم تعد خطة النجاح تتطلب بند العمل هذا."
+
+#. module: era_customer_success
+msgid "What is the customer trying to achieve?"
+msgstr "ما الذي يسعى العميل إلى تحقيقه؟"
+
+#. module: era_customer_success
+msgid "What currently blocks the customer?"
+msgstr "ما الذي يعيق العميل حالياً؟"
+
+#. module: era_customer_success
+msgid "What outcomes should ERA help deliver?"
+msgstr "ما النتائج التي ينبغي أن تساعد إيرا في تحقيقها؟"
+
+#. module: era_customer_success
+msgid "How will the customer know this succeeded?"
+msgstr "كيف سيعرف العميل أن النجاح تحقق؟"
+
+#. module: era_customer_success
+msgid "What value should ERA deliver next?"
+msgstr "ما القيمة التالية التي ينبغي أن تقدمها إيرا؟"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

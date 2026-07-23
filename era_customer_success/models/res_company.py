@@ -34,5 +34,10 @@ class ResCompany(models.Model):
     cs_ai_digest_enabled = fields.Boolean(
         string='AI Weekly Worklist', default=False,
         help="When enabled, a weekly job delivers each CSM a ranked worklist of the "
-             "accounts in their portfolio that need attention this week. "
-             "NOTE: portfolio signals are sent to the AI provider.")
+              "accounts in their portfolio that need attention this week. "
+              "NOTE: portfolio signals are sent to the AI provider.")
+    cs_ai_success_plan_enabled = fields.Boolean(
+        string='AI Success Plan Drafts', default=False,
+        help="When enabled, CSMs can ask AI to draft customer objectives, success "
+             "criteria, stakeholders and milestones from the customer snapshot. "
+             "Drafts require human review before activation.")

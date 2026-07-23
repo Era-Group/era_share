@@ -19,3 +19,9 @@ access_cs_account_copilot_user,cs.account.copilot.user,model_cs_account_copilot,
 access_cs_weekly_suggestion_user,cs.weekly.suggestion.user,model_cs_weekly_suggestion,group_era_cs_user,1,1,0,0
 access_cs_weekly_suggestion_manager,cs.weekly.suggestion.manager,model_cs_weekly_suggestion,group_era_cs_manager,1,1,1,1
 access_cs_suggestion_complete_user,cs.suggestion.complete.user,model_cs_suggestion_complete,group_era_cs_user,1,1,1,1
+access_cs_success_profile_user,cs.success.profile.user,model_cs_success_profile,group_era_cs_user,1,1,1,0
+access_cs_success_profile_manager,cs.success.profile.manager,model_cs_success_profile,group_era_cs_manager,1,1,1,1
+access_cs_success_stakeholder_user,cs.success.stakeholder.user,model_cs_success_stakeholder,group_era_cs_user,1,1,1,0
+access_cs_success_stakeholder_manager,cs.success.stakeholder.manager,model_cs_success_stakeholder,group_era_cs_manager,1,1,1,1
+access_cs_success_milestone_user,cs.success.milestone.user,model_cs_success_milestone,group_era_cs_user,1,1,1,0
+access_cs_success_milestone_manager,cs.success.milestone.manager,model_cs_success_milestone,group_era_cs_manager,1,1,1,1

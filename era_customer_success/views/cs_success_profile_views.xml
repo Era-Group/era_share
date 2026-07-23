@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_success_profile_list" model="ir.ui.view">
+        <field name="name">cs.success.profile.list</field>
+        <field name="model">cs.success.profile</field>
+        <field name="arch" type="xml">
+            <list string="Customer Success Plans">
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge"/>
+                <field name="review_date"/>
+                <field name="last_reviewed_on" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_success_profile_form" model="ir.ui.view">
+        <field name="name">cs.success.profile.form</field>
+        <field name="model">cs.success.profile</field>
+        <field name="arch" type="xml">
+            <form string="Customer Success Plan">
+                <header>
+                    <button name="action_generate_ai_draft" type="object"
+                            string="Draft Plan (AI)" icon="fa-magic" class="btn-secondary"
+                            invisible="not ai_success_plan_enabled or state != 'draft'"
+                            help="Use the customer snapshot and known contacts to fill missing plan fields and suggest reviewable milestones."/>
+                    <button name="action_activate" type="object" string="Activate"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_archive" type="object" string="Archive"
+                            invisible="state == 'archived'"/>
+                    <button name="action_set_draft" type="object" string="Revise Plan"
+                            invisible="state != 'active'"/>
+                    <button name="action_reopen" type="object" string="Reopen"
+                            invisible="state != 'archived'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
+                </header>
+                <sheet>
+                    <field name="cs_account_id" invisible="1"/>
+                    <field name="ai_success_plan_enabled" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="partner_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="csm_user_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="review_date"/>
+                        </group>
+                        <group>
+                            <field name="last_reviewed_on" readonly="1"/>
+                            <field name="ai_generated_on" readonly="1" invisible="not ai_generated_on"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Success Profile" name="profile">
+                            <group>
+                                <field name="business_objectives" placeholder="What is the customer trying to achieve?"/>
+                                <field name="challenges" placeholder="What currently blocks the customer?"/>
+                                <field name="desired_outcomes" placeholder="What outcomes should ERA help deliver?"/>
+                                <field name="success_criteria" placeholder="How will the customer know this succeeded?"/>
+                                <field name="value_hypothesis" placeholder="What value should ERA deliver next?"/>
+                            </group>
+                        </page>
+                        <page string="Stakeholders" name="stakeholders">
+                            <field name="stakeholder_ids" context="{'default_profile_id': id}">
+                                <list editable="bottom">
+                                    <field name="partner_id"
+                                           domain="[('cs_account_id', '=', parent.cs_account_id)]"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="role"/>
+                                    <field name="influence" widget="badge"/>
+                                    <field name="relationship_status" widget="badge"/>
+                                    <field name="is_primary"/>
+                                    <field name="last_contact_date" optional="show"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Success Milestones" name="milestones">
+                            <field name="milestone_ids" context="{'default_profile_id': id}">
+                                <list editable="bottom"
+                                      decoration-danger="is_overdue or state == 'blocked'"
+                                      decoration-success="state == 'achieved'"
+                                      decoration-muted="state == 'cancelled'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="is_overdue" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="owner_user_id" widget="many2one_avatar_user" readonly="1"/>
+                                    <field name="target_date" decoration-danger="is_overdue"/>
+                                    <field name="priority" widget="badge"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="success_criterion" optional="hide"/>
+                                    <field name="blocker" optional="hide"/>
+                                    <field name="evidence" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

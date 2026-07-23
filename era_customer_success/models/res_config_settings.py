@@ -23,3 +23,6 @@ class ResConfigSettings(models.TransientModel):
     cs_ai_digest_enabled = fields.Boolean(
         related='company_id.cs_ai_digest_enabled', readonly=False,
         string='AI Weekly Worklist')
+    cs_ai_success_plan_enabled = fields.Boolean(
+        related='company_id.cs_ai_success_plan_enabled', readonly=False,
+        string='AI Success Plan Drafts')

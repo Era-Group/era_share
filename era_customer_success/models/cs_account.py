@@ -114,6 +114,16 @@ class CsAccount(models.Model):
     ], string='Follow-up Cadence', default='monthly',
         help="Expected follow-up rhythm. Drives the cadence reminder and the "
              "follow-up-level evaluation.")
+    success_profile_ids = fields.One2many(
+        'cs.success.profile', 'cs_account_id', string='Success Plans')
+    success_profile_count = fields.Integer(
+        string='Success Plan', compute='_compute_success_plan_metrics')
+    open_success_milestone_count = fields.Integer(
+        string='Open Success Milestones', compute='_compute_success_plan_metrics')
+    next_success_milestone_date = fields.Date(
+        string='Next Success Milestone', compute='_compute_success_plan_metrics')
+    ai_success_plan_enabled = fields.Boolean(
+        related='company_id.cs_ai_success_plan_enabled', readonly=True)
 
     lifecycle_stage_id = fields.Many2one(
         'cs.stage', string='Lifecycle Stage', tracking=True, index=True,
@@ -294,6 +304,18 @@ class CsAccount(models.Model):
     def _compute_offering_count(self):
         for acc in self:
             acc.offering_count = len(acc.offering_ids)
+
+    @api.depends(
+        'success_profile_ids', 'success_profile_ids.milestone_ids.state',
+        'success_profile_ids.milestone_ids.target_date')
+    def _compute_success_plan_metrics(self):
+        for account in self:
+            milestones = account.success_profile_ids.milestone_ids.filtered(
+                lambda milestone: milestone.state not in ('achieved', 'cancelled'))
+            account.success_profile_count = len(account.success_profile_ids)
+            account.open_success_milestone_count = len(milestones)
+            dates = milestones.mapped('target_date')
+            account.next_success_milestone_date = min(dates) if dates else False
 
     @api.depends('partner_id')
     def _compute_counts(self):
@@ -914,6 +936,23 @@ class CsAccount(models.Model):
             },
         }
 
+    def action_open_success_profile(self):
+        self.ensure_one()
+        profile = self.success_profile_ids[:1]
+        if not profile:
+            profile = self.env['cs.success.profile'].create({
+                'cs_account_id': self.id,
+                'review_date': fields.Date.context_today(self) + timedelta(days=90),
+            })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Customer Success Plan'),
+            'res_model': 'cs.success.profile',
+            'res_id': profile.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     def action_cs_present_offering(self):
         self.ensure_one()
         return {
@@ -1504,6 +1543,28 @@ class CsAccount(models.Model):
                 'reason': _('The customer is within the renewal attention window.'),
                 'recommended_action': _('Review delivered value and customer concerns before handing any commercial need to the responsible team.'),
             }
+        milestone = self.env['cs.success.milestone'].sudo().search([
+            ('cs_account_id', '=', self.id),
+            ('profile_id.state', '=', 'active'),
+            ('state', 'not in', ('achieved', 'cancelled')),
+            ('target_date', '<=', today + timedelta(days=7)),
+        ], order='target_date, attention_rank desc, id', limit=1)
+        if milestone:
+            overdue = milestone.target_date < today
+            return {
+                'source': 'automation',
+                'action_type': 'success_milestone',
+                'priority': 'urgent' if milestone.state == 'blocked' else (
+                    'high' if overdue else milestone.priority),
+                'rank': 4,
+                'due_date': min(milestone.target_date, today),
+                'reason': _(
+                    'Success milestone "%(milestone)s" is %(timing)s.',
+                    milestone=milestone.name,
+                    timing=_('overdue') if overdue else _('due within 7 days')),
+                'recommended_action': _(
+                    'Move the milestone forward, record evidence or blockers, and agree the next customer step.'),
+            }
         cadence_days = {'weekly': 7, 'biweekly': 14, 'monthly': 30, 'quarterly': 90}
         overdue_days = cadence_days.get(self.cadence, 30)
         if not self.last_touch_date or self.days_since_touch >= overdue_days:
@@ -1511,7 +1572,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'relationship',
                 'priority': 'high' if self.days_since_touch >= overdue_days * 2 else 'medium',
-                'rank': 4,
+                'rank': 5,
                 'due_date': today,
                 'reason': _('Customer contact is missing or overdue for the agreed follow-up cadence.'),
                 'recommended_action': _('Make a value-led check-in, confirm current priorities, and agree on the next contact date.'),
@@ -1521,7 +1582,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'value',
                 'priority': 'medium',
-                'rank': 5,
+                'rank': 6,
                 'due_date': today,
                 'reason': _('Low system usage indicates that the customer may not be realizing enough value.'),
                 'recommended_action': _('Identify the adoption blocker and offer a targeted enablement, training, or support action.'),

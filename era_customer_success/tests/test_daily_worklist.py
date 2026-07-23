@@ -58,9 +58,11 @@ class TestDailyWorklist(TransactionCase):
             'recommended_action': 'New AI action',
             'due_date': fields.Date.today(),
         }, week=week)
-        self.assertEqual(result, item)
+        self.assertNotEqual(result, item)
         self.assertEqual(item.state, 'done')
         self.assertNotEqual(item.reason, 'New AI reason')
+        self.assertEqual(result.state, 'open')
+        self.assertEqual(result.reason, 'New AI reason')
 
     def test_daily_worklist_archives_stale_open_items(self):
         worklist = self.env['cs.weekly.suggestion']

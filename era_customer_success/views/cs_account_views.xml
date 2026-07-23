@@ -153,6 +153,10 @@
                                 help="Open the service offerings presented to this customer.">
                             <field name="offering_count" widget="statinfo" string="Offerings"/>
                         </button>
+                        <button class="oe_stat_button" type="object" name="action_open_success_profile" icon="fa-bullseye"
+                                help="Open the shared customer success objectives, stakeholders and milestones.">
+                            <field name="open_success_milestone_count" widget="statinfo" string="Success Plan"/>
+                        </button>
                     </div>
                     <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>
                     <div class="oe_title">
@@ -246,6 +250,7 @@
                         <group string="Follow-up">
                             <field name="last_touch_date"/>
                             <field name="next_touch_date"/>
+                            <field name="next_success_milestone_date"/>
                             <field name="days_since_touch"/>
                             <field name="meeting_count"/>
                         </group>

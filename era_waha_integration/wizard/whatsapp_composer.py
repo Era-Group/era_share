@@ -1,6 +1,5 @@
 # Part of Era Group custom addons.
 import mimetypes
-from ast import literal_eval
 
 from markupsafe import Markup
 
@@ -47,7 +46,7 @@ class WhatsappComposer(models.TransientModel):
         account = self.env['whatsapp.account'].browse(result.get('wa_account_id'))
         if (account.provider == 'waha' and not result.get('phone')
                 and not result.get('batch_mode') and result.get('res_ids') and result.get('res_model')):
-            record = self.env[result['res_model']].browse(literal_eval(result['res_ids']))[:1]
+            record = self.env[result['res_model']].browse(result['res_ids'])[:1]
             if record:
                 result['phone'] = self._waha_number_for_record(record)
         return result
@@ -158,4 +157,3 @@ class WhatsappComposer(models.TransientModel):
             if fname in record._fields and record[fname]:
                 return record[fname]
         return False
-

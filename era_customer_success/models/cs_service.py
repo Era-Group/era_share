@@ -71,6 +71,9 @@ class CsService(models.Model):
     recommendation_ticket_tag_ids = fields.Many2many(
         'helpdesk.tag', 'cs_service_helpdesk_tag_rel',
         'service_id', 'tag_id', string='Recommendation Ticket Tags')
+    suggested_ticket_tags = fields.Text(
+        string='Suggested Ticket Tags', readonly=True,
+        help='AI suggestions for matching Helpdesk tags. Review and select real database tags before applying them.')
     recommendation_cooldown_days = fields.Integer(
         string='Re-offer Cooldown (Days)', default=90)
     ai_enriched_on = fields.Datetime(string='AI Enriched On', readonly=True)
@@ -121,7 +124,7 @@ class CsService(models.Model):
             if not isinstance(data, dict):
                 raise UserError(_('The AI did not return usable data.'))
             recommendation_flags = {
-                field_name: bool(data.get(field_name))
+                field_name: data.get(field_name) is True
                 for field_name in (
                     'recommend_on_low_adoption',
                     'recommend_on_support_pressure',
@@ -148,11 +151,25 @@ class CsService(models.Model):
                 'discovery_questions': data.get('discovery_questions') or svc.discovery_questions,
                 'value_outcomes': data.get('value_outcomes') or svc.value_outcomes,
                 'not_suitable_when': data.get('not_suitable_when') or svc.not_suitable_when,
+                'suggested_ticket_tags': data.get('suggested_ticket_tags') or svc.suggested_ticket_tags,
                 'ai_enriched_on': fields.Datetime.now(),
                 **recommendation_flags,
             })
             # AI enrichment is NOT posted to the chatter — the extracted details and
             # the "AI Enriched On" timestamp are shown in the form fields instead.
+        return True
+
+    def action_apply_suggested_ticket_tags(self):
+        """Apply only exact suggestions that match existing Helpdesk tags."""
+        Tag = self.env['helpdesk.tag']
+        for service in self:
+            names = [
+                line.strip().lstrip('-').strip()
+                for line in (service.suggested_ticket_tags or '').splitlines()
+                if line.strip()
+            ]
+            tags = Tag.search([('name', 'in', names)])
+            service.recommendation_ticket_tag_ids = [(6, 0, tags.ids)]
         return True
 
     def action_view_offerings(self):

@@ -85,6 +85,9 @@
                                 <field name="action_note"/>
                                 <field name="resolution_note"/>
                             </group>
+                            <div class="text-muted">
+                                When you mark action taken, a dated next step creates an activity for the assigned CSM.
+                            </div>
                         </page>
                         <page string="Source and Audit">
                             <group>

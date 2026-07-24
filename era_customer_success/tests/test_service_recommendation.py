@@ -31,11 +31,10 @@ class TestServiceRecommendation(TransactionCase):
     def _assessment(self, complete=True):
         vals = {
             'cs_account_id': self.account.id, 'assessment_date': fields.Date.today(),
-            'source_reference': 'Customer review', 'usage_frequency': 'rare',
+            'source_reference': 'Customer review', 'support_engagement': 'low',
             'evidence': 'Aggregate evidence shared by customer.'}
         if complete:
-            vals.update({'licensed_users': 20, 'active_users_30d': 4,
-                         'key_workflows_total': 5, 'adopted_workflows': 1})
+            vals.update({'project_engagement': 'blocked'})
         assessment = self.env['cs.adoption.assessment'].create(vals)
         assessment.action_confirm()
 

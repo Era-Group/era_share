@@ -225,7 +225,17 @@ class CsVocInsight(models.Model):
         }
         if note:
             values['action_note'] = note
-        self.filtered(lambda item: item.state in ('new', 'triaged')).sudo().write(values)
+        insights = self.filtered(lambda item: item.state in ('new', 'triaged'))
+        insights.sudo().write(values)
+        todo = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        for insight in insights.filtered(lambda item: item.next_step and item.next_step_date and item.csm_user_id):
+            insight.cs_account_id.activity_schedule(
+                'mail.mail_activity_data_todo' if todo else False,
+                date_deadline=insight.next_step_date,
+                summary=_('Voice of Customer follow-up: %s', insight.name),
+                note=insight.next_step,
+                user_id=insight.csm_user_id.id,
+            )
 
     def action_close(self):
         self.check_access('write')

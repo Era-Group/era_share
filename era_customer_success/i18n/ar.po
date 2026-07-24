@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 08:13+0000\n"
-"PO-Revision-Date: 2026-07-24 16:14+0000\n"
+"PO-Revision-Date: 2026-07-24 18:52+0000\n"
 "Last-Translator: Era Group\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -832,6 +832,15 @@ msgid ""
 msgstr "تعذر توليد خطة النجاح بـ ✦. تحقق من إعدادات مزوّد ✦."
 
 #. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_service__suggested_ticket_tags
+msgid ""
+"AI suggestions for matching Helpdesk tags. Review and select real database "
+"tags before applying them."
+msgstr ""
+"اقتراحات ✦ لمطابقة وسوم الدعم. راجع الاقتراحات وحدد الوسوم الموجودة فعلياً "
+"قبل تطبيقها."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid ""
@@ -906,6 +915,11 @@ msgstr "تاريخ تنفيذ الإجراء"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_date
 msgid "Action By"
 msgstr "الإجراء بحلول"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_sources
+msgid "Action Evidence Sources"
+msgstr "مصادر دليل الإجراء"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__message_needaction
@@ -1212,6 +1226,20 @@ msgstr "تم فتح بند عمل آخر لهذا العميل. حدّث الص�
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account_copilot__answer
 msgid "Answer"
 msgstr "الإجابة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid "Apply Suggested Tags"
+msgstr "تطبيق الوسوم المقترحة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"Apply only suggestions whose names exactly match existing Helpdesk tags. "
+"Review the suggestions and existing tags first."
+msgstr ""
+"طبّق فقط الاقتراحات التي تطابق أسماء وسوم دعم موجودة تماماً. راجع الاقتراحات"
+" والوسوم الحالية أولاً."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
@@ -1570,11 +1598,6 @@ msgstr "نجاح العملاء: مزامنة نقاط التواصل في تا�
 #: model:ir.actions.server,name:era_customer_success.cron_cs_weekly_digest_ir_actions_server
 msgid "CS: Weekly CSM worklist digest (AI)"
 msgstr "نجاح العملاء: ملخص قائمة العمل الأسبوعية للمهندس ✦"
-
-#. module: era_customer_success
-#: model:ir.actions.server,name:era_customer_success.cron_cs_weekly_suggestions_catchup_ir_actions_server
-msgid "CS: Weekly worklist catch-up (resume)"
-msgstr "نجاح العملاء: استكمال قائمة العمل الأسبوعية"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__csat_snapshot
@@ -2212,11 +2235,6 @@ msgstr ""
 "والصورة واعتماد Meta المطلوب قبل استخدامه مع العميل."
 
 #. module: era_customer_success
-#: model:ir.model,website_form_label:era_customer_success.model_helpdesk_ticket
-msgid "Create a Ticket"
-msgstr "إنشاء تذكرة"
-
-#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_list
 msgid ""
 "Create a draft need-discovery offering from this support balance. Contact "
@@ -2237,11 +2255,6 @@ msgstr "أنشئ تذكرة دعم لمشكلة في الخدمة أو طلب م
 msgid ""
 "Create adoption assessments as drafts and confirm them through the workflow."
 msgstr "أنشئ تقييمات التبنّي كمسودات ثم اعتمدها من خلال مسار العمل."
-
-#. module: era_customer_success
-#: model:ir.model,website_form_label:era_customer_success.model_crm_lead
-msgid "Create an Opportunity"
-msgstr "إنشاء فرصة"
 
 #. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_csm_offering
@@ -2421,6 +2434,12 @@ msgstr "التحديات الحالية"
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__support_sale_line_id
 msgid "Current Support Package"
 msgstr "باقة الدعم الحالية"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Current customer account indicators"
+msgstr "مؤشرات حساب العميل الحالية"
 
 #. module: era_customer_success
 #. odoo-python
@@ -3259,6 +3278,11 @@ msgid "Evidence"
 msgstr "الدليل"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__evidence_sources
+msgid "Evidence Sources"
+msgstr "مصادر الدليل"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
 msgid "Evidence and Enablement"
 msgstr "الأدلة وخطة التمكين"
@@ -3362,6 +3386,12 @@ msgstr "استكشاف الاحتياج"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__sla_failed_snapshot
 msgid "Failed SLA"
 msgstr "تجاوز اتفاقية مستوى الخدمة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Failed support SLA (%s)"
+msgstr "تجاوز اتفاقية مستوى الدعم (%s)"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
@@ -3975,6 +4005,12 @@ msgid "Last Used On"
 msgstr "آخر استخدام"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Last customer contact (%s)"
+msgstr "آخر تواصل مع العميل (%s)"
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__need_timing__later
 msgid "Later"
 msgstr "لاحقاً"
@@ -3993,6 +4029,18 @@ msgstr "آخر رضا (1-5)"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__nps_latest
 msgid "Latest Survey Score (%)"
 msgstr "آخر نتيجة استبيان (%)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Latest closed value review"
+msgstr "آخر مراجعة قيمة مغلقة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Latest customer engagement assessment (%s)"
+msgstr "آخر تقييم تفاعل للعميل (%s)"
 
 #. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_crm_lead
@@ -4871,6 +4919,12 @@ msgid "Open Value Reviews"
 msgstr "مراجعات القيمة المفتوحة"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Open Voice of Customer insight"
+msgstr "رؤية صوت عميل مفتوحة"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
 msgid ""
 "Open an email containing the selected service and proposed message. Review "
@@ -4897,6 +4951,12 @@ msgid ""
 msgstr ""
 "افتح الخطط والمراجعات وساعات الدعم وصوت العميل واحتياجات الخدمات من مكان "
 "واحد."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Open support tickets (%s)"
+msgstr "تذاكر دعم مفتوحة (%s)"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -5987,6 +6047,12 @@ msgstr "محادثة تجديد"
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Renewal date (%s)"
+msgstr "تاريخ التجديد (%s)"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
 msgid "Renewal in %s days – prepare renewal for %s"
 msgstr "تجديد خلال %s يوم – جهّز تجديد %s"
 
@@ -6892,6 +6958,11 @@ msgstr "العرض المقترح"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
 msgid "Suggested Pitch (AI)"
 msgstr "العرض المقترح ✦"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service__suggested_ticket_tags
+msgid "Suggested Ticket Tags"
+msgstr "وسوم تذاكر مقترحة"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_suggestion_complete__suggestion_id
@@ -7890,6 +7961,12 @@ msgid "Voice of Customer audit fields are managed by workflow actions."
 msgstr "تُدار حقول تدقيق صوت العميل من خلال إجراءات مسار العمل."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_voc_insight.py:0
+msgid "Voice of Customer follow-up: %s"
+msgstr "متابعة صوت العميل: %s"
+
+#. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_voc_insight
 msgid ""
 "Voice of Customer insights are created from confirmed value reviews and "
@@ -8161,6 +8238,15 @@ msgstr ""
 "عند التفعيل، تُحلَّل تذاكر دعم العملاء عبر وكيل ✦ لتقييم المشاعر، ما يغذّي "
 "مؤشر صحة العميل ويُطلق تنبيهات استرداد الخدمة عند المشاعر السلبية. ملاحظة: "
 "يُرسَل نص التذكرة إلى مزوّد ✦ المُهيّأ."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid ""
+"When you mark action taken, a dated next step creates an activity for the "
+"assigned CSM."
+msgstr ""
+"عند تحديد أن الإجراء تم، تنشئ الخطوة التالية المؤرخة نشاطاً لمهندس نجاح "
+"العملاء المسند."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_account__usage_signal

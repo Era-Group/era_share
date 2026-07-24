@@ -36,20 +36,19 @@ class TestAdoptionAssessment(TransactionCase):
             'assessment_date': fields.Date.today(),
             'source': 'customer_review',
             'source_reference': 'Quarterly customer adoption review',
-            'licensed_users': 20,
-            'active_users_30d': 10,
-            'key_workflows_total': 4,
-            'adopted_workflows': 2,
-            'usage_frequency': 'weekly',
-            'evidence': 'Customer shared aggregate active-user and workflow counts.',
+            'support_engagement': 'regular',
+            'project_engagement': 'progressing',
+            'communication_engagement': 'responsive',
+            'operational_progress': 'progressing',
+            'evidence': 'Support history, project progress, and customer communication were reviewed.',
         }
         values.update(extra)
         return self.env['cs.adoption.assessment'].create(values)
 
     def test_score_uses_only_available_measured_components(self):
         assessment = self._assessment()
-        self.assertAlmostEqual(assessment.score, (50 + 50 + 70) / 3)
-        self.assertEqual(assessment.confidence, 75)
+        self.assertAlmostEqual(assessment.score, (70 + 70 + 65 + 70) / 4)
+        self.assertEqual(assessment.confidence, 100)
         self.assertEqual(assessment.status, 'watch')
         with self.assertRaises(UserError):
             self.env['cs.adoption.assessment'].with_user(self.manager).create({
@@ -91,8 +90,8 @@ class TestAdoptionAssessment(TransactionCase):
             'cs_account_id': self.account.id,
             'assessment_date': fields.Date.today(),
             'source_reference': 'Customer usage discussion',
-            'usage_frequency': 'rare',
-            'evidence': 'Customer described usage as rare.',
+            'support_engagement': 'none',
+            'evidence': 'No meaningful support interaction was found.',
         })
         assessment.action_confirm()
         self.assertEqual(assessment.confidence, 25)
@@ -108,13 +107,13 @@ class TestAdoptionAssessment(TransactionCase):
         self.account.company_id.cs_ai_adoption_enabled = True
         response = json.dumps({
             'enablement_plan': 'تنفيذ جلسة تمكين للعمليتين غير المستخدمتين وقياس الاستخدام بعد 30 يوماً.',
-            'active_users_30d': 20,
+            'support_engagement': 'active',
         })
         agent_model = type(self.env.ref('era_customer_success.cs_adoption_agent'))
         with patch.object(agent_model, 'get_direct_response', return_value=[response]):
             assessment.action_generate_ai_plan()
         self.assertIn('جلسة تمكين', assessment.enablement_plan)
-        self.assertEqual(assessment.active_users_30d, 10)
+        self.assertEqual(assessment.support_engagement, 'regular')
 
     def test_value_review_freezes_latest_confirmed_adoption(self):
         assessment = self._assessment()

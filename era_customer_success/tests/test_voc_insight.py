@@ -95,16 +95,28 @@ class TestVocInsight(TransactionCase):
         values = self.account._daily_work_item_values(fields.Date.today())
         self.assertEqual(values['action_type'], 'support_recovery')
 
+    def test_action_taken_schedules_dated_followup(self):
+        insight = self.env['cs.voc.insight'].search([
+            ('value_review_id', '=', self._close_review().id)])
+        due = fields.Date.today() + timedelta(days=3)
+        insight.write({'next_step': 'Call the customer with the recovery update.', 'next_step_date': due})
+        before = self.account.activity_ids
+
+        insight.action_mark_acted(note='Recovery action started.')
+
+        activity = (self.account.activity_ids - before).filtered(
+            lambda item: item.date_deadline == due)
+        self.assertEqual(len(activity), 1)
+        self.assertEqual(activity.user_id, self.manager)
+
     def test_adoption_confidence_controls_voice_priority(self):
         assessment = self.env['cs.adoption.assessment'].create({
             'cs_account_id': self.account.id,
             'assessment_date': fields.Date.today() - timedelta(days=1),
             'source_reference': 'Customer adoption review',
-            'licensed_users': 20,
-            'active_users_30d': 2,
-            'key_workflows_total': 5,
-            'adopted_workflows': 1,
-            'usage_frequency': 'rare',
+            'support_engagement': 'none',
+            'project_engagement': 'blocked',
+            'communication_engagement': 'unresponsive',
             'evidence': 'Customer shared aggregate adoption evidence.',
             'blockers': 'Key workflows remain unused.',
         })
@@ -118,7 +130,7 @@ class TestVocInsight(TransactionCase):
             'cs_account_id': self.account.id,
             'assessment_date': fields.Date.today(),
             'source_reference': 'Customer usage description',
-            'usage_frequency': 'rare',
+            'support_engagement': 'none',
             'evidence': 'Customer described use as rare.',
         })
         low_confidence.action_confirm()

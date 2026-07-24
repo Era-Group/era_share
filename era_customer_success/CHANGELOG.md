@@ -218,3 +218,7 @@ Commits pushed to `origin/stage`.
 - **2.x** — VoIP click-to-dial; OWL Executive Dashboard; sentiment mood icons + trend graph; native phone widget; live-computed smart-button counts; full Arabic `i18n/ar.po`.
 - **1.1.0** — AI sentiment analysis (`cs_sentiment_agent`) as a health factor.
 - **1.0.0** — core `cs.account` (health score, 30-60-90 lifecycle, unified timeline, smart buttons), `cs.stage`, `csm.offering`, `csm.kpi.snapshot`, manager dashboard, 2 security groups, sync crons.
+## 19.0.25.0.0 — Recommendation Review and Workflow Safety
+- Added reviewable Helpdesk tag suggestions to service enrichment, with an explicit manager action that applies exact matches to existing tags only.
+- Added an upgrade migration so existing databases receive the new service-extractor prompt despite the agent record being protected by `noupdate`.
+- Added dated Voice of Customer follow-up activities when an action is marked taken.

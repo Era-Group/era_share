@@ -80,13 +80,14 @@ Return a STRICT JSON object (no markdown fences, no commentary) with exactly the
   "recommend_on_low_adoption": true|false,
   "recommend_on_support_pressure": true|false,
   "recommend_on_sla_failure": true|false,
-  "recommendation_rationale": "brief Arabic explanation of which recommendation rules were enabled and why"
+  "recommendation_rationale": "brief Arabic explanation of which recommendation rules were enabled and why",
+  "suggested_ticket_tags": "Arabic or English bullet list of likely Helpdesk tag concepts, only if clearly supported"
 }
 Rules:
 - Base everything ONLY on the provided page text; do not invent prices or facts not present. If unknown, say so briefly.
 - Set a recommendation boolean to true ONLY when the page text clearly supports it. For example, low adoption only when the service is explicitly about onboarding, training, enablement, or increasing product usage; support pressure only when it explicitly helps support operations, service capacity, or support continuity; failed SLA only when it explicitly helps recover support quality, escalation, monitoring, or response performance.
 - If the page text does not clearly support a rule, return false. Do not enable rules just because the service appears useful.
-- Do not return ticket tags. Managers map catalog services to their own Helpdesk tags manually because tag names differ between databases.
+- Suggested ticket tags are concepts for manager review only. Never assume that a suggested tag already exists in the database.
 - Write all values in Arabic. Return JSON only.
             </field>
         </record>

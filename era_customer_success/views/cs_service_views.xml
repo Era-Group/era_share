@@ -60,6 +60,11 @@
                             invisible="not whatsapp_template_id"
                             groups="era_customer_success.group_era_cs_manager"
                             help="Open the existing WhatsApp template to review its content, language, approval status, and readiness before sending it to customers."/>
+                    <button name="action_apply_suggested_ticket_tags" type="object"
+                            string="Apply Suggested Tags" icon="fa-tags"
+                            invisible="not suggested_ticket_tags"
+                            groups="era_customer_success.group_era_cs_manager"
+                            help="Apply only suggestions whose names exactly match existing Helpdesk tags. Review the suggestions and existing tags first."/>
                     <field name="whatsapp_template_id" invisible="1"/>
                 </header>
                 <sheet>
@@ -125,6 +130,7 @@
                                 <field name="recommend_on_support_pressure"/>
                                 <field name="recommend_on_sla_failure"/>
                                 <field name="recommendation_ticket_tag_ids" widget="many2many_tags"/>
+                                <field name="suggested_ticket_tags" readonly="1"/>
                                 <field name="recommendation_cooldown_days"/>
                             </group>
                         </page>

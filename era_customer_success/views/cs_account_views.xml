@@ -245,6 +245,7 @@
                             <field name="usage_signal"/>
                         </group>
                     </group>
+                    <div class="o_cs_google_sheet_section">
                     <separator string="Google Sheet / ERA Information"/>
                     <div class="o_cs_google_sheet_block border border-danger rounded p-3 mb-3">
                         <field name="sheet_approved_scope" invisible="1"/>
@@ -285,6 +286,7 @@
                                 <tr><th>Last synchronized / آخر مزامنة</th><td><field name="sheet_last_synced_on" nolabel="1" readonly="1"/></td></tr>
                             </tbody>
                         </table>
+                    </div>
                     </div>
                     <group>
                         <group string="Revenue &amp; Renewal">
@@ -373,6 +375,17 @@
                 </sheet>
                 <chatter/>
             </form>
+        </field>
+    </record>
+
+    <record id="view_cs_account_form_sheet_section_last" model="ir.ui.view">
+        <field name="name">cs.account.form.sheet.section.last</field>
+        <field name="model">cs.account</field>
+        <field name="inherit_id" ref="view_cs_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="after">
+                <xpath expr="//div[hasclass('o_cs_google_sheet_section')]" position="move"/>
+            </xpath>
         </field>
     </record>
 

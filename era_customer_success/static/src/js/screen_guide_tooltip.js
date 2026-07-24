@@ -18,27 +18,24 @@ function replaceGuides(root = document) {
         icon.setAttribute("role", "button");
         icon.setAttribute("tabindex", "0");
         icon.setAttribute("aria-label", "دليل الشاشة");
-        icon.addEventListener("click", () => openGuide(text));
+        icon.addEventListener("click", () => openGuide(text, icon));
         icon.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                openGuide(text);
+                openGuide(text, icon);
             }
         });
         guide.replaceWith(icon);
     }
 }
 
-function openGuide(text) {
+function openGuide(text, trigger) {
     document.querySelector(".o_cs_screen_guide_dialog")?.remove();
     const dialog = document.createElement("dialog");
     dialog.className = "o_cs_screen_guide_dialog";
     const isRtl = document.documentElement.dir === "rtl"
         || document.documentElement.lang.startsWith("ar")
         || /[\u0600-\u06FF]/.test(text);
-    if (isRtl && !document.documentElement.dir) {
-        document.documentElement.dir = "rtl";
-    }
     dialog.dir = isRtl ? "rtl" : "ltr";
     dialog.classList.toggle("o_cs_screen_guide_dialog_rtl", isRtl);
     if (isRtl) {
@@ -83,7 +80,10 @@ function openGuide(text) {
             dialog.close();
         }
     });
-    dialog.addEventListener("close", () => dialog.remove());
+    dialog.addEventListener("close", () => {
+        dialog.remove();
+        trigger?.focus();
+    });
     document.body.append(dialog);
     dialog.showModal();
 }

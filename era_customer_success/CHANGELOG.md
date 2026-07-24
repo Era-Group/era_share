@@ -230,3 +230,5 @@ Commits pushed to `origin/stage`.
 - Expanded the executive dashboard with high-priority Voice of Customer, low engagement, critical support wallets, overdue value reviews, due work, and service needs under validation, all with source-record drill-down.
 - Added keyboard access to dashboard KPI cards and engineer rows.
 - Locked closed value reviews against business-data edits and cleaned stale partner links when a Customer Success account changes customer.
+## 19.0.28.0.0 — Accessible Executive Experience
+- Scoped RTL direction to the screen-guide dialog and restored keyboard focus to the help trigger after closing, without mutating the whole Odoo document direction.

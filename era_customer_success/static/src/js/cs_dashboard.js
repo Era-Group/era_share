@@ -4,6 +4,7 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { DateTime } from "luxon";
+import { _t } from "@web/core/l10n/translation";
 
 export class CsDashboard extends Component {
     static template = "era_customer_success.CsDashboard";
@@ -99,7 +100,7 @@ export class CsDashboard extends Component {
     get tiles() {
         const k = this.state.kpi;
         return [
-            { key: "accounts", icon: "fa-users", color: "primary", label: "Accounts", value: k.accounts, domain: [] },
+            { key: "accounts", icon: "fa-users", color: "primary", label: _t("Accounts"), value: k.accounts, domain: [] },
             { key: "health", icon: "fa-heartbeat", color: "success", label: "Avg Health", value: k.avgHealth, domain: [] },
             { key: "atRisk", icon: "fa-exclamation-triangle", color: "danger", label: "At Risk", value: k.atRisk, domain: this.atRiskDomain },
             { key: "renewals", icon: "fa-refresh", color: "warning", label: "Renewals < 90d", value: k.renewals, domain: [["renewal_soon", "=", true]] },
@@ -107,12 +108,12 @@ export class CsDashboard extends Component {
             { key: "csat", icon: "fa-star", color: "success", label: "Avg CSAT", value: k.avgCsat, domain: [] },
             { key: "sentiment", icon: "fa-smile-o", color: "primary", label: "Avg Sentiment", value: k.avgSentiment, domain: [] },
             { key: "upsell", icon: "fa-line-chart", color: "info", label: "Upsell Won", value: k.upsell, domain: [["upsell_revenue", ">", 0]] },
-            { key: "highVoc", icon: "fa-bullhorn", color: "danger", label: "High Customer Voice", value: k.highVoc, model: "cs.voc.insight", domain: [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]] },
-            { key: "lowEngagement", icon: "fa-plug", color: "warning", label: "Low Engagement", value: k.lowEngagement, domain: [["latest_adoption_status", "in", ["watch", "low"]]] },
-            { key: "criticalWallets", icon: "fa-hourglass-end", color: "danger", label: "Critical Support Hours", value: k.criticalWallets, model: "cs.support.wallet", domain: [["status", "in", ["critical", "exhausted", "expired"]]] },
-            { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: "Overdue Value Reviews", value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", DateTime.now().toISODate()], ["state", "not in", ["closed", "cancelled"]]] },
-            { key: "dueWork", icon: "fa-tasks", color: "primary", label: "Due Work", value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", DateTime.now().toISODate()]] },
-            { key: "qualifyingNeeds", icon: "fa-compass", color: "info", label: "Needs Being Validated", value: k.qualifyingNeeds, model: "csm.offering", domain: [["state", "in", ["draft", "presented"]]] },
+            { key: "highVoc", icon: "fa-bullhorn", color: "danger", label: _t("High Customer Voice"), value: k.highVoc, model: "cs.voc.insight", domain: [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]] },
+            { key: "lowEngagement", icon: "fa-plug", color: "warning", label: _t("Low Engagement"), value: k.lowEngagement, domain: [["latest_adoption_status", "in", ["watch", "low"]]] },
+            { key: "criticalWallets", icon: "fa-hourglass-end", color: "danger", label: _t("Critical Support Hours"), value: k.criticalWallets, model: "cs.support.wallet", domain: [["status", "in", ["critical", "exhausted", "expired"]]] },
+            { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: _t("Overdue Value Reviews"), value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", DateTime.now().toISODate()], ["state", "not in", ["closed", "cancelled"]]] },
+            { key: "dueWork", icon: "fa-tasks", color: "primary", label: _t("Due Work"), value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", DateTime.now().toISODate()]] },
+            { key: "qualifyingNeeds", icon: "fa-compass", color: "info", label: _t("Needs Being Validated"), value: k.qualifyingNeeds, model: "csm.offering", domain: [["state", "in", ["draft", "presented"]]] },
         ];
     }
 

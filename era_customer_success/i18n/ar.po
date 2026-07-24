@@ -878,6 +878,7 @@ msgstr "الإقرار المحاسبي"
 
 #. module: era_customer_success
 #. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
 #: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
 msgid "Accounts"
 msgstr "الحسابات"
@@ -2415,6 +2416,12 @@ msgid "Critical Support Balance (%)"
 msgstr "حد الرصيد الحرج (%)"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Critical Support Hours"
+msgstr "ساعات دعم حرجة"
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid ""
@@ -3137,6 +3144,12 @@ msgid "Due Date"
 msgstr "تاريخ الاستحقاق"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Due Work"
+msgstr "أعمال مستحقة"
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_service__service_type__module
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__need_type__module
 msgid "ERA Module"
@@ -3697,6 +3710,12 @@ msgid "High Churn Forecast (≥60%)"
 msgstr "تنبّؤ فقدان مرتفع (≥60%)"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "High Customer Voice"
+msgstr "صوت العميل عالي الأولوية"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_search
 msgid "High Priority"
 msgstr "أولوية عالية"
@@ -4163,6 +4182,12 @@ msgid "Low Balance"
 msgstr "رصيد منخفض"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Low Engagement"
+msgstr "تفاعل منخفض"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_support_low_threshold
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_support_low_threshold
 msgid "Low Support Balance (%)"
@@ -4462,6 +4487,12 @@ msgstr "احتياج للتحقق"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_search
 msgid "Needs Attention"
 msgstr "تحتاج اهتماماً"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Needs Being Validated"
+msgstr "احتياجات قيد التحقق"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_search
@@ -5249,6 +5280,12 @@ msgstr "المبلغ المتأخر"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
 msgid "Overdue Follow-up"
 msgstr "متابعة متأخرة"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Overdue Value Reviews"
+msgstr "مراجعات قيمة متأخرة"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_success_milestone__owner_user_id

@@ -187,7 +187,7 @@ class CsService(models.Model):
             lines += ['', desc]
         feats = html2plaintext(self.features or '').strip()
         if feats:
-            lines += ['', '✨ أبرز المميزات:', feats]
+            lines += ['', '✦ أبرز المميزات:', feats]
         body = re.sub(r'\n{3,}', '\n\n', '\n'.join(lines)).strip()
         return body[:1024]
 

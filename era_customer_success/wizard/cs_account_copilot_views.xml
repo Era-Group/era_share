@@ -11,7 +11,7 @@
                 <field name="question" placeholder="مثال: ليش صحة هذا العميل منخفضة؟ متى آخر تواصل؟ هل فيه فرص بيع؟"
                        nolabel="1"/>
                 <group>
-                    <button name="action_ask" type="object" string="اسأل ✨" class="btn-primary"
+                    <button name="action_ask" type="object" string="اسأل ✦" class="btn-primary"
                             help="Ask a focused question about this customer. The answer is grounded in the Customer Success record and timeline; verify important facts in their source records before acting."/>
                 </group>
                 <field name="answer" nolabel="1" readonly="1" invisible="not answer"/>

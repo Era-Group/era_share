@@ -20,7 +20,7 @@
                 <field name="service_image" widget="image" class="oe_avatar"
                        invisible="not service_id" readonly="1"/>
                 <group>
-                    <button name="action_generate" type="object" string="✨ Generate with AI"
+                    <button name="action_generate" type="object" string="✦ Generate with AI"
                             class="btn-primary"
                             help="Draft a message using the selected channel, tone, purpose, recent customer timeline, and optional catalog service. Review and edit the draft before opening the channel."/>
                 </group>

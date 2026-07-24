@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 08:13+0000\n"
-"PO-Revision-Date: 2026-07-24 14:03+0000\n"
+"PO-Revision-Date: 2026-07-24 14:28+0000\n"
 "Last-Translator: Era Group\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -142,7 +142,7 @@ msgid ""
 "<i class=\"fa fa-magic me-2\" title=\"AI Next Best Action\"/>\n"
 "                            <b class=\"me-2\">Next Best Action:</b>"
 msgstr ""
-"<i class=\"fa fa-magic me-2\" title=\"الإجراء التالي الأنسب بـ ✨\"/>\n"
+"<i class=\"fa fa-magic me-2\" title=\"الإجراء التالي الأنسب بـ ✦\"/>\n"
 "                            <b class=\"me-2\">الإجراء التالي الأنسب:</b>"
 
 #. module: era_customer_success
@@ -201,7 +201,7 @@ msgid ""
 "provider."
 msgstr ""
 "مهمة يومية تقترح الإجراء التالي الأنسب لكل عميل بناءً على وضعه وتاريخه. "
-"تُرسَل لقطة العميل إلى مزوّد ✨ المُهيّأ."
+"تُرسَل لقطة العميل إلى مزوّد ✦ المُهيّأ."
 
 #. module: era_customer_success
 #. odoo-python
@@ -226,7 +226,7 @@ msgid ""
 " snapshot is sent to the AI provider."
 msgstr ""
 "مهمة مجدولة تولّد تدريجياً ملخصاً ذكياً قصيراً (الوضع، السكوب، مجال العمل، "
-"مدة التعامل) يظهر تحت اسم كل عميل. تُرسَل لقطة العميل إلى مزوّد ✨."
+"مدة التعامل) يظهر تحت اسم كل عميل. تُرسَل لقطة العميل إلى مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.constraint,message:era_customer_success.constraint_cs_success_profile_account_unique
@@ -250,7 +250,7 @@ msgstr ""
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__source__ai
 msgid "AI"
-msgstr "✨"
+msgstr "✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__ai_adoption_enabled
@@ -258,47 +258,47 @@ msgstr "✨"
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_adoption_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Adoption Plans"
-msgstr "خطط التبنّي بـ ✨"
+msgstr "خطط التبنّي بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_churn_enabled
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_churn_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Churn Forecast"
-msgstr "تنبّؤ الفقدان بـ ✨"
+msgstr "تنبّؤ الفقدان بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_success_profile__ai_generated_on
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__ai_generated_on
 msgid "AI Draft Generated On"
-msgstr "تاريخ توليد مسودة ✨"
+msgstr "تاريخ توليد مسودة ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__ai_enriched_on
 msgid "AI Enriched On"
-msgstr "أُثري بـ ✨ في"
+msgstr "أُثري بـ ✦ في"
 
 #. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_cs_followup_compose
 msgid "AI Follow-up / Reply Composer"
-msgstr "مُحرِّر المتابعة/الردود بـ ✨"
+msgstr "مُحرِّر المتابعة/الردود بـ ✦"
 
 #. module: era_customer_success
 #: model:mail.message.subtype,name:era_customer_success.mt_cs_action
 msgid "AI Next Action"
-msgstr "إجراء ✨ التالي"
+msgstr "إجراء ✦ التالي"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_next_action_enabled
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_next_action_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Next Best Action"
-msgstr "الإجراء التالي الأنسب بـ ✨"
+msgstr "الإجراء التالي الأنسب بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_cs_call_briefing
 msgid "AI Pre-Call / Meeting Briefing"
-msgstr "تحضير ما قبل المكالمة/الاجتماع بـ ✨"
+msgstr "تحضير ما قبل المكالمة/الاجتماع بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__ai_summary
@@ -313,14 +313,14 @@ msgstr "ملخص ذكي للعميل"
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_renewal_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Renewal Strategy"
-msgstr "استراتيجية التجديد بـ ✨"
+msgstr "استراتيجية التجديد بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_sentiment_enabled
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_sentiment_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Sentiment Analysis"
-msgstr "تحليل المشاعر بـ ✨"
+msgstr "تحليل المشاعر بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__ai_success_plan_enabled
@@ -329,13 +329,13 @@ msgstr "تحليل المشاعر بـ ✨"
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_success_plan_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Success Plan Drafts"
-msgstr "مسودات خطط النجاح بـ ✨"
+msgstr "مسودات خطط النجاح بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__next_action_log_ids
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "AI Suggestions History"
-msgstr "سجل اقتراحات ✨"
+msgstr "سجل اقتراحات ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -348,52 +348,52 @@ msgstr "ملخص ذكي"
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_value_review_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Value Review Drafts"
-msgstr "مسودات مراجعة القيمة بـ ✨"
+msgstr "مسودات مراجعة القيمة بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_company__cs_ai_digest_enabled
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_ai_digest_enabled
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "AI Weekly Worklist"
-msgstr "قائمة العمل الأسبوعية بـ ✨"
+msgstr "قائمة العمل الأسبوعية بـ ✦"
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "AI adoption planning failed. Check the AI provider configuration."
-msgstr "تعذر إعداد خطة التبنّي بـ ✨. تحقق من إعداد مزود ✨."
+msgstr "تعذر إعداد خطة التبنّي بـ ✦. تحقق من إعداد مزود ✦."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "AI enablement planning is available only on draft assessments."
-msgstr "إعداد خطة التمكين بـ ✨ متاح في مسودة التقييم فقط."
+msgstr "إعداد خطة التمكين بـ ✦ متاح في مسودة التقييم فقط."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_service.py:0
 msgid "AI extraction failed. Check the AI provider configuration."
-msgstr "فشل استخراج ✨. تحقّق من إعداد مزوّد ✨."
+msgstr "فشل استخراج ✦. تحقّق من إعداد مزوّد ✦."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/csm_offering.py:0
 msgid "AI pitch generation failed. Check the AI provider configuration."
-msgstr "فشل توليد العرض بـ ✨. تحقّق من إعداد مزوّد ✨."
+msgstr "فشل توليد العرض بـ ✦. تحقّق من إعداد مزوّد ✦."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_success_profile.py:0
 msgid ""
 "AI success-plan generation failed. Check the AI provider configuration."
-msgstr "تعذر توليد خطة النجاح بـ ✨. تحقق من إعدادات مزوّد ✨."
+msgstr "تعذر توليد خطة النجاح بـ ✦. تحقق من إعدادات مزوّد ✦."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid ""
 "AI value-review generation failed. Check the AI provider configuration."
-msgstr "تعذر توليد مراجعة القيمة بـ ✨. تحقق من إعدادات مزوّد ✨."
+msgstr "تعذر توليد مراجعة القيمة بـ ✦. تحقق من إعدادات مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__accepted
@@ -505,7 +505,7 @@ msgid ""
 "customer. Review AI-generated content before activation."
 msgstr ""
 "فعّل خطة النجاح بعد مراجعتها لتصبح أهدافها وأصحاب العلاقة ومراحلها وخدماتها "
-"المرتبطة خطة العمل المشتركة لهذا العميل. راجع محتوى ✨ قبل التفعيل."
+"المرتبطة خطة العمل المشتركة لهذا العميل. راجع محتوى ✦ قبل التفعيل."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__active
@@ -560,7 +560,7 @@ msgid ""
 "Activities completed on this account during the period (pending AI/system "
 "to-dos are not counted)."
 msgstr ""
-"الأنشطة المنجزة على هذا الحساب خلال الفترة (لا تُحتسب مهام ✨ أو النظام "
+"الأنشطة المنجزة على هذا الحساب خلال الفترة (لا تُحتسب مهام ✦ أو النظام "
 "المعلقة)."
 
 #. module: era_customer_success
@@ -718,7 +718,7 @@ msgstr "الالتزامات والمسؤولون والتواريخ المتف�
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__ai_generated_on
 msgid "Ai Generated On"
-msgstr "تاريخ التوليد بـ ✨"
+msgstr "تاريخ التوليد بـ ✦"
 
 #. module: era_customer_success
 #. odoo-python
@@ -745,8 +745,8 @@ msgid ""
 "and trigger service-recovery alerts. Ticket text is sent to the configured "
 "AI provider."
 msgstr ""
-"تحليل مشاعر تذاكر الدعم عبر وكيل ✨ لتغذية مؤشر الصحة وإطلاق تنبيهات استرداد "
-"الخدمة. يُرسَل نص التذكرة إلى مزوّد ✨ المُهيّأ."
+"تحليل مشاعر تذاكر الدعم عبر وكيل ✦ لتغذية مؤشر الصحة وإطلاق تنبيهات استرداد "
+"الخدمة. يُرسَل نص التذكرة إلى مزوّد ✦ المُهيّأ."
 
 #. module: era_customer_success
 #. odoo-python
@@ -782,12 +782,12 @@ msgstr "مؤرشف"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "Artificial Intelligence"
-msgstr "✨"
+msgstr "✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Ask AI"
-msgstr "اسأل ✨"
+msgstr "اسأل ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_account_my
@@ -816,8 +816,8 @@ msgid ""
 "Ask the AI agent to classify each customer's tier from its engagement (falls"
 " back to a rule-based tier if AI is unavailable)."
 msgstr ""
-"اطلب من وكيل ✨ تصنيف شريحة كل عميل بناءً على تفاعله (مع بديل قائم على قواعد "
-"عند تعذّر ✨)."
+"اطلب من وكيل ✦ تصنيف شريحة كل عميل بناءً على تفاعله (مع بديل قائم على قواعد "
+"عند تعذّر ✦)."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -825,7 +825,7 @@ msgid ""
 "Ask the AI for the single best next action for this customer, based on their"
 " situation, history and last suggestion."
 msgstr ""
-"اطلب من ✨ أفضل خطوة تالية لهذا العميل، بناءً على وضعه وتاريخه وآخر اقتراح."
+"اطلب من ✦ أفضل خطوة تالية لهذا العميل، بناءً على وضعه وتاريخه وآخر اقتراح."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__assessment_date
@@ -984,7 +984,7 @@ msgid ""
 "Build an AI renewal play: which lever to pull (collections-first / pitch-"
 "first / re-engage) plus dated countdown steps for this renewal."
 msgstr ""
-"ابنِ خطة تجديد بـ ✨: أي رافعة تُستخدم (التحصيل أولاً / العرض أولاً / إعادة "
+"ابنِ خطة تجديد بـ ✦: أي رافعة تُستخدم (التحصيل أولاً / العرض أولاً / إعادة "
 "التفاعل) مع خطوات مؤرّخة تنازلياً لهذا التجديد."
 
 #. module: era_customer_success
@@ -1039,7 +1039,7 @@ msgstr "نجاح العملاء: تقديم دورة الحياة وتمييز �
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_analyze_sentiment_ir_actions_server
 msgid "CS: Analyse ticket sentiment (AI)"
-msgstr "نجاح العملاء: تحليل مشاعر التذاكر (✨)"
+msgstr "نجاح العملاء: تحليل مشاعر التذاكر ✦"
 
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_daily_worklist_ir_actions_server
@@ -1054,12 +1054,12 @@ msgstr "نجاح العملاء: بناء لقطة المؤشرات الشهري
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_renewal_strategy_ir_actions_server
 msgid "CS: Build renewal strategy (AI)"
-msgstr "نجاح العملاء: بناء استراتيجية التجديد (✨)"
+msgstr "نجاح العملاء: بناء استراتيجية التجديد ✦"
 
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_forecast_churn_ir_actions_server
 msgid "CS: Forecast churn probability (AI)"
-msgstr "نجاح العملاء: التنبّؤ باحتمال الفقدان (✨)"
+msgstr "نجاح العملاء: التنبّؤ باحتمال الفقدان ✦"
 
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_profile_summary_ir_actions_server
@@ -1089,7 +1089,7 @@ msgstr "نجاح العملاء: جدولة إيقاع المتابعة"
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_next_action_ir_actions_server
 msgid "CS: Suggest next best action (AI)"
-msgstr "نجاح العملاء: اقتراح الإجراء التالي الأنسب (✨)"
+msgstr "نجاح العملاء: اقتراح الإجراء التالي الأنسب ✦"
 
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_sync_touchpoints_ir_actions_server
@@ -1099,7 +1099,7 @@ msgstr "نجاح العملاء: مزامنة نقاط التواصل في تا�
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_weekly_digest_ir_actions_server
 msgid "CS: Weekly CSM worklist digest (AI)"
-msgstr "نجاح العملاء: ملخص قائمة العمل الأسبوعية للمهندس (✨)"
+msgstr "نجاح العملاء: ملخص قائمة العمل الأسبوعية للمهندس ✦"
 
 #. module: era_customer_success
 #: model:ir.actions.server,name:era_customer_success.cron_cs_weekly_suggestions_catchup_ir_actions_server
@@ -1332,7 +1332,7 @@ msgstr "مرحلة الفقدان"
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__use_ai_tier
 msgid "Classify tier with AI"
-msgstr "تصنيف الشريحة بـ ✨"
+msgstr "تصنيف الشريحة بـ ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
@@ -1530,7 +1530,7 @@ msgstr "تاريخ الإنجاز"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Compose (AI)"
-msgstr "إنشاء رسالة (✨)"
+msgstr "إنشاء رسالة ✦"
 
 #. module: era_customer_success
 #. odoo-python
@@ -1538,7 +1538,7 @@ msgstr "إنشاء رسالة (✨)"
 #: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
 msgid "Compose Follow-up (AI)"
-msgstr "إنشاء رسالة متابعة (✨)"
+msgstr "إنشاء رسالة متابعة ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__concise
@@ -1567,7 +1567,7 @@ msgid ""
 "thresholds, package validity, and expiry warnings. Enable only the "
 "automations your team will review and operate."
 msgstr ""
-"اضبط مساعدات ✨ الاختيارية ومنتجات محافظ الدعم وحدود الرصيد وصلاحية الباقات "
+"اضبط مساعدات ✦ الاختيارية ومنتجات محافظ الدعم وحدود الرصيد وصلاحية الباقات "
 "وتنبيهات الانتهاء. فعّل فقط الأتمتة التي سيراجعها فريقك ويديرها."
 
 #. module: era_customer_success
@@ -2097,7 +2097,7 @@ msgstr "مرحلة نجاح العميل"
 #. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_cs_next_action
 msgid "Customer Success Next Best Action (AI)"
-msgstr "الإجراء التالي الأنسب لنجاح العملاء (✨)"
+msgstr "الإجراء التالي الأنسب لنجاح العملاء ✦"
 
 #. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_csm_offering
@@ -2314,7 +2314,7 @@ msgid ""
 "and AI tier options before importing."
 msgstr ""
 "اكتشف الشركات ذات التذاكر أو المشاريع القائمة وغير المُدارة بعد في نجاح "
-"العملاء. راجع المصدر وعدد المرشحين والحد والإسناد وخيارات التصنيف بـ ✨ قبل "
+"العملاء. راجع المصدر وعدد المرشحين والحد والإسناد وخيارات التصنيف بـ ✦ قبل "
 "الاستيراد."
 
 #. module: era_customer_success
@@ -2469,12 +2469,12 @@ msgstr "مسودة"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
 msgid "Draft Agenda (AI)"
-msgstr "إعداد جدول الأعمال بـ ✨"
+msgstr "إعداد جدول الأعمال بـ ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
 msgid "Draft Enablement Plan (AI)"
-msgstr "إعداد مسودة خطة تمكين بـ ✨"
+msgstr "إعداد مسودة خطة تمكين بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_followup_compose__draft
@@ -2490,7 +2490,7 @@ msgstr "مسودات عروض تحتاج تحققاً"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
 msgid "Draft Plan (AI)"
-msgstr "إعداد مسودة بـ ✨"
+msgstr "إعداد مسودة بـ ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
@@ -2529,7 +2529,7 @@ msgid ""
 "Draft a ready-to-send WhatsApp, SMS or email message (or a reply to the last"
 " message) with AI — then edit the tone and send it."
 msgstr ""
-"صُغ بـ ✨ رسالة واتساب أو SMS أو إيميل جاهزة للإرسال (أو رداً على آخر رسالة) "
+"صُغ بـ ✦ رسالة واتساب أو SMS أو إيميل جاهزة للإرسال (أو رداً على آخر رسالة) "
 "— ثم عدّل النبرة وأرسلها."
 
 #. module: era_customer_success
@@ -2546,7 +2546,7 @@ msgid ""
 "blocker description. AI does not measure usage or change the confirmed "
 "score; verify all evidence before confirmation."
 msgstr ""
-"صغ خطة تمكين موجهة من مقاييس التبنّي المجمعة ووصف العائق. لا يقيس ✨ "
+"صغ خطة تمكين موجهة من مقاييس التبنّي المجمعة ووصف العائق. لا يقيس ✦ "
 "الاستخدام ولا يغير الدرجة المؤكدة؛ تحقق من الأدلة قبل التأكيد."
 
 #. module: era_customer_success
@@ -2557,7 +2557,7 @@ msgid ""
 "and edit the draft before the meeting."
 msgstr ""
 "صغ جدول أعمال وملاحظات وأسئلة ومخاطر واحتياجات مستندة إلى اللقطة المثبتة. لا"
-" يؤكد ✨ قيمة العميل أو التزاماته؛ راجع المسودة قبل الاجتماع."
+" يؤكد ✦ قيمة العميل أو التزاماته؛ راجع المسودة قبل الاجتماع."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_search
@@ -2616,19 +2616,19 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "Enable AI Adoption Plans in Customer Success settings first."
-msgstr "فعّل خطط التبنّي بـ ✨ من إعدادات نجاح العملاء أولاً."
+msgstr "فعّل خطط التبنّي بـ ✦ من إعدادات نجاح العملاء أولاً."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_success_profile.py:0
 msgid "Enable AI Success Plan Drafts in Customer Success settings first."
-msgstr "فعّل مسودات خطط النجاح بـ ✨ من إعدادات نجاح العملاء أولاً."
+msgstr "فعّل مسودات خطط النجاح بـ ✦ من إعدادات نجاح العملاء أولاً."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid "Enable AI Value Review Drafts in Customer Success settings first."
-msgstr "فعّل مسودات مراجعات القيمة بـ ✨ من إعدادات نجاح العملاء أولاً."
+msgstr "فعّل مسودات مراجعات القيمة بـ ✦ من إعدادات نجاح العملاء أولاً."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__enablement_plan
@@ -2933,7 +2933,7 @@ msgid ""
 "Generate a short AI profile summary (situation, scope, field of work, "
 "tenure) shown under the customer's name."
 msgstr ""
-"ولّد ملخصاً قصيراً بـ ✨ (الوضع، النطاق، مجال العمل، مدة التعامل) يظهر تحت "
+"ولّد ملخصاً قصيراً بـ ✦ (الوضع، النطاق، مجال العمل، مدة التعامل) يظهر تحت "
 "اسم العميل."
 
 #. module: era_customer_success
@@ -2942,7 +2942,7 @@ msgid ""
 "Generate an AI pre-call/meeting briefing: a quick snapshot, talking points, "
 "risks to handle, and the suggested goal of the contact."
 msgstr ""
-"ولّد موجزاً تحضيرياً بـ ✨ قبل المكالمة/الاجتماع: لمحة سريعة، نقاط للطرح، "
+"ولّد موجزاً تحضيرياً بـ ✦ قبل المكالمة/الاجتماع: لمحة سريعة، نقاط للطرح، "
 "مخاطر للتعامل معها، والهدف المقترح للتواصل."
 
 #. module: era_customer_success
@@ -3425,7 +3425,7 @@ msgid ""
 "to the configured AI provider."
 msgstr ""
 "اسمح لمهندسي نجاح العملاء بتوليد مسودة قابلة للمراجعة لأهداف العميل ومعايير "
-"النجاح وأصحاب العلاقة المعروفين والمراحل. تُرسل لقطة العميل إلى مزوّد ✨ "
+"النجاح وأصحاب العلاقة المعروفين والمراحل. تُرسل لقطة العميل إلى مزوّد ✦ "
 "المحدد."
 
 #. module: era_customer_success
@@ -3692,7 +3692,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_success_profile.py:0
 msgid "Move the success plan to Draft before generating an AI revision."
-msgstr "انقل خطة النجاح إلى مسودة قبل توليد مراجعة بـ ✨."
+msgstr "انقل خطة النجاح إلى مسودة قبل توليد مراجعة بـ ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__mrr
@@ -4429,7 +4429,7 @@ msgid ""
 "(WhatsApp / email) and its details steer the AI draft."
 msgstr ""
 "أرفق خدمة من الكتالوج اختيارياً. تُرسل صورتها مع الرسالة عبر واتساب أو "
-"البريد وتوجّه تفاصيلها مسودة ✨."
+"البريد وتوجّه تفاصيلها مسودة ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_support_wallet__order_id
@@ -4593,7 +4593,7 @@ msgstr ""
 #: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
 msgid "Pre-Call Briefing (AI)"
-msgstr "موجز تحضيري للمكالمة (✨)"
+msgstr "موجز تحضيري للمكالمة ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -4623,7 +4623,7 @@ msgstr "تجهيز"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Prepare (AI)"
-msgstr "تحضير (✨)"
+msgstr "تحضير ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
@@ -4634,7 +4634,7 @@ msgstr "تحضير المراجعة"
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid "Prepare and freeze the review data before generating the AI draft."
-msgstr "جهّز بيانات المراجعة وثبّتها قبل توليد مسودة ✨."
+msgstr "جهّز بيانات المراجعة وثبّتها قبل توليد مسودة ✦."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -4699,7 +4699,7 @@ msgid ""
 "Present a tailored service offering to this customer (with an AI-"
 "personalised pitch) and track whether it is accepted."
 msgstr ""
-"قدّم عرضاً خدمياً مخصّصاً لهذا العميل (برسالة مخصّصة بـ ✨) وتابع قبوله من "
+"قدّم عرضاً خدمياً مخصّصاً لهذا العميل (برسالة مخصّصة بـ ✦) وتابع قبوله من "
 "عدمه."
 
 #. module: era_customer_success
@@ -4877,7 +4877,7 @@ msgstr "فترة الانتظار قبل إعادة العرض بالأيام"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid "Read from URL (AI)"
-msgstr "قراءة من الرابط (✨)"
+msgstr "قراءة من الرابط ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
@@ -5519,8 +5519,8 @@ msgid ""
 "configured AI provider. Evidence text and customer records are not sent; AI "
 "does not collect telemetry or alter confirmed metrics."
 msgstr ""
-"أرسل مقاييس التبنّي المجمعة ووصف العائق الاختياري إلى مزوّد ✨ المحدد. لا "
-"تُرسل نصوص الأدلة أو سجلات العميل، ولا يجمع ✨ بيانات قياس أو يغير المقاييس "
+"أرسل مقاييس التبنّي المجمعة ووصف العائق الاختياري إلى مزوّد ✦ المحدد. لا "
+"تُرسل نصوص الأدلة أو سجلات العميل، ولا يجمع ✦ بيانات قياس أو يغير المقاييس "
 "المؤكدة."
 
 #. module: era_customer_success
@@ -5715,7 +5715,7 @@ msgid ""
 " draft or signal; verify facts, customer commitments, and commercial claims "
 "before use."
 msgstr ""
-"يعرض مساعدة ✨ أو وقت آخر توليد. المخرج مسودة أو إشارة للمراجعة؛ تحقق من "
+"يعرض مساعدة ✦ أو وقت آخر توليد. المخرج مسودة أو إشارة للمراجعة؛ تحقق من "
 "الحقائق والتزامات العميل والادعاءات التجارية قبل الاستخدام."
 
 #. module: era_customer_success
@@ -5765,7 +5765,7 @@ msgstr ""
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_customer_import
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
 msgid "Smart Customer Import"
-msgstr "جلب العملاء بـ ✨"
+msgstr "جلب العملاء بـ ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__snapshot_captured_on
@@ -5962,12 +5962,12 @@ msgstr "مرحلة النجاح «%(milestone)s» %(timing)s."
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Suggest Next Step (AI)"
-msgstr "اقترح الخطوة التالية (✨)"
+msgstr "اقترح الخطوة التالية ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
 msgid "Suggest Pitch (AI)"
-msgstr "اقترح صيغة العرض (✨)"
+msgstr "اقترح صيغة العرض ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__state__suggested
@@ -5999,7 +5999,7 @@ msgstr "العرض المقترح"
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__pitch_message
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
 msgid "Suggested Pitch (AI)"
-msgstr "العرض المقترح (✨)"
+msgstr "العرض المقترح ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_suggestion_complete__suggestion_id
@@ -6241,77 +6241,77 @@ msgstr "قائمة عمل الفريق"
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "The AI adoption agent is not available."
-msgstr "وكيل ✨ التبنّي غير متاح."
+msgstr "وكيل ✦ التبنّي غير متاح."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
 msgid "The AI briefing appears here…"
-msgstr "يظهر موجز ✨ هنا…"
+msgstr "يظهر موجز ✦ هنا…"
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_service.py:0
 msgid "The AI did not return usable data."
-msgstr "لم يُرجِع ✨ بيانات قابلة للاستخدام."
+msgstr "لم يُرجِع ✦ بيانات قابلة للاستخدام."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
 msgid "The AI draft appears here — edit freely before sending…"
-msgstr "تظهر مسودة ✨ هنا — عدّلها بحرية قبل الإرسال…"
+msgstr "تظهر مسودة ✦ هنا — عدّلها بحرية قبل الإرسال…"
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
 msgid "The AI returned an empty answer. Rephrase and try again."
-msgstr "أعاد ✨ إجابة فارغة. أعد الصياغة وحاول مجدداً."
+msgstr "أعاد ✦ إجابة فارغة. أعد الصياغة وحاول مجدداً."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
 msgid "The AI returned an empty briefing. Please try again."
-msgstr "أعاد ✨ موجزاً فارغاً. حاول مرة أخرى."
+msgstr "أعاد ✦ موجزاً فارغاً. حاول مرة أخرى."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
 msgid "The AI returned an empty draft. Adjust the purpose and try again."
-msgstr "أعاد ✨ مسودة فارغة. عدّل الغرض وحاول مجدداً."
+msgstr "أعاد ✦ مسودة فارغة. عدّل الغرض وحاول مجدداً."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "The AI returned an invalid adoption plan."
-msgstr "أعاد ✨ خطة تبنٍّ غير صالحة."
+msgstr "أعاد ✦ خطة تبنٍّ غير صالحة."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_success_profile.py:0
 msgid "The AI returned an invalid success-plan draft."
-msgstr "أعاد ✨ مسودة خطة نجاح غير صالحة."
+msgstr "أعاد ✦ مسودة خطة نجاح غير صالحة."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid "The AI returned an invalid value-review draft."
-msgstr "أعاد ✨ مسودة مراجعة قيمة غير صالحة."
+msgstr "أعاد ✦ مسودة مراجعة قيمة غير صالحة."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_success_profile.py:0
 msgid "The AI success-plan agent is not available."
-msgstr "وكيل خطط النجاح بـ ✨ غير متاح."
+msgstr "وكيل خطط النجاح بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid "The AI value-review agent is not available."
-msgstr "وكيل مراجعات القيمة بـ ✨ غير متاح."
+msgstr "وكيل مراجعات القيمة بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
 msgid "The Account Copilot AI agent is not available."
-msgstr "وكيل مساعد الحساب بـ ✨ غير متاح."
+msgstr "وكيل مساعد الحساب بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_account__csm_user_id
@@ -6344,7 +6344,7 @@ msgstr "قالب رسالة واتساب من Meta الذي تم إنشاؤه ل
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid "The Next Best Action AI agent is not available."
-msgstr "وكيل الإجراء التالي الأنسب بـ ✨ غير متاح."
+msgstr "وكيل الإجراء التالي الأنسب بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
@@ -6369,13 +6369,13 @@ msgstr "يجب أن ينتمي تقييم التبنّي إلى حساب صوت 
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
 msgid "The call-briefing AI agent is not available."
-msgstr "وكيل الموجز التحضيري بـ ✨ غير متاح."
+msgstr "وكيل الموجز التحضيري بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid "The churn-forecast AI agent is not available."
-msgstr "وكيل تنبّؤ الفقدان بـ ✨ غير متاح."
+msgstr "وكيل تنبّؤ الفقدان بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_account__partner_id
@@ -6421,7 +6421,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
 msgid "The follow-up composer AI agent is not available."
-msgstr "وكيل مُحرِّر المتابعة بـ ✨ غير متاح."
+msgstr "وكيل مُحرِّر المتابعة بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
@@ -6452,7 +6452,7 @@ msgstr "لم تُرجِع الصفحة نصاً قابلاً للقراءة."
 #. odoo-python
 #: code:addons/era_customer_success/models/csm_offering.py:0
 msgid "The pitch AI agent is not available."
-msgstr "وكيل صياغة العرض بـ ✨ غير متاح."
+msgstr "وكيل صياغة العرض بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
@@ -6470,7 +6470,7 @@ msgstr "وكيل الملخص الذكي غير متاح."
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid "The renewal-strategy AI agent is not available."
-msgstr "وكيل استراتيجية التجديد بـ ✨ غير متاح."
+msgstr "وكيل استراتيجية التجديد بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
@@ -6488,7 +6488,7 @@ msgstr "يجب أن تكون بداية فترة المراجعة قبل نها�
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_service.py:0
 msgid "The service-extraction AI agent is not available."
-msgstr "وكيل استخراج الخدمة بـ ✨ غير متاح."
+msgstr "وكيل استخراج الخدمة بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #. odoo-python
@@ -6526,7 +6526,7 @@ msgstr "لم تعد مراجعة القيمة تتطلب مهمة العمل ه�
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid "The weekly-worklist AI agent is not available."
-msgstr "وكيل قائمة العمل الأسبوعية بـ ✨ غير متاح."
+msgstr "وكيل قائمة العمل الأسبوعية بـ ✦ غير متاح."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_voc_insight__theme
@@ -7106,8 +7106,8 @@ msgid ""
 "action for each customer based on their situation and history. NOTE: the "
 "customer snapshot is sent to the configured AI provider."
 msgstr ""
-"عند التفعيل، تطلب مهمة يومية من وكيل ✨ اقتراح الإجراء التالي الأنسب لكل عميل"
-" بناءً على وضعه وتاريخه. ملاحظة: تُرسَل لقطة العميل إلى مزوّد ✨ المُهيّأ."
+"عند التفعيل، تطلب مهمة يومية من وكيل ✦ اقتراح الإجراء التالي الأنسب لكل عميل"
+" بناءً على وضعه وتاريخه. ملاحظة: تُرسَل لقطة العميل إلى مزوّد ✦ المُهيّأ."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_renewal_enabled
@@ -7118,7 +7118,7 @@ msgid ""
 "customer snapshot is sent to the AI provider."
 msgstr ""
 "عند التفعيل، تبني مهمة يومية خطة تجديد (الرافعة المناسبة وخطوات مؤرّخة) لكل "
-"عميل داخل نافذة التجديد (90 يوماً). ملاحظة: يُرسَل ملخّص العميل إلى مزوّد ✨."
+"عميل داخل نافذة التجديد (90 يوماً). ملاحظة: يُرسَل ملخّص العميل إلى مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_churn_enabled
@@ -7130,7 +7130,7 @@ msgid ""
 msgstr ""
 "عند التفعيل، تتنبّأ مهمة يومية باحتمال فقدان كل عميل عند 30/60/90 يوماً (مع "
 "أهم الأسباب) من وضعه وتاريخ مؤشراته، لكل العملاء النشطين. ملاحظة: تُرسَل "
-"اللقطات إلى مزوّد ✨."
+"اللقطات إلى مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_summary_enabled
@@ -7142,7 +7142,7 @@ msgid ""
 msgstr ""
 "عند التفعيل، تولّد مهمة مجدولة تدريجياً ملخصاً ذكياً قصيراً (الوضع، السكوب، "
 "مجال العمل، مدة التعامل) يظهر تحت اسم كل عميل. ملاحظة: تُرسَل لقطة العميل "
-"إلى مزوّد ✨."
+"إلى مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_res_company__cs_ai_digest_enabled
@@ -7154,7 +7154,7 @@ msgid ""
 msgstr ""
 "عند التفعيل، تُسلّم مهمة أسبوعية كل مهندس CSM قائمة عمل مرتّبة بالحسابات "
 "التي تحتاج اهتماماً هذا الأسبوع من محفظته. ملاحظة: تُرسَل مؤشرات المحفظة إلى"
-" مزوّد ✨."
+" مزوّد ✦."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_adoption_assessment__ai_adoption_enabled
@@ -7166,8 +7166,8 @@ msgid ""
 "plan. Evidence text and customer records are not sent. AI does not collect "
 "telemetry or change confirmed metrics."
 msgstr ""
-"عند التفعيل، تُرسل مقاييس التبنّي المجمعة ووصف العائق الاختياري إلى مزوّد ✨ "
-"لإعداد مسودة خطة تمكين. لا تُرسل نصوص الأدلة أو سجلات العميل، ولا يجمع ✨ "
+"عند التفعيل، تُرسل مقاييس التبنّي المجمعة ووصف العائق الاختياري إلى مزوّد ✦ "
+"لإعداد مسودة خطة تمكين. لا تُرسل نصوص الأدلة أو سجلات العميل، ولا يجمع ✦ "
 "بيانات قياس أو يغير المقاييس المؤكدة."
 
 #. module: era_customer_success
@@ -7179,9 +7179,9 @@ msgid ""
 "recovery alerts on negative sentiment. NOTE: ticket text is sent to the "
 "configured AI provider."
 msgstr ""
-"عند التفعيل، تُحلَّل تذاكر دعم العملاء عبر وكيل ✨ لتقييم المشاعر، ما يغذّي "
+"عند التفعيل، تُحلَّل تذاكر دعم العملاء عبر وكيل ✦ لتقييم المشاعر، ما يغذّي "
 "مؤشر صحة العميل ويُطلق تنبيهات استرداد الخدمة عند المشاعر السلبية. ملاحظة: "
-"يُرسَل نص التذكرة إلى مزوّد ✨ المُهيّأ."
+"يُرسَل نص التذكرة إلى مزوّد ✦ المُهيّأ."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_account__usage_signal
@@ -7317,8 +7317,8 @@ msgstr "إنشاء قالب واتساب"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
-msgid "اسأل ✨"
-msgstr "اسأل ✨"
+msgid "اسأل ✦"
+msgstr "اسأل ✦"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
@@ -7341,10 +7341,10 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_weekly_suggestion_my
 msgid ""
 "تُنشأ الأولويات تلقائياً من مخاطر العميل، الدعم، التجديد، انتظام التواصل "
-"والاستخدام، ويحسّنها ✨ أسبوعياً عند تفعيله."
+"والاستخدام، ويحسّنها ✦ أسبوعياً عند تفعيله."
 msgstr ""
 "تُنشأ الأولويات تلقائياً من مخاطر العميل، الدعم، التجديد، انتظام التواصل "
-"والاستخدام، ويحسّنها ✨ أسبوعياً عند تفعيله."
+"والاستخدام، ويحسّنها ✦ أسبوعياً عند تفعيله."
 
 #. module: era_customer_success
 #. odoo-python
@@ -7407,8 +7407,8 @@ msgstr "▫️ عملاء صغار"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
-msgid "✨ Generate with AI"
-msgstr "توليد ✨"
+msgid "✦ Generate with AI"
+msgstr "توليد ✦"
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__tier__core

@@ -45,7 +45,7 @@ before the renewal in 25 days").
 Return a STRICT JSON object (no markdown fences, no commentary) with exactly these keys:
 {
   "next_action": "one concise recommended next step, in Arabic",
-  "reason": "why this, now — grounded in the snapshot, in Arabic (1-2 sentences)",
+  "reason": "why this, now — grounded in the snapshot, in Arabic (1-2 sentences, name the factual signals used)",
   "priority": "low|medium|high|urgent",
   "suggested_in_days": 0
 }

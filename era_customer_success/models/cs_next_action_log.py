@@ -17,6 +17,7 @@ class CsNextAction(models.Model):
     company_id = fields.Many2one(related='cs_account_id.company_id', store=True, index=True)
     name = fields.Char(string='Recommended Action', required=True)
     reason = fields.Text(string='Reason')
+    evidence_sources = fields.Text(string='Evidence Sources', readonly=True)
     priority = fields.Selection([
         ('low', 'Low'),
         ('medium', 'Medium'),

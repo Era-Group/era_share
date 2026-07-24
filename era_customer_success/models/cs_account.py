@@ -335,6 +335,7 @@ class CsAccount(models.Model):
     # AI Next Best Action
     next_action = fields.Text(string='Next Best Action', readonly=True, copy=False)
     next_action_reason = fields.Text(string='Action Reason', readonly=True, copy=False)
+    next_action_sources = fields.Text(string='Action Evidence Sources', readonly=True, copy=False)
     next_action_priority = fields.Selection([
         ('low', 'Low'),
         ('medium', 'Medium'),
@@ -733,21 +734,48 @@ class CsAccount(models.Model):
                 offset = 0
             sdate = fields.Date.context_today(acc) + timedelta(days=offset)
             reason = data.get('reason') or ''
+            sources = acc._next_action_evidence_sources()
             acc.write({
                 'next_action': action,
                 'next_action_reason': reason,
+                'next_action_sources': sources,
                 'next_action_priority': prio,
                 'next_action_date': sdate,
                 'next_action_generated_on': fields.Datetime.now(),
             })
             self.env['cs.next.action'].create({
                 'cs_account_id': acc.id, 'name': action, 'reason': reason,
+                'evidence_sources': sources,
                 'priority': prio, 'suggested_date': sdate,
                 'generated_on': fields.Datetime.now(),
             })
             # NOTE: intentionally NOT posted to the chatter — the next best action
             # is shown in the form field (and kept in the cs.next.action history log).
         return True
+
+    def _next_action_evidence_sources(self):
+        """Return visible, factual sources behind an AI next-step suggestion."""
+        self.ensure_one()
+        sources = []
+        if self.open_tickets_count:
+            sources.append(_('Open support tickets (%s)', self.open_tickets_count))
+        if self.sla_failed_count:
+            sources.append(_('Failed support SLA (%s)', self.sla_failed_count))
+        if self.renewal_date:
+            sources.append(_('Renewal date (%s)', self.renewal_date))
+        if self.latest_adoption_date:
+            sources.append(_('Latest customer engagement assessment (%s)', self.latest_adoption_date))
+        if self.env['cs.voc.insight'].sudo().search_count([
+            ('cs_account_id', '=', self.id), ('state', 'in', ('new', 'triaged', 'acted')),
+        ]):
+            sources.append(_('Open Voice of Customer insight'))
+        if self.env['cs.value.review'].sudo().search_count([
+            ('cs_account_id', '=', self.id), ('state', '=', 'closed'),
+        ]):
+            sources.append(_('Latest closed value review'))
+        if self.last_touch_date:
+            sources.append(_('Last customer contact (%s)', self.last_touch_date))
+        return '\n'.join('- %s' % source for source in sources) or _('Current customer account indicators')
 
     @api.model
     def _cron_suggest_next_steps(self, limit=20):

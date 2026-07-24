@@ -209,6 +209,7 @@
                             <field name="next_action" class="ms-2 fw-bold" readonly="1" nolabel="1"/>
                         </div>
                         <field name="next_action_reason" readonly="1" nolabel="1"/>
+                        <field name="next_action_sources" readonly="1" nolabel="1" invisible="not next_action_sources"/>
                         <div class="text-muted small mt-1">
                             By <field name="next_action_date" readonly="1" nolabel="1" class="oe_inline"/>
                             · suggested <field name="next_action_generated_on" readonly="1" nolabel="1" class="oe_inline"/>

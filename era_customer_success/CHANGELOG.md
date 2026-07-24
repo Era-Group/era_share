@@ -240,3 +240,5 @@ Commits pushed to `origin/stage`.
 ## 19.0.31.0.0 — In-App Operating Guide
 - Added a read-only Arabic User Guide page directly under the Customer Success menu for employee onboarding, daily operation, best practices, UAT, and feature handover.
 - Established a permanent release rule requiring the in-app guide, project memory, release number, and update date to change with every future workflow or feature update.
+## 19.0.31.1.0 — Operational Guide Appendix
+- Expanded the in-app Arabic guide with practical scenarios, good/bad examples, expected workflow states, troubleshooting, escalation routes, and an end-of-day checklist.

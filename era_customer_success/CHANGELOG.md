@@ -5,6 +5,7 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 Commits pushed to `origin/stage`.
 
 ## 19.0.23.0.0 — Guided Operations
+- Fixed draft Value Review creation for CSM users: customer and period fields are now editable before preparation, while calculated snapshot values remain protected and the full scope freezes after preparation.
 - Reduced chatter noise from automatic health recalculation: score, status, and churn-risk tracking is posted only when the health score moves by 20 points or more in one update.
 - Clarified value-review periods with field-level examples and calendar-quarter defaults. The period now identifies the evidence window being reviewed, while the review date identifies the meeting date.
 - Added an always-visible self-service guide at the top of every Customer Success screen, wizard, inherited operational form, and executive dashboard. Each guide explains the best use, main features, priorities, and unsafe shortcuts for that specific workflow.

@@ -113,6 +113,10 @@ class CsValueReview(models.Model):
         'objectives_snapshot', 'success_criteria_snapshot',
         'milestones_snapshot', 'support_snapshot',
     }
+    _review_scope_fields = {
+        'cs_account_id', 'review_date', 'period_start', 'period_end',
+    }
+    _snapshot_value_fields = _snapshot_fields - _review_scope_fields
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -120,7 +124,7 @@ class CsValueReview(models.Model):
         for vals in vals_list:
             if not self.env.su and (
                     vals.get('state', 'draft') != 'draft'
-                    or self._snapshot_fields.intersection(vals)):
+                    or self._snapshot_value_fields.intersection(vals)):
                 raise UserError(_(
                     'Create value reviews as drafts; Prepare Review captures the snapshot.'))
             review_date = fields.Date.to_date(vals.get('review_date')) or today
@@ -135,7 +139,7 @@ class CsValueReview(models.Model):
     def write(self, vals):
         if not self.env.su and 'state' in vals:
             raise UserError(_('Use the value-review workflow buttons to change its status.'))
-        if not self.env.su and self._snapshot_fields.intersection(vals):
+        if not self.env.su and self._snapshot_value_fields.intersection(vals):
             raise UserError(_('Value-review snapshot fields can only be captured by Prepare Review.'))
         if self.filtered('snapshot_captured_on') and self._snapshot_fields.intersection(vals):
             raise UserError(_('The prepared value-review snapshot cannot be modified.'))

@@ -76,6 +76,33 @@ class TestValueReview(TransactionCase):
         self.assertEqual(review.period_start, date(2026, 4, 1))
         self.assertEqual(review.period_end, date(2026, 7, 24))
 
+    def test_csm_can_define_scope_before_prepare_but_not_after(self):
+        review = self.env['cs.value.review'].with_user(self.manager).create({
+            'cs_account_id': self.account.id,
+            'review_date': date(2026, 7, 24),
+            'period_start': date(2026, 4, 1),
+            'period_end': date(2026, 6, 30),
+        })
+        review.with_user(self.manager).write({
+            'period_start': date(2026, 4, 2),
+        })
+        self.assertEqual(review.period_start, date(2026, 4, 2))
+
+        review.with_user(self.manager).action_prepare()
+
+        with self.assertRaises(UserError):
+            review.with_user(self.manager).write({
+                'period_start': date(2026, 4, 1),
+            })
+
+    def test_csm_cannot_inject_snapshot_values(self):
+        with self.assertRaises(UserError):
+            self.env['cs.value.review'].with_user(self.manager).create({
+                'cs_account_id': self.account.id,
+                'review_date': date(2026, 7, 24),
+                'health_score_snapshot': 100,
+            })
+
     def test_prepare_requires_a_draft_review(self):
         review = self._new_review()
         review.action_prepare()

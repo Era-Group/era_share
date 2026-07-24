@@ -1,7 +1,12 @@
 .o_cs_dashboard {
     background: #f6f7fb;
-    min-height: 100%;
-    overflow: auto;
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
 }
 .o_cs_dashboard .o_cs_tile {
     cursor: pointer;

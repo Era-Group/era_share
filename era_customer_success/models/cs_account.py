@@ -144,11 +144,11 @@ class CsAccount(models.Model):
         adoption = self.env['cs.adoption.assessment'].sudo().search([
             ('cs_account_id', '=', self.id), ('state', '=', 'confirmed')],
             order='assessment_date desc, id desc', limit=1)
-        context = '%s\n\n%s' % (
+        prompt = '%s\n\n%s' % (
             self._build_profile_context(), self._build_situation_summary())
         try:
             response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
-                prompt=context)
+                prompt=prompt)
             data = _cs_extract_json(response[0] if response else '')
         except Exception as error:
             _logger.warning('Sheet form AI fill failed for account %s: %s', self.id, error)

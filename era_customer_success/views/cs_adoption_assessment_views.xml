@@ -44,15 +44,15 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
-                        <p><strong>What is this screen?</strong> A measurement of how well the customer is using the solution in real work.</p>
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
+                        <p><strong>What is this screen?</strong> A practical assessment of how actively the customer works with us and moves forward.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>
-                            <li>Compare active users with licensed users and check usage frequency.</li>
-                            <li>Measure completed onboarding and adoption of the important workflows.</li>
-                            <li>Record evidence, usage blockers, and the enablement action needed.</li>
+                            <li>Assess the customer's support interaction, project progress, and WhatsApp or other communication.</li>
+                            <li>Record whether agreed work is moving forward, blocked, or achieved.</li>
+                            <li>Record evidence, blockers, and the action needed to improve engagement.</li>
                         </ul>
-                        <p class="mb-0"><strong>Start here:</strong> Enter only numbers you can verify and attach the source. If the data is incomplete, validate it first. Confirm the assessment only when you trust the measurements.</p>
+                        <p class="mb-0"><strong>Start here:</strong> Review recent support, projects, and customer conversations. Record only evidence you can verify, then confirm when the assessment reflects real customer activity.</p>
                     </div>
                     <field name="ai_adoption_enabled" invisible="1"/>
                     <div class="oe_title">
@@ -74,24 +74,15 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Measured Adoption" name="metrics">
+                        <page string="Customer Engagement" name="metrics">
                             <group>
-                                <group string="Users">
-                                    <field name="licensed_users"/>
-                                    <field name="active_users_30d"/>
+                                <group string="Support and Projects">
+                                    <field name="support_engagement"/>
+                                    <field name="project_engagement"/>
                                 </group>
-                                <group string="Key Workflows">
-                                    <field name="key_workflows_total"/>
-                                    <field name="adopted_workflows"/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Onboarding">
-                                    <field name="onboarding_measured"/>
-                                    <field name="onboarding_percent" invisible="not onboarding_measured"/>
-                                </group>
-                                <group string="Frequency">
-                                    <field name="usage_frequency"/>
+                                <group string="Communication and Progress">
+                                    <field name="communication_engagement"/>
+                                    <field name="operational_progress"/>
                                 </group>
                             </group>
                         </page>
@@ -144,7 +135,7 @@
         <field name="context">{'search_default_confirmed': 1, 'search_default_my_assessments': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Record measured customer adoption</p>
-            <p>Use licensed and active users, adopted workflows, onboarding progress, frequency, and evidence. Confirm only reliable measurements; low-confidence data should trigger validation rather than a service recommendation.</p>
+            <p>Use evidence available to Customer Success: support interaction, project progress, WhatsApp or other communication, and agreed work outcomes. Confirm only reliable observations; incomplete evidence should trigger validation rather than a service recommendation.</p>
         </field>
     </record>
 </odoo>

@@ -5,7 +5,7 @@
         <field name="model">cs.followup.compose</field>
         <field name="arch" type="xml">
             <form string="Compose Follow-up (AI)">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A message-writing assistant for customer follow-up by email, WhatsApp, or SMS.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

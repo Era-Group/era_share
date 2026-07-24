@@ -56,7 +56,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> One prioritized task telling you which customer needs attention and what to do next.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

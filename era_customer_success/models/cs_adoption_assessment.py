@@ -54,6 +54,25 @@ class CsAdoptionAssessment(models.Model):
         ('monthly', 'Monthly'),
         ('rare', 'Rarely'),
     ], default='unknown', required=True)
+    support_engagement = fields.Selection([
+        ('unknown', 'Not Measured'), ('none', 'No Meaningful Support Activity'),
+        ('low', 'Limited Support Interaction'), ('regular', 'Regular Constructive Interaction'),
+        ('active', 'Active Productive Support Engagement'),
+    ], default='unknown', required=True)
+    project_engagement = fields.Selection([
+        ('unknown', 'Not Measured'), ('none', 'No Active Project Work'),
+        ('blocked', 'Project Work Is Blocked'), ('progressing', 'Project Work Is Progressing'),
+        ('active', 'Active Project Collaboration'),
+    ], default='unknown', required=True)
+    communication_engagement = fields.Selection([
+        ('unknown', 'Not Measured'), ('unresponsive', 'No Response or Long Silence'),
+        ('responsive', 'Responds When Contacted'), ('engaged', 'Regular Two-Way Communication'),
+    ], default='unknown', required=True)
+    operational_progress = fields.Selection([
+        ('unknown', 'Not Measured'), ('blocked', 'Customer Work Is Blocked'),
+        ('limited', 'Limited Progress'), ('progressing', 'Progressing Against Agreed Work'),
+        ('achieved', 'Agreed Work Is Being Achieved'),
+    ], default='unknown', required=True)
     blockers = fields.Text()
     evidence = fields.Text()
     enablement_plan = fields.Text(string='Enablement Plan')
@@ -87,21 +106,23 @@ class CsAdoptionAssessment(models.Model):
         return super().create(vals_list)
 
     @api.depends(
-        'licensed_users', 'active_users_30d', 'key_workflows_total',
-        'adopted_workflows', 'onboarding_measured', 'onboarding_percent',
-        'usage_frequency')
+        'support_engagement', 'project_engagement', 'communication_engagement',
+        'operational_progress')
     def _compute_score(self):
-        frequency_scores = {'daily': 100.0, 'weekly': 70.0, 'monthly': 40.0, 'rare': 10.0}
+        support_scores = {'none': 0.0, 'low': 35.0, 'regular': 70.0, 'active': 100.0}
+        project_scores = {'none': 0.0, 'blocked': 25.0, 'progressing': 70.0, 'active': 100.0}
+        communication_scores = {'unresponsive': 0.0, 'responsive': 65.0, 'engaged': 100.0}
+        progress_scores = {'blocked': 0.0, 'limited': 35.0, 'progressing': 70.0, 'achieved': 100.0}
         for assessment in self:
             components = []
-            if assessment.licensed_users > 0:
-                components.append(min(100.0, 100.0 * assessment.active_users_30d / assessment.licensed_users))
-            if assessment.key_workflows_total > 0:
-                components.append(min(100.0, 100.0 * assessment.adopted_workflows / assessment.key_workflows_total))
-            if assessment.onboarding_measured:
-                components.append(max(0.0, min(100.0, assessment.onboarding_percent)))
-            if assessment.usage_frequency in frequency_scores:
-                components.append(frequency_scores[assessment.usage_frequency])
+            for value, scores in (
+                (assessment.support_engagement, support_scores),
+                (assessment.project_engagement, project_scores),
+                (assessment.communication_engagement, communication_scores),
+                (assessment.operational_progress, progress_scores),
+            ):
+                if value in scores:
+                    components.append(scores[value])
             assessment.confidence = 25.0 * len(components)
             assessment.score = sum(components) / len(components) if components else 0.0
             if not components:
@@ -113,30 +134,17 @@ class CsAdoptionAssessment(models.Model):
             else:
                 assessment.status = 'low'
 
-    @api.constrains(
-        'licensed_users', 'active_users_30d', 'key_workflows_total',
-        'adopted_workflows', 'onboarding_percent', 'assessment_date')
+    @api.constrains('assessment_date')
     def _check_metrics(self):
         for assessment in self:
             if assessment.assessment_date > fields.Date.context_today(assessment):
                 raise ValidationError(_('The adoption assessment date cannot be in the future.'))
-            if min(
-                    assessment.licensed_users, assessment.active_users_30d,
-                    assessment.key_workflows_total, assessment.adopted_workflows) < 0:
-                raise ValidationError(_('Adoption metrics cannot be negative.'))
-            if assessment.licensed_users and assessment.active_users_30d > assessment.licensed_users:
-                raise ValidationError(_('Active users cannot exceed licensed users.'))
-            if assessment.key_workflows_total and assessment.adopted_workflows > assessment.key_workflows_total:
-                raise ValidationError(_('Adopted workflows cannot exceed key workflows.'))
-            if assessment.onboarding_measured and not 0 <= assessment.onboarding_percent <= 100:
-                raise ValidationError(_('Onboarding completion must be between 0 and 100.'))
 
     def write(self, vals):
         protected = {
             'cs_account_id', 'assessment_date', 'source', 'source_reference',
-            'licensed_users', 'active_users_30d', 'key_workflows_total',
-            'adopted_workflows', 'onboarding_measured', 'onboarding_percent',
-            'usage_frequency', 'blockers', 'evidence',
+            'support_engagement', 'project_engagement', 'communication_engagement',
+            'operational_progress', 'blockers', 'evidence',
             'enablement_plan',
             'next_assessment_date', 'confirmed_on', 'confirmed_by_id',
             'ai_generated_on',
@@ -187,13 +195,10 @@ class CsAdoptionAssessment(models.Model):
         if not agent:
             raise UserError(_('The AI adoption agent is not available.'))
         payload = {
-            'licensed_users': self.licensed_users,
-            'active_users_30d': self.active_users_30d,
-            'key_workflows_total': self.key_workflows_total,
-            'adopted_workflows': self.adopted_workflows,
-            'onboarding_measured': self.onboarding_measured,
-            'onboarding_percent': self.onboarding_percent,
-            'usage_frequency': self.usage_frequency,
+            'support_engagement': self.support_engagement,
+            'project_engagement': self.project_engagement,
+            'communication_engagement': self.communication_engagement,
+            'operational_progress': self.operational_progress,
             'score': self.score,
             'confidence': self.confidence,
             'blockers_to_address': (self.blockers or '')[:2000],

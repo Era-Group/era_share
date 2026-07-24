@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
-                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0">
+                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> The working record for solving one customer support problem.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

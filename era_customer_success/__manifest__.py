@@ -70,6 +70,8 @@
     ],
     'assets': {
         'web.assets_backend': [
+            'era_customer_success/static/src/js/screen_guide_tooltip.js',
+            'era_customer_success/static/src/scss/screen_guide_tooltip.scss',
             'era_customer_success/static/src/css/cs_dashboard.css',
             'era_customer_success/static/src/js/cs_dashboard.js',
             'era_customer_success/static/src/js/cs_sentiment_field.js',

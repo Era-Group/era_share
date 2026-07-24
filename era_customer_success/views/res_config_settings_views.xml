@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="Customer Success" string="Customer Success" name="era_customer_success">
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> The control center for optional Customer Success automation and support-hours rules.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

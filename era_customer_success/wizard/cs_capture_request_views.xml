@@ -5,7 +5,7 @@
         <field name="model">cs.capture.request</field>
         <field name="arch" type="xml">
             <form string="Capture Customer Request">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A quick way to send a customer request to Support or Sales without losing its context.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

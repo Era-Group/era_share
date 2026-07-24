@@ -39,7 +39,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> The agreed plan that defines what success means for this customer.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

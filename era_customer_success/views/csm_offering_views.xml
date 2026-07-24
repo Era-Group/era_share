@@ -52,7 +52,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> A controlled path from a possible service need to a qualified commercial opportunity.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

@@ -24,7 +24,7 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> A stage in the customer lifecycle, such as onboarding, stable, at risk, or churned.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

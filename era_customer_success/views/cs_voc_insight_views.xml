@@ -43,7 +43,7 @@
                            statusbar_visible="new,triaged,acted,closed,dismissed"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> A customer concern, request, priority, or blocker that needs follow-up.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

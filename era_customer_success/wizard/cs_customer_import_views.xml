@@ -5,7 +5,7 @@
         <field name="model">cs.customer.import</field>
         <field name="arch" type="xml">
             <form string="Smart Customer Import">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A controlled way to add existing Odoo companies to Customer Success.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

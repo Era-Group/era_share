@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 08:13+0000\n"
-"PO-Revision-Date: 2026-07-24 15:47+0000\n"
+"PO-Revision-Date: 2026-07-24 16:14+0000\n"
 "Last-Translator: Era Group\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -257,17 +257,6 @@ msgstr ""
 "لم يكن مناسباً."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid ""
-"<strong>Start here:</strong> Enter only numbers you can verify and attach "
-"the source. If the data is incomplete, validate it first. Confirm the "
-"assessment only when you trust the measurements."
-msgstr ""
-"<strong>ابدأ من هنا:</strong> أدخل أرقاماً تستطيع التحقق منها وسجل مصدرها. "
-"إذا كانت البيانات ناقصة فتحقق منها أولاً. أكد التقييم فقط عندما تثق "
-"بالقياسات."
-
-#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
 msgid ""
 "<strong>Start here:</strong> Enter the period being measured, then click "
@@ -370,6 +359,17 @@ msgstr ""
 "فرصة بيع."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid ""
+"<strong>Start here:</strong> Review recent support, projects, and customer "
+"conversations. Record only evidence you can verify, then confirm when the "
+"assessment reflects real customer activity."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> راجع الدعم والمشاريع ومحادثات العميل الأخيرة. "
+"سجل الأدلة التي تستطيع التحقق منها فقط، ثم أكد التقييم عندما يعكس نشاط "
+"العميل الفعلي."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
 msgid ""
 "<strong>Start here:</strong> Select the outcome and write a useful note. If "
@@ -462,15 +462,6 @@ msgstr ""
 " الحالية."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid ""
-"<strong>What is this screen?</strong> A measurement of how well the customer"
-" is using the solution in real work."
-msgstr ""
-"<strong>ما هذه الشاشة؟</strong> قياس لمدى استخدام العميل للحل في عمله "
-"الفعلي."
-
-#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
 msgid ""
 "<strong>What is this screen?</strong> A message-writing assistant for "
@@ -487,6 +478,15 @@ msgid ""
 msgstr ""
 "<strong>ما هذه الشاشة؟</strong> سجل اجتماع دوري مع العميل للتأكد من أنه حقق "
 "فائدة حقيقية من الخدمة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid ""
+"<strong>What is this screen?</strong> A practical assessment of how actively"
+" the customer works with us and moves forward."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> تقييم عملي لمدى تفاعل العميل معنا وتقدم "
+"العمل معه."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
@@ -969,6 +969,16 @@ msgid "Active Customers"
 msgstr "العملاء النشطون"
 
 #. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__support_engagement__active
+msgid "Active Productive Support Engagement"
+msgstr "تفاعل نشط ومثمر مع الدعم"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__project_engagement__active
+msgid "Active Project Collaboration"
+msgstr "تعاون نشط في المشاريع"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__active_users_30d
 msgid "Active Users (30 Days)"
 msgstr "المستخدمون النشطون خلال 30 يوماً"
@@ -977,12 +987,6 @@ msgstr "المستخدمون النشطون خلال 30 يوماً"
 #: model:cs.stage,description:era_customer_success.cs_stage_steady
 msgid "Active customer in steady-state cadence (weekly / monthly)."
 msgstr "عميل نشط بإيقاع مستقر (أسبوعي/شهري)."
-
-#. module: era_customer_success
-#. odoo-python
-#: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
-msgid "Active users cannot exceed licensed users."
-msgstr "لا يمكن أن يتجاوز عدد المستخدمين النشطين عدد المستخدمين المرخّصين."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__activity_ids
@@ -1049,12 +1053,6 @@ msgstr "ساعات دعم إضافية - %s"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__adopted_workflows
 msgid "Adopted Workflows"
 msgstr "العمليات التي تم تبنّيها"
-
-#. module: era_customer_success
-#. odoo-python
-#: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
-msgid "Adopted workflows cannot exceed key workflows."
-msgstr "لا يمكن أن يتجاوز عدد العمليات المتبنّاة عدد العمليات الرئيسية."
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_voc_insight__theme__adoption
@@ -1130,12 +1128,6 @@ msgstr ""
 "%(confidence).0f%% %(due)s."
 
 #. module: era_customer_success
-#. odoo-python
-#: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
-msgid "Adoption metrics cannot be negative."
-msgstr "لا يمكن أن تكون مؤشرات التبنّي سالبة."
-
-#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_service__service_type__advisory
 msgid "Advisory"
 msgstr "استشاري"
@@ -1165,6 +1157,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__commitments
 msgid "Agreed Commitments"
 msgstr "الالتزامات المتفق عليها"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__operational_progress__achieved
+msgid "Agreed Work Is Being Achieved"
+msgstr "العمل المتفق عليه يتحقق"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
@@ -1280,6 +1277,13 @@ msgstr ""
 msgid "Ask why health is low, what changed, or what needs attention."
 msgstr ""
 "اسأل لماذا انخفضت الصحة، أو ما الذي تغير، أو ما الذي يحتاج إلى اهتمام."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid ""
+"Assess the customer's support interaction, project progress, and WhatsApp or"
+" other communication."
+msgstr "قيّم تفاعل العميل مع الدعم وتقدم المشاريع وواتساب أو أي تواصل آخر."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__assessment_date
@@ -1932,6 +1936,16 @@ msgid "Color"
 msgstr "اللون"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__communication_engagement
+msgid "Communication Engagement"
+msgstr "التفاعل في التواصل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Communication and Progress"
+msgstr "التواصل والتقدم"
+
+#. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_res_company
 msgid "Companies"
 msgstr "الشركات"
@@ -1951,11 +1965,6 @@ msgstr "الشركات"
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__company_id
 msgid "Company"
 msgstr "الشركة"
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Compare active users with licensed users and check usage frequency."
-msgstr "قارن المستخدمين النشطين بالمستخدمين المرخصين وراجع تكرار الاستخدام."
 
 #. module: era_customer_success
 #. odoo-javascript
@@ -2486,6 +2495,11 @@ msgid "Customer Contacted"
 msgstr "تم التواصل مع العميل"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Customer Engagement"
+msgstr "تفاعل العميل"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
 msgid "Customer Evidence"
 msgstr "أدلة العميل"
@@ -2661,6 +2675,11 @@ msgstr "مراجعة قيمة العميل"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Customer Voice"
 msgstr "صوت العميل"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__operational_progress__blocked
+msgid "Customer Work Is Blocked"
+msgstr "عمل العميل متعطل"
 
 #. module: era_customer_success
 #. odoo-python
@@ -3454,11 +3473,6 @@ msgstr ""
 "وليس جزءاً من الفترة المقاسة."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Frequency"
-msgstr "التكرار"
-
-#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__tone__friendly
 msgid "Friendly"
 msgstr "ودّية"
@@ -3877,7 +3891,6 @@ msgstr "مستخدم رئيسي"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__key_workflows_total
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
 msgid "Key Workflows"
 msgstr "العمليات الرئيسية"
 
@@ -4025,6 +4038,16 @@ msgstr "مراحل دورة الحياة"
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__renewal_risk__likely
 msgid "Likely"
 msgstr "مُرجَّح"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__operational_progress__limited
+msgid "Limited Progress"
+msgstr "تقدم محدود"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__support_engagement__low
+msgid "Limited Support Interaction"
+msgstr "تفاعل محدود مع الدعم"
 
 #. module: era_customer_success
 #. odoo-javascript
@@ -4187,16 +4210,6 @@ msgstr "يحدّد فرصة أنشأها فريق نجاح العملاء (تو�
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__limit
 msgid "Max customers"
 msgstr "أقصى عدد عملاء"
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Measure completed onboarding and adoption of the important workflows."
-msgstr "قس اكتمال التهيئة وتبنّي مسارات العمل المهمة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Measured Adoption"
-msgstr "التبنّي المقاس"
 
 #. module: era_customer_success
 #. odoo-python
@@ -4509,9 +4522,19 @@ msgid "Next Value Review"
 msgstr "مراجعة القيمة القادمة"
 
 #. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__project_engagement__none
+msgid "No Active Project Work"
+msgstr "لا يوجد عمل مشروع نشط"
+
+#. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_csm_kpi_snapshot
 msgid "No KPI snapshots are available yet"
 msgstr "لا توجد لقطات مؤشرات حتى الآن"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__support_engagement__none
+msgid "No Meaningful Support Activity"
+msgstr "لا يوجد تفاعل دعم مؤثر"
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__support_wallet_status__none
@@ -4523,6 +4546,11 @@ msgstr "لا توجد باقة"
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__outcome__no_response
 msgid "No Response"
 msgstr "لا يوجد رد"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__communication_engagement__unresponsive
+msgid "No Response or Long Silence"
+msgstr "لا توجد استجابة أو يوجد انقطاع طويل"
 
 #. module: era_customer_success
 #. odoo-python
@@ -4640,6 +4668,14 @@ msgid "No team work is due today"
 msgstr "لا توجد أعمال فريق مستحقة اليوم"
 
 #. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__communication_engagement__unknown
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__operational_progress__unknown
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__project_engagement__unknown
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__support_engagement__unknown
+msgid "Not Measured"
+msgstr "غير مقاس"
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_suggestion_complete__outcome__not_relevant
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__outcome__not_relevant
 msgid "Not Relevant"
@@ -4748,11 +4784,6 @@ msgid "Offerings"
 msgstr "العروض"
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Onboarding"
-msgstr "التهيئة الأولية"
-
-#. module: era_customer_success
 #: model:cs.stage,name:era_customer_success.cs_stage_onboarding
 msgid "Onboarding (0-30)"
 msgstr "التهيئة (0-30)"
@@ -4776,12 +4807,6 @@ msgstr "مرحلة التهيئة"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__onboarding_start_date
 msgid "Onboarding Start"
 msgstr "بداية التهيئة"
-
-#. module: era_customer_success
-#. odoo-python
-#: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
-msgid "Onboarding completion must be between 0 and 100."
-msgstr "يجب أن تكون نسبة اكتمال التهيئة الأولية بين 0 و100."
 
 #. module: era_customer_success
 #. odoo-python
@@ -5054,6 +5079,11 @@ msgstr "افتح اشتراكات هذا العميل (الإيراد المتك
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Open this customer's support tickets (Helpdesk)."
 msgstr "افتح تذاكر دعم هذا العميل (مكتب المساعدة)."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__operational_progress
+msgid "Operational Progress"
+msgstr "تقدم العمل"
 
 #. module: era_customer_success
 #. odoo-python
@@ -5460,6 +5490,26 @@ msgid "Profile"
 msgstr "الملف"
 
 #. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__operational_progress__progressing
+msgid "Progressing Against Agreed Work"
+msgstr "يتقدم وفق العمل المتفق عليه"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__project_engagement
+msgid "Project Engagement"
+msgstr "التفاعل في المشروع"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__project_engagement__blocked
+msgid "Project Work Is Blocked"
+msgstr "عمل المشروع متعطل"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__project_engagement__progressing
+msgid "Project Work Is Progressing"
+msgstr "عمل المشروع يتقدم"
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -5568,12 +5618,14 @@ msgstr "قراءة من الرابط ✦"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid ""
-"Read the public service URL and draft catalog details, features, audience, "
-"value points, and pitch content. Review every generated statement before "
-"using the service in recommendations."
+"Read the public service URL and fill catalog details, customer-fit signals, "
+"discovery questions, outcomes, exclusions, and clearly supported "
+"recommendation rules. Review every generated field before enabling the "
+"service for recommendations."
 msgstr ""
-"اقرأ رابط الخدمة العام وصغ تفاصيل الكتالوج والمزايا والجمهور ونقاط القيمة "
-"ومحتوى العرض. راجع كل عبارة مولدة قبل استخدام الخدمة في التوصيات."
+"اقرأ رابط الخدمة العام واملأ تفاصيل الكتالوج وإشارات ملاءمة العميل وأسئلة "
+"الاستكشاف والنتائج وحالات الاستبعاد وقواعد التوصية المدعومة بوضوح. راجع كل "
+"حقل مولد قبل تفعيل الخدمة للتوصيات."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
@@ -5659,6 +5711,12 @@ msgid "Recommendation cooldown cannot be negative."
 msgstr "لا يمكن أن تكون فترة انتظار إعادة التوصية سالبة."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Recommendation setup rationale"
+msgstr "سبب إعداد التوصية"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service_recommendation_wizard__line_ids
 msgid "Recommendations"
 msgstr "التوصيات"
@@ -5703,8 +5761,9 @@ msgstr "سجّل مؤشراً واحداً مقاساً على الأقل قبل
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Record evidence, usage blockers, and the enablement action needed."
-msgstr "سجل الأدلة وعوائق الاستخدام وإجراء التمكين المطلوب."
+msgid ""
+"Record evidence, blockers, and the action needed to improve engagement."
+msgstr "سجل الأدلة والعوائق والإجراء المطلوب لتحسين التفاعل."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -5775,6 +5834,11 @@ msgstr ""
 " الاحتياج لفرصة CRM."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Record whether agreed work is moving forward, blocked, or achieved."
+msgstr "سجل ما إذا كان العمل المتفق عليه يتقدم أو متعطل أو تم تحقيقه."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/self_service_help.py:0
 msgid ""
@@ -5817,6 +5881,16 @@ msgstr ""
 msgid ""
 "Regenerate the briefing when customer data or the meeting purpose changes."
 msgstr "أعد توليد الملخص عندما تتغير بيانات العميل أو غرض الاجتماع."
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__support_engagement__regular
+msgid "Regular Constructive Interaction"
+msgstr "تفاعل منتظم وبنّاء"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__communication_engagement__engaged
+msgid "Regular Two-Way Communication"
+msgstr "تواصل منتظم من الطرفين"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
@@ -5977,6 +6051,11 @@ msgstr "إعادة إلى مسودة"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_voc_insight__resolution_note
 msgid "Resolution Note"
 msgstr "ملاحظة الحل"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__communication_engagement__responsive
+msgid "Responds When Contacted"
+msgstr "يستجيب عند التواصل"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
@@ -6856,6 +6935,11 @@ msgid "Support & Satisfaction"
 msgstr "الدعم والرضا"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__support_engagement
+msgid "Support Engagement"
+msgstr "التفاعل مع الدعم"
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_voc_insight__theme__support
 msgid "Support Experience"
 msgstr "تجربة الدعم"
@@ -6949,6 +7033,11 @@ msgstr "استعادة رضا العميل"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__support_snapshot
 msgid "Support Summary"
 msgstr "ملخص الدعم"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Support and Projects"
+msgstr "الدعم والمشاريع"
 
 #. module: era_customer_success
 #. odoo-python
@@ -7585,21 +7674,22 @@ msgid "Usage Frequency"
 msgstr "تكرار الاستخدام"
 
 #. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_adoption_assessment
+msgid ""
+"Use evidence available to Customer Success: support interaction, project "
+"progress, WhatsApp or other communication, and agreed work outcomes. Confirm"
+" only reliable observations; incomplete evidence should trigger validation "
+"rather than a service recommendation."
+msgstr ""
+"استخدم الأدلة المتاحة لنجاح العملاء: التفاعل مع الدعم وتقدم المشاريع وواتساب"
+" أو أي تواصل آخر ونتائج العمل المتفق عليه. أكد الملاحظات الموثوقة فقط؛ "
+"الأدلة الناقصة تتطلب تحققاً لا توصية خدمة."
+
+#. module: era_customer_success
 #. odoo-javascript
 #: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
 msgid "Use it to:"
 msgstr "استخدمها من أجل:"
-
-#. module: era_customer_success
-#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_adoption_assessment
-msgid ""
-"Use licensed and active users, adopted workflows, onboarding progress, "
-"frequency, and evidence. Confirm only reliable measurements; low-confidence "
-"data should trigger validation rather than a service recommendation."
-msgstr ""
-"استخدم المستخدمين المرخصين والنشطين والمسارات المتبنّاة وتقدم التهيئة "
-"والتكرار والأدلة. أكد القياسات الموثوقة فقط؛ البيانات منخفضة الموثوقية تتطلب"
-" تحققاً لا توصية خدمة."
 
 #. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_value_review
@@ -7655,11 +7745,6 @@ msgstr "استخدم أزرار مسار مراجعة القيمة لتغيير 
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_support_wallet__used_hours
 msgid "Used Hours"
 msgstr "الساعات المستخدمة"
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid "Users"
-msgstr "المستخدمون"
 
 #. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_csm_offering

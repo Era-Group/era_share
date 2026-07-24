@@ -5,7 +5,7 @@
         <field name="model">cs.account.copilot</field>
         <field name="arch" type="xml">
             <form string="Account Copilot">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A question box for getting a quick answer from the customer's Odoo data.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

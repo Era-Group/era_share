@@ -5,7 +5,7 @@
         <field name="model">cs.service.recommendation.wizard</field>
         <field name="arch" type="xml">
             <form string="Recommended Services">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A list of services that may help this customer, based on current customer data.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
-                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0" invisible="not is_company">
+                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0 o_cs_screen_guide" invisible="not is_company">
                     <p><strong>What is this screen?</strong> The official company record and the starting point for enrolling a company in Customer Success.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

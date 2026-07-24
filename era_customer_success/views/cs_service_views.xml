@@ -63,7 +63,7 @@
                     <field name="whatsapp_template_id" invisible="1"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> The service catalog entry used to explain, recommend, and present one service correctly.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

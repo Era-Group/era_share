@@ -53,7 +53,7 @@
                            statusbar_visible="draft,prepared,held,closed,cancelled"/>
                 </header>
                 <sheet>
-                    <div class="border rounded bg-light p-3 mb-3">
+                    <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                         <p><strong>What is this screen?</strong> A periodic meeting record used to confirm whether the customer received useful value from the service.</p>
                         <p><strong>Use it to:</strong></p>
                         <ul>

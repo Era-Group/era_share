@@ -5,7 +5,7 @@
         <field name="model">cs.call.briefing</field>
         <field name="arch" type="xml">
             <form string="Pre-Call Briefing (AI)">
-                <div class="border rounded bg-light p-3 mb-3">
+                <div class="border rounded bg-light p-3 mb-3 o_cs_screen_guide">
                     <p><strong>What is this screen?</strong> A short preparation note for an upcoming customer call or meeting.</p>
                     <p><strong>Use it to:</strong></p>
                     <ul>

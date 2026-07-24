@@ -1,0 +1,43 @@
+.o_cs_screen_guide_help {
+    color: var(--o-brand-primary);
+    cursor: help;
+    font-size: 1.2rem;
+    margin-inline: 0.5rem;
+    vertical-align: middle;
+}
+
+.o_cs_screen_guide_dialog {
+    background: #fff;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .25);
+    color: #1f2937;
+    direction: rtl;
+    max-width: min(680px, calc(100vw - 2rem));
+    padding: 2rem 2.5rem;
+    text-align: right;
+    width: 680px;
+
+    &::backdrop {
+        background: rgba(15, 23, 42, .45);
+    }
+}
+
+.o_cs_screen_guide_content {
+    font-size: 1.15rem;
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
+.o_cs_screen_guide_close {
+    background: transparent;
+    border: 0;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 2rem;
+    left: .75rem;
+    line-height: 1;
+    padding: .25rem .5rem;
+    position: absolute;
+    top: .5rem;
+}

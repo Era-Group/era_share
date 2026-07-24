@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { DateTime } from "luxon";
 
 export class CsDashboard extends Component {
     static template = "era_customer_success.CsDashboard";
@@ -16,6 +17,8 @@ export class CsDashboard extends Component {
             kpi: {
                 accounts: 0, avgHealth: 0, atRisk: 0, mrr: 0,
                 renewals: 0, avgCsat: 0, avgSentiment: 0, upsell: 0,
+                openVoc: 0, highVoc: 0, lowEngagement: 0, criticalWallets: 0,
+                overdueReviews: 0, dueWork: 0, qualifyingNeeds: 0,
             },
             engineers: [],
             atRisk: [],
@@ -47,6 +50,14 @@ export class CsDashboard extends Component {
         k.avgSentiment = Math.round(g.sentiment_score || 0);
         k.atRisk = await this.orm.searchCount(M, this.atRiskDomain);
         k.renewals = await this.orm.searchCount(M, [["renewal_soon", "=", true]]);
+        const today = DateTime.now().toISODate();
+        k.openVoc = await this.orm.searchCount("cs.voc.insight", [["state", "in", ["new", "triaged", "acted"]]]);
+        k.highVoc = await this.orm.searchCount("cs.voc.insight", [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]]);
+        k.lowEngagement = await this.orm.searchCount(M, [["latest_adoption_status", "in", ["watch", "low"]]]);
+        k.criticalWallets = await this.orm.searchCount("cs.support.wallet", [["status", "in", ["critical", "exhausted", "expired"]]]);
+        k.overdueReviews = await this.orm.searchCount("cs.value.review", [["review_date", "<", today], ["state", "not in", ["closed", "cancelled"]]]);
+        k.dueWork = await this.orm.searchCount("cs.weekly.suggestion", [["state", "=", "open"], ["due_date", "<=", today]]);
+        k.qualifyingNeeds = await this.orm.searchCount("csm.offering", [["state", "in", ["draft", "presented"]]]);
 
         // Per-engineer leaderboard
         const rows = await this.orm.call(
@@ -96,6 +107,12 @@ export class CsDashboard extends Component {
             { key: "csat", icon: "fa-star", color: "success", label: "Avg CSAT", value: k.avgCsat, domain: [] },
             { key: "sentiment", icon: "fa-smile-o", color: "primary", label: "Avg Sentiment", value: k.avgSentiment, domain: [] },
             { key: "upsell", icon: "fa-line-chart", color: "info", label: "Upsell Won", value: k.upsell, domain: [["upsell_revenue", ">", 0]] },
+            { key: "highVoc", icon: "fa-bullhorn", color: "danger", label: "High Customer Voice", value: k.highVoc, model: "cs.voc.insight", domain: [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]] },
+            { key: "lowEngagement", icon: "fa-plug", color: "warning", label: "Low Engagement", value: k.lowEngagement, domain: [["latest_adoption_status", "in", ["watch", "low"]]] },
+            { key: "criticalWallets", icon: "fa-hourglass-end", color: "danger", label: "Critical Support Hours", value: k.criticalWallets, model: "cs.support.wallet", domain: [["status", "in", ["critical", "exhausted", "expired"]]] },
+            { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: "Overdue Value Reviews", value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", DateTime.now().toISODate()], ["state", "not in", ["closed", "cancelled"]]] },
+            { key: "dueWork", icon: "fa-tasks", color: "primary", label: "Due Work", value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", DateTime.now().toISODate()]] },
+            { key: "qualifyingNeeds", icon: "fa-compass", color: "info", label: "Needs Being Validated", value: k.qualifyingNeeds, model: "csm.offering", domain: [["state", "in", ["draft", "presented"]]] },
         ];
     }
 
@@ -104,7 +121,14 @@ export class CsDashboard extends Component {
     }
 
     onTile(tile) {
-        this.openAccounts(tile.label, tile.domain);
+        this.openRecords(tile.model || "cs.account", tile.label, tile.domain);
+    }
+
+    openRecords(model, name, domain) {
+        this.action.doAction({
+            type: "ir.actions.act_window", name, res_model: model, domain: domain || [],
+            views: [[false, "list"], [false, "form"]],
+        });
     }
 
     openAccounts(name, domain) {
@@ -119,6 +143,13 @@ export class CsDashboard extends Component {
 
     openEngineer(eng) {
         this.openAccounts(eng.name, [["csm_user_id", "=", eng.id]]);
+    }
+
+    onTileKeydown(ev, tile) {
+        if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            this.onTile(tile);
+        }
     }
 
     openAccount(id) {

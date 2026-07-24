@@ -117,6 +117,12 @@ class CsValueReview(models.Model):
         'cs_account_id', 'review_date', 'period_start', 'period_end',
     }
     _snapshot_value_fields = _snapshot_fields - _review_scope_fields
+    _closed_business_fields = {
+        'agenda', 'observations', 'questions', 'value_realized', 'evidence',
+        'customer_priorities', 'risks_and_blockers', 'potential_needs',
+        'commitments', 'next_step', 'next_step_date', 'next_review_date',
+        'stakeholder_ids',
+    }
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -137,6 +143,8 @@ class CsValueReview(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        if self.filtered(lambda review: review.state == 'closed') and self._closed_business_fields.intersection(vals):
+            raise UserError(_('Closed value reviews are immutable. Create a new review for corrections or follow-up.'))
         if not self.env.su and 'state' in vals:
             raise UserError(_('Use the value-review workflow buttons to change its status.'))
         if not self.env.su and self._snapshot_value_fields.intersection(vals):

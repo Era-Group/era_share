@@ -29,8 +29,11 @@
                 <div class="row g-3 mb-4">
                     <t t-foreach="tiles" t-as="tile" t-key="tile.key">
                         <div class="col-6 col-md-3">
-                            <div t-attf-class="card shadow-sm border-0 o_cs_tile border-start border-4 border-#{tile.color}"
-                                 t-on-click="() => this.onTile(tile)">
+                             <div t-attf-class="card shadow-sm border-0 o_cs_tile border-start border-4 border-#{tile.color}"
+                                  role="button" tabindex="0"
+                                  t-att-aria-label="tile.label + ': ' + tile.value"
+                                  t-on-click="() => this.onTile(tile)"
+                                  t-on-keydown="(ev) => this.onTileKeydown(ev, tile)">
                                 <div class="card-body d-flex align-items-center">
                                     <i t-attf-class="fa #{tile.icon} fa-2x me-3 text-#{tile.color}"/>
                                     <div>
@@ -60,8 +63,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr t-foreach="state.engineers" t-as="e" t-key="e.id"
-                                        class="o_cs_row" t-on-click="() => this.openEngineer(e)">
+                                     <tr t-foreach="state.engineers" t-as="e" t-key="e.id"
+                                         class="o_cs_row" role="button" tabindex="0"
+                                         t-on-click="() => this.openEngineer(e)"
+                                         t-on-keydown="(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); this.openEngineer(e); } }">
                                         <td t-esc="e.name"/>
                                         <td class="text-end" t-esc="e.accounts"/>
                                         <td class="text-end">

@@ -226,3 +226,7 @@ Commits pushed to `origin/stage`.
 - Enforced customer-account record access before AI copilots, call briefings, and follow-up composers build privileged customer context.
 - Enforced company opt-in settings inside manual Next Best Action and profile-summary actions.
 - Restricted service URL enrichment to public HTTPS hosts, blocked private/local/reserved addresses and redirects, and capped downloaded content at 1 MB.
+## 19.0.27.0.0 — Executive Control and Data Integrity
+- Expanded the executive dashboard with high-priority Voice of Customer, low engagement, critical support wallets, overdue value reviews, due work, and service needs under validation, all with source-record drill-down.
+- Added keyboard access to dashboard KPI cards and engineer rows.
+- Locked closed value reviews against business-data edits and cleaned stale partner links when a Customer Success account changes customer.

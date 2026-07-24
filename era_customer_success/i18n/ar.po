@@ -1943,6 +1943,16 @@ msgid "Closed On"
 msgstr "تاريخ الإغلاق"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_value_review.py:0
+msgid ""
+"Closed value reviews are immutable. Create a new review for corrections or "
+"follow-up."
+msgstr ""
+"مراجعات القيمة المغلقة غير قابلة للتعديل. أنشئ مراجعة جديدة للتصحيح أو "
+"المتابعة."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Collections"
 msgstr "التحصيلات"

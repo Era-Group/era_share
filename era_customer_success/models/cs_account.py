@@ -530,8 +530,18 @@ class CsAccount(models.Model):
         if ('csm_user_id' in vals
                 and not self.env.user.has_group('era_customer_success.group_era_cs_manager')):
             raise UserError(_('Only a Customer Success Manager can change the assigned CSM.'))
+        old_partner_ids = set()
+        if 'partner_id' in vals:
+            for account in self:
+                old_partner_ids.update(account._partner_ids())
         res = super().write(vals)
         if 'partner_id' in vals:
+            new_partner_ids = set()
+            for account in self:
+                new_partner_ids.update(account._partner_ids())
+            stale_partners = self.env['res.partner'].browse(old_partner_ids - new_partner_ids).filtered(
+                lambda partner: partner.cs_account_id in self)
+            stale_partners.with_context(skip_cs_mirror=True).write({'cs_account_id': False})
             self._sync_partner_link()
         if 'csm_user_id' in vals and not self.env.context.get('skip_cs_mirror'):
             self._mirror_csm_to_partner()

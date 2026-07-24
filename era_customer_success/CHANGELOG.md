@@ -235,3 +235,5 @@ Commits pushed to `origin/stage`.
 ## 19.0.29.0.0 — Portfolio Data Coverage
 - Added executive coverage indicators for accounts missing engagement assessments, value-review schedules, or customer contact in the last 30 days.
 - Exposed next-action evidence sources directly in the AI suggestion history for audit and coaching.
+## 19.0.30.0.0 — Technical Consolidation
+- Unified AI JSON response extraction in one shared utility and aligned handover/test documentation with the current release.

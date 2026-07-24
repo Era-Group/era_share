@@ -1,30 +1,11 @@
 # -*- coding: utf-8 -*-
-import json
-import re
 import logging
 
 from odoo import api, fields, models, _
 
+from .ai_utils import extract_json_object as _cs_extract_json
+
 _logger = logging.getLogger(__name__)
-
-
-def _cs_extract_json(raw):
-    """Best-effort extraction of a JSON object from an LLM response."""
-    if not raw:
-        return None
-    text = raw.strip()
-    if text.startswith('```'):
-        text = re.sub(r'^```[a-zA-Z]*', '', text).strip().rstrip('`').strip()
-    try:
-        return json.loads(text)
-    except (ValueError, TypeError):
-        match = re.search(r'\{.*\}', text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(0))
-            except (ValueError, TypeError):
-                return None
-    return None
 
 
 class HelpdeskTicket(models.Model):

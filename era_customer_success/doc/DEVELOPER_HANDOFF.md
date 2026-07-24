@@ -5,7 +5,7 @@
 > Companion files: [CHANGELOG.md](../CHANGELOG.md), Arabic docs in this `doc/` folder
 > (FEATURES_AR, USER_GUIDE_AR, IMPROVEMENTS_AR).
 
-Last updated at **v19.0.13.4.0** (2026-06-22).
+Last updated at **v19.0.29.0.0** (2026-07-24).
 
 ---
 

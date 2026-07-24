@@ -12,6 +12,8 @@ from odoo import api, fields, models, SUPERUSER_ID, _
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
 
+from .ai_utils import extract_json_object as _cs_extract_json
+
 _logger = logging.getLogger(__name__)
 
 
@@ -51,25 +53,6 @@ _CS_WEEKLY_DIGEST_LOCK = 871423901
 _CS_SENTIMENT_WINDOW_DAYS = 365
 _CS_SENTIMENT_HALFLIFE_DAYS = 90
 _CS_HEALTH_TRACKING_THRESHOLD = 20
-
-
-def _cs_extract_json(raw):
-    """Best-effort extraction of a JSON object from an LLM response."""
-    if not raw:
-        return None
-    text = raw.strip()
-    if text.startswith('```'):
-        text = re.sub(r'^```[a-zA-Z]*', '', text).strip().rstrip('`').strip()
-    try:
-        return json.loads(text)
-    except (ValueError, TypeError):
-        match = re.search(r'\{.*\}', text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(0))
-            except (ValueError, TypeError):
-                return None
-    return None
 
 
 class CsAccount(models.Model):

@@ -33,12 +33,50 @@ function openGuide(text) {
     document.querySelector(".o_cs_screen_guide_dialog")?.remove();
     const dialog = document.createElement("dialog");
     dialog.className = "o_cs_screen_guide_dialog";
-    dialog.dir = "rtl";
+    const isRtl = document.documentElement.dir === "rtl"
+        || document.documentElement.lang.startsWith("ar")
+        || /[\u0600-\u06FF]/.test(text);
+    if (isRtl && !document.documentElement.dir) {
+        document.documentElement.dir = "rtl";
+    }
+    dialog.dir = isRtl ? "rtl" : "ltr";
+    dialog.classList.toggle("o_cs_screen_guide_dialog_rtl", isRtl);
+    if (isRtl) {
+        dialog.style.direction = "rtl";
+    }
+    const lines = text.split("\n").filter(Boolean);
+    const [intro, section, ...details] = lines;
+    const startIndex = details.findIndex(
+        (line) => line.startsWith("Start here:") || line.startsWith("ابدأ من هنا:")
+    );
+    const uses = startIndex === -1 ? details : details.slice(0, startIndex);
+    const start = startIndex === -1 ? "" : details.slice(startIndex).join(" ");
     dialog.innerHTML = `
         <button type="button" class="o_cs_screen_guide_close" aria-label="إغلاق">×</button>
-        <div class="o_cs_screen_guide_content"></div>
+        <div class="o_cs_screen_guide_content">
+            <p class="o_cs_screen_guide_intro"></p>
+            <h3 class="o_cs_screen_guide_section"></h3>
+            <ul class="o_cs_screen_guide_list"></ul>
+            <p class="o_cs_screen_guide_start"></p>
+        </div>
     `;
-    dialog.querySelector(".o_cs_screen_guide_content").textContent = text;
+    dialog.querySelector(".o_cs_screen_guide_intro").textContent = intro || "";
+    dialog.querySelector(".o_cs_screen_guide_section").textContent = section || "";
+    for (const line of uses) {
+        const item = document.createElement("li");
+        item.textContent = line.replace(/^[-•]\s*/, "");
+        dialog.querySelector(".o_cs_screen_guide_list").append(item);
+    }
+    dialog.querySelector(".o_cs_screen_guide_start").textContent = start.replace(/^Start here:\s*/, "ابدأ من هنا: ");
+    if (isRtl) {
+        for (const element of dialog.querySelectorAll(".o_cs_screen_guide_content, .o_cs_screen_guide_intro, .o_cs_screen_guide_section, .o_cs_screen_guide_list, .o_cs_screen_guide_start")) {
+            element.style.setProperty("direction", "rtl", "important");
+            element.style.setProperty("text-align", "right", "important");
+        }
+        const list = dialog.querySelector(".o_cs_screen_guide_list");
+        list.style.setProperty("padding-right", "1.4rem", "important");
+        list.style.setProperty("padding-left", "0", "important");
+    }
     dialog.querySelector(".o_cs_screen_guide_close").addEventListener("click", () => dialog.close());
     dialog.addEventListener("click", (event) => {
         if (event.target === dialog) {

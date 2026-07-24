@@ -53,7 +53,12 @@ export class CsDashboard extends Component {
         const today = new Date().toISOString().slice(0, 10);
         k.openVoc = await this.orm.searchCount("cs.voc.insight", [["state", "in", ["new", "triaged", "acted"]]]);
         k.highVoc = await this.orm.searchCount("cs.voc.insight", [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]]);
-        k.lowEngagement = await this.orm.searchCount(M, [["latest_adoption_status", "in", ["watch", "low"]]]);
+        const engagementRows = await this.orm.searchRead(
+            M, [], ["latest_adoption_status"], { limit: 10000 }
+        );
+        k.lowEngagement = engagementRows.filter(
+            (account) => ["watch", "low"].includes(account.latest_adoption_status)
+        ).length;
         k.criticalWallets = await this.orm.searchCount("cs.support.wallet", [["status", "in", ["critical", "exhausted", "expired"]]]);
         k.overdueReviews = await this.orm.searchCount("cs.value.review", [["review_date", "<", today], ["state", "not in", ["closed", "cancelled"]]]);
         k.dueWork = await this.orm.searchCount("cs.weekly.suggestion", [["state", "=", "open"], ["due_date", "<=", today]]);
@@ -108,7 +113,7 @@ export class CsDashboard extends Component {
             { key: "sentiment", icon: "fa-smile-o", color: "primary", label: "Avg Sentiment", value: k.avgSentiment, domain: [] },
             { key: "upsell", icon: "fa-line-chart", color: "info", label: "Upsell Won", value: k.upsell, domain: [["upsell_revenue", ">", 0]] },
             { key: "highVoc", icon: "fa-bullhorn", color: "danger", label: _t("High Customer Voice"), value: k.highVoc, model: "cs.voc.insight", domain: [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]] },
-            { key: "lowEngagement", icon: "fa-plug", color: "warning", label: _t("Low Engagement"), value: k.lowEngagement, domain: [["latest_adoption_status", "in", ["watch", "low"]]] },
+            { key: "lowEngagement", icon: "fa-plug", color: "warning", label: _t("Low Engagement"), value: k.lowEngagement, model: "cs.adoption.assessment", domain: [["state", "=", "confirmed"], ["status", "in", ["watch", "low"]]] },
             { key: "criticalWallets", icon: "fa-hourglass-end", color: "danger", label: _t("Critical Support Hours"), value: k.criticalWallets, model: "cs.support.wallet", domain: [["status", "in", ["critical", "exhausted", "expired"]]] },
             { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: _t("Overdue Value Reviews"), value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", new Date().toISOString().slice(0, 10)], ["state", "not in", ["closed", "cancelled"]]] },
             { key: "dueWork", icon: "fa-tasks", color: "primary", label: _t("Due Work"), value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", new Date().toISOString().slice(0, 10)]] },

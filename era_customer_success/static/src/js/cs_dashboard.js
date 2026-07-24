@@ -3,7 +3,6 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { DateTime } from "luxon";
 import { _t } from "@web/core/l10n/translation";
 
 export class CsDashboard extends Component {
@@ -51,7 +50,7 @@ export class CsDashboard extends Component {
         k.avgSentiment = Math.round(g.sentiment_score || 0);
         k.atRisk = await this.orm.searchCount(M, this.atRiskDomain);
         k.renewals = await this.orm.searchCount(M, [["renewal_soon", "=", true]]);
-        const today = DateTime.now().toISODate();
+        const today = new Date().toISOString().slice(0, 10);
         k.openVoc = await this.orm.searchCount("cs.voc.insight", [["state", "in", ["new", "triaged", "acted"]]]);
         k.highVoc = await this.orm.searchCount("cs.voc.insight", [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]]);
         k.lowEngagement = await this.orm.searchCount(M, [["latest_adoption_status", "in", ["watch", "low"]]]);
@@ -111,8 +110,8 @@ export class CsDashboard extends Component {
             { key: "highVoc", icon: "fa-bullhorn", color: "danger", label: _t("High Customer Voice"), value: k.highVoc, model: "cs.voc.insight", domain: [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]] },
             { key: "lowEngagement", icon: "fa-plug", color: "warning", label: _t("Low Engagement"), value: k.lowEngagement, domain: [["latest_adoption_status", "in", ["watch", "low"]]] },
             { key: "criticalWallets", icon: "fa-hourglass-end", color: "danger", label: _t("Critical Support Hours"), value: k.criticalWallets, model: "cs.support.wallet", domain: [["status", "in", ["critical", "exhausted", "expired"]]] },
-            { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: _t("Overdue Value Reviews"), value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", DateTime.now().toISODate()], ["state", "not in", ["closed", "cancelled"]]] },
-            { key: "dueWork", icon: "fa-tasks", color: "primary", label: _t("Due Work"), value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", DateTime.now().toISODate()]] },
+            { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: _t("Overdue Value Reviews"), value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", new Date().toISOString().slice(0, 10)], ["state", "not in", ["closed", "cancelled"]]] },
+            { key: "dueWork", icon: "fa-tasks", color: "primary", label: _t("Due Work"), value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", new Date().toISOString().slice(0, 10)]] },
             { key: "qualifyingNeeds", icon: "fa-compass", color: "info", label: _t("Needs Being Validated"), value: k.qualifyingNeeds, model: "csm.offering", domain: [["state", "in", ["draft", "presented"]]] },
         ];
     }
@@ -150,6 +149,13 @@ export class CsDashboard extends Component {
         if (ev.key === "Enter" || ev.key === " ") {
             ev.preventDefault();
             this.onTile(tile);
+        }
+    }
+
+    onEngineerKeydown(ev, engineer) {
+        if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            this.openEngineer(engineer);
         }
     }
 

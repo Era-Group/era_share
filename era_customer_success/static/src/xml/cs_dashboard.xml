@@ -66,7 +66,7 @@
                                      <tr t-foreach="state.engineers" t-as="e" t-key="e.id"
                                          class="o_cs_row" role="button" tabindex="0"
                                          t-on-click="() => this.openEngineer(e)"
-                                         t-on-keydown="(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); this.openEngineer(e); } }">
+                                         t-on-keydown="(ev) => this.onEngineerKeydown(ev, e)">
                                         <td t-esc="e.name"/>
                                         <td class="text-end" t-esc="e.accounts"/>
                                         <td class="text-end">

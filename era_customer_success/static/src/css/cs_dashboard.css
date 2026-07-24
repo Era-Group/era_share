@@ -1,9 +1,10 @@
 .o_cs_dashboard {
     background: #f6f7fb;
-    height: 100%;
+    height: calc(100vh - 46px) !important;
+    max-height: calc(100vh - 46px) !important;
     min-height: 0;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll !important;
     overscroll-behavior-y: contain;
     scrollbar-gutter: stable;
     -webkit-overflow-scrolling: touch;

@@ -37,3 +37,6 @@ access_cs_service_recommendation_wizard_user,cs.service.recommendation.wizard.us
 access_cs_service_recommendation_line_user,cs.service.recommendation.line.user,model_cs_service_recommendation_line,group_era_cs_user,1,1,1,1
 access_cs_user_guide_user,cs.user.guide.user,model_cs_user_guide,group_era_cs_user,1,0,0,0
 access_cs_user_guide_manager,cs.user.guide.manager,model_cs_user_guide,group_era_cs_manager,1,0,0,0
+access_cs_google_sync_log_manager,cs.google.sheet.sync.log.manager,model_cs_google_sheet_sync_log,group_era_cs_manager,1,0,0,0
+access_cs_portfolio_share_manager,cs.portfolio.share.manager,model_cs_portfolio_share,group_era_cs_manager,1,1,1,1
+access_cs_portfolio_share_line_manager,cs.portfolio.share.line.manager,model_cs_portfolio_share_line,group_era_cs_manager,1,1,1,1

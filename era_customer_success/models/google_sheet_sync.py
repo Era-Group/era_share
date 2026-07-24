@@ -1,0 +1,461 @@
+import base64
+import json
+import re
+import time
+from difflib import SequenceMatcher
+from urllib.parse import urlparse
+
+import requests
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+
+from .cs_account import _cs_extract_json
+
+
+SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
+ERA_COLUMNS = {
+    'A': 'ERA CSM', 'B': 'ERA CSM phone number', 'C': 'ERA CSM email',
+    'G': 'Recurring plan', 'H': 'Industry', 'K': 'Active Users',
+    'N': 'Adoption', 'O': 'Client Website',
+}
+SHEET_ACCOUNT_FIELDS = {
+    'A': 'sheet_era_csm', 'B': 'sheet_era_csm_phone', 'C': 'sheet_era_csm_email',
+    'D': 'sheet_customer_name', 'E': 'sheet_date_of_join', 'F': 'sheet_next_invoice_date',
+    'G': 'sheet_recurring_plan', 'H': 'sheet_industry', 'I': 'sheet_number_of_employees',
+    'J': 'sheet_number_of_users', 'K': 'sheet_active_users', 'L': 'sheet_stage',
+    'M': 'sheet_version', 'N': 'sheet_adoption', 'O': 'sheet_client_website',
+    'P': 'sheet_active_implemented_modules', 'Q': 'sheet_potential_expansion',
+    'R': 'sheet_next_action', 'S': 'sheet_extra_notes', 'T': 'sheet_expansion_status',
+}
+MATCH_HEADER_ALIASES = {
+    'name': {'customer name', 'client name', 'company name'},
+    'email': {'customer email', 'client email', 'company email', 'email'},
+    'phone': {'customer phone', 'client phone', 'company phone', 'phone', 'mobile'},
+    'website': {'client website', 'customer website', 'company website', 'website'},
+}
+
+
+def _b64url(value):
+    return base64.urlsafe_b64encode(value).rstrip(b'=').decode()
+
+
+def _normalize_text(value):
+    return re.sub(r'[^\w]+', ' ', (value or '').casefold()).strip()
+
+
+def _normalize_phone(value):
+    return re.sub(r'\D', '', value or '')[-9:]
+
+
+def _normalize_website(value):
+    host = urlparse(value if '://' in (value or '') else 'https://%s' % (value or '')).netloc
+    return host.casefold().removeprefix('www.')
+
+
+class CsGoogleSheetSync(models.AbstractModel):
+    _name = 'cs.google.sheet.sync'
+    _description = 'Customer Portfolio Google Sheet Synchronization'
+
+    @api.model
+    def _settings(self):
+        params = self.env['ir.config_parameter'].sudo()
+        return {
+            'enabled': params.get_param('era_customer_success.google_sheet_enabled') == 'True',
+            'spreadsheet_id': params.get_param('era_customer_success.google_spreadsheet_id'),
+            'gid': int(params.get_param('era_customer_success.google_sheet_gid') or 0),
+            'credentials': params.get_param('era_customer_success.google_service_account_json'),
+            'sharing_approved': params.get_param('era_customer_success.google_sharing_approved') == 'True',
+            'approval_scope': params.get_param('era_customer_success.google_approval_scope'),
+        }
+
+    @api.model
+    def _access_token(self, credentials_json):
+        try:
+            info = json.loads(credentials_json or '')
+            now = int(time.time())
+            header = _b64url(json.dumps({'alg': 'RS256', 'typ': 'JWT'}).encode())
+            claims = _b64url(json.dumps({
+                'iss': info['client_email'], 'scope': SHEETS_SCOPE,
+                'aud': info.get('token_uri', 'https://oauth2.googleapis.com/token'),
+                'iat': now, 'exp': now + 3600,
+            }, separators=(',', ':')).encode())
+            unsigned = '%s.%s' % (header, claims)
+            key = serialization.load_pem_private_key(info['private_key'].encode(), password=None)
+            signature = key.sign(unsigned.encode(), padding.PKCS1v15(), hashes.SHA256())
+            assertion = '%s.%s' % (unsigned, _b64url(signature))
+            response = requests.post(
+                info.get('token_uri', 'https://oauth2.googleapis.com/token'), timeout=20,
+                data={'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer', 'assertion': assertion})
+            response.raise_for_status()
+            return response.json()['access_token']
+        except Exception as error:
+            raise UserError(_('Google authentication failed: %s', error))
+
+    @api.model
+    def _request(self, method, url, token, **kwargs):
+        response = requests.request(method, url, timeout=30, headers={
+            'Authorization': 'Bearer %s' % token, 'Content-Type': 'application/json'}, **kwargs)
+        response.raise_for_status()
+        return response.json() if response.content else {}
+
+    @api.model
+    def _sheet_title(self, spreadsheet_id, gid, token):
+        metadata = self._request('GET', 'https://sheets.googleapis.com/v4/spreadsheets/%s' % spreadsheet_id, token)
+        for sheet in metadata.get('sheets', []):
+            props = sheet.get('properties', {})
+            if props.get('sheetId') == gid:
+                return props.get('title')
+        raise UserError(_('Google Sheet tab with gid %s was not found.', gid))
+
+    @api.model
+    def _red_header_columns(self, spreadsheet_id, gid, token):
+        url = ('https://sheets.googleapis.com/v4/spreadsheets/%s'
+               '?includeGridData=true&fields=sheets(properties(sheetId),data.rowData.values.effectiveFormat.textFormat.foregroundColor)'
+               % spreadsheet_id)
+        metadata = self._request('GET', url, token)
+        for sheet in metadata.get('sheets', []):
+            if sheet.get('properties', {}).get('sheetId') != gid:
+                continue
+            values = ((sheet.get('data') or [{}])[0].get('rowData') or [{}])[0].get('values', [])
+            red_columns = set()
+            for index, cell in enumerate(values[:20]):
+                color = cell.get('effectiveFormat', {}).get('textFormat', {}).get('foregroundColor', {})
+                red, green, blue = color.get('red', 0), color.get('green', 0), color.get('blue', 0)
+                if red >= 0.65 and red >= green * 1.35 and red >= blue * 1.35:
+                    red_columns.add(chr(ord('A') + index))
+            return red_columns
+        raise UserError(_('Google Sheet tab with gid %s was not found.', gid))
+
+    @api.model
+    def _matching_columns(self, headers):
+        columns = {}
+        for index, header in enumerate(headers):
+            normalized = _normalize_text(header)
+            for key, aliases in MATCH_HEADER_ALIASES.items():
+                if normalized in aliases:
+                    columns[key] = index
+        return columns
+
+    @api.model
+    def _match_account(self, row, columns, accounts):
+        values = {key: row[index] if index < len(row) else '' for key, index in columns.items()}
+        scored = []
+        for account in accounts:
+            partner = account.partner_id.commercial_partner_id
+            score, reasons = 0, []
+            if values.get('email') and partner.email and values['email'].strip().casefold() == partner.email.strip().casefold():
+                score += 100
+                reasons.append('email')
+            if values.get('website') and partner.website and _normalize_website(values['website']) == _normalize_website(partner.website):
+                score += 80
+                reasons.append('website')
+            if values.get('phone') and partner.phone and _normalize_phone(values['phone']) == _normalize_phone(partner.phone):
+                score += 80
+                reasons.append('phone')
+            row_name, account_name = _normalize_text(values.get('name')), _normalize_text(partner.name)
+            if row_name and account_name:
+                similarity = SequenceMatcher(None, row_name, account_name).ratio()
+                if row_name == account_name:
+                    score += 90
+                    reasons.append('exact name')
+                elif similarity >= 0.86:
+                    score += int(similarity * 60)
+                    reasons.append('similar name')
+            if score:
+                scored.append((score, account.id, account, ', '.join(reasons)))
+        scored.sort(reverse=True, key=lambda item: (item[0], item[1]))
+        if not scored or scored[0][0] < 80 or (len(scored) > 1 and scored[0][0] - scored[1][0] < 20):
+            return False, 0, 'manual review required'
+        return scored[0][2], scored[0][0], scored[0][3]
+
+    @api.model
+    def _match_account_with_ai(self, row, columns, accounts):
+        account, confidence, reason = self._match_account(row, columns, accounts)
+        if account:
+            return account, confidence, reason
+        values = {key: row[index] if index < len(row) else '' for key, index in columns.items()}
+        scored = []
+        for candidate in accounts:
+            partner = candidate.partner_id.commercial_partner_id
+            name = _normalize_text(values.get('name'))
+            candidate_name = _normalize_text(partner.name)
+            if name and candidate_name:
+                similarity = SequenceMatcher(None, name, candidate_name).ratio()
+                if similarity >= 0.55:
+                    scored.append((int(similarity * 100), candidate.id, candidate, 'candidate'))
+        return self._ai_match_account(values, scored, accounts)
+
+    @api.model
+    def _ai_match_account(self, row_values, scored, accounts):
+        agent = self.env.ref(
+            'era_customer_success.cs_customer_match_agent', raise_if_not_found=False)
+        if not agent:
+            return False, 0, 'manual review required'
+        if not scored:
+            return False, 0, 'no candidate; manual review required'
+        candidates = [item[2] for item in scored[:10]]
+        candidate_lines = []
+        for account in candidates:
+            partner = account.partner_id.commercial_partner_id
+            candidate_lines.append(json.dumps({
+                'account_id': account.id,
+                'name': partner.name or '',
+                'email': partner.email or '',
+                'phone': partner.phone or '',
+                'website': partner.website or '',
+            }, ensure_ascii=False))
+        prompt = 'SHEET ROW:\n%s\nCANDIDATES:\n%s' % (
+            json.dumps(row_values, ensure_ascii=False), '\n'.join(candidate_lines))
+        try:
+            response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(prompt=prompt)
+            result = _cs_extract_json(response[0] if response else '')
+        except Exception:
+            return False, 0, 'AI unavailable; manual review required'
+        if not isinstance(result, dict):
+            return False, 0, 'invalid AI result; manual review required'
+        try:
+            account_id = int(result.get('account_id') or 0)
+            confidence = int(result.get('confidence') or 0)
+        except (TypeError, ValueError):
+            return False, 0, 'invalid AI result; manual review required'
+        account = accounts.filtered(lambda candidate: candidate.id == account_id)[:1]
+        if account and account not in candidates:
+            account = accounts.browse()
+        if not account or confidence < 90:
+            return False, confidence, 'low-confidence AI result; manual review required'
+        return account, confidence, 'AI: %s' % (result.get('reason') or 'multi-signal match')
+
+    @api.model
+    def _account_values(self, account):
+        adoption = self.env['cs.adoption.assessment'].sudo().search([
+            ('cs_account_id', '=', account.id), ('state', '=', 'confirmed')],
+            order='assessment_date desc, id desc', limit=1)
+        subscription = self.env['sale.order'].sudo().search([
+            ('partner_id.commercial_partner_id', '=', account.partner_id.id),
+            ('is_subscription', '=', True), ('subscription_state', '=', '3_progress')],
+            order='next_invoice_date asc, id desc', limit=1)
+        plan = ''
+        for field_name in ('plan_id', 'recurring_plan_id'):
+            if field_name in subscription._fields and subscription[field_name]:
+                plan = subscription[field_name].display_name
+                break
+        active_users = adoption.active_users_30d if adoption and adoption.active_users_30d else ''
+        return {
+            'A': account.csm_user_id.name or '',
+            'B': account.csm_user_id.phone or '',
+            'C': account.csm_user_id.email or '',
+            'G': plan,
+            'H': account.partner_id.industry_id.name or '',
+            'K': active_users,
+            'N': ('%.2f%%' % account.latest_adoption_score) if account.latest_adoption_date else '',
+            'O': account.partner_id.website or '',
+        }
+
+    @api.model
+    def _sheet_row_values(self, row):
+        values = {}
+        for index, column in enumerate(SHEET_ACCOUNT_FIELDS):
+            value = row[index] if index < len(row) else ''
+            if column in ('E', 'F') and value:
+                value = str(value).strip()
+            elif column in ('I', 'J', 'K') and value:
+                try:
+                    value = int(float(value))
+                except (TypeError, ValueError):
+                    value = False
+            values[SHEET_ACCOUNT_FIELDS[column]] = value
+        return values
+
+    @api.model
+    def action_sync(self):
+        settings = self._settings()
+        if not settings.get('sharing_approved') or not (settings.get('approval_scope') or '').strip():
+            raise UserError(_('Approve and document the information scope before sharing data with Odoo through Google Sheet.'))
+        if not all((settings['spreadsheet_id'], settings['credentials'])):
+            raise UserError(_('Configure the Google Spreadsheet ID and service-account credentials first.'))
+        token = self._access_token(settings['credentials'])
+        title = self._sheet_title(settings['spreadsheet_id'], settings['gid'], token)
+        red_columns = self._red_header_columns(settings['spreadsheet_id'], settings['gid'], token)
+        approved_columns = {
+            column.strip().upper() for column in (settings.get('approval_scope') or '').split(',')
+            if column.strip()
+        }
+        if not approved_columns:
+            raise UserError(_('Scan the Google Sheet scope before approving synchronization.'))
+        if approved_columns - red_columns:
+            raise UserError(_(
+                'Synchronization stopped: approved columns %s are not red in the current Google Sheet. '
+                'Review the sheet colors and obtain approval before changing the scope.',
+                ', '.join(sorted(approved_columns - red_columns))))
+        escaped = title.replace("'", "''")
+        base = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values' % settings['spreadsheet_id']
+        rows = self._request('GET', "%s/'%s'!A1:T" % (base, escaped), token).get('values', [])
+        if not rows:
+            raise UserError(_('The Google Sheet is empty.'))
+        headers = rows[0] + [''] * (20 - len(rows[0]))
+        for column, expected in ERA_COLUMNS.items():
+            if column not in approved_columns:
+                continue
+            index = ord(column) - ord('A')
+            if headers[index].strip() != expected:
+                raise UserError(_('Column %s must be "%s" before synchronization.', column, expected))
+        if headers[3].strip() != 'Customer Name':
+            raise UserError(_('Column D must be "Customer Name" before synchronization.'))
+        matching_columns = self._matching_columns(headers)
+        if 'name' not in matching_columns:
+            matching_columns['name'] = 3
+        updates = []
+        matched = 0
+        accounts = self.env['cs.account'].sudo().search([('company_id', '=', self.env.company.id)])
+        match_details = []
+        for row_number, row in enumerate(rows[1:], start=2):
+            account, confidence, reason = self._match_account_with_ai(row, matching_columns, accounts)
+            if not account:
+                continue
+            matched += 1
+            match_details.append('Row %s -> %s (%s%%: %s)' % (
+                row_number, account.partner_id.display_name, confidence, reason))
+            sheet_values = self._sheet_row_values(row)
+            account_values = {
+                field_name: value for column, field_name in SHEET_ACCOUNT_FIELDS.items()
+                if column in approved_columns and column in red_columns
+                for value in [sheet_values.get(field_name)]
+                if value not in ('', False, None)
+            }
+            if account_values:
+                account_values['sheet_last_synced_on'] = fields.Datetime.now()
+                account.sudo().write(account_values)
+            for column, value in self._account_values(account).items():
+                if column in approved_columns and column in red_columns and value not in ('', False, None):
+                    updates.append({'range': "'%s'!%s%s" % (escaped, column, row_number), 'values': [[value]]})
+        if updates:
+            self._request('POST', '%s:batchUpdate' % base, token, json={
+                'valueInputOption': 'USER_ENTERED', 'data': updates})
+        self.env['cs.google.sheet.sync.log'].sudo().create({
+            'company_id': self.env.company.id, 'spreadsheet_id': settings['spreadsheet_id'],
+            'matched_accounts': matched, 'updated_cells': len(updates), 'state': 'success',
+            'details': '\n'.join(match_details)})
+        return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
+            'title': _('Google Sheet synchronized'),
+            'message': _('%s accounts matched; %s ERA-owned cells updated.', matched, len(updates)),
+            'type': 'success', 'sticky': False}}
+
+    @api.model
+    def action_sync_account(self, account, use_ai=True, all_fields=False):
+        account.ensure_one()
+        settings = self._settings()
+        if not settings.get('sharing_approved') or not (settings.get('approval_scope') or '').strip():
+            raise UserError(_('Approve the Google Sheet information scope before filling this customer record.'))
+        if not all((settings['spreadsheet_id'], settings['credentials'])):
+            raise UserError(_('Configure the Google Spreadsheet ID and service-account credentials first.'))
+        token = self._access_token(settings['credentials'])
+        title = self._sheet_title(settings['spreadsheet_id'], settings['gid'], token)
+        red_columns = self._red_header_columns(settings['spreadsheet_id'], settings['gid'], token)
+        approved_columns = {column.strip().upper() for column in settings['approval_scope'].split(',') if column.strip()}
+        if not all_fields and approved_columns - red_columns:
+            raise UserError(_('The approved Google Sheet title colors changed. Scan and approve the scope again.'))
+        escaped = title.replace("'", "''")
+        base = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values' % settings['spreadsheet_id']
+        rows = self._request('GET', "%s/'%s'!A1:T" % (base, escaped), token).get('values', [])
+        if not rows:
+            raise UserError(_('The Google Sheet is empty.'))
+        headers = rows[0] + [''] * (20 - len(rows[0]))
+        if headers[3].strip() != 'Customer Name':
+            raise UserError(_('Column D must be "Customer Name" before synchronization.'))
+        matching_columns = self._matching_columns(headers)
+        matching_columns.setdefault('name', 3)
+        account_match, confidence, reason = False, 0, ''
+        matched_row = None
+        accounts = self.env['cs.account'].sudo().browse(account.id)
+        for row in rows[1:]:
+            matcher = self._match_account_with_ai if use_ai else self._match_account
+            candidate, confidence, reason = matcher(row, matching_columns, accounts)
+            if candidate:
+                account_match = candidate
+                matched_row = row
+                break
+        if not account_match or matched_row is None:
+            raise UserError(_('No sufficiently confident Google Sheet row matched this customer.'))
+        values = self._sheet_row_values(matched_row)
+        allowed_columns = set(SHEET_ACCOUNT_FIELDS) if all_fields else approved_columns & red_columns
+        values = {field_name: value for column, field_name in SHEET_ACCOUNT_FIELDS.items()
+                  if column in allowed_columns
+                  for value in [values.get(field_name)] if value not in ('', False, None)}
+        written_fields = sorted(values)
+        if not written_fields:
+            raise UserError(_('The customer matched, but the approved Google Sheet columns contain no values for this row.'))
+        values['sheet_last_synced_on'] = fields.Datetime.now()
+        account.sudo().write(values)
+        return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
+            'title': _('Customer Sheet fields filled'),
+            'message': _('Customer matched with %s%% confidence (%s). %s fields filled: %s.',
+                         confidence, reason, len(written_fields), ', '.join(written_fields)),
+            'type': 'success', 'sticky': False}}
+
+    @api.model
+    def action_send_account(self, account):
+        account.ensure_one()
+        settings = self._settings()
+        if not settings.get('sharing_approved') or not (settings.get('approval_scope') or '').strip():
+            raise UserError(_('Approve the Google Sheet information scope before sending this customer record.'))
+        if not all((settings['spreadsheet_id'], settings['credentials'])):
+            raise UserError(_('Configure the Google Spreadsheet ID and service-account credentials first.'))
+        token = self._access_token(settings['credentials'])
+        title = self._sheet_title(settings['spreadsheet_id'], settings['gid'], token)
+        red_columns = self._red_header_columns(settings['spreadsheet_id'], settings['gid'], token)
+        approved_columns = {column.strip().upper() for column in settings['approval_scope'].split(',') if column.strip()}
+        if approved_columns - red_columns:
+            raise UserError(_('The approved Google Sheet title colors changed. Scan and approve the scope again.'))
+        escaped = title.replace("'", "''")
+        base = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values' % settings['spreadsheet_id']
+        rows = self._request('GET', "%s/'%s'!A1:T" % (base, escaped), token).get('values', [])
+        if not rows:
+            raise UserError(_('The Google Sheet is empty.'))
+        headers = rows[0] + [''] * (20 - len(rows[0]))
+        if headers[3].strip() != 'Customer Name':
+            raise UserError(_('Column D must be "Customer Name" before synchronization.'))
+        matching_columns = self._matching_columns(headers)
+        matching_columns.setdefault('name', 3)
+        matched_row = None
+        row_number = None
+        for number, row in enumerate(rows[1:], 2):
+            candidate, confidence, reason = self._match_account_with_ai(row, matching_columns, self.env['cs.account'].sudo().browse(account.id))
+            if candidate:
+                matched_row, row_number = row, number
+                break
+        if matched_row is None:
+            raise UserError(_('No sufficiently confident Google Sheet row matched this customer.'))
+        updates = [{'range': "'%s'!%s%s" % (escaped, column, row_number),
+                    'values': [[value]]}
+                   for column, field_name in SHEET_ACCOUNT_FIELDS.items()
+                   for value in [account[field_name]]
+                   if column in approved_columns and column in red_columns and value not in ('', False, None)]
+        if not updates:
+            raise UserError(_('This customer has no non-empty approved red fields to send to Excel.'))
+        self._request('POST', '%s:batchUpdate' % base, token, json={
+            'valueInputOption': 'USER_ENTERED', 'data': updates})
+        return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
+            'title': _('Customer data sent to Excel'),
+            'message': _('%s approved fields sent.', len(updates)),
+            'type': 'success', 'sticky': False}}
+
+    @api.model
+    def _cron_sync(self):
+        if self._settings()['enabled']:
+            self.action_sync()
+
+
+class CsGoogleSheetSyncLog(models.Model):
+    _name = 'cs.google.sheet.sync.log'
+    _description = 'Google Sheet Synchronization Log'
+    _order = 'create_date desc'
+
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    spreadsheet_id = fields.Char(readonly=True)
+    matched_accounts = fields.Integer(readonly=True)
+    updated_cells = fields.Integer(readonly=True)
+    state = fields.Selection([('success', 'Success'), ('failed', 'Failed')], readonly=True)
+    details = fields.Text(readonly=True)

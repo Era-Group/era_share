@@ -245,6 +245,47 @@
                             <field name="usage_signal"/>
                         </group>
                     </group>
+                    <separator string="Google Sheet / ERA Information"/>
+                    <div class="o_cs_google_sheet_block border border-danger rounded p-3 mb-3">
+                        <div class="mb-2">
+                            <button name="action_match_fetch_google_sheet_fields" type="object" string="1. Match Excel and fetch all fields" class="btn-danger" icon="fa-search"/>
+                            <button name="action_fill_google_sheet_fields" type="object" string="2. Fill fields with AI" class="btn-warning" icon="fa-magic"/>
+                            <button name="action_send_google_sheet_fields" type="object" string="3. Send data to Excel" class="btn-primary" icon="fa-upload"/>
+                        </div>
+                        <div class="alert alert-danger" role="status">
+                            <strong>ERA / Google Sheet fields:</strong>
+                            These fields are filled automatically every Thursday only for columns approved by the red title-color check. Do not use them for internal health, ticket, revenue, chatter, or private notes.
+                        </div>
+                        <group>
+                            <group string="ERA ownership">
+                                <field name="sheet_era_csm" class="text-danger"/>
+                                <field name="sheet_era_csm_phone" class="text-danger"/>
+                                <field name="sheet_era_csm_email" class="text-danger"/>
+                                <field name="sheet_recurring_plan" class="text-danger"/>
+                                <field name="sheet_industry" class="text-danger"/>
+                                <field name="sheet_active_users" class="text-danger"/>
+                                <field name="sheet_adoption" class="text-danger"/>
+                                <field name="sheet_client_website" class="text-danger"/>
+                            </group>
+                            <group string="Sheet review fields">
+                                <field name="sheet_customer_name" class="text-danger"/>
+                                <field name="sheet_date_of_join" class="text-danger"/>
+                                <field name="sheet_next_invoice_date" class="text-danger"/>
+                                <field name="sheet_number_of_employees" class="text-danger"/>
+                                <field name="sheet_number_of_users" class="text-danger"/>
+                                <field name="sheet_stage" class="text-danger"/>
+                                <field name="sheet_version" class="text-danger"/>
+                                <field name="sheet_expansion_status" class="text-danger"/>
+                            </group>
+                        </group>
+                        <group string="Sheet notes and planning">
+                            <field name="sheet_active_implemented_modules" class="text-danger"/>
+                            <field name="sheet_potential_expansion" class="text-danger"/>
+                            <field name="sheet_next_action" class="text-danger"/>
+                            <field name="sheet_extra_notes" class="text-danger"/>
+                            <field name="sheet_last_synced_on"/>
+                        </group>
+                    </div>
                     <group>
                         <group string="Revenue &amp; Renewal">
                             <field name="mrr" widget="monetary"/>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_portfolio_share_list" model="ir.ui.view">
+        <field name="name">cs.portfolio.share.list</field><field name="model">cs.portfolio.share</field>
+        <field name="arch" type="xml"><list><field name="name"/><field name="active"/><field name="expires_on"/><field name="portal_user_ids" widget="many2many_tags"/><field name="access_count"/><field name="last_accessed_on"/></list></field>
+    </record>
+    <record id="view_cs_portfolio_share_form" model="ir.ui.view">
+        <field name="name">cs.portfolio.share.form</field><field name="model">cs.portfolio.share</field>
+        <field name="arch" type="xml">
+            <form string="Odoo Portfolio Share">
+                <header>
+                    <button name="action_prepare_snapshot" type="object" string="Prepare Snapshot" class="btn-primary"/>
+                    <button name="action_approve_sharing" type="object" string="Approve Sharing" invisible="sharing_approved" class="btn-primary"/>
+                    <button name="action_revoke_sharing_approval" type="object" string="Revoke Approval" invisible="not sharing_approved"/>
+                    <button name="action_activate" type="object" string="Activate" invisible="active" class="btn-primary"/>
+                    <button name="action_revoke" type="object" string="Revoke" invisible="not active"/>
+                    <button name="action_regenerate_token" type="object" string="Regenerate Token"/>
+                    <button name="action_open_portal" type="object" string="Open Portal" icon="fa-external-link"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="sharing_approved" invisible="1"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="status"><strong>Privacy boundary:</strong> No information is shared with Odoo through the portal or Excel until the reviewed snapshot is explicitly approved. Preparing the snapshot again revokes that approval. The portal and Excel expose only the 20 reviewed columns and never expose health, tickets, revenue, chatter, internal notes, or source records.</div>
+                    <group><group><field name="name"/><field name="company_id" groups="base.group_multi_company"/><field name="expires_on"/><field name="allow_export"/></group><group><field name="portal_user_ids" widget="many2many_tags"/><field name="portal_url" widget="url" readonly="1"/><field name="sharing_approved"/><field name="sharing_approved_by_id"/><field name="sharing_approved_on"/><field name="access_count"/><field name="last_accessed_on"/></group></group>
+                    <field name="account_ids" widget="many2many_tags" domain="[('company_id', '=', company_id)]"/>
+                    <notebook><page string="Published Rows / الصفوف المنشورة"><field name="line_ids"><list editable="bottom">
+                        <field name="era_csm"/><field name="era_csm_phone" optional="hide"/><field name="era_csm_email" optional="hide"/><field name="customer_name"/>
+                        <field name="date_of_join"/><field name="next_invoice_date"/><field name="recurring_plan"/><field name="industry"/><field name="number_of_employees" optional="hide"/><field name="number_of_users" optional="hide"/><field name="active_users"/><field name="stage"/><field name="version"/><field name="adoption"/><field name="client_website" optional="hide"/><field name="active_implemented_modules" optional="hide"/><field name="potential_expansion"/><field name="next_action"/><field name="extra_notes" optional="hide"/><field name="expansion_status"/>
+                    </list></field></page></notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_cs_portfolio_share" model="ir.actions.act_window"><field name="name">Odoo Portfolio Shares</field><field name="res_model">cs.portfolio.share</field><field name="view_mode">list,form</field></record>
+</odoo>

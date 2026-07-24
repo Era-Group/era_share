@@ -91,6 +91,43 @@ class CsAccount(models.Model):
     phone = fields.Char(related='partner_id.phone', string='Phone', readonly=False)
     email = fields.Char(related='partner_id.email', string='Email', readonly=False)
 
+    # Google Sheet / ERA operational fields. These are updated only when their
+    # corresponding red title is approved in the synchronization settings.
+    sheet_era_csm = fields.Char(string='Sheet: ERA CSM')
+    sheet_era_csm_phone = fields.Char(string='Sheet: ERA CSM phone')
+    sheet_era_csm_email = fields.Char(string='Sheet: ERA CSM email')
+    sheet_customer_name = fields.Char(string='Sheet: Customer Name')
+    sheet_date_of_join = fields.Date(string='Sheet: Date of Join')
+    sheet_next_invoice_date = fields.Date(string='Sheet: Next invoice date')
+    sheet_recurring_plan = fields.Char(string='Sheet: Recurring plan')
+    sheet_industry = fields.Char(string='Sheet: Industry')
+    sheet_number_of_employees = fields.Integer(string='Sheet: Employees')
+    sheet_number_of_users = fields.Integer(string='Sheet: Users')
+    sheet_active_users = fields.Integer(string='Sheet: Active Users')
+    sheet_stage = fields.Char(string='Sheet: Stage')
+    sheet_version = fields.Char(string='Sheet: Version')
+    sheet_adoption = fields.Char(string='Sheet: Adoption')
+    sheet_client_website = fields.Char(string='Sheet: Client Website')
+    sheet_active_implemented_modules = fields.Text(string='Sheet: Active Implemented modules')
+    sheet_potential_expansion = fields.Text(string='Sheet: Potential Expansion')
+    sheet_next_action = fields.Text(string='Sheet: Next Action')
+    sheet_extra_notes = fields.Text(string='Sheet: Extra Notes')
+    sheet_expansion_status = fields.Char(string='Sheet: Expansion Status')
+    sheet_last_synced_on = fields.Datetime(string='Sheet: Last synced', readonly=True, copy=False)
+
+    def action_fill_google_sheet_fields(self):
+        self.ensure_one()
+        return self.env['cs.google.sheet.sync'].action_sync_account(self, use_ai=True)
+
+    def action_match_fetch_google_sheet_fields(self):
+        self.ensure_one()
+        return self.env['cs.google.sheet.sync'].action_sync_account(
+            self, use_ai=False, all_fields=True)
+
+    def action_send_google_sheet_fields(self):
+        self.ensure_one()
+        return self.env['cs.google.sheet.sync'].action_send_account(self)
+
     csm_user_id = fields.Many2one(
         'res.users', string='Customer Success Engineer', tracking=True,
         help="The CSM engineer responsible for following up with this customer.")

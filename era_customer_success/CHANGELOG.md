@@ -242,3 +242,7 @@ Commits pushed to `origin/stage`.
 - Established a permanent release rule requiring the in-app guide, project memory, release number, and update date to change with every future workflow or feature update.
 ## 19.0.31.1.0 — Operational Guide Appendix
 - Expanded the in-app Arabic guide with practical scenarios, good/bad examples, expected workflow states, troubleshooting, escalation routes, and an end-of-day checklist.
+## 19.0.32.0.0 — Odoo Partner Portfolio Portal
+- Added a bilingual external portal and matching Excel export restricted to the exact A–T columns in Odoo's shared customer sheet.
+- Added access by explicitly authorized portal user or revocable expiring token, snapshot review before activation, and access auditing.
+- Added Google Sheets synchronization for ERA-owned columns A, B, C, G, H, K, N and O only; all other columns are preserved.

@@ -78,6 +78,33 @@
                             <field name="cs_support_expiry_warning_days" class="oe_inline"/> days
                         </setting>
                     </block>
+                    <block title="Odoo Portfolio Google Sheet" id="cs_google_sheet_block">
+                        <setting string="Information-sharing approval" help="Scan the Google Sheet first. Odoo reads the font color of row-1 column titles and fills the detected scope below. Review that scope, then explicitly approve it. Revoke approval and scan again before changing the sheet.">
+                            <div class="content-group">
+                                <field name="cs_google_sharing_approved" readonly="1"/>
+                                <br/><button name="action_scan_google_sheet_scope" type="object" string="Scan Google Sheet Titles" class="btn-secondary"/>
+                                <br/><label for="cs_google_approval_scope"/><field name="cs_google_approval_scope" class="w-100" readonly="1"/>
+                                <br/><button name="action_approve_google_sharing" type="object" string="Approve Sharing" class="btn-primary" invisible="cs_google_sharing_approved"/>
+                                <button name="action_revoke_google_sharing" type="object" string="Revoke Approval" invisible="not cs_google_sharing_approved"/>
+                                <br/><field name="cs_google_approved_by" readonly="1"/><field name="cs_google_approved_on" readonly="1"/>
+                            </div>
+                        </setting>
+                        <setting string="Automatic synchronization" help="Before every run, inspect the font color of each column-title cell in row 1. Write only to columns whose title text is red. Customer matching uses exact signals first and the AI matching agent for unresolved rows; uncertain matches are skipped.">
+                            <field name="cs_google_sheet_enabled"/>
+                        </setting>
+                        <setting string="Spreadsheet and tab">
+                            <div class="content-group">
+                                <label for="cs_google_spreadsheet_id"/><field name="cs_google_spreadsheet_id" class="w-100" placeholder="معرّف Google Sheet"/>
+                                <br/><label for="cs_google_sheet_gid"/><div class="d-flex align-items-center gap-2"><field name="cs_google_sheet_gid" nolabel="1" class="oe_inline"/><span>معرّف تبويب Google Sheet (GID)</span></div>
+                            </div>
+                        </setting>
+                        <setting string="Google Service Account" help="Paste the service-account JSON. Share the Google Sheet with the client_email inside this JSON as Editor.">
+                            <field name="cs_google_service_account_json" password="True" placeholder="{ ... }"/>
+                        </setting>
+                        <setting string="Run now">
+                            <button name="action_sync_google_sheet" type="object" string="Synchronize ERA Columns" class="btn-primary"/>
+                        </setting>
+                    </block>
                 </app>
             </xpath>
         </field>

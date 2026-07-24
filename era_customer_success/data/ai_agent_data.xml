@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        <record id="cs_customer_match_agent" model="ai.agent">
+            <field name="name">CS Customer Record Matcher</field>
+            <field name="subtitle">Matches a Google Sheet customer row to a reviewed Odoo account candidate.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You match one Google Sheet customer row to a restricted list of Odoo account candidates.
+Use all available signals: normalized company name, aliases, email and email domain, phone,
+website domain, and other supplied identifiers. Never invent a customer and never select an
+account outside the supplied candidates. Return STRICT JSON only:
+{"account_id": 123, "confidence": 0, "reason": "short factual reason"}
+Use account_id=0 when uncertain. Confidence must be 0..100. Use confidence 90 or higher only
+when multiple signals agree or one strong unique identifier agrees. Similar names alone should
+normally remain below 90. Do not include markdown or any additional keys.
+            </field>
+        </record>
         <record id="cs_sentiment_agent" model="ai.agent">
             <field name="name">CS Sentiment Analyzer</field>
             <field name="subtitle">Analyzes customer ticket sentiment for Customer Success health scoring.</field>

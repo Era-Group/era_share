@@ -14,6 +14,308 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_customer_success
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
+msgid "Odoo Portfolio Shares"
+msgstr "مشاركات محفظة العملاء مع أودو"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_portfolio_share_form
+msgid "Odoo Portfolio Share"
+msgstr "مشاركة محفظة العملاء مع أودو"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_portfolio_share.py:0
+msgid "Odoo Shared Customer Portfolio"
+msgstr "محفظة العملاء المشتركة مع أودو"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_portfolio_share_form
+msgid "Prepare Snapshot"
+msgstr "تحضير اللقطة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_portfolio_share_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Approve Sharing"
+msgstr "الموافقة على المشاركة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_portfolio_share_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Revoke Approval"
+msgstr "إلغاء الموافقة"
+
+#. module: era_customer_success
+msgid "Revoke"
+msgstr "إلغاء المشاركة"
+
+#. module: era_customer_success
+msgid "Regenerate Token"
+msgstr "إعادة إنشاء رمز الوصول"
+
+#. module: era_customer_success
+msgid "Open Portal"
+msgstr "فتح البوابة"
+
+#. module: era_customer_success
+msgid "Published Rows / الصفوف المنشورة"
+msgstr "الصفوف المنشورة / Published Rows"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__sharing_approved
+msgid "Information Sharing Approved"
+msgstr "تمت الموافقة على مشاركة المعلومات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__sharing_approved_by_id
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approved_by
+msgid "Approved By"
+msgstr "وافق عليها"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__sharing_approved_on
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approved_on
+msgid "Approved On"
+msgstr "تاريخ الموافقة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__portal_user_ids
+msgid "Authorized Portal Users"
+msgstr "مستخدمو البوابة المصرح لهم"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__account_ids
+msgid "Included Customer Accounts"
+msgstr "حسابات العملاء المشمولة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__line_ids
+msgid "Published Rows"
+msgstr "الصفوف المنشورة"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_portfolio_share
+msgid "External Customer Portfolio Share"
+msgstr "مشاركة خارجية لمحفظة العملاء"
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_portfolio_share_line
+msgid "Published Customer Portfolio Row"
+msgstr "صف منشور من محفظة العملاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Information-sharing approval"
+msgstr "الموافقة على مشاركة المعلومات"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Scan Google Sheet Titles"
+msgstr "فحص عناوين Google Sheet"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approval_scope
+msgid "Detected Red-Title Scope"
+msgstr "النطاق المكتشف للعناوين الحمراء"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Scan the Google Sheet scope before approving synchronization."
+msgstr "افحص نطاق Google Sheet قبل الموافقة على المزامنة."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sharing_approved
+msgid "Google Sheet Information Sharing Approved"
+msgstr "تمت الموافقة على مشاركة المعلومات مع Google Sheet"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approval_scope
+msgid "Approved Information Scope"
+msgstr "نطاق المعلومات الموافق عليه"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sheet_enabled
+msgid "Automatic Google Sheet Sync"
+msgstr "المزامنة التلقائية مع Google Sheet"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_spreadsheet_id
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Spreadsheet ID"
+msgstr "معرف جدول البيانات"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sheet_gid
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Sheet Tab GID"
+msgstr "معرف تبويب الجدول GID"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_service_account_json
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Service Account JSON"
+msgstr "بيانات حساب الخدمة JSON"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Odoo Portfolio Google Sheet"
+msgstr "Google Sheet لمحفظة عملاء أودو"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Automatic synchronization"
+msgstr "المزامنة التلقائية"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Spreadsheet and tab"
+msgstr "جدول البيانات والتبويب"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Google Service Account"
+msgstr "حساب خدمة Google"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Run now"
+msgstr "تشغيل الآن"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Synchronize ERA Columns"
+msgstr "مزامنة أعمدة ERA"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Fill from Google Sheet now"
+msgstr "تعبئة من Google Sheet الآن"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "1. Match Excel and fetch all fields"
+msgstr "1. مطابقة Excel وجلب جميع الحقول"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "2. Fill fields with AI"
+msgstr "2. تعبئة الحقول بالذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "3. Send data to Excel"
+msgstr "3. إرسال البيانات إلى Excel"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Approve the Google Sheet information scope before sending this customer record."
+msgstr "وافق على نطاق معلومات Google Sheet قبل إرسال سجل هذا العميل."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "This customer has no non-empty approved red fields to send to Excel."
+msgstr "لا توجد لدى هذا العميل حقول حمراء معتمدة تحتوي بيانات لإرسالها إلى Excel."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Customer data sent to Excel"
+msgstr "تم إرسال بيانات العميل إلى Excel"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "%s approved fields sent."
+msgstr "تم إرسال %s حقلاً معتمداً."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Approve the Google Sheet information scope before filling this customer record."
+msgstr "وافق على نطاق معلومات Google Sheet قبل تعبئة سجل هذا العميل."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "The approved Google Sheet title colors changed. Scan and approve the scope again."
+msgstr "تغيرت ألوان عناوين Google Sheet الموافق عليها. أعد الفحص والموافقة على النطاق."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "No sufficiently confident Google Sheet row matched this customer."
+msgstr "لم يتم العثور على صف في Google Sheet يطابق هذا العميل بدرجة ثقة كافية."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Customer Sheet fields filled"
+msgstr "تمت تعبئة حقول Sheet للعميل"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "The customer matched, but the approved Google Sheet columns contain no values for this row."
+msgstr "تمت مطابقة العميل، لكن أعمدة Google Sheet الموافق عليها لا تحتوي قيماً لهذا الصف."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Approved columns and purpose"
+msgstr "الأعمدة الموافق عليها والغرض من المشاركة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Paste the service-account JSON. Share the Google Sheet with the client_email inside this JSON as Editor."
+msgstr "ألصق بيانات حساب الخدمة بصيغة JSON. شارك Google Sheet مع البريد الموجود في client_email داخل هذه البيانات بصلاحية محرر."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Before every run, inspect the font color of each column-title cell in row 1. Write only to columns whose title text is red. Customer matching uses exact signals first and the AI matching agent for unresolved rows; uncertain matches are skipped."
+msgstr "قبل كل تشغيل، افحص لون خط كل عنوان عمود في الصف الأول. اكتب فقط في الأعمدة التي يكون نص عنوانها باللون الأحمر. تستخدم مطابقة العملاء الإشارات الدقيقة أولاً ثم وكيل الذكاء للصفوف غير المحسومة، ويتم تجاوز المطابقات غير المؤكدة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Synchronization is blocked until an authorized user documents and explicitly approves the exact information scope. Revoke approval before changing or adding any shared information, then document and approve the new scope."
+msgstr "تتوقف المزامنة حتى يوثق مستخدم مخول نطاق المعلومات بدقة ويوافق عليه صراحة. ألغِ الموافقة قبل تغيير أو إضافة أي معلومة مشتركة، ثم وثّق النطاق الجديد ووافق عليه."
+
+#. module: era_customer_success
+msgid "Document the approved information scope before approving synchronization."
+msgstr "وثّق نطاق المعلومات الموافق عليه قبل الموافقة على المزامنة."
+
+#. module: era_customer_success
+msgid "Approve and document the information scope before sharing data with Odoo through Google Sheet."
+msgstr "وافق على نطاق المعلومات ووثّقه قبل مشاركة البيانات مع أودو عبر Google Sheet."
+
+#. module: era_customer_success
+msgid "Configure the Google Spreadsheet ID and service-account credentials first."
+msgstr "اضبط معرف Google Spreadsheet وبيانات اعتماد حساب الخدمة أولاً."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "أدخل معرف Google Sheet أولاً."
+msgstr "أدخل معرف Google Sheet أولاً."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "لفحص عناوين Sheet الخاصة، أدخل بيانات حساب خدمة Google أولاً."
+msgstr "لفحص عناوين Sheet الخاصة، أدخل بيانات حساب خدمة Google أولاً."
+
+#. module: era_customer_success
+msgid "Google Sheet synchronized"
+msgstr "تمت مزامنة Google Sheet"
+
+#. module: era_customer_success
+msgid "%s accounts matched; %s ERA-owned cells updated."
+msgstr "تمت مطابقة %s حساباً وتحديث %s خلية مملوكة لـ ERA."
+
+#. module: era_customer_success
+msgid "Prepare and review the published rows before approving information sharing."
+msgstr "حضّر الصفوف المنشورة وراجعها قبل الموافقة على مشاركة المعلومات."
+
+#. module: era_customer_success
+msgid "Approve information sharing before activating the portal or Excel export."
+msgstr "وافق على مشاركة المعلومات قبل تفعيل البوابة أو تصدير Excel."
+
+#. module: era_customer_success
+msgid "Only portal users can be authorized for an external portfolio share."
+msgstr "لا يمكن منح صلاحية المشاركة الخارجية إلا لمستخدمي البوابة."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

@@ -46,6 +46,14 @@ class CsmOffering(models.Model):
     ], default='draft', tracking=True, string='Status')
     notes = fields.Text()
     opportunity_id = fields.Many2one('crm.lead', string='Opportunity', readonly=True)
+    is_service_recommendation = fields.Boolean(readonly=True, copy=False)
+    recommendation_key = fields.Char(readonly=True, copy=False, index=True)
+    recommendation_score = fields.Integer(readonly=True, copy=False)
+    recommendation_reason = fields.Text(readonly=True, copy=False)
+
+    _recommendation_key_unique = models.Constraint(
+        'unique(recommendation_key)',
+        'This service recommendation already exists.')
 
     @api.onchange('service_id')
     def _onchange_service_id(self):
@@ -103,6 +111,17 @@ class CsmOffering(models.Model):
                 vals.setdefault('csm_user_id', account.csm_user_id.id)
                 vals.setdefault('company_id', account.company_id.id)
         return super().create(vals_list)
+
+    @api.constrains('cs_account_id', 'partner_id', 'company_id')
+    def _check_account_customer_company(self):
+        for offering in self.filtered('cs_account_id'):
+            same_company = offering.company_id == offering.cs_account_id.company_id
+            same_customer = (
+                offering.partner_id.commercial_partner_id
+                == offering.cs_account_id.partner_id.commercial_partner_id)
+            if not same_company or not same_customer:
+                raise UserError(_(
+                    'The offering customer and company must match the Customer Success account.'))
 
     def action_present(self):
         self.write({'state': 'presented'})

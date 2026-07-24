@@ -47,6 +47,32 @@ class CsService(models.Model):
              "to offer this to a customer.")
     pitch_template = fields.Text(string='Suggested Pitch')
     product_tmpl_ids = fields.Many2many('product.template', string='Related Products')
+    service_type = fields.Selection([
+        ('service', 'Service'),
+        ('module', 'ERA Module'),
+        ('training', 'Training'),
+        ('advisory', 'Advisory'),
+        ('integration', 'Integration'),
+    ], default='service', required=True)
+    need_signals = fields.Text(
+        string='Need Signals',
+        help='Observable customer conditions that indicate this service may create value.')
+    discovery_questions = fields.Text(
+        string='Discovery Questions',
+        help='Questions the CSM should ask before qualifying this need.')
+    value_outcomes = fields.Text(
+        string='Expected Customer Outcomes')
+    not_suitable_when = fields.Text(
+        string='Not Suitable When',
+        help='Conditions that should stop the CSM from presenting this service.')
+    recommend_on_low_adoption = fields.Boolean(string='Recommend for Low Adoption')
+    recommend_on_support_pressure = fields.Boolean(string='Recommend for Support Pressure')
+    recommend_on_sla_failure = fields.Boolean(string='Recommend after Failed SLA')
+    recommendation_ticket_tag_ids = fields.Many2many(
+        'helpdesk.tag', 'cs_service_helpdesk_tag_rel',
+        'service_id', 'tag_id', string='Recommendation Ticket Tags')
+    recommendation_cooldown_days = fields.Integer(
+        string='Re-offer Cooldown (Days)', default=90)
     ai_enriched_on = fields.Datetime(string='AI Enriched On', readonly=True)
     offering_count = fields.Integer(compute='_compute_offering_count', string='# Offerings')
     whatsapp_template_id = fields.Many2one(
@@ -59,6 +85,12 @@ class CsService(models.Model):
         mapped = {s.id: c for s, c in data}
         for svc in self:
             svc.offering_count = mapped.get(svc.id, 0)
+
+    @api.constrains('recommendation_cooldown_days')
+    def _check_recommendation_cooldown(self):
+        for service in self:
+            if service.recommendation_cooldown_days < 0:
+                raise UserError(_('Recommendation cooldown cannot be negative.'))
 
     def action_enrich_from_url(self):
         """Fetch the service page and let the AI extract structured details."""

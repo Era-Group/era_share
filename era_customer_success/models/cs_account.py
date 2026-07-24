@@ -133,7 +133,7 @@ class CsAccount(models.Model):
     adoption_assessment_ids = fields.One2many(
         'cs.adoption.assessment', 'cs_account_id', string='Adoption Assessments')
     adoption_assessment_count = fields.Integer(
-        compute='_compute_adoption_metrics', string='Adoption Assessments')
+        compute='_compute_adoption_metrics', string='# Adoption Assessments')
     latest_adoption_score = fields.Float(
         compute='_compute_adoption_metrics', string='Adoption Score')
     latest_adoption_confidence = fields.Float(
@@ -1080,6 +1080,22 @@ class CsAccount(models.Model):
             'view_mode': 'list,form',
             'domain': [('cs_account_id', '=', self.id)],
             'context': {'default_cs_account_id': self.id},
+        }
+
+    def action_recommend_services(self):
+        self.ensure_one()
+        self.check_access('read')
+        wizard = self.env['cs.service.recommendation.wizard'].create({
+            'cs_account_id': self.id,
+        })
+        wizard.action_compute()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Recommended Services'),
+            'res_model': 'cs.service.recommendation.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
         }
 
     def _refresh_adoption_work_item(self):

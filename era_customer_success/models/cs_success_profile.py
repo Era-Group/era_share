@@ -44,6 +44,10 @@ class CsSuccessProfile(models.Model):
         'cs.success.stakeholder', 'profile_id', string='Stakeholders')
     milestone_ids = fields.One2many(
         'cs.success.milestone', 'profile_id', string='Success Milestones')
+    recommended_service_ids = fields.Many2many(
+        'cs.service', 'cs_success_profile_service_rel',
+        'profile_id', 'service_id', string='Services to Explore',
+        help='Services explicitly linked to customer goals for discovery, not automatic selling.')
 
     _account_unique = models.Constraint(
         'unique(cs_account_id)',

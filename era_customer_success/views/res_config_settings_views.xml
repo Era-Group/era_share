@@ -40,6 +40,10 @@
                                  help="Draft a grounded agenda, observations, questions, risks, and needs to validate from the frozen review snapshot. Confirmed value and commitments remain manual.">
                             <field name="cs_ai_value_review_enabled"/>
                         </setting>
+                        <setting string="AI Adoption Plans"
+                                 help="Send aggregate adoption metrics and the optional blocker description to the configured AI provider. Evidence text and customer records are not sent; AI does not collect telemetry or alter confirmed metrics.">
+                            <field name="cs_ai_adoption_enabled"/>
+                        </setting>
                     </block>
                     <block title="Support Hours Automation" id="cs_support_hours_block">
                         <setting string="Support Hours Products"

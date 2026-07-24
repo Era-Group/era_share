@@ -47,6 +47,12 @@ class ResCompany(models.Model):
         help="When enabled, CSMs can ask AI to draft a grounded value-review "
              "agenda, observations, questions, risks, and needs to validate. "
              "Customer-confirmed value and commitments always remain manual.")
+    cs_ai_adoption_enabled = fields.Boolean(
+        string='AI Adoption Plans', default=False,
+        help="When enabled, aggregate adoption metrics and the optional blocker "
+             "description are sent to the configured AI provider to draft an "
+             "enablement plan. Evidence text and customer records are not sent. "
+             "AI does not collect telemetry or change confirmed metrics.")
     cs_support_product_tmpl_ids = fields.Many2many(
         'product.template', 'res_company_cs_support_product_rel',
         'company_id', 'product_tmpl_id', string='Support Hours Products',

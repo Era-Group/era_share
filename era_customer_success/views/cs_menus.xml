@@ -17,6 +17,9 @@
     <menuitem id="menu_cs_value_reviews" name="Value Reviews"
               parent="menu_cs_root" action="action_cs_value_review" sequence="25"/>
 
+    <menuitem id="menu_cs_adoption_assessments" name="Adoption Assessments"
+              parent="menu_cs_root" action="action_cs_adoption_assessment" sequence="27"/>
+
     <menuitem id="menu_cs_offerings" name="Offerings"
               parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
 

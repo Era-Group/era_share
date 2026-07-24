@@ -17,3 +17,4 @@ from . import cs_weekly_suggestion
 from . import cs_success_profile
 from . import cs_support_wallet
 from . import cs_value_review
+from . import cs_adoption_assessment

@@ -4,6 +4,15 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.19.0.0 — Measured Customer Adoption
+- Added historical adoption assessments with explicit provenance for active users, licensed users, key-workflow adoption, onboarding completion and usage frequency.
+- Adoption score averages only available measured components; data confidence exposes completeness separately so missing telemetry is never presented as low usage.
+- Confirmed evidence is immutable, future-dated assessments are rejected, and workflow actions verify record rules before privileged writes.
+- Added one prioritized adoption-enablement signal to `My Work Today`; low-confidence signals request data validation instead of urgent intervention.
+- Added an opt-in AI enablement-plan drafter. Only aggregate metrics and the optional blocker description are sent; evidence text and customer records are excluded.
+- Value Reviews now freeze and send the measured adoption score, confidence, status and evidence date as part of the QBR snapshot.
+- Completed Arabic translations for adoption screens, statuses, validation messages and AI controls; removed duplicate PO entries.
+
 ## 19.0.18.0.0 — Customer Value Reviews (QBR)
 - Added periodic value reviews that freeze health, satisfaction, support hours, objectives, criteria and milestone progress at preparation time.
 - Added a value-led workflow: Draft → Prepared → Held → Closed, requiring customer-confirmed value, commitments and the next review date before closure.

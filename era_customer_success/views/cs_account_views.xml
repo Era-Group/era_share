@@ -165,6 +165,10 @@
                                 help="Prepare and record periodic customer value reviews.">
                             <field name="open_value_review_count" widget="statinfo" string="Value Reviews"/>
                         </button>
+                        <button class="oe_stat_button" type="object" name="action_view_adoption_assessments" icon="fa-users"
+                                help="Record measured adoption evidence and customer enablement plans.">
+                            <field name="latest_adoption_score" widget="statinfo" string="Adoption"/>
+                        </button>
                     </div>
                     <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>
                     <div class="oe_title">
@@ -264,6 +268,11 @@
                             <field name="next_touch_date"/>
                             <field name="next_success_milestone_date"/>
                             <field name="next_value_review_date"/>
+                            <field name="latest_adoption_status" widget="badge"/>
+                            <field name="latest_adoption_score"/>
+                            <field name="latest_adoption_confidence"/>
+                            <field name="latest_adoption_date"/>
+                            <field name="next_adoption_assessment_date"/>
                             <field name="days_since_touch"/>
                             <field name="meeting_count"/>
                         </group>

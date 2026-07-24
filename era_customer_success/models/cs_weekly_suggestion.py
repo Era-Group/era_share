@@ -43,6 +43,7 @@ class CsWeeklySuggestion(models.Model):
         ('value', 'Deliver Value'),
         ('success_milestone', 'Success Milestone'),
         ('value_review', 'Value Review'),
+        ('adoption', 'Adoption Enablement'),
         ('growth', 'Explore Need'),
     ], string='Work Type', default='relationship', required=True)
     due_date = fields.Date(string='Due Date', required=True, default=fields.Date.context_today, index=True)

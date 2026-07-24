@@ -29,6 +29,9 @@ class ResConfigSettings(models.TransientModel):
     cs_ai_value_review_enabled = fields.Boolean(
         related='company_id.cs_ai_value_review_enabled', readonly=False,
         string='AI Value Review Drafts')
+    cs_ai_adoption_enabled = fields.Boolean(
+        related='company_id.cs_ai_adoption_enabled', readonly=False,
+        string='AI Adoption Plans')
     cs_support_product_tmpl_ids = fields.Many2many(
         related='company_id.cs_support_product_tmpl_ids', readonly=False,
         string='Support Hours Products')

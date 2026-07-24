@@ -54,6 +54,13 @@ class CsValueReview(models.Model):
     support_purchased_snapshot = fields.Float(string='Support Hours Purchased', readonly=True)
     support_used_snapshot = fields.Float(string='Support Hours Used', readonly=True)
     support_remaining_snapshot = fields.Float(string='Support Hours Remaining', readonly=True)
+    adoption_score_snapshot = fields.Float(string='Adoption Score', readonly=True)
+    adoption_confidence_snapshot = fields.Float(string='Adoption Data Confidence', readonly=True)
+    adoption_status_snapshot = fields.Selection([
+        ('unknown', 'Unknown'), ('healthy', 'Healthy'),
+        ('watch', 'Needs Attention'), ('low', 'Low Adoption'),
+    ], string='Adoption Status', readonly=True)
+    adoption_date_snapshot = fields.Date(string='Adoption Evidence Date', readonly=True)
     objectives_snapshot = fields.Text(string='Customer Objectives', readonly=True)
     success_criteria_snapshot = fields.Text(string='Success Criteria', readonly=True)
     milestones_snapshot = fields.Text(string='Milestone Progress', readonly=True)
@@ -91,6 +98,8 @@ class CsValueReview(models.Model):
         'nps_snapshot', 'sentiment_snapshot', 'open_tickets_snapshot',
         'sla_failed_snapshot', 'support_purchased_snapshot',
         'support_used_snapshot', 'support_remaining_snapshot',
+        'adoption_score_snapshot', 'adoption_confidence_snapshot',
+        'adoption_status_snapshot', 'adoption_date_snapshot',
         'objectives_snapshot', 'success_criteria_snapshot',
         'milestones_snapshot', 'support_snapshot',
     }
@@ -192,6 +201,10 @@ class CsValueReview(models.Model):
             'support_purchased_snapshot': account.support_hours_purchased,
             'support_used_snapshot': account.support_hours_used,
             'support_remaining_snapshot': account.support_hours_remaining,
+            'adoption_score_snapshot': account.latest_adoption_score,
+            'adoption_confidence_snapshot': account.latest_adoption_confidence,
+            'adoption_status_snapshot': account.latest_adoption_status,
+            'adoption_date_snapshot': account.latest_adoption_date,
             'objectives_snapshot': profile.business_objectives if profile else False,
             'success_criteria_snapshot': profile.success_criteria if profile else False,
             'milestones_snapshot': '\n'.join(milestone_lines) or _('No success milestones recorded.'),
@@ -275,12 +288,15 @@ class CsValueReview(models.Model):
             '=== FROZEN REVIEW SNAPSHOT ===\n'
             'Customer: %s\nPeriod: %s to %s\nObjectives: %s\nSuccess criteria: %s\n'
             'Milestones:\n%s\nSupport:\n%s\n'
-            'Health=%s; CSAT=%s; Survey=%s; Sentiment=%s; Open tickets=%s; Failed SLA=%s' % (
+            'Health=%s; CSAT=%s; Survey=%s; Sentiment=%s; Open tickets=%s; Failed SLA=%s\n'
+            'Adoption score=%s; Adoption confidence=%s; Adoption status=%s; Adoption evidence date=%s' % (
                 self.partner_id.name, self.period_start, self.period_end,
                 self.objectives_snapshot or '-', self.success_criteria_snapshot or '-',
                 self.milestones_snapshot or '-', self.support_snapshot or '-',
                 self.health_score_snapshot, self.csat_snapshot, self.nps_snapshot,
                 self.sentiment_snapshot, self.open_tickets_snapshot, self.sla_failed_snapshot,
+                self.adoption_score_snapshot, self.adoption_confidence_snapshot,
+                self.adoption_status_snapshot, self.adoption_date_snapshot,
             )
         )
 

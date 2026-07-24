@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_adoption_assessment_list" model="ir.ui.view">
+        <field name="name">cs.adoption.assessment.list</field>
+        <field name="model">cs.adoption.assessment</field>
+        <field name="arch" type="xml">
+            <list string="Adoption Assessments" default_order="assessment_date desc"
+                  decoration-danger="status == 'low' and state == 'confirmed'"
+                  decoration-warning="status == 'watch' and state == 'confirmed'"
+                  decoration-success="status == 'healthy' and state == 'confirmed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="partner_id"/>
+                <field name="csm_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="assessment_date"/>
+                <field name="source" widget="badge"/>
+                <field name="score" widget="progressbar"/>
+                <field name="confidence" widget="progressbar"/>
+                <field name="status" widget="badge"/>
+                <field name="next_assessment_date" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_adoption_assessment_form" model="ir.ui.view">
+        <field name="name">cs.adoption.assessment.form</field>
+        <field name="model">cs.adoption.assessment</field>
+        <field name="arch" type="xml">
+            <form string="Customer Adoption Assessment">
+                <header>
+                    <button name="action_generate_ai_plan" type="object"
+                            string="Draft Enablement Plan (AI)" icon="fa-magic"
+                            invisible="state != 'draft' or not ai_adoption_enabled"/>
+                    <button name="action_confirm" type="object" string="Confirm Evidence"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state != 'draft'"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
+                </header>
+                <sheet>
+                    <field name="ai_adoption_enabled" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="partner_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cs_account_id"/>
+                            <field name="csm_user_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="assessment_date"/>
+                            <field name="next_assessment_date"/>
+                        </group>
+                        <group>
+                            <field name="source"/>
+                            <field name="source_reference" placeholder="Report, meeting, integration, or evidence reference..."/>
+                            <field name="score" widget="progressbar"/>
+                            <field name="confidence" widget="progressbar"/>
+                            <field name="status" widget="badge"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Measured Adoption" name="metrics">
+                            <group>
+                                <group string="Users">
+                                    <field name="licensed_users"/>
+                                    <field name="active_users_30d"/>
+                                </group>
+                                <group string="Key Workflows">
+                                    <field name="key_workflows_total"/>
+                                    <field name="adopted_workflows"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Onboarding">
+                                    <field name="onboarding_measured"/>
+                                    <field name="onboarding_percent" invisible="not onboarding_measured"/>
+                                </group>
+                                <group string="Frequency">
+                                    <field name="usage_frequency"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Evidence and Enablement" name="evidence">
+                            <group>
+                                <field name="evidence" placeholder="Measured evidence supporting this assessment..."/>
+                                <field name="blockers" placeholder="What prevents wider or deeper adoption?"/>
+                                <field name="enablement_plan" placeholder="Targeted enablement actions for customer success..."/>
+                            </group>
+                        </page>
+                        <page string="Audit" name="audit">
+                            <group>
+                                <field name="confirmed_on"/>
+                                <field name="confirmed_by_id" widget="many2one_avatar_user"/>
+                                <field name="ai_generated_on"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cs_adoption_assessment_search" model="ir.ui.view">
+        <field name="name">cs.adoption.assessment.search</field>
+        <field name="model">cs.adoption.assessment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="csm_user_id"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="needs_attention" string="Needs Attention"
+                        domain="[('state', '=', 'confirmed'), ('status', 'in', ('watch','low'))]"/>
+                <filter name="my_assessments" string="My Assessments" domain="[('csm_user_id', '=', uid)]"/>
+                <group>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                    <filter name="group_source" string="Source" context="{'group_by': 'source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cs_adoption_assessment" model="ir.actions.act_window">
+        <field name="name">Adoption Assessments</field>
+        <field name="res_model">cs.adoption.assessment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_adoption_assessment_search"/>
+        <field name="context">{'search_default_confirmed': 1, 'search_default_my_assessments': 1}</field>
+    </record>
+</odoo>

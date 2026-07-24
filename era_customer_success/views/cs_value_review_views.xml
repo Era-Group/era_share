@@ -74,6 +74,10 @@
                                     <field name="csat_snapshot"/>
                                     <field name="nps_snapshot"/>
                                     <field name="sentiment_snapshot"/>
+                                    <field name="adoption_status_snapshot" widget="badge"/>
+                                    <field name="adoption_score_snapshot"/>
+                                    <field name="adoption_confidence_snapshot"/>
+                                    <field name="adoption_date_snapshot"/>
                                 </group>
                                 <group>
                                     <field name="open_tickets_snapshot"/>

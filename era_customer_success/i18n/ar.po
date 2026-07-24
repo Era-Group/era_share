@@ -81,10 +81,6 @@ msgid "Due Date"
 msgstr "تاريخ الاستحقاق"
 
 #. module: era_customer_success
-msgid "Overdue"
-msgstr "متأخر"
-
-#. module: era_customer_success
 msgid "Today"
 msgstr "اليوم"
 
@@ -111,10 +107,6 @@ msgstr "متابعة التجديد"
 #. module: era_customer_success
 msgid "Deliver Value"
 msgstr "تقديم قيمة"
-
-#. module: era_customer_success
-msgid "Explore Need"
-msgstr "استكشاف احتياج"
 
 #. module: era_customer_success
 msgid "Customer Contacted"
@@ -211,10 +203,6 @@ msgstr "مسودات خطط النجاح بالذكاء"
 #. module: era_customer_success
 msgid "Stakeholders"
 msgstr "أصحاب العلاقة"
-
-#. module: era_customer_success
-msgid "Contact"
-msgstr "جهة الاتصال"
 
 #. module: era_customer_success
 msgid "Champion"
@@ -433,10 +421,6 @@ msgid "Expired"
 msgstr "منتهية"
 
 #. module: era_customer_success
-msgid "Explore Need"
-msgstr "استكشاف الاحتياج"
-
-#. module: era_customer_success
 msgid "Explore Additional Support Need"
 msgstr "استكشاف احتياج دعم إضافي"
 
@@ -621,10 +605,6 @@ msgid "Needs to Validate"
 msgstr "احتياجات تحتاج تحققاً"
 
 #. module: era_customer_success
-msgid "Follow-up"
-msgstr "المتابعة"
-
-#. module: era_customer_success
 msgid "AI Value Review Drafts"
 msgstr "مسودات مراجعة القيمة بالذكاء"
 
@@ -639,6 +619,234 @@ msgstr "مستحقة أو متأخرة"
 #. module: era_customer_success
 msgid "My Reviews"
 msgstr "مراجعاتي"
+
+#. module: era_customer_success
+msgid "Adoption Assessments"
+msgstr "تقييمات تبنّي العميل"
+
+#. module: era_customer_success
+msgid "Customer Adoption Assessment"
+msgstr "تقييم تبنّي العميل"
+
+#. module: era_customer_success
+msgid "Adoption Score"
+msgstr "درجة التبنّي"
+
+#. module: era_customer_success
+msgid "Adoption Status"
+msgstr "حالة التبنّي"
+
+#. module: era_customer_success
+msgid "Adoption Data Confidence"
+msgstr "موثوقية بيانات التبنّي"
+
+#. module: era_customer_success
+msgid "Latest Adoption Assessment"
+msgstr "آخر تقييم للتبنّي"
+
+#. module: era_customer_success
+msgid "Next Adoption Review"
+msgstr "مراجعة التبنّي القادمة"
+
+#. module: era_customer_success
+msgid "Adoption Evidence Date"
+msgstr "تاريخ دليل التبنّي"
+
+#. module: era_customer_success
+msgid "Low Adoption"
+msgstr "تبنٍّ منخفض"
+
+#. module: era_customer_success
+msgid "Adoption Enablement"
+msgstr "تمكين تبنّي العميل"
+
+#. module: era_customer_success
+msgid "Assessment Date"
+msgstr "تاريخ التقييم"
+
+#. module: era_customer_success
+msgid "CSM Check"
+msgstr "تحقق مهندس نجاح العملاء"
+
+#. module: era_customer_success
+msgid "Customer Review"
+msgstr "مراجعة مع العميل"
+
+#. module: era_customer_success
+msgid "Imported Aggregate"
+msgstr "بيانات مجمعة مستوردة"
+
+#. module: era_customer_success
+msgid "Verified Telemetry"
+msgstr "قياس استخدام موثّق"
+
+#. module: era_customer_success
+msgid "Source Reference"
+msgstr "مرجع مصدر البيانات"
+
+#. module: era_customer_success
+msgid "Licensed Users"
+msgstr "المستخدمون المرخّصون"
+
+#. module: era_customer_success
+msgid "Active Users (30 Days)"
+msgstr "المستخدمون النشطون خلال 30 يوماً"
+
+#. module: era_customer_success
+msgid "Key Workflows"
+msgstr "العمليات الرئيسية"
+
+#. module: era_customer_success
+msgid "Adopted Workflows"
+msgstr "العمليات التي تم تبنّيها"
+
+#. module: era_customer_success
+msgid "Onboarding Measured"
+msgstr "تم قياس التهيئة الأولية"
+
+#. module: era_customer_success
+msgid "Onboarding Completion (%)"
+msgstr "نسبة اكتمال التهيئة الأولية (%)"
+
+#. module: era_customer_success
+msgid "Usage Frequency"
+msgstr "تكرار الاستخدام"
+
+#. module: era_customer_success
+msgid "Daily"
+msgstr "يومياً"
+
+#. module: era_customer_success
+msgid "Rarely"
+msgstr "نادراً"
+
+#. module: era_customer_success
+msgid "Enablement Plan"
+msgstr "خطة التمكين"
+
+#. module: era_customer_success
+msgid "AI Adoption Plans"
+msgstr "خطط التبنّي بالذكاء الاصطناعي"
+
+#. module: era_customer_success
+msgid "Draft Enablement Plan (AI)"
+msgstr "إعداد مسودة خطة تمكين بالذكاء"
+
+#. module: era_customer_success
+msgid "Confirm Evidence"
+msgstr "اعتماد أدلة التبنّي"
+
+#. module: era_customer_success
+msgid "Measured Adoption"
+msgstr "التبنّي المقاس"
+
+#. module: era_customer_success
+msgid "Users"
+msgstr "المستخدمون"
+
+#. module: era_customer_success
+msgid "Onboarding"
+msgstr "التهيئة الأولية"
+
+#. module: era_customer_success
+msgid "Frequency"
+msgstr "التكرار"
+
+#. module: era_customer_success
+msgid "Evidence and Enablement"
+msgstr "الأدلة وخطة التمكين"
+
+#. module: era_customer_success
+msgid "My Assessments"
+msgstr "تقييماتي"
+
+#. module: era_customer_success
+msgid "Report, meeting, integration, or evidence reference..."
+msgstr "مرجع التقرير أو الاجتماع أو التكامل أو الدليل..."
+
+#. module: era_customer_success
+msgid "Measured evidence supporting this assessment..."
+msgstr "الأدلة المقاسة التي تدعم هذا التقييم..."
+
+#. module: era_customer_success
+msgid "What prevents wider or deeper adoption?"
+msgstr "ما الذي يمنع انتشار الاستخدام أو تعمّقه؟"
+
+#. module: era_customer_success
+msgid "Targeted enablement actions for customer success..."
+msgstr "إجراءات تمكين موجهة لتحقيق نجاح العميل..."
+
+#. module: era_customer_success
+msgid "Adoption metrics cannot be negative."
+msgstr "لا يمكن أن تكون مؤشرات التبنّي سالبة."
+
+#. module: era_customer_success
+msgid "Active users cannot exceed licensed users."
+msgstr "لا يمكن أن يتجاوز عدد المستخدمين النشطين عدد المستخدمين المرخّصين."
+
+#. module: era_customer_success
+msgid "Adopted workflows cannot exceed key workflows."
+msgstr "لا يمكن أن يتجاوز عدد العمليات المتبنّاة عدد العمليات الرئيسية."
+
+#. module: era_customer_success
+msgid "Onboarding completion must be between 0 and 100."
+msgstr "يجب أن تكون نسبة اكتمال التهيئة الأولية بين 0 و100."
+
+#. module: era_customer_success
+msgid "Confirmed adoption evidence cannot be modified."
+msgstr "لا يمكن تعديل أدلة التبنّي بعد اعتمادها."
+
+#. module: era_customer_success
+msgid "Use the adoption assessment workflow buttons to change its status."
+msgstr "استخدم أزرار مسار تقييم التبنّي لتغيير حالته."
+
+#. module: era_customer_success
+msgid "Record at least one measured adoption component before confirming."
+msgstr "سجّل مؤشراً واحداً مقاساً على الأقل قبل اعتماد التقييم."
+
+#. module: era_customer_success
+msgid "Record the evidence and its source before confirming adoption."
+msgstr "سجّل دليل التبنّي ومصدره قبل اعتماد التقييم."
+
+#. module: era_customer_success
+msgid "AI enablement planning is available only on draft assessments."
+msgstr "إعداد خطة التمكين بالذكاء متاح في مسودة التقييم فقط."
+
+#. module: era_customer_success
+msgid "Enable AI Adoption Plans in Customer Success settings first."
+msgstr "فعّل خطط التبنّي بالذكاء من إعدادات نجاح العملاء أولاً."
+
+#. module: era_customer_success
+msgid "The AI adoption agent is not available."
+msgstr "وكيل ذكاء التبنّي غير متاح."
+
+#. module: era_customer_success
+msgid "AI adoption planning failed. Check the AI provider configuration."
+msgstr "تعذر إعداد خطة التبنّي بالذكاء. تحقق من إعداد مزود الذكاء الاصطناعي."
+
+#. module: era_customer_success
+msgid "The AI returned an invalid adoption plan."
+msgstr "أعاد الذكاء الاصطناعي خطة تبنٍّ غير صالحة."
+
+#. module: era_customer_success
+msgid "Create adoption assessments as drafts and confirm them through the workflow."
+msgstr "أنشئ تقييمات التبنّي كمسودات ثم اعتمدها من خلال مسار العمل."
+
+#. module: era_customer_success
+msgid "Validate the adoption data first, then confirm blockers and agree a targeted enablement action."
+msgstr "تحقق أولاً من بيانات التبنّي، ثم أكد العوائق واتفق على إجراء تمكين موجه."
+
+#. module: era_customer_success
+msgid "Validate the adoption blockers and agree a targeted enablement action with the customer."
+msgstr "تحقق من عوائق التبنّي واتفق مع العميل على إجراء تمكين موجه."
+
+#. module: era_customer_success
+msgid "The latest adoption evidence no longer requires this work item."
+msgstr "لم تعد أحدث أدلة التبنّي تتطلب بند العمل هذا."
+
+#. module: era_customer_success
+msgid "The adoption assessment date cannot be in the future."
+msgstr "لا يمكن أن يكون تاريخ تقييم التبنّي في المستقبل."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count

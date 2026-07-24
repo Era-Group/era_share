@@ -29,3 +29,5 @@ access_cs_support_wallet_user,cs.support.wallet.user,model_cs_support_wallet,gro
 access_cs_support_wallet_manager,cs.support.wallet.manager,model_cs_support_wallet,group_era_cs_manager,1,0,0,0
 access_cs_value_review_user,cs.value.review.user,model_cs_value_review,group_era_cs_user,1,1,1,0
 access_cs_value_review_manager,cs.value.review.manager,model_cs_value_review,group_era_cs_manager,1,1,1,1
+access_cs_adoption_assessment_user,cs.adoption.assessment.user,model_cs_adoption_assessment,group_era_cs_user,1,1,1,0
+access_cs_adoption_assessment_manager,cs.adoption.assessment.manager,model_cs_adoption_assessment,group_era_cs_manager,1,1,1,1

@@ -126,3 +126,15 @@ html[dir="rtl"] .o_cs_screen_guide_dialog .o_cs_screen_guide_start {
         color: rgba(255, 255, 255, .75) !important;
     }
 }
+
+.o_cs_google_sheet_block td:has(.text-danger:not(.d-none)) {
+    background-color: var(--bs-danger) !important;
+    color: #fff !important;
+
+    .o_field_widget,
+    .o_input,
+    input,
+    textarea {
+        color: #fff !important;
+    }
+}

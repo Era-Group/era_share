@@ -27,6 +27,7 @@
         'helpdesk_sale_timesheet',
         'sale_subscription',
         'account_followup',
+        'account_reports',
         'survey',
         'calendar',
         'voip',

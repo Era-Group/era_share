@@ -254,6 +254,11 @@ msgid "The customer matched, but the approved Google Sheet columns contain no va
 msgstr "تمت مطابقة العميل، لكن أعمدة Google Sheet الموافق عليها لا تحتوي قيماً لهذا الصف."
 
 #. module: era_customer_success
+#. odoo-python
+msgid "The matched Google Sheet row contains no values to import."
+msgstr "صف Google Sheet المطابق لا يحتوي على قيم لاستيرادها."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "Approved columns and purpose"
 msgstr "الأعمدة الموافق عليها والغرض من المشاركة"

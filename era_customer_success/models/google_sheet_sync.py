@@ -386,7 +386,7 @@ class CsGoogleSheetSync(models.AbstractModel):
                   for value in [values.get(field_name)] if value not in ('', False, None)}
         written_fields = sorted(values)
         if not written_fields:
-            raise UserError(_('The customer matched, but the approved Google Sheet columns contain no values for this row.'))
+            raise UserError(_('The matched Google Sheet row contains no values to import.'))
         values['sheet_last_synced_on'] = fields.Datetime.now()
         account.sudo().write(values)
         return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {

@@ -127,7 +127,8 @@ class CsAccount(models.Model):
 
     def action_fill_google_sheet_fields(self):
         self.ensure_one()
-        return self.env['cs.google.sheet.sync'].action_sync_account(self, use_ai=True)
+        return self.env['cs.google.sheet.sync'].action_sync_account(
+            self, use_ai=True, all_fields=True)
 
     def action_match_fetch_google_sheet_fields(self):
         self.ensure_one()

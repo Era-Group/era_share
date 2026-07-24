@@ -48,20 +48,24 @@
                     <button name="action_enrich_from_url" type="object"
                             string="Read from URL (AI)" icon="fa-magic" class="btn-primary"
                             invisible="not url"
-                            groups="era_customer_success.group_era_cs_manager"/>
+                            groups="era_customer_success.group_era_cs_manager"
+                            help="Read the public service URL and draft catalog details, features, audience, value points, and pitch content. Review every generated statement before using the service in recommendations."/>
                     <button name="action_create_whatsapp_template" type="object"
                             string="إنشاء قالب واتساب" icon="fa-whatsapp" class="btn-secondary"
                             invisible="whatsapp_template_id"
-                            groups="era_customer_success.group_era_cs_manager"/>
+                            groups="era_customer_success.group_era_cs_manager"
+                            help="Create a Meta WhatsApp template for this catalog service. Complete and review the service name, message, image, and required Meta approval before customer use."/>
                     <button name="action_create_whatsapp_template" type="object"
                             string="فتح قالب واتساب" icon="fa-whatsapp"
                             invisible="not whatsapp_template_id"
-                            groups="era_customer_success.group_era_cs_manager"/>
+                            groups="era_customer_success.group_era_cs_manager"
+                            help="Open the existing WhatsApp template to review its content, language, approval status, and readiness before sending it to customers."/>
                     <field name="whatsapp_template_id" invisible="1"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift">
+                        <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift"
+                                help="View every customer offering created from this catalog service, including drafts, presentations, accepted qualifications, and rejections.">
                             <field name="offering_count" widget="statinfo" string="Offerings"/>
                         </button>
                     </div>

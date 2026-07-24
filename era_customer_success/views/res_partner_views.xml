@@ -8,7 +8,8 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" type="object"
                         name="action_open_cs_account" icon="fa-heartbeat"
-                        invisible="not is_company">
+                        invisible="not is_company"
+                        help="Open this company's Customer Success 360° record. If no account exists, use Enroll in Customer Success from the Actions menu first.">
                     <div class="o_stat_info">
                         <span class="o_stat_text">Customer</span>
                         <span class="o_stat_text">Success</span>
@@ -20,6 +21,7 @@
 
     <record id="action_server_enroll_cs" model="ir.actions.server">
         <field name="name">Enroll in Customer Success</field>
+        <field name="help">Create or open the Customer Success account for each selected company. Existing accounts are reused, and the company must be assigned to a CSM before operational follow-up.</field>
         <field name="model_id" ref="base.model_res_partner"/>
         <field name="binding_model_id" ref="base.model_res_partner"/>
         <field name="binding_view_types">list,form</field>

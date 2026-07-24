@@ -14,8 +14,10 @@
                 <field name="cs_account_id" invisible="1"/>
                 <footer>
                     <button name="action_regenerate" type="object" string="🔄 Regenerate"
-                            class="btn-primary"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                            class="btn-primary"
+                            help="Regenerate the briefing after changing the contact purpose or when fresher customer data is available. Verify risks, talking points, and dates against source records before the call."/>
+                    <button string="Close" class="btn-secondary" special="cancel"
+                            help="Close the briefing. It is preparation guidance only and does not contact the customer or schedule an activity."/>
                 </footer>
             </form>
         </field>

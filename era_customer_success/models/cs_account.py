@@ -50,6 +50,7 @@ _CS_WEEKLY_DIGEST_LOCK = 871423901
 # full year — otherwise quiet accounts would always read neutral/0.
 _CS_SENTIMENT_WINDOW_DAYS = 365
 _CS_SENTIMENT_HALFLIFE_DAYS = 90
+_CS_HEALTH_TRACKING_THRESHOLD = 20
 
 
 def _cs_extract_json(raw):
@@ -78,6 +79,17 @@ class CsAccount(models.Model):
     _order = 'health_score asc, next_touch_date asc, id desc'
     _rec_name = 'partner_id'
     _check_company_auto = True
+
+    def _mail_track(self, tracked_fields, initial_values):
+        """Keep routine health recalculations out of the customer timeline."""
+        if 'health_score' in initial_values:
+            old_score = initial_values.get('health_score') or 0
+            new_score = self.health_score or 0
+            if abs(new_score - old_score) < _CS_HEALTH_TRACKING_THRESHOLD:
+                tracked_fields = dict(tracked_fields)
+                for field_name in ('health_score', 'health_status', 'churn_risk'):
+                    tracked_fields.pop(field_name, None)
+        return super()._mail_track(tracked_fields, initial_values)
 
     # ------------------------------------------------------------------
     # Core / assignment

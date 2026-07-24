@@ -4,6 +4,14 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.22.0.0 — Self-Explaining Customer Success
+- Added complete hover guidance to every module button, covering purpose, prerequisites, side effects, and recommended use without changing workflow or permissions.
+- Added actionable empty-state guidance to every window action so users know how records are created, what evidence is required, and the correct next step.
+- Added a scoped self-service field-help layer for all Customer Success models and wizards. Existing specialist help is preserved; undocumented fields receive type-aware guidance that distinguishes inputs, workflow choices, computed evidence, AI drafts, dates, and qualification controls.
+- Expanded high-risk workflow guidance for service recommendations, opportunity qualification, Voice of Customer, value reviews, adoption evidence, support wallets, success plans, daily work, AI assistance, and customer communication.
+- AI guidance consistently states that output is advisory and must be reviewed; service recommendations consistently state that they do not create opportunities before customer need, interest, and timing are confirmed.
+- Reduced chatter noise from automatic health recalculation: score, status, and churn-risk tracking is posted only when the health score moves by 20 points or more in one update.
+
 ## 19.0.21.0.0 — Voice of Customer
 - Added immutable Voice of Customer insights captured automatically from closed Value Reviews and confirmed Adoption Assessments.
 - Insights preserve source evidence, priorities, risks, response commitments and adoption confidence without copying ticket text or creating chatter events.

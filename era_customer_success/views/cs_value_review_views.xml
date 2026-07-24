@@ -31,18 +31,24 @@
             <form string="Customer Value Review">
                 <header>
                     <button name="action_prepare" type="object" string="Prepare Review"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft'"
+                            help="Capture and freeze the current KPI, adoption, support, objectives, and milestone snapshot. Verify the review period first; frozen snapshot fields cannot be edited manually."/>
                     <button name="action_generate_ai_draft" type="object"
                             string="Draft Agenda (AI)" icon="fa-magic"
-                            invisible="state != 'prepared' or not ai_value_review_enabled"/>
+                            invisible="state != 'prepared' or not ai_value_review_enabled"
+                            help="Draft an agenda, grounded observations, questions, risks, and needs from the frozen snapshot. AI does not confirm customer value or commitments; review and edit the draft before the meeting."/>
                     <button name="action_mark_held" type="object" string="Mark Held"
-                            class="btn-primary" invisible="state != 'prepared'"/>
+                            class="btn-primary" invisible="state != 'prepared'"
+                            help="Mark the customer review as held after the meeting occurred. Then record customer-confirmed value, evidence, risks, commitments, and the next review date."/>
                     <button name="action_close" type="object" string="Close Review"
-                            class="btn-primary" invisible="state != 'held'"/>
+                            class="btn-primary" invisible="state != 'held'"
+                            help="Close the review after recording confirmed value, evidence, commitments, and a dated next step. Closing may create a Voice of Customer insight from validated risks or priorities, but never creates a sales opportunity automatically."/>
                     <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state in ('closed','cancelled')"/>
+                            invisible="state in ('closed','cancelled')"
+                            help="Cancel a review that will not take place. Use this instead of deleting it so scheduling and audit history remain visible."/>
                     <button name="action_set_draft" type="object" string="Reset to Draft"
-                            invisible="state != 'cancelled'"/>
+                            invisible="state != 'cancelled'"
+                            help="Return a cancelled review to Draft when it should be prepared again. Confirm the dates and participants before preparing it."/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,prepared,held,closed,cancelled"/>
                 </header>
@@ -167,5 +173,9 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_cs_value_review_search"/>
         <field name="context">{'search_default_open': 1, 'search_default_my_reviews': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Prepare the first customer value review</p>
+            <p>Use periodic reviews to freeze customer evidence, hold a structured conversation, confirm delivered value, and agree commitments. Start from the active success plan or create a draft for the required period.</p>
+        </field>
     </record>
 </odoo>

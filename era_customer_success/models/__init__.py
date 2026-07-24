@@ -20,3 +20,4 @@ from . import cs_value_review
 from . import cs_adoption_assessment
 from . import cs_voc_insight
 from . import account_return
+from . import self_service_help

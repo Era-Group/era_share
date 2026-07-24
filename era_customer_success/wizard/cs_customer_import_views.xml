@@ -22,8 +22,10 @@
                     </group>
                 </group>
                 <footer>
-                    <button name="action_import" type="object" string="Import Customers" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_import" type="object" string="Import Customers" class="btn-primary"
+                            help="Enroll the detected companies as Customer Success accounts, up to the selected limit. Existing managed customers are skipped; optional assignment uses the least-loaded eligible CSM first."/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"
+                            help="Close without enrolling any customers or changing CSM assignments."/>
                 </footer>
             </form>
         </field>
@@ -34,5 +36,8 @@
         <field name="res_model">cs.customer.import</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="help" type="html">
+            <p>Detect companies with existing tickets or projects that are not yet managed by Customer Success. Review the source, candidate count, limit, assignment, and AI tier options before importing.</p>
+        </field>
     </record>
 </odoo>

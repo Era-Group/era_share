@@ -2,6 +2,7 @@
 <odoo>
     <record id="action_cs_executive_dashboard" model="ir.actions.client">
         <field name="name">Executive Dashboard</field>
+        <field name="help">Open the live executive view of portfolio size, health, risk, revenue, sentiment, and CSM distribution. Use tiles and rankings to drill into source customer records.</field>
         <field name="tag">cs_dashboard</field>
     </record>
 </odoo>

@@ -28,13 +28,17 @@
             <form string="Voice of Customer Insight" create="0" delete="0">
                 <header>
                     <button name="action_triage" type="object" string="Triage"
-                            class="btn-primary" invisible="state != 'new'"/>
+                            class="btn-primary" invisible="state != 'new'"
+                            help="Acknowledge and classify this customer signal for action. Review the source evidence, theme, sentiment, priority, and suggested response before triage."/>
                     <button name="action_mark_acted" type="object" string="Mark Action Taken"
-                            class="btn-primary" invisible="state not in ('new','triaged')"/>
+                            class="btn-primary" invisible="state not in ('new','triaged')"
+                            help="Confirm that a concrete customer action was taken. Record what was done and add a dated next step when follow-up remains."/>
                     <button name="action_close" type="object" string="Close Insight"
-                            class="btn-primary" invisible="state not in ('triaged','acted')"/>
+                            class="btn-primary" invisible="state not in ('triaged','acted')"
+                            help="Close the insight after the concern or priority has been resolved. A clear resolution note is required so future reviewers understand the outcome."/>
                     <button name="action_dismiss" type="object" string="Dismiss"
-                            invisible="state not in ('new','triaged')"/>
+                            invisible="state not in ('new','triaged')"
+                            help="Dismiss this signal only when it is not actionable or not relevant. The original source evidence and audit trail remain available."/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="new,triaged,acted,closed,dismissed"/>
                 </header>
@@ -122,5 +126,9 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_cs_voc_insight_search"/>
         <field name="context">{'search_default_open': 1, 'search_default_my_insights': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No open customer insights require action</p>
+            <p>Voice of Customer insights are created from confirmed value reviews and adoption assessments. Triage important evidence, take a documented action, and close it only after recording the resolution.</p>
+        </field>
     </record>
 </odoo>

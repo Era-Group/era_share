@@ -105,6 +105,10 @@
         <field name="view_mode">graph,pivot,list</field>
         <field name="view_id" ref="view_csm_sentiment_trend_graph"/>
         <field name="search_view_id" ref="view_csm_kpi_snapshot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No sentiment history is available yet</p>
+            <p>Periodic KPI snapshots preserve customer sentiment, CSAT, and health trends. Select a measure and period, then open the related customer records to investigate changes before taking action.</p>
+        </field>
     </record>
 
     <record id="action_csm_kpi_snapshot" model="ir.actions.act_window">
@@ -112,5 +116,9 @@
         <field name="res_model">csm.kpi.snapshot</field>
         <field name="view_mode">pivot,graph,list</field>
         <field name="search_view_id" ref="view_csm_kpi_snapshot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No KPI snapshots are available yet</p>
+            <p>Snapshots compare CSM activity, customer health, revenue, satisfaction, support, and outcomes over time. Use measures for trends and coaching, not as standalone employee-performance conclusions.</p>
+        </field>
     </record>
 </odoo>

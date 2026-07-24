@@ -9,7 +9,8 @@
             <div t-else="">
                 <div class="d-flex align-items-center mb-3">
                     <h2 class="mb-0 me-auto">Customer Success — Executive Dashboard</h2>
-                    <button class="btn btn-secondary" t-on-click="() => this.loadData()">
+                    <button class="btn btn-secondary" t-on-click="() => this.loadData()"
+                            title="Refresh every dashboard KPI and ranking from current Customer Success data. Use this after assignments, health updates, or completed work; it does not recalculate source records.">
                         <i class="fa fa-refresh me-1"/> Refresh
                     </button>
                 </div>

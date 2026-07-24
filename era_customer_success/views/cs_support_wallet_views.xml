@@ -22,9 +22,11 @@
                        decoration-warning="status in ('expiring','low')"
                        decoration-danger="status in ('critical','exhausted','expired')"/>
                 <button name="action_explore_support_need" type="object"
-                        string="Explore Need" icon="fa-comments"/>
+                        string="Explore Need" icon="fa-comments"
+                        help="Create a draft need-discovery offering from this support balance. Contact the customer and confirm upcoming support needs before presenting or qualifying it."/>
                 <button name="action_open_sale_order" type="object"
-                        string="Source" icon="fa-external-link" groups="era_customer_success.group_era_cs_manager"/>
+                        string="Source" icon="fa-external-link" groups="era_customer_success.group_era_cs_manager"
+                        help="Open the confirmed sales order line that created this support-hours wallet to verify the purchased product, quantity, customer, and date."/>
             </list>
         </field>
     </record>
@@ -36,9 +38,11 @@
             <form string="Support Hours" create="0" edit="0" delete="0">
                 <header>
                     <button name="action_explore_support_need" type="object"
-                            string="Explore Additional Support Need" class="btn-primary"/>
+                            string="Explore Additional Support Need" class="btn-primary"
+                            help="Start a draft conversation about additional support based on the live remaining balance and expiry. This does not create a CRM opportunity until customer interest and timing are confirmed."/>
                     <button name="action_open_sale_order" type="object"
-                            string="Open Source Order" groups="era_customer_success.group_era_cs_manager"/>
+                            string="Open Source Order" groups="era_customer_success.group_era_cs_manager"
+                            help="Open the source sales order to verify the purchased hours and commercial details. Wallet consumption itself is calculated from linked timesheets."/>
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -96,5 +100,9 @@
         <field name="res_model">cs.support.wallet</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_cs_support_wallet_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No prepaid support-hour packages were detected</p>
+            <p>Wallets are created from confirmed prepaid time-service order lines. Configure eligible support products in Customer Success settings, then review remaining hours and expiry before discussing additional support.</p>
+        </field>
     </record>
 </odoo>

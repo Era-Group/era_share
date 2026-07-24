@@ -19,8 +19,10 @@
                     <field name="schedule_activity" invisible="not next_step"/>
                 </group>
                 <footer>
-                    <button name="action_confirm" type="object" string="Save Outcome" class="btn-primary"/>
-                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                    <button name="action_confirm" type="object" string="Save Outcome" class="btn-primary"
+                            help="Complete the work item with the selected outcome and a factual note. If a next step is entered, set its date and optionally create an Odoo activity."/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"
+                            help="Close without completing the work item. The item remains open and no follow-up activity is created."/>
                 </footer>
             </form>
         </field>

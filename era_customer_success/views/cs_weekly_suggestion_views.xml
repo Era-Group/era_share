@@ -30,9 +30,11 @@
                 <field name="state" widget="badge"
                        decoration-success="state == 'done'"
                        decoration-muted="state == 'dismissed'"/>
-                <button name="action_open_account" type="object" string="Open" icon="fa-folder-open-o"/>
+                <button name="action_open_account" type="object" string="Open" icon="fa-folder-open-o"
+                        help="Open the customer 360° record to review health, history, support, adoption, and the evidence behind this work item before acting."/>
                 <button name="action_mark_done" type="object" string="Record Outcome" icon="fa-check"
-                        class="btn-primary" invisible="state != 'open'"/>
+                        class="btn-primary" invisible="state != 'open'"
+                        help="Record what happened, the customer response, and any dated next step. Use this after completing the recommended customer action."/>
             </list>
         </field>
     </record>
@@ -43,10 +45,14 @@
         <field name="arch" type="xml">
             <form string="Customer Success Work Item">
                 <header>
-                    <button name="action_open_account" type="object" string="Open Customer" class="btn-primary" icon="fa-folder-open-o"/>
-                    <button name="action_mark_done" type="object" string="Record Outcome" class="btn-primary" invisible="state != 'open'"/>
-                    <button name="action_dismiss" type="object" string="Dismiss" invisible="state != 'open'"/>
-                    <button name="action_reopen" type="object" string="Reopen" invisible="state == 'open'"/>
+                    <button name="action_open_account" type="object" string="Open Customer" class="btn-primary" icon="fa-folder-open-o"
+                            help="Open the full customer record and verify the signals behind this recommendation before contacting the customer."/>
+                    <button name="action_mark_done" type="object" string="Record Outcome" class="btn-primary" invisible="state != 'open'"
+                            help="Complete this work item by recording a meaningful outcome. Add a next step and date when further follow-up is required."/>
+                    <button name="action_dismiss" type="object" string="Dismiss" invisible="state != 'open'"
+                            help="Dismiss this item only when it is not relevant or has been superseded. Dismissal preserves the record for audit and reporting."/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state == 'open'"
+                            help="Reopen a completed or dismissed item when customer follow-up is still required. Review the previous outcome before continuing."/>
                     <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                 </header>
                 <sheet>
@@ -127,8 +133,8 @@
         <field name="domain">[]</field>
         <field name="context">{'search_default_today': 1}</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiley_face">لا توجد أعمال مستحقة اليوم</p>
-            <p>تُنشأ الأولويات تلقائياً من مخاطر العميل، الدعم، التجديد، انتظام التواصل والاستخدام، ويحسّنها الذكاء أسبوعياً عند تفعيله.</p>
+            <p class="o_view_nocontent_smiling_face">لا توجد أعمال مستحقة اليوم</p>
+            <p>تُنشأ الأولويات تلقائياً من مخاطر العميل، الدعم، التجديد، انتظام التواصل والاستخدام، ويحسّنها ✨ أسبوعياً عند تفعيله.</p>
         </field>
     </record>
 
@@ -139,5 +145,9 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_cs_weekly_suggestion_search"/>
         <field name="context">{'search_default_today': 1, 'search_default_group_csm': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No team work is due today</p>
+            <p>The daily worklist ranks customer risks, support pressure, renewal timing, contact cadence, adoption, and Voice of Customer signals. Remove the Today filter to review future or completed work.</p>
+        </field>
     </record>
 </odoo>

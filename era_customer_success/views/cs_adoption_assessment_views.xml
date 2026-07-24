@@ -30,13 +30,17 @@
                 <header>
                     <button name="action_generate_ai_plan" type="object"
                             string="Draft Enablement Plan (AI)" icon="fa-magic"
-                            invisible="state != 'draft' or not ai_adoption_enabled"/>
+                            invisible="state != 'draft' or not ai_adoption_enabled"
+                            help="Draft a targeted enablement plan from aggregate adoption metrics and the blocker description. AI does not measure usage or change the confirmed score; verify all evidence before confirmation."/>
                     <button name="action_confirm" type="object" string="Confirm Evidence"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft'"
+                            help="Confirm that the entered adoption metrics and evidence are reliable. Confirmation freezes the assessment, updates the customer adoption indicators, and may create an actionable Voice of Customer insight when blockers exist."/>
                     <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state != 'draft'"/>
+                            invisible="state != 'draft'"
+                            help="Cancel an invalid or unnecessary draft assessment. Cancelled records remain available for audit and do not update customer adoption indicators."/>
                     <button name="action_set_draft" type="object" string="Reset to Draft"
-                            invisible="state != 'cancelled'"/>
+                            invisible="state != 'cancelled'"
+                            help="Return a cancelled assessment to Draft so its source, metrics, evidence, and enablement plan can be corrected before confirmation."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                 </header>
                 <sheet>
@@ -128,5 +132,9 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_cs_adoption_assessment_search"/>
         <field name="context">{'search_default_confirmed': 1, 'search_default_my_assessments': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record measured customer adoption</p>
+            <p>Use licensed and active users, adopted workflows, onboarding progress, frequency, and evidence. Confirm only reliable measurements; low-confidence data should trigger validation rather than a service recommendation.</p>
+        </field>
     </record>
 </odoo>

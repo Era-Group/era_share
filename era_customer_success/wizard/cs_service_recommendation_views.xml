@@ -25,8 +25,10 @@
                 <footer>
                     <button name="action_create_drafts" type="object"
                             string="Create Drafts to Validate" class="btn-primary"
-                            invisible="not line_ids"/>
-                    <button string="Close" special="cancel" class="btn-secondary"/>
+                            invisible="not line_ids"
+                            help="Create one draft offering for each selected service so the CSM can validate the need with the customer. This does not present a service or create a CRM opportunity."/>
+                    <button string="Close" special="cancel" class="btn-secondary"
+                            help="Close the recommendations without creating drafts. Recommendations are calculated again from current customer evidence the next time this window is opened."/>
                 </footer>
             </form>
         </field>

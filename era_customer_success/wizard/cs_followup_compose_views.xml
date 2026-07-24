@@ -21,15 +21,18 @@
                        invisible="not service_id" readonly="1"/>
                 <group>
                     <button name="action_generate" type="object" string="✨ Generate with AI"
-                            class="btn-primary"/>
+                            class="btn-primary"
+                            help="Draft a message using the selected channel, tone, purpose, recent customer timeline, and optional catalog service. Review and edit the draft before opening the channel."/>
                 </group>
                 <field name="draft" nolabel="1" placeholder="The AI draft appears here — edit freely before sending…"
                        widget="text" options="{'resizable': true}"/>
                 <field name="cs_account_id" invisible="1"/>
                 <footer>
                     <button name="action_send" type="object" string="Send / Open Channel"
-                            class="btn-primary" invisible="not draft"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                            class="btn-primary" invisible="not draft"
+                            help="Open the selected communication channel with this reviewed draft. Confirm the recipient and content in the channel before final sending."/>
+                    <button string="Close" class="btn-secondary" special="cancel"
+                            help="Close without opening a channel. The draft is not sent to the customer."/>
                 </footer>
             </form>
         </field>

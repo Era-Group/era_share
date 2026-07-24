@@ -22,8 +22,10 @@
                     <field name="description" placeholder="Details..."/>
                 </group>
                 <footer>
-                    <button name="action_submit" type="object" string="Create" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_submit" type="object" string="Create" class="btn-primary"
+                            help="Create the selected record from the customer request: a Helpdesk ticket for support, or a CRM opportunity for a qualified commercial request. Review the subject, details, routing team, and expected value first."/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"
+                            help="Close this window without creating a ticket or opportunity. Information entered here will not be saved."/>
                 </footer>
             </form>
         </field>

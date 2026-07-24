@@ -25,13 +25,17 @@
                             invisible="not ai_success_plan_enabled or state != 'draft'"
                             help="Use the customer snapshot and known contacts to fill missing plan fields and suggest reviewable milestones."/>
                     <button name="action_activate" type="object" string="Activate"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft'"
+                            help="Activate the reviewed success plan so its objectives, stakeholders, milestones, and linked services become the shared operating plan for this customer. Review AI-generated content before activation."/>
                     <button name="action_archive" type="object" string="Archive"
-                            invisible="state == 'archived'"/>
+                            invisible="state == 'archived'"
+                            help="Archive this plan when it is no longer the customer's current plan. Historical objectives, milestones, and evidence remain available for audit."/>
                     <button name="action_set_draft" type="object" string="Revise Plan"
-                            invisible="state != 'active'"/>
+                            invisible="state != 'active'"
+                            help="Return the active plan to Draft so objectives, stakeholders, or milestones can be revised. Activate it again after completing the review."/>
                     <button name="action_reopen" type="object" string="Reopen"
-                            invisible="state != 'archived'"/>
+                            invisible="state != 'archived'"
+                            help="Reopen this archived plan as a Draft for reuse or revision. Confirm that it should replace any currently active customer plan before activation."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
                 </header>
                 <sheet>

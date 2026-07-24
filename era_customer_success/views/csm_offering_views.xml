@@ -27,21 +27,28 @@
             <form>
                 <header>
                     <button name="action_suggest_pitch" type="object" string="Suggest Pitch (AI)"
-                            icon="fa-magic" class="btn-secondary"/>
+                            icon="fa-magic" class="btn-secondary"
+                            help="Draft a customer-specific value message using the selected service and customer context. Review accuracy, tone, and claims before sending; this does not present or qualify the offering."/>
                     <button name="action_send_service_whatsapp" type="object"
                             string="إرسال قالب الخدمة (واتساب)" icon="fa-whatsapp"
-                            class="btn-secondary" invisible="not service_id"/>
+                            class="btn-secondary" invisible="not service_id"
+                            help="Open the approved WhatsApp service template for this customer. Verify the recipient, service details, and customer consent before sending."/>
                     <button name="action_send_service_email" type="object"
                             string="إرسال إيميل" icon="fa-envelope"
-                            class="btn-secondary" invisible="not service_id"/>
+                            class="btn-secondary" invisible="not service_id"
+                            help="Open an email containing the selected service and proposed message. Review recipients, content, and attachments before sending."/>
                     <button name="action_present" type="object" string="Mark Presented"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft'"
+                            help="Confirm that the service was actually presented to the customer. First document the customer need, contact, suitability check, channel, and presentation details."/>
                     <button name="action_accept" type="object" string="Qualify → Create Opportunity"
-                            class="btn-primary" invisible="state != 'presented'"/>
+                            class="btn-primary" invisible="state != 'presented'"
+                            help="Qualify the need and create one CRM opportunity only after the customer confirms interest and timing. This is the commercial handoff point; recommendations alone must not create opportunities."/>
                     <button name="action_reject" type="object" string="Reject"
-                            invisible="state not in ('draft','presented')"/>
+                            invisible="state not in ('draft','presented')"
+                            help="Reject this offering when it is unsuitable or the customer declines. The rejection date is retained and recommendation cooldown rules reduce repeated suggestions."/>
                     <button name="action_open_opportunity" type="object" string="View Opportunity"
-                            invisible="not opportunity_id"/>
+                            invisible="not opportunity_id"
+                            help="Open the CRM opportunity created from this qualified offering to continue the commercial process with the responsible sales team."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
                 </header>
                 <sheet>
@@ -102,5 +109,9 @@
         <field name="name">Offerings</field>
         <field name="res_model">csm.offering</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Validate a customer need before selling</p>
+            <p>Create an offering as a Draft, document the need and customer contact, present the service, then qualify it only after interest and timing are confirmed. A CRM opportunity is created at qualification, never from a recommendation alone.</p>
+        </field>
     </record>
 </odoo>

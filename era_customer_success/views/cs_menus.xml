@@ -48,6 +48,7 @@
 
     <record id="action_cs_weekly_digest_run" model="ir.actions.server">
         <field name="name">Generate Weekly Suggestions Now</field>
+        <field name="help">Build or refresh the ranked weekly worklist for every eligible CSM. Run this after major customer-data changes; generation is idempotent and preserves completed work history.</field>
         <field name="model_id" ref="model_cs_account"/>
         <field name="state">code</field>
         <field name="code">action = model.action_run_weekly_digest_now()</field>

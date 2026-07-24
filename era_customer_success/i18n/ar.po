@@ -4379,6 +4379,12 @@ msgid "Milestone Progress"
 msgstr "تقدم مراحل النجاح"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "Missing Engagement Assessment"
+msgstr "لا يوجد تقييم تفاعل"
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__monthly
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__usage_frequency__monthly
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_kpi_snapshot__period_type__month
@@ -4634,6 +4640,12 @@ msgid "No Active Project Work"
 msgstr "لا يوجد عمل مشروع نشط"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "No Contact in 30 Days"
+msgstr "لا يوجد تواصل منذ 30 يوماً"
+
+#. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_csm_kpi_snapshot
 msgid "No KPI snapshots are available yet"
 msgstr "لا توجد لقطات مؤشرات حتى الآن"
@@ -4658,6 +4670,12 @@ msgstr "لا يوجد رد"
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__communication_engagement__unresponsive
 msgid "No Response or Long Silence"
 msgstr "لا توجد استجابة أو يوجد انقطاع طويل"
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/js/cs_dashboard.js:0
+msgid "No Value Review Scheduled"
+msgstr "لا توجد مراجعة قيمة مجدولة"
 
 #. module: era_customer_success
 #. odoo-python

@@ -232,3 +232,6 @@ Commits pushed to `origin/stage`.
 - Locked closed value reviews against business-data edits and cleaned stale partner links when a Customer Success account changes customer.
 ## 19.0.28.0.0 — Accessible Executive Experience
 - Scoped RTL direction to the screen-guide dialog and restored keyboard focus to the help trigger after closing, without mutating the whole Odoo document direction.
+## 19.0.29.0.0 — Portfolio Data Coverage
+- Added executive coverage indicators for accounts missing engagement assessments, value-review schedules, or customer contact in the last 30 days.
+- Exposed next-action evidence sources directly in the AI suggestion history for audit and coaching.

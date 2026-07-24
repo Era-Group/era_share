@@ -19,6 +19,7 @@ export class CsDashboard extends Component {
                 renewals: 0, avgCsat: 0, avgSentiment: 0, upsell: 0,
                 openVoc: 0, highVoc: 0, lowEngagement: 0, criticalWallets: 0,
                 overdueReviews: 0, dueWork: 0, qualifyingNeeds: 0,
+                missingEngagement: 0, missingReview: 0, staleContact: 0,
             },
             engineers: [],
             atRisk: [],
@@ -54,11 +55,25 @@ export class CsDashboard extends Component {
         k.openVoc = await this.orm.searchCount("cs.voc.insight", [["state", "in", ["new", "triaged", "acted"]]]);
         k.highVoc = await this.orm.searchCount("cs.voc.insight", [["priority", "=", "high"], ["state", "in", ["new", "triaged"]]]);
         const engagementRows = await this.orm.searchRead(
-            M, [], ["latest_adoption_status"], { limit: 10000 }
+            M, [], ["latest_adoption_status", "latest_adoption_date", "next_value_review_date", "last_touch_date"], { limit: 10000 }
         );
         k.lowEngagement = engagementRows.filter(
             (account) => ["watch", "low"].includes(account.latest_adoption_status)
         ).length;
+        const staleCutoff = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+        const missingEngagementIds = engagementRows.filter((account) => !account.latest_adoption_date).map((account) => account.id);
+        const missingReviewIds = engagementRows.filter((account) => !account.next_value_review_date).map((account) => account.id);
+        const staleContactIds = engagementRows.filter(
+            (account) => !account.last_touch_date || account.last_touch_date.slice(0, 10) < staleCutoff
+        ).map((account) => account.id);
+        k.missingEngagement = missingEngagementIds.length;
+        k.missingReview = missingReviewIds.length;
+        k.staleContact = staleContactIds.length;
+        this.coverageDomains = {
+            missingEngagement: [["id", "in", missingEngagementIds]],
+            missingReview: [["id", "in", missingReviewIds]],
+            staleContact: [["id", "in", staleContactIds]],
+        };
         k.criticalWallets = await this.orm.searchCount("cs.support.wallet", [["status", "in", ["critical", "exhausted", "expired"]]]);
         k.overdueReviews = await this.orm.searchCount("cs.value.review", [["review_date", "<", today], ["state", "not in", ["closed", "cancelled"]]]);
         k.dueWork = await this.orm.searchCount("cs.weekly.suggestion", [["state", "=", "open"], ["due_date", "<=", today]]);
@@ -118,6 +133,9 @@ export class CsDashboard extends Component {
             { key: "overdueReviews", icon: "fa-calendar-times-o", color: "warning", label: _t("Overdue Value Reviews"), value: k.overdueReviews, model: "cs.value.review", domain: [["review_date", "<", new Date().toISOString().slice(0, 10)], ["state", "not in", ["closed", "cancelled"]]] },
             { key: "dueWork", icon: "fa-tasks", color: "primary", label: _t("Due Work"), value: k.dueWork, model: "cs.weekly.suggestion", domain: [["state", "=", "open"], ["due_date", "<=", new Date().toISOString().slice(0, 10)]] },
             { key: "qualifyingNeeds", icon: "fa-compass", color: "info", label: _t("Needs Being Validated"), value: k.qualifyingNeeds, model: "csm.offering", domain: [["state", "in", ["draft", "presented"]]] },
+            { key: "missingEngagement", icon: "fa-question-circle", color: "warning", label: _t("Missing Engagement Assessment"), value: k.missingEngagement, domain: this.coverageDomains?.missingEngagement || [] },
+            { key: "missingReview", icon: "fa-calendar-o", color: "warning", label: _t("No Value Review Scheduled"), value: k.missingReview, domain: this.coverageDomains?.missingReview || [] },
+            { key: "staleContact", icon: "fa-phone", color: "danger", label: _t("No Contact in 30 Days"), value: k.staleContact, domain: this.coverageDomains?.staleContact || [] },
         ];
     }
 

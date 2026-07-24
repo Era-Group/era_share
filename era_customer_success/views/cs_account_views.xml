@@ -323,6 +323,7 @@
                                            decoration-warning="priority in ('high','medium')"/>
                                     <field name="suggested_date"/>
                                     <field name="reason" optional="hide"/>
+                                    <field name="evidence_sources" optional="show"/>
                                     <field name="state" widget="badge"/>
                                 </list>
                             </field>

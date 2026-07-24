@@ -36,8 +36,8 @@
                             class="btn-secondary" invisible="not service_id"/>
                     <button name="action_present" type="object" string="Mark Presented"
                             class="btn-primary" invisible="state != 'draft'"/>
-                    <button name="action_accept" type="object" string="Accept → Create Opportunity"
-                            class="btn-primary" invisible="state not in ('draft','presented')"/>
+                    <button name="action_accept" type="object" string="Qualify → Create Opportunity"
+                            class="btn-primary" invisible="state != 'presented'"/>
                     <button name="action_reject" type="object" string="Reject"
                             invisible="state not in ('draft','presented')"/>
                     <button name="action_open_opportunity" type="object" string="View Opportunity"
@@ -45,6 +45,10 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
                 </header>
                 <sheet>
+                    <field name="is_service_recommendation" invisible="1"/>
+                    <div class="alert alert-info" role="status" invisible="not is_service_recommendation">
+                        توصية للاستكشاف فقط. تحقّق من احتياج العميل قبل تقديم الخدمة أو إنشاء فرصة.
+                    </div>
                     <field name="service_image" widget="image" class="oe_avatar"
                            invisible="not service_id" readonly="1"/>
                     <div class="oe_title">
@@ -60,15 +64,27 @@
                             <field name="service_id"/>
                             <field name="need_type"/>
                             <field name="support_sale_line_id" invisible="need_type != 'support_hours'"/>
+                            <field name="recommendation_score" invisible="not is_service_recommendation"/>
                             <field name="offering_date"/>
                             <field name="channel"/>
                             <field name="expected_value" widget="monetary"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="opportunity_id" readonly="1"/>
+                            <field name="rejected_on" invisible="not rejected_on"/>
                         </group>
                     </group>
                     <field name="product_tmpl_ids" widget="many2many_tags"/>
+                    <group string="Need Qualification">
+                        <field name="customer_need"/>
+                        <field name="customer_contact_id" domain="[('cs_account_id', '=', cs_account_id)]"/>
+                        <field name="suitability_checked"/>
+                        <field name="customer_interest_confirmed"/>
+                        <field name="need_timing"/>
+                    </group>
                     <notebook>
+                        <page string="Recommendation Evidence" invisible="not is_service_recommendation">
+                            <field name="recommendation_reason" readonly="1"/>
+                        </page>
                         <page string="Suggested Pitch (AI)" name="pitch">
                             <field name="pitch_message" placeholder="Click 'Suggest Pitch (AI)' to generate a message tailored to this customer's situation…"/>
                         </page>

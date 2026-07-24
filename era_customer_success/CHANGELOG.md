@@ -4,6 +4,23 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.21.0.0 — Voice of Customer
+- Added immutable Voice of Customer insights captured automatically from closed Value Reviews and confirmed Adoption Assessments.
+- Insights preserve source evidence, priorities, risks, response commitments and adoption confidence without copying ticket text or creating chatter events.
+- Reliable low adoption and review risks become high-priority customer voice; low-confidence adoption remains medium priority.
+- Only high-priority new/triaged insights enter `My Work Today`, below churn/support recovery and above support-hour and routine follow-up work.
+- Completing or dismissing the linked work item updates the insight workflow; closing an insight requires a documented response and resolution.
+- Added idempotent historical backfill, source-key deduplication, company/CSM record rules, immutable snapshots and workflow-managed audit fields.
+- Added a partial unique index plus row locking to guarantee one open work item per customer/week under concurrent cron and user actions.
+
+## 19.0.20.0.0 — Explainable Service Recommendations
+- Enriched the ERA catalog with service type, observable need signals, discovery questions, expected customer outcomes, exclusions, recommendation triggers, ticket tags and a re-offer cooldown.
+- Added an on-demand recommendation wizard that scores up to three services from confirmed adoption, support pressure, failed SLA, recent ticket tags and explicit success-plan links.
+- Recommendations exclude products already purchased, open offerings, and recently rejected services. All reasons are shown before creating records.
+- Selected recommendations create idempotent `csm.offering` drafts only; no CRM opportunity is created.
+- Added qualification gates: documented customer need, valid customer contact, suitability check, Presented state, confirmed interest and clear timing are required before opportunity handoff.
+- Ticket and sales aggregates are restricted to the account company; no ticket content is copied to recommendations.
+
 ## 19.0.19.0.0 — Measured Customer Adoption
 - Added historical adoption assessments with explicit provenance for active users, licensed users, key-workflow adoption, onboarding completion and usage frequency.
 - Adoption score averages only available measured components; data confidence exposes completeness separately so missing telemetry is never presented as low usage.

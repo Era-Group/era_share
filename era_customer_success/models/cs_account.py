@@ -146,6 +146,12 @@ class CsAccount(models.Model):
         compute='_compute_adoption_metrics', string='Latest Adoption Assessment')
     next_adoption_assessment_date = fields.Date(
         compute='_compute_adoption_metrics', string='Next Adoption Review')
+    voc_insight_ids = fields.One2many(
+        'cs.voc.insight', 'cs_account_id', string='Voice of Customer')
+    open_voc_count = fields.Integer(
+        string='Open Customer Insights', compute='_compute_voc_metrics')
+    high_voc_count = fields.Integer(
+        string='High-Priority Customer Insights', compute='_compute_voc_metrics')
 
     lifecycle_stage_id = fields.Many2one(
         'cs.stage', string='Lifecycle Stage', tracking=True, index=True,
@@ -409,6 +415,15 @@ class CsAccount(models.Model):
             account.latest_adoption_status = latest.status if latest else 'unknown'
             account.latest_adoption_date = latest.assessment_date if latest else False
             account.next_adoption_assessment_date = latest.next_assessment_date if latest else False
+
+    @api.depends('voc_insight_ids.state', 'voc_insight_ids.priority')
+    def _compute_voc_metrics(self):
+        for account in self:
+            open_insights = account.voc_insight_ids.filtered(
+                lambda insight: insight.state in ('new', 'triaged', 'acted'))
+            account.open_voc_count = len(open_insights)
+            account.high_voc_count = len(open_insights.filtered(
+                lambda insight: insight.priority == 'high'))
 
     @api.depends('partner_id')
     def _compute_counts(self):
@@ -1082,6 +1097,17 @@ class CsAccount(models.Model):
             'context': {'default_cs_account_id': self.id},
         }
 
+    def action_view_voc_insights(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Voice of Customer'),
+            'res_model': 'cs.voc.insight',
+            'view_mode': 'list,form',
+            'domain': [('cs_account_id', '=', self.id)],
+            'context': {'default_cs_account_id': self.id},
+        }
+
     def action_recommend_services(self):
         self.ensure_one()
         self.check_access('read')
@@ -1700,6 +1726,23 @@ class CsAccount(models.Model):
                 'reason': _('Negative sentiment or a failed support SLA may damage customer trust.'),
                 'recommended_action': _('Review the support issue, contact the customer with a clear update, and record the recovery commitment.'),
             }
+        voc = self.env['cs.voc.insight'].sudo().search([
+            ('cs_account_id', '=', self.id),
+            ('state', 'in', ('new', 'triaged')),
+            ('priority', '=', 'high'),
+        ], order='insight_date, id', limit=1)
+        if voc:
+            return {
+                'source': 'automation',
+                'action_type': 'voice_customer',
+                'priority': 'high',
+                'rank': 3,
+                'due_date': today,
+                'voc_id': voc.id,
+                'reason': _('High-priority customer voice: %s', voc.name),
+                'recommended_action': _(
+                    'Review the customer evidence, agree a response, and record the action taken.'),
+            }
         wallets = self.env['cs.support.wallet'].sudo().search([
             ('cs_account_id', '=', self.id),
         ], order='order_date desc, id desc')
@@ -1715,7 +1758,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'support_hours',
                 'priority': 'high' if urgent else 'medium',
-                'rank': 3,
+                'rank': 4,
                 'due_date': today,
                 'reason': _(
                     'Support package "%(package)s" has %(remaining).1f hours remaining '
@@ -1733,7 +1776,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'renewal',
                 'priority': 'high' if self.days_to_renewal <= 30 else 'medium',
-                'rank': 4,
+                'rank': 5,
                 'due_date': today,
                 'reason': _('The customer is within the renewal attention window.'),
                 'recommended_action': _('Review delivered value and customer concerns before handing any commercial need to the responsible team.'),
@@ -1751,7 +1794,7 @@ class CsAccount(models.Model):
                 'action_type': 'success_milestone',
                 'priority': 'urgent' if milestone.state == 'blocked' else (
                     'high' if overdue else milestone.priority),
-                'rank': 5,
+                'rank': 6,
                 'due_date': min(milestone.target_date, today),
                 'reason': _(
                     'Success milestone "%(milestone)s" is %(timing)s.',
@@ -1771,7 +1814,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'value_review',
                 'priority': 'high' if overdue else 'medium',
-                'rank': 6,
+                'rank': 7,
                 'due_date': min(value_review.review_date, today),
                 'reason': _(
                     'Customer value review "%(review)s" is %(timing)s.',
@@ -1794,7 +1837,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'adoption',
                 'priority': 'high' if adoption.status == 'low' and not low_confidence else 'medium',
-                'rank': 7,
+                'rank': 8,
                 'due_date': today,
                 'reason': _(
                     'Adoption is %(status)s at %(score).0f%% with %(confidence).0f%% data confidence%(due)s.',
@@ -1814,7 +1857,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'relationship',
                 'priority': 'high' if self.days_since_touch >= overdue_days * 2 else 'medium',
-                'rank': 8,
+                'rank': 9,
                 'due_date': today,
                 'reason': _('Customer contact is missing or overdue for the agreed follow-up cadence.'),
                 'recommended_action': _('Make a value-led check-in, confirm current priorities, and agree on the next contact date.'),
@@ -1824,7 +1867,7 @@ class CsAccount(models.Model):
                 'source': 'automation',
                 'action_type': 'value',
                 'priority': 'medium',
-                'rank': 9,
+                'rank': 10,
                 'due_date': today,
                 'reason': _('Low system usage indicates that the customer may not be realizing enough value.'),
                 'recommended_action': _('Identify the adoption blocker and offer a targeted enablement, training, or support action.'),

@@ -3,3 +3,5 @@ from . import test_success_profile
 from . import test_support_wallet
 from . import test_value_review
 from . import test_adoption_assessment
+from . import test_service_recommendation
+from . import test_voc_insight

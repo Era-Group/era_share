@@ -20,6 +20,9 @@
     <menuitem id="menu_cs_adoption_assessments" name="Adoption Assessments"
               parent="menu_cs_root" action="action_cs_adoption_assessment" sequence="27"/>
 
+    <menuitem id="menu_cs_voc_insights" name="Voice of Customer"
+              parent="menu_cs_root" action="action_cs_voc_insight" sequence="28"/>
+
     <menuitem id="menu_cs_offerings" name="Offerings"
               parent="menu_cs_root" action="action_csm_offering" sequence="30"/>
 

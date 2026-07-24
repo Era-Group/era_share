@@ -8,6 +8,7 @@
                 <field name="image_128" widget="image" class="oe_avatar" optional="show"/>
                 <field name="name"/>
                 <field name="target_audience" optional="show"/>
+                <field name="service_type" widget="badge" optional="show"/>
                 <field name="url" widget="url" optional="show"/>
                 <field name="offering_count" optional="show"/>
                 <field name="ai_enriched_on" optional="hide"/>
@@ -73,6 +74,7 @@
                         <group>
                             <field name="url" widget="url" placeholder="https://…"/>
                             <field name="target_audience"/>
+                            <field name="service_type"/>
                         </group>
                         <group>
                             <field name="ai_enriched_on" readonly="1"/>
@@ -90,6 +92,23 @@
                         </page>
                         <page string="Suggested Pitch" name="pitch">
                             <field name="pitch_template" placeholder="A ready-to-send suggested message to a customer…"/>
+                        </page>
+                        <page string="Customer Fit" name="customer_fit">
+                            <group>
+                                <field name="need_signals"/>
+                                <field name="discovery_questions"/>
+                                <field name="value_outcomes"/>
+                                <field name="not_suitable_when"/>
+                            </group>
+                        </page>
+                        <page string="Recommendation Rules" name="recommendation_rules">
+                            <group>
+                                <field name="recommend_on_low_adoption"/>
+                                <field name="recommend_on_support_pressure"/>
+                                <field name="recommend_on_sla_failure"/>
+                                <field name="recommendation_ticket_tag_ids" widget="many2many_tags"/>
+                                <field name="recommendation_cooldown_days"/>
+                            </group>
                         </page>
                         <page string="Products" name="products">
                             <field name="product_tmpl_ids" widget="many2many_tags"/>

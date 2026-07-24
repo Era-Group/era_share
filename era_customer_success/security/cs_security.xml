@@ -211,4 +211,22 @@
         <field name="model_id" ref="model_cs_adoption_assessment"/>
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
+
+    <record id="cs_voc_insight_rule_own" model="ir.rule">
+        <field name="name">CS Voice of Customer: own (CSM)</field>
+        <field name="model_id" ref="model_cs_voc_insight"/>
+        <field name="domain_force">[('csm_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_user'))]"/>
+    </record>
+    <record id="cs_voc_insight_rule_manager" model="ir.rule">
+        <field name="name">CS Voice of Customer: all (Manager)</field>
+        <field name="model_id" ref="model_cs_voc_insight"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_era_cs_manager'))]"/>
+    </record>
+    <record id="cs_voc_insight_rule_company" model="ir.rule">
+        <field name="name">CS Voice of Customer: allowed companies</field>
+        <field name="model_id" ref="model_cs_voc_insight"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 </odoo>

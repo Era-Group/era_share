@@ -26,6 +26,7 @@
                 <field name="recommended_action"/>
                 <field name="week" optional="hide"/>
                 <field name="source" widget="badge" optional="hide"/>
+                <field name="voc_id" optional="hide"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'done'"
                        decoration-muted="state == 'dismissed'"/>
@@ -63,6 +64,7 @@
                             <field name="churn_probability" readonly="1"/>
                             <field name="generated_on" readonly="1"/>
                             <field name="source" widget="badge"/>
+                            <field name="voc_id" readonly="1" invisible="not voc_id"/>
                         </group>
                     </group>
                     <group string="السبب / Why">

@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
 
@@ -63,6 +64,8 @@ class TestDailyWorklist(TransactionCase):
         self.assertNotEqual(item.reason, 'New AI reason')
         self.assertEqual(result.state, 'open')
         self.assertEqual(result.reason, 'New AI reason')
+        with self.assertRaises(UserError):
+            item.action_reopen()
 
     def test_daily_worklist_archives_stale_open_items(self):
         worklist = self.env['cs.weekly.suggestion']

@@ -38,13 +38,21 @@ class CsServiceRecommendationWizard(models.TransientModel):
         partner_ids = account._partner_ids()
         recent_tickets = self.env['helpdesk.ticket'].sudo().search([
             ('partner_id', 'in', partner_ids),
+            ('company_id', '=', account.company_id.id),
             ('stage_id.fold', '=', False),
             ('create_date', '>=', fields.Datetime.now() - timedelta(days=30)),
         ])
         recent_tag_ids = set(recent_tickets.tag_ids.ids)
+        sla_failed_count = self.env['helpdesk.ticket'].sudo().search_count([
+            ('partner_id', 'in', partner_ids),
+            ('company_id', '=', account.company_id.id),
+            ('stage_id.fold', '=', False),
+            ('sla_fail', '=', True),
+        ])
 
         sold_lines = self.env['sale.order.line'].sudo().search([
             ('order_id.state', 'in', ('sale', 'done')),
+            ('company_id', '=', account.company_id.id),
             ('order_partner_id.commercial_partner_id', '=', account.partner_id.id),
             ('display_type', '=', False),
         ])
@@ -69,8 +77,9 @@ class CsServiceRecommendationWizard(models.TransientModel):
                 continue
             rejected = offerings.filtered(
                 lambda item: item.service_id == service and item.state == 'rejected'
-                and item.offering_date
-                and item.offering_date >= today - timedelta(days=service.recommendation_cooldown_days))
+                and item.rejected_on
+                and fields.Date.to_date(item.rejected_on)
+                    >= today - timedelta(days=service.recommendation_cooldown_days))
             if rejected:
                 continue
 
@@ -89,9 +98,9 @@ class CsServiceRecommendationWizard(models.TransientModel):
                     'Support package %(package)s is %(status)s with %(remaining).1f hours remaining.',
                     package=wallet.product_id.display_name,
                     status=wallet.status, remaining=wallet.remaining_hours))
-            if service.recommend_on_sla_failure and account.sla_failed_count:
+            if service.recommend_on_sla_failure and sla_failed_count:
                 score += 20
-                reasons.append(_('%s open support tickets have failed SLA.', account.sla_failed_count))
+                reasons.append(_('%s open support tickets have failed SLA.', sla_failed_count))
             matching_tags = service.recommendation_ticket_tag_ids.filtered(
                 lambda tag: tag.id in recent_tag_ids)
             if matching_tags:
@@ -125,8 +134,9 @@ class CsServiceRecommendationWizard(models.TransientModel):
         Offering = self.env['csm.offering']
         for line in self.line_ids.filtered('selected'):
             service = line.service_id
-            key = 'service-recommendation:%s:%s:%s' % (
-                account.company_id.id, account.id, service.id)
+            key = 'service-recommendation:%s:%s:%s:%s' % (
+                account.company_id.id, account.id, service.id,
+                fields.Date.context_today(self))
             existing = Offering.search([
                 ('cs_account_id', '=', account.id),
                 ('service_id', '=', service.id),
@@ -143,9 +153,10 @@ class CsServiceRecommendationWizard(models.TransientModel):
                 'service_id': service.id,
                 'need_type': 'module' if service.service_type == 'module' else 'service',
                 'product_tmpl_ids': [(6, 0, service.product_tmpl_ids.ids)],
-                'notes': '%s\n\n%s' % (
+                'notes': '%s\n\n%s\n\n%s' % (
                     line.reason or '',
-                    _('Discovery questions:\n%s', service.discovery_questions or '-')),
+                    _('Discovery questions:\n%s', service.discovery_questions or '-'),
+                    _('Do not present when:\n%s', service.not_suitable_when or '-')),
                 'is_service_recommendation': True,
                 'recommendation_key': key,
                 'recommendation_score': line.score,

@@ -59,6 +59,7 @@
                                 <field name="desired_outcomes" placeholder="What outcomes should ERA help deliver?"/>
                                 <field name="success_criteria" placeholder="How will the customer know this succeeded?"/>
                                 <field name="value_hypothesis" placeholder="What value should ERA deliver next?"/>
+                                <field name="recommended_service_ids" widget="many2many_tags"/>
                             </group>
                         </page>
                         <page string="Stakeholders" name="stakeholders">

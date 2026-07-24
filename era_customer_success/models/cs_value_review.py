@@ -271,6 +271,7 @@ class CsValueReview(models.Model):
                         summary=review.next_step,
                         note=review.commitments,
                     )
+            self.env['cs.voc.insight']._capture_value_review(review)
             review._refresh_daily_work_item()
         return True
 

@@ -849,6 +849,266 @@ msgid "The adoption assessment date cannot be in the future."
 msgstr "لا يمكن أن يكون تاريخ تقييم التبنّي في المستقبل."
 
 #. module: era_customer_success
+msgid "Recommend Services"
+msgstr "توصية خدمات"
+
+#. module: era_customer_success
+msgid "Recommended Services"
+msgstr "الخدمات الموصى باستكشافها"
+
+#. module: era_customer_success
+msgid "Customer Fit"
+msgstr "ملاءمة العميل"
+
+#. module: era_customer_success
+msgid "Recommendation Rules"
+msgstr "قواعد التوصية"
+
+#. module: era_customer_success
+msgid "Recommendation Evidence"
+msgstr "أدلة التوصية"
+
+#. module: era_customer_success
+msgid "Need Signals"
+msgstr "علامات الاحتياج"
+
+#. module: era_customer_success
+msgid "Discovery Questions"
+msgstr "أسئلة الاستكشاف"
+
+#. module: era_customer_success
+msgid "Expected Customer Outcomes"
+msgstr "النتائج المتوقعة للعميل"
+
+#. module: era_customer_success
+msgid "Not Suitable When"
+msgstr "غير مناسبة عندما"
+
+#. module: era_customer_success
+msgid "Recommend for Low Adoption"
+msgstr "توصية عند انخفاض التبنّي"
+
+#. module: era_customer_success
+msgid "Recommend for Support Pressure"
+msgstr "توصية عند ضغط ساعات الدعم"
+
+#. module: era_customer_success
+msgid "Recommend after Failed SLA"
+msgstr "توصية بعد إخفاق اتفاقية مستوى الخدمة"
+
+#. module: era_customer_success
+msgid "Recommendation Ticket Tags"
+msgstr "وسوم التذاكر المحفزة للتوصية"
+
+#. module: era_customer_success
+msgid "Re-offer Cooldown (Days)"
+msgstr "فترة الانتظار قبل إعادة العرض بالأيام"
+
+#. module: era_customer_success
+msgid "Services to Explore"
+msgstr "خدمات للاستكشاف"
+
+#. module: era_customer_success
+msgid "Create Drafts to Validate"
+msgstr "إنشاء مسودات للتحقق"
+
+#. module: era_customer_success
+msgid "Draft Offerings to Validate"
+msgstr "مسودات عروض تحتاج تحققاً"
+
+#. module: era_customer_success
+msgid "Need Qualification"
+msgstr "تأهيل الاحتياج"
+
+#. module: era_customer_success
+msgid "Validated Customer Need"
+msgstr "احتياج العميل المتحقق منه"
+
+#. module: era_customer_success
+msgid "Customer Contact"
+msgstr "جهة اتصال العميل"
+
+#. module: era_customer_success
+msgid "Suitability Checked"
+msgstr "تم التحقق من الملاءمة"
+
+#. module: era_customer_success
+msgid "Customer Interest Confirmed"
+msgstr "تم تأكيد اهتمام العميل"
+
+#. module: era_customer_success
+msgid "Need Timing"
+msgstr "توقيت الاحتياج"
+
+#. module: era_customer_success
+msgid "Now"
+msgstr "الآن"
+
+#. module: era_customer_success
+msgid "This Quarter"
+msgstr "خلال هذا الربع"
+
+#. module: era_customer_success
+msgid "Later"
+msgstr "لاحقاً"
+
+#. module: era_customer_success
+msgid "Qualify → Create Opportunity"
+msgstr "تأهيل ← إنشاء فرصة"
+
+#. module: era_customer_success
+msgid "Recommendation cooldown cannot be negative."
+msgstr "لا يمكن أن تكون فترة انتظار إعادة التوصية سالبة."
+
+#. module: era_customer_success
+msgid "The offering customer and company must match the Customer Success account."
+msgstr "يجب أن يطابق عميل العرض وشركته حساب نجاح العميل."
+
+#. module: era_customer_success
+msgid "The offering contact must belong to the Customer Success account."
+msgstr "يجب أن تنتمي جهة اتصال العرض إلى حساب نجاح العميل."
+
+#. module: era_customer_success
+msgid "Document the validated need and contact, then confirm suitability before presenting the service."
+msgstr "وثّق الاحتياج المتحقق منه وجهة الاتصال، ثم أكد الملاءمة قبل تقديم الخدمة."
+
+#. module: era_customer_success
+msgid "Present and discuss the service before qualifying an opportunity."
+msgstr "قدّم الخدمة وناقشها مع العميل قبل تأهيل فرصة."
+
+#. module: era_customer_success
+msgid "Confirm customer interest and need timing before creating an opportunity."
+msgstr "أكد اهتمام العميل وتوقيت الاحتياج قبل إنشاء فرصة."
+
+#. module: era_customer_success
+msgid "Complete need, contact, and suitability qualification before creating an opportunity."
+msgstr "أكمل تأهيل الاحتياج وجهة الاتصال والملاءمة قبل إنشاء فرصة."
+
+#. module: era_customer_success
+msgid "Voice of Customer"
+msgstr "صوت العميل"
+
+#. module: era_customer_success
+msgid "Voice of Customer Insight"
+msgstr "ملاحظة من صوت العميل"
+
+#. module: era_customer_success
+msgid "Customer Voice"
+msgstr "صوت العميل"
+
+#. module: era_customer_success
+msgid "Open Customer Insights"
+msgstr "ملاحظات العميل المفتوحة"
+
+#. module: era_customer_success
+msgid "High-Priority Customer Insights"
+msgstr "ملاحظات العميل عالية الأولوية"
+
+#. module: era_customer_success
+msgid "Customer Insight"
+msgstr "ملاحظة العميل"
+
+#. module: era_customer_success
+msgid "Realized Value"
+msgstr "القيمة المحققة"
+
+#. module: era_customer_success
+msgid "Customer Priority"
+msgstr "أولوية العميل"
+
+#. module: era_customer_success
+msgid "Risk or Complaint"
+msgstr "مخاطرة أو شكوى"
+
+#. module: era_customer_success
+msgid "Support Experience"
+msgstr "تجربة الدعم"
+
+#. module: era_customer_success
+msgid "Action Taken"
+msgstr "تم اتخاذ إجراء"
+
+#. module: era_customer_success
+msgid "Triaged"
+msgstr "تم التصنيف"
+
+#. module: era_customer_success
+msgid "Risks or Blockers"
+msgstr "المخاطر أو العوائق"
+
+#. module: era_customer_success
+msgid "Suggested Customer Success Response"
+msgstr "استجابة نجاح العملاء المقترحة"
+
+#. module: era_customer_success
+msgid "Response and Resolution"
+msgstr "الاستجابة والحل"
+
+#. module: era_customer_success
+msgid "Customer Evidence"
+msgstr "أدلة العميل"
+
+#. module: era_customer_success
+msgid "Source and Audit"
+msgstr "المصدر وسجل التدقيق"
+
+#. module: era_customer_success
+msgid "Triage"
+msgstr "تصنيف"
+
+#. module: era_customer_success
+msgid "Mark Action Taken"
+msgstr "تسجيل اتخاذ إجراء"
+
+#. module: era_customer_success
+msgid "Close Insight"
+msgstr "إغلاق ملاحظة العميل"
+
+#. module: era_customer_success
+msgid "My Insights"
+msgstr "ملاحظاتي"
+
+#. module: era_customer_success
+msgid "Value Review Voice - %s"
+msgstr "صوت العميل من مراجعة القيمة - %s"
+
+#. module: era_customer_success
+msgid "Adoption Voice - %s"
+msgstr "صوت العميل من تقييم التبنّي - %s"
+
+#. module: era_customer_success
+msgid "High-priority customer voice: %s"
+msgstr "صوت عميل عالي الأولوية: %s"
+
+#. module: era_customer_success
+msgid "Review the customer evidence, agree a response, and record the action taken."
+msgstr "راجع أدلة العميل، واتفق على الاستجابة، وسجّل الإجراء المتخذ."
+
+#. module: era_customer_success
+msgid "Voice of Customer source snapshots cannot be modified."
+msgstr "لا يمكن تعديل لقطة مصدر صوت العميل."
+
+#. module: era_customer_success
+msgid "Voice of Customer audit fields are managed by workflow actions."
+msgstr "تُدار حقول تدقيق صوت العميل من خلال إجراءات مسار العمل."
+
+#. module: era_customer_success
+msgid "Use the Voice of Customer workflow buttons to change its status."
+msgstr "استخدم أزرار مسار صوت العميل لتغيير حالته."
+
+#. module: era_customer_success
+msgid "Record the response and resolution before closing the customer insight."
+msgstr "سجّل الاستجابة والحل قبل إغلاق ملاحظة العميل."
+
+#. module: era_customer_success
+msgid "A newer work item is already open for this customer and week. Close it before reopening history."
+msgstr "يوجد بند عمل أحدث مفتوح لهذا العميل والأسبوع. أغلقه قبل إعادة فتح السجل التاريخي."
+
+#. module: era_customer_success
+msgid "Another work item became open for this customer. Refresh and try again."
+msgstr "تم فتح بند عمل آخر لهذا العميل. حدّث الصفحة وحاول مرة أخرى."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_stage__account_count
 msgid "# Accounts"
 msgstr "عدد الحسابات"

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_voc_insight_list" model="ir.ui.view">
+        <field name="name">cs.voc.insight.list</field>
+        <field name="model">cs.voc.insight</field>
+        <field name="arch" type="xml">
+            <list string="Voice of Customer" create="0" delete="0"
+                  decoration-danger="priority == 'high' and state in ('new','triaged')"
+                  decoration-success="sentiment == 'positive'"
+                  decoration-muted="state in ('closed','dismissed')">
+                <field name="insight_date"/>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="source_type" widget="badge"/>
+                <field name="theme" widget="badge"/>
+                <field name="sentiment" widget="badge"/>
+                <field name="priority" widget="badge"/>
+                <field name="csm_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_voc_insight_form" model="ir.ui.view">
+        <field name="name">cs.voc.insight.form</field>
+        <field name="model">cs.voc.insight</field>
+        <field name="arch" type="xml">
+            <form string="Voice of Customer Insight" create="0" delete="0">
+                <header>
+                    <button name="action_triage" type="object" string="Triage"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_mark_acted" type="object" string="Mark Action Taken"
+                            class="btn-primary" invisible="state not in ('new','triaged')"/>
+                    <button name="action_close" type="object" string="Close Insight"
+                            class="btn-primary" invisible="state not in ('triaged','acted')"/>
+                    <button name="action_dismiss" type="object" string="Dismiss"
+                            invisible="state not in ('new','triaged')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,triaged,acted,closed,dismissed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="cs_account_id" readonly="1"/>
+                            <field name="csm_user_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="insight_date" readonly="1"/>
+                            <field name="source_type" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="theme" readonly="1"/>
+                            <field name="sentiment" widget="badge" readonly="1"/>
+                            <field name="priority" widget="badge" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Customer Evidence">
+                            <group>
+                                <field name="summary" readonly="1"/>
+                                <field name="evidence" readonly="1"/>
+                                <field name="customer_priorities" readonly="1"/>
+                                <field name="risks_or_blockers" readonly="1"/>
+                                <field name="suggested_response" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Response and Resolution">
+                            <group>
+                                <field name="next_step"/>
+                                <field name="next_step_date" required="next_step"/>
+                                <field name="action_note"/>
+                                <field name="resolution_note"/>
+                            </group>
+                        </page>
+                        <page string="Source and Audit">
+                            <group>
+                                <field name="value_review_id" readonly="1"/>
+                                <field name="adoption_assessment_id" readonly="1"/>
+                                <field name="adoption_score" readonly="1"/>
+                                <field name="adoption_confidence" readonly="1"/>
+                                <field name="triaged_on" readonly="1"/>
+                                <field name="triaged_by_id" readonly="1"/>
+                                <field name="acted_on" readonly="1"/>
+                                <field name="acted_by_id" readonly="1"/>
+                                <field name="closed_on" readonly="1"/>
+                                <field name="closed_by_id" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cs_voc_insight_search" model="ir.ui.view">
+        <field name="name">cs.voc.insight.search</field>
+        <field name="model">cs.voc.insight</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="csm_user_id"/>
+                <filter name="open" string="Open"
+                        domain="[('state', 'in', ('new','triaged','acted'))]"/>
+                <filter name="high_priority" string="High Priority"
+                        domain="[('priority', '=', 'high'), ('state', 'in', ('new','triaged'))]"/>
+                <filter name="negative" string="Negative" domain="[('sentiment', '=', 'negative')]"/>
+                <filter name="my_insights" string="My Insights" domain="[('csm_user_id', '=', uid)]"/>
+                <group>
+                    <filter name="group_theme" string="Theme" context="{'group_by': 'theme'}"/>
+                    <filter name="group_source" string="Source" context="{'group_by': 'source_type'}"/>
+                    <filter name="group_priority" string="Priority" context="{'group_by': 'priority'}"/>
+                    <filter name="group_csm" string="CSM Engineer" context="{'group_by': 'csm_user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cs_voc_insight" model="ir.actions.act_window">
+        <field name="name">Voice of Customer</field>
+        <field name="res_model">cs.voc.insight</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cs_voc_insight_search"/>
+        <field name="context">{'search_default_open': 1, 'search_default_my_insights': 1}</field>
+    </record>
+</odoo>

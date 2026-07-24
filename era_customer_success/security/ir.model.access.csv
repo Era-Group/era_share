@@ -31,5 +31,7 @@ access_cs_value_review_user,cs.value.review.user,model_cs_value_review,group_era
 access_cs_value_review_manager,cs.value.review.manager,model_cs_value_review,group_era_cs_manager,1,1,1,1
 access_cs_adoption_assessment_user,cs.adoption.assessment.user,model_cs_adoption_assessment,group_era_cs_user,1,1,1,0
 access_cs_adoption_assessment_manager,cs.adoption.assessment.manager,model_cs_adoption_assessment,group_era_cs_manager,1,1,1,1
+access_cs_voc_insight_user,cs.voc.insight.user,model_cs_voc_insight,group_era_cs_user,1,1,0,0
+access_cs_voc_insight_manager,cs.voc.insight.manager,model_cs_voc_insight,group_era_cs_manager,1,1,0,0
 access_cs_service_recommendation_wizard_user,cs.service.recommendation.wizard.user,model_cs_service_recommendation_wizard,group_era_cs_user,1,1,1,1
 access_cs_service_recommendation_line_user,cs.service.recommendation.line.user,model_cs_service_recommendation_line,group_era_cs_user,1,1,1,1

@@ -8,7 +8,7 @@ import requests
 from markupsafe import Markup
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import html2plaintext
 from odoo.tools.mimetypes import guess_mimetype
 
@@ -90,7 +90,7 @@ class CsService(models.Model):
     def _check_recommendation_cooldown(self):
         for service in self:
             if service.recommendation_cooldown_days < 0:
-                raise UserError(_('Recommendation cooldown cannot be negative.'))
+                raise ValidationError(_('Recommendation cooldown cannot be negative.'))
 
     def action_enrich_from_url(self):
         """Fetch the service page and let the AI extract structured details."""

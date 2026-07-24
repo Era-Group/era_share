@@ -98,6 +98,7 @@
                             help="Draft a ready-to-send WhatsApp, SMS or email message (or a reply to the last message) with AI — then edit the tone and send it."/>
                     <button name="action_call_briefing" type="object" string="Prepare (AI)" icon="fa-id-card-o" class="btn-secondary"
                             help="Generate an AI pre-call/meeting briefing: a quick snapshot, talking points, risks to handle, and the suggested goal of the contact."/>
+                    <button name="action_recommend_services" type="object" string="Recommend Services" icon="fa-compass" class="btn-secondary"/>
                     <button name="action_cs_present_offering" type="object" string="Present Offering" class="btn-primary"
                             help="Present a tailored service offering to this customer (with an AI-personalised pitch) and track whether it is accepted."/>
                     <button name="action_cs_capture_request" type="object" string="Capture Request" class="btn-secondary"
@@ -168,6 +169,10 @@
                         <button class="oe_stat_button" type="object" name="action_view_adoption_assessments" icon="fa-users"
                                 help="Record measured adoption evidence and customer enablement plans.">
                             <field name="latest_adoption_score" widget="statinfo" string="Adoption"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_voc_insights" icon="fa-commenting-o"
+                                help="Review customer priorities, risks, value, and adoption evidence captured from confirmed workflows.">
+                            <field name="open_voc_count" widget="statinfo" string="Customer Voice"/>
                         </button>
                     </div>
                     <widget name="web_ribbon" title="Churn Risk" bg_color="text-bg-danger" invisible="not churn_risk"/>

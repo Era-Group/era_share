@@ -2,7 +2,7 @@
 import logging
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -46,10 +46,19 @@ class CsmOffering(models.Model):
     ], default='draft', tracking=True, string='Status')
     notes = fields.Text()
     opportunity_id = fields.Many2one('crm.lead', string='Opportunity', readonly=True)
+    rejected_on = fields.Datetime(readonly=True, copy=False)
     is_service_recommendation = fields.Boolean(readonly=True, copy=False)
     recommendation_key = fields.Char(readonly=True, copy=False, index=True)
     recommendation_score = fields.Integer(readonly=True, copy=False)
     recommendation_reason = fields.Text(readonly=True, copy=False)
+    customer_need = fields.Text(string='Validated Customer Need')
+    customer_contact_id = fields.Many2one('res.partner', string='Customer Contact')
+    suitability_checked = fields.Boolean(string='Suitability Checked')
+    customer_interest_confirmed = fields.Boolean(string='Customer Interest Confirmed')
+    need_timing = fields.Selection([
+        ('unknown', 'Unknown'), ('now', 'Now'),
+        ('quarter', 'This Quarter'), ('later', 'Later'),
+    ], default='unknown', string='Need Timing')
 
     _recommendation_key_unique = models.Constraint(
         'unique(recommendation_key)',
@@ -105,12 +114,19 @@ class CsmOffering(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if not self.env.su and vals.get('state', 'draft') != 'draft':
+                raise UserError(_('Create offerings as drafts and use the workflow actions.'))
             if vals.get('cs_account_id'):
                 account = self.env['cs.account'].browse(vals['cs_account_id'])
                 vals.setdefault('partner_id', account.partner_id.id)
                 vals.setdefault('csm_user_id', account.csm_user_id.id)
                 vals.setdefault('company_id', account.company_id.id)
         return super().create(vals_list)
+
+    def write(self, vals):
+        if 'state' in vals and not self.env.su:
+            raise UserError(_('Use the offering workflow actions to change its status.'))
+        return super().write(vals)
 
     @api.constrains('cs_account_id', 'partner_id', 'company_id')
     def _check_account_customer_company(self):
@@ -120,18 +136,46 @@ class CsmOffering(models.Model):
                 offering.partner_id.commercial_partner_id
                 == offering.cs_account_id.partner_id.commercial_partner_id)
             if not same_company or not same_customer:
-                raise UserError(_(
+                raise ValidationError(_(
                     'The offering customer and company must match the Customer Success account.'))
 
+    @api.constrains('customer_contact_id', 'cs_account_id')
+    def _check_customer_contact(self):
+        for offering in self.filtered('customer_contact_id'):
+            if offering.customer_contact_id.id not in offering.cs_account_id._partner_ids():
+                raise ValidationError(_('The offering contact must belong to the Customer Success account.'))
+
     def action_present(self):
-        self.write({'state': 'presented'})
+        self.check_access('write')
+        for offering in self:
+            if (not offering.customer_need or not offering.customer_contact_id
+                    or not offering.suitability_checked):
+                raise UserError(_(
+                    'Document the validated need and contact, then confirm suitability before presenting the service.'))
+        self.sudo().write({'state': 'presented'})
         for off in self:
             off.message_post(body=_('Offering "%s" presented to the customer.', off.name))
         return True
 
     def action_accept(self):
+        self.check_access('write')
+        if self:
+            self.env.cr.execute(
+                'SELECT id FROM csm_offering WHERE id IN %s FOR UPDATE',
+                [tuple(self.ids)])
+            self.invalidate_recordset(['state', 'opportunity_id'])
         upsell_tag = self.env.ref('era_customer_success.crm_tag_cs_upsell', raise_if_not_found=False)
         for off in self:
+            if off.state != 'presented':
+                raise UserError(_('Present and discuss the service before qualifying an opportunity.'))
+            if (not off.customer_need or not off.customer_contact_id
+                    or not off.suitability_checked):
+                raise UserError(_(
+                    'Complete need, contact, and suitability qualification before creating an opportunity.'))
+            if not off.customer_interest_confirmed or off.need_timing == 'unknown':
+                raise UserError(_('Confirm customer interest and need timing before creating an opportunity.'))
+            if off.opportunity_id:
+                raise UserError(_('An opportunity has already been created for this offering.'))
             lead = self.env['crm.lead'].create({
                 'name': _('Upsell: %s', off.name),
                 'type': 'opportunity',
@@ -142,12 +186,16 @@ class CsmOffering(models.Model):
                 'cs_upsell_type': 'expansion',
                 'tag_ids': [(4, upsell_tag.id)] if upsell_tag else False,
             })
-            off.write({'state': 'accepted', 'opportunity_id': lead.id})
+            off.sudo().write({'state': 'accepted', 'opportunity_id': lead.id})
             off.message_post(body=_('Offering accepted – opportunity %s created.', lead.name))
         return True
 
     def action_reject(self):
-        self.write({'state': 'rejected'})
+        self.check_access('write')
+        self.sudo().write({
+            'state': 'rejected',
+            'rejected_on': fields.Datetime.now(),
+        })
         return True
 
     def action_send_service_whatsapp(self):

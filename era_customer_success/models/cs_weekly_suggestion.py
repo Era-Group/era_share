@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 
+from psycopg2 import IntegrityError
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
@@ -37,6 +39,7 @@ class CsWeeklySuggestion(models.Model):
     action_type = fields.Selection([
         ('risk_recovery', 'Risk Recovery'),
         ('support_recovery', 'Support Recovery'),
+        ('voice_customer', 'Voice of Customer'),
         ('support_hours', 'Support Hours'),
         ('relationship', 'Relationship Follow-up'),
         ('renewal', 'Renewal Follow-up'),
@@ -71,6 +74,16 @@ class CsWeeklySuggestion(models.Model):
     next_step = fields.Char(string='Next Step', readonly=True, copy=False)
     next_step_date = fields.Date(string='Next Step Date', readonly=True, copy=False)
     is_overdue = fields.Boolean(string='Overdue', compute='_compute_is_overdue', search='_search_is_overdue')
+    voc_id = fields.Many2one(
+        'cs.voc.insight', string='Customer Insight', readonly=True, copy=False,
+        ondelete='set null')
+
+    def init(self):
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS cs_weekly_suggestion_open_account_week_uniq
+                ON cs_weekly_suggestion (cs_account_id, week)
+             WHERE state = 'open'
+        """)
 
     @api.depends('state', 'due_date')
     def _compute_is_overdue(self):
@@ -128,15 +141,31 @@ class CsWeeklySuggestion(models.Model):
         }
 
     def action_reopen(self):
-        self.write({
-            'state': 'open',
-            'outcome': False,
-            'outcome_note': False,
-            'completed_on': False,
-            'completed_by_id': False,
-            'next_step': False,
-            'next_step_date': False,
-        })
+        self.check_access('write')
+        for suggestion in self:
+            existing = self.search([
+                ('id', '!=', suggestion.id),
+                ('cs_account_id', '=', suggestion.cs_account_id.id),
+                ('week', '=', suggestion.week),
+                ('state', '=', 'open'),
+            ], limit=1)
+            if existing:
+                raise UserError(_(
+                    'A newer work item is already open for this customer and week. Close it before reopening history.'))
+            try:
+                with self.env.cr.savepoint():
+                    suggestion.write({
+                        'state': 'open',
+                        'outcome': False,
+                        'outcome_note': False,
+                        'completed_on': False,
+                        'completed_by_id': False,
+                        'next_step': False,
+                        'next_step_date': False,
+                    })
+            except IntegrityError:
+                raise UserError(_(
+                    'Another work item became open for this customer. Refresh and try again.'))
 
     @api.model
     def _week_start(self, day=None):
@@ -146,11 +175,6 @@ class CsWeeklySuggestion(models.Model):
     @api.model
     def _upsert_automated_item(self, account, values, week=None):
         week = week or self._week_start()
-        item = self.sudo().search([
-            ('cs_account_id', '=', account.id),
-            ('week', '=', week),
-            ('state', '=', 'open'),
-        ], order='id desc', limit=1)
         vals = {
             **values,
             'cs_account_id': account.id,
@@ -159,10 +183,26 @@ class CsWeeklySuggestion(models.Model):
             'churn_probability': account.churn_probability,
             'generated_on': fields.Datetime.now(),
         }
-        if item:
-            item.write(vals)
-            return item
-        return self.sudo().create(vals)
+        for attempt in range(3):
+            item = self.sudo().search([
+                ('cs_account_id', '=', account.id),
+                ('week', '=', week),
+                ('state', '=', 'open'),
+            ], order='id desc', limit=1)
+            if item:
+                self.env.cr.execute(
+                    'SELECT id FROM cs_weekly_suggestion WHERE id = %s FOR UPDATE',
+                    [item.id])
+                item.invalidate_recordset(['state'])
+                if item.state == 'open':
+                    item.write(vals)
+                    return item
+            try:
+                with self.env.cr.savepoint():
+                    return self.sudo().create(vals)
+            except IntegrityError:
+                if attempt == 2:
+                    raise
 
     @api.model
     def _cron_build_daily_worklist(self):
@@ -237,6 +277,11 @@ class CsSuggestionComplete(models.TransientModel):
             'next_step': self.next_step or False,
             'next_step_date': self.next_step_date or False,
         })
+        if suggestion.voc_id:
+            if self.dismiss:
+                suggestion.voc_id.action_dismiss(self.outcome_note)
+            else:
+                suggestion.voc_id.action_mark_acted(self.outcome_note)
         if self.schedule_activity and self.next_step and self.next_step_date:
             account = suggestion.cs_account_id
             existing = account.activity_ids.filtered(

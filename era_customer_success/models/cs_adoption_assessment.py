@@ -164,6 +164,7 @@ class CsAdoptionAssessment(models.Model):
             if not assessment.next_assessment_date:
                 values['next_assessment_date'] = assessment.assessment_date + timedelta(days=90)
             assessment.sudo().write(values)
+            self.env['cs.voc.insight']._capture_adoption_assessment(assessment)
             assessment.cs_account_id._refresh_adoption_work_item()
 
     def action_cancel(self):

@@ -114,6 +114,16 @@ class CsAccount(models.Model):
     sheet_extra_notes = fields.Text(string='Sheet: Extra Notes')
     sheet_expansion_status = fields.Char(string='Sheet: Expansion Status')
     sheet_last_synced_on = fields.Datetime(string='Sheet: Last synced', readonly=True, copy=False)
+    sheet_approved_scope = fields.Char(
+        string='Approved Sheet Columns', compute='_compute_sheet_approved_scope')
+
+    def _compute_sheet_approved_scope(self):
+        scope = self.env['ir.config_parameter'].sudo().get_param(
+            'era_customer_success.google_approval_scope', '')
+        normalized = ','.join(
+            column.strip().upper() for column in scope.split(',') if column.strip())
+        for account in self:
+            account.sheet_approved_scope = normalized
 
     def action_fill_google_sheet_fields(self):
         self.ensure_one()

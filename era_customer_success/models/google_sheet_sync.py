@@ -393,7 +393,8 @@ class CsGoogleSheetSync(models.AbstractModel):
             'title': _('Customer Sheet fields filled'),
             'message': _('Customer matched with %s%% confidence (%s). %s fields filled: %s.',
                          confidence, reason, len(written_fields), ', '.join(written_fields)),
-            'type': 'success', 'sticky': False}}
+            'type': 'success', 'sticky': False,
+            'next': {'type': 'ir.actions.client', 'tag': 'reload'}}}
 
     @api.model
     def action_send_account(self, account):

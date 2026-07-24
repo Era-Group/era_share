@@ -247,6 +247,7 @@
                     </group>
                     <separator string="Google Sheet / ERA Information"/>
                     <div class="o_cs_google_sheet_block border border-danger rounded p-3 mb-3">
+                        <field name="sheet_approved_scope" invisible="1"/>
                         <div class="mb-2">
                             <button name="action_match_fetch_google_sheet_fields" type="object" string="1. Match Excel and fetch all fields" class="btn-danger" icon="fa-search"/>
                             <button name="action_fill_google_sheet_fields" type="object" string="2. Fill fields with AI" class="btn-warning" icon="fa-magic"/>
@@ -258,31 +259,51 @@
                         </div>
                         <group>
                             <group string="ERA ownership">
-                                <field name="sheet_era_csm" class="text-danger"/>
-                                <field name="sheet_era_csm_phone" class="text-danger"/>
-                                <field name="sheet_era_csm_email" class="text-danger"/>
-                                <field name="sheet_recurring_plan" class="text-danger"/>
-                                <field name="sheet_industry" class="text-danger"/>
-                                <field name="sheet_active_users" class="text-danger"/>
-                                <field name="sheet_adoption" class="text-danger"/>
-                                <field name="sheet_client_website" class="text-danger"/>
+                                <field name="sheet_era_csm" class="text-danger" invisible="'A' not in sheet_approved_scope"/>
+                                <field name="sheet_era_csm" readonly="1" invisible="'A' in sheet_approved_scope"/>
+                                <field name="sheet_era_csm_phone" class="text-danger" invisible="'B' not in sheet_approved_scope"/>
+                                <field name="sheet_era_csm_phone" readonly="1" invisible="'B' in sheet_approved_scope"/>
+                                <field name="sheet_era_csm_email" class="text-danger" invisible="'C' not in sheet_approved_scope"/>
+                                <field name="sheet_era_csm_email" readonly="1" invisible="'C' in sheet_approved_scope"/>
+                                <field name="sheet_recurring_plan" class="text-danger" invisible="'G' not in sheet_approved_scope"/>
+                                <field name="sheet_recurring_plan" readonly="1" invisible="'G' in sheet_approved_scope"/>
+                                <field name="sheet_industry" class="text-danger" invisible="'H' not in sheet_approved_scope"/>
+                                <field name="sheet_industry" readonly="1" invisible="'H' in sheet_approved_scope"/>
+                                <field name="sheet_active_users" class="text-danger" invisible="'K' not in sheet_approved_scope"/>
+                                <field name="sheet_active_users" readonly="1" invisible="'K' in sheet_approved_scope"/>
+                                <field name="sheet_adoption" class="text-danger" invisible="'N' not in sheet_approved_scope"/>
+                                <field name="sheet_adoption" readonly="1" invisible="'N' in sheet_approved_scope"/>
+                                <field name="sheet_client_website" class="text-danger" invisible="'O' not in sheet_approved_scope"/>
+                                <field name="sheet_client_website" readonly="1" invisible="'O' in sheet_approved_scope"/>
                             </group>
                             <group string="Sheet review fields">
-                                <field name="sheet_customer_name" class="text-danger"/>
-                                <field name="sheet_date_of_join" class="text-danger"/>
-                                <field name="sheet_next_invoice_date" class="text-danger"/>
-                                <field name="sheet_number_of_employees" class="text-danger"/>
-                                <field name="sheet_number_of_users" class="text-danger"/>
-                                <field name="sheet_stage" class="text-danger"/>
-                                <field name="sheet_version" class="text-danger"/>
-                                <field name="sheet_expansion_status" class="text-danger"/>
+                                <field name="sheet_customer_name" class="text-danger" invisible="'D' not in sheet_approved_scope"/>
+                                <field name="sheet_customer_name" readonly="1" invisible="'D' in sheet_approved_scope"/>
+                                <field name="sheet_date_of_join" class="text-danger" invisible="'E' not in sheet_approved_scope"/>
+                                <field name="sheet_date_of_join" readonly="1" invisible="'E' in sheet_approved_scope"/>
+                                <field name="sheet_next_invoice_date" class="text-danger" invisible="'F' not in sheet_approved_scope"/>
+                                <field name="sheet_next_invoice_date" readonly="1" invisible="'F' in sheet_approved_scope"/>
+                                <field name="sheet_number_of_employees" class="text-danger" invisible="'I' not in sheet_approved_scope"/>
+                                <field name="sheet_number_of_employees" readonly="1" invisible="'I' in sheet_approved_scope"/>
+                                <field name="sheet_number_of_users" class="text-danger" invisible="'J' not in sheet_approved_scope"/>
+                                <field name="sheet_number_of_users" readonly="1" invisible="'J' in sheet_approved_scope"/>
+                                <field name="sheet_stage" class="text-danger" invisible="'L' not in sheet_approved_scope"/>
+                                <field name="sheet_stage" readonly="1" invisible="'L' in sheet_approved_scope"/>
+                                <field name="sheet_version" class="text-danger" invisible="'M' not in sheet_approved_scope"/>
+                                <field name="sheet_version" readonly="1" invisible="'M' in sheet_approved_scope"/>
+                                <field name="sheet_expansion_status" class="text-danger" invisible="'T' not in sheet_approved_scope"/>
+                                <field name="sheet_expansion_status" readonly="1" invisible="'T' in sheet_approved_scope"/>
                             </group>
                         </group>
                         <group string="Sheet notes and planning">
-                            <field name="sheet_active_implemented_modules" class="text-danger"/>
-                            <field name="sheet_potential_expansion" class="text-danger"/>
-                            <field name="sheet_next_action" class="text-danger"/>
-                            <field name="sheet_extra_notes" class="text-danger"/>
+                            <field name="sheet_active_implemented_modules" class="text-danger" invisible="'P' not in sheet_approved_scope"/>
+                            <field name="sheet_active_implemented_modules" readonly="1" invisible="'P' in sheet_approved_scope"/>
+                            <field name="sheet_potential_expansion" class="text-danger" invisible="'Q' not in sheet_approved_scope"/>
+                            <field name="sheet_potential_expansion" readonly="1" invisible="'Q' in sheet_approved_scope"/>
+                            <field name="sheet_next_action" class="text-danger" invisible="'R' not in sheet_approved_scope"/>
+                            <field name="sheet_next_action" readonly="1" invisible="'R' in sheet_approved_scope"/>
+                            <field name="sheet_extra_notes" class="text-danger" invisible="'S' not in sheet_approved_scope"/>
+                            <field name="sheet_extra_notes" readonly="1" invisible="'S' in sheet_approved_scope"/>
                             <field name="sheet_last_synced_on"/>
                         </group>
                     </div>

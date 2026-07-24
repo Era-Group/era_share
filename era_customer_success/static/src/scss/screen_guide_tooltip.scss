@@ -105,3 +105,24 @@ html[dir="rtl"] .o_cs_screen_guide_dialog .o_cs_screen_guide_start {
     position: absolute;
     top: .5rem;
 }
+
+.o_cs_google_sheet_block .text-danger {
+    background-color: var(--bs-danger) !important;
+    border-radius: var(--bs-border-radius);
+    color: #fff !important;
+    padding: .25rem .5rem;
+
+    &.o_input,
+    .o_input,
+    input,
+    textarea {
+        background-color: var(--bs-danger) !important;
+        border-color: var(--bs-danger) !important;
+        color: #fff !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: rgba(255, 255, 255, .75) !important;
+    }
+}

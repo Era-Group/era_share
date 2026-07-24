@@ -5,10 +5,15 @@
         <field name="model">cs.suggestion.complete</field>
         <field name="arch" type="xml">
             <form string="Record Outcome">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Close the loop after completing a recommended customer action.<br/>
-                    <strong>Features:</strong> Outcome classification, factual note, next step, deadline, and optional Odoo activity.<br/>
-                    <strong>Priority:</strong> Record what actually happened and the customer's response. Add one dated next step when follow-up remains; do not mark work complete with a vague note.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> The final record of what happened after you completed a customer task.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Choose the actual outcome of the action.</li>
+                        <li>Write what you did and how the customer responded.</li>
+                        <li>Add one next step, date, and optional Odoo activity when follow-up remains.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Select the outcome and write a useful note. If more work is needed, add a specific next step and date. Do not close the task with a vague note such as “contacted customer”.</p>
                 </div>
                 <group>
                     <field name="suggestion_id" invisible="1"/>

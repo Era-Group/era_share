@@ -73,7 +73,21 @@ class TestServiceRecommendation(TransactionCase):
 
     def test_low_confidence_and_confirmed_purchase_are_excluded(self):
         self._assessment(complete=False)
-        self.assertFalse(self._wizard().line_ids)
+        wizard = self._wizard()
+        self.assertFalse(wizard.line_ids)
+        self.assertIn('No current customer signal matches', wizard.recommendation_status)
+
+    def test_unconfigured_catalog_explains_why_no_suggestions_exist(self):
+        self.service.write({
+            'recommend_on_low_adoption': False,
+            'recommend_on_support_pressure': False,
+            'recommend_on_sla_failure': False,
+        })
+
+        wizard = self._wizard()
+
+        self.assertFalse(wizard.line_ids)
+        self.assertIn('No catalog service has recommendation conditions configured', wizard.recommendation_status)
 
     def test_explicit_success_plan_link_and_idempotency(self):
         self.env['cs.success.profile'].create({

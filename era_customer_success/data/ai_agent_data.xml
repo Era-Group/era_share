@@ -72,10 +72,21 @@ Return a STRICT JSON object (no markdown fences, no commentary) with exactly the
   "product_details": "concrete product details (what it does, integrations, requirements), in Arabic",
   "target_audience": "who this is for, in Arabic (one short line)",
   "decision_points": "what helps decide to offer it: value proposition, pricing model if mentioned, typical triggers, in Arabic",
-  "suggested_pitch": "a short, ready-to-send suggested pitch message to a customer, in Arabic"
+  "suggested_pitch": "a short, ready-to-send suggested pitch message to a customer, in Arabic",
+  "need_signals": "observable signs that indicate a customer may need this service, Arabic bullet list",
+  "discovery_questions": "3-5 Arabic questions a CSM should ask to validate the need",
+  "value_outcomes": "concrete customer outcomes this service can help achieve, Arabic bullet list",
+  "not_suitable_when": "when the CSM should not present this service, Arabic bullet list",
+  "recommend_on_low_adoption": true|false,
+  "recommend_on_support_pressure": true|false,
+  "recommend_on_sla_failure": true|false,
+  "recommendation_rationale": "brief Arabic explanation of which recommendation rules were enabled and why"
 }
 Rules:
 - Base everything ONLY on the provided page text; do not invent prices or facts not present. If unknown, say so briefly.
+- Set a recommendation boolean to true ONLY when the page text clearly supports it. For example, low adoption only when the service is explicitly about onboarding, training, enablement, or increasing product usage; support pressure only when it explicitly helps support operations, service capacity, or support continuity; failed SLA only when it explicitly helps recover support quality, escalation, monitoring, or response performance.
+- If the page text does not clearly support a rule, return false. Do not enable rules just because the service appears useful.
+- Do not return ticket tags. Managers map catalog services to their own Helpdesk tags manually because tag names differ between databases.
 - Write all values in Arabic. Return JSON only.
             </field>
         </record>

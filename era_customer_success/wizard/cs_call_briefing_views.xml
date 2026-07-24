@@ -5,10 +5,15 @@
         <field name="model">cs.call.briefing</field>
         <field name="arch" type="xml">
             <form string="Pre-Call Briefing (AI)">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Prepare for a customer call or meeting without manually reading the full timeline.<br/>
-                    <strong>Features:</strong> Situation snapshot, talking points, risks, recommended objective, and regeneration from current data.<br/>
-                    <strong>Priority:</strong> Confirm important facts and dates before the call. Use the briefing to prepare questions, not as a script or a substitute for listening to the customer.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A short preparation note for an upcoming customer call or meeting.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Understand the current customer situation before the conversation.</li>
+                        <li>Review suggested talking points, risks, and the main meeting objective.</li>
+                        <li>Regenerate the briefing when customer data or the meeting purpose changes.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Read the briefing, verify important facts and dates, and prepare your questions. Do not read it as a script; listen to the customer and update the record after the call.</p>
                 </div>
                 <group>
                     <field name="partner_id" readonly="1"/>

@@ -49,7 +49,7 @@
                             string="Read from URL (AI)" icon="fa-magic" class="btn-primary"
                             invisible="not url"
                             groups="era_customer_success.group_era_cs_manager"
-                            help="Read the public service URL and draft catalog details, features, audience, value points, and pitch content. Review every generated statement before using the service in recommendations."/>
+                            help="Read the public service URL and fill catalog details, customer-fit signals, discovery questions, outcomes, exclusions, and clearly supported recommendation rules. Review every generated field before enabling the service for recommendations."/>
                     <button name="action_create_whatsapp_template" type="object"
                             string="إنشاء قالب واتساب" icon="fa-whatsapp" class="btn-secondary"
                             invisible="whatsapp_template_id"
@@ -63,10 +63,19 @@
                     <field name="whatsapp_template_id" invisible="1"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Define when a service creates customer value and how a CSM should discover the need.<br/>
-                        <strong>Features:</strong> Audience, value points, need signals, discovery questions, exclusions, ticket tags, image, pitch, and communication template.<br/>
-                        <strong>Priority:</strong> Write observable need signals and disqualifiers before enabling recommendations. Review generated catalog content and never describe a recommendation as confirmed customer interest.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> The service catalog entry used to explain, recommend, and present one service correctly.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Explain what the service does, who needs it, and the value it should create.</li>
+                            <li>Define visible need signals, discovery questions, and cases where it should not be offered.</li>
+                            <li>Prepare the image, pitch, ticket tags, and approved communication template.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Write the need signals and exclusion rules first, then add questions the CSM should ask. Review generated content before enabling recommendations.</p>
+                    </div>
+                    <div class="alert alert-warning" role="status"
+                         invisible="recommend_on_low_adoption or recommend_on_support_pressure or recommend_on_sla_failure or recommendation_ticket_tag_ids">
+                        <strong>Recommendation setup required:</strong> This service will not appear in Suggested Services until you configure at least one recommendation trigger or ticket tag below, or link it to an active success plan.
                     </div>
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift"

@@ -56,10 +56,15 @@
                     <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Execute the single most important customer action due now and preserve its outcome.<br/>
-                        <strong>Features:</strong> Ranked reason, source signal, customer context, outcome, next step, deadline, and optional activity.<br/>
-                        <strong>Priority:</strong> Handle critical support and customer-risk items first. Open the customer evidence before acting; dismiss only when the item is genuinely irrelevant.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> One prioritized task telling you which customer needs attention and what to do next.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Understand why the task is important and which customer signal created it.</li>
+                            <li>Open the customer record and complete the suggested action.</li>
+                            <li>Record the result and create a dated follow-up when more work is needed.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Open the customer and verify the reason. Complete urgent support and risk tasks first. Record the real outcome; dismiss only when the task is not relevant.</p>
                     </div>
                     <group>
                         <group>

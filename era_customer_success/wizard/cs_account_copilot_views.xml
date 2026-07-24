@@ -5,10 +5,15 @@
         <field name="model">cs.account.copilot</field>
         <field name="arch" type="xml">
             <form string="Account Copilot">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Ask a focused question when you need a quick reading of the customer record.<br/>
-                    <strong>Features:</strong> Grounded answer from account data and timeline without changing customer records.<br/>
-                    <strong>Priority:</strong> Ask one specific question, then verify dates, amounts, commitments, and risks in their source records before making a decision.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A question box for getting a quick answer from the customer's Odoo data.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Ask why health is low, what changed, or what needs attention.</li>
+                        <li>Find recent support, communication, renewal, and activity context.</li>
+                        <li>Prepare before opening several records manually.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Ask one clear question. Use the answer to find the right records, then verify dates, amounts, commitments, and risks before deciding. The answer does not change customer data.</p>
                 </div>
                 <div class="alert alert-info" role="status">
                     🤖 <field name="partner_id" readonly="1" class="oe_inline" nolabel="1"/> — اسأل أي سؤال عن هذا العميل (الوضع، الصحة، المخاطر، التجديد، آخر التفاعلات…)

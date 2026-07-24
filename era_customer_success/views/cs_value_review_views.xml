@@ -53,10 +53,15 @@
                            statusbar_visible="draft,prepared,held,closed,cancelled"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Review the value delivered during a defined evidence period in a structured customer meeting.<br/>
-                        <strong>Features:</strong> Frozen KPI snapshot, agenda, customer-confirmed value, evidence, risks, commitments, and follow-up.<br/>
-                        <strong>Priority:</strong> Set the measured period first, prepare the snapshot, hold the meeting, then close only after the customer confirms value and commitments. The review date is the meeting date.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> A periodic meeting record used to confirm whether the customer received useful value from the service.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Review results and usage during a clear period, such as 1 April to 30 June.</li>
+                            <li>Discuss problems, blockers, satisfaction, and value confirmed by the customer.</li>
+                            <li>Agree the next actions, owners, dates, and next review meeting.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Enter the period being measured, then click Prepare Review. After the meeting, record what the customer confirmed and the agreed commitments. The review date is the meeting date, not the measured period.</p>
                     </div>
                     <field name="ai_value_review_enabled" invisible="1"/>
                     <div class="oe_title">

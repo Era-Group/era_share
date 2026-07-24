@@ -4,7 +4,13 @@ Odoo 19 Enterprise. All versions deployed to prod DB `ae3229b2-5291-4967-80e1-63
 (upgrade via `odoo-bin -u era_customer_success -d <prod> --stop-after-init`; workers auto-reload).
 Commits pushed to `origin/stage`.
 
+## 19.0.24.0.0 — Guided Operations
+- Expanded service URL enrichment to fill customer-fit signals, discovery questions, expected outcomes, exclusions, and only evidence-supported adoption/support/SLA recommendation rules. Existing service-extractor agents are upgraded through migration.
+- Expanded Next Step ✦ context to include the latest confirmed adoption assessment, open Voice of Customer insights, and latest closed value review, alongside health, support, renewal, and communication signals.
+- Added transparent service-recommendation diagnostics: the wizard now explains whether no services are configured or no customer evidence matches configured services, while the catalog warns managers when a service has no recommendation condition.
+
 ## 19.0.23.0.0 — Guided Operations
+- Rewrote every screen guide in plain, practical language: what the screen is, three concrete uses, and a direct first step. Replaced the dense blue alert with a readable white card and bullet list.
 - Fixed draft Value Review creation for CSM users: customer and period fields are now editable before preparation, while calculated snapshot values remain protected and the full scope freezes after preparation.
 - Reduced chatter noise from automatic health recalculation: score, status, and churn-risk tracking is posted only when the health score moves by 20 points or more in one update.
 - Clarified value-review periods with field-level examples and calendar-quarter defaults. The period now identifies the evidence window being reviewed, while the review date identifies the meeting date.

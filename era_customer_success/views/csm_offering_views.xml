@@ -52,10 +52,15 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Validate a discovered customer need before handing it to the commercial team.<br/>
-                        <strong>Features:</strong> Service context, need evidence, suitability check, customer contact, pitch, presentation, interest, timing, and CRM handoff.<br/>
-                        <strong>Priority:</strong> Document the need before presenting. Create an opportunity only after the customer explicitly confirms interest and timing; reject unsuitable recommendations instead of forcing qualification.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> A controlled path from a possible service need to a qualified commercial opportunity.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Write the customer's need and why the selected service may fit.</li>
+                            <li>Prepare the message, record who received it, and mark when it was presented.</li>
+                            <li>Confirm customer interest and timing before handing the need to Sales.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Document the need and check suitability, then present the service. Create the opportunity only after the customer confirms interest and timing. Reject it if it is not suitable.</p>
                     </div>
                     <field name="is_service_recommendation" invisible="1"/>
                     <div class="alert alert-info" role="status" invisible="not is_service_recommendation">

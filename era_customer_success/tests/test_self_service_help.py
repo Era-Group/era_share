@@ -1,3 +1,4 @@
+from odoo import fields
 from odoo.tests.common import TransactionCase
 
 
@@ -29,6 +30,60 @@ class TestSelfServiceHelp(TransactionCase):
         self.assertIn('direct validation', descriptions['customer_interest_confirmed']['help'])
         self.assertIn('CRM opportunity', descriptions['need_timing']['help'])
 
+    def test_next_action_summary_includes_new_customer_success_workflows(self):
+        partner = self.env['res.partner'].create({
+            'name': 'Next Action Context Customer',
+            'is_company': True,
+        })
+        account = self.env['cs.account'].sudo().create({
+            'partner_id': partner.id,
+            'csm_user_id': self.env.user.id,
+        })
+        adoption = self.env['cs.adoption.assessment'].sudo().create({
+            'cs_account_id': account.id,
+            'assessment_date': fields.Date.today(),
+            'licensed_users': 10,
+            'active_users_30d': 5,
+            'key_workflows_total': 2,
+            'adopted_workflows': 1,
+            'onboarding_measured': True,
+            'onboarding_percent': 50,
+            'usage_frequency': 'weekly',
+            'blockers': 'Users need enablement.',
+            'evidence': 'Weekly usage report.',
+            'source_reference': 'CSM review meeting.',
+        })
+        adoption.action_confirm()
+        self.env['cs.voc.insight'].sudo().create({
+            'name': 'Recovery follow-up needed',
+            'cs_account_id': account.id,
+            'insight_date': fields.Date.today(),
+            'source_type': 'manual',
+            'theme': 'support',
+            'sentiment': 'negative',
+            'priority': 'high',
+            'summary': 'Customer needs a recovery update.',
+        })
+        review = self.env['cs.value.review'].sudo().create({
+            'cs_account_id': account.id,
+            'state': 'closed',
+            'review_date': fields.Date.today(),
+            'period_start': fields.Date.today(),
+            'period_end': fields.Date.today(),
+            'value_realized': 'Faster processing.',
+            'risks_and_blockers': 'Training remains needed.',
+            'commitments': 'Run enablement session.',
+        })
+
+        summary = account._build_situation_summary()
+
+        self.assertIn('Latest adoption assessment', summary)
+        self.assertIn('Users need enablement.', summary)
+        self.assertIn('Open Voice of Customer insights', summary)
+        self.assertIn('Customer needs a recovery update.', summary)
+        self.assertIn('Latest closed value review', summary)
+        self.assertIn(review.value_realized, summary)
+
     def test_every_operational_form_has_a_starting_guide(self):
         view_xmlids = [
             'view_cs_account_form',
@@ -56,6 +111,7 @@ class TestSelfServiceHelp(TransactionCase):
         for xmlid in view_xmlids:
             with self.subTest(view=xmlid):
                 arch = self.env.ref('era_customer_success.%s' % xmlid).arch_db
-                self.assertIn('Best use:', arch)
-                self.assertIn('Features:', arch)
-                self.assertIn('Priority:', arch)
+                self.assertIn('What is this screen?', arch)
+                self.assertIn('Use it to:', arch)
+                self.assertIn('Start here:', arch)
+                self.assertIn('<ul>', arch)

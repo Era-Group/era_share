@@ -5,10 +5,15 @@
         <field name="model">cs.followup.compose</field>
         <field name="arch" type="xml">
             <form string="Compose Follow-up (AI)">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Prepare a context-aware customer follow-up for the selected channel.<br/>
-                    <strong>Features:</strong> Purpose, tone, recent timeline, optional service context, editable draft, and channel handoff.<br/>
-                    <strong>Priority:</strong> Verify the recipient, facts, promises, and tone before opening the channel. The generated text is a draft and is never sent automatically.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A message-writing assistant for customer follow-up by email, WhatsApp, or SMS.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Choose the purpose, channel, and tone of the message.</li>
+                        <li>Use recent customer history and an optional service to prepare the draft.</li>
+                        <li>Edit the text before opening the selected communication channel.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Select the purpose and tone, generate the draft, then check the recipient, facts, promises, and language. The message is never sent automatically.</p>
                 </div>
                 <group>
                     <group>

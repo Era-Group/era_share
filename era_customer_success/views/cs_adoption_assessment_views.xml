@@ -44,10 +44,15 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Measure whether the customer is actually using the solution and realizing the intended workflows.<br/>
-                        <strong>Features:</strong> Usage, workflow adoption, onboarding progress, confidence, evidence, blockers, and enablement plan.<br/>
-                        <strong>Priority:</strong> Enter verifiable measurements and source evidence. Confirm only reliable data; low confidence means validate the data before recommending a service.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> A measurement of how well the customer is using the solution in real work.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Compare active users with licensed users and check usage frequency.</li>
+                            <li>Measure completed onboarding and adoption of the important workflows.</li>
+                            <li>Record evidence, usage blockers, and the enablement action needed.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Enter only numbers you can verify and attach the source. If the data is incomplete, validate it first. Confirm the assessment only when you trust the measurements.</p>
                     </div>
                     <field name="ai_adoption_enabled" invisible="1"/>
                     <div class="oe_title">

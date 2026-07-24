@@ -643,6 +643,57 @@ class CsAccount(models.Model):
                 self.call_count, self.whatsapp_count, self.meeting_count,
                 self.opportunity_count, self.offering_count),
         ]
+        latest_adoption = self.env['cs.adoption.assessment'].sudo().search([
+            ('cs_account_id', '=', self.id), ('state', '=', 'confirmed'),
+        ], order='assessment_date desc, id desc', limit=1)
+        if latest_adoption:
+            L.append(
+                "Latest adoption assessment (%s): score %s%%, data confidence %s%%, "
+                "status %s. Blocker: %s. Enablement plan: %s." % (
+                    latest_adoption.assessment_date,
+                    latest_adoption.score,
+                    latest_adoption.confidence,
+                    latest_adoption.status,
+                    (latest_adoption.blockers or '-')[:500],
+                    (latest_adoption.enablement_plan or '-')[:500],
+                )
+            )
+        else:
+            L.append("No confirmed adoption assessment is available.")
+
+        open_voc = self.env['cs.voc.insight'].sudo().search([
+            ('cs_account_id', '=', self.id),
+            ('state', 'in', ('new', 'triaged', 'acted')),
+        ], order='priority_rank desc, insight_date desc, id desc', limit=3)
+        if open_voc:
+            L.append("Open Voice of Customer insights:\n- " + "\n- ".join(
+                "%s | %s sentiment | %s priority | %s" % (
+                    insight.theme, insight.sentiment, insight.priority,
+                    (insight.summary or insight.suggestion or '-')[:500],
+                ) for insight in open_voc
+            ))
+        else:
+            L.append("No open Voice of Customer insights.")
+
+        latest_review = self.env['cs.value.review'].sudo().search([
+            ('cs_account_id', '=', self.id), ('state', '=', 'closed'),
+        ], order='review_date desc, id desc', limit=1)
+        if latest_review:
+            L.append(
+                "Latest closed value review (%s, period %s to %s): confirmed value: %s. "
+                "Risks: %s. Commitments: %s. Next step: %s on %s." % (
+                    latest_review.review_date,
+                    latest_review.period_start,
+                    latest_review.period_end,
+                    (latest_review.value_realized or '-')[:500],
+                    (latest_review.risks_and_blockers or '-')[:500],
+                    (latest_review.commitments or '-')[:500],
+                    latest_review.next_step or '-',
+                    latest_review.next_step_date or '-',
+                )
+            )
+        else:
+            L.append("No closed value review is available.")
         msgs = self.message_ids.filtered(lambda m: m.body)[:8]
         hist = [re.sub(r'<[^>]+>', ' ', (m.body or '')).strip()[:160] for m in msgs]
         hist = [h for h in hist if h]

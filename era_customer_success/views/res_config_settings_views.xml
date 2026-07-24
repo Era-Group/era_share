@@ -7,10 +7,15 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="Customer Success" string="Customer Success" name="era_customer_success">
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Enable only the Customer Success automations your team is ready to own and review.<br/>
-                        <strong>Features:</strong> Optional ✦ assistants, support-wallet products, validity, balance thresholds, and expiry warnings.<br/>
-                        <strong>Priority:</strong> Configure support products and thresholds first. Enable each ✦ feature only after reviewing its data-sharing note, expected owner, and operating process.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> The control center for optional Customer Success automation and support-hours rules.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Turn individual ✦ assistants on or off.</li>
+                            <li>Select which products create support-hours wallets.</li>
+                            <li>Set package validity, low-balance limits, and expiry warnings.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Configure support products and limits first. Before enabling any ✦ feature, read what data it sends, decide who reviews the output, and define how the team will use it.</p>
                     </div>
                     <block title="Artificial Intelligence" id="cs_ai_block">
                         <setting string="AI Sentiment Analysis"

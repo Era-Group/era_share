@@ -7,10 +7,15 @@
                 <div class="mt-2">Loading Customer Success dashboard…</div>
             </div>
             <div t-else="">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Identify portfolio-level risks and where management attention is needed.<br/>
-                    <strong>Features:</strong> Customer volume, health, risk, revenue, sentiment, engineer distribution, and drill-down rankings.<br/>
-                    <strong>Priority:</strong> Start with critical customers and overloaded portfolios, then open the source accounts before acting. Use trends for coaching and prioritization, not as standalone employee evaluation.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A management overview showing where the customer portfolio needs attention.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>See customer volume, health, risk, revenue, and sentiment.</li>
+                        <li>Compare workload and customer distribution across CSM engineers.</li>
+                        <li>Open the customer records behind any number or ranking.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Review critical customers and overloaded portfolios, then open the source accounts before acting. Use trends for coaching and prioritization, not as a final employee evaluation.</p>
                 </div>
                 <div class="d-flex align-items-center mb-3">
                     <h2 class="mb-0 me-auto">Customer Success — Executive Dashboard</h2>

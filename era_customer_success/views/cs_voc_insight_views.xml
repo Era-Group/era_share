@@ -43,10 +43,15 @@
                            statusbar_visible="new,triaged,acted,closed,dismissed"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Turn validated customer concerns, priorities, and blockers into owned actions.<br/>
-                        <strong>Features:</strong> Source evidence, theme, sentiment, priority, suggested response, audit trail, and resolution.<br/>
-                        <strong>Priority:</strong> Triage high-priority negative signals first, document the action taken, and close only with a clear resolution. Do not convert an insight directly into a sales opportunity.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> A customer concern, request, priority, or blocker that needs follow-up.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Understand what the customer said and which review or assessment created the signal.</li>
+                            <li>Set the importance and assign a clear response or recovery action.</li>
+                            <li>Keep the action, owner, dates, and final resolution in one audit trail.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Handle high-priority negative signals first. Review the source, click Triage, take the action, then close only after writing the resolution. This is not a sales opportunity.</p>
                     </div>
                     <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
                     <group>

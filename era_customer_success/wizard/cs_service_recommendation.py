@@ -12,6 +12,7 @@ class CsServiceRecommendationWizard(models.TransientModel):
 
     cs_account_id = fields.Many2one('cs.account', required=True, readonly=True)
     partner_id = fields.Many2one(related='cs_account_id.partner_id', readonly=True)
+    recommendation_status = fields.Text(readonly=True)
     line_ids = fields.One2many(
         'cs.service.recommendation.line', 'wizard_id', string='Recommendations')
 
@@ -69,8 +70,16 @@ class CsServiceRecommendationWizard(models.TransientModel):
             lambda item: item.state in ('draft', 'presented')).service_id.ids)
 
         recommendations = []
+        eligible_services = self.env['cs.service'].search([('active', '=', True)])
+        configured_services = eligible_services.filtered(
+            lambda service: service.recommend_on_low_adoption
+            or service.recommend_on_support_pressure
+            or service.recommend_on_sla_failure
+            or service.recommendation_ticket_tag_ids
+            or service in account.success_profile_ids.mapped('recommended_service_ids')
+        )
         today = fields.Date.context_today(self)
-        for service in self.env['cs.service'].search([('active', '=', True)]):
+        for service in eligible_services:
             if service.id in open_service_ids:
                 continue
             if purchased_template_ids.intersection(service.product_tmpl_ids.ids):
@@ -113,6 +122,17 @@ class CsServiceRecommendationWizard(models.TransientModel):
                 reasons.append(_('The active success plan explicitly links this service to customer goals.'))
             if score >= 30:
                 recommendations.append((score, service, '\n'.join('- %s' % reason for reason in reasons)))
+
+        if recommendations:
+            status = _(
+                'Suggestions are based on matched customer signals. Read the reason and discovery questions before creating a draft.')
+        elif not configured_services:
+            status = _(
+                'No catalog service has recommendation conditions configured yet. Ask a Customer Success Manager to configure at least one trigger, ticket tag, or success-plan link in the service catalog.')
+        else:
+            status = _(
+                'No current customer signal matches the configured services. Add a confirmed adoption assessment, active success-plan service link, recent tagged support ticket, support-pressure signal, or failed SLA to generate an evidence-based recommendation.')
+        self.write({'recommendation_status': status})
 
         recommendations.sort(key=lambda item: (-item[0], item[1].name.lower(), item[1].id))
         for score, service, reason in recommendations[:3]:

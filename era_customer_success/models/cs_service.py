@@ -120,14 +120,36 @@ class CsService(models.Model):
                 raise UserError(_('AI extraction failed. Check the AI provider configuration.'))
             if not isinstance(data, dict):
                 raise UserError(_('The AI did not return usable data.'))
+            recommendation_flags = {
+                field_name: bool(data.get(field_name))
+                for field_name in (
+                    'recommend_on_low_adoption',
+                    'recommend_on_support_pressure',
+                    'recommend_on_sla_failure',
+                )
+                if data.get(field_name) is not None
+            }
+            recommendation_rationale = (data.get('recommendation_rationale') or '').strip()
+            decision_points = data.get('decision_points') or svc.decision_points
+            if recommendation_rationale:
+                decision_points = '%s\n\n%s: %s' % (
+                    decision_points or '',
+                    _('Recommendation setup rationale'),
+                    recommendation_rationale,
+                )
             svc.write({
                 'short_description': data.get('description') or svc.short_description,
                 'features': data.get('features') or svc.features,
                 'product_details': data.get('product_details') or svc.product_details,
                 'target_audience': data.get('target_audience') or svc.target_audience,
-                'decision_points': data.get('decision_points') or svc.decision_points,
+                'decision_points': decision_points,
                 'pitch_template': data.get('suggested_pitch') or svc.pitch_template,
+                'need_signals': data.get('need_signals') or svc.need_signals,
+                'discovery_questions': data.get('discovery_questions') or svc.discovery_questions,
+                'value_outcomes': data.get('value_outcomes') or svc.value_outcomes,
+                'not_suitable_when': data.get('not_suitable_when') or svc.not_suitable_when,
                 'ai_enriched_on': fields.Datetime.now(),
+                **recommendation_flags,
             })
             # AI enrichment is NOT posted to the chatter — the extracted details and
             # the "AI Enriched On" timestamp are shown in the form fields instead.

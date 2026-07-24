@@ -5,10 +5,15 @@
         <field name="model">cs.capture.request</field>
         <field name="arch" type="xml">
             <form string="Capture Customer Request">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Route a customer request to the correct operational owner.<br/>
-                    <strong>Features:</strong> Support ticket or qualified commercial request, subject, details, team, value, and expected closing date.<br/>
-                    <strong>Priority:</strong> Use Helpdesk for service issues and CRM only for a real commercial request. Write enough context so the receiving team can act without asking the customer to repeat it.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A quick way to send a customer request to Support or Sales without losing its context.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Create a support ticket for a service problem or assistance request.</li>
+                        <li>Create a CRM opportunity only for a real commercial request.</li>
+                        <li>Pass the subject, details, responsible team, value, and expected date.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Choose the correct request type, write what the customer asked for in clear words, and select the team that must act. Add enough detail so the customer does not need to repeat the request.</p>
                 </div>
                 <group>
                     <group>

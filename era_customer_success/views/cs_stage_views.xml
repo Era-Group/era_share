@@ -24,10 +24,15 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Configure the ordered lifecycle that every Customer Success account follows.<br/>
-                        <strong>Features:</strong> Sequence, kanban folding, color, onboarding windows, risk and churn meaning, and stage email template.<br/>
-                        <strong>Priority:</strong> Keep stages few and unambiguous. Avoid overlapping onboarding day windows, and mark risk or churn stages only when they should change reporting and automation.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> A stage in the customer lifecycle, such as onboarding, stable, at risk, or churned.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>Set the stage name, order, color, and meaning.</li>
+                            <li>Define the day range for automatic onboarding movement.</li>
+                            <li>Mark stages that represent risk or churn and choose the related email template.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Keep the lifecycle short and clear. Make onboarding day ranges non-overlapping. Mark risk and churn only when they should affect reports and automation.</p>
                     </div>
                     <group>
                         <group>

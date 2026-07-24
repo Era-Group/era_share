@@ -91,7 +91,7 @@
             <form>
                 <header>
                     <button name="action_suggest_next_step" type="object" string="Suggest Next Step (AI)" icon="fa-magic" class="btn-secondary"
-                            help="Ask the AI for the single best next action for this customer, based on their situation, history and last suggestion."/>
+                            help="Suggest one next action using the customer situation, support, renewal, health, communication, latest confirmed adoption assessment, open Voice of Customer insights, and the latest closed value review. Verify the source records before acting."/>
                     <button name="action_account_copilot" type="object" string="Ask AI" icon="fa-comments" class="btn-secondary"
                             help="Open the Account Copilot: ask any natural-language question about this customer and get an answer grounded in its data and timeline."/>
                     <button name="action_compose_followup" type="object" string="Compose (AI)" icon="fa-pencil-square-o" class="btn-secondary"
@@ -114,10 +114,15 @@
                     <field name="lifecycle_stage_id" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-info mb-3" role="status">
-                        <strong>Best use:</strong> Run the complete customer relationship from one 360° record.<br/>
-                        <strong>Features:</strong> Health, adoption, support, value, renewal, communications, work items, and service discovery.<br/>
-                        <strong>Priority:</strong> Start with open risks and today's action, verify the source evidence, then record the customer outcome and next date. AI and recommendations are advisory only.
+                    <div class="border rounded bg-light p-3 mb-3">
+                        <p><strong>What is this screen?</strong> The main workspace for understanding and managing one customer.</p>
+                        <p><strong>Use it to:</strong></p>
+                        <ul>
+                            <li>See customer health, support problems, adoption, renewal, and recent communication.</li>
+                            <li>Know the most important action due today and why it matters.</li>
+                            <li>Open plans, reviews, support hours, customer voice, and service needs from one place.</li>
+                        </ul>
+                        <p class="mb-0"><strong>Start here:</strong> Read the open risk and today's action, open its source evidence, contact the customer, then record the result and next date. ✦ uses support, health, adoption, Voice of Customer, and value reviews to help you decide; it does not replace your verification.</p>
                     </div>
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="object" name="action_view_tickets" icon="fa-ticket"

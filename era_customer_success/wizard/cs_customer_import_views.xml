@@ -5,10 +5,15 @@
         <field name="model">cs.customer.import</field>
         <field name="arch" type="xml">
             <form string="Smart Customer Import">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Enroll existing companies with real service or project history into Customer Success in controlled batches.<br/>
-                    <strong>Features:</strong> Source selection, candidate count, import limit, balanced CSM assignment, and optional tier classification.<br/>
-                    <strong>Priority:</strong> Start with a small limit, review assignment capacity, and import only companies that should receive an ongoing success motion. Existing accounts are skipped.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A controlled way to add existing Odoo companies to Customer Success.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Find companies that already have support tickets or projects.</li>
+                        <li>Import a limited batch and distribute it across available CSM engineers.</li>
+                        <li>Optionally classify customer tiers during import.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Choose the source, check the candidate count, and begin with a small limit. Review team capacity before automatic assignment. Existing Customer Success accounts are skipped.</p>
                 </div>
                 <div class="alert alert-info" role="status">
                     <i class="fa fa-magic me-1" title="Smart import"/>

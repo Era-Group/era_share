@@ -6,10 +6,15 @@
         <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
-                <div class="alert alert-info mx-3 mt-3 mb-0" role="status">
-                    <strong>Best use:</strong> Resolve the support issue while preserving customer-impact evidence for Customer Success.<br/>
-                    <strong>Features:</strong> Ticket ownership, SLA, communication, tags, resolution, and sentiment signal connected to customer health.<br/>
-                    <strong>Priority:</strong> Restore service and communicate clearly first. Keep tags and resolution factual; sentiment is a signal for follow-up, not a replacement for reading the conversation.
+                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0">
+                    <p><strong>What is this screen?</strong> The working record for solving one customer support problem.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Assign the issue, communicate with the customer, and monitor the SLA.</li>
+                        <li>Record useful tags, work performed, and the final resolution.</li>
+                        <li>Provide support-impact and sentiment signals to Customer Success.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Restore service and give the customer a clear update first. Keep tags and resolution factual. Read the conversation before using the sentiment signal for follow-up.</p>
                 </div>
             </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">

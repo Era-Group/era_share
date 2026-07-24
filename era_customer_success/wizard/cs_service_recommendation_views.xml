@@ -5,10 +5,15 @@
         <field name="model">cs.service.recommendation.wizard</field>
         <field name="arch" type="xml">
             <form string="Recommended Services">
-                <div class="alert alert-info mb-3" role="status">
-                    <strong>Best use:</strong> Discover which catalog services are worth validating with this customer now.<br/>
-                    <strong>Features:</strong> Evidence-based score, reason, discovery questions, selection, and draft-offering creation.<br/>
-                    <strong>Priority:</strong> Review the reason and ask the discovery questions before selecting a service. Creating a draft starts validation only; it does not present a service or create an opportunity.
+                <div class="border rounded bg-light p-3 mb-3">
+                    <p><strong>What is this screen?</strong> A list of services that may help this customer, based on current customer data.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>See which service was suggested, its score, and the reason.</li>
+                        <li>Read the questions you should ask to confirm the need.</li>
+                        <li>Select suitable services and create draft offerings for validation.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Read the reason, ask the discovery questions, then select only the services that deserve a customer conversation. A draft is not a sale, a presentation, or a CRM opportunity.</p>
                 </div>
                 <group>
                     <field name="cs_account_id" invisible="1"/>
@@ -17,6 +22,7 @@
                 <div class="alert alert-info" role="status">
                     هذه توصيات للاستكشاف فقط. تحقق من الاحتياج واهتمام العميل قبل تقديم الخدمة أو تأهيل فرصة.
                 </div>
+                <field name="recommendation_status" nolabel="1" readonly="1" widget="text"/>
                 <field name="line_ids" nolabel="1">
                     <list create="0" delete="0" editable="bottom">
                         <field name="selected"/>

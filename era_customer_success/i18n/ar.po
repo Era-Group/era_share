@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 08:13+0000\n"
-"PO-Revision-Date: 2026-07-24 15:22+0000\n"
+"PO-Revision-Date: 2026-07-24 15:47+0000\n"
 "Last-Translator: Era Group\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -170,224 +170,440 @@ msgstr ""
 "                        <span class=\"o_stat_text\">العميل</span>"
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid ""
-"<strong>Best use:</strong> Agree the customer's shared success direction before running reviews or recommending services.<br/>\n"
-"                        <strong>Features:</strong> Business objectives, success criteria, stakeholders, milestones, and goal-linked services.<br/>\n"
-"                        <strong>Priority:</strong> Keep one reviewed active plan, assign dated milestones, and record evidence and blockers. Review any generated draft before activation."
+"<strong>Recommendation setup required:</strong> This service will not appear"
+" in Suggested Services until you configure at least one recommendation "
+"trigger or ticket tag below, or link it to an active success plan."
 msgstr ""
-"<strong>أفضل استخدام:</strong> اتفق على اتجاه النجاح المشترك للعميل قبل المراجعات أو توصية الخدمات.<br/>\n"
-"                        <strong>المميزات:</strong> أهداف العمل ومعايير النجاح وأصحاب العلاقة والمراحل والخدمات المرتبطة بالأهداف.<br/>\n"
-"                        <strong>الأولوية:</strong> احتفظ بخطة نشطة واحدة بعد مراجعتها، وحدد مراحل مؤرخة وسجل الأدلة والعوائق. راجع أي مسودة مولدة قبل التفعيل."
+"<strong>يلزم إعداد التوصية:</strong> لن تظهر هذه الخدمة في «توصية الخدمات» "
+"حتى تضبط شرط توصية واحداً على الأقل أو وسم تذكرة أدناه، أو تربطها بخطة نجاح "
+"نشطة."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
 msgid ""
-"<strong>Best use:</strong> Ask a focused question when you need a quick reading of the customer record.<br/>\n"
-"                    <strong>Features:</strong> Grounded answer from account data and timeline without changing customer records.<br/>\n"
-"                    <strong>Priority:</strong> Ask one specific question, then verify dates, amounts, commitments, and risks in their source records before making a decision."
+"<strong>Start here:</strong> Ask one clear question. Use the answer to find "
+"the right records, then verify dates, amounts, commitments, and risks before"
+" deciding. The answer does not change customer data."
 msgstr ""
-"<strong>أفضل استخدام:</strong> اطرح سؤالاً محدداً عندما تحتاج قراءة سريعة لسجل العميل.<br/>\n"
-"                    <strong>المميزات:</strong> إجابة مستندة إلى بيانات الحساب وخطه الزمني دون تغيير سجلات العميل.<br/>\n"
-"                    <strong>الأولوية:</strong> اطرح سؤالاً واحداً محدداً ثم تحقق من التواريخ والمبالغ والالتزامات والمخاطر في سجلات المصدر قبل اتخاذ القرار."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
-msgid ""
-"<strong>Best use:</strong> Close the loop after completing a recommended customer action.<br/>\n"
-"                    <strong>Features:</strong> Outcome classification, factual note, next step, deadline, and optional Odoo activity.<br/>\n"
-"                    <strong>Priority:</strong> Record what actually happened and the customer's response. Add one dated next step when follow-up remains; do not mark work complete with a vague note."
-msgstr ""
-"<strong>أفضل استخدام:</strong> أغلق دورة العمل بعد تنفيذ إجراء العميل المقترح.<br/>\n"
-"                    <strong>المميزات:</strong> تصنيف النتيجة وملاحظة واقعية وخطوة تالية وموعد ونشاط أودو اختياري.<br/>\n"
-"                    <strong>الأولوية:</strong> سجل ما حدث فعلياً ورد العميل. أضف خطوة تالية واحدة مؤرخة عند استمرار المتابعة، ولا تكمل العمل بملاحظة مبهمة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
-msgid ""
-"<strong>Best use:</strong> Configure the ordered lifecycle that every Customer Success account follows.<br/>\n"
-"                        <strong>Features:</strong> Sequence, kanban folding, color, onboarding windows, risk and churn meaning, and stage email template.<br/>\n"
-"                        <strong>Priority:</strong> Keep stages few and unambiguous. Avoid overlapping onboarding day windows, and mark risk or churn stages only when they should change reporting and automation."
-msgstr ""
-"<strong>أفضل استخدام:</strong> اضبط دورة الحياة المرتبة التي يتبعها كل حساب نجاح عملاء.<br/>\n"
-"                        <strong>المميزات:</strong> الترتيب وطي الكانبان واللون وفترات التهيئة ومعنى الخطر والفقد وقالب بريد المرحلة.<br/>\n"
-"                        <strong>الأولوية:</strong> اجعل المراحل قليلة وواضحة. تجنب تداخل فترات التهيئة، وحدد الخطر أو الفقد فقط عندما ينبغي أن يغيرا التقارير والأتمتة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
-msgid ""
-"<strong>Best use:</strong> Define when a service creates customer value and how a CSM should discover the need.<br/>\n"
-"                        <strong>Features:</strong> Audience, value points, need signals, discovery questions, exclusions, ticket tags, image, pitch, and communication template.<br/>\n"
-"                        <strong>Priority:</strong> Write observable need signals and disqualifiers before enabling recommendations. Review generated catalog content and never describe a recommendation as confirmed customer interest."
-msgstr ""
-"<strong>أفضل استخدام:</strong> عرّف متى تحقق الخدمة قيمة للعميل وكيف يكتشف مهندس النجاح الاحتياج.<br/>\n"
-"                        <strong>المميزات:</strong> الجمهور ونقاط القيمة وإشارات الاحتياج وأسئلة الاستكشاف والاستبعادات ووسوم التذاكر والصورة والعرض وقالب التواصل.<br/>\n"
-"                        <strong>الأولوية:</strong> اكتب إشارات احتياج قابلة للملاحظة وموانع واضحة قبل تفعيل التوصيات. راجع المحتوى المولد ولا تصف التوصية كاهتمام مؤكد من العميل."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
-msgid ""
-"<strong>Best use:</strong> Discover which catalog services are worth validating with this customer now.<br/>\n"
-"                    <strong>Features:</strong> Evidence-based score, reason, discovery questions, selection, and draft-offering creation.<br/>\n"
-"                    <strong>Priority:</strong> Review the reason and ask the discovery questions before selecting a service. Creating a draft starts validation only; it does not present a service or create an opportunity."
-msgstr ""
-"<strong>أفضل استخدام:</strong> اكتشف خدمات الكتالوج الجديرة بالتحقق مع العميل الآن.<br/>\n"
-"                    <strong>المميزات:</strong> درجة وسبب مستندان إلى الأدلة وأسئلة استكشاف واختيار وإنشاء مسودة عرض.<br/>\n"
-"                    <strong>الأولوية:</strong> راجع السبب واطرح أسئلة الاستكشاف قبل اختيار الخدمة. إنشاء المسودة يبدأ التحقق فقط ولا يعرض خدمة أو ينشئ فرصة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
-msgid ""
-"<strong>Best use:</strong> Enable only the Customer Success automations your team is ready to own and review.<br/>\n"
-"                        <strong>Features:</strong> Optional ✦ assistants, support-wallet products, validity, balance thresholds, and expiry warnings.<br/>\n"
-"                        <strong>Priority:</strong> Configure support products and thresholds first. Enable each ✦ feature only after reviewing its data-sharing note, expected owner, and operating process."
-msgstr ""
-"<strong>أفضل استخدام:</strong> فعّل فقط أتمتة نجاح العملاء التي يملك فريقك القدرة على تشغيلها ومراجعتها.<br/>\n"
-"                        <strong>المميزات:</strong> مساعدات ✦ الاختيارية ومنتجات محافظ الدعم والصلاحية وحدود الرصيد وتنبيهات الانتهاء.<br/>\n"
-"                        <strong>الأولوية:</strong> اضبط منتجات الدعم والحدود أولاً. فعّل كل ميزة ✦ بعد مراجعة ملاحظة مشاركة البيانات والمسؤول المتوقع وآلية التشغيل."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
-msgid ""
-"<strong>Best use:</strong> Enroll existing companies with real service or project history into Customer Success in controlled batches.<br/>\n"
-"                    <strong>Features:</strong> Source selection, candidate count, import limit, balanced CSM assignment, and optional tier classification.<br/>\n"
-"                    <strong>Priority:</strong> Start with a small limit, review assignment capacity, and import only companies that should receive an ongoing success motion. Existing accounts are skipped."
-msgstr ""
-"<strong>أفضل استخدام:</strong> سجل الشركات ذات سجل خدمة أو مشاريع حقيقي في نجاح العملاء على دفعات مضبوطة.<br/>\n"
-"                    <strong>المميزات:</strong> اختيار المصدر وعدد المرشحين وحد الاستيراد والتوزيع المتوازن والتصنيف الاختياري.<br/>\n"
-"                    <strong>الأولوية:</strong> ابدأ بعدد صغير وراجع قدرة الإسناد، واستورد فقط الشركات التي تحتاج متابعة نجاح مستمرة. يتخطى النظام الحسابات الموجودة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
-msgid ""
-"<strong>Best use:</strong> Execute the single most important customer action due now and preserve its outcome.<br/>\n"
-"                        <strong>Features:</strong> Ranked reason, source signal, customer context, outcome, next step, deadline, and optional activity.<br/>\n"
-"                        <strong>Priority:</strong> Handle critical support and customer-risk items first. Open the customer evidence before acting; dismiss only when the item is genuinely irrelevant."
-msgstr ""
-"<strong>أفضل استخدام:</strong> نفذ أهم إجراء مستحق للعميل الآن واحفظ نتيجته.<br/>\n"
-"                        <strong>المميزات:</strong> سبب مرتب وإشارة المصدر وسياق العميل والنتيجة والخطوة التالية والموعد والنشاط الاختياري.<br/>\n"
-"                        <strong>الأولوية:</strong> عالج الدعم الحرج ومخاطر العميل أولاً. افتح أدلة العميل قبل التنفيذ، واستبعد المهمة فقط إذا كانت غير ذات صلة فعلاً."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
-msgid ""
-"<strong>Best use:</strong> Measure whether the customer is actually using the solution and realizing the intended workflows.<br/>\n"
-"                        <strong>Features:</strong> Usage, workflow adoption, onboarding progress, confidence, evidence, blockers, and enablement plan.<br/>\n"
-"                        <strong>Priority:</strong> Enter verifiable measurements and source evidence. Confirm only reliable data; low confidence means validate the data before recommending a service."
-msgstr ""
-"<strong>أفضل استخدام:</strong> قس ما إذا كان العميل يستخدم الحل فعلياً ويحقق مسارات العمل المستهدفة.<br/>\n"
-"                        <strong>المميزات:</strong> الاستخدام وتبنّي المسارات وتقدم التهيئة والموثوقية والأدلة والعوائق وخطة التمكين.<br/>\n"
-"                        <strong>الأولوية:</strong> أدخل قياسات قابلة للتحقق ودليل المصدر. أكد البيانات الموثوقة فقط؛ انخفاض الموثوقية يعني التحقق قبل توصية أي خدمة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
-msgid ""
-"<strong>Best use:</strong> Monitor prepaid support hours and discuss continuity before balance or validity runs out.<br/>\n"
-"                        <strong>Features:</strong> Purchased, consumed, remaining, balance percentage, expiry, live status, and source order.<br/>\n"
-"                        <strong>Priority:</strong> Review critical or expiring wallets first. Explore the customer's upcoming need before presenting additional support; this screen does not create an opportunity automatically."
-msgstr ""
-"<strong>أفضل استخدام:</strong> راقب ساعات الدعم المدفوعة مسبقاً وناقش الاستمرارية قبل نفاد الرصيد أو الصلاحية.<br/>\n"
-"                        <strong>المميزات:</strong> المشترى والمستهلك والمتبقي ونسبة الرصيد والانتهاء والحالة المباشرة وأمر المصدر.<br/>\n"
-"                        <strong>الأولوية:</strong> راجع المحافظ الحرجة أو القريبة من الانتهاء أولاً. استكشف احتياج العميل القادم قبل عرض دعم إضافي؛ لا تنشئ هذه الشاشة فرصة تلقائياً."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
-msgid ""
-"<strong>Best use:</strong> Prepare a context-aware customer follow-up for the selected channel.<br/>\n"
-"                    <strong>Features:</strong> Purpose, tone, recent timeline, optional service context, editable draft, and channel handoff.<br/>\n"
-"                    <strong>Priority:</strong> Verify the recipient, facts, promises, and tone before opening the channel. The generated text is a draft and is never sent automatically."
-msgstr ""
-"<strong>أفضل استخدام:</strong> جهز متابعة للعميل تراعي السياق والقناة المختارة.<br/>\n"
-"                    <strong>المميزات:</strong> الغرض والنبرة والخط الزمني الحديث وسياق خدمة اختياري ومسودة قابلة للتعديل وفتح القناة.<br/>\n"
-"                    <strong>الأولوية:</strong> تحقق من المستلم والحقائق والوعود والنبرة قبل فتح القناة. النص المولد مسودة ولا يُرسل تلقائياً أبداً."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
-msgid ""
-"<strong>Best use:</strong> Prepare for a customer call or meeting without manually reading the full timeline.<br/>\n"
-"                    <strong>Features:</strong> Situation snapshot, talking points, risks, recommended objective, and regeneration from current data.<br/>\n"
-"                    <strong>Priority:</strong> Confirm important facts and dates before the call. Use the briefing to prepare questions, not as a script or a substitute for listening to the customer."
-msgstr ""
-"<strong>أفضل استخدام:</strong> استعد لمكالمة أو اجتماع دون قراءة الخط الزمني بالكامل يدوياً.<br/>\n"
-"                    <strong>المميزات:</strong> لقطة الوضع ونقاط الحديث والمخاطر والهدف المقترح وإعادة التوليد من البيانات الحالية.<br/>\n"
-"                    <strong>الأولوية:</strong> أكد الحقائق والتواريخ المهمة قبل الاتصال. استخدم الموجز لتحضير الأسئلة لا كنص جاهز أو بديل عن الاستماع للعميل."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
-msgid ""
-"<strong>Best use:</strong> Resolve the support issue while preserving customer-impact evidence for Customer Success.<br/>\n"
-"                    <strong>Features:</strong> Ticket ownership, SLA, communication, tags, resolution, and sentiment signal connected to customer health.<br/>\n"
-"                    <strong>Priority:</strong> Restore service and communicate clearly first. Keep tags and resolution factual; sentiment is a signal for follow-up, not a replacement for reading the conversation."
-msgstr ""
-"<strong>أفضل استخدام:</strong> حل مشكلة الدعم مع حفظ دليل أثرها على العميل لنجاح العملاء.<br/>\n"
-"                    <strong>المميزات:</strong> مسؤول التذكرة واتفاقية مستوى الخدمة والتواصل والوسوم والحل وإشارة المشاعر المرتبطة بصحة العميل.<br/>\n"
-"                    <strong>الأولوية:</strong> استعد الخدمة وتواصل بوضوح أولاً. اجعل الوسوم والحل واقعيين؛ المشاعر إشارة للمتابعة وليست بديلاً عن قراءة المحادثة."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
-msgid ""
-"<strong>Best use:</strong> Review the value delivered during a defined evidence period in a structured customer meeting.<br/>\n"
-"                        <strong>Features:</strong> Frozen KPI snapshot, agenda, customer-confirmed value, evidence, risks, commitments, and follow-up.<br/>\n"
-"                        <strong>Priority:</strong> Set the measured period first, prepare the snapshot, hold the meeting, then close only after the customer confirms value and commitments. The review date is the meeting date."
-msgstr ""
-"<strong>أفضل استخدام:</strong> راجع القيمة المقدمة خلال فترة أدلة محددة في اجتماع منظم مع العميل.<br/>\n"
-"                        <strong>المميزات:</strong> لقطة مؤشرات ثابتة وجدول أعمال وقيمة أكدها العميل وأدلة ومخاطر والتزامات ومتابعة.<br/>\n"
-"                        <strong>الأولوية:</strong> حدد الفترة المقاسة أولاً ثم جهز اللقطة واعقد الاجتماع، وأغلق فقط بعد تأكيد العميل للقيمة والالتزامات. تاريخ المراجعة هو تاريخ الاجتماع."
+"<strong>ابدأ من هنا:</strong> اطرح سؤالاً واحداً واضحاً. استخدم الإجابة "
+"للوصول إلى السجلات الصحيحة، ثم تحقق من التواريخ والمبالغ والالتزامات "
+"والمخاطر قبل اتخاذ القرار. الإجابة لا تغير بيانات العميل."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
 msgid ""
-"<strong>Best use:</strong> Route a customer request to the correct operational owner.<br/>\n"
-"                    <strong>Features:</strong> Support ticket or qualified commercial request, subject, details, team, value, and expected closing date.<br/>\n"
-"                    <strong>Priority:</strong> Use Helpdesk for service issues and CRM only for a real commercial request. Write enough context so the receiving team can act without asking the customer to repeat it."
+"<strong>Start here:</strong> Choose the correct request type, write what the"
+" customer asked for in clear words, and select the team that must act. Add "
+"enough detail so the customer does not need to repeat the request."
 msgstr ""
-"<strong>أفضل استخدام:</strong> وجّه طلب العميل إلى المسؤول التشغيلي الصحيح.<br/>\n"
-"                    <strong>المميزات:</strong> تذكرة دعم أو طلب تجاري مؤهل وموضوع وتفاصيل وفريق وقيمة وتاريخ إغلاق متوقع.<br/>\n"
-"                    <strong>الأولوية:</strong> استخدم الدعم لمشكلات الخدمة وCRM للطلبات التجارية الحقيقية فقط. اكتب سياقاً كافياً ليتصرف الفريق دون مطالبة العميل بتكرار طلبه."
+"<strong>ابدأ من هنا:</strong> اختر نوع الطلب الصحيح، واكتب طلب العميل بكلمات"
+" واضحة، وحدد الفريق المسؤول. أضف تفاصيل كافية حتى لا يضطر العميل إلى شرح "
+"طلبه مرة أخرى."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
 msgid ""
-"<strong>Best use:</strong> Run the complete customer relationship from one 360° record.<br/>\n"
-"                        <strong>Features:</strong> Health, adoption, support, value, renewal, communications, work items, and service discovery.<br/>\n"
-"                        <strong>Priority:</strong> Start with open risks and today's action, verify the source evidence, then record the customer outcome and next date. AI and recommendations are advisory only."
+"<strong>Start here:</strong> Choose the source, check the candidate count, "
+"and begin with a small limit. Review team capacity before automatic "
+"assignment. Existing Customer Success accounts are skipped."
 msgstr ""
-"<strong>أفضل استخدام:</strong> أدر علاقة العميل كاملة من سجل شامل واحد.<br/>\n"
-"                        <strong>المميزات:</strong> الصحة والتبنّي والدعم والقيمة والتجديد والتواصل ومهام العمل واستكشاف الخدمات.<br/>\n"
-"                        <strong>الأولوية:</strong> ابدأ بالمخاطر المفتوحة وإجراء اليوم، وتحقق من دليل المصدر ثم سجل نتيجة العميل والتاريخ التالي. ✦ والتوصيات أدوات استشارية فقط."
+"<strong>ابدأ من هنا:</strong> اختر المصدر، وراجع عدد الشركات المرشحة، وابدأ "
+"بعدد صغير. تأكد من قدرة الفريق قبل الإسناد التلقائي. يتخطى النظام الحسابات "
+"الموجودة."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid ""
-"<strong>Best use:</strong> Turn validated customer concerns, priorities, and blockers into owned actions.<br/>\n"
-"                        <strong>Features:</strong> Source evidence, theme, sentiment, priority, suggested response, audit trail, and resolution.<br/>\n"
-"                        <strong>Priority:</strong> Triage high-priority negative signals first, document the action taken, and close only with a clear resolution. Do not convert an insight directly into a sales opportunity."
+"<strong>Start here:</strong> Configure support products and limits first. "
+"Before enabling any ✦ feature, read what data it sends, decide who reviews "
+"the output, and define how the team will use it."
 msgstr ""
-"<strong>أفضل استخدام:</strong> حوّل مخاوف العميل وأولوياته وعوائقه المتحقق منها إلى إجراءات ذات مسؤول.<br/>\n"
-"                        <strong>المميزات:</strong> دليل المصدر والموضوع والمشاعر والأولوية والاستجابة المقترحة ومسار التدقيق والحل.<br/>\n"
-"                        <strong>الأولوية:</strong> افرز الإشارات السلبية عالية الأولوية أولاً ووثق الإجراء، وأغلق بحل واضح فقط. لا تحول الرؤية مباشرة إلى فرصة بيع."
-
-#. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
-msgid ""
-"<strong>Best use:</strong> Validate a discovered customer need before handing it to the commercial team.<br/>\n"
-"                        <strong>Features:</strong> Service context, need evidence, suitability check, customer contact, pitch, presentation, interest, timing, and CRM handoff.<br/>\n"
-"                        <strong>Priority:</strong> Document the need before presenting. Create an opportunity only after the customer explicitly confirms interest and timing; reject unsuitable recommendations instead of forcing qualification."
-msgstr ""
-"<strong>أفضل استخدام:</strong> تحقق من احتياج العميل المكتشف قبل تسليمه للفريق التجاري.<br/>\n"
-"                        <strong>المميزات:</strong> سياق الخدمة ودليل الاحتياج وفحص الملاءمة وجهة الاتصال والعرض والتقديم والاهتمام والتوقيت وتسليم CRM.<br/>\n"
-"                        <strong>الأولوية:</strong> وثق الاحتياج قبل العرض. أنشئ فرصة فقط بعد تأكيد العميل الصريح للاهتمام والتوقيت؛ ارفض التوصيات غير المناسبة بدلاً من فرض التأهيل."
+"<strong>ابدأ من هنا:</strong> اضبط منتجات الدعم والحدود أولاً. قبل تفعيل أي "
+"ميزة ✦، اقرأ البيانات التي سترسلها وحدد من سيراجع النتيجة وكيف سيستخدمها "
+"الفريق."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
 msgid ""
-"<strong>Best use:</strong> Verify the company identity and enroll it into Customer Success when ongoing value management is required.<br/>\n"
-"                    <strong>Features:</strong> Company contacts and communication details plus direct access to the Customer Success 360° account.<br/>\n"
-"                    <strong>Priority:</strong> Keep one clean company record, confirm the commercial entity, then enroll and assign a CSM. Do not create duplicate companies to separate Customer Success activity."
+"<strong>Start here:</strong> Confirm that this is the correct commercial "
+"company, clean its contacts, then enroll it and assign a CSM. Do not create "
+"a duplicate company for Customer Success work."
 msgstr ""
-"<strong>أفضل استخدام:</strong> تحقق من هوية الشركة وسجلها في نجاح العملاء عندما تحتاج إدارة قيمة مستمرة.<br/>\n"
-"                    <strong>المميزات:</strong> جهات اتصال الشركة وبيانات التواصل والوصول المباشر إلى حساب نجاح العملاء الشامل.<br/>\n"
-"                    <strong>الأولوية:</strong> احتفظ بسجل شركة واحد ونظيف وأكد الكيان التجاري ثم سجلها وأسند مهندس نجاح. لا تنشئ شركات مكررة لفصل نشاط نجاح العملاء."
+"<strong>ابدأ من هنا:</strong> تأكد أن هذا هو سجل الشركة الصحيح، ورتب جهات "
+"الاتصال، ثم أضفها إلى نجاح العملاء وأسند مهندسًا لها. لا تنشئ شركة مكررة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+msgid ""
+"<strong>Start here:</strong> Confirm the goals with the customer, add "
+"measurable success criteria, assign milestone dates, then activate one "
+"reviewed plan. Do not activate a generated draft before checking it."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> أكد الأهداف مع العميل، وأضف معايير نجاح قابلة "
+"للقياس، وحدد تواريخ المراحل، ثم فعّل خطة واحدة بعد مراجعتها. لا تفعّل مسودة "
+"مولدة قبل فحصها."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid ""
+"<strong>Start here:</strong> Document the need and check suitability, then "
+"present the service. Create the opportunity only after the customer confirms"
+" interest and timing. Reject it if it is not suitable."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اكتب احتياج العميل وتأكد من ملاءمة الخدمة، ثم "
+"اعرضها. أنشئ الفرصة فقط بعد أن يؤكد العميل اهتمامه والتوقيت. ارفض العرض إذا "
+"لم يكن مناسباً."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid ""
+"<strong>Start here:</strong> Enter only numbers you can verify and attach "
+"the source. If the data is incomplete, validate it first. Confirm the "
+"assessment only when you trust the measurements."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> أدخل أرقاماً تستطيع التحقق منها وسجل مصدرها. "
+"إذا كانت البيانات ناقصة فتحقق منها أولاً. أكد التقييم فقط عندما تثق "
+"بالقياسات."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+msgid ""
+"<strong>Start here:</strong> Enter the period being measured, then click "
+"Prepare Review. After the meeting, record what the customer confirmed and "
+"the agreed commitments. The review date is the meeting date, not the "
+"measured period."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> أدخل الفترة التي تريد قياسها ثم اضغط «تحضير "
+"المراجعة». بعد الاجتماع سجل ما أكده العميل والالتزامات المتفق عليها. تاريخ "
+"المراجعة هو تاريخ الاجتماع وليس فترة القياس."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid ""
+"<strong>Start here:</strong> Handle high-priority negative signals first. "
+"Review the source, click Triage, take the action, then close only after "
+"writing the resolution. This is not a sales opportunity."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> ابدأ بالإشارات السلبية عالية الأولوية. راجع "
+"المصدر، ثم افرز الإشارة ونفذ الإجراء، ولا تغلقها قبل كتابة الحل. هذه ليست "
+"فرصة بيع."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid ""
+"<strong>Start here:</strong> Keep the lifecycle short and clear. Make "
+"onboarding day ranges non-overlapping. Mark risk and churn only when they "
+"should affect reports and automation."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اجعل المراحل قليلة وواضحة، ولا تجعل فترات أيام"
+" التهيئة متداخلة. حدد الخطر والفقد فقط عندما يجب أن يؤثرا في التقارير "
+"والأتمتة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid ""
+"<strong>Start here:</strong> Open the customer and verify the reason. "
+"Complete urgent support and risk tasks first. Record the real outcome; "
+"dismiss only when the task is not relevant."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> افتح العميل وتحقق من سبب المهمة. نفذ مهام "
+"الدعم والخطر العاجلة أولاً. سجل النتيجة الحقيقية، واستبعد المهمة فقط إذا لم "
+"تكن ذات صلة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid ""
+"<strong>Start here:</strong> Read the briefing, verify important facts and "
+"dates, and prepare your questions. Do not read it as a script; listen to the"
+" customer and update the record after the call."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اقرأ الملخص، وتحقق من الحقائق والتواريخ "
+"المهمة، وجهز أسئلتك. لا تقرأه كنص محفوظ؛ استمع للعميل وحدّث السجل بعد "
+"المكالمة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"<strong>Start here:</strong> Read the open risk and today's action, open its"
+" source evidence, contact the customer, then record the result and next "
+"date. ✦ uses support, health, adoption, Voice of Customer, and value reviews"
+" to help you decide; it does not replace your verification."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اقرأ الخطر المفتوح ومهمة اليوم، وافتح دليلها، "
+"وتواصل مع العميل، ثم سجل النتيجة والموعد التالي. تستخدم ✦ الدعم والصحة "
+"والتبنّي وصوت العميل ومراجعات القيمة لمساعدتك في القرار، لكنها لا تغني عن "
+"التحقق."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+msgid ""
+"<strong>Start here:</strong> Read the reason, ask the discovery questions, "
+"then select only the services that deserve a customer conversation. A draft "
+"is not a sale, a presentation, or a CRM opportunity."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اقرأ سبب التوصية واطرح أسئلة الاستكشاف، ثم "
+"اختر فقط الخدمات التي تستحق مناقشتها مع العميل. المسودة ليست بيعاً ولا عرضاً"
+" ولا فرصة CRM."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+msgid ""
+"<strong>Start here:</strong> Restore service and give the customer a clear "
+"update first. Keep tags and resolution factual. Read the conversation before"
+" using the sentiment signal for follow-up."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> أعد الخدمة وقدم للعميل تحديثاً واضحاً أولاً. "
+"اجعل الوسوم والحل واقعيين، واقرأ المحادثة قبل استخدام إشارة المشاعر "
+"للمتابعة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+msgid ""
+"<strong>Start here:</strong> Review critical and expiring packages first. "
+"Confirm the customer's future need before presenting more support. Exploring"
+" a need does not create a sales opportunity."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> راجع الباقات الحرجة والقريبة من الانتهاء "
+"أولاً. أكد احتياج العميل القادم قبل عرض دعم إضافي. استكشاف الاحتياج لا ينشئ "
+"فرصة بيع."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+msgid ""
+"<strong>Start here:</strong> Select the outcome and write a useful note. If "
+"more work is needed, add a specific next step and date. Do not close the "
+"task with a vague note such as “contacted customer”."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اختر النتيجة واكتب ملاحظة مفيدة. إذا بقي عمل "
+"آخر فأضف خطوة محددة وتاريخاً. لا تغلق المهمة بعبارة عامة مثل «تم التواصل مع "
+"العميل»."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid ""
+"<strong>Start here:</strong> Select the purpose and tone, generate the "
+"draft, then check the recipient, facts, promises, and language. The message "
+"is never sent automatically."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اختر الغرض والنبرة وولّد المسودة، ثم راجع "
+"المستلم والحقائق والوعود واللغة. لا تُرسل الرسالة تلقائياً أبداً."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"<strong>Start here:</strong> Write the need signals and exclusion rules "
+"first, then add questions the CSM should ask. Review generated content "
+"before enabling recommendations."
+msgstr ""
+"<strong>ابدأ من هنا:</strong> اكتب إشارات الاحتياج وحالات عدم عرض الخدمة "
+"أولاً، ثم أضف الأسئلة التي يطرحها مهندس النجاح. راجع المحتوى المولد قبل "
+"تفعيل التوصيات."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid "<strong>Use it to:</strong>"
+msgstr "<strong>استخدمها من أجل:</strong>"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid ""
+"<strong>What is this screen?</strong> A controlled path from a possible "
+"service need to a qualified commercial opportunity."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مسار منظم يحول احتياج خدمة محتمل إلى فرصة "
+"تجارية مؤهلة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid ""
+"<strong>What is this screen?</strong> A controlled way to add existing Odoo "
+"companies to Customer Success."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> طريقة منظمة لإضافة الشركات الموجودة في أودو "
+"إلى نجاح العملاء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid ""
+"<strong>What is this screen?</strong> A customer concern, request, priority,"
+" or blocker that needs follow-up."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> ملاحظة أو طلب أو أولوية أو عائق ذكره العميل "
+"ويحتاج إلى متابعة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+msgid ""
+"<strong>What is this screen?</strong> A list of services that may help this "
+"customer, based on current customer data."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> قائمة خدمات قد تفيد العميل بناءً على بياناته"
+" الحالية."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid ""
+"<strong>What is this screen?</strong> A measurement of how well the customer"
+" is using the solution in real work."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> قياس لمدى استخدام العميل للحل في عمله "
+"الفعلي."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid ""
+"<strong>What is this screen?</strong> A message-writing assistant for "
+"customer follow-up by email, WhatsApp, or SMS."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مساعد لكتابة رسالة متابعة للعميل عبر البريد "
+"أو واتساب أو الرسائل النصية."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+msgid ""
+"<strong>What is this screen?</strong> A periodic meeting record used to "
+"confirm whether the customer received useful value from the service."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> سجل اجتماع دوري مع العميل للتأكد من أنه حقق "
+"فائدة حقيقية من الخدمة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid ""
+"<strong>What is this screen?</strong> A question box for getting a quick "
+"answer from the customer's Odoo data."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مكان لطرح سؤال والحصول على إجابة سريعة من "
+"بيانات العميل في أودو."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid ""
+"<strong>What is this screen?</strong> A quick way to send a customer request"
+" to Support or Sales without losing its context."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> طريقة سريعة لتحويل طلب العميل إلى الدعم أو "
+"المبيعات مع حفظ كل التفاصيل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid ""
+"<strong>What is this screen?</strong> A short preparation note for an "
+"upcoming customer call or meeting."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> ملخص قصير يساعدك على الاستعداد لمكالمة أو "
+"اجتماع قادم مع العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid ""
+"<strong>What is this screen?</strong> A stage in the customer lifecycle, "
+"such as onboarding, stable, at risk, or churned."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مرحلة من مراحل علاقة العميل، مثل التهيئة أو "
+"الاستقرار أو الخطر أو الفقد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid ""
+"<strong>What is this screen?</strong> One prioritized task telling you which"
+" customer needs attention and what to do next."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مهمة مرتبة تخبرك أي عميل يحتاج اهتمامك وما "
+"الإجراء التالي."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+msgid ""
+"<strong>What is this screen?</strong> The agreed plan that defines what "
+"success means for this customer."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> الخطة المتفق عليها التي توضح ماذا يعني "
+"النجاح لهذا العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid ""
+"<strong>What is this screen?</strong> The control center for optional "
+"Customer Success automation and support-hours rules."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> مركز التحكم في أتمتة نجاح العملاء وقواعد "
+"ساعات الدعم."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+msgid ""
+"<strong>What is this screen?</strong> The customer's prepaid support-hours "
+"balance and expiry status."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> رصيد ساعات الدعم المدفوعة للعميل وتاريخ "
+"انتهائها."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+msgid ""
+"<strong>What is this screen?</strong> The final record of what happened "
+"after you completed a customer task."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> السجل النهائي لما حدث بعد تنفيذ مهمة تخص "
+"العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"<strong>What is this screen?</strong> The main workspace for understanding "
+"and managing one customer."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> الشاشة الرئيسية لفهم عميل واحد وإدارة "
+"متابعته."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid ""
+"<strong>What is this screen?</strong> The official company record and the "
+"starting point for enrolling a company in Customer Success."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> السجل الرسمي للشركة ونقطة البدء لإضافتها إلى"
+" نجاح العملاء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"<strong>What is this screen?</strong> The service catalog entry used to "
+"explain, recommend, and present one service correctly."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> بطاقة خدمة في الكتالوج تُستخدم لشرح الخدمة "
+"والتوصية بها وعرضها بطريقة صحيحة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+msgid ""
+"<strong>What is this screen?</strong> The working record for solving one "
+"customer support problem."
+msgstr ""
+"<strong>ما هذه الشاشة؟</strong> سجل العمل المستخدم لحل مشكلة دعم واحدة "
+"للعميل."
 
 #. module: era_customer_success
 #: model:ir.model.constraint,message:era_customer_success.constraint_cs_account_partner_uniq
@@ -422,6 +638,13 @@ msgid ""
 msgstr ""
 "مهمة يومية تقترح الإجراء التالي الأنسب لكل عميل بناءً على وضعه وتاريخه. "
 "تُرسَل لقطة العميل إلى مزوّد ✦ المُهيّأ."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid ""
+"A management overview showing where the customer portfolio needs attention."
+msgstr "نظرة إدارية توضح أين تحتاج محفظة العملاء إلى الاهتمام."
 
 #. module: era_customer_success
 #. odoo-python
@@ -810,6 +1033,13 @@ msgid "Add a template service to the catalog"
 msgstr "أضف خدمة نموذجية إلى الكتالوج"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+msgid ""
+"Add one next step, date, and optional Odoo activity when follow-up remains."
+msgstr ""
+"أضف خطوة تالية واحدة وتاريخاً ونشاط أودو اختياري عند الحاجة إلى متابعة."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_support_wallet.py:0
 msgid "Additional Support Hours - %s"
@@ -926,6 +1156,12 @@ msgstr ""
 "شهراً، مع وزن أعلى للتذاكر الأحدث."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+msgid "Agree the next actions, owners, dates, and next review meeting."
+msgstr ""
+"اتفق على الإجراءات القادمة والمسؤولين والتواريخ وموعد المراجعة التالية."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__commitments
 msgid "Agreed Commitments"
 msgstr "الالتزامات المتفق عليها"
@@ -1040,12 +1276,10 @@ msgstr ""
 "عند تعذّر ✦)."
 
 #. module: era_customer_success
-#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
-msgid ""
-"Ask the AI for the single best next action for this customer, based on their"
-" situation, history and last suggestion."
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "Ask why health is low, what changed, or what needs attention."
 msgstr ""
-"اطلب من ✦ أفضل خطوة تالية لهذا العميل، بناءً على وضعه وتاريخه وآخر اقتراح."
+"اسأل لماذا انخفضت الصحة، أو ما الذي تغير، أو ما الذي يحتاج إلى اهتمام."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__assessment_date
@@ -1056,6 +1290,11 @@ msgstr "تاريخ التقييم"
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_account_all
 msgid "Assign each customer to a CSM engineer and follow up in one place."
 msgstr "أسنِد كل عميل لمهندس نجاح عملاء وتابعه في مكان واحد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+msgid "Assign the issue, communicate with the customer, and monitor the SLA."
+msgstr "أسند المشكلة وتواصل مع العميل وراقب اتفاقية مستوى الخدمة."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -1169,12 +1408,6 @@ msgid "Base"
 msgstr "الأساس"
 
 #. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid "Best use:"
-msgstr "أفضل استخدام:"
-
-#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__cadence__biweekly
 msgid "Bi-weekly"
 msgstr "كل أسبوعين"
@@ -1193,6 +1426,13 @@ msgstr "العائق"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__blockers
 msgid "Blockers"
 msgstr "العوائق"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+msgid ""
+"Break the plan into dated milestones and record progress, evidence, and "
+"blockers."
+msgstr "قسّم الخطة إلى مراحل مؤرخة وسجل التقدم والأدلة والعوائق."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_call_briefing__briefing
@@ -1493,6 +1733,16 @@ msgstr ""
 "العمل والأولوية والتقارير أو الإجراء التالي المقترح."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+msgid "Choose the actual outcome of the action."
+msgstr "اختر النتيجة الفعلية للإجراء."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Choose the purpose, channel, and tone of the message."
+msgstr "اختر غرض الرسالة وقناتها ونبرتها."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Churn 30/60/90d"
 msgstr "الفقدان 30/60/90 يوم"
@@ -1703,6 +1953,17 @@ msgid "Company"
 msgstr "الشركة"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Compare active users with licensed users and check usage frequency."
+msgstr "قارن المستخدمين النشطين بالمستخدمين المرخصين وراجع تكرار الاستخدام."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Compare workload and customer distribution across CSM engineers."
+msgstr "قارن حجم العمل وتوزيع العملاء بين مهندسي نجاح العملاء."
+
+#. module: era_customer_success
 #: model:ir.model,name:era_customer_success.model_cs_suggestion_complete
 msgid "Complete Customer Success Work Item"
 msgstr "إكمال مهمة نجاح العميل"
@@ -1797,6 +2058,11 @@ msgstr "اعتماد أدلة التبنّي"
 msgid ""
 "Confirm customer interest and need timing before creating an opportunity."
 msgstr "أكد اهتمام العميل وتوقيت الاحتياج قبل إنشاء فرصة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Confirm customer interest and timing before handing the need to Sales."
+msgstr "أكد اهتمام العميل والتوقيت قبل تسليم الاحتياج إلى المبيعات."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
@@ -1922,6 +2188,11 @@ msgid "Create Drafts to Validate"
 msgstr "إنشاء مسودات للتحقق"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Create a CRM opportunity only for a real commercial request."
+msgstr "أنشئ فرصة CRM فقط عند وجود طلب تجاري حقيقي."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid ""
 "Create a Meta WhatsApp template for this catalog service. Complete and "
@@ -1945,6 +2216,11 @@ msgid ""
 msgstr ""
 "أنشئ مسودة عرض لاستكشاف الاحتياج من رصيد الدعم. تواصل مع العميل وأكد "
 "احتياجاته القادمة قبل العرض أو التأهيل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Create a support ticket for a service problem or assistance request."
+msgstr "أنشئ تذكرة دعم لمشكلة في الخدمة أو طلب مساعدة."
 
 #. module: era_customer_success
 #. odoo-python
@@ -2410,16 +2686,6 @@ msgid "Customer value review \"%(review)s\" is %(timing)s."
 msgstr "مراجعة قيمة العميل «%(review)s» %(timing)s."
 
 #. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid ""
-"Customer volume, health, risk, revenue, sentiment, engineer distribution, "
-"and drill-down rankings."
-msgstr ""
-"حجم العملاء والصحة والمخاطر والإيراد والمشاعر وتوزيع المهندسين والترتيبات "
-"القابلة للتفصيل."
-
-#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__value_realized
 msgid "Customer-Confirmed Value"
 msgstr "القيمة التي أكدها العميل"
@@ -2486,6 +2752,20 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_stage
 msgid "Define the customer lifecycle"
 msgstr "عرّف دورة حياة العميل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid "Define the day range for automatic onboarding movement."
+msgstr "حدد نطاق الأيام للانتقال التلقائي خلال التهيئة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"Define visible need signals, discovery questions, and cases where it should "
+"not be offered."
+msgstr ""
+"حدد إشارات الاحتياج الواضحة وأسئلة الاستكشاف والحالات التي لا يجب عرض الخدمة"
+" فيها."
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_weekly_suggestion__action_type__value
@@ -2558,6 +2838,13 @@ msgid ""
 msgstr ""
 "أسئلة الاستكشاف:\n"
 "%s"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+msgid ""
+"Discuss problems, blockers, satisfaction, and value confirmed by the "
+"customer."
+msgstr "ناقش المشاكل والعوائق والرضا والقيمة التي أكدها العميل."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_suggestion_complete__dismiss
@@ -2812,6 +3099,11 @@ msgid "Economic Buyer"
 msgstr "صاحب القرار المالي"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid "Edit the text before opening the selected communication channel."
+msgstr "عدّل النص قبل فتح قناة التواصل المختارة."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__email
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_followup_compose__channel__email
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__channel__email
@@ -2911,6 +3203,13 @@ msgstr ""
 #: model:ir.actions.server,name:era_customer_success.action_server_enroll_cs
 msgid "Enroll in Customer Success"
 msgstr "تسجيل في نجاح العملاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid ""
+"Enroll the company when it needs ongoing value and adoption management."
+msgstr ""
+"أضف الشركة إلى نجاح العملاء عندما تحتاج متابعة مستمرة للقيمة والتبنّي."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
@@ -3022,6 +3321,12 @@ msgid "Expiry Warning"
 msgstr "تنبيه الانتهاء"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"Explain what the service does, who needs it, and the value it should create."
+msgstr "اشرح ماذا تقدم الخدمة ومن يحتاجها وما القيمة التي يفترض أن تحققها."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_support_wallet.py:0
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
@@ -3040,10 +3345,14 @@ msgid "Failed SLA"
 msgstr "تجاوز اتفاقية مستوى الخدمة"
 
 #. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid "Features:"
-msgstr "المميزات:"
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid "Find companies that already have support tickets or projects."
+msgstr "اعثر على الشركات التي لديها تذاكر دعم أو مشاريع بالفعل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "Find recent support, communication, renewal, and activity context."
+msgstr "اعثر على سياق الدعم والتواصل والتجديد والأنشطة الحديثة."
 
 #. module: era_customer_success
 #: model:cs.stage,description:era_customer_success.cs_stage_onboarding
@@ -3406,13 +3715,6 @@ msgstr ""
 "تقييم للعميل."
 
 #. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid ""
-"Identify portfolio-level risks and where management attention is needed."
-msgstr "حدد مخاطر المحفظة والمواقع التي تحتاج اهتمام الإدارة."
-
-#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid ""
@@ -3469,6 +3771,12 @@ msgstr "الصورة 512"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
 msgid "Import Customers"
 msgstr "استيراد العملاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid ""
+"Import a limited batch and distribute it across available CSM engineers."
+msgstr "استورد دفعة محدودة ووزعها على مهندسي النجاح المتاحين."
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__source__import
@@ -3552,6 +3860,12 @@ msgid "Kanban Color"
 msgstr "لون الكانبان"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid ""
+"Keep the action, owner, dates, and final resolution in one audit trail."
+msgstr "احتفظ بالإجراء والمسؤول والتواريخ والحل النهائي في سجل واحد."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__features
 msgid "Key Features / Benefits"
 msgstr "المميزات / الفوائد الرئيسية"
@@ -3566,6 +3880,16 @@ msgstr "مستخدم رئيسي"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
 msgid "Key Workflows"
 msgstr "العمليات الرئيسية"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "Know the most important action due today and why it matters."
+msgstr "اعرف أهم إجراء مستحق اليوم ولماذا هو مهم."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+msgid "Know when the balance is low or the package is close to expiry."
+msgstr "اعرف متى ينخفض الرصيد أو تقترب الباقة من الانتهاء."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_success_stakeholder__last_contact_date
@@ -3761,6 +4085,12 @@ msgid "MRR"
 msgstr "MRR"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid ""
+"Maintain the correct company identity, contacts, and communication details."
+msgstr "حافظ على بيانات الشركة الصحيحة وجهات اتصالها ووسائل التواصل."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid ""
@@ -3815,6 +4145,13 @@ msgid "Mark Presented"
 msgstr "وضع كمُقدّم"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid ""
+"Mark stages that represent risk or churn and choose the related email "
+"template."
+msgstr "حدد المراحل التي تمثل الخطر أو الفقد واختر قالب البريد المرتبط."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
 msgid ""
 "Mark the customer review as held after the meeting occurred. Then record "
@@ -3850,6 +4187,11 @@ msgstr "يحدّد فرصة أنشأها فريق نجاح العملاء (تو�
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_customer_import__limit
 msgid "Max customers"
 msgstr "أقصى عدد عملاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Measure completed onboarding and adoption of the important workflows."
+msgstr "قس اكتمال التهيئة وتبنّي مسارات العمل المهمة."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
@@ -4225,6 +4567,31 @@ msgid "No at-risk customers 🎉"
 msgstr "لا عملاء معرّضون للخطر 🎉"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_service_recommendation.py:0
+msgid ""
+"No catalog service has recommendation conditions configured yet. Ask a "
+"Customer Success Manager to configure at least one trigger, ticket tag, or "
+"success-plan link in the service catalog."
+msgstr ""
+"لا توجد أي خدمة في الكتالوج لها شروط توصية مضبوطة حتى الآن. اطلب من مدير "
+"نجاح العملاء ضبط شرط واحد على الأقل أو وسم تذكرة أو ربط بخطة نجاح داخل "
+"كتالوج الخدمات."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_service_recommendation.py:0
+msgid ""
+"No current customer signal matches the configured services. Add a confirmed "
+"adoption assessment, active success-plan service link, recent tagged support"
+" ticket, support-pressure signal, or failed SLA to generate an evidence-"
+"based recommendation."
+msgstr ""
+"لا توجد إشارة حالية من العميل تطابق الخدمات المضبوطة. أضف تقييم تبنٍّ "
+"مؤكداً، أو اربط خدمة بخطة نجاح نشطة، أو سجل تذكرة دعم حديثة بوسم مناسب، أو "
+"إشارة ضغط دعم، أو تجاوز مستوى خدمة لإنتاج توصية مبنية على دليل."
+
+#. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_account_my
 msgid "No customers are assigned to you"
 msgstr "لا يوجد عملاء مسندون إليك"
@@ -4488,9 +4855,23 @@ msgstr ""
 "والمرفقات قبل الإرسال."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_partner_form_cs
+msgid "Open its Customer Success 360° account directly."
+msgstr "افتح حساب نجاح العملاء الشامل للشركة مباشرة."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Open offering form"
 msgstr "فتح فورم العرض"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Open plans, reviews, support hours, customer voice, and service needs from "
+"one place."
+msgstr ""
+"افتح الخطط والمراجعات وساعات الدعم وصوت العميل واحتياجات الخدمات من مكان "
+"واحد."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
@@ -4547,6 +4928,17 @@ msgstr ""
 "المهمة قبل التنفيذ."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid "Open the customer record and complete the suggested action."
+msgstr "افتح سجل العميل ونفذ الإجراء المقترح."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Open the customer records behind any number or ranking."
+msgstr "افتح سجلات العملاء الموجودة خلف أي رقم أو ترتيب."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid ""
 "Open the existing WhatsApp template to review its content, language, "
@@ -4593,6 +4985,12 @@ msgstr "افتح العروض الخدمية المُقدّمة لهذا الع�
 msgid ""
 "Open the shared customer success objectives, stakeholders and milestones."
 msgstr "افتح أهداف نجاح العميل المشتركة وأصحاب العلاقة والمراحل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+msgid ""
+"Open the source order and start a conversation about upcoming support needs."
+msgstr "افتح أمر البيع المصدر وابدأ نقاشاً حول احتياجات الدعم القادمة."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
@@ -4688,6 +5086,11 @@ msgstr ""
 "البريد وتوجّه تفاصيلها مسودة ✦."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_customer_import_view_form
+msgid "Optionally classify customer tiers during import."
+msgstr "صنّف شرائح العملاء أثناء الاستيراد بشكل اختياري."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_support_wallet__order_id
 msgid "Order"
 msgstr "الطلب"
@@ -4748,6 +5151,11 @@ msgstr "صلاحية الباقة"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__stakeholder_ids
 msgid "Participants"
 msgstr "المشاركون"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
+msgid "Pass the subject, details, responsible team, value, and expected date."
+msgstr "انقل الموضوع والتفاصيل والفريق المسؤول والقيمة والتاريخ المتوقع."
 
 #. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_service
@@ -4898,6 +5306,11 @@ msgid "Prepare and record periodic customer value reviews."
 msgstr "جهّز وسجل مراجعات قيمة العميل الدورية."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_copilot_form
+msgid "Prepare before opening several records manually."
+msgstr "استعد قبل الحاجة إلى فتح عدة سجلات يدوياً."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_account.py:0
 msgid ""
@@ -4910,6 +5323,18 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_value_review
 msgid "Prepare the first customer value review"
 msgstr "جهّز أول مراجعة قيمة للعميل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
+msgid ""
+"Prepare the image, pitch, ticket tags, and approved communication template."
+msgstr "جهز الصورة وصيغة العرض ووسوم التذاكر وقالب التواصل المعتمد."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid ""
+"Prepare the message, record who received it, and mark when it was presented."
+msgstr "جهز الرسالة وسجل من استلمها وحدد متى تم عرضها."
 
 #. module: era_customer_success
 #. odoo-python
@@ -5014,12 +5439,6 @@ msgid "Priority Rank"
 msgstr "ترتيب الأولوية"
 
 #. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid "Priority:"
-msgstr "الأولوية:"
-
-#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__product_details
 msgid "Product Details"
 msgstr "تفاصيل المنتج"
@@ -5051,6 +5470,11 @@ msgstr "المشاريع"
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_customer_import__source__projects
 msgid "Projects only"
 msgstr "المشاريع فقط"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+msgid "Provide support-impact and sentiment signals to Customer Success."
+msgstr "زوّد نجاح العملاء بإشارات أثر الدعم ومشاعر العميل."
 
 #. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_service__url
@@ -5152,6 +5576,11 @@ msgstr ""
 "ومحتوى العرض. راجع كل عبارة مولدة قبل استخدام الخدمة في التوصيات."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+msgid "Read the questions you should ask to confirm the need."
+msgstr "اقرأ الأسئلة التي يجب طرحها للتأكد من الاحتياج."
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_voc_insight__theme__value
 msgid "Realized Value"
 msgstr "القيمة المحققة"
@@ -5214,6 +5643,11 @@ msgid "Recommendation Score"
 msgstr "درجة التوصية"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_service_recommendation_wizard__recommendation_status
+msgid "Recommendation Status"
+msgstr "حالة التوصيات"
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__recommendation_ticket_tag_ids
 msgid "Recommendation Ticket Tags"
 msgstr "وسوم التذاكر المحفزة للتوصية"
@@ -5268,6 +5702,11 @@ msgid "Record at least one measured adoption component before confirming."
 msgstr "سجّل مؤشراً واحداً مقاساً على الأقل قبل اعتماد التقييم."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_adoption_assessment_form
+msgid "Record evidence, usage blockers, and the enablement action needed."
+msgstr "سجل الأدلة وعوائق الاستخدام وإجراء التمكين المطلوب."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "Record measured adoption evidence and customer enablement plans."
 msgstr "سجل أدلة التبنّي المقاسة وخطط تمكين العميل."
@@ -5294,11 +5733,27 @@ msgid "Record the evidence and its source before confirming adoption."
 msgstr "سجّل دليل التبنّي ومصدره قبل اعتماد التقييم."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+msgid "Record the people involved and what each person is responsible for."
+msgstr "سجل الأشخاص المشاركين ومسؤولية كل شخص."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/cs_voc_insight.py:0
 msgid ""
 "Record the response and resolution before closing the customer insight."
 msgstr "سجّل الاستجابة والحل قبل إغلاق ملاحظة العميل."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid ""
+"Record the result and create a dated follow-up when more work is needed."
+msgstr "سجل النتيجة وأنشئ متابعة مؤرخة عند الحاجة إلى عمل إضافي."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.helpdesk_ticket_view_form_cs
+msgid "Record useful tags, work performed, and the final resolution."
+msgstr "سجل وسوماً مفيدة والعمل المنفذ والحل النهائي."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_list
@@ -5356,6 +5811,12 @@ msgid ""
 msgstr ""
 "أعد توليد الموجز بعد تغيير غرض التواصل أو توفر بيانات أحدث. تحقق من المخاطر "
 "ونقاط الحديث والتواريخ في سجلات المصدر قبل المكالمة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid ""
+"Regenerate the briefing when customer data or the meeting purpose changes."
+msgstr "أعد توليد الملخص عندما تتغير بيانات العميل أو غرض الاجتماع."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
@@ -5582,6 +6043,18 @@ msgid "Review agenda..."
 msgstr "جدول أعمال المراجعة..."
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid ""
+"Review critical customers and overloaded portfolios, then open the source "
+"accounts before acting. Use trends for coaching and prioritization, not as a"
+" final employee evaluation."
+msgstr ""
+"راجع العملاء الحرجين والمحافظ ذات الحمل المرتفع، ثم افتح الحسابات المصدرية "
+"قبل التصرف. استخدم الاتجاهات للتوجيه وترتيب الأولويات، وليس كتقييم نهائي "
+"للموظف."
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid ""
 "Review customer priorities, risks, value, and adoption evidence captured "
@@ -5615,6 +6088,18 @@ msgid ""
 msgstr ""
 "راجع القيمة المقدمة ومخاوف العميل قبل تسليم أي احتياج تجاري إلى الفريق "
 "المسؤول."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_value_review_form
+msgid ""
+"Review results and usage during a clear period, such as 1 April to 30 June."
+msgstr "راجع النتائج والاستخدام خلال فترة واضحة، مثل 1 أبريل إلى 30 يونيو."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid ""
+"Review suggested talking points, risks, and the main meeting objective."
+msgstr "راجع نقاط الحديث المقترحة والمخاطر والهدف الرئيسي للاجتماع."
 
 #. module: era_customer_success
 #. odoo-python
@@ -5718,6 +6203,29 @@ msgid "Score"
 msgstr "الدرجة"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"See customer health, support problems, adoption, renewal, and recent "
+"communication."
+msgstr "شاهد صحة العميل ومشاكل الدعم والتبنّي والتجديد وآخر تواصل."
+
+#. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "See customer volume, health, risk, revenue, and sentiment."
+msgstr "شاهد عدد العملاء والصحة والمخاطر والإيراد والمشاعر."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_support_wallet_form
+msgid "See purchased, used, and remaining support hours."
+msgstr "شاهد ساعات الدعم المشتراة والمستخدمة والمتبقية."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+msgid "See which service was suggested, its score, and the reason."
+msgstr "شاهد الخدمة المقترحة ودرجتها وسبب اقتراحها."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_account__tier
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_kpi_snapshot__tier
 msgid "Segment / Tier"
@@ -5742,6 +6250,16 @@ msgid ""
 msgstr ""
 "اختر منتجات الوقت المدفوعة مسبقاً التي تمثل باقات ساعات الدعم. تُكتشف "
 "الباقات المستخدمة في تذاكر الدعم تلقائياً."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_recommendation_wizard_form
+msgid "Select suitable services and create draft offerings for validation."
+msgstr "اختر الخدمات المناسبة وأنشئ مسودات عروض للتحقق منها."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Select which products create support-hours wallets."
+msgstr "حدد المنتجات التي تنشئ محافظ ساعات الدعم."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service_recommendation_line__selected
@@ -5927,6 +6445,11 @@ msgid "Set both the next step and its date, or leave both empty."
 msgstr "حدد الخطوة التالية وتاريخها معاً، أو اتركهما فارغين."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Set package validity, low-balance limits, and expiry warnings."
+msgstr "حدد صلاحية الباقة وحدود انخفاض الرصيد وتنبيهات الانتهاء."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/models/self_service_help.py:0
 msgid ""
@@ -5941,6 +6464,16 @@ msgstr ""
 #: code:addons/era_customer_success/models/csm_offering.py:0
 msgid "Set the catalog service on this offering first."
 msgstr "حدد خدمة الكتالوج في هذا العرض أولاً."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid "Set the importance and assign a clear response or recovery action."
+msgstr "حدد الأهمية وأسند استجابة واضحة أو إجراء معالجة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_stage_form
+msgid "Set the stage name, order, color, and meaning."
+msgstr "حدد اسم المرحلة وترتيبها ولونها ومعناها."
 
 #. module: era_customer_success
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_config_settings
@@ -6105,22 +6638,16 @@ msgstr ""
 " هذا فرصة CRM حتى تأكيد اهتمام العميل وتوقيته."
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Start here:"
+msgstr "ابدأ من هنا:"
+
+#. module: era_customer_success
 #: model:ir.model.fields,help:era_customer_success.field_cs_stage__day_window_start
 msgid ""
 "Start of the onboarding day window (relative to onboarding start date)."
 msgstr "بداية نافذة أيام التهيئة (نسبةً لتاريخ بدء التهيئة)."
-
-#. module: era_customer_success
-#. odoo-javascript
-#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
-msgid ""
-"Start with critical customers and overloaded portfolios, then open the "
-"source accounts before acting. Use trends for coaching and prioritization, "
-"not as standalone employee evaluation."
-msgstr ""
-"ابدأ بالعملاء الحرجين والمحافظ ذات الحمل المرتفع، ثم افتح الحسابات المصدرية "
-"قبل التصرف. استخدم الاتجاهات للتوجيه وترتيب الأولويات لا كتقييم منفرد "
-"للموظف."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__state
@@ -6244,6 +6771,18 @@ msgid "Suggest Pitch (AI)"
 msgstr "اقترح صيغة العرض ✦"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid ""
+"Suggest one next action using the customer situation, support, renewal, "
+"health, communication, latest confirmed adoption assessment, open Voice of "
+"Customer insights, and the latest closed value review. Verify the source "
+"records before acting."
+msgstr ""
+"اقترح إجراءً تالياً واحداً باستخدام وضع العميل والدعم والتجديد والصحة "
+"والتواصل وآخر تقييم تبنٍّ مؤكد ورؤى صوت العميل المفتوحة وآخر مراجعة قيمة "
+"مغلقة. تحقق من سجلات المصدر قبل التنفيذ."
+
+#. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_next_action__state__suggested
 msgid "Suggested"
 msgstr "مُقترَح"
@@ -6279,6 +6818,16 @@ msgstr "العرض المقترح ✦"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_suggestion_complete__suggestion_id
 msgid "Suggestion"
 msgstr "الاقتراح"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_service_recommendation.py:0
+msgid ""
+"Suggestions are based on matched customer signals. Read the reason and "
+"discovery questions before creating a draft."
+msgstr ""
+"هذه التوصيات مبنية على إشارات متطابقة من بيانات العميل. اقرأ السبب وأسئلة "
+"الاستكشاف قبل إنشاء مسودة."
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_csm_offering__suitability_checked
@@ -6945,6 +7494,11 @@ msgid "Triaged On"
 msgstr "تاريخ الفرز"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Turn individual ✦ assistants on or off."
+msgstr "فعّل أو أوقف كل مساعد ✦ على حدة."
+
+#. module: era_customer_success
 #. odoo-python
 #: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
 msgid "Type a question first."
@@ -6961,6 +7515,24 @@ msgstr "نوع النشاط الاستثنائي على السجل."
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_search
 msgid "Unassigned"
 msgstr "غير مُسند"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_call_briefing_form
+msgid "Understand the current customer situation before the conversation."
+msgstr "افهم وضع العميل الحالي قبل المحادثة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_voc_insight_form
+msgid ""
+"Understand what the customer said and which review or assessment created the"
+" signal."
+msgstr "افهم ما قاله العميل وأي مراجعة أو تقييم أنشأ الإشارة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_form
+msgid ""
+"Understand why the task is important and which customer signal created it."
+msgstr "افهم لماذا المهمة مهمة وأي إشارة من العميل أنشأتها."
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_account__latest_adoption_status__unknown
@@ -7013,6 +7585,12 @@ msgid "Usage Frequency"
 msgstr "تكرار الاستخدام"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "Use it to:"
+msgstr "استخدمها من أجل:"
+
+#. module: era_customer_success
 #: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_adoption_assessment
 msgid ""
 "Use licensed and active users, adopted workflows, onboarding progress, "
@@ -7033,6 +7611,12 @@ msgstr ""
 "استخدم المراجعات الدورية لتثبيت أدلة العميل وعقد حوار منظم وتأكيد القيمة "
 "والاتفاق على الالتزامات. ابدأ من خطة النجاح النشطة أو أنشئ مسودة للفترة "
 "المطلوبة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_followup_compose_form
+msgid ""
+"Use recent customer history and an optional service to prepare the draft."
+msgstr "استخدم تاريخ العميل الحديث وخدمة اختيارية لإعداد المسودة."
 
 #. module: era_customer_success
 #. odoo-python
@@ -7325,6 +7909,12 @@ msgid "What is the customer trying to achieve?"
 msgstr "ما الذي يسعى العميل إلى تحقيقه؟"
 
 #. module: era_customer_success
+#. odoo-javascript
+#: code:addons/era_customer_success/static/src/xml/cs_dashboard.xml:0
+msgid "What is this screen?"
+msgstr "ما هذه الشاشة؟"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
 msgid "What it does, integrations, requirements…"
 msgstr "ماذا تفعل، التكاملات، المتطلبات…"
@@ -7507,6 +8097,21 @@ msgstr "معالج"
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_weekly_suggestion_search
 msgid "Work Type"
 msgstr "نوع العمل"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_success_profile_form
+msgid "Write the customer's business goals and how success will be measured."
+msgstr "اكتب أهداف عمل العميل وكيف سيتم قياس النجاح."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_csm_offering_form
+msgid "Write the customer's need and why the selected service may fit."
+msgstr "اكتب احتياج العميل ولماذا قد تكون الخدمة المختارة مناسبة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_suggestion_complete_form
+msgid "Write what you did and how the customer responded."
+msgstr "اكتب ما قمت به وكيف استجاب العميل."
 
 #. module: era_customer_success
 #. odoo-python

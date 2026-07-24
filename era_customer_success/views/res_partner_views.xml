@@ -6,10 +6,15 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
-                <div class="alert alert-info mx-3 mt-3 mb-0" role="status" invisible="not is_company">
-                    <strong>Best use:</strong> Verify the company identity and enroll it into Customer Success when ongoing value management is required.<br/>
-                    <strong>Features:</strong> Company contacts and communication details plus direct access to the Customer Success 360° account.<br/>
-                    <strong>Priority:</strong> Keep one clean company record, confirm the commercial entity, then enroll and assign a CSM. Do not create duplicate companies to separate Customer Success activity.
+                <div class="border rounded bg-light p-3 mx-3 mt-3 mb-0" invisible="not is_company">
+                    <p><strong>What is this screen?</strong> The official company record and the starting point for enrolling a company in Customer Success.</p>
+                    <p><strong>Use it to:</strong></p>
+                    <ul>
+                        <li>Maintain the correct company identity, contacts, and communication details.</li>
+                        <li>Enroll the company when it needs ongoing value and adoption management.</li>
+                        <li>Open its Customer Success 360° account directly.</li>
+                    </ul>
+                    <p class="mb-0"><strong>Start here:</strong> Confirm that this is the correct commercial company, clean its contacts, then enroll it and assign a CSM. Do not create a duplicate company for Customer Success work.</p>
                 </div>
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">

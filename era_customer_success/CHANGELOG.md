@@ -222,3 +222,7 @@ Commits pushed to `origin/stage`.
 - Added reviewable Helpdesk tag suggestions to service enrichment, with an explicit manager action that applies exact matches to existing tags only.
 - Added an upgrade migration so existing databases receive the new service-extractor prompt despite the agent record being protected by `noupdate`.
 - Added dated Voice of Customer follow-up activities when an action is marked taken.
+## 19.0.26.0.0 — AI Privacy and URL Security
+- Enforced customer-account record access before AI copilots, call briefings, and follow-up composers build privileged customer context.
+- Enforced company opt-in settings inside manual Next Best Action and profile-summary actions.
+- Restricted service URL enrichment to public HTTPS hosts, blocked private/local/reserved addresses and redirects, and capped downloaded content at 1 MB.

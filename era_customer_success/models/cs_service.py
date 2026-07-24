@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import base64
+import ipaddress
 import logging
 import re
+import socket
+from urllib.parse import urlparse
 
 import requests
 
@@ -15,6 +18,7 @@ from odoo.tools.mimetypes import guess_mimetype
 from .cs_account import _cs_extract_json
 
 _logger = logging.getLogger(__name__)
+_CS_SERVICE_PAGE_MAX_BYTES = 1_000_000
 
 # mimetype -> clean extension (used so a message attachment keeps a clean, well-known
 # file extension when the service image is sent alongside a follow-up message).
@@ -105,11 +109,7 @@ class CsService(models.Model):
             if not svc.url:
                 raise UserError(_('Please set the service URL first.'))
             try:
-                resp = requests.get(
-                    svc.url, timeout=20,
-                    headers={'User-Agent': 'Mozilla/5.0 (compatible; OdooCS/1.0)'})
-                resp.raise_for_status()
-                page_text = html2plaintext(resp.text)[:6000]
+                page_text = html2plaintext(self._fetch_public_service_page(svc.url))[:6000]
             except Exception as e:
                 raise UserError(_('Could not fetch the URL: %s', e))
             if not page_text.strip():
@@ -158,6 +158,33 @@ class CsService(models.Model):
             # AI enrichment is NOT posted to the chatter — the extracted details and
             # the "AI Enriched On" timestamp are shown in the form fields instead.
         return True
+
+    @api.model
+    def _fetch_public_service_page(self, url):
+        parsed = urlparse(url or '')
+        if parsed.scheme != 'https' or not parsed.hostname:
+            raise UserError(_('Service enrichment accepts public HTTPS URLs only.'))
+        try:
+            addresses = {
+                item[4][0] for item in socket.getaddrinfo(
+                    parsed.hostname, parsed.port or 443, type=socket.SOCK_STREAM)
+            }
+        except socket.gaierror as error:
+            raise UserError(_('Could not resolve the service URL host: %s', error))
+        if not addresses or any(not ipaddress.ip_address(address).is_global for address in addresses):
+            raise UserError(_('Private, local, and reserved network addresses are not allowed.'))
+        response = requests.get(
+            url, timeout=20, allow_redirects=False, stream=True,
+            headers={'User-Agent': 'Mozilla/5.0 (compatible; OdooCS/1.0)'})
+        if 300 <= response.status_code < 400:
+            raise UserError(_('Redirecting service URLs are not allowed. Use the final public HTTPS URL.'))
+        response.raise_for_status()
+        content = bytearray()
+        for chunk in response.iter_content(chunk_size=65536):
+            content.extend(chunk)
+            if len(content) > _CS_SERVICE_PAGE_MAX_BYTES:
+                raise UserError(_('The service page is too large to process safely.'))
+        return bytes(content).decode(response.encoding or 'utf-8', errors='replace')
 
     def action_apply_suggested_ticket_tags(self):
         """Apply only exact suggestions that match existing Helpdesk tags."""

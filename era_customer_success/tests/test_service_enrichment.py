@@ -1,4 +1,5 @@
 import json
+import socket
 from unittest.mock import Mock, patch
 
 from odoo.tests import TransactionCase, tagged
@@ -7,13 +8,21 @@ from odoo.tests import TransactionCase, tagged
 @tagged('post_install', '-at_install')
 class TestServiceEnrichment(TransactionCase):
 
+    def test_private_service_url_is_rejected(self):
+        private_address = [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('127.0.0.1', 443))]
+        with patch('odoo.addons.era_customer_success.models.cs_service.socket.getaddrinfo', return_value=private_address):
+            with self.assertRaises(Exception):
+                self.env['cs.service']._fetch_public_service_page('https://localhost/internal')
+
     def test_url_enrichment_populates_customer_fit_and_safe_rules(self):
         service = self.env['cs.service'].create({
             'name': 'Enablement Service',
             'url': 'https://example.com/enablement',
         })
         response = Mock()
-        response.text = '<html><body>Training and onboarding improve product adoption.</body></html>'
+        response.status_code = 200
+        response.encoding = 'utf-8'
+        response.iter_content.return_value = [b'<html><body>Training and onboarding improve product adoption.</body></html>']
         response.raise_for_status = Mock()
         data = {
             'description': 'خدمة تمكين وتدريب.',
@@ -33,7 +42,9 @@ class TestServiceEnrichment(TransactionCase):
             'suggested_ticket_tags': '- New Requirement\n- missing tag',
         }
         agent_model = type(self.env.ref('era_customer_success.cs_service_extract_agent'))
-        with patch('odoo.addons.era_customer_success.models.cs_service.requests.get', return_value=response), \
+        public_address = [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('93.184.216.34', 443))]
+        with patch('odoo.addons.era_customer_success.models.cs_service.socket.getaddrinfo', return_value=public_address), \
+                patch('odoo.addons.era_customer_success.models.cs_service.requests.get', return_value=response), \
                 patch.object(agent_model, 'get_direct_response', return_value=[json.dumps(data)]):
             service.action_enrich_from_url()
 

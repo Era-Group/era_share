@@ -42,6 +42,9 @@ class CsFollowupCompose(models.TransientModel):
     # ------------------------------------------------------------------
     def _build_compose_prompt(self):
         self.ensure_one()
+        self.cs_account_id.check_access('read')
+        if self.partner_id != self.cs_account_id.partner_id:
+            raise UserError(_('The selected customer does not match the Customer Success account.'))
         acc = self.cs_account_id
         channel_label = dict(self._fields['channel'].selection).get(self.channel)
         tone_label = dict(self._fields['tone'].selection).get(self.tone)

@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 08:13+0000\n"
-"PO-Revision-Date: 2026-07-24 18:52+0000\n"
+"PO-Revision-Date: 2026-07-24 19:01+0000\n"
 "Last-Translator: Era Group\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -2203,6 +2203,12 @@ msgid "Could not get an answer right now. Please try again."
 msgstr "تعذّر الحصول على إجابة الآن. حاول مرة أخرى."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Could not resolve the service URL host: %s"
+msgstr "تعذر الوصول إلى مضيف رابط الخدمة: %s"
+
+#. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.cs_capture_request_view_form
 msgid "Create"
 msgstr "إنشاء"
@@ -3173,6 +3179,18 @@ msgstr ""
 #: code:addons/era_customer_success/models/cs_adoption_assessment.py:0
 msgid "Enable AI Adoption Plans in Customer Success settings first."
 msgstr "فعّل خطط التبنّي بـ ✦ من إعدادات نجاح العملاء أولاً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Enable AI Next Best Action in Customer Success settings first."
+msgstr "فعّل الخطوة التالية ✦ من إعدادات نجاح العملاء أولاً."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "Enable AI Profile Summary in Customer Success settings first."
+msgstr "فعّل ملخص الملف ✦ من إعدادات نجاح العملاء أولاً."
 
 #. module: era_customer_success
 #. odoo-python
@@ -5529,6 +5547,12 @@ msgid "Priority Rank"
 msgstr "ترتيب الأولوية"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Private, local, and reserved network addresses are not allowed."
+msgstr "لا يُسمح بعناوين الشبكات الخاصة أو المحلية أو المحجوزة."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__product_details
 msgid "Product Details"
 msgstr "تفاصيل المنتج"
@@ -5908,6 +5932,14 @@ msgid ""
 msgstr ""
 "يسجل الدليل وراء الاستنتاج. اجعله واقعياً ومحدداً ليتمكن مهندس آخر من التحقق"
 " من التوصية ومتابعة حوار العميل."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid ""
+"Redirecting service URLs are not allowed. Use the final public HTTPS URL."
+msgstr ""
+"لا يُسمح بروابط الخدمات التي تعيد التوجيه. استخدم رابط HTTPS العام النهائي."
 
 #. module: era_customer_success
 #. odoo-javascript
@@ -6532,6 +6564,12 @@ msgstr "نوع الخدمة"
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_service__url
 msgid "Service URL"
 msgstr "رابط الخدمة"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "Service enrichment accepts public HTTPS URLs only."
+msgstr "إثراء الخدمة يقبل روابط HTTPS العامة فقط."
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_service_form
@@ -7496,6 +7534,20 @@ msgstr "لا يمكن أن يسبق تاريخ المراجعة نهاية ال�
 #: code:addons/era_customer_success/models/cs_value_review.py:0
 msgid "The review period start must be before its end."
 msgstr "يجب أن تكون بداية فترة المراجعة قبل نهايتها."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/wizard/cs_account_copilot.py:0
+#: code:addons/era_customer_success/wizard/cs_call_briefing.py:0
+#: code:addons/era_customer_success/wizard/cs_followup_compose.py:0
+msgid "The selected customer does not match the Customer Success account."
+msgstr "العميل المحدد لا يطابق حساب نجاح العملاء."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_service.py:0
+msgid "The service page is too large to process safely."
+msgstr "صفحة الخدمة كبيرة جدًا ولا يمكن معالجتها بأمان."
 
 #. module: era_customer_success
 #. odoo-python

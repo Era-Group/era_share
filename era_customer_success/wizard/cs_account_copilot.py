@@ -32,6 +32,9 @@ class CsAccountCopilot(models.TransientModel):
 
     def action_ask(self):
         self.ensure_one()
+        self.cs_account_id.check_access('read')
+        if self.partner_id != self.cs_account_id.partner_id:
+            raise UserError(_('The selected customer does not match the Customer Success account.'))
         if not self.question or not self.question.strip():
             raise UserError(_('Type a question first.'))
         agent = self.env.ref('era_customer_success.cs_account_qa_agent', raise_if_not_found=False)

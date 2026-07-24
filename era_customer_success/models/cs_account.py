@@ -709,6 +709,9 @@ class CsAccount(models.Model):
 
     def action_suggest_next_step(self):
         """Ask the AI agent for the next best action for each account."""
+        self.check_access('read')
+        if any(not account.company_id.cs_ai_next_action_enabled for account in self):
+            raise UserError(_('Enable AI Next Best Action in Customer Success settings first.'))
         agent = self.env.ref('era_customer_success.cs_next_action_agent', raise_if_not_found=False)
         if not agent:
             raise UserError(_('The Next Best Action AI agent is not available.'))
@@ -1536,6 +1539,9 @@ class CsAccount(models.Model):
         return "\n".join(L)
 
     def action_generate_summary(self):
+        self.check_access('read')
+        if any(not account.company_id.cs_ai_summary_enabled for account in self):
+            raise UserError(_('Enable AI Profile Summary in Customer Success settings first.'))
         agent = self.env.ref('era_customer_success.cs_profile_summary_agent', raise_if_not_found=False)
         if not agent:
             raise UserError(_('The profile-summary AI agent is not available.'))

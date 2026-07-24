@@ -23,6 +23,9 @@ class CsCallBriefing(models.TransientModel):
 
     def _generate(self):
         self.ensure_one()
+        self.cs_account_id.check_access('read')
+        if self.partner_id != self.cs_account_id.partner_id:
+            raise UserError(_('The selected customer does not match the Customer Success account.'))
         agent = self.env.ref('era_customer_success.cs_call_prep_agent',
                              raise_if_not_found=False)
         if not agent:

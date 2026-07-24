@@ -263,7 +263,7 @@
                                 <tr><th style="width:35%">Field / الحقل</th><th>Value / القيمة</th></tr>
                             </thead>
                             <tbody>
-                                <tr class="table-danger"><th colspan="2">Fields sent to Excel / الحقول المرسلة إلى Excel</th></tr>
+                                <tr class="table-light"><th colspan="2">Fields sent to Excel / الحقول المرسلة إلى Excel</th></tr>
                                 <tr invisible="'A' not in sheet_approved_scope"><th>ERA CSM</th><td><field name="sheet_era_csm" nolabel="1" class="text-danger"/></td></tr>
                                 <tr invisible="'B' not in sheet_approved_scope"><th>ERA CSM phone</th><td><field name="sheet_era_csm_phone" nolabel="1" class="text-danger"/></td></tr>
                                 <tr invisible="'C' not in sheet_approved_scope"><th>ERA CSM email</th><td><field name="sheet_era_csm_email" nolabel="1" class="text-danger"/></td></tr>

@@ -12,6 +12,16 @@ from .cs_account import _cs_extract_json
 _logger = logging.getLogger(__name__)
 
 
+def _default_review_period_start(review_date):
+    """Start value reviews on a clear three-month calendar period."""
+    month = review_date.month - 3
+    year = review_date.year
+    if month <= 0:
+        month += 12
+        year -= 1
+    return review_date.replace(year=year, month=month, day=1)
+
+
 class CsValueReview(models.Model):
     _name = 'cs.value.review'
     _description = 'Customer Value Review'
@@ -115,7 +125,7 @@ class CsValueReview(models.Model):
                     'Create value reviews as drafts; Prepare Review captures the snapshot.'))
             review_date = fields.Date.to_date(vals.get('review_date')) or today
             vals.setdefault('period_end', review_date)
-            vals.setdefault('period_start', review_date - timedelta(days=90))
+            vals.setdefault('period_start', _default_review_period_start(review_date))
             if not vals.get('name') and vals.get('cs_account_id'):
                 account = self.env['cs.account'].browse(vals['cs_account_id'])
                 vals['name'] = _('Value Review - %(customer)s - %(date)s',
@@ -214,7 +224,7 @@ class CsValueReview(models.Model):
     def action_prepare(self):
         for review in self:
             if review.state != 'draft':
-                continue
+                raise UserError(_('Only draft value reviews can be prepared.'))
             values = {} if review.snapshot_captured_on else review._snapshot_values()
             values.update({
                 'state': 'prepared',
@@ -351,7 +361,7 @@ class CsValueReview(models.Model):
                         'cs_account_id': profile.cs_account_id.id,
                         'review_date': profile.review_date,
                         'period_end': profile.review_date,
-                        'period_start': profile.review_date - timedelta(days=90),
+                        'period_start': _default_review_period_start(profile.review_date),
                         'next_review_date': profile.review_date + timedelta(days=90),
                         'stakeholder_ids': [(6, 0, profile.stakeholder_ids.ids)],
                     })

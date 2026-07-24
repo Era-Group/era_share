@@ -46,6 +46,11 @@
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Monitor prepaid support hours and discuss continuity before balance or validity runs out.<br/>
+                        <strong>Features:</strong> Purchased, consumed, remaining, balance percentage, expiry, live status, and source order.<br/>
+                        <strong>Priority:</strong> Review critical or expiring wallets first. Explore the customer's upcoming need before presenting additional support; this screen does not create an opportunity automatically.
+                    </div>
                     <div class="oe_title">
                         <h1><field name="product_id"/></h1>
                         <h2><field name="partner_id"/></h2>

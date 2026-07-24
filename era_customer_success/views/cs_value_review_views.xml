@@ -32,7 +32,7 @@
                 <header>
                     <button name="action_prepare" type="object" string="Prepare Review"
                             class="btn-primary" invisible="state != 'draft'"
-                            help="Capture and freeze the current KPI, adoption, support, objectives, and milestone snapshot. Verify the review period first; frozen snapshot fields cannot be edited manually."/>
+                            help="Freeze the evidence for the selected review period. For example, choose 1 April to 30 June to review the value delivered in that quarter; the review date is the meeting date, not part of the measured period."/>
                     <button name="action_generate_ai_draft" type="object"
                             string="Draft Agenda (AI)" icon="fa-magic"
                             invisible="state != 'prepared' or not ai_value_review_enabled"
@@ -53,6 +53,11 @@
                            statusbar_visible="draft,prepared,held,closed,cancelled"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Review the value delivered during a defined evidence period in a structured customer meeting.<br/>
+                        <strong>Features:</strong> Frozen KPI snapshot, agenda, customer-confirmed value, evidence, risks, commitments, and follow-up.<br/>
+                        <strong>Priority:</strong> Set the measured period first, prepare the snapshot, hold the meeting, then close only after the customer confirms value and commitments. The review date is the meeting date.
+                    </div>
                     <field name="ai_value_review_enabled" invisible="1"/>
                     <div class="oe_title">
                         <h1><field name="name"/></h1>
@@ -66,9 +71,9 @@
                                    domain="[('cs_account_id', '=', cs_account_id)]"/>
                         </group>
                         <group>
-                            <field name="review_date"/>
-                            <field name="period_start"/>
-                            <field name="period_end"/>
+                            <field name="review_date" help="The date the value-review meeting takes place. It can be after the review period ends, because the meeting discusses the evidence collected during that period."/>
+                            <field name="period_start" help="The first day of the period whose delivered value will be reviewed. Example: set 1 April when reviewing the second quarter. This is not the date the meeting takes place."/>
+                            <field name="period_end" help="The last day of the period whose delivered value will be reviewed. Example: set 30 June with a 1 April start. Keep it on or before the review meeting date."/>
                             <field name="next_review_date"/>
                         </group>
                     </group>

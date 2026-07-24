@@ -24,6 +24,11 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Configure the ordered lifecycle that every Customer Success account follows.<br/>
+                        <strong>Features:</strong> Sequence, kanban folding, color, onboarding windows, risk and churn meaning, and stage email template.<br/>
+                        <strong>Priority:</strong> Keep stages few and unambiguous. Avoid overlapping onboarding day windows, and mark risk or churn stages only when they should change reporting and automation.
+                    </div>
                     <group>
                         <group>
                             <field name="name"/>

@@ -28,3 +28,34 @@ class TestSelfServiceHelp(TransactionCase):
         self.assertIn('workflow stage', descriptions['state']['help'])
         self.assertIn('direct validation', descriptions['customer_interest_confirmed']['help'])
         self.assertIn('CRM opportunity', descriptions['need_timing']['help'])
+
+    def test_every_operational_form_has_a_starting_guide(self):
+        view_xmlids = [
+            'view_cs_account_form',
+            'view_cs_success_profile_form',
+            'view_cs_value_review_form',
+            'view_cs_adoption_assessment_form',
+            'view_cs_voc_insight_form',
+            'view_cs_weekly_suggestion_form',
+            'view_cs_support_wallet_form',
+            'view_csm_offering_form',
+            'view_cs_service_form',
+            'view_cs_stage_form',
+            'cs_capture_request_view_form',
+            'view_cs_followup_compose_form',
+            'view_cs_suggestion_complete_form',
+            'view_cs_service_recommendation_wizard_form',
+            'view_cs_account_copilot_form',
+            'cs_customer_import_view_form',
+            'view_cs_call_briefing_form',
+            'view_partner_form_cs',
+            'helpdesk_ticket_view_form_cs',
+            'res_config_settings_view_form_cs',
+        ]
+
+        for xmlid in view_xmlids:
+            with self.subTest(view=xmlid):
+                arch = self.env.ref('era_customer_success.%s' % xmlid).arch_db
+                self.assertIn('Best use:', arch)
+                self.assertIn('Features:', arch)
+                self.assertIn('Priority:', arch)

@@ -7,6 +7,11 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="Customer Success" string="Customer Success" name="era_customer_success">
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Enable only the Customer Success automations your team is ready to own and review.<br/>
+                        <strong>Features:</strong> Optional ✦ assistants, support-wallet products, validity, balance thresholds, and expiry warnings.<br/>
+                        <strong>Priority:</strong> Configure support products and thresholds first. Enable each ✦ feature only after reviewing its data-sharing note, expected owner, and operating process.
+                    </div>
                     <block title="Artificial Intelligence" id="cs_ai_block">
                         <setting string="AI Sentiment Analysis"
                                  help="Analyse support ticket sentiment with the AI agent to feed the health score and trigger service-recovery alerts. Ticket text is sent to the configured AI provider.">

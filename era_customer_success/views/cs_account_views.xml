@@ -114,6 +114,11 @@
                     <field name="lifecycle_stage_id" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Run the complete customer relationship from one 360° record.<br/>
+                        <strong>Features:</strong> Health, adoption, support, value, renewal, communications, work items, and service discovery.<br/>
+                        <strong>Priority:</strong> Start with open risks and today's action, verify the source evidence, then record the customer outcome and next date. AI and recommendations are advisory only.
+                    </div>
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="object" name="action_view_tickets" icon="fa-ticket"
                                 help="Open this customer's support tickets (Helpdesk).">

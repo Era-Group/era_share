@@ -5,6 +5,13 @@
         <field name="model">helpdesk.ticket</field>
         <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info mx-3 mt-3 mb-0" role="status">
+                    <strong>Best use:</strong> Resolve the support issue while preserving customer-impact evidence for Customer Success.<br/>
+                    <strong>Features:</strong> Ticket ownership, SLA, communication, tags, resolution, and sentiment signal connected to customer health.<br/>
+                    <strong>Priority:</strong> Restore service and communicate clearly first. Keep tags and resolution factual; sentiment is a signal for follow-up, not a replacement for reading the conversation.
+                </div>
+            </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="cs_sentiment_analyzed" invisible="1"/>
                 <field name="cs_sentiment_label" widget="badge"

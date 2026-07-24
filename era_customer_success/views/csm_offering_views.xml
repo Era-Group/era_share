@@ -52,6 +52,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,presented,accepted"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Validate a discovered customer need before handing it to the commercial team.<br/>
+                        <strong>Features:</strong> Service context, need evidence, suitability check, customer contact, pitch, presentation, interest, timing, and CRM handoff.<br/>
+                        <strong>Priority:</strong> Document the need before presenting. Create an opportunity only after the customer explicitly confirms interest and timing; reject unsuitable recommendations instead of forcing qualification.
+                    </div>
                     <field name="is_service_recommendation" invisible="1"/>
                     <div class="alert alert-info" role="status" invisible="not is_service_recommendation">
                         توصية للاستكشاف فقط. تحقّق من احتياج العميل قبل تقديم الخدمة أو إنشاء فرصة.

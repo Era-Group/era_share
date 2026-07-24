@@ -56,6 +56,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="open,done"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Execute the single most important customer action due now and preserve its outcome.<br/>
+                        <strong>Features:</strong> Ranked reason, source signal, customer context, outcome, next step, deadline, and optional activity.<br/>
+                        <strong>Priority:</strong> Handle critical support and customer-risk items first. Open the customer evidence before acting; dismiss only when the item is genuinely irrelevant.
+                    </div>
                     <group>
                         <group>
                             <field name="partner_id" readonly="1"/>

@@ -43,6 +43,11 @@
                            statusbar_visible="new,triaged,acted,closed,dismissed"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Turn validated customer concerns, priorities, and blockers into owned actions.<br/>
+                        <strong>Features:</strong> Source evidence, theme, sentiment, priority, suggested response, audit trail, and resolution.<br/>
+                        <strong>Priority:</strong> Triage high-priority negative signals first, document the action taken, and close only with a clear resolution. Do not convert an insight directly into a sales opportunity.
+                    </div>
                     <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
                     <group>
                         <group>

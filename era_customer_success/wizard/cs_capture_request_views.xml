@@ -5,6 +5,11 @@
         <field name="model">cs.capture.request</field>
         <field name="arch" type="xml">
             <form string="Capture Customer Request">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Route a customer request to the correct operational owner.<br/>
+                    <strong>Features:</strong> Support ticket or qualified commercial request, subject, details, team, value, and expected closing date.<br/>
+                    <strong>Priority:</strong> Use Helpdesk for service issues and CRM only for a real commercial request. Write enough context so the receiving team can act without asking the customer to repeat it.
+                </div>
                 <group>
                     <group>
                         <field name="partner_id" readonly="1"/>

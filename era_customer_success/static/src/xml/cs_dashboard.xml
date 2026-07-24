@@ -7,6 +7,11 @@
                 <div class="mt-2">Loading Customer Success dashboard…</div>
             </div>
             <div t-else="">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Identify portfolio-level risks and where management attention is needed.<br/>
+                    <strong>Features:</strong> Customer volume, health, risk, revenue, sentiment, engineer distribution, and drill-down rankings.<br/>
+                    <strong>Priority:</strong> Start with critical customers and overloaded portfolios, then open the source accounts before acting. Use trends for coaching and prioritization, not as standalone employee evaluation.
+                </div>
                 <div class="d-flex align-items-center mb-3">
                     <h2 class="mb-0 me-auto">Customer Success — Executive Dashboard</h2>
                     <button class="btn btn-secondary" t-on-click="() => this.loadData()"

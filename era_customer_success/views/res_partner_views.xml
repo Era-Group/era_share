@@ -5,6 +5,13 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info mx-3 mt-3 mb-0" role="status" invisible="not is_company">
+                    <strong>Best use:</strong> Verify the company identity and enroll it into Customer Success when ongoing value management is required.<br/>
+                    <strong>Features:</strong> Company contacts and communication details plus direct access to the Customer Success 360° account.<br/>
+                    <strong>Priority:</strong> Keep one clean company record, confirm the commercial entity, then enroll and assign a CSM. Do not create duplicate companies to separate Customer Success activity.
+                </div>
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" type="object"
                         name="action_open_cs_account" icon="fa-heartbeat"

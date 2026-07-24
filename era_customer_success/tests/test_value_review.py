@@ -1,5 +1,5 @@
 import json
-from datetime import timedelta
+from datetime import date, timedelta
 from unittest.mock import patch
 
 from odoo import fields
@@ -66,6 +66,22 @@ class TestValueReview(TransactionCase):
         with self.assertRaises(UserError):
             review.with_user(self.manager).with_context(
                 cs_value_review_workflow=True).write({'state': 'closed'})
+
+    def test_default_period_is_the_previous_three_calendar_months(self):
+        review = self.env['cs.value.review'].create({
+            'cs_account_id': self.account.id,
+            'review_date': date(2026, 7, 24),
+        })
+
+        self.assertEqual(review.period_start, date(2026, 4, 1))
+        self.assertEqual(review.period_end, date(2026, 7, 24))
+
+    def test_prepare_requires_a_draft_review(self):
+        review = self._new_review()
+        review.action_prepare()
+
+        with self.assertRaises(UserError):
+            review.action_prepare()
 
     def test_close_updates_plan_and_schedules_one_followup_without_crm(self):
         review = self._new_review()

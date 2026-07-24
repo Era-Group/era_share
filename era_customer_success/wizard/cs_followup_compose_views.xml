@@ -5,6 +5,11 @@
         <field name="model">cs.followup.compose</field>
         <field name="arch" type="xml">
             <form string="Compose Follow-up (AI)">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Prepare a context-aware customer follow-up for the selected channel.<br/>
+                    <strong>Features:</strong> Purpose, tone, recent timeline, optional service context, editable draft, and channel handoff.<br/>
+                    <strong>Priority:</strong> Verify the recipient, facts, promises, and tone before opening the channel. The generated text is a draft and is never sent automatically.
+                </div>
                 <group>
                     <group>
                         <field name="partner_id" readonly="1"/>

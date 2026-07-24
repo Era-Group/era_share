@@ -5,6 +5,11 @@
         <field name="model">cs.account.copilot</field>
         <field name="arch" type="xml">
             <form string="Account Copilot">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Ask a focused question when you need a quick reading of the customer record.<br/>
+                    <strong>Features:</strong> Grounded answer from account data and timeline without changing customer records.<br/>
+                    <strong>Priority:</strong> Ask one specific question, then verify dates, amounts, commitments, and risks in their source records before making a decision.
+                </div>
                 <div class="alert alert-info" role="status">
                     🤖 <field name="partner_id" readonly="1" class="oe_inline" nolabel="1"/> — اسأل أي سؤال عن هذا العميل (الوضع، الصحة، المخاطر، التجديد، آخر التفاعلات…)
                 </div>

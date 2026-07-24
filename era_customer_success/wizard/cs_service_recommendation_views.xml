@@ -5,6 +5,11 @@
         <field name="model">cs.service.recommendation.wizard</field>
         <field name="arch" type="xml">
             <form string="Recommended Services">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Discover which catalog services are worth validating with this customer now.<br/>
+                    <strong>Features:</strong> Evidence-based score, reason, discovery questions, selection, and draft-offering creation.<br/>
+                    <strong>Priority:</strong> Review the reason and ask the discovery questions before selecting a service. Creating a draft starts validation only; it does not present a service or create an opportunity.
+                </div>
                 <group>
                     <field name="cs_account_id" invisible="1"/>
                     <field name="partner_id"/>

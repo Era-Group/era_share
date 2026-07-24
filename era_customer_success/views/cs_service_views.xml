@@ -63,6 +63,11 @@
                     <field name="whatsapp_template_id" invisible="1"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Define when a service creates customer value and how a CSM should discover the need.<br/>
+                        <strong>Features:</strong> Audience, value points, need signals, discovery questions, exclusions, ticket tags, image, pitch, and communication template.<br/>
+                        <strong>Priority:</strong> Write observable need signals and disqualifiers before enabling recommendations. Review generated catalog content and never describe a recommendation as confirmed customer interest.
+                    </div>
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="object" name="action_view_offerings" icon="fa-gift"
                                 help="View every customer offering created from this catalog service, including drafts, presentations, accepted qualifications, and rejections.">

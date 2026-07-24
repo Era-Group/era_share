@@ -39,6 +39,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
                 </header>
                 <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <strong>Best use:</strong> Agree the customer's shared success direction before running reviews or recommending services.<br/>
+                        <strong>Features:</strong> Business objectives, success criteria, stakeholders, milestones, and goal-linked services.<br/>
+                        <strong>Priority:</strong> Keep one reviewed active plan, assign dated milestones, and record evidence and blockers. Review any generated draft before activation.
+                    </div>
                     <field name="cs_account_id" invisible="1"/>
                     <field name="ai_success_plan_enabled" invisible="1"/>
                     <div class="oe_title">

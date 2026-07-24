@@ -5,6 +5,11 @@
         <field name="model">cs.customer.import</field>
         <field name="arch" type="xml">
             <form string="Smart Customer Import">
+                <div class="alert alert-info mb-3" role="status">
+                    <strong>Best use:</strong> Enroll existing companies with real service or project history into Customer Success in controlled batches.<br/>
+                    <strong>Features:</strong> Source selection, candidate count, import limit, balanced CSM assignment, and optional tier classification.<br/>
+                    <strong>Priority:</strong> Start with a small limit, review assignment capacity, and import only companies that should receive an ongoing success motion. Existing accounts are skipped.
+                </div>
                 <div class="alert alert-info" role="status">
                     <i class="fa fa-magic me-1" title="Smart import"/>
                     Imports companies that already had dealings with us (tickets or projects)

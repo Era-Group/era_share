@@ -28,6 +28,8 @@
 
     <menuitem id="menu_cs_service_catalog" name="Service Catalog"
               parent="menu_cs_root" action="action_cs_service" sequence="35"/>
+    <menuitem id="menu_cs_user_guide" name="دليل الاستخدام"
+              parent="menu_cs_root" action="action_cs_user_guide" sequence="70"/>
 
 
     <!-- Reporting -->

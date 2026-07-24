@@ -4,6 +4,14 @@ from odoo.tests.common import TransactionCase
 
 class TestSelfServiceHelp(TransactionCase):
 
+    def test_in_app_user_guide_matches_module_release(self):
+        guide = self.env.ref('era_customer_success.cs_user_guide_main')
+        module = self.env['ir.module.module'].search([
+            ('name', '=', 'era_customer_success')], limit=1)
+        self.assertEqual(guide.release, module.installed_version)
+        self.assertIn('بداية كل يوم', guide.content)
+        self.assertIn('اختبار الاستلام', guide.content)
+
     def test_existing_and_generated_help_are_available(self):
         descriptions = self.env['cs.account'].fields_get(['partner_id', 'health_score'])
 

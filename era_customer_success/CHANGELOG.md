@@ -237,3 +237,6 @@ Commits pushed to `origin/stage`.
 - Exposed next-action evidence sources directly in the AI suggestion history for audit and coaching.
 ## 19.0.30.0.0 — Technical Consolidation
 - Unified AI JSON response extraction in one shared utility and aligned handover/test documentation with the current release.
+## 19.0.31.0.0 — In-App Operating Guide
+- Added a read-only Arabic User Guide page directly under the Customer Success menu for employee onboarding, daily operation, best practices, UAT, and feature handover.
+- Established a permanent release rule requiring the in-app guide, project memory, release number, and update date to change with every future workflow or feature update.

@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Era Customer Success",
-    'summary': "Customer Success platform: 360° customer follow-up, CSM assignment, "
-               "health scoring, unified timeline (WhatsApp/SMS/Calls/Tickets), "
-               "lifecycle (30-60-90) and a manager KPI dashboard.",
-    'description': "A thin orchestration layer over Helpdesk, VoIP, WhatsApp "
-                   "(native), Subscriptions, Surveys, CRM and Accounting "
-                   "Follow-up: a Customer Success Account per customer assigned to a "
-                   "CSM engineer, a unified 360 timeline, an automatic health score, "
-                   "a 30-60-90 lifecycle, and a manager KPI dashboard.",
+    'summary': "منصة نجاح عملاء 360°: متابعة يومية، تفاعل، قيمة، صوت العميل، دعم، توصيات خدمات ولوحة تنفيذية.",
+    'description': "منصة متكاملة داخل أودو لإدارة نجاح العملاء بعد البيع: ملف عميل موحد، "
+                    "قائمة عمل يومية، مؤشر صحة، تقييم تفاعل من الدعم والمشاريع والتواصل، "
+                    "مراجعات قيمة، صوت العميل، ساعات الدعم، توصيات خدمات قابلة للتفسير، "
+                    "خطوة تالية بمصادر دليل، ولوحة تنفيذية للإدارة.",
     'author': "Era Group",
     'website': "https://www.era.net.sa",
     'category': 'Services/Customer Success',
-    'version': '19.0.30.0.0',
+    'version': '19.0.31.0.0',
     'license': 'LGPL-3',
     'depends': [
         'base',
@@ -66,6 +63,7 @@
         'views/res_partner_views.xml',
         'views/helpdesk_ticket_views.xml',
         'views/res_config_settings_views.xml',
+        'views/cs_user_guide_views.xml',
         'views/cs_menus.xml',
     ],
     'assets': {

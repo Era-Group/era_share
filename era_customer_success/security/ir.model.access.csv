@@ -35,3 +35,5 @@ access_cs_voc_insight_user,cs.voc.insight.user,model_cs_voc_insight,group_era_cs
 access_cs_voc_insight_manager,cs.voc.insight.manager,model_cs_voc_insight,group_era_cs_manager,1,1,0,0
 access_cs_service_recommendation_wizard_user,cs.service.recommendation.wizard.user,model_cs_service_recommendation_wizard,group_era_cs_user,1,1,1,1
 access_cs_service_recommendation_line_user,cs.service.recommendation.line.user,model_cs_service_recommendation_line,group_era_cs_user,1,1,1,1
+access_cs_user_guide_user,cs.user.guide.user,model_cs_user_guide,group_era_cs_user,1,0,0,0
+access_cs_user_guide_manager,cs.user.guide.manager,model_cs_user_guide,group_era_cs_manager,1,0,0,0

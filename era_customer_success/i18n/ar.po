@@ -205,6 +205,36 @@ msgstr "2. تعبئة الحقول بالذكاء"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
+msgid "2. Fill local form with AI"
+msgstr "2. تعبئة الفورم المحلي بالذكاء"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "The Sheet form AI assistant is not available."
+msgstr "مساعد الذكاء لتعبئة فورم Sheet غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "AI could not fill the Sheet form. Check the AI provider configuration."
+msgstr "تعذر على الذكاء تعبئة فورم Sheet. تحقق من إعداد مزود الذكاء."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "The Sheet form AI assistant returned an invalid response."
+msgstr "أعاد مساعد الذكاء لتعبئة فورم Sheet استجابة غير صالحة."
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Sheet form filled with AI"
+msgstr "تمت تعبئة الفورم بالذكاء"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "The local form was filled from current Odoo customer data. No Excel data was read or sent."
+msgstr "تمت تعبئة الفورم المحلي من بيانات العميل الحالية في أودو، دون قراءة أو إرسال أي بيانات إلى Excel."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_account_form
 msgid "3. Send data to Excel"
 msgstr "3. إرسال البيانات إلى Excel"
 

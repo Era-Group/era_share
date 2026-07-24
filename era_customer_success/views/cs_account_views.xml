@@ -250,7 +250,7 @@
                         <field name="sheet_approved_scope" invisible="1"/>
                         <div class="mb-2">
                             <button name="action_match_fetch_google_sheet_fields" type="object" string="1. Match Excel and fetch all fields" class="btn-danger" icon="fa-search"/>
-                            <button name="action_fill_google_sheet_fields" type="object" string="2. Fill fields with AI" class="btn-warning" icon="fa-magic"/>
+                            <button name="action_fill_google_sheet_fields" type="object" string="2. Fill local form with AI" class="btn-warning" icon="fa-magic"/>
                             <button name="action_send_google_sheet_fields" type="object" string="3. Send data to Excel" class="btn-primary" icon="fa-upload"/>
                         </div>
                         <div class="alert alert-danger" role="status">

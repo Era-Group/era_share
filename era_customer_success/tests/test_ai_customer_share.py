@@ -143,6 +143,27 @@ class TestAiCustomerShare(TransactionCase):
         self.assertTrue(line.exists())
         self.assertEqual(self.share.line_ids.customer_name, 'Published Name')
 
+    def test_weekly_refresh_excludes_customers_not_marked_for_portal(self):
+        line = self.env['cs.ai.customer.share.line'].create({
+            'share_id': self.share.id,
+            'account_id': self.account.id,
+            'customer_name': 'Previously Published',
+        })
+        self.account.sudo().send_to_portal_share = False
+        self.share.write({
+            'state': 'approved',
+            'portal_enabled': True,
+            'selected_fields': 'customer_name',
+            'include_customer_name': True,
+        })
+        with patch.object(type(self.share), '_prepare_account_row') as prepare:
+            self.share._refresh_approved_portal_table(respect_portal_selection=True)
+        prepare.assert_not_called()
+        self.assertFalse(line.exists())
+        self.assertFalse(self.share.line_ids)
+        self.assertEqual(self.share.state, 'approved')
+        self.assertTrue(self.share.portal_enabled)
+
     def test_weekly_cron_refreshes_only_live_approved_tables(self):
         self.share.write({'state': 'approved', 'portal_enabled': True})
         draft = self.env['cs.ai.customer.share'].create({
@@ -168,3 +189,6 @@ class TestAiCustomerShare(TransactionCase):
         self.assertNotIn(draft.id, refreshed_ids)
         self.assertNotIn(unpublished.id, refreshed_ids)
         self.assertNotIn(expired.id, refreshed_ids)
+        self.assertTrue(all(
+            call.kwargs.get('respect_portal_selection') is True
+            for call in refresh.call_args_list))

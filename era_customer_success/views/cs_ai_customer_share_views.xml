@@ -74,7 +74,8 @@
                         </group>
                     </group>
                     <div class="alert alert-info" role="status">
-                        The weekly AI refresh runs Thursday at 6:00 PM Saudi time only for approved, published, active, and unexpired Portal tables. Draft, review, unpublished, and expired tables are not updated.
+                        <p class="mb-1">The weekly AI refresh runs Thursday at 6:00 PM Saudi time only for approved, published, active, and unexpired Portal tables. Draft, review, unpublished, and expired tables are not updated.</p>
+                        <p class="mb-0">Only included customers whose Customer Success record has “Send to Portal for Sharing” enabled remain in the weekly table.</p>
                     </div>
                     <field name="request_description" readonly="state == 'approved'"
                            placeholder="Describe only the customer information required for the joint review..."/>

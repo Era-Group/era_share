@@ -253,6 +253,11 @@ msgstr "يعمل التحديث الأسبوعي بالذكاء يوم الخم�
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid "Only included customers whose Customer Success record has “Send to Portal for Sharing” enabled remain in the weekly table."
+msgstr "يبقى في الجدول الأسبوعي فقط العملاء المشمولون والمفعّل في سجل نجاح العملاء الخاص بهم خيار «إرساله للبوابة للمشاركة»."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Describe only the customer information required for the joint review..."
 msgstr "صف فقط معلومات العميل المطلوبة للمراجعة المشتركة..."
 

@@ -396,7 +396,7 @@ class CsAiCustomerShare(models.Model):
             'published_on': False,
         })
 
-    def _refresh_approved_portal_table(self):
+    def _refresh_approved_portal_table(self, respect_portal_selection=False):
         self.ensure_one()
         if self.state != 'approved' or not self.portal_enabled:
             return False
@@ -406,12 +406,16 @@ class CsAiCustomerShare(models.Model):
             raise UserError(_('The approved Portal table has no safe selected fields.'))
         if not self.account_ids:
             raise UserError(_('The approved Portal table has no included customers.'))
+        accounts = self.account_ids
+        if respect_portal_selection:
+            accounts = accounts.filtered('send_to_portal_share')
         # Prepare all rows first so an AI failure cannot erase the currently published table.
         row_values = [self._prepare_account_row(account, selected)
-                      for account in self.account_ids]
+                      for account in accounts]
         refresh_context = dict(self.env.context, cs_scheduled_portal_refresh=True)
         self.line_ids.with_context(refresh_context).unlink()
-        self.env['cs.ai.customer.share.line'].with_context(refresh_context).create(row_values)
+        if row_values:
+            self.env['cs.ai.customer.share.line'].with_context(refresh_context).create(row_values)
         self.with_context(refresh_context).write({
             'prepared_by_id': self.env.user.id,
             'prepared_on': fields.Datetime.now(),
@@ -429,7 +433,7 @@ class CsAiCustomerShare(models.Model):
         for share in shares:
             try:
                 with self.env.cr.savepoint():
-                    share._refresh_approved_portal_table()
+                    share._refresh_approved_portal_table(respect_portal_selection=True)
             except Exception as error:
                 _logger.exception(
                     'Scheduled Portal refresh kept the previous table for share %s: %s',

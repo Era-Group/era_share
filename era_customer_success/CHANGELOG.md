@@ -262,3 +262,6 @@ Commits pushed to `origin/stage`.
 - Reads per-cell Google Sheets Data Validation before writing and preserves the exact configured option spelling.
 - Supports direct dropdown lists and range-backed lists, blocking the batch before writing when an outbound value is not allowed.
 - Completed Arabic references and translations for the AI sharing form, Portal controls, status fields, instructions, and empty-state help.
+## 19.0.33.3.0 — Weekly Portal Customer Eligibility
+- Filters Thursday Portal refresh rows to customers included in the report whose Customer Success record still has “Send to Portal for Sharing” enabled.
+- Removes previously published rows on the next refresh when that customer-level option is disabled, without adding accounts outside the report selection.

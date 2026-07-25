@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_ai_customer_share_table" name="AI Customer Sharing Table">
+        <t t-call="portal.frontend_layout">
+            <div class="container-fluid py-4 px-lg-5">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                    <div>
+                        <p class="text-uppercase text-muted small mb-1">ERA Group × Odoo</p>
+                        <h1 class="h3 mb-1" t-esc="share.name"/>
+                        <p class="text-muted mb-0">AI-reviewed customer information / بيانات العملاء المراجعة بالذكاء</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge text-bg-success">Approved / معتمد</span>
+                        <div class="small text-muted mt-1">Expires / ينتهي: <t t-esc="share.expires_on"/></div>
+                    </div>
+                </div>
+                <div class="table-responsive border rounded bg-white shadow-sm">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th t-if="share.include_customer_name">Customer Name<br/>اسم العميل</th>
+                                <th t-if="share.include_last_contact">Last Contact<br/>آخر تواصل</th>
+                                <th t-if="share.include_contact_result">Contact Result<br/>نتيجة التواصل</th>
+                                <th t-if="share.include_adoption_percent">Adoption<br/>نسبة التبني</th>
+                                <th t-if="share.include_customer_voice">Voice of Customer<br/>صوت العميل</th>
+                                <th t-if="share.include_relationship_health_percent">Relationship Health<br/>صحة العلاقة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="share.line_ids" t-as="line">
+                                <td t-if="share.include_customer_name" t-esc="line.customer_name"/>
+                                <td t-if="share.include_last_contact" t-esc="line.last_contact"/>
+                                <td t-if="share.include_contact_result" class="text-wrap" t-esc="line.contact_result"/>
+                                <td t-if="share.include_adoption_percent"><t t-esc="round(line.adoption_percent, 2)"/>%</td>
+                                <td t-if="share.include_customer_voice" class="text-wrap" t-esc="line.customer_voice"/>
+                                <td t-if="share.include_relationship_health_percent"><t t-esc="round(line.relationship_health_percent, 2)"/>%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

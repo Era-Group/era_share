@@ -9,11 +9,12 @@
     'author': "Era Group",
     'website': "https://www.era.net.sa",
     'category': 'Services/Customer Success',
-    'version': '19.0.32.1.0',
+    'version': '19.0.33.0.0',
     'license': 'LGPL-3',
     'depends': [
         'base',
         'base_setup',
+        'portal',
         'mail',
         'ai',
         'contacts',
@@ -64,6 +65,8 @@
         'views/helpdesk_ticket_views.xml',
         'views/res_config_settings_views.xml',
         'views/cs_user_guide_views.xml',
+        'views/cs_ai_customer_share_views.xml',
+        'views/cs_ai_customer_share_portal_templates.xml',
         'views/cs_menus.xml',
     ],
     'assets': {

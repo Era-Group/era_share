@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_ai_customer_share_list" model="ir.ui.view">
+        <field name="name">cs.ai.customer.share.list</field>
+        <field name="model">cs.ai.customer.share</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="state" widget="badge"/>
+                <field name="selected_fields"/>
+                <field name="prepared_on"/>
+                <field name="approved_on"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cs_ai_customer_share_form" model="ir.ui.view">
+        <field name="name">cs.ai.customer.share.form</field>
+        <field name="model">cs.ai.customer.share</field>
+        <field name="arch" type="xml">
+            <form string="AI Customer Sharing Table">
+                <header>
+                    <button name="action_prepare_with_ai" type="object"
+                            string="Prepare Table with AI" class="btn-primary"
+                            invisible="state == 'approved'"/>
+                    <button name="action_approve" type="object"
+                            string="Approve Reviewed Table" class="btn-primary"
+                            invisible="state != 'prepared'"/>
+                    <button name="action_revoke_approval" type="object"
+                            string="Revoke Approval" invisible="state != 'approved'"/>
+                    <button name="action_publish_portal" type="object"
+                            string="Publish to Portal" class="btn-primary"
+                            invisible="state != 'approved' or portal_enabled"/>
+                    <button name="action_unpublish_portal" type="object"
+                            string="Unpublish Portal" invisible="not portal_enabled"/>
+                    <button name="action_regenerate_portal_token" type="object"
+                            string="Regenerate Portal Link" invisible="not id"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="status">
+                        <strong>One form, one table:</strong>
+                        AI selects only safe columns requested in the description and prepares a reviewable row for each customer. Nothing is shared externally from this screen.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="account_ids" widget="many2many_tags"
+                                   domain="[('company_id', '=', company_id)]"
+                                   readonly="state == 'approved'"/>
+                        </group>
+                        <group>
+                            <field name="selected_fields"/>
+                            <field name="prepared_by_id"/>
+                            <field name="prepared_on"/>
+                            <field name="approved_by_id" invisible="state != 'approved'"/>
+                            <field name="approved_on" invisible="state != 'approved'"/>
+                        </group>
+                    </group>
+                    <group string="Portal Sharing Settings">
+                        <group>
+                            <field name="portal_enabled" widget="boolean_toggle"/>
+                            <field name="expires_on"/>
+                            <field name="portal_user_ids" widget="many2many_tags"/>
+                            <field name="portal_url" widget="url" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="published_by_id"/>
+                            <field name="published_on"/>
+                            <field name="access_count"/>
+                            <field name="last_accessed_on"/>
+                        </group>
+                    </group>
+                    <field name="request_description" readonly="state == 'approved'"
+                           placeholder="Describe only the customer information required for the joint review..."/>
+                    <field name="include_customer_name" invisible="1"/>
+                    <field name="include_last_contact" invisible="1"/>
+                    <field name="include_contact_result" invisible="1"/>
+                    <field name="include_adoption_percent" invisible="1"/>
+                    <field name="include_customer_voice" invisible="1"/>
+                    <field name="include_relationship_health_percent" invisible="1"/>
+                    <separator string="AI-Prepared Customer Table"/>
+                    <field name="line_ids" nolabel="1" readonly="state == 'approved'">
+                        <list editable="bottom" open_form_view="0" create="0" delete="0">
+                            <field name="account_id" column_invisible="1"/>
+                            <field name="customer_name"
+                                   column_invisible="not parent.include_customer_name"/>
+                            <field name="last_contact"
+                                   column_invisible="not parent.include_last_contact"/>
+                            <field name="contact_result"
+                                   column_invisible="not parent.include_contact_result"/>
+                            <field name="adoption_percent"
+                                   column_invisible="not parent.include_adoption_percent"/>
+                            <field name="customer_voice"
+                                   column_invisible="not parent.include_customer_voice"/>
+                            <field name="relationship_health_percent"
+                                   column_invisible="not parent.include_relationship_health_percent"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cs_ai_customer_share" model="ir.actions.act_window">
+        <field name="name">AI Customer Sharing Tables</field>
+        <field name="res_model">cs.ai.customer.share</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create one AI-reviewed customer table</p>
+            <p>Describe the required information, select customers, prepare with AI, then review and approve.</p>
+        </field>
+    </record>
+</odoo>

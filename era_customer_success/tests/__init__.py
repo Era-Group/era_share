@@ -9,3 +9,4 @@ from . import test_self_service_help
 from . import test_health_tracking
 from . import test_service_enrichment
 from . import test_google_sheet_sync
+from . import test_ai_customer_share

@@ -44,6 +44,17 @@
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 
+    <record id="cs_ai_customer_share_rule_company" model="ir.rule">
+        <field name="name">AI Customer Sharing Table: allowed companies</field>
+        <field name="model_id" ref="model_cs_ai_customer_share"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="cs_ai_customer_share_line_rule_company" model="ir.rule">
+        <field name="name">AI Customer Sharing Row: allowed companies</field>
+        <field name="model_id" ref="model_cs_ai_customer_share_line"/>
+        <field name="domain_force">[('share_id.company_id', 'in', company_ids)]</field>
+    </record>
+
     <record id="cs_offering_rule_own" model="ir.rule">
         <field name="name">CS Offering: own (CSM)</field>
         <field name="model_id" ref="model_csm_offering"/>

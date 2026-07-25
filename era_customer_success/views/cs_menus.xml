@@ -30,6 +30,9 @@
               parent="menu_cs_root" action="action_cs_service" sequence="35"/>
     <menuitem id="menu_cs_user_guide" name="دليل الاستخدام"
               parent="menu_cs_root" action="action_cs_user_guide" sequence="70"/>
+    <menuitem id="menu_cs_ai_customer_share" name="AI Customer Sharing Table"
+              parent="menu_cs_root" action="action_cs_ai_customer_share" sequence="72"
+              groups="group_era_cs_manager"/>
 
 
     <!-- Reporting -->

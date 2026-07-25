@@ -83,6 +83,10 @@ class CsAccount(models.Model):
         help="The customer company managed by Customer Success. "
              "One account per company; child contacts are aggregated automatically.")
     active = fields.Boolean(default=True)
+    send_to_portal_share = fields.Boolean(
+        string='Send to Portal for Sharing', tracking=True,
+        help='Include this customer by default in the AI-reviewed sharing table. '
+             'This flag does not publish or send data by itself.')
     company_id = fields.Many2one(
         'res.company', string='Company', required=True, index=True,
         default=lambda self: self.env.company)
@@ -602,6 +606,9 @@ class CsAccount(models.Model):
             for vals in vals_list:
                 if vals.get('csm_user_id') not in (False, self.env.user.id):
                     raise UserError(_('Only a Customer Success Manager can assign accounts to another user.'))
+                if vals.get('send_to_portal_share'):
+                    raise UserError(_(
+                        'Only a Customer Success Manager can select customers for Portal sharing.'))
         accounts = super().create(vals_list)
         accounts._sync_partner_link()
         accounts._mirror_csm_to_partner()
@@ -610,6 +617,12 @@ class CsAccount(models.Model):
         return accounts
 
     def write(self, vals):
+        if ('send_to_portal_share' in vals
+                and not self.env.su
+                and not self.env.user.has_group(
+                    'era_customer_success.group_era_cs_manager')):
+            raise UserError(_(
+                'Only a Customer Success Manager can select customers for Portal sharing.'))
         if ('csm_user_id' in vals
                 and not self.env.user.has_group('era_customer_success.group_era_cs_manager')):
             raise UserError(_('Only a Customer Success Manager can change the assigned CSM.'))

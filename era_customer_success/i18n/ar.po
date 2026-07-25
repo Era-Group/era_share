@@ -14,6 +14,118 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_customer_success
+msgid "AI Customer Sharing Table"
+msgstr "جدول مشاركة بيانات العملاء بالذكاء"
+
+#. module: era_customer_success
+msgid "AI Customer Sharing Tables"
+msgstr "جداول مشاركة بيانات العملاء بالذكاء"
+
+#. module: era_customer_success
+msgid "Odoo Customer Data Review"
+msgstr "مراجعة بيانات عملاء أودو"
+
+#. module: era_customer_success
+msgid "Requested Information Description"
+msgstr "وصف المعلومات المطلوبة"
+
+#. module: era_customer_success
+msgid "Included Customers"
+msgstr "العملاء المشمولون"
+
+#. module: era_customer_success
+msgid "Send to Portal for Sharing"
+msgstr "إرساله للبوابة للمشاركة"
+
+#. module: era_customer_success
+msgid "Include this customer by default in the AI-reviewed sharing table. This flag does not publish or send data by itself."
+msgstr "أدرج هذا العميل افتراضياً في جدول المشاركة المراجع بالذكاء. هذه العلامة لا تنشر أو ترسل أي بيانات بمفردها."
+
+#. module: era_customer_success
+msgid "Prepare Table with AI"
+msgstr "تحضير الجدول بالذكاء"
+
+#. module: era_customer_success
+msgid "Approve Reviewed Table"
+msgstr "الموافقة على الجدول بعد المراجعة"
+
+#. module: era_customer_success
+msgid "AI-Prepared Customer Table"
+msgstr "جدول العملاء المحضر بالذكاء"
+
+#. module: era_customer_success
+msgid "Prepared for Review"
+msgstr "محضر للمراجعة"
+
+#. module: era_customer_success
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: era_customer_success
+msgid "Last Contact"
+msgstr "آخر تواصل"
+
+#. module: era_customer_success
+msgid "Contact Result"
+msgstr "نتيجة التواصل"
+
+#. module: era_customer_success
+msgid "Adoption (%)"
+msgstr "نسبة التبني (%)"
+
+#. module: era_customer_success
+msgid "Voice of Customer"
+msgstr "صوت العميل"
+
+#. module: era_customer_success
+msgid "Relationship Health (%)"
+msgstr "نسبة صحة العلاقة (%)"
+
+#. module: era_customer_success
+msgid "The description did not select any allowed sharing field."
+msgstr "لم يحدد الوصف أي حقل مسموح لمشاركة البيانات."
+
+#. module: era_customer_success
+msgid "Select at least one customer before preparing the table."
+msgstr "اختر عميلاً واحداً على الأقل قبل تحضير الجدول."
+
+#. module: era_customer_success
+msgid "Prepare and review the AI table before approval."
+msgstr "حضّر جدول الذكاء وراجعه قبل الموافقة."
+
+#. module: era_customer_success
+msgid "Portal Sharing Settings"
+msgstr "إعدادات المشاركة على Portal"
+
+#. module: era_customer_success
+msgid "Publish to Portal"
+msgstr "النشر إلى Portal"
+
+#. module: era_customer_success
+msgid "Unpublish Portal"
+msgstr "إلغاء النشر على Portal"
+
+#. module: era_customer_success
+msgid "Regenerate Portal Link"
+msgstr "تجديد رابط Portal"
+
+#. module: era_customer_success
+msgid "Authorized Portal Users"
+msgstr "مستخدمو Portal المصرح لهم"
+
+#. module: era_customer_success
+msgid "Approve the reviewed AI table before publishing it to Portal."
+msgstr "وافق على جدول الذكاء بعد مراجعته قبل نشره إلى Portal."
+
+#. module: era_customer_success
+msgid "Portal expiration must be today or later."
+msgstr "يجب أن يكون تاريخ انتهاء Portal اليوم أو بعده."
+
+#. module: era_customer_success
+msgid "Only a Customer Success Manager can select customers for Portal sharing."
+msgstr "يمكن لمدير نجاح العملاء فقط اختيار العملاء للمشاركة على Portal."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

@@ -222,6 +222,7 @@
                             <field name="tier"/>
                             <field name="cadence"/>
                             <field name="onboarding_start_date"/>
+                            <field name="send_to_portal_share" groups="era_customer_success.group_era_cs_manager"/>
                         </group>
                         <group string="Health">
                             <field name="health_score" widget="progressbar"/>

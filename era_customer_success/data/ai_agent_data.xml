@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        <record id="cs_share_field_selector_agent" model="ai.agent">
+            <field name="name">CS Sharing Field Selector</field>
+            <field name="subtitle">Converts a sharing description into a safe, reviewed column selection.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You receive a natural-language description and a strict allowed_fields list. Select only fields
+explicitly requested or clearly equivalent in meaning. Never add fields outside allowed_fields.
+Return STRICT JSON only: {"selected_fields": ["field_name"]}. Do not add commentary.
+            </field>
+        </record>
+        <record id="cs_share_row_builder_agent" model="ai.agent">
+            <field name="name">CS Customer Sharing Row Builder</field>
+            <field name="subtitle">Builds one concise, reviewable customer row from current Odoo evidence.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You prepare one customer row for an external joint review. Use only the supplied customer
+snapshot and selected_fields. Return STRICT JSON with only these possible keys:
+customer_name, last_contact, contact_result, adoption_percent, customer_voice,
+relationship_health_percent. Keep text concise and factual. Percentages are numbers 0..100.
+Do not include revenue, ticket details, internal notes, chatter, health drivers, risks, or any
+information not represented by a selected field. Use an empty string or 0 when evidence is
+missing. Never infer a contact result that is not supported by the snapshot.
+            </field>
+        </record>
         <record id="cs_customer_match_agent" model="ai.agent">
             <field name="name">CS Customer Record Matcher</field>
             <field name="subtitle">Matches a Google Sheet customer row to a reviewed Odoo account candidate.</field>

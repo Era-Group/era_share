@@ -23,3 +23,4 @@ from . import account_return
 from . import self_service_help
 from . import cs_user_guide
 from . import google_sheet_sync
+from . import cs_ai_customer_share

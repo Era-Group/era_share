@@ -249,3 +249,8 @@ Commits pushed to `origin/stage`.
 ## 19.0.32.1.0 — Retire Incorrect Portal Share
 - Removed the previous portfolio portal, token sharing, external Excel export, and management forms because they did not match the required single-table AI-reviewed sharing workflow.
 - Kept the approved Google Sheet integration and customer-record Sheet fields independent from the retired portal.
+## 19.0.33.0.0 — AI-Reviewed Customer Sharing Table
+- Added one internal review form with one customer table; row records do not have separate forms.
+- Added AI selection from a strict safe column catalog and AI preparation of customer name, last contact, contact result, adoption, Voice of Customer, and relationship health.
+- Added explicit review approval with automatic revocation whenever an approved row is edited.
+- Added one bilingual Portal table with per-share authorized users, expiring token link, explicit publish/unpublish controls, and access auditing.

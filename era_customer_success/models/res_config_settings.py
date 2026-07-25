@@ -89,6 +89,7 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         self.ensure_one()
+        result = super().set_values()
         url = (self.cs_google_sheet_url or '').strip()
         if url:
             spreadsheet_id, gid = self._parse_google_sheet_url(url)
@@ -102,7 +103,7 @@ class ResConfigSettings(models.TransientModel):
                 params.set_param('era_customer_success.google_approval_scope', '')
                 params.set_param('era_customer_success.google_approved_by', '')
                 params.set_param('era_customer_success.google_approved_on', '')
-        return super().set_values()
+        return result
 
     def action_scan_google_sheet_scope(self):
         self.ensure_one()

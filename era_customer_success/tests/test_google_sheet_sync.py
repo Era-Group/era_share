@@ -218,6 +218,30 @@ class TestGoogleSheetScope(TransactionCase):
         with self.assertRaises(UserError):
             settings._parse_google_sheet_url('https://example.com/not-a-sheet')
 
+    def test_changed_google_sheet_link_replaces_derived_sync_target(self):
+        params = self.env['ir.config_parameter'].sudo()
+        params.set_param('era_customer_success.google_spreadsheet_id', 'old-sheet')
+        params.set_param('era_customer_success.google_sheet_gid', '12')
+        params.set_param('era_customer_success.google_sharing_approved', 'True')
+        params.set_param('era_customer_success.google_approval_scope', 'A, B')
+        settings = self.env['res.config.settings'].create({
+            'cs_google_sheet_url': (
+                'https://docs.google.com/spreadsheets/d/new-sheet/edit?gid=34'),
+            'cs_google_spreadsheet_id': 'old-sheet',
+            'cs_google_sheet_gid': 12,
+            'cs_google_sharing_approved': True,
+            'cs_google_approval_scope': 'A, B',
+        })
+
+        settings.set_values()
+
+        self.assertEqual(
+            params.get_param('era_customer_success.google_spreadsheet_id'), 'new-sheet')
+        self.assertEqual(params.get_param('era_customer_success.google_sheet_gid'), '34')
+        self.assertEqual(
+            params.get_param('era_customer_success.google_sharing_approved'), 'False')
+        self.assertFalse(params.get_param('era_customer_success.google_approval_scope'))
+
     def test_approved_alias_matches_with_full_confidence(self):
         alias = self.env['cs.customer.match.alias'].create({
             'alias_name': 'Completely Different Excel Name',

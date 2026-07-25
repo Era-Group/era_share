@@ -313,3 +313,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.19.0 — Select Matched Customers for Portal Sharing
 - Automatically enables Portal sharing selection on every Customer Success account successfully matched by the background Excel matching job.
 - Leaves unresolved customers unselected and preserves the compact column-A-only matching output.
+## 19.0.33.20.0 — Use the Latest Google Sheet Link
+- Fixes settings persistence so changing the complete Google Sheet link also replaces the Spreadsheet ID and tab GID used by synchronization.
+- Revokes the previous approval whenever the derived synchronization target changes, requiring the new sheet scope to be scanned and approved.

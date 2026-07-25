@@ -32,6 +32,14 @@ class TestAiCustomerShare(TransactionCase):
         self.assertEqual(self.share._safe_percent(140), 100.0)
         self.assertEqual(self.share._safe_percent('missing', 45), 45.0)
 
+    def test_selected_text_fields_never_remain_blank(self):
+        values = {'last_contact': '', 'contact_result': '', 'customer_voice': ''}
+        selected = ['last_contact', 'contact_result', 'customer_voice']
+        self.share._complete_missing_values(values, self.account, selected)
+        self.assertTrue(values['last_contact'])
+        self.assertTrue(values['contact_result'])
+        self.assertTrue(values['customer_voice'])
+
     def test_approved_table_is_revoked_when_a_row_changes(self):
         line = self.env['cs.ai.customer.share.line'].create({
             'share_id': self.share.id,

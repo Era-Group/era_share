@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import secrets
 
 from odoo import api, fields, models, _
@@ -145,13 +146,14 @@ class CsAiCustomerShare(models.Model):
 
     def _prepare_account_row(self, account, selected):
         agent = self.env.ref(
-            'era_customer_success.cs_share_row_builder_agent',
+            'era_customer_success.cs_share_row_builder_agent_v2',
             raise_if_not_found=False)
         if not agent:
             raise UserError(_('The AI customer-table builder is not available.'))
         prompt = json.dumps({
             'selected_fields': selected,
-            'customer_snapshot': account._build_situation_summary(),
+            'requested_description': self.request_description,
+            'customer_snapshot': self._build_share_context(account),
         }, ensure_ascii=False)
         try:
             response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
@@ -174,7 +176,127 @@ class CsAiCustomerShare(models.Model):
             'relationship_health_percent': self._safe_percent(
                 data.get('relationship_health_percent'), account.health_score),
         }
+        missing = self._missing_selected_values(values, selected, account)
+        if missing:
+            retry_prompt = json.dumps({
+                'selected_fields': selected,
+                'requested_description': self.request_description,
+                'customer_snapshot': self._build_share_context(account),
+                'previous_response': data,
+                'missing_fields': missing,
+                'instruction': 'Return every selected field. Use an explicit no-evidence statement instead of blank text.',
+            }, ensure_ascii=False)
+            try:
+                response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
+                    prompt=retry_prompt)
+                retry_data = extract_json_object(response[0] if response else '')
+            except Exception as error:
+                _logger.warning('AI customer sharing retry failed for account %s: %s', account.id, error)
+                retry_data = None
+            if isinstance(retry_data, dict):
+                values.update({
+                    'customer_name': str(retry_data.get('customer_name') or values['customer_name'])[:250],
+                    'last_contact': str(retry_data.get('last_contact') or values['last_contact'])[:250],
+                    'contact_result': str(retry_data.get('contact_result') or values['contact_result'])[:2000],
+                    'adoption_percent': self._safe_percent(
+                        retry_data.get('adoption_percent'), values['adoption_percent']),
+                    'customer_voice': str(retry_data.get('customer_voice') or values['customer_voice'])[:2000],
+                    'relationship_health_percent': self._safe_percent(
+                        retry_data.get('relationship_health_percent'), values['relationship_health_percent']),
+                })
+        self._complete_missing_values(values, account, selected)
         return values
+
+    def _build_share_context(self, account):
+        lines = [
+            'Customer: %s' % account.partner_id.name,
+            'Lifecycle stage: %s' % (account.lifecycle_stage_id.name or 'Not recorded'),
+            'Current relationship health signal: %s/100 (%s)' % (
+                account.health_score, account.health_status or 'unknown'),
+            'Usage signal: %s' % (account.usage_signal or 'not recorded'),
+            'Last tracked touch: %s; next planned touch: %s' % (
+                account.last_touch_date or 'not recorded', account.next_touch_date or 'not recorded'),
+            'Customer sentiment signal: %s (%s)' % (
+                account.sentiment_label or 'not recorded', account.sentiment_score or 0),
+            'Interaction counts: calls %s, WhatsApp %s, meetings %s' % (
+                account.call_count, account.whatsapp_count, account.meeting_count),
+        ]
+        adoption = self.env['cs.adoption.assessment'].sudo().search([
+            ('cs_account_id', '=', account.id), ('state', '=', 'confirmed')],
+            order='assessment_date desc, id desc', limit=1)
+        if adoption:
+            lines.append('Confirmed adoption assessment on %s: %s/100; status %s; blockers %s' % (
+                adoption.assessment_date, adoption.score, adoption.status,
+                (adoption.blockers or 'none recorded')[:500]))
+        else:
+            lines.append('No confirmed adoption assessment. Estimate adoption from current usage, lifecycle, and interaction evidence.')
+        completed = self.env['cs.weekly.suggestion'].sudo().search([
+            ('cs_account_id', '=', account.id), ('state', '=', 'done')],
+            order='completed_on desc, id desc', limit=3)
+        if completed:
+            lines.append('Recent completed follow-up outcomes:')
+            lines.extend('- %s | %s | %s | next: %s' % (
+                item.completed_on or item.write_date,
+                item.outcome or 'not classified',
+                (item.outcome_note or 'no result note')[:500],
+                item.next_step or 'not recorded') for item in completed)
+        voc = self.env['cs.voc.insight'].sudo().search([
+            ('cs_account_id', '=', account.id),
+            ('state', 'not in', ('dismissed',))],
+            order='insight_date desc, id desc', limit=3)
+        if voc:
+            lines.append('Voice of Customer evidence:')
+            lines.extend('- %s | %s | %s | %s' % (
+                item.insight_date, item.sentiment, item.theme,
+                (item.summary or 'no summary')[:500]) for item in voc)
+        messages = account.message_ids.filtered(lambda message: message.body).sorted(
+            key=lambda message: message.date or message.create_date, reverse=True)[:10]
+        if messages:
+            lines.append('Recent dated timeline:')
+            for message in messages:
+                body = re.sub(r'<[^>]+>', ' ', message.body or '')
+                body = re.sub(r'\s+', ' ', body).strip()
+                if body:
+                    lines.append('- %s | %s' % (
+                        message.date or message.create_date, body[:500]))
+        return '\n'.join(lines)
+
+    @api.model
+    def _missing_selected_values(self, values, selected, account=None):
+        missing = [field_name for field_name in selected
+                   if field_name in ('last_contact', 'contact_result', 'customer_voice')
+                   and not str(values.get(field_name) or '').strip()]
+        if (account and 'adoption_percent' in selected
+                and not values.get('adoption_percent')
+                and (account.usage_signal == 'active' or account.call_count
+                     or account.whatsapp_count or account.meeting_count)):
+            missing.append('adoption_percent')
+        if (account and 'relationship_health_percent' in selected
+                and not values.get('relationship_health_percent')
+                and account.health_score):
+            missing.append('relationship_health_percent')
+        return missing
+
+    @api.model
+    def _complete_missing_values(self, values, account, selected):
+        if 'last_contact' in selected and not values.get('last_contact'):
+            latest_message = account.message_ids.filtered(lambda message: message.body).sorted(
+                key=lambda message: message.date or message.create_date, reverse=True)[:1]
+            values['last_contact'] = str(
+                account.last_touch_date or
+                (latest_message.date or latest_message.create_date if latest_message else '') or
+                _('No verified customer contact is recorded.'))[:250]
+        if 'contact_result' in selected and not values.get('contact_result'):
+            values['contact_result'] = _(
+                'No verified contact result is recorded; review is required.')
+        if 'customer_voice' in selected and not values.get('customer_voice'):
+            if account.sentiment_label:
+                values['customer_voice'] = _(
+                    'No direct Voice of Customer statement is recorded. Current sentiment signal: %s.',
+                    account.sentiment_label)
+            else:
+                values['customer_voice'] = _(
+                    'No direct Voice of Customer statement is recorded.')
 
     def action_prepare_with_ai(self):
         self.ensure_one()

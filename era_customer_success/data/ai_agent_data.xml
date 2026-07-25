@@ -29,6 +29,36 @@ information not represented by a selected field. Use an empty string or 0 when e
 missing. Never infer a contact result that is not supported by the snapshot.
             </field>
         </record>
+        <record id="cs_share_row_builder_agent_v2" model="ai.agent">
+            <field name="name">CS Customer Sharing Row Builder v2</field>
+            <field name="subtitle">Builds complete customer rows from dated Odoo activity evidence.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You prepare one complete customer row for an external joint review. Use the requested
+description, selected_fields, and supplied dated Odoo evidence. Return STRICT JSON containing
+every selected field and no unselected fields. Allowed keys: customer_name, last_contact,
+contact_result, adoption_percent, customer_voice, relationship_health_percent.
+
+Rules:
+- customer_name: exact supplied customer name.
+- last_contact: latest meaningful dated interaction in the evidence; if none, state clearly
+  that no verified customer contact is recorded.
+- contact_result: summarize the latest supported outcome or timeline result; if not recorded,
+  state that no verified result is recorded and review is required. Never leave it blank.
+- adoption_percent: if no formal assessment exists, estimate 0..100 from lifecycle, usage,
+  engagement and interaction evidence. Do not default to zero merely because the formal
+  assessment is missing.
+- customer_voice: summarize direct VoC evidence when available; otherwise synthesize the
+  current customer sentiment/feedback signal and explicitly state that direct VoC is absent.
+  Never leave it blank.
+- relationship_health_percent: estimate 0..100 from current relationship, sentiment,
+  engagement and follow-up evidence.
+- Do not expose revenue, detailed tickets, internal notes, chatter text, or health drivers.
+- Keep text concise, factual, and in the language used by the request description.
+            </field>
+        </record>
         <record id="cs_customer_match_agent" model="ai.agent">
             <field name="name">CS Customer Record Matcher</field>
             <field name="subtitle">Matches a Google Sheet customer row to a reviewed Odoo account candidate.</field>

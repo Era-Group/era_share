@@ -126,6 +126,22 @@ msgid "Only a Customer Success Manager can select customers for Portal sharing."
 msgstr "يمكن لمدير نجاح العملاء فقط اختيار العملاء للمشاركة على Portal."
 
 #. module: era_customer_success
+msgid "No verified customer contact is recorded."
+msgstr "لا يوجد تواصل موثق مع العميل."
+
+#. module: era_customer_success
+msgid "No verified contact result is recorded; review is required."
+msgstr "لا توجد نتيجة تواصل موثقة؛ يلزم المراجعة."
+
+#. module: era_customer_success
+msgid "No direct Voice of Customer statement is recorded."
+msgstr "لا يوجد تصريح مباشر مسجل لصوت العميل."
+
+#. module: era_customer_success
+msgid "No direct Voice of Customer statement is recorded. Current sentiment signal: %s."
+msgstr "لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %s."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

@@ -1,3 +1,7 @@
+from unittest.mock import patch
+
+from odoo.exceptions import UserError
+from odoo import fields
 from odoo.tests import TransactionCase, tagged
 
 
@@ -39,6 +43,17 @@ class TestAiCustomerShare(TransactionCase):
         self.assertTrue(values['last_contact'])
         self.assertTrue(values['contact_result'])
         self.assertTrue(values['customer_voice'])
+        self.assertTrue(self.share._is_bilingual_text(values['contact_result']))
+        self.assertTrue(self.share._is_bilingual_text(values['customer_voice']))
+
+    def test_monolingual_ai_text_is_rejected_as_incomplete(self):
+        values = {
+            'contact_result': 'تم التواصل مع العميل',
+            'customer_voice': 'Positive customer feedback',
+        }
+        missing = self.share._missing_selected_values(
+            values, ['contact_result', 'customer_voice'])
+        self.assertEqual(set(missing), {'contact_result', 'customer_voice'})
 
     def test_approved_table_is_revoked_when_a_row_changes(self):
         line = self.env['cs.ai.customer.share.line'].create({
@@ -84,3 +99,72 @@ class TestAiCustomerShare(TransactionCase):
         line.unlink()
         self.assertFalse(self.share.portal_enabled)
         self.assertEqual(self.share.state, 'draft')
+
+    def test_scheduled_refresh_keeps_approval_and_portal_enabled(self):
+        self.env['cs.ai.customer.share.line'].create({
+            'share_id': self.share.id,
+            'account_id': self.account.id,
+            'customer_name': 'Old Name',
+        })
+        self.share.write({
+            'state': 'approved',
+            'portal_enabled': True,
+            'selected_fields': 'customer_name',
+            'include_customer_name': True,
+        })
+        generated = {
+            'share_id': self.share.id,
+            'account_id': self.account.id,
+            'customer_name': 'Refreshed Name',
+        }
+        with patch.object(type(self.share), '_prepare_account_row', return_value=generated):
+            self.share._refresh_approved_portal_table()
+        self.assertEqual(self.share.state, 'approved')
+        self.assertTrue(self.share.portal_enabled)
+        self.assertEqual(self.share.line_ids.customer_name, 'Refreshed Name')
+        self.assertTrue(self.share.last_auto_refresh_on)
+
+    def test_ai_failure_preserves_existing_published_rows(self):
+        line = self.env['cs.ai.customer.share.line'].create({
+            'share_id': self.share.id,
+            'account_id': self.account.id,
+            'customer_name': 'Published Name',
+        })
+        self.share.write({
+            'state': 'approved',
+            'portal_enabled': True,
+            'selected_fields': 'customer_name',
+            'include_customer_name': True,
+        })
+        with patch.object(type(self.share), '_prepare_account_row',
+                          side_effect=UserError('AI unavailable')):
+            with self.assertRaises(UserError):
+                self.share._refresh_approved_portal_table()
+        self.assertTrue(line.exists())
+        self.assertEqual(self.share.line_ids.customer_name, 'Published Name')
+
+    def test_weekly_cron_refreshes_only_live_approved_tables(self):
+        self.share.write({'state': 'approved', 'portal_enabled': True})
+        draft = self.env['cs.ai.customer.share'].create({
+            'name': 'Draft Table', 'request_description': 'Customer name',
+            'account_ids': [(6, 0, self.account.ids)],
+        })
+        unpublished = self.env['cs.ai.customer.share'].create({
+            'name': 'Unpublished Table', 'request_description': 'Customer name',
+            'account_ids': [(6, 0, self.account.ids)],
+        })
+        unpublished.write({'state': 'approved', 'portal_enabled': False})
+        expired = self.env['cs.ai.customer.share'].create({
+            'name': 'Expired Table', 'request_description': 'Customer name',
+            'account_ids': [(6, 0, self.account.ids)],
+            'expires_on': fields.Date.add(fields.Date.today(), days=-1),
+        })
+        expired.write({'state': 'approved', 'portal_enabled': True})
+        with patch.object(type(self.share), '_refresh_approved_portal_table',
+                          autospec=True, return_value=True) as refresh:
+            self.env['cs.ai.customer.share']._cron_refresh_approved_portal_tables()
+        refreshed_ids = {call.args[0].id for call in refresh.call_args_list}
+        self.assertIn(self.share.id, refreshed_ids)
+        self.assertNotIn(draft.id, refreshed_ids)
+        self.assertNotIn(unpublished.id, refreshed_ids)
+        self.assertNotIn(expired.id, refreshed_ids)

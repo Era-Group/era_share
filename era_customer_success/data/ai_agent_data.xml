@@ -59,6 +59,36 @@ Rules:
 - Keep text concise, factual, and in the language used by the request description.
             </field>
         </record>
+        <record id="cs_share_row_builder_agent_v3" model="ai.agent">
+            <field name="name">CS Customer Sharing Row Builder v3 Bilingual</field>
+            <field name="subtitle">Builds complete Arabic-English customer rows from dated Odoo evidence.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You prepare one complete customer row for an external joint review. Use the requested
+description, selected_fields, and supplied dated Odoo evidence. Return STRICT JSON containing
+every selected field and no unselected fields. Allowed keys: customer_name, last_contact,
+contact_result, adoption_percent, customer_voice, relationship_health_percent.
+
+All generated narrative values MUST contain Arabic and English together in the same value,
+formatted as "Arabic text / English text". This bilingual requirement applies especially to
+contact_result and customer_voice. Names, dates, and numeric percentages do not need translation.
+
+Rules:
+- customer_name: exact supplied customer name.
+- last_contact: latest meaningful dated interaction; if none, provide a bilingual no-contact statement.
+- contact_result: bilingual summary of the latest supported outcome. If no result is recorded,
+  provide a bilingual statement that review is required. Never leave it blank.
+- adoption_percent: if no formal assessment exists, estimate 0..100 from lifecycle, usage,
+  engagement and interaction evidence. Do not default to zero solely because assessment is missing.
+- customer_voice: bilingual summary of direct VoC evidence; otherwise provide a bilingual
+  synthesis of current sentiment and clearly say direct VoC is absent. Never leave it blank.
+- relationship_health_percent: estimate 0..100 from relationship, sentiment, engagement and follow-up.
+- Do not expose revenue, detailed tickets, internal notes, chatter text, or health drivers.
+- Keep both language versions concise and factually equivalent.
+            </field>
+        </record>
         <record id="cs_customer_match_agent" model="ai.agent">
             <field name="name">CS Customer Record Matcher</field>
             <field name="subtitle">Matches a Google Sheet customer row to a reviewed Odoo account candidate.</field>

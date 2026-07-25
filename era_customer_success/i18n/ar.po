@@ -142,6 +142,14 @@ msgid "No direct Voice of Customer statement is recorded. Current sentiment sign
 msgstr "لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %s."
 
 #. module: era_customer_success
+msgid "The approved Portal table has no safe selected fields."
+msgstr "جدول Portal المعتمد لا يحتوي على حقول آمنة مختارة."
+
+#. module: era_customer_success
+msgid "The approved Portal table has no included customers."
+msgstr "جدول Portal المعتمد لا يحتوي على عملاء مشمولين."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

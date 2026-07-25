@@ -72,6 +72,7 @@ class CsAiCustomerShare(models.Model):
     published_on = fields.Datetime(readonly=True, copy=False)
     access_count = fields.Integer(readonly=True, copy=False)
     last_accessed_on = fields.Datetime(readonly=True, copy=False)
+    last_auto_refresh_on = fields.Datetime(readonly=True, copy=False)
 
     @api.depends('access_token')
     def _compute_portal_url(self):
@@ -146,7 +147,7 @@ class CsAiCustomerShare(models.Model):
 
     def _prepare_account_row(self, account, selected):
         agent = self.env.ref(
-            'era_customer_success.cs_share_row_builder_agent_v2',
+            'era_customer_success.cs_share_row_builder_agent_v3',
             raise_if_not_found=False)
         if not agent:
             raise UserError(_('The AI customer-table builder is not available.'))
@@ -184,7 +185,10 @@ class CsAiCustomerShare(models.Model):
                 'customer_snapshot': self._build_share_context(account),
                 'previous_response': data,
                 'missing_fields': missing,
-                'instruction': 'Return every selected field. Use an explicit no-evidence statement instead of blank text.',
+                'instruction': (
+                    'Return every selected field. contact_result and customer_voice must each '
+                    'contain Arabic and English together. Use an explicit bilingual no-evidence '
+                    'statement instead of blank text.'),
             }, ensure_ascii=False)
             try:
                 response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
@@ -266,6 +270,10 @@ class CsAiCustomerShare(models.Model):
         missing = [field_name for field_name in selected
                    if field_name in ('last_contact', 'contact_result', 'customer_voice')
                    and not str(values.get(field_name) or '').strip()]
+        missing.extend(
+            field_name for field_name in ('contact_result', 'customer_voice')
+            if field_name in selected and field_name not in missing
+            and not self._is_bilingual_text(values.get(field_name)))
         if (account and 'adoption_percent' in selected
                 and not values.get('adoption_percent')
                 and (account.usage_signal == 'active' or account.call_count
@@ -278,6 +286,11 @@ class CsAiCustomerShare(models.Model):
         return missing
 
     @api.model
+    def _is_bilingual_text(self, value):
+        text = str(value or '')
+        return bool(re.search(r'[\u0600-\u06ff]', text) and re.search(r'[A-Za-z]', text))
+
+    @api.model
     def _complete_missing_values(self, values, account, selected):
         if 'last_contact' in selected and not values.get('last_contact'):
             latest_message = account.message_ids.filtered(lambda message: message.body).sorted(
@@ -285,17 +298,22 @@ class CsAiCustomerShare(models.Model):
             values['last_contact'] = str(
                 account.last_touch_date or
                 (latest_message.date or latest_message.create_date if latest_message else '') or
-                _('No verified customer contact is recorded.'))[:250]
-        if 'contact_result' in selected and not values.get('contact_result'):
-            values['contact_result'] = _(
+                'لا يوجد تواصل موثق مع العميل. / No verified customer contact is recorded.')[:250]
+        if ('contact_result' in selected
+                and not self._is_bilingual_text(values.get('contact_result'))):
+            values['contact_result'] = (
+                'لا توجد نتيجة تواصل موثقة؛ يلزم المراجعة. / '
                 'No verified contact result is recorded; review is required.')
-        if 'customer_voice' in selected and not values.get('customer_voice'):
+        if ('customer_voice' in selected
+                and not self._is_bilingual_text(values.get('customer_voice'))):
             if account.sentiment_label:
-                values['customer_voice'] = _(
-                    'No direct Voice of Customer statement is recorded. Current sentiment signal: %s.',
-                    account.sentiment_label)
+                values['customer_voice'] = (
+                    'لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %(signal)s. / '
+                    'No direct Voice of Customer statement is recorded. Current sentiment signal: %(signal)s.'
+                ) % {'signal': account.sentiment_label}
             else:
-                values['customer_voice'] = _(
+                values['customer_voice'] = (
+                    'لا يوجد تصريح مباشر مسجل لصوت العميل. / '
                     'No direct Voice of Customer statement is recorded.')
 
     def action_prepare_with_ai(self):
@@ -372,6 +390,46 @@ class CsAiCustomerShare(models.Model):
             'published_on': False,
         })
 
+    def _refresh_approved_portal_table(self):
+        self.ensure_one()
+        if self.state != 'approved' or not self.portal_enabled:
+            return False
+        selected = self._filter_allowed_fields(
+            [field_name.strip() for field_name in (self.selected_fields or '').split(',')])
+        if not selected:
+            raise UserError(_('The approved Portal table has no safe selected fields.'))
+        if not self.account_ids:
+            raise UserError(_('The approved Portal table has no included customers.'))
+        # Prepare all rows first so an AI failure cannot erase the currently published table.
+        row_values = [self._prepare_account_row(account, selected)
+                      for account in self.account_ids]
+        refresh_context = dict(self.env.context, cs_scheduled_portal_refresh=True)
+        self.line_ids.with_context(refresh_context).unlink()
+        self.env['cs.ai.customer.share.line'].with_context(refresh_context).create(row_values)
+        self.with_context(refresh_context).write({
+            'prepared_by_id': self.env.user.id,
+            'prepared_on': fields.Datetime.now(),
+            'last_auto_refresh_on': fields.Datetime.now(),
+        })
+        return True
+
+    @api.model
+    def _cron_refresh_approved_portal_tables(self, limit=50):
+        shares = self.sudo().search([
+            ('state', '=', 'approved'),
+            ('portal_enabled', '=', True),
+            ('expires_on', '>=', fields.Date.today()),
+        ], order='last_auto_refresh_on asc, id', limit=limit)
+        for share in shares:
+            try:
+                with self.env.cr.savepoint():
+                    share._refresh_approved_portal_table()
+            except Exception as error:
+                _logger.exception(
+                    'Scheduled Portal refresh kept the previous table for share %s: %s',
+                    share.id, error)
+        return True
+
 
 class CsAiCustomerShareLine(models.Model):
     _name = 'cs.ai.customer.share.line'
@@ -396,6 +454,8 @@ class CsAiCustomerShareLine(models.Model):
         return result
 
     def unlink(self):
+        if self.env.context.get('cs_scheduled_portal_refresh'):
+            return super().unlink()
         approved = self.mapped('share_id').filtered(lambda share: share.state == 'approved')
         result = super().unlink()
         if approved:

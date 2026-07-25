@@ -254,3 +254,7 @@ Commits pushed to `origin/stage`.
 - Added AI selection from a strict safe column catalog and AI preparation of customer name, last contact, contact result, adoption, Voice of Customer, and relationship health.
 - Added explicit review approval with automatic revocation whenever an approved row is edited.
 - Added one bilingual Portal table with per-share authorized users, expiring token link, explicit publish/unpublish controls, and access auditing.
+## 19.0.33.1.0 — Thursday Portal Table Refresh
+- Added a Thursday 18:00 Saudi-time AI refresh restricted to approved, published, active, and unexpired Portal tables.
+- Generates every replacement row before changing the published table, preserving the previous live data if any AI row fails.
+- Requires AI-generated narrative cells to include Arabic and English together, with automatic retry and bilingual no-evidence fallbacks.

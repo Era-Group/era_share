@@ -70,8 +70,12 @@
                             <field name="published_on"/>
                             <field name="access_count"/>
                             <field name="last_accessed_on"/>
+                            <field name="last_auto_refresh_on"/>
                         </group>
                     </group>
+                    <div class="alert alert-info" role="status">
+                        The weekly AI refresh runs Thursday at 6:00 PM Saudi time only for approved, published, active, and unexpired Portal tables. Draft, review, unpublished, and expired tables are not updated.
+                    </div>
                     <field name="request_description" readonly="state == 'approved'"
                            placeholder="Describe only the customer information required for the joint review..."/>
                     <field name="include_customer_name" invisible="1"/>

@@ -179,4 +179,16 @@
         <field name="active" eval="True"/>
         <field name="nextcall" eval="(DateTime.now() + relativedelta(days=(3 - DateTime.now().weekday()) % 7, hour=9, minute=0, second=0))"/>
     </record>
+
+    <record id="cron_cs_refresh_ai_portal_tables" model="ir.cron">
+        <field name="name">CS: Refresh approved AI Portal tables Thursday evening</field>
+        <field name="model_id" ref="model_cs_ai_customer_share"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_approved_portal_tables()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(days=((3 - DateTime.now().weekday()) % 7) or (7 if DateTime.now().hour &gt;= 15 else 0), hour=15, minute=0, second=0, microsecond=0))"/>
+    </record>
 </odoo>

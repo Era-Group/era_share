@@ -172,6 +172,7 @@ class TestGoogleSheetScope(TransactionCase):
 
     def test_match_all_writes_status_to_column_a_only(self):
         sync = self.env['cs.google.sheet.sync']
+        self.account.sudo().write({'send_to_portal_share': False})
         rows = [
             ['ERA CSM', 'ERA CSM phone number', 'ERA CSM email', 'Customer Name'],
             ['', '', '', 'Matched Customer'],
@@ -192,6 +193,7 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertEqual([item['range'].split('!')[1] for item in payload], ['A2', 'A3'])
         self.assertEqual(payload[0]['values'][0][0], 'x')
         self.assertEqual(payload[1]['values'][0][0], '')
+        self.assertTrue(self.account.send_to_portal_share)
 
     def test_matching_action_queues_background_job_without_google_request(self):
         sync = self.env['cs.google.sheet.sync']

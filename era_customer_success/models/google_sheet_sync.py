@@ -671,6 +671,7 @@ class CsGoogleSheetSync(models.AbstractModel):
         ])
         account_aliases = self._account_operational_aliases(accounts)
         updates, details = [], []
+        matched_account_ids = set()
         matched = unmatched = skipped = 0
         for row_number, row in enumerate(rows[1:], start=2):
             customer_name = row[3].strip() if len(row) > 3 and row[3] else ''
@@ -681,6 +682,7 @@ class CsGoogleSheetSync(models.AbstractModel):
                 row, matching_columns, accounts, account_aliases=account_aliases)
             if account:
                 matched += 1
+                matched_account_ids.add(account.id)
                 status = 'x'
                 details.append('Row %s | %s -> %s (%s%%: %s)' % (
                     row_number, customer_name, account.partner_id.display_name,
@@ -702,6 +704,10 @@ class CsGoogleSheetSync(models.AbstractModel):
         if updates:
             self._request('POST', '%s:batchUpdate' % base, token, json={
                 'valueInputOption': 'USER_ENTERED', 'data': updates})
+        if matched_account_ids:
+            self.env['cs.account'].sudo().browse(sorted(matched_account_ids)).write({
+                'send_to_portal_share': True,
+            })
         result = {
             'matched_accounts': matched,
             'updated_cells': len(updates),

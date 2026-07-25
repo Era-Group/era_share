@@ -310,3 +310,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.18.0 — Create Customer Companies Inline
 - Allows users to create a missing customer company directly from the Customer Success account form.
 - Defaults inline-created partners to company type while retaining the company-only customer domain.
+## 19.0.33.19.0 — Select Matched Customers for Portal Sharing
+- Automatically enables Portal sharing selection on every Customer Success account successfully matched by the background Excel matching job.
+- Leaves unresolved customers unselected and preserves the compact column-A-only matching output.

@@ -54,6 +54,18 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertEqual(reason, 'Arabic-English phonetic name')
         self.assertEqual(_phonetic_customer_name('Aknaf Company for Plastic'), 'aknaf')
 
+    def test_customer_name_score_matches_phonetic_arabic_and_english_variants(self):
+        for english, arabic in (
+            ('Konooz Travel', 'وكالة كنوز السفر'),
+            ('Fitness and Fun', 'مؤسسة فتنس فن'),
+            ('Filmban Commercial Company', 'شركة فلمبان'),
+            ('Sanabel AlShahd', 'مصانع سنابل الشهد للأغذية'),
+            ('Akun Modern Holding Company', 'مجموعة اكون'),
+        ):
+            score, reason = _customer_name_score(english, arabic)
+            self.assertGreaterEqual(score, 85)
+            self.assertIn('phonetic name', reason)
+
     def test_customer_name_score_does_not_match_unrelated_names(self):
         score, _reason = _customer_name_score('First Tire', 'Flint Manufacturing')
         self.assertEqual(score, 0)

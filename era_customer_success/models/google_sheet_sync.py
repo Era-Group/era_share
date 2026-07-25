@@ -48,12 +48,15 @@ NAME_STOP_WORDS = {
     'business', 'services', 'service', 'international', 'int', 'sa', 'ksa',
     'factory', 'manufacturing', 'manufacturer', 'industry', 'industrial',
     'arabian', 'arabia', 'for', 'plastic', 'plastics', 'products', 'product',
-    'specialized', 'specialised',
+    'specialized', 'specialised', 'and', 'his', 'partner', 'sons', 'son', 'travel',
+    'agency', 'office', 'consulting', 'water', 'health', 'food', 'foods', 'al',
+    'commercial', 'modern',
     'شركة', 'شركه', 'مؤسسة', 'مؤسسه', 'مجموعة', 'مجموعه', 'للتجارة', 'للتجاره',
     'التجارية', 'التجاريه', 'التجارة', 'التجاره', 'العالمية', 'العالميه',
     'المحدودة', 'المحدوده', 'محدوده', 'ذمم', 'م م', 'مصنع', 'صناعه', 'لصناعه', 'للصناعه', 'صناعي',
     'صناعيه', 'الصناعه', 'الصناعيه', 'عربي', 'عربيه', 'متخصصه', 'للمنتجات',
-    'منتجات', 'بلاستيك', 'بلاستيكيه',
+    'منتجات', 'بلاستيك', 'بلاستيكيه', 'وكاله', 'وكالة', 'مؤسسه', 'مؤسسة', 'موسسه', 'مكتب',
+    'استشارات', 'مياه', 'صحيه', 'مصانع', 'اغذيه', 'للغذيه', 'للاغذيه', 'سفر', 'وشريكه',
 }
 ARABIC_NAME_TRANSLATION = str.maketrans({
     'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ؤ': 'و', 'ئ': 'ي',
@@ -61,7 +64,7 @@ ARABIC_NAME_TRANSLATION = str.maketrans({
 })
 ARABIC_PHONETIC_TRANSLATION = str.maketrans({
     'ا': 'a', 'ب': 'p', 'ت': 't', 'ث': 's', 'ج': 'j', 'ح': 'h', 'خ': 'k',
-    'د': 'd', 'ذ': 'z', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 's', 'ص': 's',
+    'د': 'd', 'ذ': 'z', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'x', 'ص': 's',
     'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'g', 'ف': 'f', 'ق': 'k',
     'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'o', 'ي': 'i',
 })
@@ -80,7 +83,7 @@ def _normalize_customer_name(value):
     text = re.sub(r'[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]', '', text)
     tokens = []
     for token in re.findall(r'[\w]+', text):
-        if token.startswith('ال') and len(token) > 4:
+        if token.startswith(('ال', 'al')) and len(token) > 4:
             token = token[2:]
         if token not in NAME_STOP_WORDS and len(token) > 1:
             tokens.append(token)
@@ -89,7 +92,11 @@ def _normalize_customer_name(value):
 
 def _phonetic_customer_name(value):
     text = _normalize_customer_name(value).translate(ARABIC_PHONETIC_TRANSLATION)
-    text = text.replace('ph', 'f').replace('v', 'f').replace('q', 'k').replace('c', 'k')
+    text = (text.replace('ph', 'f').replace('kh', 'k').replace('sh', 's')
+                .replace('th', 's').replace('v', 'f').replace('q', 'k')
+                .replace('c', 'k').replace('b', 'p').replace('x', 's'))
+    text = re.sub(r'[aeiou]+', '', text)
+    text = re.sub(r'(.)\1+', r'\1', text)
     return re.sub(r'[^a-z0-9]+', ' ', text).strip()
 
 
@@ -102,6 +109,9 @@ def _customer_name_score(left, right):
     left_phonetic, right_phonetic = _phonetic_customer_name(left), _phonetic_customer_name(right)
     if left_phonetic and left_phonetic == right_phonetic:
         return 88, 'Arabic-English phonetic name'
+    phonetic_similarity = SequenceMatcher(None, left_phonetic, right_phonetic).ratio()
+    if left_phonetic and right_phonetic and phonetic_similarity >= 0.86:
+        return int(phonetic_similarity * 85), 'similar Arabic-English phonetic name'
     left_tokens, right_tokens = set(left_core.split()), set(right_core.split())
     shared = left_tokens & right_tokens
     smallest = min(len(left_tokens), len(right_tokens))

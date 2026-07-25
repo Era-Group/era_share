@@ -298,3 +298,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.14.0 — Arabic-English Phonetic Matching
 - Adds a constrained Arabic-to-Latin phonetic key after legal and activity descriptors are removed.
 - Matches `Arabian PPCO Company Ltd` to `شركة ببكو العربية المحدودة` and `Aknaf Company for Plastic` to `شركة أكناف المتخصصة للمنتجات البلاستيكية` before invoking AI.
+## 19.0.33.15.0 — Expanded Arabic-English Name Matching
+- Adds normalized activity, agency, institution, product, travel, and modern-holding descriptors.
+- Supports direct phonetic matching for Konooz, Fitness and Fun, Filmban, Sanabel AlShahd, and Akun variants.

@@ -148,4 +148,15 @@ class ResConfigSettings(models.TransientModel):
     def action_match_google_sheet_customers(self):
         self.ensure_one()
         self.set_values()
-        return self.env['cs.google.sheet.sync'].action_match_all_sheet_customers()
+        return self.env['cs.google.sheet.sync'].action_queue_match_all_sheet_customers()
+
+    def action_open_google_matching_results(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Excel Customer Matching Results'),
+            'res_model': 'cs.google.sheet.sync.log',
+            'view_mode': 'list,form',
+            'domain': [('job_type', '=', 'matching')],
+            'context': {'search_default_group_by_state': 0},
+        }

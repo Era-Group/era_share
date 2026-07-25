@@ -9,7 +9,7 @@
     'author': "Era Group",
     'website': "https://www.era.net.sa",
     'category': 'Services/Customer Success',
-    'version': '19.0.33.10.0',
+    'version': '19.0.33.11.0',
     'license': 'LGPL-3',
     'depends': [
         'base',
@@ -64,6 +64,7 @@
         'views/res_partner_views.xml',
         'views/helpdesk_ticket_views.xml',
         'views/res_config_settings_views.xml',
+        'views/google_sheet_sync_views.xml',
         'views/cs_user_guide_views.xml',
         'views/cs_ai_customer_share_views.xml',
         'views/cs_ai_customer_share_portal_templates.xml',

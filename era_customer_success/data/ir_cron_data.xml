@@ -180,6 +180,18 @@
         <field name="nextcall" eval="(DateTime.now() + relativedelta(days=(3 - DateTime.now().weekday()) % 7, hour=9, minute=0, second=0))"/>
     </record>
 
+    <record id="cron_cs_process_google_sheet_matching" model="ir.cron">
+        <field name="name">CS: Process Excel customer matching queue</field>
+        <field name="model_id" ref="model_cs_google_sheet_sync"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_process_customer_match_jobs()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(minutes=1, second=0))"/>
+    </record>
+
     <record id="cron_cs_refresh_ai_portal_tables" model="ir.cron">
         <field name="name">CS: Refresh approved AI Portal tables Thursday evening</field>
         <field name="model_id" ref="model_cs_ai_customer_share"/>

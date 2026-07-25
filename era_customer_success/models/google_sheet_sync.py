@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 import re
 import time
 from difflib import SequenceMatcher
@@ -13,6 +14,9 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 from .cs_account import _cs_extract_json
+
+
+_logger = logging.getLogger(__name__)
 
 
 SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
@@ -525,7 +529,7 @@ class CsGoogleSheetSync(models.AbstractModel):
             'type': 'success', 'sticky': False}}
 
     @api.model
-    def action_match_all_sheet_customers(self):
+    def _run_match_all_sheet_customers(self, log=False):
         settings = self._settings()
         if not all((settings['spreadsheet_id'], settings['credentials'])):
             raise UserError(_('Configure the Google Spreadsheet ID and service-account credentials first.'))
@@ -573,19 +577,54 @@ class CsGoogleSheetSync(models.AbstractModel):
         if updates:
             self._request('POST', '%s:batchUpdate' % base, token, json={
                 'valueInputOption': 'USER_ENTERED', 'data': updates})
-        self.env['cs.google.sheet.sync.log'].sudo().create({
-            'company_id': self.env.company.id,
-            'spreadsheet_id': settings['spreadsheet_id'],
+        result = {
             'matched_accounts': matched,
             'updated_cells': len(updates),
-            'state': 'success',
             'details': '\n'.join(details),
+        }
+        if log:
+            log.write(dict(result, state='success'))
+        else:
+            self.env['cs.google.sheet.sync.log'].sudo().create({
+                'company_id': self.env.company.id,
+                'spreadsheet_id': settings['spreadsheet_id'],
+                'job_type': 'matching', 'state': 'success', **result,
+            })
+        return result
+
+    @api.model
+    def action_queue_match_all_sheet_customers(self):
+        queued = self.env['cs.google.sheet.sync.log'].sudo().search_count([
+            ('job_type', '=', 'matching'), ('state', 'in', ('queued', 'running')),
+        ])
+        if queued:
+            raise UserError(_('An Excel customer matching job is already queued or running.'))
+        log = self.env['cs.google.sheet.sync.log'].sudo().create({
+            'company_id': self.env.company.id,
+            'spreadsheet_id': self._settings().get('spreadsheet_id'),
+            'job_type': 'matching', 'state': 'queued',
+            'details': _('Waiting for background matching.'),
         })
         return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
-            'title': _('Excel customer matching complete'),
-            'message': _('%s matched, %s unmatched, %s blank rows skipped. Status was written in column A only.',
-                         matched, unmatched, skipped),
-            'type': 'success', 'sticky': True}}
+            'title': _('Excel customer matching queued'),
+            'message': _('Matching runs in the background. Open Google synchronization logs to view job %s and its result.', log.id),
+            'type': 'info', 'sticky': False}}
+
+    @api.model
+    def _cron_process_customer_match_jobs(self):
+        job = self.env['cs.google.sheet.sync.log'].sudo().search([
+            ('job_type', '=', 'matching'), ('state', '=', 'queued'),
+        ], order='create_date, id', limit=1)
+        if not job:
+            return True
+        job.write({'state': 'running', 'details': _('Matching Excel customers in the background.')})
+        try:
+            with self.env.cr.savepoint():
+                self._run_match_all_sheet_customers(log=job)
+        except Exception as error:
+            _logger.exception('Excel customer matching job %s failed: %s', job.id, error)
+            job.write({'state': 'failed', 'details': str(error)})
+        return True
 
     @api.model
     def action_sync_account(self, account, use_ai=True, all_fields=False):
@@ -707,8 +746,14 @@ class CsGoogleSheetSyncLog(models.Model):
     _order = 'create_date desc'
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    job_type = fields.Selection([
+        ('sync', 'Synchronization'), ('matching', 'Customer Matching'),
+    ], required=True, default='sync', readonly=True)
     spreadsheet_id = fields.Char(readonly=True)
     matched_accounts = fields.Integer(readonly=True)
     updated_cells = fields.Integer(readonly=True)
-    state = fields.Selection([('success', 'Success'), ('failed', 'Failed')], readonly=True)
+    state = fields.Selection([
+        ('queued', 'Queued'), ('running', 'Running'),
+        ('success', 'Success'), ('failed', 'Failed'),
+    ], readonly=True)
     details = fields.Text(readonly=True)

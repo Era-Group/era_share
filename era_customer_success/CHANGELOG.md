@@ -286,3 +286,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.10.0 — Complete Google Sheet Link
 - Replaces separate Spreadsheet ID and GID inputs in settings with one complete Google Sheet URL.
 - Extracts the ID and tab GID automatically, rejects invalid links, and revokes sharing approval whenever the source link changes.
+## 19.0.33.11.0 — Background Excel Matching
+- Moves full Excel customer matching to a queued background job to prevent long HTTP requests and browser disconnects.
+- Adds queued/running/success/failed matching results with a settings action to view row-level logs; the background process still writes only column A.

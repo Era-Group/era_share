@@ -373,6 +373,60 @@ msgid "%s matched, %s unmatched, %s blank rows skipped. Status was written in co
 msgstr "تمت مطابقة %s عميل، ولم تتم مطابقة %s عميل، وتم تجاوز %s صف فارغ. كُتبت الحالة في العمود A فقط."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Open Matching Results"
+msgstr "فتح نتائج المطابقة"
+
+#. module: era_customer_success
+msgid "Excel Customer Matching Results"
+msgstr "نتائج مطابقة عملاء Excel"
+
+#. module: era_customer_success
+msgid "Google Sheet Job Result"
+msgstr "نتيجة مهمة Google Sheet"
+
+#. module: era_customer_success
+msgid "Customer Matching"
+msgstr "مطابقة العملاء"
+
+#. module: era_customer_success
+msgid "Queued"
+msgstr "في الانتظار"
+
+#. module: era_customer_success
+msgid "Running"
+msgstr "جارٍ التنفيذ"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "An Excel customer matching job is already queued or running."
+msgstr "توجد مهمة مطابقة عملاء Excel في الانتظار أو قيد التنفيذ بالفعل."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Waiting for background matching."
+msgstr "بانتظار المطابقة في الخلفية."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Excel customer matching queued"
+msgstr "تمت إضافة مطابقة عملاء Excel إلى قائمة الانتظار"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Matching runs in the background. Open Google synchronization logs to view job %s and its result."
+msgstr "تعمل المطابقة في الخلفية. افتح سجلات مزامنة Google لعرض المهمة %s ونتيجتها."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Matching Excel customers in the background."
+msgstr "تتم مطابقة عملاء Excel في الخلفية."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sheet_url
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "Google Sheet Link"

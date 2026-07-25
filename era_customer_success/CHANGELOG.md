@@ -316,3 +316,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.20.0 — Use the Latest Google Sheet Link
 - Fixes settings persistence so changing the complete Google Sheet link also replaces the Spreadsheet ID and tab GID used by synchronization.
 - Revokes the previous approval whenever the derived synchronization target changes, requiring the new sheet scope to be scanned and approved.
+## 19.0.33.21.0 — Send Local ERA Form Values in Batch Sync
+- Includes approved local ERA form fields in full-sheet synchronization instead of sending only directly computed Odoo fields.
+- Sends the conditional Stage and Active Implemented modules values from columns L and P after validating them against Google Sheet dropdown options when present.

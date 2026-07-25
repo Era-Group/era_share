@@ -487,7 +487,11 @@ class CsGoogleSheetSync(models.AbstractModel):
                 plan = subscription[field_name].display_name
                 break
         active_users = adoption.active_users_30d if adoption and adoption.active_users_30d else ''
-        return {
+        values = {
+            column: account[field_name] or ''
+            for column, field_name in SHEET_ACCOUNT_FIELDS.items()
+        }
+        values.update({
             'A': account.csm_user_id.name or '',
             'B': account.csm_user_id.phone or '',
             'C': account.csm_user_id.email or '',
@@ -496,7 +500,8 @@ class CsGoogleSheetSync(models.AbstractModel):
             'K': active_users,
             'N': ('%.2f%%' % account.latest_adoption_score) if account.latest_adoption_date else '',
             'O': account.partner_id.website or '',
-        }
+        })
+        return values
 
     @api.model
     def _sheet_row_values(self, row):

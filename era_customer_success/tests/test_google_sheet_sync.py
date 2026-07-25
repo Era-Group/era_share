@@ -148,6 +148,17 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertNotIn('sheet_next_action', values)
         self.assertNotIn('sheet_extra_notes', values)
 
+    def test_batch_sync_values_include_local_stage_and_modules(self):
+        self.account.write({
+            'sheet_stage': 'Training',
+            'sheet_active_implemented_modules': 'Sales, Accounting',
+        })
+
+        values = self.env['cs.google.sheet.sync']._account_values(self.account)
+
+        self.assertEqual(values['L'], 'Training')
+        self.assertEqual(values['P'], 'Sales, Accounting')
+
     def test_ai_dropdown_options_include_only_approved_red_columns(self):
         sync = self.env['cs.google.sheet.sync']
         validations = {

@@ -246,3 +246,6 @@ Commits pushed to `origin/stage`.
 - Added a bilingual external portal and matching Excel export restricted to the exact A–T columns in Odoo's shared customer sheet.
 - Added access by explicitly authorized portal user or revocable expiring token, snapshot review before activation, and access auditing.
 - Added Google Sheets synchronization for ERA-owned columns A, B, C, G, H, K, N and O only; all other columns are preserved.
+## 19.0.32.1.0 — Retire Incorrect Portal Share
+- Removed the previous portfolio portal, token sharing, external Excel export, and management forms because they did not match the required single-table AI-reviewed sharing workflow.
+- Kept the approved Google Sheet integration and customer-record Sheet fields independent from the retired portal.

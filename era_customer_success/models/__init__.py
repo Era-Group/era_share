@@ -22,5 +22,4 @@ from . import cs_voc_insight
 from . import account_return
 from . import self_service_help
 from . import cs_user_guide
-from . import cs_portfolio_share
 from . import google_sheet_sync

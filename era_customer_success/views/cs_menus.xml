@@ -69,7 +69,4 @@
               groups="group_era_cs_manager"/>
     <menuitem id="menu_cs_settings" name="Settings"
               parent="menu_cs_config" action="action_cs_config_settings" sequence="20"/>
-    <menuitem id="menu_cs_portfolio_shares" name="Odoo Portfolio Shares"
-              parent="menu_cs_config" action="action_cs_portfolio_share" sequence="25"
-              groups="group_era_cs_manager"/>
 </odoo>

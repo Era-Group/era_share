@@ -8,4 +8,4 @@ from . import test_voc_insight
 from . import test_self_service_help
 from . import test_health_tracking
 from . import test_service_enrichment
-from . import test_portfolio_portal
+from . import test_google_sheet_sync

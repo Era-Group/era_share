@@ -258,3 +258,7 @@ Commits pushed to `origin/stage`.
 - Added a Thursday 18:00 Saudi-time AI refresh restricted to approved, published, active, and unexpired Portal tables.
 - Generates every replacement row before changing the published table, preserving the previous live data if any AI row fails.
 - Requires AI-generated narrative cells to include Arabic and English together, with automatic retry and bilingual no-evidence fallbacks.
+## 19.0.33.2.0 — Google Sheet Validation Lists
+- Reads per-cell Google Sheets Data Validation before writing and preserves the exact configured option spelling.
+- Supports direct dropdown lists and range-backed lists, blocking the batch before writing when an outbound value is not allowed.
+- Completed Arabic references and translations for the AI sharing form, Portal controls, status fields, instructions, and empty-state help.

@@ -43,8 +43,8 @@ class CsAiCustomerShare(models.Model):
         ('draft', 'Draft'),
         ('prepared', 'Prepared for Review'),
         ('approved', 'Approved'),
-    ], default='draft', required=True, readonly=True)
-    selected_fields = fields.Char(readonly=True, copy=False)
+    ], string='Status', default='draft', required=True, readonly=True)
+    selected_fields = fields.Char(string='Selected Fields', readonly=True, copy=False)
     include_customer_name = fields.Boolean(readonly=True, copy=False)
     include_last_contact = fields.Boolean(readonly=True, copy=False)
     include_contact_result = fields.Boolean(readonly=True, copy=False)
@@ -54,25 +54,31 @@ class CsAiCustomerShare(models.Model):
     line_ids = fields.One2many(
         'cs.ai.customer.share.line', 'share_id', string='AI-Prepared Customer Table',
         copy=False)
-    prepared_by_id = fields.Many2one('res.users', readonly=True, copy=False)
-    prepared_on = fields.Datetime(readonly=True, copy=False)
-    approved_by_id = fields.Many2one('res.users', readonly=True, copy=False)
-    approved_on = fields.Datetime(readonly=True, copy=False)
-    portal_enabled = fields.Boolean(readonly=True, copy=False)
+    prepared_by_id = fields.Many2one(
+        'res.users', string='Prepared By', readonly=True, copy=False)
+    prepared_on = fields.Datetime(string='Prepared On', readonly=True, copy=False)
+    approved_by_id = fields.Many2one(
+        'res.users', string='Approved By', readonly=True, copy=False)
+    approved_on = fields.Datetime(string='Approved On', readonly=True, copy=False)
+    portal_enabled = fields.Boolean(string='Portal Enabled', readonly=True, copy=False)
     portal_user_ids = fields.Many2many(
         'res.users', 'cs_ai_customer_share_portal_user_rel',
         'share_id', 'user_id', string='Authorized Portal Users', copy=False,
         domain="[('share', '=', True)]")
     expires_on = fields.Date(
+        string='Expires On',
         required=True, default=lambda self: fields.Date.add(fields.Date.today(), days=30))
     access_token = fields.Char(
         default=lambda self: secrets.token_urlsafe(32), readonly=True, copy=False)
-    portal_url = fields.Char(compute='_compute_portal_url')
-    published_by_id = fields.Many2one('res.users', readonly=True, copy=False)
-    published_on = fields.Datetime(readonly=True, copy=False)
-    access_count = fields.Integer(readonly=True, copy=False)
-    last_accessed_on = fields.Datetime(readonly=True, copy=False)
-    last_auto_refresh_on = fields.Datetime(readonly=True, copy=False)
+    portal_url = fields.Char(string='Portal URL', compute='_compute_portal_url')
+    published_by_id = fields.Many2one(
+        'res.users', string='Published By', readonly=True, copy=False)
+    published_on = fields.Datetime(string='Published On', readonly=True, copy=False)
+    access_count = fields.Integer(string='Access Count', readonly=True, copy=False)
+    last_accessed_on = fields.Datetime(
+        string='Last Accessed On', readonly=True, copy=False)
+    last_auto_refresh_on = fields.Datetime(
+        string='Last Automatic Refresh', readonly=True, copy=False)
 
     @api.depends('access_token')
     def _compute_portal_url(self):

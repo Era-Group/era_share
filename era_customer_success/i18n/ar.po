@@ -14,114 +14,152 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_ai_customer_share
+#: model:ir.ui.menu,name:era_customer_success.menu_cs_ai_customer_share
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "AI Customer Sharing Table"
 msgstr "جدول مشاركة بيانات العملاء بالذكاء"
 
 #. module: era_customer_success
+#: model:ir.actions.act_window,name:era_customer_success.action_cs_ai_customer_share
 msgid "AI Customer Sharing Tables"
 msgstr "جداول مشاركة بيانات العملاء بالذكاء"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "Odoo Customer Data Review"
 msgstr "مراجعة بيانات عملاء أودو"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__request_description
 msgid "Requested Information Description"
 msgstr "وصف المعلومات المطلوبة"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__account_ids
 msgid "Included Customers"
 msgstr "العملاء المشمولون"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_account__send_to_portal_share
 msgid "Send to Portal for Sharing"
 msgstr "إرساله للبوابة للمشاركة"
 
 #. module: era_customer_success
+#: model:ir.model.fields,help:era_customer_success.field_cs_account__send_to_portal_share
 msgid "Include this customer by default in the AI-reviewed sharing table. This flag does not publish or send data by itself."
 msgstr "أدرج هذا العميل افتراضياً في جدول المشاركة المراجع بالذكاء. هذه العلامة لا تنشر أو ترسل أي بيانات بمفردها."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Prepare Table with AI"
 msgstr "تحضير الجدول بالذكاء"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Approve Reviewed Table"
 msgstr "الموافقة على الجدول بعد المراجعة"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__line_ids
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "AI-Prepared Customer Table"
 msgstr "جدول العملاء المحضر بالذكاء"
 
 #. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_ai_customer_share__state__prepared
 msgid "Prepared for Review"
 msgstr "محضر للمراجعة"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__customer_name
 msgid "Customer Name"
 msgstr "اسم العميل"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__last_contact
 msgid "Last Contact"
 msgstr "آخر تواصل"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__contact_result
 msgid "Contact Result"
 msgstr "نتيجة التواصل"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__adoption_percent
 msgid "Adoption (%)"
 msgstr "نسبة التبني (%)"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__customer_voice
 msgid "Voice of Customer"
 msgstr "صوت العميل"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share_line__relationship_health_percent
 msgid "Relationship Health (%)"
 msgstr "نسبة صحة العلاقة (%)"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "The description did not select any allowed sharing field."
 msgstr "لم يحدد الوصف أي حقل مسموح لمشاركة البيانات."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "Select at least one customer before preparing the table."
 msgstr "اختر عميلاً واحداً على الأقل قبل تحضير الجدول."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "Prepare and review the AI table before approval."
 msgstr "حضّر جدول الذكاء وراجعه قبل الموافقة."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Portal Sharing Settings"
 msgstr "إعدادات المشاركة على Portal"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Publish to Portal"
 msgstr "النشر إلى Portal"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Unpublish Portal"
 msgstr "إلغاء النشر على Portal"
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Regenerate Portal Link"
 msgstr "تجديد رابط Portal"
 
 #. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__portal_user_ids
 msgid "Authorized Portal Users"
 msgstr "مستخدمو Portal المصرح لهم"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "Approve the reviewed AI table before publishing it to Portal."
 msgstr "وافق على جدول الذكاء بعد مراجعته قبل نشره إلى Portal."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "Portal expiration must be today or later."
 msgstr "يجب أن يكون تاريخ انتهاء Portal اليوم أو بعده."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
 msgid "Only a Customer Success Manager can select customers for Portal sharing."
 msgstr "يمكن لمدير نجاح العملاء فقط اختيار العملاء للمشاركة على Portal."
 
@@ -142,12 +180,146 @@ msgid "No direct Voice of Customer statement is recorded. Current sentiment sign
 msgstr "لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %s."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "The approved Portal table has no safe selected fields."
 msgstr "جدول Portal المعتمد لا يحتوي على حقول آمنة مختارة."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
 msgid "The approved Portal table has no included customers."
 msgstr "جدول Portal المعتمد لا يحتوي على عملاء مشمولين."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__selected_fields
+msgid "Selected Fields"
+msgstr "الحقول المختارة"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__portal_enabled
+msgid "Portal Enabled"
+msgstr "Portal مفعل"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__portal_url
+msgid "Portal URL"
+msgstr "رابط Portal"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__published_by_id
+msgid "Published By"
+msgstr "نشره"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__published_on
+msgid "Published On"
+msgstr "تاريخ النشر"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__access_count
+msgid "Access Count"
+msgstr "عدد مرات الوصول"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__last_accessed_on
+msgid "Last Accessed On"
+msgstr "آخر وصول"
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__last_auto_refresh_on
+msgid "Last Automatic Refresh"
+msgstr "آخر تحديث تلقائي"
+
+#. module: era_customer_success
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_ai_customer_share__state__approved
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid "One form, one table:"
+msgstr "فورم واحد، جدول واحد:"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid "AI selects only safe columns requested in the description and prepares a reviewable row for each customer. Nothing is shared externally from this screen."
+msgstr "يختار الذكاء فقط الأعمدة الآمنة المطلوبة في الوصف ويحضّر صفاً قابلاً للمراجعة لكل عميل. لا تتم مشاركة أي شيء خارجياً من هذه الشاشة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid "The weekly AI refresh runs Thursday at 6:00 PM Saudi time only for approved, published, active, and unexpired Portal tables. Draft, review, unpublished, and expired tables are not updated."
+msgstr "يعمل التحديث الأسبوعي بالذكاء يوم الخميس الساعة 6:00 مساءً بتوقيت السعودية فقط لجداول Portal المعتمدة والمنشورة والفعالة وغير المنتهية. لا يتم تحديث المسودات أو الجداول قيد المراجعة أو غير المنشورة أو المنتهية."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid "Describe only the customer information required for the joint review..."
+msgstr "صف فقط معلومات العميل المطلوبة للمراجعة المشتركة..."
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_ai_customer_share
+msgid "Create one AI-reviewed customer table"
+msgstr "أنشئ جدول عملاء واحداً مراجعاً بالذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.actions.act_window,help:era_customer_success.action_cs_ai_customer_share
+msgid "Describe the required information, select customers, prepare with AI, then review and approve."
+msgstr "صف المعلومات المطلوبة، واختر العملاء، وحضّر الجدول بالذكاء، ثم راجعه ووافق عليه."
+
+#. module: era_customer_success
+#: model:ir.model,name:era_customer_success.model_cs_ai_customer_share_line
+msgid "AI Customer Sharing Table Row"
+msgstr "صف جدول مشاركة بيانات العملاء بالذكاء"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
+msgid ""
+"<strong>One form, one table:</strong>\n"
+"                        AI selects only safe columns requested in the description and prepares a reviewable row for each customer. Nothing is shared externally from this screen."
+msgstr ""
+"<strong>فورم واحد، جدول واحد:</strong>\n"
+"                        يختار الذكاء فقط الأعمدة الآمنة المطلوبة في الوصف ويحضّر صفاً قابلاً للمراجعة لكل عميل. لا تتم مشاركة أي شيء خارجياً من هذه الشاشة."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.portal_ai_customer_share_table
+msgid "AI-reviewed customer information / بيانات العملاء المراجعة بالذكاء"
+msgstr "بيانات العملاء المراجعة بالذكاء / AI-reviewed customer information"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
+msgid "The AI sharing-field selector is not available."
+msgstr "وكيل الذكاء لاختيار حقول المشاركة غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
+msgid "AI could not analyse the requested sharing fields."
+msgstr "تعذر على الذكاء تحليل حقول المشاركة المطلوبة."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
+msgid "The AI customer-table builder is not available."
+msgstr "وكيل الذكاء لتحضير جدول العملاء غير متاح."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
+msgid "AI could not prepare the customer row for %s."
+msgstr "تعذر على الذكاء تحضير صف العميل %s."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_ai_customer_share.py:0
+msgid "AI returned an invalid customer row for %s."
+msgstr "أعاد الذكاء صفاً غير صالح للعميل %s."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Value \"%s\" is not allowed for Google Sheet column %s (%s). Allowed values: %s"
+msgstr "القيمة \"%s\" غير مسموحة لعمود Google Sheet رقم %s (%s). القيم المسموحة: %s"
 
 #. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
@@ -180,6 +352,7 @@ msgstr "الموافقة على المشاركة"
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_portfolio_share_form
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+#: model_terms:ir.ui.view,arch_db:era_customer_success.view_cs_ai_customer_share_form
 msgid "Revoke Approval"
 msgstr "إلغاء الموافقة"
 
@@ -207,12 +380,14 @@ msgstr "تمت الموافقة على مشاركة المعلومات"
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__sharing_approved_by_id
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approved_by
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__approved_by_id
 msgid "Approved By"
 msgstr "وافق عليها"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_portfolio_share__sharing_approved_on
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_approved_on
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__approved_on
 msgid "Approved On"
 msgstr "تاريخ الموافقة"
 
@@ -3507,6 +3682,7 @@ msgstr "تم"
 
 #. module: era_customer_success
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_adoption_assessment__state__draft
+#: model:ir.model.fields.selection,name:era_customer_success.selection__cs_ai_customer_share__state__draft
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_success_profile__state__draft
 #: model:ir.model.fields.selection,name:era_customer_success.selection__cs_value_review__state__draft
 #: model:ir.model.fields.selection,name:era_customer_success.selection__csm_offering__state__draft
@@ -3863,6 +4039,7 @@ msgstr "منتهية"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_support_wallet__expiry_date
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__expires_on
 msgid "Expires On"
 msgstr "تنتهي في"
 
@@ -6001,11 +6178,13 @@ msgstr "جاهزة"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__prepared_by_id
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__prepared_by_id
 msgid "Prepared By"
 msgstr "جهّزها"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_value_review__prepared_on
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__prepared_on
 msgid "Prepared On"
 msgstr "تاريخ التجهيز"
 
@@ -7381,6 +7560,7 @@ msgstr "الحالة"
 
 #. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_adoption_assessment__status
+#: model:ir.model.fields,field_description:era_customer_success.field_cs_ai_customer_share__state
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_next_action__state
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_support_wallet__status
 #: model:ir.model.fields,field_description:era_customer_success.field_cs_weekly_suggestion__state

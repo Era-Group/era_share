@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
 
@@ -26,3 +27,28 @@ class TestGoogleSheetScope(TransactionCase):
         payload = request_mock.call_args_list[-1].kwargs.get('json', {}).get('data', [])
         allowed = {'A', 'B', 'C', 'H', 'I', 'L', 'O', 'P'}
         self.assertTrue(all(item['range'].split('!')[1][0] in allowed for item in payload))
+
+    def test_dropdown_value_uses_exact_sheet_option(self):
+        sync = self.env['cs.google.sheet.sync']
+        value = sync._validated_dropdown_value(
+            'live', [' Live', 'Cancelled', 'On Hold'], 'L', 'Stage')
+        self.assertEqual(value, ' Live')
+
+    def test_dropdown_rejects_value_outside_sheet_options(self):
+        sync = self.env['cs.google.sheet.sync']
+        with self.assertRaisesRegex(UserError, 'Allowed values'):
+            sync._validated_dropdown_value(
+                'Implementation', ['Live', 'Cancelled', 'On Hold'], 'L', 'Stage')
+
+    def test_one_of_range_loads_allowed_values(self):
+        sync = self.env['cs.google.sheet.sync']
+        condition = {
+            'type': 'ONE_OF_RANGE',
+            'values': [{'userEnteredValue': "='Lists'!$A$1:$A$3"}],
+        }
+        with patch.object(type(sync), '_request', return_value={
+                'values': [['Done'], ['Pending'], ['No potential']]}) as request_mock:
+            options = sync._validation_condition_options(
+                condition, 'sheet', 'Portfolio', 'token')
+        self.assertEqual(options, ['Done', 'Pending', 'No potential'])
+        self.assertIn('Lists', request_mock.call_args.args[1])

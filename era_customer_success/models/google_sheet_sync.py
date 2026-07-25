@@ -3,7 +3,7 @@ import json
 import re
 import time
 from difflib import SequenceMatcher
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 import requests
 from cryptography.hazmat.primitives import hashes, serialization
@@ -128,6 +128,68 @@ class CsGoogleSheetSync(models.AbstractModel):
                     red_columns.add(chr(ord('A') + index))
             return red_columns
         raise UserError(_('Google Sheet tab with gid %s was not found.', gid))
+
+    @api.model
+    def _validation_options_by_cell(self, spreadsheet_id, title, start_row, end_row, token):
+        if end_row < start_row:
+            return {}
+        sheet_range = "'%s'!A%s:T%s" % (title.replace("'", "''"), start_row, end_row)
+        url = ('https://sheets.googleapis.com/v4/spreadsheets/%s'
+               '?includeGridData=true&ranges=%s&fields='
+               'sheets(data(rowData(values(dataValidation(condition(type,values))))))'
+               % (spreadsheet_id, quote(sheet_range, safe='')))
+        metadata = self._request('GET', url, token)
+        row_data = (((metadata.get('sheets') or [{}])[0].get('data') or [{}])[0]
+                    .get('rowData') or [])
+        options_by_cell = {}
+        range_cache = {}
+        for row_offset, row in enumerate(row_data):
+            for column_index, cell in enumerate((row or {}).get('values', [])[:20]):
+                condition = cell.get('dataValidation', {}).get('condition', {})
+                options = self._validation_condition_options(
+                    condition, spreadsheet_id, title, token, range_cache)
+                if options:
+                    column = chr(ord('A') + column_index)
+                    options_by_cell[(start_row + row_offset, column)] = options
+        return options_by_cell
+
+    @api.model
+    def _validation_condition_options(self, condition, spreadsheet_id, title, token, cache=None):
+        condition_type = condition.get('type')
+        raw_values = [item.get('userEnteredValue', '')
+                      for item in condition.get('values', [])]
+        if condition_type == 'ONE_OF_LIST':
+            return [value for value in raw_values if value != '']
+        if condition_type != 'ONE_OF_RANGE' or not raw_values:
+            return []
+        source_range = raw_values[0].lstrip('=')
+        if '!' not in source_range:
+            source_range = "'%s'!%s" % (title.replace("'", "''"), source_range)
+        cache = cache if cache is not None else {}
+        if source_range not in cache:
+            base = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values' % spreadsheet_id
+            data = self._request(
+                'GET', '%s/%s' % (base, quote(source_range, safe='')), token)
+            cache[source_range] = [str(value) for row in data.get('values', [])
+                                   for value in row if value not in ('', None)]
+        return cache[source_range]
+
+    @api.model
+    def _validated_dropdown_value(self, value, options, column, header=''):
+        if not options or value in ('', False, None):
+            return value
+        text = str(value).strip()
+        exact = [option for option in options if str(option).strip().casefold() == text.casefold()]
+        if exact:
+            return exact[0]
+        normalized = _normalize_text(text)
+        normalized_matches = [option for option in options
+                              if _normalize_text(str(option)) == normalized]
+        if len(normalized_matches) == 1:
+            return normalized_matches[0]
+        raise UserError(_(
+            'Value "%s" is not allowed for Google Sheet column %s (%s). Allowed values: %s',
+            value, column, header or column, ', '.join(map(str, options))))
 
     @api.model
     def _matching_columns(self, headers):
@@ -308,6 +370,8 @@ class CsGoogleSheetSync(models.AbstractModel):
         if 'name' not in matching_columns:
             matching_columns['name'] = 3
         updates = []
+        validations = self._validation_options_by_cell(
+            settings['spreadsheet_id'], title, 2, len(rows), token)
         matched = 0
         accounts = self.env['cs.account'].sudo().search([('company_id', '=', self.env.company.id)])
         match_details = []
@@ -330,6 +394,9 @@ class CsGoogleSheetSync(models.AbstractModel):
                 account.sudo().write(account_values)
             for column, value in self._account_values(account).items():
                 if column in approved_columns and column in red_columns and value not in ('', False, None):
+                    value = self._validated_dropdown_value(
+                        value, validations.get((row_number, column), []),
+                        column, headers[ord(column) - ord('A')])
                     updates.append({'range': "'%s'!%s%s" % (escaped, column, row_number), 'values': [[value]]})
         if updates:
             self._request('POST', '%s:batchUpdate' % base, token, json={
@@ -429,11 +496,20 @@ class CsGoogleSheetSync(models.AbstractModel):
                 break
         if matched_row is None:
             raise UserError(_('No sufficiently confident Google Sheet row matched this customer.'))
-        updates = [{'range': "'%s'!%s%s" % (escaped, column, row_number),
-                    'values': [[value]]}
-                   for column, field_name in SHEET_ACCOUNT_FIELDS.items()
-                   for value in [account[field_name]]
-                   if column in approved_columns and column in red_columns and value not in ('', False, None)]
+        validations = self._validation_options_by_cell(
+            settings['spreadsheet_id'], title, row_number, row_number, token)
+        updates = []
+        for column, field_name in SHEET_ACCOUNT_FIELDS.items():
+            value = account[field_name]
+            if column not in approved_columns or column not in red_columns or value in ('', False, None):
+                continue
+            value = self._validated_dropdown_value(
+                value, validations.get((row_number, column), []),
+                column, headers[ord(column) - ord('A')])
+            updates.append({
+                'range': "'%s'!%s%s" % (escaped, column, row_number),
+                'values': [[value]],
+            })
         if not updates:
             raise UserError(_('This customer has no non-empty approved red fields to send to Excel.'))
         self._request('POST', '%s:batchUpdate' % base, token, json={

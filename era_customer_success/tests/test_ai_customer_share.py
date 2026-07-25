@@ -78,6 +78,18 @@ class TestAiCustomerShare(TransactionCase):
         command = defaults['account_ids'][0]
         self.assertIn(self.account.id, command[2])
 
+    def test_prepare_button_queues_background_work_without_calling_ai(self):
+        with patch.object(type(self.share), '_analyse_requested_fields') as analyse, \
+                patch.object(type(self.share), '_trigger_preparation_cron') as trigger:
+            action = self.share.action_prepare_with_ai()
+
+        analyse.assert_not_called()
+        trigger.assert_called_once()
+        self.assertEqual(self.share.preparation_state, 'queued')
+        self.assertEqual(self.share.preparation_total, 1)
+        self.assertEqual(self.share.preparation_progress, 0)
+        self.assertEqual(action['tag'], 'display_notification')
+
     def test_portal_cannot_publish_before_review_approval(self):
         with self.assertRaisesRegex(Exception, 'Approve the reviewed AI table'):
             self.share.action_publish_portal()

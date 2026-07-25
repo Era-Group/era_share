@@ -79,6 +79,22 @@ class CsAiCustomerShare(models.Model):
         string='Last Accessed On', readonly=True, copy=False)
     last_auto_refresh_on = fields.Datetime(
         string='Last Automatic Refresh', readonly=True, copy=False)
+    preparation_state = fields.Selection([
+        ('idle', 'Not Queued'),
+        ('queued', 'Queued'),
+        ('running', 'Preparing'),
+        ('done', 'Completed'),
+        ('failed', 'Failed'),
+    ], string='AI Preparation', default='idle', required=True, readonly=True, copy=False)
+    preparation_progress = fields.Integer(
+        string='Prepared Rows', readonly=True, copy=False)
+    preparation_total = fields.Integer(
+        string='Total Rows', readonly=True, copy=False)
+    preparation_error = fields.Text(
+        string='Preparation Error', readonly=True, copy=False)
+    preparation_failure_count = fields.Integer(readonly=True, copy=False)
+    preparation_requested_by_id = fields.Many2one(
+        'res.users', string='Requested By', readonly=True, copy=False)
 
     @api.depends('access_token')
     def _compute_portal_url(self):
@@ -110,7 +126,12 @@ class CsAiCustomerShare(models.Model):
                         include_contact_result=False,
                         include_adoption_percent=False,
                         include_customer_voice=False,
-                        include_relationship_health_percent=False)
+                        include_relationship_health_percent=False,
+                        preparation_state='idle',
+                        preparation_progress=0,
+                        preparation_total=0,
+                        preparation_error=False,
+                        preparation_failure_count=0)
         return super().write(vals)
 
     def _analyse_requested_fields(self):
@@ -326,28 +347,118 @@ class CsAiCustomerShare(models.Model):
         self.ensure_one()
         if not self.account_ids:
             raise UserError(_('Select at least one customer before preparing the table.'))
-        selected = self._analyse_requested_fields()
         self.line_ids.unlink()
-        for account in self.account_ids:
-            self.env['cs.ai.customer.share.line'].create(
-                self._prepare_account_row(account, selected))
-        flags = {
-            'include_%s' % field_name: field_name in selected
-            for field_name in ALLOWED_SHARE_FIELDS
-        }
         self.write({
-            **flags,
-            'state': 'prepared',
-            'selected_fields': ', '.join(selected),
-            'prepared_by_id': self.env.user.id,
-            'prepared_on': fields.Datetime.now(),
+            'state': 'draft',
+            'selected_fields': False,
+            'prepared_by_id': False,
+            'prepared_on': False,
             'approved_by_id': False,
             'approved_on': False,
             'portal_enabled': False,
             'published_by_id': False,
             'published_on': False,
+            'preparation_state': 'queued',
+            'preparation_progress': 0,
+            'preparation_total': len(self.account_ids),
+            'preparation_error': False,
+            'preparation_failure_count': 0,
+            'preparation_requested_by_id': self.env.user.id,
+            **{'include_%s' % field_name: False for field_name in ALLOWED_SHARE_FIELDS},
         })
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
+        self._trigger_preparation_cron()
+        return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
+            'title': _('AI table preparation queued'),
+            'message': _(
+                '%s customer rows will be prepared in the background. Refresh this form to follow progress.',
+                len(self.account_ids)),
+            'type': 'info', 'sticky': False,
+            'next': {'type': 'ir.actions.client', 'tag': 'reload'}}}
+
+    @api.model
+    def _trigger_preparation_cron(self):
+        cron = self.env.ref(
+            'era_customer_success.cron_cs_process_ai_share_preparations',
+            raise_if_not_found=False)
+        if cron:
+            cron._trigger()
+
+    @api.model
+    def _cron_process_ai_table_preparations(self, batch=3):
+        share = self.sudo().search([
+            ('preparation_state', 'in', ('queued', 'running')),
+        ], order='write_date, id', limit=1)
+        if not share:
+            return True
+        try:
+            requested_by = share.preparation_requested_by_id
+            if not requested_by or not requested_by.active:
+                raise UserError(_('The user who requested preparation is no longer active.'))
+            worker_share = share.with_user(requested_by)
+            worker_share.check_access('read')
+            if not share.selected_fields:
+                selected = worker_share._analyse_requested_fields()
+                flags = {
+                    'include_%s' % field_name: field_name in selected
+                    for field_name in ALLOWED_SHARE_FIELDS
+                }
+                share.write({
+                    **flags,
+                    'selected_fields': ', '.join(selected),
+                    'preparation_state': 'running',
+                    'preparation_error': False,
+                })
+                self.env.cr.commit()
+            else:
+                selected = share._filter_allowed_fields([
+                    field_name.strip()
+                    for field_name in share.selected_fields.split(',')
+                ])
+            prepared_account_ids = set(share.line_ids.account_id.ids)
+            remaining = share.account_ids.sorted('id').filtered(
+                lambda account: account.id not in prepared_account_ids)
+            for account in remaining[:batch]:
+                values = worker_share._prepare_account_row(
+                    account.with_user(requested_by), selected)
+                self.env['cs.ai.customer.share.line'].sudo().create(values)
+                progress = self.env['cs.ai.customer.share.line'].sudo().search_count([
+                    ('share_id', '=', share.id),
+                ])
+                share.write({
+                    'preparation_state': 'running',
+                    'preparation_progress': progress,
+                    'preparation_error': False,
+                    'preparation_failure_count': 0,
+                })
+                self.env.cr.commit()
+            share = self.sudo().browse(share.id)
+            progress = self.env['cs.ai.customer.share.line'].sudo().search_count([
+                ('share_id', '=', share.id),
+            ])
+            if progress >= share.preparation_total:
+                share.write({
+                    'state': 'prepared',
+                    'preparation_state': 'done',
+                    'preparation_progress': progress,
+                    'prepared_by_id': share.preparation_requested_by_id.id,
+                    'prepared_on': fields.Datetime.now(),
+                })
+            else:
+                share.preparation_state = 'queued'
+                self._trigger_preparation_cron()
+        except Exception as error:
+            self.env.cr.rollback()
+            share = self.sudo().browse(share.id)
+            failures = share.preparation_failure_count + 1
+            share.write({
+                'preparation_state': 'failed' if failures >= 3 else 'queued',
+                'preparation_failure_count': failures,
+                'preparation_error': str(error)[:2000],
+            })
+            _logger.exception(
+                'AI sharing table preparation failed for share %s (attempt %s): %s',
+                share.id, failures, error)
+        return True
 
     def action_approve(self):
         self.ensure_one()

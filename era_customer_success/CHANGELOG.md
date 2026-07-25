@@ -319,3 +319,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.21.0 — Send Local ERA Form Values in Batch Sync
 - Includes approved local ERA form fields in full-sheet synchronization instead of sending only directly computed Odoo fields.
 - Sends the conditional Stage and Active Implemented modules values from columns L and P after validating them against Google Sheet dropdown options when present.
+## 19.0.33.22.0 — Prepare AI Sharing Tables in Background
+- Queues the customer sharing table from the form immediately instead of holding the browser request open for every customer AI call.
+- Processes rows gradually with durable progress, automatic retries, and a visible failure message without losing completed rows.

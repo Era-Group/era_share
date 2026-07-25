@@ -22,7 +22,7 @@
                 <header>
                     <button name="action_prepare_with_ai" type="object"
                             string="Prepare Table with AI" class="btn-primary"
-                            invisible="state == 'approved'"/>
+                            invisible="state == 'approved' or preparation_state in ('queued', 'running')"/>
                     <button name="action_approve" type="object"
                             string="Approve Reviewed Table" class="btn-primary"
                             invisible="state != 'prepared'"/>
@@ -48,12 +48,16 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="account_ids" widget="many2many_tags"
                                    domain="[('company_id', '=', company_id)]"
-                                   readonly="state == 'approved'"/>
+                                   readonly="state == 'approved' or preparation_state in ('queued', 'running')"/>
                         </group>
                         <group>
                             <field name="selected_fields"/>
                             <field name="prepared_by_id"/>
                             <field name="prepared_on"/>
+                            <field name="preparation_state" widget="badge"/>
+                            <field name="preparation_progress"/>
+                            <field name="preparation_total"/>
+                            <field name="preparation_error" invisible="not preparation_error"/>
                             <field name="approved_by_id" invisible="state != 'approved'"/>
                             <field name="approved_on" invisible="state != 'approved'"/>
                         </group>
@@ -77,7 +81,8 @@
                         <p class="mb-1">The weekly AI refresh runs Thursday at 6:00 PM Saudi time only for approved, published, active, and unexpired Portal tables. Draft, review, unpublished, and expired tables are not updated.</p>
                         <p class="mb-0">Only included customers whose Customer Success record has “Send to Portal for Sharing” enabled remain in the weekly table.</p>
                     </div>
-                    <field name="request_description" readonly="state == 'approved'"
+                    <field name="request_description"
+                           readonly="state == 'approved' or preparation_state in ('queued', 'running')"
                            placeholder="Describe only the customer information required for the joint review..."/>
                     <field name="include_customer_name" invisible="1"/>
                     <field name="include_last_contact" invisible="1"/>

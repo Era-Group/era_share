@@ -446,6 +446,11 @@ msgstr "الموافقة على مشاركة المعلومات"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Scan the Google Sheet first. Odoo reads the font color of row-1 column titles and fills the detected scope below. Review that scope, then explicitly approve it. Revoke approval and scan again before changing the sheet."
+msgstr "افحص Google Sheet أولاً. يقرأ أودو لون خط عناوين الأعمدة في الصف الأول ويعبئ النطاق المكتشف أدناه. راجع النطاق ثم وافق عليه صراحة. ألغِ الموافقة وأعد الفحص قبل تغيير الجدول."
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "Scan Google Sheet Titles"
 msgstr "فحص عناوين Google Sheet"
 

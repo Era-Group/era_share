@@ -559,17 +559,16 @@ class CsGoogleSheetSync(models.AbstractModel):
                 row, matching_columns, accounts)
             if account:
                 matched += 1
-                status = 'MATCHED: %s (%s%%)' % (
-                    account.partner_id.display_name, confidence)
+                status = 'x'
                 details.append('Row %s | %s -> %s (%s%%: %s)' % (
                     row_number, customer_name, account.partner_id.display_name,
                     confidence, reason))
             else:
                 unmatched += 1
-                status = 'UNMATCHED'
+                status = ''
                 details.append('Row %s | %s -> UNMATCHED (%s)' % (
                     row_number, customer_name, reason))
-            # Matching status is intentionally the only value written by this action.
+            # Column A is a compact marker only: x for a successful match, blank otherwise.
             updates.append({
                 'range': "'%s'!A%s" % (escaped, row_number),
                 'values': [[status]],

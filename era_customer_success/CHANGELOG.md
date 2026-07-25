@@ -289,3 +289,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.11.0 — Background Excel Matching
 - Moves full Excel customer matching to a queued background job to prevent long HTTP requests and browser disconnects.
 - Adds queued/running/success/failed matching results with a settings action to view row-level logs; the background process still writes only column A.
+## 19.0.33.12.0 — Compact Excel Match Marker
+- Replaces verbose matching text in column A with a single `x` for successful matches and an empty value for unmatched rows.
+- Keeps customer identity, confidence, and matching rationale exclusively in the Odoo matching-result log.

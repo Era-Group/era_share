@@ -157,8 +157,8 @@ class TestGoogleSheetScope(TransactionCase):
             sync._run_match_all_sheet_customers()
         payload = request_mock.call_args_list[-1].kwargs['json']['data']
         self.assertEqual([item['range'].split('!')[1] for item in payload], ['A2', 'A3'])
-        self.assertTrue(payload[0]['values'][0][0].startswith('MATCHED:'))
-        self.assertEqual(payload[1]['values'][0][0], 'UNMATCHED')
+        self.assertEqual(payload[0]['values'][0][0], 'x')
+        self.assertEqual(payload[1]['values'][0][0], '')
 
     def test_matching_action_queues_background_job_without_google_request(self):
         sync = self.env['cs.google.sheet.sync']

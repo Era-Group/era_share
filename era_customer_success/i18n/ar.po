@@ -351,8 +351,8 @@ msgstr "مطابقة كل عملاء Excel"
 
 #. module: era_customer_success
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
-msgid "Matches every Excel customer to Customer Success records and writes matching status in column A only. See Google synchronization logs for row-level results."
-msgstr "يطابق كل عميل في Excel مع سجلات نجاح العملاء ويكتب حالة المطابقة في العمود A فقط. راجع سجلات مزامنة Google للاطلاع على نتيجة كل صف."
+msgid "Matches every Excel customer to Customer Success records and writes x in column A only for successful matches. Unmatched rows are left blank. See Google synchronization logs for row-level results."
+msgstr "يطابق كل عميل في Excel مع سجلات نجاح العملاء ويكتب حرف x في العمود A فقط للمطابقات الناجحة. تترك الصفوف غير المطابقة فارغة. راجع سجلات مزامنة Google للاطلاع على نتيجة كل صف."
 
 #. module: era_customer_success
 #. odoo-python

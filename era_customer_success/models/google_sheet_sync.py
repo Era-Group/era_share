@@ -36,7 +36,20 @@ MATCH_HEADER_ALIASES = {
     'email': {'customer email', 'client email', 'company email', 'email'},
     'phone': {'customer phone', 'client phone', 'company phone', 'phone', 'mobile'},
     'website': {'client website', 'customer website', 'company website', 'website'},
+    'vat': {'vat', 'tax id', 'tax number', 'registration number', 'cr number'},
 }
+NAME_STOP_WORDS = {
+    'company', 'co', 'ltd', 'limited', 'llc', 'inc', 'corp', 'corporation', 'group',
+    'holding', 'holdings', 'trading', 'establishment', 'enterprise', 'enterprises',
+    'business', 'services', 'service', 'international', 'int', 'sa', 'ksa',
+    'شركة', 'شركه', 'مؤسسة', 'مؤسسه', 'مجموعة', 'مجموعه', 'للتجارة', 'للتجاره',
+    'التجارية', 'التجاريه', 'التجارة', 'التجاره', 'العالمية', 'العالميه',
+    'المحدودة', 'المحدوده', 'ذمم', 'م م',
+}
+ARABIC_NAME_TRANSLATION = str.maketrans({
+    'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ؤ': 'و', 'ئ': 'ي',
+    'ى': 'ي', 'ة': 'ه', 'ـ': '', 'پ': 'ب', 'چ': 'ج', 'ڤ': 'ف', 'گ': 'ك',
+})
 
 
 def _b64url(value):
@@ -45,6 +58,37 @@ def _b64url(value):
 
 def _normalize_text(value):
     return re.sub(r'[^\w]+', ' ', (value or '').casefold()).strip()
+
+
+def _normalize_customer_name(value):
+    text = (value or '').casefold().translate(ARABIC_NAME_TRANSLATION)
+    text = re.sub(r'[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]', '', text)
+    tokens = [token for token in re.findall(r'[\w]+', text)
+              if token not in NAME_STOP_WORDS and len(token) > 1]
+    return ' '.join(tokens)
+
+
+def _customer_name_score(left, right):
+    left_core, right_core = _normalize_customer_name(left), _normalize_customer_name(right)
+    if not left_core or not right_core:
+        return 0, ''
+    if left_core == right_core:
+        return 90, 'normalized name'
+    left_tokens, right_tokens = set(left_core.split()), set(right_core.split())
+    shared = left_tokens & right_tokens
+    smallest = min(len(left_tokens), len(right_tokens))
+    if shared and len(shared) == smallest and smallest >= 1:
+        return 82, 'name subset'
+    if len(left_core) >= 4 and len(right_core) >= 4 and (
+            left_core in right_core or right_core in left_core):
+        return 80, 'name contains'
+    union = left_tokens | right_tokens
+    token_score = len(shared) / len(union) if union else 0
+    sequence_score = SequenceMatcher(None, left_core, right_core).ratio()
+    score = max(token_score, sequence_score)
+    if score >= 0.72:
+        return int(score * 75), 'similar normalized name'
+    return 0, ''
 
 
 def _normalize_phone(value):
@@ -230,15 +274,13 @@ class CsGoogleSheetSync(models.AbstractModel):
             if values.get('phone') and partner.phone and _normalize_phone(values['phone']) == _normalize_phone(partner.phone):
                 score += 80
                 reasons.append('phone')
-            row_name, account_name = _normalize_text(values.get('name')), _normalize_text(partner.name)
-            if row_name and account_name:
-                similarity = SequenceMatcher(None, row_name, account_name).ratio()
-                if row_name == account_name:
-                    score += 90
-                    reasons.append('exact name')
-                elif similarity >= 0.86:
-                    score += int(similarity * 60)
-                    reasons.append('similar name')
+            if values.get('vat') and partner.vat and _normalize_text(values['vat']) == _normalize_text(partner.vat):
+                score += 100
+                reasons.append('VAT')
+            name_score, name_reason = _customer_name_score(values.get('name'), partner.name)
+            if name_score:
+                score += name_score
+                reasons.append(name_reason)
             if score:
                 scored.append((score, account.id, account, ', '.join(reasons)))
         scored.sort(reverse=True, key=lambda item: (item[0], item[1]))
@@ -255,18 +297,21 @@ class CsGoogleSheetSync(models.AbstractModel):
         scored = []
         for candidate in accounts:
             partner = candidate.partner_id.commercial_partner_id
-            name = _normalize_text(values.get('name'))
-            candidate_name = _normalize_text(partner.name)
-            if name and candidate_name:
-                similarity = SequenceMatcher(None, name, candidate_name).ratio()
-                if similarity >= 0.55:
-                    scored.append((int(similarity * 100), candidate.id, candidate, 'candidate'))
+            name_score, _reason = _customer_name_score(values.get('name'), partner.name)
+            if name_score:
+                scored.append((name_score, candidate.id, candidate, 'candidate'))
+        # Different scripts (Arabic/English) can have no lexical overlap. Give AI
+        # a bounded broad candidate set rather than silently skipping that customer.
+        if not scored:
+            scored = [(0, candidate.id, candidate, 'broad candidate')
+                      for candidate in accounts[:100]]
+        scored.sort(reverse=True, key=lambda item: (item[0], item[1]))
         return self._ai_match_account(values, scored, accounts)
 
     @api.model
     def _ai_match_account(self, row_values, scored, accounts):
         agent = self.env.ref(
-            'era_customer_success.cs_customer_match_agent', raise_if_not_found=False)
+            'era_customer_success.cs_customer_match_agent_v2', raise_if_not_found=False)
         if not agent:
             return False, 0, 'manual review required'
         if not scored:
@@ -281,6 +326,7 @@ class CsGoogleSheetSync(models.AbstractModel):
                 'email': partner.email or '',
                 'phone': partner.phone or '',
                 'website': partner.website or '',
+                'vat': partner.vat or '',
             }, ensure_ascii=False))
         prompt = 'SHEET ROW:\n%s\nCANDIDATES:\n%s' % (
             json.dumps(row_values, ensure_ascii=False), '\n'.join(candidate_lines))

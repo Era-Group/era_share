@@ -3,9 +3,27 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
+from odoo.addons.era_customer_success.models.google_sheet_sync import (
+    _customer_name_score,
+    _normalize_customer_name,
+)
+
 
 @tagged('post_install', '-at_install')
 class TestGoogleSheetScope(TransactionCase):
+
+    def test_customer_name_normalization_handles_arabic_variants_and_company_words(self):
+        self.assertEqual(_normalize_customer_name('شركة الرائحة الفواحة المحدودة'),
+                         _normalize_customer_name('الرائحه الفواحه'))
+
+    def test_customer_name_score_accepts_partial_company_name(self):
+        score, reason = _customer_name_score('Tad Group Int.', 'Tad')
+        self.assertGreaterEqual(score, 80)
+        self.assertIn('name', reason)
+
+    def test_customer_name_score_does_not_match_unrelated_names(self):
+        score, _reason = _customer_name_score('First Tire', 'Flint Manufacturing')
+        self.assertEqual(score, 0)
 
     def test_sync_updates_approved_red_columns_only(self):
         sync = self.env['cs.google.sheet.sync']

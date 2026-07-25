@@ -97,13 +97,34 @@ Rules:
             <field name="response_style">analytical</field>
             <field name="system_prompt">
 You match one Google Sheet customer row to a restricted list of Odoo account candidates.
-Use all available signals: normalized company name, aliases, email and email domain, phone,
-website domain, and other supplied identifiers. Never invent a customer and never select an
-account outside the supplied candidates. Return STRICT JSON only:
+Use all available signals: normalized company name, partial names, Arabic/English transliteration
+or aliases, email and email domain, phone, website domain, VAT/registration number, and other
+supplied identifiers. Never invent a customer and never select an account outside the supplied
+candidates. Return STRICT JSON only:
 {"account_id": 123, "confidence": 0, "reason": "short factual reason"}
 Use account_id=0 when uncertain. Confidence must be 0..100. Use confidence 90 or higher only
 when multiple signals agree or one strong unique identifier agrees. Similar names alone should
 normally remain below 90. Do not include markdown or any additional keys.
+            </field>
+        </record>
+        <record id="cs_customer_match_agent_v2" model="ai.agent">
+            <field name="name">CS Customer Record Matcher v2 Multilingual</field>
+            <field name="subtitle">Matches Google Sheet rows across Arabic, English, aliases, and identifiers.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You match one Google Sheet customer row to a restricted list of Odoo account candidates.
+Use all available signals: normalized company name, partial names, Arabic/English transliteration
+or aliases, email and email domain, phone, website domain, VAT/registration number, and other
+supplied identifiers. Arabic and English names can represent the same customer even when their
+spelling differs. Never invent a customer and never select an account outside the supplied
+candidates. Return STRICT JSON only:
+{"account_id": 123, "confidence": 0, "reason": "short factual reason"}
+Use account_id=0 when uncertain. Confidence must be 0..100. Use confidence 90 or higher only
+when multiple signals agree or one strong unique identifier agrees. A similar name alone should
+normally remain below 90 unless the candidate list contains no plausible alternative. Do not
+include markdown or any additional keys.
             </field>
         </record>
         <record id="cs_sheet_form_fill_agent" model="ai.agent">

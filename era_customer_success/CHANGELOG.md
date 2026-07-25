@@ -277,3 +277,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.7.0 — Implemented Module Evidence
 - Supplies AI with sold/subscribed products, implementation projects, and recent support subjects/tags to identify all actively used modules.
 - Keeps commercial offers from being treated as implementation evidence and still enforces the exact multi-select Sheet options.
+## 19.0.33.8.0 — Multilingual Customer Matching
+- Normalizes Arabic name variants, removes company suffixes, and supports partial-name and reordered-token matching.
+- Adds VAT matching and a multilingual AI fallback with broader bounded candidates for Arabic/English or alias differences.

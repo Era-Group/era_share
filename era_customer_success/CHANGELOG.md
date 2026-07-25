@@ -307,3 +307,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.17.0 — Operational Customer Alias Evidence
 - Adds project names, company child names, partner references, and sale-order customer references to direct and AI matching evidence.
 - Resolves exact operational aliases such as a project trading name while retaining persistent reviewed aliases for ambiguous cases.
+## 19.0.33.18.0 — Create Customer Companies Inline
+- Allows users to create a missing customer company directly from the Customer Success account form.
+- Defaults inline-created partners to company type while retaining the company-only customer domain.

@@ -133,7 +133,7 @@ class CsAccount(models.Model):
         self.ensure_one()
         self.check_access('write')
         agent = self.env.ref(
-            'era_customer_success.cs_sheet_form_fill_agent_v2', raise_if_not_found=False)
+            'era_customer_success.cs_sheet_form_fill_agent_v3', raise_if_not_found=False)
         if not agent:
             raise UserError(_('The Sheet form AI assistant is not available.'))
         subscription = self.env['sale.order'].sudo().search([
@@ -166,6 +166,9 @@ class CsAccount(models.Model):
             raise UserError(_('AI could not fill the Sheet form. Check the AI provider configuration.'))
         if not isinstance(data, dict):
             raise UserError(_('The Sheet form AI assistant returned an invalid response.'))
+        implemented_modules = data.get('active_implemented_modules') or []
+        if isinstance(implemented_modules, (list, tuple, set)):
+            implemented_modules = ', '.join(map(str, implemented_modules))
         vals = {
             'sheet_era_csm': self.csm_user_id.name or '',
             'sheet_era_csm_phone': self.csm_user_id.phone or '',
@@ -179,7 +182,7 @@ class CsAccount(models.Model):
             'sheet_stage': str(data.get('stage') or self.lifecycle_stage_id.name or '')[:250],
             'sheet_adoption': ('%.2f%%' % self.latest_adoption_score) if self.latest_adoption_date else '',
             'sheet_client_website': self.partner_id.website or '',
-            'sheet_active_implemented_modules': str(data.get('active_implemented_modules') or '')[:5000],
+            'sheet_active_implemented_modules': str(implemented_modules)[:5000],
             'sheet_potential_expansion': str(data.get('potential_expansion') or '')[:5000],
             'sheet_next_action': str(data.get('next_action') or '')[:5000],
             'sheet_extra_notes': str(data.get('extra_notes') or '')[:5000],
@@ -197,7 +200,8 @@ class CsAccount(models.Model):
                 continue
             try:
                 vals[field_name] = sheet_sync._validated_dropdown_value(
-                    vals[field_name], config['options'], config['column'], field_name)
+                    vals[field_name], config['options'], config['column'], field_name,
+                    multiple=config.get('multiple', False))
             except UserError:
                 invalid_dropdowns[field_name] = config
         if invalid_dropdowns:
@@ -220,7 +224,8 @@ class CsAccount(models.Model):
                         'AI did not select an allowed Google Sheet value for %s. Allowed values: %s',
                         field_name, ', '.join(config['options'])))
                 vals[field_name] = sheet_sync._validated_dropdown_value(
-                    corrected, config['options'], config['column'], field_name)
+                    corrected, config['options'], config['column'], field_name,
+                    multiple=config.get('multiple', False))
         self.write(vals)
         return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
             'title': _('Sheet form filled with AI'),

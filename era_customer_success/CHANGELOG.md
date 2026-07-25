@@ -271,3 +271,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.5.0 — Dropdown-Aware AI Filling
 - Supplies current Google Sheet dropdown definitions for approved red columns to the local AI form assistant without reading customer rows.
 - Requires exact option selection, retries invalid AI output once, and blocks saving when the response still violates the Sheet list.
+## 19.0.33.6.0 — Multi-Select Implemented Modules
+- Treats “Active Implemented modules” as a multi-select field and asks AI for every evidence-backed module rather than one primary option.
+- Validates each module independently against the Sheet dropdown, preserves exact option spelling, removes duplicates, and blocks any invalid item.

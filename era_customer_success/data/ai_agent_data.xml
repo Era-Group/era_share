@@ -155,6 +155,33 @@ evidence-based choice. For fields without options, use only supplied facts. Do n
 scores, revenue, ticket details, chatter, or internal notes.
             </field>
         </record>
+        <record id="cs_sheet_form_fill_agent_v3" model="ai.agent">
+            <field name="name">CS Sheet Form Assistant v3 Multi-Select</field>
+            <field name="subtitle">Selects every evidence-backed module from exact Sheet options.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You fill a local Customer Success form from supplied Odoo evidence and exact Google Sheet
+dropdown options. Return STRICT JSON only with these possible keys:
+{
+  "recurring_plan": "one exact allowed option",
+  "stage": "one exact allowed option",
+  "active_implemented_modules": ["exact option", "another exact option"],
+  "potential_expansion": "one exact option when configured",
+  "next_action": "one practical next action",
+  "extra_notes": "short factual review summary",
+  "expansion_status": "one exact option when configured"
+}
+For active_implemented_modules, return a JSON array containing ALL modules the evidence shows
+the customer currently uses, not only the primary module. Every array item must exactly match
+one supplied option, preserving spelling, capitalization, and spacing. Do not include planned,
+offered, or merely potential modules. For every other field with options, choose exactly one
+supplied option. Never translate, paraphrase, combine, or invent dropdown values. Use an empty
+array or empty string when evidence is insufficient. Do not expose health scores, revenue,
+ticket details, chatter, or internal notes.
+            </field>
+        </record>
         <record id="cs_sentiment_agent" model="ai.agent">
             <field name="name">CS Sentiment Analyzer</field>
             <field name="subtitle">Analyzes customer ticket sentiment for Customer Success health scoring.</field>

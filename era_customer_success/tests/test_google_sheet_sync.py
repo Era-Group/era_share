@@ -40,6 +40,21 @@ class TestGoogleSheetScope(TransactionCase):
             sync._validated_dropdown_value(
                 'Implementation', ['Live', 'Cancelled', 'On Hold'], 'L', 'Stage')
 
+    def test_module_dropdown_accepts_and_normalizes_multiple_options(self):
+        sync = self.env['cs.google.sheet.sync']
+        value = sync._validated_dropdown_value(
+            ['sales', 'Accounting', 'Sales'],
+            ['Sales', 'Accounting', 'Inventory'],
+            'P', 'Active Implemented modules', multiple=True)
+        self.assertEqual(value, 'Sales, Accounting')
+
+    def test_module_dropdown_rejects_any_invalid_option(self):
+        sync = self.env['cs.google.sheet.sync']
+        with self.assertRaisesRegex(UserError, 'Allowed values'):
+            sync._validated_dropdown_value(
+                'Sales, Unknown Module', ['Sales', 'Accounting'],
+                'P', 'Active Implemented modules', multiple=True)
+
     def test_one_of_range_loads_allowed_values(self):
         sync = self.env['cs.google.sheet.sync']
         condition = {
@@ -88,4 +103,6 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertEqual(options['sheet_stage']['options'], ['Live', 'Cancelled'])
         self.assertEqual(options['sheet_active_implemented_modules']['options'],
                          ['Sales', 'Accounting'])
+        self.assertTrue(options['sheet_active_implemented_modules']['multiple'])
+        self.assertFalse(options['sheet_stage']['multiple'])
         self.assertNotIn('sheet_expansion_status', options)

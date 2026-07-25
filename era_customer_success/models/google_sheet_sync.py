@@ -30,6 +30,7 @@ SHEET_ACCOUNT_FIELDS = {
     'P': 'sheet_active_implemented_modules', 'Q': 'sheet_potential_expansion',
     'R': 'sheet_next_action', 'S': 'sheet_extra_notes', 'T': 'sheet_expansion_status',
 }
+MULTI_SELECT_SHEET_FIELDS = {'sheet_active_implemented_modules'}
 MATCH_HEADER_ALIASES = {
     'name': {'customer name', 'client name', 'company name'},
     'email': {'customer email', 'client email', 'company email', 'email'},
@@ -175,9 +176,21 @@ class CsGoogleSheetSync(models.AbstractModel):
         return cache[source_range]
 
     @api.model
-    def _validated_dropdown_value(self, value, options, column, header=''):
+    def _validated_dropdown_value(self, value, options, column, header='', multiple=False):
         if not options or value in ('', False, None):
             return value
+        if multiple:
+            raw_values = value if isinstance(value, (list, tuple, set)) else re.split(
+                r'\s*[,;\n]\s*', str(value))
+            validated = []
+            for raw_value in raw_values:
+                if raw_value in ('', False, None):
+                    continue
+                option = self._validated_dropdown_value(
+                    raw_value, options, column, header, multiple=False)
+                if option not in validated:
+                    validated.append(option)
+            return ', '.join(map(str, validated))
         text = str(value).strip()
         exact = [option for option in options if str(option).strip().casefold() == text.casefold()]
         if exact:
@@ -383,6 +396,7 @@ class CsGoogleSheetSync(models.AbstractModel):
             entry = by_field.setdefault(field_name, {
                 'column': column,
                 'options': [],
+                'multiple': field_name in MULTI_SELECT_SHEET_FIELDS,
             })
             for option in options:
                 if option not in entry['options']:
@@ -449,7 +463,8 @@ class CsGoogleSheetSync(models.AbstractModel):
                 if column in approved_columns and column in red_columns and value not in ('', False, None):
                     value = self._validated_dropdown_value(
                         value, validations.get((row_number, column), []),
-                        column, headers[ord(column) - ord('A')])
+                        column, headers[ord(column) - ord('A')],
+                        multiple=column == 'P')
                     updates.append({'range': "'%s'!%s%s" % (escaped, column, row_number), 'values': [[value]]})
         if updates:
             self._request('POST', '%s:batchUpdate' % base, token, json={
@@ -556,7 +571,8 @@ class CsGoogleSheetSync(models.AbstractModel):
                 continue
             value = self._validated_dropdown_value(
                 value, validations.get((row_number, column), []),
-                column, headers[ord(column) - ord('A')])
+                column, headers[ord(column) - ord('A')],
+                multiple=column == 'P')
             updates.append({
                 'range': "'%s'!%s%s" % (escaped, column, row_number),
                 'values': [[value]],

@@ -265,3 +265,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.3.0 — Weekly Portal Customer Eligibility
 - Filters Thursday Portal refresh rows to customers included in the report whose Customer Success record still has “Send to Portal for Sharing” enabled.
 - Removes previously published rows on the next refresh when that customer-level option is disabled, without adding accounts outside the report selection.
+## 19.0.33.4.0 — Accurate Excel Read-Only Values
+- Full Excel import now mirrors all A–T cells, clearing stale local values when the corresponding Sheet cells are empty.
+- Local AI filling is restricted to approved outbound columns and no longer populates the read-only Excel section.

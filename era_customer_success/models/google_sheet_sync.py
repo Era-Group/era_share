@@ -332,6 +332,31 @@ class CsGoogleSheetSync(models.AbstractModel):
         return values
 
     @api.model
+    def _account_values_from_sheet_row(self, row, allowed_columns, clear_missing=False):
+        sheet_values = self._sheet_row_values(row)
+        values = {}
+        for column, field_name in SHEET_ACCOUNT_FIELDS.items():
+            if column not in allowed_columns:
+                continue
+            value = sheet_values.get(field_name)
+            if clear_missing:
+                values[field_name] = value if value not in ('', None) else False
+            elif value not in ('', False, None):
+                values[field_name] = value
+        return values
+
+    @api.model
+    def _approved_account_field_names(self):
+        settings = self._settings()
+        approved_columns = {
+            column.strip().upper()
+            for column in (settings.get('approval_scope') or '').split(',')
+            if column.strip()
+        }
+        return {field_name for column, field_name in SHEET_ACCOUNT_FIELDS.items()
+                if column in approved_columns}
+
+    @api.model
     def action_sync(self):
         settings = self._settings()
         if not settings.get('sharing_approved') or not (settings.get('approval_scope') or '').strip():
@@ -382,13 +407,8 @@ class CsGoogleSheetSync(models.AbstractModel):
             matched += 1
             match_details.append('Row %s -> %s (%s%%: %s)' % (
                 row_number, account.partner_id.display_name, confidence, reason))
-            sheet_values = self._sheet_row_values(row)
-            account_values = {
-                field_name: value for column, field_name in SHEET_ACCOUNT_FIELDS.items()
-                if column in approved_columns and column in red_columns
-                for value in [sheet_values.get(field_name)]
-                if value not in ('', False, None)
-            }
+            account_values = self._account_values_from_sheet_row(
+                row, approved_columns & red_columns)
             if account_values:
                 account_values['sheet_last_synced_on'] = fields.Datetime.now()
                 account.sudo().write(account_values)
@@ -446,11 +466,9 @@ class CsGoogleSheetSync(models.AbstractModel):
                 break
         if not account_match or matched_row is None:
             raise UserError(_('No sufficiently confident Google Sheet row matched this customer.'))
-        values = self._sheet_row_values(matched_row)
         allowed_columns = set(SHEET_ACCOUNT_FIELDS) if all_fields else approved_columns & red_columns
-        values = {field_name: value for column, field_name in SHEET_ACCOUNT_FIELDS.items()
-                  if column in allowed_columns
-                  for value in [values.get(field_name)] if value not in ('', False, None)}
+        values = self._account_values_from_sheet_row(
+            matched_row, allowed_columns, clear_missing=all_fields)
         written_fields = sorted(values)
         if not written_fields:
             raise UserError(_('The matched Google Sheet row contains no values to import.'))

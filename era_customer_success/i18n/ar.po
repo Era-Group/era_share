@@ -327,6 +327,12 @@ msgid "Value \"%s\" is not allowed for Google Sheet column %s (%s). Allowed valu
 msgstr "القيمة \"%s\" غير مسموحة لعمود Google Sheet رقم %s (%s). القيم المسموحة: %s"
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "No approved outbound Google Sheet fields are available for AI filling."
+msgstr "لا توجد حقول Google Sheet صادرة ومعتمدة متاحة للتعبئة بالذكاء."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

@@ -52,3 +52,20 @@ class TestGoogleSheetScope(TransactionCase):
                 condition, 'sheet', 'Portfolio', 'token')
         self.assertEqual(options, ['Done', 'Pending', 'No potential'])
         self.assertIn('Lists', request_mock.call_args.args[1])
+
+    def test_full_excel_import_clears_local_values_missing_from_row(self):
+        sync = self.env['cs.google.sheet.sync']
+        row = [''] * 20
+        row[3] = 'Customer from Excel'
+        values = sync._account_values_from_sheet_row(
+            row, set('ABCDEFGHIJKLMNOPQRST'), clear_missing=True)
+        self.assertEqual(values['sheet_customer_name'], 'Customer from Excel')
+        self.assertFalse(values['sheet_next_action'])
+        self.assertFalse(values['sheet_extra_notes'])
+
+    def test_partial_import_preserves_missing_local_values(self):
+        sync = self.env['cs.google.sheet.sync']
+        row = [''] * 20
+        values = sync._account_values_from_sheet_row(row, {'R', 'S'})
+        self.assertNotIn('sheet_next_action', values)
+        self.assertNotIn('sheet_extra_notes', values)

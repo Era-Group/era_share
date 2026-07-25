@@ -177,8 +177,13 @@ class CsAccount(models.Model):
             'sheet_next_action': str(data.get('next_action') or '')[:5000],
             'sheet_extra_notes': str(data.get('extra_notes') or '')[:5000],
             'sheet_expansion_status': str(data.get('expansion_status') or '')[:200],
-            'sheet_last_synced_on': fields.Datetime.now(),
         }
+        approved_sheet_fields = self.env['cs.google.sheet.sync']._approved_account_field_names()
+        vals = {field_name: value for field_name, value in vals.items()
+                if field_name in approved_sheet_fields}
+        if not vals:
+            raise UserError(_(
+                'No approved outbound Google Sheet fields are available for AI filling.'))
         self.write(vals)
         return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
             'title': _('Sheet form filled with AI'),

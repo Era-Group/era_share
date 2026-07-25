@@ -301,3 +301,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.15.0 — Expanded Arabic-English Name Matching
 - Adds normalized activity, agency, institution, product, travel, and modern-holding descriptors.
 - Supports direct phonetic matching for Konooz, Fitness and Fun, Filmban, Sanabel AlShahd, and Akun variants.
+## 19.0.33.16.0 — Persistent Customer Matching Aliases
+- Learns successful full Excel-name mappings and reuses approved aliases at 100% confidence.
+- Creates pending alias records for unresolved rows, with a manager review screen to select and approve the Customer Success record once.

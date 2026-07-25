@@ -427,6 +427,40 @@ msgid "Matching Excel customers in the background."
 msgstr "تتم مطابقة عملاء Excel في الخلفية."
 
 #. module: era_customer_success
+msgid "Customer Matching Aliases"
+msgstr "أسماء العملاء البديلة للمطابقة"
+
+#. module: era_customer_success
+msgid "Excel Customer Name"
+msgstr "اسم العميل في Excel"
+
+#. module: era_customer_success
+msgid "Matched Customer Success Record"
+msgstr "سجل نجاح العميل المطابق"
+
+#. module: era_customer_success
+msgid "Needs Review"
+msgstr "يحتاج مراجعة"
+
+#. module: era_customer_success
+msgid "Approve Alias"
+msgstr "اعتماد الاسم البديل"
+
+#. module: era_customer_success
+msgid "Review Again"
+msgstr "إعادة المراجعة"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Review Customer Aliases"
+msgstr "مراجعة أسماء العملاء البديلة"
+
+#. module: era_customer_success
+#. odoo-python
+msgid "Select a Customer Success record before approving the alias."
+msgstr "اختر سجل نجاح العميل قبل اعتماد الاسم البديل."
+
+#. module: era_customer_success
 #: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sheet_url
 #: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
 msgid "Google Sheet Link"

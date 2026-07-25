@@ -160,3 +160,8 @@ class ResConfigSettings(models.TransientModel):
             'domain': [('job_type', '=', 'matching')],
             'context': {'search_default_group_by_state': 0},
         }
+
+    def action_open_customer_match_aliases(self):
+        self.ensure_one()
+        return self.env.ref(
+            'era_customer_success.action_cs_customer_match_alias').read()[0]

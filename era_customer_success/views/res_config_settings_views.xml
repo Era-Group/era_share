@@ -104,6 +104,7 @@
                             <button name="action_sync_google_sheet" type="object" string="Synchronize ERA Columns" class="btn-primary"/>
                             <button name="action_match_google_sheet_customers" type="object" string="Match All Excel Customers" class="btn-secondary"/>
                             <button name="action_open_google_matching_results" type="object" string="Open Matching Results" class="btn-link"/>
+                            <button name="action_open_customer_match_aliases" type="object" string="Review Customer Aliases" class="btn-link"/>
                             <div class="text-muted mt-2">Matches every Excel customer to Customer Success records and writes x in column A only for successful matches. Unmatched rows are left blank. See Google synchronization logs for row-level results.</div>
                         </setting>
                     </block>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cs_customer_match_alias_list" model="ir.ui.view">
+        <field name="name">cs.customer.match.alias.list</field>
+        <field name="model">cs.customer.match.alias</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" default_order="state, alias_name">
+                <field name="alias_name"/>
+                <field name="account_id" domain="[('company_id', '=', company_id)]"/>
+                <field name="state" widget="badge"/>
+                <field name="confidence"/>
+                <field name="reason" optional="show"/>
+                <field name="source" optional="hide"/>
+                <field name="last_seen_on" optional="hide"/>
+                <field name="company_id" column_invisible="1"/>
+                <button name="action_approve" type="object" string="Approve Alias"
+                        icon="fa-check" invisible="state == 'approved'"/>
+                <button name="action_reset_to_review" type="object" string="Review Again"
+                        icon="fa-undo" invisible="state != 'approved'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_cs_customer_match_alias_search" model="ir.ui.view">
+        <field name="name">cs.customer.match.alias.search</field>
+        <field name="model">cs.customer.match.alias</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="alias_name"/>
+                <field name="account_id"/>
+                <filter name="pending" string="Needs Review" domain="[('state','=','pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_cs_customer_match_alias" model="ir.actions.act_window">
+        <field name="name">Customer Matching Aliases</field>
+        <field name="res_model">cs.customer.match.alias</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_cs_customer_match_alias_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+</odoo>

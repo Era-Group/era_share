@@ -14,6 +14,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 from .cs_account import _cs_extract_json
+from .cs_customer_match_alias import customer_alias_key
 
 
 _logger = logging.getLogger(__name__)
@@ -297,8 +298,47 @@ class CsGoogleSheetSync(models.AbstractModel):
         return columns
 
     @api.model
+    def _approved_alias_account(self, customer_name, accounts):
+        key = customer_alias_key(customer_name)
+        if not key:
+            return self.env['cs.account']
+        alias = self.env['cs.customer.match.alias'].sudo().search([
+            ('company_id', '=', self.env.company.id),
+            ('alias_key', '=', key), ('state', '=', 'approved'),
+            ('active', '=', True), ('account_id', '!=', False),
+        ], limit=1)
+        return alias.account_id if alias.account_id in accounts else self.env['cs.account']
+
+    @api.model
+    def _remember_customer_alias(self, customer_name, account=False, confidence=0, reason=''):
+        key = customer_alias_key(customer_name)
+        if not key:
+            return self.env['cs.customer.match.alias']
+        Alias = self.env['cs.customer.match.alias'].sudo()
+        alias = Alias.search([
+            ('company_id', '=', self.env.company.id), ('alias_key', '=', key),
+        ], limit=1)
+        values = {
+            'alias_name': customer_name,
+            'confidence': confidence,
+            'reason': reason,
+            'last_seen_on': fields.Datetime.now(),
+        }
+        if account and not (alias.source == 'manual' and alias.state == 'approved'):
+            values.update({'account_id': account.id, 'state': 'approved', 'source': 'automatic'})
+        elif not account and not alias:
+            values.update({'state': 'pending', 'source': 'automatic'})
+        if alias:
+            alias.write(values)
+            return alias
+        return Alias.create(dict(values, company_id=self.env.company.id))
+
+    @api.model
     def _match_account(self, row, columns, accounts):
         values = {key: row[index] if index < len(row) else '' for key, index in columns.items()}
+        alias_account = self._approved_alias_account(values.get('name'), accounts)
+        if alias_account:
+            return alias_account, 100, 'approved alias'
         scored = []
         for account in accounts:
             partner = account.partner_id.commercial_partner_id
@@ -598,11 +638,15 @@ class CsGoogleSheetSync(models.AbstractModel):
                 details.append('Row %s | %s -> %s (%s%%: %s)' % (
                     row_number, customer_name, account.partner_id.display_name,
                     confidence, reason))
+                self._remember_customer_alias(
+                    customer_name, account, confidence, reason)
             else:
                 unmatched += 1
                 status = ''
                 details.append('Row %s | %s -> UNMATCHED (%s)' % (
                     row_number, customer_name, reason))
+                self._remember_customer_alias(
+                    customer_name, False, confidence, reason)
             # Column A is a compact marker only: x for a successful match, blank otherwise.
             updates.append({
                 'range': "'%s'!A%s" % (escaped, row_number),

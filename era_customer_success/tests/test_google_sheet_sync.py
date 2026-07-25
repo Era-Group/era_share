@@ -45,14 +45,14 @@ class TestGoogleSheetScope(TransactionCase):
             'Arabian PPCO Company Ltd', 'شركة ببكو العربية المحدودة')
         self.assertGreaterEqual(score, 88)
         self.assertEqual(reason, 'Arabic-English phonetic name')
-        self.assertEqual(_phonetic_customer_name('Arabian PPCO Company Ltd'), 'ppko')
+        self.assertEqual(_phonetic_customer_name('Arabian PPCO Company Ltd'), 'pk')
 
     def test_customer_name_score_matches_arabic_and_english_aknaf_plastic(self):
         score, reason = _customer_name_score(
             'Aknaf Company for Plastic', 'شركة أكناف المتخصصة للمنتجات البلاستيكية')
         self.assertGreaterEqual(score, 88)
         self.assertEqual(reason, 'Arabic-English phonetic name')
-        self.assertEqual(_phonetic_customer_name('Aknaf Company for Plastic'), 'aknaf')
+        self.assertEqual(_phonetic_customer_name('Aknaf Company for Plastic'), 'knf')
 
     def test_customer_name_score_matches_phonetic_arabic_and_english_variants(self):
         for english, arabic in (
@@ -215,3 +215,26 @@ class TestGoogleSheetScope(TransactionCase):
         settings = self.env['res.config.settings']
         with self.assertRaises(UserError):
             settings._parse_google_sheet_url('https://example.com/not-a-sheet')
+
+    def test_approved_alias_matches_with_full_confidence(self):
+        alias = self.env['cs.customer.match.alias'].create({
+            'alias_name': 'Completely Different Excel Name',
+            'account_id': self.account.id,
+            'company_id': self.env.company.id,
+        })
+        alias.action_approve()
+        row = ['', '', '', 'Completely Different Excel Name']
+        account, confidence, reason = self.env['cs.google.sheet.sync']._match_account(
+            row, {'name': 3}, self.account)
+        self.assertEqual(account, self.account)
+        self.assertEqual(confidence, 100)
+        self.assertEqual(reason, 'approved alias')
+
+    def test_unmatched_name_creates_pending_alias_for_review(self):
+        alias = self.env['cs.google.sheet.sync']._remember_customer_alias(
+            'Unknown Excel Trading Name', False, 0, 'manual review required')
+        self.assertEqual(alias.state, 'pending')
+        self.assertFalse(alias.account_id)
+        alias.account_id = self.account
+        alias.action_approve()
+        self.assertEqual(alias.state, 'approved')

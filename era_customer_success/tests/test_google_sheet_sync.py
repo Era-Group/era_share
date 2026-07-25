@@ -6,6 +6,7 @@ from odoo.tests import TransactionCase, tagged
 from odoo.addons.era_customer_success.models.google_sheet_sync import (
     _customer_name_score,
     _normalize_customer_name,
+    _phonetic_customer_name,
 )
 
 
@@ -38,6 +39,20 @@ class TestGoogleSheetScope(TransactionCase):
             'مصنع ربيع الصحارى', 'شركة ربيع الصحارى للصناعة')
         self.assertGreaterEqual(score, 90)
         self.assertEqual(reason, 'normalized name')
+
+    def test_customer_name_score_matches_arabic_and_english_ppco(self):
+        score, reason = _customer_name_score(
+            'Arabian PPCO Company Ltd', 'شركة ببكو العربية المحدودة')
+        self.assertGreaterEqual(score, 88)
+        self.assertEqual(reason, 'Arabic-English phonetic name')
+        self.assertEqual(_phonetic_customer_name('Arabian PPCO Company Ltd'), 'ppko')
+
+    def test_customer_name_score_matches_arabic_and_english_aknaf_plastic(self):
+        score, reason = _customer_name_score(
+            'Aknaf Company for Plastic', 'شركة أكناف المتخصصة للمنتجات البلاستيكية')
+        self.assertGreaterEqual(score, 88)
+        self.assertEqual(reason, 'Arabic-English phonetic name')
+        self.assertEqual(_phonetic_customer_name('Aknaf Company for Plastic'), 'aknaf')
 
     def test_customer_name_score_does_not_match_unrelated_names(self):
         score, _reason = _customer_name_score('First Tire', 'Flint Manufacturing')

@@ -47,14 +47,23 @@ NAME_STOP_WORDS = {
     'holding', 'holdings', 'trading', 'establishment', 'enterprise', 'enterprises',
     'business', 'services', 'service', 'international', 'int', 'sa', 'ksa',
     'factory', 'manufacturing', 'manufacturer', 'industry', 'industrial',
+    'arabian', 'arabia', 'for', 'plastic', 'plastics', 'products', 'product',
+    'specialized', 'specialised',
     'شركة', 'شركه', 'مؤسسة', 'مؤسسه', 'مجموعة', 'مجموعه', 'للتجارة', 'للتجاره',
     'التجارية', 'التجاريه', 'التجارة', 'التجاره', 'العالمية', 'العالميه',
-    'المحدودة', 'المحدوده', 'ذمم', 'م م', 'مصنع', 'صناعه', 'لصناعه', 'للصناعه', 'صناعي',
-    'صناعيه', 'الصناعه', 'الصناعيه',
+    'المحدودة', 'المحدوده', 'محدوده', 'ذمم', 'م م', 'مصنع', 'صناعه', 'لصناعه', 'للصناعه', 'صناعي',
+    'صناعيه', 'الصناعه', 'الصناعيه', 'عربي', 'عربيه', 'متخصصه', 'للمنتجات',
+    'منتجات', 'بلاستيك', 'بلاستيكيه',
 }
 ARABIC_NAME_TRANSLATION = str.maketrans({
     'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ؤ': 'و', 'ئ': 'ي',
     'ى': 'ي', 'ة': 'ه', 'ـ': '', 'پ': 'ب', 'چ': 'ج', 'ڤ': 'ف', 'گ': 'ك',
+})
+ARABIC_PHONETIC_TRANSLATION = str.maketrans({
+    'ا': 'a', 'ب': 'p', 'ت': 't', 'ث': 's', 'ج': 'j', 'ح': 'h', 'خ': 'k',
+    'د': 'd', 'ذ': 'z', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 's', 'ص': 's',
+    'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'g', 'ف': 'f', 'ق': 'k',
+    'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'o', 'ي': 'i',
 })
 
 
@@ -78,12 +87,21 @@ def _normalize_customer_name(value):
     return ' '.join(tokens)
 
 
+def _phonetic_customer_name(value):
+    text = _normalize_customer_name(value).translate(ARABIC_PHONETIC_TRANSLATION)
+    text = text.replace('ph', 'f').replace('v', 'f').replace('q', 'k').replace('c', 'k')
+    return re.sub(r'[^a-z0-9]+', ' ', text).strip()
+
+
 def _customer_name_score(left, right):
     left_core, right_core = _normalize_customer_name(left), _normalize_customer_name(right)
     if not left_core or not right_core:
         return 0, ''
     if left_core == right_core:
         return 90, 'normalized name'
+    left_phonetic, right_phonetic = _phonetic_customer_name(left), _phonetic_customer_name(right)
+    if left_phonetic and left_phonetic == right_phonetic:
+        return 88, 'Arabic-English phonetic name'
     left_tokens, right_tokens = set(left_core.split()), set(right_core.split())
     shared = left_tokens & right_tokens
     smallest = min(len(left_tokens), len(right_tokens))
@@ -326,7 +344,8 @@ class CsGoogleSheetSync(models.AbstractModel):
             return False, 0, 'manual review required'
         if not scored:
             return False, 0, 'no candidate; manual review required'
-        candidates = [item[2] for item in scored[:10]]
+        broad = any(item[3] == 'broad candidate' for item in scored)
+        candidates = [item[2] for item in scored[:100 if broad else 20]]
         candidate_lines = []
         for account in candidates:
             partner = account.partner_id.commercial_partner_id

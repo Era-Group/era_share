@@ -295,3 +295,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.13.0 — Arabic Industrial Name Matching
 - Normalizes factory and industry descriptors plus Arabic definite articles to match legal-company name variants.
 - Adds regression coverage for `مصنع ربيع الصحارى` matching `شركة ربيع الصحارى للصناعة`.
+## 19.0.33.14.0 — Arabic-English Phonetic Matching
+- Adds a constrained Arabic-to-Latin phonetic key after legal and activity descriptors are removed.
+- Matches `Arabian PPCO Company Ltd` to `شركة ببكو العربية المحدودة` and `Aknaf Company for Plastic` to `شركة أكناف المتخصصة للمنتجات البلاستيكية` before invoking AI.

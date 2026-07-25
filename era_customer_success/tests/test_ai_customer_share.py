@@ -55,6 +55,13 @@ class TestAiCustomerShare(TransactionCase):
             values, ['contact_result', 'customer_voice'])
         self.assertEqual(set(missing), {'contact_result', 'customer_voice'})
 
+    def test_module_evidence_keeps_exact_allowed_options(self):
+        options = ['Sales', 'Accounting', 'Inventory']
+        evidence = self.account._build_sheet_module_evidence(options)
+        self.assertEqual(evidence['allowed_module_options'], options)
+        self.assertIn('support_ticket_subjects', evidence)
+        self.assertIn('sold_or_subscribed_products', evidence)
+
     def test_approved_table_is_revoked_when_a_row_changes(self):
         line = self.env['cs.ai.customer.share.line'].create({
             'share_id': self.share.id,

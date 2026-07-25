@@ -274,3 +274,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.6.0 — Multi-Select Implemented Modules
 - Treats “Active Implemented modules” as a multi-select field and asks AI for every evidence-backed module rather than one primary option.
 - Validates each module independently against the Sheet dropdown, preserves exact option spelling, removes duplicates, and blocks any invalid item.
+## 19.0.33.7.0 — Implemented Module Evidence
+- Supplies AI with sold/subscribed products, implementation projects, and recent support subjects/tags to identify all actively used modules.
+- Keeps commercial offers from being treated as implementation evidence and still enforces the exact multi-select Sheet options.

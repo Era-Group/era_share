@@ -154,8 +154,12 @@ class CsAccount(models.Model):
             field_name.removeprefix('sheet_'): config['options']
             for field_name, config in dropdowns.items()
         }
-        prompt = '%s\n\n%s\n\nEXACT GOOGLE SHEET DROPDOWN OPTIONS:\n%s' % (
+        module_options = dropdowns.get(
+            'sheet_active_implemented_modules', {}).get('options', [])
+        module_evidence = self._build_sheet_module_evidence(module_options)
+        prompt = '%s\n\n%s\n\nIMPLEMENTED MODULE EVIDENCE:\n%s\n\nEXACT GOOGLE SHEET DROPDOWN OPTIONS:\n%s' % (
             self._build_profile_context(), self._build_situation_summary(),
+            json.dumps(module_evidence, ensure_ascii=False),
             json.dumps(dropdowns_for_ai, ensure_ascii=False))
         try:
             response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
@@ -232,6 +236,30 @@ class CsAccount(models.Model):
             'message': _('The local form was filled from current Odoo customer data and Excel dropdown definitions. No Excel customer data was read or sent.'),
             'type': 'success', 'sticky': False,
             'next': {'type': 'ir.actions.client', 'tag': 'reload'}}}
+
+    def _build_sheet_module_evidence(self, allowed_options):
+        self.ensure_one()
+        partner_ids = self._partner_ids()
+        orders = self.env['sale.order'].sudo().search([
+            ('partner_id', 'in', partner_ids),
+            ('state', 'in', ('sale', 'done')),
+        ], order='date_order desc, id desc', limit=50)
+        projects = self.env['project.project'].sudo().search([
+            ('partner_id', 'in', partner_ids),
+        ], order='write_date desc, id desc', limit=30)
+        tickets = self.env['helpdesk.ticket'].sudo().search([
+            ('partner_id', 'in', partner_ids),
+        ], order='write_date desc, id desc', limit=100)
+        return {
+            'allowed_module_options': allowed_options,
+            'sold_or_subscribed_products': orders.order_line.product_id.mapped('name')[:100],
+            'implementation_projects': projects.mapped('name')[:50],
+            'support_ticket_subjects': tickets.mapped('name')[:100],
+            'support_ticket_tags': tickets.tag_ids.mapped('name')[:50],
+            'instruction': (
+                'Infer all currently used modules from this evidence. A ticket about operating, '
+                'configuring, or fixing a module is evidence of use; a sales offer alone is not.'),
+        }
 
     def action_match_fetch_google_sheet_fields(self):
         self.ensure_one()

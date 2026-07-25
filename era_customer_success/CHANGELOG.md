@@ -268,3 +268,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.4.0 — Accurate Excel Read-Only Values
 - Full Excel import now mirrors all A–T cells, clearing stale local values when the corresponding Sheet cells are empty.
 - Local AI filling is restricted to approved outbound columns and no longer populates the read-only Excel section.
+## 19.0.33.5.0 — Dropdown-Aware AI Filling
+- Supplies current Google Sheet dropdown definitions for approved red columns to the local AI form assistant without reading customer rows.
+- Requires exact option selection, retries invalid AI output once, and blocks saving when the response still violates the Sheet list.

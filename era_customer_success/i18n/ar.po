@@ -333,6 +333,18 @@ msgid "No approved outbound Google Sheet fields are available for AI filling."
 msgstr "لا توجد حقول Google Sheet صادرة ومعتمدة متاحة للتعبئة بالذكاء."
 
 #. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "AI did not select an allowed Google Sheet value for %s. Allowed values: %s"
+msgstr "لم يختر الذكاء قيمة مسموحة في Google Sheet للحقل %s. القيم المسموحة: %s"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/cs_account.py:0
+msgid "The local form was filled from current Odoo customer data and Excel dropdown definitions. No Excel customer data was read or sent."
+msgstr "تمت تعبئة الفورم المحلي من بيانات العميل الحالية في أودو وتعريفات قوائم Excel. لم تتم قراءة أو إرسال بيانات عملاء من Excel."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

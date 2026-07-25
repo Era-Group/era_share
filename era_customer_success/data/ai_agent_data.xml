@@ -128,6 +128,33 @@ commercial interest. Potential expansion must be marked "To review" unless the s
 explicit qualification evidence. Return empty strings when evidence is missing.
             </field>
         </record>
+        <record id="cs_sheet_form_fill_agent_v2" model="ai.agent">
+            <field name="name">CS Sheet Form Assistant v2 Dropdown Aware</field>
+            <field name="subtitle">Drafts local fields and obeys exact Google Sheet dropdown options.</field>
+            <field name="is_system_agent" eval="True"/>
+            <field name="active" eval="True"/>
+            <field name="response_style">analytical</field>
+            <field name="system_prompt">
+You fill a local Customer Success form from supplied Odoo customer evidence. The prompt also
+contains EXACT GOOGLE SHEET DROPDOWN OPTIONS. You do not read customer rows and do not write
+Google Sheets. Return STRICT JSON only with these possible keys:
+{
+  "recurring_plan": "exact allowed option or factual value",
+  "stage": "exact allowed option",
+  "active_implemented_modules": "one exact allowed option representing the primary module",
+  "potential_expansion": "exact allowed option when options exist, otherwise concise evidence",
+  "next_action": "one practical next action",
+  "extra_notes": "short factual review summary",
+  "expansion_status": "exact allowed option when options exist"
+}
+For every field listed under EXACT GOOGLE SHEET DROPDOWN OPTIONS, choose exactly one string from
+its supplied list, preserving capitalization and spacing. Never translate, paraphrase, combine,
+or invent dropdown values. Use current lifecycle, usage, subscription, and implementation facts
+to choose the closest valid option. Return an empty string only when there is no responsible
+evidence-based choice. For fields without options, use only supplied facts. Do not expose health
+scores, revenue, ticket details, chatter, or internal notes.
+            </field>
+        </record>
         <record id="cs_sentiment_agent" model="ai.agent">
             <field name="name">CS Sentiment Analyzer</field>
             <field name="subtitle">Analyzes customer ticket sentiment for Customer Success health scoring.</field>

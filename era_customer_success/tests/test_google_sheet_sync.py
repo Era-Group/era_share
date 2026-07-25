@@ -69,3 +69,23 @@ class TestGoogleSheetScope(TransactionCase):
         values = sync._account_values_from_sheet_row(row, {'R', 'S'})
         self.assertNotIn('sheet_next_action', values)
         self.assertNotIn('sheet_extra_notes', values)
+
+    def test_ai_dropdown_options_include_only_approved_red_columns(self):
+        sync = self.env['cs.google.sheet.sync']
+        validations = {
+            (4, 'L'): ['Live', 'Cancelled'],
+            (4, 'P'): ['Sales', 'Accounting'],
+            (4, 'T'): ['Done', 'Pending'],
+        }
+        with patch.object(type(sync), '_settings', return_value={
+                'spreadsheet_id': 'sheet', 'gid': 1, 'credentials': '{}',
+                'approval_scope': 'L,P'}), \
+                patch.object(type(sync), '_access_token', return_value='token'), \
+                patch.object(type(sync), '_sheet_title', return_value='Portfolio'), \
+                patch.object(type(sync), '_red_header_columns', return_value={'L', 'P', 'T'}), \
+                patch.object(type(sync), '_validation_options_by_cell', return_value=validations):
+            options = sync._approved_dropdown_options()
+        self.assertEqual(options['sheet_stage']['options'], ['Live', 'Cancelled'])
+        self.assertEqual(options['sheet_active_implemented_modules']['options'],
+                         ['Sales', 'Accounting'])
+        self.assertNotIn('sheet_expansion_status', options)

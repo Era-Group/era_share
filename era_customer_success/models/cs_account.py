@@ -133,7 +133,7 @@ class CsAccount(models.Model):
         self.ensure_one()
         self.check_access('write')
         agent = self.env.ref(
-            'era_customer_success.cs_sheet_form_fill_agent', raise_if_not_found=False)
+            'era_customer_success.cs_sheet_form_fill_agent_v2', raise_if_not_found=False)
         if not agent:
             raise UserError(_('The Sheet form AI assistant is not available.'))
         subscription = self.env['sale.order'].sudo().search([
@@ -148,8 +148,15 @@ class CsAccount(models.Model):
         adoption = self.env['cs.adoption.assessment'].sudo().search([
             ('cs_account_id', '=', self.id), ('state', '=', 'confirmed')],
             order='assessment_date desc, id desc', limit=1)
-        prompt = '%s\n\n%s' % (
-            self._build_profile_context(), self._build_situation_summary())
+        sheet_sync = self.env['cs.google.sheet.sync']
+        dropdowns = sheet_sync._approved_dropdown_options()
+        dropdowns_for_ai = {
+            field_name.removeprefix('sheet_'): config['options']
+            for field_name, config in dropdowns.items()
+        }
+        prompt = '%s\n\n%s\n\nEXACT GOOGLE SHEET DROPDOWN OPTIONS:\n%s' % (
+            self._build_profile_context(), self._build_situation_summary(),
+            json.dumps(dropdowns_for_ai, ensure_ascii=False))
         try:
             response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
                 prompt=prompt)
@@ -166,10 +173,10 @@ class CsAccount(models.Model):
             'sheet_customer_name': self.partner_id.name or '',
             'sheet_date_of_join': self.onboarding_start_date,
             'sheet_next_invoice_date': self.renewal_date,
-            'sheet_recurring_plan': plan,
+            'sheet_recurring_plan': str(data.get('recurring_plan') or plan)[:250],
             'sheet_industry': self.partner_id.industry_id.name or '',
             'sheet_active_users': adoption.active_users_30d if adoption else 0,
-            'sheet_stage': self.lifecycle_stage_id.name or '',
+            'sheet_stage': str(data.get('stage') or self.lifecycle_stage_id.name or '')[:250],
             'sheet_adoption': ('%.2f%%' % self.latest_adoption_score) if self.latest_adoption_date else '',
             'sheet_client_website': self.partner_id.website or '',
             'sheet_active_implemented_modules': str(data.get('active_implemented_modules') or '')[:5000],
@@ -184,10 +191,40 @@ class CsAccount(models.Model):
         if not vals:
             raise UserError(_(
                 'No approved outbound Google Sheet fields are available for AI filling.'))
+        invalid_dropdowns = {}
+        for field_name, config in dropdowns.items():
+            if field_name not in vals or vals[field_name] in ('', False, None):
+                continue
+            try:
+                vals[field_name] = sheet_sync._validated_dropdown_value(
+                    vals[field_name], config['options'], config['column'], field_name)
+            except UserError:
+                invalid_dropdowns[field_name] = config
+        if invalid_dropdowns:
+            retry_prompt = '%s\n\nPREVIOUS JSON:\n%s\n\nINVALID DROPDOWN FIELDS:\n%s\n\nReturn corrected JSON using exact options only.' % (
+                prompt, json.dumps(data, ensure_ascii=False),
+                json.dumps({name.removeprefix('sheet_'): item['options']
+                            for name, item in invalid_dropdowns.items()}, ensure_ascii=False))
+            try:
+                response = agent.with_user(self.env.ref('base.user_root')).get_direct_response(
+                    prompt=retry_prompt)
+                retry_data = _cs_extract_json(response[0] if response else '')
+            except Exception as error:
+                _logger.warning('Sheet dropdown AI retry failed for account %s: %s', self.id, error)
+                retry_data = {}
+            for field_name, config in invalid_dropdowns.items():
+                ai_key = field_name.removeprefix('sheet_')
+                corrected = retry_data.get(ai_key) if isinstance(retry_data, dict) else False
+                if corrected in ('', False, None):
+                    raise UserError(_(
+                        'AI did not select an allowed Google Sheet value for %s. Allowed values: %s',
+                        field_name, ', '.join(config['options'])))
+                vals[field_name] = sheet_sync._validated_dropdown_value(
+                    corrected, config['options'], config['column'], field_name)
         self.write(vals)
         return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
             'title': _('Sheet form filled with AI'),
-            'message': _('The local form was filled from current Odoo customer data. No Excel data was read or sent.'),
+            'message': _('The local form was filled from current Odoo customer data and Excel dropdown definitions. No Excel customer data was read or sent.'),
             'type': 'success', 'sticky': False,
             'next': {'type': 'ir.actions.client', 'tag': 'reload'}}}
 

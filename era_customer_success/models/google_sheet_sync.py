@@ -357,6 +357,39 @@ class CsGoogleSheetSync(models.AbstractModel):
                 if column in approved_columns}
 
     @api.model
+    def _approved_dropdown_options(self, scan_end_row=200):
+        settings = self._settings()
+        if not all((settings.get('spreadsheet_id'), settings.get('credentials'))):
+            return {}
+        approved_columns = {
+            column.strip().upper()
+            for column in (settings.get('approval_scope') or '').split(',')
+            if column.strip()
+        }
+        if not approved_columns:
+            return {}
+        token = self._access_token(settings['credentials'])
+        title = self._sheet_title(settings['spreadsheet_id'], settings['gid'], token)
+        red_columns = self._red_header_columns(
+            settings['spreadsheet_id'], settings['gid'], token)
+        allowed_columns = approved_columns & red_columns
+        validations = self._validation_options_by_cell(
+            settings['spreadsheet_id'], title, 2, scan_end_row, token)
+        by_field = {}
+        for (_row_number, column), options in validations.items():
+            field_name = SHEET_ACCOUNT_FIELDS.get(column)
+            if column not in allowed_columns or not field_name:
+                continue
+            entry = by_field.setdefault(field_name, {
+                'column': column,
+                'options': [],
+            })
+            for option in options:
+                if option not in entry['options']:
+                    entry['options'].append(option)
+        return by_field
+
+    @api.model
     def action_sync(self):
         settings = self._settings()
         if not settings.get('sharing_approved') or not (settings.get('approval_scope') or '').strip():

@@ -73,3 +73,14 @@ class TestAiCustomerShare(TransactionCase):
         line.customer_voice = 'Reviewed voice'
         self.assertFalse(self.share.portal_enabled)
         self.assertEqual(self.share.state, 'prepared')
+
+    def test_deleting_approved_row_unpublishes_portal(self):
+        line = self.env['cs.ai.customer.share.line'].create({
+            'share_id': self.share.id,
+            'account_id': self.account.id,
+            'customer_name': self.account.partner_id.name,
+        })
+        self.share.write({'state': 'approved', 'portal_enabled': True})
+        line.unlink()
+        self.assertFalse(self.share.portal_enabled)
+        self.assertEqual(self.share.state, 'draft')

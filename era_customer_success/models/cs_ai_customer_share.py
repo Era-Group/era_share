@@ -319,6 +319,9 @@ class CsAiCustomerShare(models.Model):
             'prepared_on': fields.Datetime.now(),
             'approved_by_id': False,
             'approved_on': False,
+            'portal_enabled': False,
+            'published_by_id': False,
+            'published_on': False,
         })
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
@@ -388,6 +391,13 @@ class CsAiCustomerShareLine(models.Model):
     def write(self, vals):
         result = super().write(vals)
         approved = self.mapped('share_id').filtered(lambda share: share.state == 'approved')
+        if approved:
+            approved.action_revoke_approval()
+        return result
+
+    def unlink(self):
+        approved = self.mapped('share_id').filtered(lambda share: share.state == 'approved')
+        result = super().unlink()
         if approved:
             approved.action_revoke_approval()
         return result

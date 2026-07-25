@@ -46,9 +46,11 @@ NAME_STOP_WORDS = {
     'company', 'co', 'ltd', 'limited', 'llc', 'inc', 'corp', 'corporation', 'group',
     'holding', 'holdings', 'trading', 'establishment', 'enterprise', 'enterprises',
     'business', 'services', 'service', 'international', 'int', 'sa', 'ksa',
+    'factory', 'manufacturing', 'manufacturer', 'industry', 'industrial',
     'شركة', 'شركه', 'مؤسسة', 'مؤسسه', 'مجموعة', 'مجموعه', 'للتجارة', 'للتجاره',
     'التجارية', 'التجاريه', 'التجارة', 'التجاره', 'العالمية', 'العالميه',
-    'المحدودة', 'المحدوده', 'ذمم', 'م م',
+    'المحدودة', 'المحدوده', 'ذمم', 'م م', 'مصنع', 'صناعه', 'لصناعه', 'صناعي',
+    'صناعيه', 'الصناعه', 'الصناعيه',
 }
 ARABIC_NAME_TRANSLATION = str.maketrans({
     'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ؤ': 'و', 'ئ': 'ي',
@@ -67,8 +69,12 @@ def _normalize_text(value):
 def _normalize_customer_name(value):
     text = (value or '').casefold().translate(ARABIC_NAME_TRANSLATION)
     text = re.sub(r'[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]', '', text)
-    tokens = [token for token in re.findall(r'[\w]+', text)
-              if token not in NAME_STOP_WORDS and len(token) > 1]
+    tokens = []
+    for token in re.findall(r'[\w]+', text):
+        if token.startswith('ال') and len(token) > 4:
+            token = token[2:]
+        if token not in NAME_STOP_WORDS and len(token) > 1:
+            tokens.append(token)
     return ' '.join(tokens)
 
 

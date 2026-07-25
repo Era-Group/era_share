@@ -292,3 +292,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.12.0 — Compact Excel Match Marker
 - Replaces verbose matching text in column A with a single `x` for successful matches and an empty value for unmatched rows.
 - Keeps customer identity, confidence, and matching rationale exclusively in the Odoo matching-result log.
+## 19.0.33.13.0 — Arabic Industrial Name Matching
+- Normalizes factory and industry descriptors plus Arabic definite articles to match legal-company name variants.
+- Adds regression coverage for `مصنع ربيع الصحارى` matching `شركة ربيع الصحارى للصناعة`.

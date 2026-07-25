@@ -33,6 +33,12 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertGreaterEqual(score, 80)
         self.assertIn('name', reason)
 
+    def test_customer_name_score_ignores_factory_and_industry_descriptors(self):
+        score, reason = _customer_name_score(
+            'مصنع ربيع الصحارى', 'شركة ربيع الصحارى للصناعة')
+        self.assertGreaterEqual(score, 90)
+        self.assertEqual(reason, 'normalized name')
+
     def test_customer_name_score_does_not_match_unrelated_names(self):
         score, _reason = _customer_name_score('First Tire', 'Flint Manufacturing')
         self.assertEqual(score, 0)

@@ -196,11 +196,14 @@ class CsAiCustomerShare(models.Model):
             'share_id': self.id,
             'account_id': account.id,
             'customer_name': str(data.get('customer_name') or account.partner_id.name or '')[:250],
-            'last_contact': str(data.get('last_contact') or account.last_touch_date or '')[:250],
-            'contact_result': str(data.get('contact_result') or '')[:2000],
+            'last_contact': self.format_bilingual_text(
+                data.get('last_contact') or account.last_touch_date or '')[:250],
+            'contact_result': self.format_bilingual_text(
+                data.get('contact_result') or '')[:2000],
             'adoption_percent': self._safe_percent(
                 data.get('adoption_percent'), account.latest_adoption_score),
-            'customer_voice': str(data.get('customer_voice') or '')[:2000],
+            'customer_voice': self.format_bilingual_text(
+                data.get('customer_voice') or '')[:2000],
             'relationship_health_percent': self._safe_percent(
                 data.get('relationship_health_percent'), account.health_score),
         }
@@ -227,11 +230,14 @@ class CsAiCustomerShare(models.Model):
             if isinstance(retry_data, dict):
                 values.update({
                     'customer_name': str(retry_data.get('customer_name') or values['customer_name'])[:250],
-                    'last_contact': str(retry_data.get('last_contact') or values['last_contact'])[:250],
-                    'contact_result': str(retry_data.get('contact_result') or values['contact_result'])[:2000],
+                    'last_contact': self.format_bilingual_text(
+                        retry_data.get('last_contact') or values['last_contact'])[:250],
+                    'contact_result': self.format_bilingual_text(
+                        retry_data.get('contact_result') or values['contact_result'])[:2000],
                     'adoption_percent': self._safe_percent(
                         retry_data.get('adoption_percent'), values['adoption_percent']),
-                    'customer_voice': str(retry_data.get('customer_voice') or values['customer_voice'])[:2000],
+                    'customer_voice': self.format_bilingual_text(
+                        retry_data.get('customer_voice') or values['customer_voice'])[:2000],
                     'relationship_health_percent': self._safe_percent(
                         retry_data.get('relationship_health_percent'), values['relationship_health_percent']),
                 })
@@ -318,6 +324,10 @@ class CsAiCustomerShare(models.Model):
         return bool(re.search(r'[\u0600-\u06ff]', text) and re.search(r'[A-Za-z]', text))
 
     @api.model
+    def format_bilingual_text(self, value):
+        return re.sub(r'\s+/\s+', '\n', str(value or '')).strip()
+
+    @api.model
     def _complete_missing_values(self, values, account, selected):
         if 'last_contact' in selected and not values.get('last_contact'):
             latest_message = account.message_ids.filtered(lambda message: message.body).sorted(
@@ -325,22 +335,22 @@ class CsAiCustomerShare(models.Model):
             values['last_contact'] = str(
                 account.last_touch_date or
                 (latest_message.date or latest_message.create_date if latest_message else '') or
-                'لا يوجد تواصل موثق مع العميل. / No verified customer contact is recorded.')[:250]
+                'لا يوجد تواصل موثق مع العميل.\nNo verified customer contact is recorded.')[:250]
         if ('contact_result' in selected
                 and not self._is_bilingual_text(values.get('contact_result'))):
             values['contact_result'] = (
-                'لا توجد نتيجة تواصل موثقة؛ يلزم المراجعة. / '
+                'لا توجد نتيجة تواصل موثقة؛ يلزم المراجعة.\n'
                 'No verified contact result is recorded; review is required.')
         if ('customer_voice' in selected
                 and not self._is_bilingual_text(values.get('customer_voice'))):
             if account.sentiment_label:
                 values['customer_voice'] = (
-                    'لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %(signal)s. / '
+                    'لا يوجد تصريح مباشر مسجل لصوت العميل. إشارة المشاعر الحالية: %(signal)s.\n'
                     'No direct Voice of Customer statement is recorded. Current sentiment signal: %(signal)s.'
                 ) % {'signal': account.sentiment_label}
             else:
                 values['customer_voice'] = (
-                    'لا يوجد تصريح مباشر مسجل لصوت العميل. / '
+                    'لا يوجد تصريح مباشر مسجل لصوت العميل.\n'
                     'No direct Voice of Customer statement is recorded.')
 
     def action_prepare_with_ai(self):

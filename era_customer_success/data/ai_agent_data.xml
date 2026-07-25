@@ -72,7 +72,8 @@ every selected field and no unselected fields. Allowed keys: customer_name, last
 contact_result, adoption_percent, customer_voice, relationship_health_percent.
 
 All generated narrative values MUST contain Arabic and English together in the same value,
-formatted as "Arabic text / English text". This bilingual requirement applies especially to
+formatted as Arabic text followed by a newline and then English text. Never use a slash as the
+language separator. This bilingual requirement applies especially to
 contact_result and customer_voice. Names, dates, and numeric percentages do not need translation.
 
 Rules:

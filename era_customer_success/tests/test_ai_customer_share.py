@@ -55,6 +55,12 @@ class TestAiCustomerShare(TransactionCase):
             values, ['contact_result', 'customer_voice'])
         self.assertEqual(set(missing), {'contact_result', 'customer_voice'})
 
+    def test_bilingual_portal_text_uses_newline_instead_of_slash(self):
+        value = self.share.format_bilingual_text(
+            'تم التواصل مع العميل. / Customer contact was completed.')
+        self.assertEqual(
+            value, 'تم التواصل مع العميل.\nCustomer contact was completed.')
+
     def test_module_evidence_keeps_exact_allowed_options(self):
         options = ['Sales', 'Accounting', 'Inventory']
         evidence = self.account._build_sheet_module_evidence(options)

@@ -322,3 +322,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.22.0 — Prepare AI Sharing Tables in Background
 - Queues the customer sharing table from the form immediately instead of holding the browser request open for every customer AI call.
 - Processes rows gradually with durable progress, automatic retries, and a visible failure message without losing completed rows.
+## 19.0.33.23.0 — Separate Portal Languages by Line
+- Displays Arabic and English sharing-table narratives on separate lines instead of using a slash separator.
+- Normalizes existing slash-separated Portal rows at render time and instructs future AI output to use newline-separated languages.

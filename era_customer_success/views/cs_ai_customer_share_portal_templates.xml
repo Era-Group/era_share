@@ -29,10 +29,13 @@
                         <tbody>
                             <tr t-foreach="share.line_ids" t-as="line">
                                 <td t-if="share.include_customer_name" t-esc="line.customer_name"/>
-                                <td t-if="share.include_last_contact" t-esc="line.last_contact"/>
-                                <td t-if="share.include_contact_result" class="text-wrap" t-esc="line.contact_result"/>
+                                <td t-if="share.include_last_contact" style="white-space: pre-line"
+                                    t-esc="share.format_bilingual_text(line.last_contact)"/>
+                                <td t-if="share.include_contact_result" class="text-wrap text-break"
+                                    style="white-space: pre-line" t-esc="share.format_bilingual_text(line.contact_result)"/>
                                 <td t-if="share.include_adoption_percent"><t t-esc="round(line.adoption_percent, 2)"/>%</td>
-                                <td t-if="share.include_customer_voice" class="text-wrap" t-esc="line.customer_voice"/>
+                                <td t-if="share.include_customer_voice" class="text-wrap text-break"
+                                    style="white-space: pre-line" t-esc="share.format_bilingual_text(line.customer_voice)"/>
                                 <td t-if="share.include_relationship_health_percent"><t t-esc="round(line.relationship_health_percent, 2)"/>%</td>
                             </tr>
                         </tbody>

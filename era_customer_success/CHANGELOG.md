@@ -304,3 +304,6 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.16.0 — Persistent Customer Matching Aliases
 - Learns successful full Excel-name mappings and reuses approved aliases at 100% confidence.
 - Creates pending alias records for unresolved rows, with a manager review screen to select and approve the Customer Success record once.
+## 19.0.33.17.0 — Operational Customer Alias Evidence
+- Adds project names, company child names, partner references, and sale-order customer references to direct and AI matching evidence.
+- Resolves exact operational aliases such as a project trading name while retaining persistent reviewed aliases for ambiguous cases.

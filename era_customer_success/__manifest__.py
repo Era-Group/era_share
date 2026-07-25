@@ -9,7 +9,7 @@
     'author': "Era Group",
     'website': "https://www.era.net.sa",
     'category': 'Services/Customer Success',
-    'version': '19.0.33.16.0',
+    'version': '19.0.33.17.0',
     'license': 'LGPL-3',
     'depends': [
         'base',

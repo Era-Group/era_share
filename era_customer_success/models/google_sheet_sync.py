@@ -334,11 +334,46 @@ class CsGoogleSheetSync(models.AbstractModel):
         return Alias.create(dict(values, company_id=self.env.company.id))
 
     @api.model
-    def _match_account(self, row, columns, accounts):
+    def _account_operational_aliases(self, accounts):
+        aliases = {account.id: [] for account in accounts}
+        if not accounts:
+            return aliases
+        account_by_partner = {
+            account.partner_id.commercial_partner_id.id: account for account in accounts
+        }
+        partner_ids = list(account_by_partner)
+        for account in accounts:
+            partner = account.partner_id.commercial_partner_id
+            if partner.ref:
+                aliases[account.id].append(partner.ref)
+            aliases[account.id].extend(
+                partner.child_ids.filtered('is_company').mapped('name'))
+        if 'project.project' in self.env.registry:
+            projects = self.env['project.project'].sudo().search([
+                ('partner_id', 'child_of', partner_ids),
+            ])
+            for project in projects:
+                account = account_by_partner.get(project.partner_id.commercial_partner_id.id)
+                if account and project.name:
+                    aliases[account.id].append(project.name)
+        orders = self.env['sale.order'].sudo().search([
+            ('partner_id', 'child_of', partner_ids),
+            ('client_order_ref', '!=', False),
+        ])
+        for order in orders:
+            account = account_by_partner.get(order.partner_id.commercial_partner_id.id)
+            if account and order.client_order_ref:
+                aliases[account.id].append(order.client_order_ref)
+        return {account_id: list(dict.fromkeys(filter(None, names)))
+                for account_id, names in aliases.items()}
+
+    @api.model
+    def _match_account(self, row, columns, accounts, account_aliases=None):
         values = {key: row[index] if index < len(row) else '' for key, index in columns.items()}
         alias_account = self._approved_alias_account(values.get('name'), accounts)
         if alias_account:
             return alias_account, 100, 'approved alias'
+        account_aliases = account_aliases if account_aliases is not None else self._account_operational_aliases(accounts)
         scored = []
         for account in accounts:
             partner = account.partner_id.commercial_partner_id
@@ -355,10 +390,16 @@ class CsGoogleSheetSync(models.AbstractModel):
             if values.get('vat') and partner.vat and _normalize_text(values['vat']) == _normalize_text(partner.vat):
                 score += 100
                 reasons.append('VAT')
-            name_score, name_reason = _customer_name_score(values.get('name'), partner.name)
+            candidate_names = [partner.name] + account_aliases.get(account.id, [])
+            name_score, name_reason, best_name = max(
+                ((*_customer_name_score(values.get('name'), name), name)
+                 for name in candidate_names),
+                key=lambda item: item[0], default=(0, '', ''))
             if name_score:
                 score += name_score
-                reasons.append(name_reason)
+                reasons.append('%s%s' % (
+                    name_reason,
+                    ' via operational alias' if best_name != partner.name else ''))
             if score:
                 scored.append((score, account.id, account, ', '.join(reasons)))
         scored.sort(reverse=True, key=lambda item: (item[0], item[1]))
@@ -367,8 +408,10 @@ class CsGoogleSheetSync(models.AbstractModel):
         return scored[0][2], scored[0][0], scored[0][3]
 
     @api.model
-    def _match_account_with_ai(self, row, columns, accounts):
-        account, confidence, reason = self._match_account(row, columns, accounts)
+    def _match_account_with_ai(self, row, columns, accounts, account_aliases=None):
+        account_aliases = account_aliases if account_aliases is not None else self._account_operational_aliases(accounts)
+        account, confidence, reason = self._match_account(
+            row, columns, accounts, account_aliases=account_aliases)
         if account:
             return account, confidence, reason
         values = {key: row[index] if index < len(row) else '' for key, index in columns.items()}
@@ -384,10 +427,10 @@ class CsGoogleSheetSync(models.AbstractModel):
             scored = [(0, candidate.id, candidate, 'broad candidate')
                       for candidate in accounts[:100]]
         scored.sort(reverse=True, key=lambda item: (item[0], item[1]))
-        return self._ai_match_account(values, scored, accounts)
+        return self._ai_match_account(values, scored, accounts, account_aliases=account_aliases)
 
     @api.model
-    def _ai_match_account(self, row_values, scored, accounts):
+    def _ai_match_account(self, row_values, scored, accounts, account_aliases=None):
         agent = self.env.ref(
             'era_customer_success.cs_customer_match_agent_v2', raise_if_not_found=False)
         if not agent:
@@ -406,6 +449,7 @@ class CsGoogleSheetSync(models.AbstractModel):
                 'phone': partner.phone or '',
                 'website': partner.website or '',
                 'vat': partner.vat or '',
+                'known_aliases': (account_aliases or {}).get(account.id, []),
             }, ensure_ascii=False))
         prompt = 'SHEET ROW:\n%s\nCANDIDATES:\n%s' % (
             json.dumps(row_values, ensure_ascii=False), '\n'.join(candidate_lines))
@@ -571,9 +615,11 @@ class CsGoogleSheetSync(models.AbstractModel):
             settings['spreadsheet_id'], title, 2, len(rows), token)
         matched = 0
         accounts = self.env['cs.account'].sudo().search([('company_id', '=', self.env.company.id)])
+        account_aliases = self._account_operational_aliases(accounts)
         match_details = []
         for row_number, row in enumerate(rows[1:], start=2):
-            account, confidence, reason = self._match_account_with_ai(row, matching_columns, accounts)
+            account, confidence, reason = self._match_account_with_ai(
+                row, matching_columns, accounts, account_aliases=account_aliases)
             if not account:
                 continue
             matched += 1
@@ -623,6 +669,7 @@ class CsGoogleSheetSync(models.AbstractModel):
         accounts = self.env['cs.account'].sudo().search([
             ('company_id', '=', self.env.company.id),
         ])
+        account_aliases = self._account_operational_aliases(accounts)
         updates, details = [], []
         matched = unmatched = skipped = 0
         for row_number, row in enumerate(rows[1:], start=2):
@@ -631,7 +678,7 @@ class CsGoogleSheetSync(models.AbstractModel):
                 skipped += 1
                 continue
             account, confidence, reason = self._match_account_with_ai(
-                row, matching_columns, accounts)
+                row, matching_columns, accounts, account_aliases=account_aliases)
             if account:
                 matched += 1
                 status = 'x'
@@ -731,9 +778,11 @@ class CsGoogleSheetSync(models.AbstractModel):
         account_match, confidence, reason = False, 0, ''
         matched_row = None
         accounts = self.env['cs.account'].sudo().browse(account.id)
+        account_aliases = self._account_operational_aliases(accounts)
         for row in rows[1:]:
             matcher = self._match_account_with_ai if use_ai else self._match_account
-            candidate, confidence, reason = matcher(row, matching_columns, accounts)
+            candidate, confidence, reason = matcher(
+                row, matching_columns, accounts, account_aliases=account_aliases)
             if candidate:
                 account_match = candidate
                 matched_row = row
@@ -781,8 +830,12 @@ class CsGoogleSheetSync(models.AbstractModel):
         matching_columns.setdefault('name', 3)
         matched_row = None
         row_number = None
+        single_account = self.env['cs.account'].sudo().browse(account.id)
+        account_aliases = self._account_operational_aliases(single_account)
         for number, row in enumerate(rows[1:], 2):
-            candidate, confidence, reason = self._match_account_with_ai(row, matching_columns, self.env['cs.account'].sudo().browse(account.id))
+            candidate, confidence, reason = self._match_account_with_ai(
+                row, matching_columns, single_account,
+                account_aliases=account_aliases)
             if candidate:
                 matched_row, row_number = row, number
                 break

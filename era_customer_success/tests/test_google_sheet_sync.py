@@ -238,3 +238,17 @@ class TestGoogleSheetScope(TransactionCase):
         alias.account_id = self.account
         alias.action_approve()
         self.assertEqual(alias.state, 'approved')
+
+    def test_project_name_is_used_as_operational_customer_alias(self):
+        self.env['project.project'].create({
+            'name': 'Alliance Island Delivery',
+            'partner_id': self.account.partner_id.id,
+        })
+        aliases = self.env['cs.google.sheet.sync']._account_operational_aliases(
+            self.account)
+        row = ['', '', '', 'Alliance Island Delivery']
+        account, confidence, reason = self.env['cs.google.sheet.sync']._match_account(
+            row, {'name': 3}, self.account, account_aliases=aliases)
+        self.assertEqual(account, self.account)
+        self.assertGreaterEqual(confidence, 90)
+        self.assertIn('operational alias', reason)

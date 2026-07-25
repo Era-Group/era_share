@@ -345,6 +345,51 @@ msgid "The local form was filled from current Odoo customer data and Excel dropd
 msgstr "تمت تعبئة الفورم المحلي من بيانات العميل الحالية في أودو وتعريفات قوائم Excel. لم تتم قراءة أو إرسال بيانات عملاء من Excel."
 
 #. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Match All Excel Customers"
+msgstr "مطابقة كل عملاء Excel"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Matches every Excel customer to Customer Success records and writes matching status in column A only. See Google synchronization logs for row-level results."
+msgstr "يطابق كل عميل في Excel مع سجلات نجاح العملاء ويكتب حالة المطابقة في العمود A فقط. راجع سجلات مزامنة Google للاطلاع على نتيجة كل صف."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Column D must be \"Customer Name\" before matching."
+msgstr "يجب أن يكون عنوان العمود D هو \"Customer Name\" قبل المطابقة."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "Excel customer matching complete"
+msgstr "اكتملت مطابقة عملاء Excel"
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/google_sheet_sync.py:0
+msgid "%s matched, %s unmatched, %s blank rows skipped. Status was written in column A only."
+msgstr "تمت مطابقة %s عميل، ولم تتم مطابقة %s عميل، وتم تجاوز %s صف فارغ. كُتبت الحالة في العمود A فقط."
+
+#. module: era_customer_success
+#: model:ir.model.fields,field_description:era_customer_success.field_res_config_settings__cs_google_sheet_url
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Google Sheet Link"
+msgstr "رابط Google Sheet"
+
+#. module: era_customer_success
+#: model_terms:ir.ui.view,arch_db:era_customer_success.res_config_settings_view_form_cs
+msgid "Paste the complete Google Sheet URL. Odoo automatically extracts the Spreadsheet ID and tab GID. Changing the link revokes information-sharing approval until the titles are scanned and approved again."
+msgstr "ألصق رابط Google Sheet الكامل. يستخرج أودو معرف جدول البيانات ومعرف التبويب GID تلقائياً. يؤدي تغيير الرابط إلى إلغاء الموافقة على مشاركة المعلومات حتى يتم فحص العناوين والموافقة عليها مرة أخرى."
+
+#. module: era_customer_success
+#. odoo-python
+#: code:addons/era_customer_success/models/res_config_settings.py:0
+msgid "Enter a complete Google Sheet link."
+msgstr "أدخل رابط Google Sheet كاملاً."
+
+#. module: era_customer_success
 #: model:ir.ui.menu,name:era_customer_success.menu_cs_portfolio_shares
 #: model:ir.actions.act_window,name:era_customer_success.action_cs_portfolio_share
 msgid "Odoo Portfolio Shares"

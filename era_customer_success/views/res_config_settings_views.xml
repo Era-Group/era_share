@@ -92,10 +92,9 @@
                         <setting string="Automatic synchronization" help="Before every run, inspect the font color of each column-title cell in row 1. Write only to columns whose title text is red. Customer matching uses exact signals first and the AI matching agent for unresolved rows; uncertain matches are skipped.">
                             <field name="cs_google_sheet_enabled"/>
                         </setting>
-                        <setting string="Spreadsheet and tab">
+                        <setting string="Google Sheet Link" help="Paste the complete Google Sheet URL. Odoo automatically extracts the Spreadsheet ID and tab GID. Changing the link revokes information-sharing approval until the titles are scanned and approved again.">
                             <div class="content-group">
-                                <label for="cs_google_spreadsheet_id"/><field name="cs_google_spreadsheet_id" class="w-100" placeholder="معرّف Google Sheet"/>
-                                <br/><label for="cs_google_sheet_gid"/><div class="d-flex align-items-center gap-2"><field name="cs_google_sheet_gid" nolabel="1" class="oe_inline"/><span>معرّف تبويب Google Sheet (GID)</span></div>
+                                <field name="cs_google_sheet_url" class="w-100" placeholder="https://docs.google.com/spreadsheets/d/.../edit?gid=..."/>
                             </div>
                         </setting>
                         <setting string="Google Service Account" help="Paste the service-account JSON. Share the Google Sheet with the client_email inside this JSON as Editor.">
@@ -103,6 +102,8 @@
                         </setting>
                         <setting string="Run now">
                             <button name="action_sync_google_sheet" type="object" string="Synchronize ERA Columns" class="btn-primary"/>
+                            <button name="action_match_google_sheet_customers" type="object" string="Match All Excel Customers" class="btn-secondary"/>
+                            <div class="text-muted mt-2">Matches every Excel customer to Customer Success records and writes matching status in column A only. See Google synchronization logs for row-level results.</div>
                         </setting>
                     </block>
                 </app>

@@ -12,6 +12,18 @@ from odoo.addons.era_customer_success.models.google_sheet_sync import (
 @tagged('post_install', '-at_install')
 class TestGoogleSheetScope(TransactionCase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        partner = cls.env['res.partner'].create({
+            'name': 'Matched Customer', 'is_company': True,
+        })
+        cls.account = cls.env['cs.account'].create({
+            'partner_id': partner.id,
+            'company_id': cls.env.company.id,
+            'csm_user_id': False,
+        })
+
     def test_customer_name_normalization_handles_arabic_variants_and_company_words(self):
         self.assertEqual(_normalize_customer_name('شركة الرائحة الفواحة المحدودة'),
                          _normalize_customer_name('الرائحه الفواحه'))
@@ -124,3 +136,38 @@ class TestGoogleSheetScope(TransactionCase):
         self.assertTrue(options['sheet_active_implemented_modules']['multiple'])
         self.assertFalse(options['sheet_stage']['multiple'])
         self.assertNotIn('sheet_expansion_status', options)
+
+    def test_match_all_writes_status_to_column_a_only(self):
+        sync = self.env['cs.google.sheet.sync']
+        rows = [
+            ['ERA CSM', 'ERA CSM phone number', 'ERA CSM email', 'Customer Name'],
+            ['', '', '', 'Matched Customer'],
+            ['', '', '', 'Unknown Customer'],
+            ['', '', '', ''],
+        ]
+        with patch.object(type(sync), '_settings', return_value={
+                'spreadsheet_id': 'sheet', 'gid': 1, 'credentials': '{}'}), \
+                patch.object(type(sync), '_access_token', return_value='token'), \
+                patch.object(type(sync), '_sheet_title', return_value='Portfolio'), \
+                patch.object(type(sync), '_match_account_with_ai', side_effect=[
+                    (self.account, 96, 'email'),
+                    (False, 0, 'manual review required'),
+                ]), \
+                patch.object(type(sync), '_request', side_effect=[{'values': rows}, {}]) as request_mock:
+            sync.action_match_all_sheet_customers()
+        payload = request_mock.call_args_list[-1].kwargs['json']['data']
+        self.assertEqual([item['range'].split('!')[1] for item in payload], ['A2', 'A3'])
+        self.assertTrue(payload[0]['values'][0][0].startswith('MATCHED:'))
+        self.assertEqual(payload[1]['values'][0][0], 'UNMATCHED')
+
+    def test_complete_google_sheet_link_extracts_id_and_gid(self):
+        settings = self.env['res.config.settings']
+        spreadsheet_id, gid = settings._parse_google_sheet_url(
+            'https://docs.google.com/spreadsheets/d/abc_DEF-123/edit?gid=1481647876#gid=1481647876')
+        self.assertEqual(spreadsheet_id, 'abc_DEF-123')
+        self.assertEqual(gid, 1481647876)
+
+    def test_google_sheet_link_requires_spreadsheet_url(self):
+        settings = self.env['res.config.settings']
+        with self.assertRaises(UserError):
+            settings._parse_google_sheet_url('https://example.com/not-a-sheet')

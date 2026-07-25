@@ -525,6 +525,69 @@ class CsGoogleSheetSync(models.AbstractModel):
             'type': 'success', 'sticky': False}}
 
     @api.model
+    def action_match_all_sheet_customers(self):
+        settings = self._settings()
+        if not all((settings['spreadsheet_id'], settings['credentials'])):
+            raise UserError(_('Configure the Google Spreadsheet ID and service-account credentials first.'))
+        token = self._access_token(settings['credentials'])
+        title = self._sheet_title(settings['spreadsheet_id'], settings['gid'], token)
+        escaped = title.replace("'", "''")
+        base = 'https://sheets.googleapis.com/v4/spreadsheets/%s/values' % settings['spreadsheet_id']
+        rows = self._request('GET', "%s/'%s'!A1:T" % (base, escaped), token).get('values', [])
+        if not rows:
+            raise UserError(_('The Google Sheet is empty.'))
+        headers = rows[0] + [''] * (20 - len(rows[0]))
+        if headers[3].strip() != 'Customer Name':
+            raise UserError(_('Column D must be "Customer Name" before matching.'))
+        matching_columns = self._matching_columns(headers)
+        matching_columns.setdefault('name', 3)
+        accounts = self.env['cs.account'].sudo().search([
+            ('company_id', '=', self.env.company.id),
+        ])
+        updates, details = [], []
+        matched = unmatched = skipped = 0
+        for row_number, row in enumerate(rows[1:], start=2):
+            customer_name = row[3].strip() if len(row) > 3 and row[3] else ''
+            if not customer_name:
+                skipped += 1
+                continue
+            account, confidence, reason = self._match_account_with_ai(
+                row, matching_columns, accounts)
+            if account:
+                matched += 1
+                status = 'MATCHED: %s (%s%%)' % (
+                    account.partner_id.display_name, confidence)
+                details.append('Row %s | %s -> %s (%s%%: %s)' % (
+                    row_number, customer_name, account.partner_id.display_name,
+                    confidence, reason))
+            else:
+                unmatched += 1
+                status = 'UNMATCHED'
+                details.append('Row %s | %s -> UNMATCHED (%s)' % (
+                    row_number, customer_name, reason))
+            # Matching status is intentionally the only value written by this action.
+            updates.append({
+                'range': "'%s'!A%s" % (escaped, row_number),
+                'values': [[status]],
+            })
+        if updates:
+            self._request('POST', '%s:batchUpdate' % base, token, json={
+                'valueInputOption': 'USER_ENTERED', 'data': updates})
+        self.env['cs.google.sheet.sync.log'].sudo().create({
+            'company_id': self.env.company.id,
+            'spreadsheet_id': settings['spreadsheet_id'],
+            'matched_accounts': matched,
+            'updated_cells': len(updates),
+            'state': 'success',
+            'details': '\n'.join(details),
+        })
+        return {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {
+            'title': _('Excel customer matching complete'),
+            'message': _('%s matched, %s unmatched, %s blank rows skipped. Status was written in column A only.',
+                         matched, unmatched, skipped),
+            'type': 'success', 'sticky': True}}
+
+    @api.model
     def action_sync_account(self, account, use_ai=True, all_fields=False):
         account.ensure_one()
         settings = self._settings()

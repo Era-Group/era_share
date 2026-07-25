@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _
+import re
+
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -49,6 +51,9 @@ class ResConfigSettings(models.TransientModel):
         related='company_id.cs_support_expiry_warning_days', readonly=False,
         string='Support Expiry Warning (Days)')
     cs_google_sheet_enabled = fields.Boolean(config_parameter='era_customer_success.google_sheet_enabled', string='Automatic Google Sheet Sync')
+    cs_google_sheet_url = fields.Char(
+        config_parameter='era_customer_success.google_sheet_url',
+        string='Google Sheet Link')
     cs_google_spreadsheet_id = fields.Char(config_parameter='era_customer_success.google_spreadsheet_id', string='Spreadsheet ID')
     cs_google_sheet_gid = fields.Integer(config_parameter='era_customer_success.google_sheet_gid', string='Sheet Tab GID', default=1481647876)
     cs_google_service_account_json = fields.Char(config_parameter='era_customer_success.google_service_account_json', string='Service Account JSON')
@@ -64,6 +69,40 @@ class ResConfigSettings(models.TransientModel):
     cs_google_approved_on = fields.Datetime(
         config_parameter='era_customer_success.google_approved_on',
         string='Approved On', readonly=True)
+
+    @api.model
+    def _parse_google_sheet_url(self, value):
+        match = re.search(r'/spreadsheets/d/([A-Za-z0-9_-]+)', value or '')
+        if not match:
+            raise UserError(_('Enter a complete Google Sheet link.'))
+        gid_match = re.search(r'[?&#]gid=(\d+)', value)
+        return match.group(1), int(gid_match.group(1)) if gid_match else 0
+
+    def get_values(self):
+        values = super().get_values()
+        if not values.get('cs_google_sheet_url') and values.get('cs_google_spreadsheet_id'):
+            values['cs_google_sheet_url'] = (
+                'https://docs.google.com/spreadsheets/d/%s/edit?gid=%s' % (
+                    values['cs_google_spreadsheet_id'],
+                    values.get('cs_google_sheet_gid') or 0))
+        return values
+
+    def set_values(self):
+        self.ensure_one()
+        url = (self.cs_google_sheet_url or '').strip()
+        if url:
+            spreadsheet_id, gid = self._parse_google_sheet_url(url)
+            params = self.env['ir.config_parameter'].sudo()
+            changed = (params.get_param('era_customer_success.google_spreadsheet_id') != spreadsheet_id
+                       or int(params.get_param('era_customer_success.google_sheet_gid') or 0) != gid)
+            params.set_param('era_customer_success.google_spreadsheet_id', spreadsheet_id)
+            params.set_param('era_customer_success.google_sheet_gid', gid)
+            if changed:
+                params.set_param('era_customer_success.google_sharing_approved', 'False')
+                params.set_param('era_customer_success.google_approval_scope', '')
+                params.set_param('era_customer_success.google_approved_by', '')
+                params.set_param('era_customer_success.google_approved_on', '')
+        return super().set_values()
 
     def action_scan_google_sheet_scope(self):
         self.ensure_one()
@@ -105,3 +144,8 @@ class ResConfigSettings(models.TransientModel):
     def action_sync_google_sheet(self):
         self.ensure_one()
         return self.env['cs.google.sheet.sync'].action_sync()
+
+    def action_match_google_sheet_customers(self):
+        self.ensure_one()
+        self.set_values()
+        return self.env['cs.google.sheet.sync'].action_match_all_sheet_customers()

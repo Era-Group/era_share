@@ -280,3 +280,9 @@ Commits pushed to `origin/stage`.
 ## 19.0.33.8.0 — Multilingual Customer Matching
 - Normalizes Arabic name variants, removes company suffixes, and supports partial-name and reordered-token matching.
 - Adds VAT matching and a multilingual AI fallback with broader bounded candidates for Arabic/English or alias differences.
+## 19.0.33.9.0 — Excel Customer Matching Action
+- Adds a settings action that matches every Excel customer to Customer Success records and writes matching status only in column A.
+- Adds per-row result logs, matched/unmatched counts, blank-row skipping, and a strict regression test proving B–T are untouched.
+## 19.0.33.10.0 — Complete Google Sheet Link
+- Replaces separate Spreadsheet ID and GID inputs in settings with one complete Google Sheet URL.
+- Extracts the ID and tab GID automatically, rejects invalid links, and revokes sharing approval whenever the source link changes.

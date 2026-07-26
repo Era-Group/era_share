@@ -83,14 +83,21 @@ class DiscussChannel(models.Model):
         return params
 
     def message_post(self, *args, **kwargs):
-        if kwargs.get('waha_internal_note'):
+        is_waha = _is_waha_channel(self)
+        mentioned_partner_ids = []
+        if is_waha:
+            mentioned_partner_ids = list(kwargs.get('partner_ids') or [])
+            mentioned_partner_ids += list((kwargs.get('partner_ids_mention_token') or {}).keys())
+        has_internal_mention = is_waha and bool(self.env['res.partner'].browse(mentioned_partner_ids).filtered(
+            lambda partner: partner.main_user_id and not partner.main_user_id.share))
+        if kwargs.get('waha_internal_note') or has_internal_mention:
             if not _is_waha_channel(self) or not self.env.user._is_internal():
                 raise AccessError(_('WAHA internal notes are restricted to internal users.'))
             # A standard internal log is deliberately not a whatsapp_message, so it
             # cannot create a whatsapp.message or reach WAHA.
             kwargs['message_type'] = 'comment'
             kwargs['subtype_xmlid'] = 'mail.mt_note'
-            kwargs.pop('waha_internal_note')
+            kwargs.pop('waha_internal_note', None)
             return super(DiscussChannel, self.with_context(waha_internal_note=True)).message_post(
                 *args, **kwargs)
         # Enforce WAHA account-protection limits on genuine outbound sends (a reply

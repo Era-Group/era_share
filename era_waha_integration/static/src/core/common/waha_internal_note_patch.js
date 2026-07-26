@@ -1,24 +1,27 @@
 import { registerComposerAction } from "@mail/core/common/composer_actions";
 import { Composer } from "@mail/core/common/composer";
-import { Composer as ComposerRecord } from "@mail/core/common/composer_model";
-import { patch } from "@web/core/utils/patch";
+import { Message as MessageRecord } from "@mail/core/common/message_model";
 import { _t } from "@web/core/l10n/translation";
+import { patch } from "@web/core/utils/patch";
 import { useState } from "@odoo/owl";
-
-patch(ComposerRecord.prototype, {
-    clear() {
-        super.clear();
-        this.wahaInternalNote = false;
-    },
-});
 
 patch(Composer.prototype, {
     get postData() {
         const postData = super.postData;
-        if (this.props.composer.wahaInternalNote) {
+        if (this.props.composer.targetThread?.is_waha_channel && this.props.composer.wahaInternalNote) {
             postData.wahaInternalNote = true;
+            this.props.composer.wahaInternalNote = false;
         }
         return postData;
+    },
+});
+
+patch(MessageRecord.prototype, {
+    get bubbleColor() {
+        if (this.thread?.is_waha_channel && this.isNote) {
+            return "orange";
+        }
+        return super.bubbleColor;
     },
 });
 

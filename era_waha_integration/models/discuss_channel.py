@@ -3,7 +3,7 @@ import logging
 
 from odoo import _, api, fields, models
 from odoo.addons.mail.tools.discuss import Store
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -79,10 +79,20 @@ class DiscussChannel(models.Model):
     def _get_notify_valid_parameters(self):
         params = super()._get_notify_valid_parameters()
         if self.channel_type == 'whatsapp':
-            return params | {'whatsapp_outbound_msg_uid'}
+            return params | {'whatsapp_outbound_msg_uid', 'waha_internal_note'}
         return params
 
     def message_post(self, *args, **kwargs):
+        if kwargs.get('waha_internal_note'):
+            if not _is_waha_channel(self) or not self.env.user._is_internal():
+                raise AccessError(_('WAHA internal notes are restricted to internal users.'))
+            # A standard internal log is deliberately not a whatsapp_message, so it
+            # cannot create a whatsapp.message or reach WAHA.
+            kwargs['message_type'] = 'comment'
+            kwargs['subtype_xmlid'] = 'mail.mt_note'
+            kwargs.pop('waha_internal_note')
+            return super(DiscussChannel, self.with_context(waha_internal_note=True)).message_post(
+                *args, **kwargs)
         # Enforce WAHA account-protection limits on genuine outbound sends (a reply
         # typed in Discuss, or a composer send). Inbound and history-import posts,
         # which carry a *_msg_uid, are exempt. Raising rolls back the request so the
@@ -101,6 +111,9 @@ class DiscussChannel(models.Model):
             self.wa_account_id._waha_check_send_allowed(
                 self.whatsapp_number, user, channel=self, check_new=False)
         return super().message_post(*args, **kwargs)
+
+    def _message_post_after_hook(self, message, msg_vals):
+        return super()._message_post_after_hook(message, msg_vals)
 
     def _notify_thread(self, message, msg_vals=False, **kwargs):
         """History-import hook for outbound (fromMe) messages: create the outbound

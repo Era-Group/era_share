@@ -19,7 +19,8 @@ class DiscussChannelMember(models.Model):
             if channel.channel_type != 'whatsapp' or account.provider != 'waha':
                 continue
             # Only agents send read receipts — never the customer's own partner.
-            if member.partner_id and member.partner_id == channel.whatsapp_partner_id:
+            if (not channel.is_waha_group_channel and member.partner_id
+                    and member.partner_id == channel.whatsapp_partner_id):
                 continue
             try:
                 account._waha_mark_seen(channel)

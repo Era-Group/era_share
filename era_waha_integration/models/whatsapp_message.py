@@ -4,7 +4,7 @@ import re
 
 from lxml import html as lxml_html
 
-from odoo import _, models, modules
+from odoo import _, fields, models, modules
 from odoo.addons.whatsapp.tools.whatsapp_exception import WhatsAppError
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import html2plaintext
@@ -96,6 +96,8 @@ def html_to_whatsapp(html):
 class WhatsappMessage(models.Model):
     _inherit = 'whatsapp.message'
 
+    waha_chat_id = fields.Char(copy=False, index=True)
+
     def _send_message(self, with_commit=False):
         """Route WAHA-account messages through WAHA; delegate the rest to Meta (super)."""
         waha = self.filtered(lambda m: m.wa_account_id.provider == 'waha')
@@ -129,10 +131,12 @@ class WhatsappMessage(models.Model):
                         "WAHA session, then resend.", live))
                 return
         try:
-            self._assert_recipient_identifier()
-            if self.mobile_number_formatted:
-                self._check_number_blacklist()
-            chat_id = account._waha_chat_id(self.mobile_number_formatted)
+            chat_id = self.waha_chat_id or ''
+            if not chat_id:
+                self._assert_recipient_identifier()
+                if self.mobile_number_formatted:
+                    self._check_number_blacklist()
+                chat_id = account._waha_chat_id(self.mobile_number_formatted)
             if not chat_id:
                 raise WhatsAppError(failure_type='phone_invalid')
             body = html_to_whatsapp(self.body) if self.body else ''

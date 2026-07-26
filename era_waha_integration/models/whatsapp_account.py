@@ -97,7 +97,8 @@ class WhatsappAccount(models.Model):
     waha_reconcile_on_reconnect = fields.Boolean(
         string='Reconcile on reconnect', default=True,
         help="When the session comes back to 'working' after a disconnection, "
-             "check active channels and backfill any missed messages.")
+              "check active channels and backfill any missed messages.")
+    waha_group_ids = fields.One2many('whatsapp.waha.group', 'account_id', string='Groups')
 
     # ---- Account-protection (anti-ban) limits ----
     waha_working_since = fields.Datetime(
@@ -301,6 +302,92 @@ class WhatsappAccount(models.Model):
     def _waha_chat_id(self, number):
         digits = re.sub(r'\D', '', number or '')
         return f"{digits}@c.us" if digits else ''
+
+    @api.model
+    def _waha_group_chat_id(self, payload):
+        data = payload.get('_data') or {}
+        candidates = [
+            payload.get('chatId'), payload.get('from'),
+            data.get('chatId'), data.get('remoteJid'),
+            (data.get('key') or {}).get('remoteJid'),
+        ]
+        return next((value for value in candidates if isinstance(value, str) and value.endswith('@g.us')), '')
+
+    @api.model
+    def _waha_participant_jid(self, payload):
+        data = payload.get('_data') or {}
+        key = data.get('key') or {}
+        candidates = [
+            payload.get('participant'), data.get('participant'), data.get('author'),
+            key.get('participant'), key.get('remoteJidAlt'), data.get('remoteJidAlt'),
+        ]
+        return next((value for value in candidates if isinstance(value, str) and value), '')
+
+    def _waha_resolve_participant(self, participant, payload, sender_name=False):
+        """Return a matching/created sender partner or False for unresolved LID identities."""
+        number = self._waha_resolve_number(participant, payload)
+        if not number:
+            return self.env['res.partner']
+        identifiers = {'number': number}
+        partner = self.env['res.partner']._find_or_create_from_whatsapp_identifiers(
+            identifiers, sender_name or number, self)
+        if sender_name and partner.name in (number, '+' + number, partner.phone):
+            partner.name = sender_name
+        return partner
+
+    @api.model
+    def _waha_group_sender_prefix(self, content, sender_name, participant):
+        label = sender_name or (participant[-8:] if participant else _('Unknown sender'))
+        prefix = Markup('<p><strong>{}</strong></p>').format(escape(label))
+        content['body'] = prefix + Markup(content.get('body') or '')
+        return content
+
+    def action_waha_sync_groups(self):
+        self.ensure_one()
+        if self.provider != 'waha':
+            raise UserError(_('This action is only available on WAHA accounts.'))
+        Group = self.env['whatsapp.waha.group'].sudo()
+        seen, offset, page = set(), 0, 100
+        while True:
+            data = self._waha_request(
+                f'{self.waha_session}/groups', 'GET',
+                params={'limit': page, 'offset': offset, 'exclude': 'participants'})
+            # WAHA engines differ here: most return a list (or ``{'groups': [...]}``),
+            # while NOWEB may return ``{'123@g.us': {...}, ...}``.
+            if isinstance(data, dict) and isinstance(data.get('groups'), list):
+                groups = data['groups']
+            elif isinstance(data, dict):
+                groups = [value | {'id': key} if isinstance(value, dict) else {'id': key}
+                          for key, value in data.items()
+                          if isinstance(key, str) and key.endswith('@g.us')]
+            else:
+                groups = data
+            groups = groups if isinstance(groups, list) else []
+            for raw in groups:
+                raw = raw or {}
+                chat_id = raw.get('id') or raw.get('chatId') or (raw.get('_data') or {}).get('id')
+                if isinstance(chat_id, dict):
+                    chat_id = chat_id.get('_serialized') or chat_id.get('id')
+                if not isinstance(chat_id, str) or not chat_id.endswith('@g.us'):
+                    continue
+                subject = raw.get('subject') or raw.get('name') or raw.get('title') or (raw.get('_data') or {}).get('subject')
+                seen.add(chat_id)
+                group = Group.search([('account_id', '=', self.id), ('chat_id', '=', chat_id)], limit=1)
+                vals = {'subject': subject or chat_id, 'available': True, 'last_sync_at': fields.Datetime.now()}
+                if group:
+                    group.write(vals)
+                else:
+                    group = Group.create(vals | {'account_id': self.id, 'chat_id': chat_id, 'enabled': False})
+                channels = self.env['discuss.channel'].sudo().search([
+                    ('wa_account_id', '=', self.id), ('waha_chat_id', '=', chat_id)])
+                if channels and subject:
+                    channels.write({'name': subject, 'waha_group_id': group.id})
+            if len(groups) < page:
+                break
+            offset += page
+        missing = Group.search([('account_id', '=', self.id), ('chat_id', 'not in', list(seen))])
+        missing.write({'available': False, 'last_sync_at': fields.Datetime.now()})
+        return True
 
     @api.model
     def _waha_sanitize(self, raw):
@@ -519,7 +606,8 @@ class WhatsappAccount(models.Model):
 
     def _waha_react(self, wa_message, emoji):
         self.ensure_one()
-        chat_id = self._waha_chat_id(wa_message.mobile_number or wa_message.mobile_number_formatted or '')
+        chat_id = wa_message.waha_chat_id or self._waha_chat_id(
+            wa_message.mobile_number or wa_message.mobile_number_formatted or '')
         return self._waha_request('reaction', 'PUT', data={
             'session': self.waha_session, 'chatId': chat_id,
             'messageId': wa_message.msg_uid, 'reaction': emoji or ''}, timeout=8)
@@ -554,7 +642,7 @@ class WhatsappAccount(models.Model):
         self.ensure_one()
         if self.provider != 'waha':
             return
-        chat_id = self._waha_chat_id(channel.whatsapp_number or '')
+        chat_id = channel.waha_chat_id or self._waha_chat_id(channel.whatsapp_number or '')
         if not chat_id:
             return
         self.sudo()._waha_request(
@@ -686,11 +774,46 @@ class WhatsappAccount(models.Model):
         if not msg_uid:
             return
         from_contact = payload.get('from') or ''
-        if not from_contact or from_contact in ('status@broadcast',) or from_contact.endswith('@g.us'):
+        group_chat_id = self._waha_group_chat_id(payload)
+        if from_contact in ('status@broadcast',) or (from_contact and from_contact.endswith('@newsletter')):
             return
         # Serialize concurrent deliveries of the same message across workers.
         self.env.cr.execute("SELECT pg_advisory_xact_lock(hashtext(%s))", (msg_uid,))
         if self._waha_uid_exists(msg_uid):
+            return
+        if group_chat_id:
+            group = self.env['whatsapp.waha.group'].sudo().search([
+                ('account_id', '=', self.id), ('chat_id', '=', group_chat_id),
+                ('enabled', '=', True), ('available', '=', True)], limit=1)
+            if not group:
+                return
+            channel = self.env['discuss.channel']._waha_get_group_channel(self, group, create_if_not_found=True)
+            was_empty = not channel.message_ids
+            content = self._waha_build_content(payload)
+            if not content.get('body') and not content.get('attachments'):
+                if payload.get('hasMedia'):
+                    content['body'] = plaintext2html('[%s]' % _('media message could not be downloaded'))
+                else:
+                    return
+            sender_name = payload.get('notifyName') or (payload.get('_data') or {}).get('notifyName')
+            participant = self._waha_participant_jid(payload)
+            partner = self._waha_resolve_participant(participant, payload, sender_name)
+            if not partner:
+                content = self._waha_group_sender_prefix(content, sender_name, participant)
+                partner = self.env.ref('base.partner_root')
+            try:
+                with self.env.cr.savepoint():
+                    channel.message_post(
+                        whatsapp_inbound_msg_uid=msg_uid,
+                        message_type='whatsapp_message', author_id=partner.id,
+                        subtype_xmlid='mail.mt_comment', **content)
+            except Exception:
+                _logger.exception('WAHA: failed posting inbound group message %s', msg_uid)
+                return
+            if was_empty and self.waha_auto_import_history:
+                self._waha_sync_channel_history(channel, deep=True, limit=self.waha_history_limit)
+            return
+        if not from_contact:
             return
         number = self._waha_resolve_number(from_contact, payload)
         if not number:
@@ -793,7 +916,10 @@ class WhatsappAccount(models.Model):
         if not mail_message or mail_message.model != 'discuss.channel':
             return
         channel = self.env['discuss.channel'].sudo().browse(mail_message.res_id)
-        partner = channel.whatsapp_partner_id
+        participant = self._waha_participant_jid(payload) if channel.is_waha_group_channel else ''
+        partner = self._waha_resolve_participant(
+            participant, payload, payload.get('notifyName') or (payload.get('_data') or {}).get('notifyName')) \
+            if participant else channel.whatsapp_partner_id
         if not partner:
             return
         # reaction.text carries the emoji; empty string means the reaction was removed.
@@ -818,9 +944,9 @@ class WhatsappAccount(models.Model):
         """Smart backfill: if the last 2 WAHA messages are already known, do nothing;
         otherwise import missing messages oldest-first (deduped, idempotent)."""
         self.ensure_one()
-        if not channel.whatsapp_number:
+        if not channel.whatsapp_number and not channel.waha_chat_id:
             return 0
-        chat_id = self._waha_chat_id(channel.whatsapp_number)
+        chat_id = channel.waha_chat_id or self._waha_chat_id(channel.whatsapp_number)
         if not chat_id:
             return 0
         if not deep:
@@ -886,10 +1012,18 @@ class WhatsappAccount(models.Model):
                             **content,
                         )
                     else:
+                        partner = channel.whatsapp_partner_id
+                        if channel.is_waha_group_channel:
+                            participant = self._waha_participant_jid(waha_message)
+                            sender_name = waha_message.get('notifyName') or (waha_message.get('_data') or {}).get('notifyName')
+                            partner = self._waha_resolve_participant(participant, waha_message, sender_name)
+                            if not partner:
+                                content = self._waha_group_sender_prefix(content, sender_name, participant)
+                                partner = operator
                         channel.message_post(
                             whatsapp_inbound_msg_uid=uid,
                             message_type='whatsapp_message',
-                            author_id=channel.whatsapp_partner_id.id,
+                            author_id=partner.id,
                             subtype_xmlid='mail.mt_note',
                             **content,
                         )
@@ -926,8 +1060,20 @@ class WhatsappAccount(models.Model):
         imported = 0
         for chat in overview:
             chat_id_raw = (chat or {}).get('id') or ''
+            if chat_id_raw.endswith('@g.us'):
+                group = self.env['whatsapp.waha.group'].sudo().search([
+                    ('account_id', '=', self.id), ('chat_id', '=', chat_id_raw),
+                    ('enabled', '=', True), ('available', '=', True)], limit=1)
+                if not group:
+                    continue
+                channel = self.env['discuss.channel']._waha_get_group_channel(self, group, create_if_not_found=True)
+                try:
+                    imported += self._waha_sync_channel_history(channel, deep=True)
+                except Exception:
+                    _logger.exception('WAHA: reconcile-overview failed for group %s', chat_id_raw)
+                continue
             if not chat_id_raw.endswith('@c.us'):
-                continue  # 1:1 chats only — skip groups (@g.us), status, @lid
+                continue
             last = chat.get('lastMessage') or {}
             ts = last.get('timestamp')
             if ts and int(ts) < cutoff:

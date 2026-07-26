@@ -1,5 +1,12 @@
 # Era WAHA WhatsApp Integration
 
+## Group chats
+
+WAHA group chats are opt-in per account. Open the account's **Groups** tab, use
+**Sync Groups**, then explicitly enable approved groups. Each enabled group is
+shown as a single Discuss WhatsApp channel. Group participants are message
+authors only and are never added as Discuss channel members.
+
 Brings the **WAHA** (WhatsApp HTTP API, https://waha.devlike.pro) into Odoo's
 standard Enterprise **WhatsApp + Discuss** stack as an alternative backend
 *provider*, so WAHA conversations behave exactly like standard WhatsApp inside

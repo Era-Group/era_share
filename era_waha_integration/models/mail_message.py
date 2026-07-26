@@ -10,6 +10,29 @@ _logger = logging.getLogger(__name__)
 class MailMessage(models.Model):
     _inherit = 'mail.message'
 
+    def _waha_group_authors_to_store(self, store):
+        """Expose sender phone numbers only for WAHA group messages.
+
+        The standard Discuss store deliberately serializes authors with no contact
+        fields, so the browser cannot otherwise render the number beside the name.
+        """
+        group_messages = self.filtered(
+            lambda m: m.model == 'discuss.channel'
+            and m.message_type == 'whatsapp_message'
+            and self.env['discuss.channel'].browse(m.res_id).is_waha_group_channel)
+        if group_messages:
+            store.add(group_messages, [
+                Store.One('author_id', ['phone']),
+            ])
+
+    def _extras_to_store(self, store, format_reply):
+        super()._extras_to_store(store, format_reply=format_reply)
+        self._waha_group_authors_to_store(store)
+
+    def _message_notifications_to_store(self, store):
+        super()._message_notifications_to_store(store)
+        self._waha_group_authors_to_store(store)
+
     def _message_reaction(self, content, action, partner, guest, store: Store = None):
         """The standard WhatsApp override pushes reactions to the Meta Graph API for any
         'whatsapp_message'. For WAHA-backed messages that would crash, so we handle the

@@ -126,6 +126,7 @@ class WhatsappAccount(models.Model):
     # ---- Account health monitoring ----
     waha_flap_count = fields.Integer(string='Status flaps (today)', default=0, copy=False)
     waha_health_alerted = fields.Boolean(default=False, copy=False)
+    waha_health_alert_date = fields.Date(copy=False)
     waha_health_score = fields.Integer(string='Health Score', compute='_compute_waha_health')
     waha_health_label = fields.Selection(
         [('good', 'Good'), ('warning', 'Warning'), ('critical', 'Critical')],
@@ -1452,7 +1453,10 @@ class WhatsappAccount(models.Model):
         """Notify the responsible user(s) that this account's health degraded, as a
         DIRECT MESSAGE from OdooBot — not a chatter post on the account."""
         self.ensure_one()
-        partners = self.notify_user_ids.partner_id
+        # Account-health degradation is an operational/admin concern, not an
+        # inbox assignment. It must never interrupt the WAHA reception team.
+        admin = self.env.ref('base.user_admin').sudo()
+        partners = admin.partner_id if admin.active and not admin.share else self.env['res.partner']
         if not partners:
             return
         body = Markup(
@@ -1489,16 +1493,23 @@ class WhatsappAccount(models.Model):
 
     @api.model
     def _cron_waha_health_check(self):
+        today = fields.Date.context_today(self)
         for account in self.search([('provider', '=', 'waha')]):
             data = account._waha_health_data()
-            degraded = data['label'] != 'good'
-            if degraded and not account.waha_health_alerted:
+            # Warning is informational in the account form. Only a critical score
+            # is operationally dangerous enough to interrupt the administrator.
+            in_danger = data['label'] == 'critical'
+            if in_danger and account.waha_health_alert_date != today:
                 try:
                     account._waha_health_alert(data)
                 except Exception:
                     _logger.exception("WAHA health alert failed for %s", account.id)
-                account.waha_health_alerted = True
-            elif not degraded and account.waha_health_alerted:
+                else:
+                    account.write({
+                        'waha_health_alerted': True,
+                        'waha_health_alert_date': today,
+                    })
+            elif not in_danger and account.waha_health_alerted:
                 account.waha_health_alerted = False
 
     @api.model

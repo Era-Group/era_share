@@ -21,6 +21,10 @@ direct-message chats.
   Users during company working hours.
 - A WAHA reply or internal note resolves all pending inbound work in that
   conversation.
+- WAHA account-health degradation alerts are direct OdooBot messages to the
+  primary Odoo administrator (`base.user_admin`) only, never to Default Users.
+- Health alerts are sent only for a `critical` health score, never for `warning`,
+  and at most once per WAHA account per calendar day.
 
 ## Unread Counter Rule
 

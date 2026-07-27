@@ -1,7 +1,7 @@
 # Part of Era Group custom addons.
 {
     'name': 'Era WAHA WhatsApp Integration',
-    'version': '19.0.1.17.0',
+    'version': '19.0.1.18.7',
     'category': 'Productivity/WhatsApp',
     'summary': 'Two-way WAHA (WhatsApp Web) messaging inside Odoo Discuss',
     'description': """
@@ -13,6 +13,14 @@ Odoo's standard Enterprise WhatsApp/Discuss stack as an alternative backend
 channels linked to the partner sharing the sender's phone number, and replies
 typed in Discuss are delivered through WAHA. Includes session/QR management,
 delivery/read ticks and a smart historical-conversation backfill.
+
+سياسة تنبيهات WAHA
+------------------
+تنبه الرسائل الواردة الجديدة المستخدمين الافتراضيين للحساب إلى أن يرد موظف
+داخلي، أو يكتب ملاحظة داخلية، أو تتم الإشارة إليه في ملاحظة داخلية. بعدها تصل
+الرسائل الواردة إلى المشاركين في المحادثة فقط. لا تنشئ الرسائل الصادرة أو
+السجل المستورد تنبيهات. وتُصعّد الرسالة الواردة الحية غير المُجاب عنها مرة
+واحدة إلى المستخدمين الافتراضيين بعد 60 دقيقة خلال أوقات دوام الشركة.
 """,
     'author': 'Era Group',
     'website': 'https://era.net.sa',
@@ -38,5 +46,5 @@ delivery/read ticks and a smart historical-conversation backfill.
         ],
     },
     'installable': True,
-    'application': False,
+    'application': True,
 }

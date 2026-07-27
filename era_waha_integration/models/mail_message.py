@@ -1,7 +1,7 @@
 # Part of Era Group custom addons.
 import logging
 
-from odoo import models
+from odoo import fields, models
 from odoo.addons.mail.tools.discuss import Store
 
 _logger = logging.getLogger(__name__)
@@ -9,6 +9,33 @@ _logger = logging.getLogger(__name__)
 
 class MailMessage(models.Model):
     _inherit = 'mail.message'
+
+    # These flags are set only for live inbound WAHA webhooks. Imported history must
+    # never cause a new unattended-conversation escalation after an upgrade or sync.
+    waha_pending_reply = fields.Boolean(copy=False, index=True)
+    waha_escalated_at = fields.Datetime(copy=False, index=True)
+    waha_notification_policy_applied = fields.Boolean(copy=False)
+    # Discuss broadcasts channel updates to every member for synchronization. This
+    # stores the actual WAHA notification audience so non-recipients can keep the
+    # conversation available without seeing a new-message alert or unread counter.
+    waha_notification_partner_ids = fields.Many2many(
+        'res.partner', 'mail_message_waha_notification_partner_rel', 'message_id', 'partner_id',
+        copy=False)
+
+    def _to_store_defaults(self, target):
+        return super()._to_store_defaults(target) + [
+            Store.Many(
+                'waha_notification_partner_ids', [],
+                predicate=lambda message: message.model == 'discuss.channel'
+                and self.env['discuss.channel'].browse(message.res_id).is_waha_channel,
+                sudo=True,
+            ),
+            Store.Attr(
+                'waha_notification_policy_applied',
+                predicate=lambda message: message.model == 'discuss.channel'
+                and self.env['discuss.channel'].browse(message.res_id).is_waha_channel,
+            ),
+        ]
 
     def _waha_group_authors_to_store(self, store):
         """Expose sender phone numbers only for WAHA group messages.

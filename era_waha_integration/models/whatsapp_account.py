@@ -223,6 +223,39 @@ class WhatsappAccount(models.Model):
                 ('channel_id', 'in', channels.ids),
                 ('partner_id', 'in', removed_users.partner_id.ids),
             ]).unlink()
+        self._waha_keep_channel_members_pinned()
+
+    def _waha_keep_channel_members_pinned(self):
+        """WAHA is a shared inbox: retain internal conversation history in Discuss."""
+        self.ensure_one()
+        members = self.env['discuss.channel.member'].sudo().search([
+            ('channel_id.wa_account_id', '=', self.id),
+            ('partner_id.user_ids.share', '=', False),
+        ])
+        members.filtered('unpin_dt').write({'unpin_dt': False})
+        # Re-send the channel header to each member. Without this, an already-open
+        # browser keeps its old unpinned sidebar cache until a full reload.
+        for member in members:
+            member.channel_id._broadcast(member.partner_id.ids)
+
+    def _waha_backfill_notification_participants(self):
+        """Restore participants from historical replies without issuing alerts."""
+        self.ensure_one()
+        channels = self.env['discuss.channel'].sudo().search([
+            ('wa_account_id', '=', self.id),
+            ('channel_type', '=', 'whatsapp'),
+        ])
+        for channel in channels:
+            users = channel._waha_backfill_participants()
+            if not users:
+                continue
+            latest_message = self.env['mail.message'].sudo().search([
+                ('model', '=', 'discuss.channel'),
+                ('res_id', '=', channel.id),
+            ], order='id desc', limit=1)
+            if latest_message:
+                channel._waha_mark_nonrecipients_as_read(
+                    latest_message, users.partner_id.ids, notify=False)
 
     def _waha_grant_members(self, channel):
         """Add this account's users (notify_user_ids) to a freshly-created channel."""
@@ -230,6 +263,7 @@ class WhatsappAccount(models.Model):
         if channel and self.notify_user_ids:
             channel.sudo().add_members(
                 partner_ids=self.notify_user_ids.partner_id.ids, post_joined_message=False)
+            self._waha_keep_channel_members_pinned()
 
     # ------------------------------------------------------------------
     # WAHA HTTP helpers
@@ -671,6 +705,75 @@ class WhatsappAccount(models.Model):
         return channel
 
     # ------------------------------------------------------------------
+    # Unanswered inbound-message escalation
+    # ------------------------------------------------------------------
+    def _waha_company_is_working(self, company, now):
+        """Whether the company default calendar is open at ``now`` (UTC-naive)."""
+        calendar = company.resource_calendar_id
+        if not calendar:
+            # A missing calendar must not silently strand customer messages forever.
+            return True
+        now_aware = now.replace(tzinfo=timezone.utc)
+        intervals = calendar._work_intervals_batch(
+            now_aware,
+            now_aware + timedelta(minutes=1),
+            domain=[('company_id', 'in', [False, company.id])],
+        )
+        return bool(intervals.get(False))
+
+    def _cron_waha_escalate_unanswered(self):
+        """Escalate live inbound messages still unanswered after one working hour.
+
+        A row lock and an escalation timestamp make this safe when multiple cron
+        workers run at once. The timestamp is written before dispatch so a browser
+        push retry cannot turn into repeated team-wide interruptions.
+        """
+        now = fields.Datetime.now()
+        due_before = now - timedelta(hours=1)
+        messages = self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'),
+            ('waha_pending_reply', '=', True),
+            ('waha_escalated_at', '=', False),
+            ('create_date', '<=', due_before),
+        ], order='create_date', limit=200)
+        for message in messages:
+            try:
+                with self.env.cr.savepoint():
+                    self.env.cr.execute(
+                        'SELECT id FROM mail_message WHERE id = %s FOR UPDATE SKIP LOCKED',
+                        [message.id],
+                    )
+                    if not self.env.cr.fetchone():
+                        continue
+                    message.invalidate_recordset()
+                    if not message.waha_pending_reply or message.waha_escalated_at:
+                        continue
+                    channel = self.env['discuss.channel'].sudo().browse(message.res_id).exists()
+                    if (not channel or channel.channel_type != 'whatsapp'
+                            or channel.wa_account_id.provider != 'waha'):
+                        continue
+                    account = channel.wa_account_id
+                    # WhatsApp accounts are multi-company through
+                    # ``allowed_company_ids`` rather than a single company_id.
+                    company = account.allowed_company_ids[:1] or self.env.company
+                    if not self._waha_company_is_working(company, now):
+                        continue
+                    users = account.notify_user_ids.filtered(
+                        lambda user: user.active and not user.share)
+                    if not users:
+                        _logger.warning(
+                            'WAHA: no Default Users to escalate unanswered message %s for account %s',
+                            message.id, account.id)
+                        message.write({'waha_escalated_at': now})
+                        continue
+                    recipients_data = channel._waha_recipients_for_users(message, users)
+                    message.write({'waha_escalated_at': now})
+                    if recipients_data:
+                        channel._notify_thread_by_web_push(message, recipients_data)
+            except Exception:
+                _logger.exception('WAHA: failed escalating unanswered message %s', message.id)
+
+    # ------------------------------------------------------------------
     # Inbound processing (called from the webhook controller)
     # ------------------------------------------------------------------
     def _waha_resolve_number(self, from_contact, payload):
@@ -805,6 +908,7 @@ class WhatsappAccount(models.Model):
                 with self.env.cr.savepoint():
                     channel.message_post(
                         whatsapp_inbound_msg_uid=msg_uid,
+                        waha_live_inbound=True,
                         message_type='whatsapp_message', author_id=partner.id,
                         subtype_xmlid='mail.mt_comment', **content)
             except Exception:
@@ -844,6 +948,7 @@ class WhatsappAccount(models.Model):
             with self.env.cr.savepoint():
                 channel.message_post(
                     whatsapp_inbound_msg_uid=msg_uid,
+                    waha_live_inbound=True,
                     message_type='whatsapp_message',
                     author_id=channel.whatsapp_partner_id.id,
                     subtype_xmlid='mail.mt_comment',

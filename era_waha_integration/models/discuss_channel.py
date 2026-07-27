@@ -25,6 +25,11 @@ class DiscussChannel(models.Model):
     waha_group_id = fields.Many2one('whatsapp.waha.group', ondelete='set null', index=True)
     waha_chat_id = fields.Char(copy=False, index=True)
     is_waha_group_channel = fields.Boolean(compute='_compute_is_waha_group_channel')
+    # Channel members control access to every account conversation. Keep notification
+    # ownership separate so Default Users do not receive every WAHA exchange forever.
+    waha_participant_user_ids = fields.Many2many(
+        'res.users', 'discuss_channel_waha_participant_rel', 'channel_id', 'user_id',
+        string='WAHA Notification Participants', copy=False)
 
     @api.depends('channel_type', 'wa_account_id.provider')
     def _compute_is_waha_channel(self):
@@ -79,8 +84,24 @@ class DiscussChannel(models.Model):
     def _get_notify_valid_parameters(self):
         params = super()._get_notify_valid_parameters()
         if self.channel_type == 'whatsapp':
-            return params | {'whatsapp_outbound_msg_uid', 'waha_internal_note'}
+            return params | {
+                'whatsapp_outbound_msg_uid',
+                'waha_internal_note',
+                'waha_live_inbound',
+            }
         return params
+
+    def channel_pin(self, pinned=False):
+        """Keep WAHA conversations visible instead of treating them as disposable chats."""
+        waha_channels = self.filtered(_is_waha_channel)
+        for channel in waha_channels:
+            # The sidebar must retain conversation history. WAHA channels are an
+            # inbox, not temporary direct messages that can disappear on unpin.
+            super(DiscussChannel, channel).channel_pin(pinned=True)
+        other_channels = self - waha_channels
+        if other_channels:
+            return super(DiscussChannel, other_channels).channel_pin(pinned=pinned)
+        return True
 
     def message_post(self, *args, **kwargs):
         is_waha = _is_waha_channel(self)
@@ -90,7 +111,24 @@ class DiscussChannel(models.Model):
             mentioned_partner_ids += list((kwargs.get('partner_ids_mention_token') or {}).keys())
         has_internal_mention = is_waha and bool(self.env['res.partner'].browse(mentioned_partner_ids).filtered(
             lambda partner: partner.main_user_id and not partner.main_user_id.share))
-        if kwargs.get('waha_internal_note') or has_internal_mention:
+        is_internal_note = kwargs.get('waha_internal_note') or has_internal_mention
+        is_outbound = (
+            is_waha
+            and kwargs.get('message_type') == 'whatsapp_message'
+            and not kwargs.get('whatsapp_inbound_msg_uid')
+            and not kwargs.get('whatsapp_outbound_msg_uid')
+        )
+        participant_users = self.env['res.users']
+        if is_waha and (is_outbound or is_internal_note):
+            author_id = kwargs.get('author_id') or self.env.user.partner_id.id
+            participant_users |= self._waha_internal_users_for_partners([author_id])
+            # An internal-note mention explicitly hands the conversation to that
+            # colleague, so subscribe them before this note is notified.
+            if is_internal_note:
+                participant_users |= self._waha_internal_users_for_partners(mentioned_partner_ids)
+            if participant_users:
+                self.waha_participant_user_ids |= participant_users
+        if is_internal_note:
             if not _is_waha_channel(self) or not self.env.user._is_internal():
                 raise AccessError(_('WAHA internal notes are restricted to internal users.'))
             # A standard internal log is deliberately not a whatsapp_message, so it
@@ -98,8 +136,10 @@ class DiscussChannel(models.Model):
             kwargs['message_type'] = 'comment'
             kwargs['subtype_xmlid'] = 'mail.mt_note'
             kwargs.pop('waha_internal_note', None)
-            return super(DiscussChannel, self.with_context(waha_internal_note=True)).message_post(
+            message = super(DiscussChannel, self.with_context(waha_internal_note=True)).message_post(
                 *args, **kwargs)
+            self._waha_resolve_pending_replies(message)
+            return message
         # Enforce WAHA account-protection limits on genuine outbound sends (a reply
         # typed in Discuss, or a composer send). Inbound and history-import posts,
         # which carry a *_msg_uid, are exempt. Raising rolls back the request so the
@@ -117,7 +157,153 @@ class DiscussChannel(models.Model):
                     [('partner_id', '=', author_pid)], limit=1) or user
             self.wa_account_id._waha_check_send_allowed(
                 self.whatsapp_number, user, channel=self, check_new=False)
-        return super().message_post(*args, **kwargs)
+        message = super().message_post(*args, **kwargs)
+        if is_outbound:
+            self._waha_resolve_pending_replies(message)
+        return message
+
+    def _waha_internal_users_for_partners(self, partner_ids):
+        """Return active internal users represented by the given partners."""
+        partners = self.env['res.partner'].browse(partner_ids).exists()
+        return self.env['res.users'].sudo().search([
+            ('partner_id', 'in', partners.ids),
+            ('active', '=', True),
+            ('share', '=', False),
+        ])
+
+    def _waha_notification_users(self):
+        self.ensure_one()
+        return self.waha_participant_user_ids.filtered(
+            lambda user: user.active and not user.share)
+
+    def _waha_filter_recipients(self, recipients_data, users, author_id=False):
+        """Keep stock Discuss notification preferences while limiting recipients."""
+        partner_ids = set(users.partner_id.ids)
+        if author_id:
+            partner_ids.discard(author_id)
+        seen = set()
+        return [
+            recipient for recipient in recipients_data
+            if recipient['id'] in partner_ids
+            and not (recipient['id'] in seen or seen.add(recipient['id']))
+        ]
+
+    def _waha_recipients_for_users(self, message, users, msg_vals=False):
+        """Compute normal Discuss recipient data, then restrict it to WAHA owners."""
+        self.ensure_one()
+        recipients_data = super()._notify_get_recipients(message, msg_vals=msg_vals or {})
+        author_id = (msg_vals or {}).get('author_id') or message.author_id.id
+        return self._waha_filter_recipients(recipients_data, users, author_id=author_id)
+
+    def _waha_notification_users_for_message(self, message, msg_vals=False, **kwargs):
+        """Return WAHA users entitled to interrupt/mark unread for this message."""
+        msg_vals = msg_vals or {}
+        message_type = msg_vals.get('message_type', message.message_type)
+        if message_type == 'whatsapp_message':
+            if (kwargs.get('whatsapp_inbound_msg_uid')
+                    and kwargs.get('waha_live_inbound')):
+                return self._waha_notification_users() or self.wa_account_id.notify_user_ids.filtered(
+                    lambda user: user.active and not user.share)
+            return self.env['res.users']
+        if message_type == 'comment' and self._waha_is_internal_note(message, msg_vals):
+            return self._waha_notification_users()
+        return self.env['res.users']
+
+    def _waha_is_internal_note(self, message, msg_vals=False):
+        subtype_id = (msg_vals or {}).get('subtype_id') or message.subtype_id.id
+        return subtype_id == self.env.ref('mail.mt_note').id
+
+    def _notify_get_recipients(self, message, msg_vals=False, **kwargs):
+        recipients_data = super()._notify_get_recipients(message, msg_vals=msg_vals, **kwargs)
+        if not _is_waha_channel(self):
+            return recipients_data
+
+        msg_vals = msg_vals or {}
+        message_type = msg_vals.get('message_type', message.message_type)
+        if message_type == 'whatsapp_message':
+            # A WAHA outgoing message is already visible in the channel through the
+            # normal bus event, but it must never interrupt colleagues with a push.
+            if not kwargs.get('whatsapp_inbound_msg_uid'):
+                return []
+            # Initial history and manual/reconciliation imports intentionally remain
+            # quiet. Only a live webhook starts a fresh notification lifecycle.
+            if not kwargs.get('waha_live_inbound'):
+                return []
+            users = self._waha_notification_users_for_message(message, msg_vals, **kwargs)
+            return self._waha_filter_recipients(
+                recipients_data, users,
+                author_id=msg_vals.get('author_id') or message.author_id.id)
+
+        if message_type == 'comment' and self._waha_is_internal_note(message, msg_vals):
+            return self._waha_filter_recipients(
+                recipients_data, self._waha_notification_users(),
+                author_id=msg_vals.get('author_id') or message.author_id.id)
+        return recipients_data
+
+    def _waha_send_unread_state(self, members):
+        """Refresh another member's sidebar counter after changing its separator."""
+        for member in members:
+            bus_last_id = self.env['bus.bus'].sudo()._bus_last_id()
+            Store(bus_channel=member._bus_channel()).add(
+                member,
+                [
+                    Store.One('channel_id', [], as_thread=True),
+                    'message_unread_counter',
+                    {'message_unread_counter_bus_id': bus_last_id},
+                    'new_message_separator',
+                    *self.env['discuss.channel.member']._to_store_persona([]),
+                ],
+            ).bus_send()
+
+    def _waha_mark_nonrecipients_as_read(self, message, recipient_partner_ids, notify=True):
+        """WAHA channel membership grants access, not a permanent unread subscription."""
+        self.ensure_one()
+        members = self.env['discuss.channel.member'].sudo().search([
+            ('channel_id', '=', self.id),
+            ('partner_id.user_ids.share', '=', False),
+            ('partner_id', 'not in', recipient_partner_ids),
+        ])
+        for member in members:
+            member._set_new_message_separator(message.id + 1)
+        if notify:
+            self._waha_send_unread_state(members)
+
+    def _waha_backfill_participants(self):
+        """Recover notification ownership from prior internal WAHA activity.
+
+        This changes no message, notification, or escalation state. It only records
+        the people who already handled a conversation before this policy existed.
+        """
+        self.ensure_one()
+        messages = self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'),
+            ('res_id', '=', self.id),
+            '|',
+            ('message_type', '=', 'whatsapp_message'),
+            ('subtype_id', '=', self.env.ref('mail.mt_note').id),
+        ])
+        users = self._waha_internal_users_for_partners(messages.author_id.ids)
+        if users:
+            self.waha_participant_user_ids |= users
+        return self._waha_notification_users()
+
+    def _waha_resolve_pending_replies(self, handled_message):
+        """A human reply resolves the inbox item for every internal channel member."""
+        self.ensure_one()
+        self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'),
+            ('res_id', '=', self.id),
+            ('waha_pending_reply', '=', True),
+        ]).write({'waha_pending_reply': False})
+        members = self.env['discuss.channel.member'].sudo().search([
+            ('channel_id', '=', self.id),
+            ('partner_id.user_ids.share', '=', False),
+        ])
+        for member in members:
+            member._set_new_message_separator(handled_message.id + 1)
+        # `_set_new_message_separator` updates the server-side counter but does
+        # not notify another user's browser. Refresh all sidebars immediately.
+        self._waha_send_unread_state(members)
 
     def _message_post_after_hook(self, message, msg_vals):
         return super()._message_post_after_hook(message, msg_vals)
@@ -137,7 +323,24 @@ class DiscussChannel(models.Model):
                 'mobile_number': ('+' + self.whatsapp_number) if self.whatsapp_number else False,
                 'waha_chat_id': self.waha_chat_id or False,
             })
-        return super()._notify_thread(message, msg_vals=msg_vals, **kwargs)
+        recipient_partner_ids = []
+        if _is_waha_channel(self):
+            users = self._waha_notification_users_for_message(message, msg_vals, **kwargs)
+            recipients_data = self._waha_recipients_for_users(message, users, msg_vals)
+            recipient_partner_ids = [recipient['id'] for recipient in recipients_data]
+            message.sudo().write({
+                'waha_notification_policy_applied': True,
+                'waha_notification_partner_ids': [(6, 0, recipient_partner_ids)],
+            })
+        if kwargs.get('waha_live_inbound') and self.channel_type == 'whatsapp':
+            message.sudo().write({
+                'waha_pending_reply': True,
+                'waha_escalated_at': False,
+            })
+        result = super()._notify_thread(message, msg_vals=msg_vals, **kwargs)
+        if _is_waha_channel(self):
+            self._waha_mark_nonrecipients_as_read(message, recipient_partner_ids)
+        return result
 
     def _get_inbound_whatsapp_message_values_from_mail_message(self, mail_message, whatsapp_message_uid, parent_msg_id=False):
         vals = super()._get_inbound_whatsapp_message_values_from_mail_message(

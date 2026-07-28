@@ -1,1 +1,1 @@
-# era_share 1.1
+# era_share 1.2

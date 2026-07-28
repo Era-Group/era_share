@@ -139,10 +139,15 @@
                                     <!-- Refresh: always useful -->
                                     <button name="action_waha_refresh_status" type="object" string="Refresh"
                                             icon="fa-refresh" class="btn btn-secondary"/>
-                                    <!-- Stop: only when a session is live -->
+                                    <!-- Stop: pauses only; the device stays linked -->
                                     <button name="action_waha_stop_session" type="object" string="Stop"
                                             icon="fa-stop" class="btn btn-secondary"
                                             invisible="waha_status not in ('working', 'starting', 'scan_qr_code')"/>
+                                    <!-- Unlink: destructive, hence the confirmation -->
+                                    <button name="action_waha_logout_session" type="object" string="Unlink"
+                                            icon="fa-chain-broken" class="btn btn-secondary"
+                                            groups="whatsapp.group_whatsapp_admin"
+                                            confirm="This removes the device from WhatsApp on the phone. Reconnecting will require scanning a new QR code. Continue?"/>
                                 </div>
                             </setting>
                             <setting string="QR Code" invisible="not waha_qr_valid"

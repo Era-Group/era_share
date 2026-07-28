@@ -547,9 +547,12 @@ class WhatsappAccount(models.Model):
         except requests.exceptions.RequestException as err:
             raise UserError(_("Failed to reach WAHA server: %s") % err)
         if resp.status_code == 422:
-            # Session already exists: update its config (webhooks) without restarting.
+            # Session already exists: update its config, then start it explicitly. PUT
+            # only saves the config — without the start call the session stays down
+            # while Odoo reports 'starting', which looks exactly like a hung connection.
             self._waha_request(f'sessions/{self.waha_session}', 'PUT', data={
                 'name': self.waha_session, 'config': config})
+            self._waha_request(f'sessions/{self.waha_session}/start', 'POST')
         elif resp.status_code not in (200, 201):
             raise UserError(_("WAHA start session failed %(code)s: %(body)s") % {
                 'code': resp.status_code, 'body': self._waha_error_body(resp)})
@@ -560,8 +563,21 @@ class WhatsappAccount(models.Model):
         return self.action_waha_get_qr()
 
     def action_waha_stop_session(self):
+        """Pause the session, keeping the WhatsApp device linked.
+
+        This used to call DELETE /api/sessions/{name}, which in WAHA logs the device out
+        and removes both config and stored credentials — pressing Stop unlinked the
+        number and forced a new QR scan. /stop is the non-destructive endpoint.
+        """
         self.ensure_one()
-        self._waha_request(f'sessions/{self.waha_session}', 'DELETE')
+        self._waha_request(f'sessions/{self.waha_session}/stop', 'POST')
+        self._waha_write_status('stopped', source='manual')
+        return self._waha_status_notification()
+
+    def action_waha_logout_session(self):
+        """Unlink the number from WhatsApp. Reconnecting then needs a fresh QR scan."""
+        self.ensure_one()
+        self._waha_request(f'sessions/{self.waha_session}/logout', 'POST')
         self._waha_write_status('stopped', source='manual')
         self._waha_update({'waha_qr_image': False, 'waha_qr_fetched': False})
         return self._waha_status_notification()

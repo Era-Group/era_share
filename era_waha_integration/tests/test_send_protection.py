@@ -195,6 +195,33 @@ class TestWahaSendProtection(TransactionCase):
         self.assertTrue(request.called)
         self.assertTrue(self.account.waha_qr_fetched)
 
+    # -- session lifecycle -------------------------------------------------
+
+    def test_stop_pauses_without_unlinking_the_device(self):
+        """DELETE /api/sessions/{name} logs the device out and wipes credentials, so
+        Stop must never use it — that turned a pause into a forced re-pairing."""
+        with patch.object(type(self.account), '_waha_request', return_value={}) as request:
+            self.account.action_waha_stop_session()
+        endpoint, method = request.call_args[0][0], request.call_args[0][1]
+        self.assertEqual(endpoint, 'sessions/protection-test/stop')
+        self.assertEqual(method, 'POST')
+
+    def test_unlink_uses_the_logout_endpoint(self):
+        with patch.object(type(self.account), '_waha_request', return_value={}) as request:
+            self.account.action_waha_logout_session()
+        self.assertEqual(request.call_args[0][0], 'sessions/protection-test/logout')
+
+    def test_starting_an_existing_session_actually_starts_it(self):
+        """A 422 means the session exists; updating its config alone leaves it down."""
+        response = type('R', (), {'status_code': 422})()
+        with patch.object(type(self.account), '_waha_http', return_value=response), \
+             patch.object(type(self.account), '_waha_request', return_value={}) as request, \
+             patch.object(type(self.account), 'action_waha_get_qr', return_value=None):
+            self.account.action_waha_start_session()
+        called = [call[0][0] for call in request.call_args_list]
+        self.assertIn('sessions/protection-test', called)
+        self.assertIn('sessions/protection-test/start', called)
+
     # -- session config pushed to WAHA -------------------------------------
 
     def test_engine_config_defaults_to_the_quiet_options(self):

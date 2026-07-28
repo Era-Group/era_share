@@ -1,4 +1,5 @@
 phonenumbers
+Babel
 markdown2==2.5.4
 pdfminer.six==20211012
 rlPyCairo

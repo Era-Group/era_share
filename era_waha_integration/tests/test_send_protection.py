@@ -155,6 +155,27 @@ class TestWahaSendProtection(TransactionCase):
         self.assertEqual(event.status, 'working')
         self.assertEqual(event.source, 'webhook')
 
+    # -- session config pushed to WAHA -------------------------------------
+
+    def test_engine_config_defaults_to_the_quiet_options(self):
+        config = self.account._waha_webhook_config()['noweb']
+        self.assertFalse(config['markOnline'])
+        self.assertFalse(config['store']['fullSync'])
+        self.assertTrue(config['store']['enabled'])
+
+    def test_engine_config_follows_the_account_fields(self):
+        self.account.write({'waha_mark_online': True, 'waha_noweb_full_sync': True})
+        config = self.account._waha_webhook_config()['noweb']
+        self.assertTrue(config['markOnline'])
+        self.assertTrue(config['store']['fullSync'])
+
+    def test_webhook_secret_is_pushed_to_waha_once_generated(self):
+        self.assertNotIn('hmac', self.account._waha_webhook_config()['webhooks'][0])
+        self.account.action_waha_generate_webhook_secret()
+        self.assertTrue(self.account.waha_webhook_secret)
+        webhook = self.account._waha_webhook_config()['webhooks'][0]
+        self.assertEqual(webhook['hmac']['key'], self.account.waha_webhook_secret)
+
     # -- sending window ----------------------------------------------------
 
     def test_window_holds_cold_outreach_but_never_replies(self):

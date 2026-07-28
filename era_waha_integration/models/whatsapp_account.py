@@ -3,6 +3,7 @@ import base64
 import logging
 import mimetypes
 import re
+import secrets
 import time
 from datetime import datetime, timedelta, timezone
 
@@ -84,6 +85,19 @@ class WhatsappAccount(models.Model):
         string='Webhook HMAC Secret', groups='whatsapp.group_whatsapp_admin',
         help="Optional shared secret. When set, WAHA signs webhooks with this key "
              "(X-Webhook-Hmac, sha512) and the controller verifies the signature.")
+    # NOWEB engine options. Odoo owns these: `action_waha_start_session` pushes the whole
+    # config to WAHA, so anything set only in the WAHA dashboard is overwritten on the
+    # next start. Keeping them here makes Odoo the single source of truth.
+    waha_mark_online = fields.Boolean(
+        string='Stay online on WhatsApp', default=False,
+        help="When on, the session reports itself permanently online. That is both a bot "
+             "fingerprint (real phones go idle) and the reason push notifications stop "
+             "reaching the phone, since WhatsApp considers this device active.")
+    waha_noweb_full_sync = fields.Boolean(
+        string='Full history sync on link', default=False,
+        help="When on, linking downloads the ENTIRE account history. A real phone does "
+             "not request that repeatedly, and it makes each re-link far heavier. The "
+             "per-channel backfill already imports what operators need.")
     waha_max_media_mb = fields.Integer(
         string='Max attachment (MB)', default=16,
         help="Reject outbound attachments whose file size exceeds this, with a clear error, "
@@ -508,12 +522,20 @@ class WhatsappAccount(models.Model):
             webhook['hmac'] = {'key': self.waha_webhook_secret}
         return {
             # `fullSync` (camelCase) is the key WAHA actually reads — the snake_case
-            # spelling was silently ignored. Kept False on purpose: a full history sync
-            # on every link is an anomaly a real phone never produces, and the per-channel
-            # backfill below already fetches everything the operators need.
-            'noweb': {'store': {'enabled': True, 'fullSync': False}},
+            # spelling this module used before was silently ignored.
+            'noweb': {
+                'markOnline': self.waha_mark_online,
+                'store': {'enabled': True, 'fullSync': self.waha_noweb_full_sync},
+            },
             'webhooks': [webhook],
         }
+
+    def action_waha_generate_webhook_secret(self):
+        """Create a webhook signing secret. Without one the public webhook route accepts
+        any POST, so anyone who learns the URL can inject forged inbound messages."""
+        for account in self:
+            account.waha_webhook_secret = secrets.token_urlsafe(32)
+        return True
 
     def action_waha_start_session(self):
         self.ensure_one()

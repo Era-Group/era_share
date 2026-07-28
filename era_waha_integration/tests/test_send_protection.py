@@ -169,6 +169,32 @@ class TestWahaSendProtection(TransactionCase):
         self.env['whatsapp.account'].get_views(
             [(self.env.ref('era_waha_integration.whatsapp_account_view_form_waha').id, 'form')])
 
+    # -- QR retrieval ------------------------------------------------------
+
+    def test_qr_endpoint_matches_the_engine(self):
+        """/api/screenshot photographs a browser, so it never yields a QR on NOWEB."""
+        self.account.waha_engine = 'NOWEB'
+        endpoint, params = self.account._waha_qr_request()
+        self.assertEqual(endpoint, 'protection-test/auth/qr')
+        self.assertEqual(params['format'], 'image')
+        self.account.waha_engine = 'WEBJS'
+        self.assertEqual(self.account._waha_qr_request()[0], 'screenshot')
+
+    def test_qr_button_explains_itself_when_there_is_nothing_to_scan(self):
+        with patch.object(type(self.account), '_waha_request',
+                          side_effect=UserError('Session status is not as expected')):
+            with self.assertRaises(UserError):
+                self.account.action_waha_show_qr()
+            # The webhook-driven path must stay quiet — it fires on every status event.
+            self.assertIsNone(self.account.action_waha_get_qr())
+
+    def test_scan_qr_code_status_fetches_a_fresh_code(self):
+        with patch.object(type(self.account), '_waha_request',
+                          return_value=b'PNGDATA') as request:
+            self.account._waha_apply_status('scan_qr_code', {}, source='webhook')
+        self.assertTrue(request.called)
+        self.assertTrue(self.account.waha_qr_fetched)
+
     # -- session config pushed to WAHA -------------------------------------
 
     def test_engine_config_defaults_to_the_quiet_options(self):

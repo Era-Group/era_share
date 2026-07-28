@@ -133,7 +133,7 @@
                                             icon="fa-play" class="btn btn-primary"
                                             invisible="waha_status in ('working', 'starting', 'scan_qr_code')"/>
                                     <!-- Get QR: only while the session is waiting to be linked by scanning -->
-                                    <button name="action_waha_get_qr" type="object" string="Get QR"
+                                    <button name="action_waha_show_qr" type="object" string="Get QR"
                                             icon="fa-qrcode" class="btn btn-primary"
                                             invisible="waha_status not in ('starting', 'scan_qr_code')"/>
                                     <!-- Refresh: always useful -->

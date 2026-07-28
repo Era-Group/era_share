@@ -566,22 +566,48 @@ class WhatsappAccount(models.Model):
         self._waha_update({'waha_qr_image': False, 'waha_qr_fetched': False})
         return self._waha_status_notification()
 
-    def action_waha_get_qr(self):
+    def _waha_qr_request(self):
+        """Endpoint + params that return the pairing QR for this engine.
+
+        /api/screenshot photographs a browser page, so it exists only for WEBJS; on
+        NOWEB and GOWS it can never return a QR no matter the session state.
+        """
         self.ensure_one()
+        if self.waha_engine == 'WEBJS':
+            return 'screenshot', {'session': self.waha_session}
+        return f'{self.waha_session}/auth/qr', {'format': 'image'}
+
+    def action_waha_get_qr(self, silent=True):
+        self.ensure_one()
+        endpoint, params = self._waha_qr_request()
         try:
-            screenshot = self._waha_request('screenshot', 'GET', params={'session': self.waha_session})
-            if isinstance(screenshot, bytes):
-                encoded = base64.b64encode(screenshot)
-                # Always stamp the fetch time so freshness is tracked even when the image
-                # bytes are identical to the previous poll.
-                self._waha_update({'waha_qr_image': encoded, 'waha_qr_fetched': fields.Datetime.now()})
-        except UserError:
-            # QR unavailable (probably already authenticated)
-            pass
+            image = self._waha_request(endpoint, 'GET', params=params)
+        except UserError as err:
+            # WAHA answers 422 with the expected status when there is nothing to scan,
+            # which is the normal case for a session that is already linked or not
+            # started. Staying silent here is what made the button look broken.
+            _logger.info("WAHA QR unavailable for %s: %s", self.waha_session, err)
+            if silent:
+                return None
+            raise UserError(_(
+                "No QR code to show right now. WhatsApp only issues one while the session "
+                "is waiting to be scanned — press Start first, and if the session is "
+                "still linked it will simply reconnect without a QR.\n\n%s", err)) from None
+        if isinstance(image, bytes) and image:
+            # Always stamp the fetch time so freshness is tracked even when the image
+            # bytes are identical to the previous poll.
+            self._waha_update({'waha_qr_image': base64.b64encode(image),
+                               'waha_qr_fetched': fields.Datetime.now()})
         # NOTE: we deliberately do NOT refresh status here. Writing waha_status on every
         # QR poll races with the concurrent session.status webhook writer on the same row
         # and produces "could not serialize access due to concurrent update" errors.
         # Status arrives via the webhook and the periodic/manual refresh instead.
+        return None
+
+    def action_waha_show_qr(self):
+        """Button entry point: surface why there is no code instead of doing nothing."""
+        self.ensure_one()
+        self.action_waha_get_qr(silent=False)
         return None
 
     def _waha_probe_status(self):
@@ -701,6 +727,11 @@ class WhatsappAccount(models.Model):
         self.ensure_one()
         was_working = self.waha_status == 'working'
         self._waha_write_status(status, me, source=source)
+        if (status or '').lower() == 'scan_qr_code':
+            # WhatsApp rotates the pairing code every few seconds and WAHA emits
+            # scan_qr_code again each time. Fetching on the event is the only way the
+            # form can show a code that is still scannable.
+            self.action_waha_get_qr()
         if not was_working and (status or '').lower() == 'working' and self.waha_reconcile_on_reconnect:
             # Debounce: while a session flaps it reaches 'working' repeatedly, and each
             # reconcile is a bulk chat-overview fetch. Re-running it every few seconds

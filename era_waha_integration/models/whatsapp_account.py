@@ -13,6 +13,7 @@ import requests
 from markupsafe import Markup, escape
 
 from odoo import _, api, fields, models, SUPERUSER_ID
+from odoo.addons.base.models.res_partner import _tz_get
 from odoo.addons.era_waha_integration.models.waha_exceptions import (
     WahaNewNumberLimit, WahaSendLimit)
 from odoo.addons.mail.tools.discuss import Store
@@ -165,7 +166,7 @@ class WhatsappAccount(models.Model):
     waha_send_window_start = fields.Float(string='Window start', default=8.0)
     waha_send_window_end = fields.Float(string='Window end', default=21.0)
     waha_tz = fields.Selection(
-        '_tz_get', string='Window timezone', default='Asia/Riyadh',
+        _tz_get, string='Window timezone', default='Asia/Riyadh',
         help="Timezone the sending window is expressed in.")
     waha_hold_max_hours = fields.Integer(
         string='Max hold (hours)', default=24,

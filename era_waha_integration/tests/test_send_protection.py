@@ -155,6 +155,20 @@ class TestWahaSendProtection(TransactionCase):
         self.assertEqual(event.status, 'working')
         self.assertEqual(event.source, 'webhook')
 
+    # -- form rendering ----------------------------------------------------
+
+    def test_account_form_and_field_descriptions_load(self):
+        """Installing the module is not enough to prove the form opens.
+
+        A Selection whose source is passed by name has to resolve to an attribute on the
+        model; getting that wrong raises only when fields_get runs, i.e. the first time
+        somebody opens the account — never during install or the other tests here.
+        """
+        descriptions = self.env['whatsapp.account'].fields_get()
+        self.assertTrue(descriptions['waha_tz']['selection'])
+        self.env['whatsapp.account'].get_views(
+            [(self.env.ref('era_waha_integration.whatsapp_account_view_form_waha').id, 'form')])
+
     # -- session config pushed to WAHA -------------------------------------
 
     def test_engine_config_defaults_to_the_quiet_options(self):

@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_whatsapp_waha_group_admin,whatsapp.waha.group admin,model_whatsapp_waha_group,whatsapp.group_whatsapp_admin,1,1,1,1
+access_whatsapp_waha_session_event_user,whatsapp.waha.session.event user,model_whatsapp_waha_session_event,base.group_user,1,0,0,0
+access_whatsapp_waha_session_event_admin,whatsapp.waha.session.event admin,model_whatsapp_waha_session_event,whatsapp.group_whatsapp_admin,1,1,1,1

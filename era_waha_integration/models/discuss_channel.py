@@ -155,8 +155,12 @@ class DiscussChannel(models.Model):
             if author_pid and author_pid != user.partner_id.id:
                 user = self.env['res.users'].sudo().search(
                     [('partner_id', '=', author_pid)], limit=1) or user
+            # check_new=True: a first contact typed straight into Discuss is exactly the
+            # cold outreach the daily cap exists to bound. Exempting this path left the
+            # cap enforceable only from the composers, which is not where most sends
+            # actually originate.
             self.wa_account_id._waha_check_send_allowed(
-                self.whatsapp_number, user, channel=self, check_new=False)
+                self.whatsapp_number, user, channel=self, check_new=True)
         message = super().message_post(*args, **kwargs)
         if is_outbound:
             self._waha_resolve_pending_replies(message)

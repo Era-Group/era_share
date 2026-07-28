@@ -50,6 +50,9 @@ WAHA_RECONCILE_MAX_CHATS = 300
 # one): a message missed during an outage often sits BELOW a later reply, so a
 # last-message-only check would skip the chat and leave the gap.
 WAHA_RECONCILE_TAIL = 20
+# A flapping session reaches 'working' over and over; don't re-run the bulk reconcile
+# more often than this.
+WAHA_RECONCILE_DEBOUNCE_MINUTES = 10
 
 
 class WhatsappAccount(models.Model):
@@ -108,6 +111,11 @@ class WhatsappAccount(models.Model):
         string='New numbers / user / day', default=5,
         help="Max brand-new numbers each user may first-contact per day on this "
              "(unofficial) account. Beyond it, they are redirected to official WhatsApp. 0 = no limit.")
+    waha_new_number_account_daily_limit = fields.Integer(
+        string='New numbers / day (account)', default=8,
+        help="Max brand-new numbers first-contacted per day across ALL users of this "
+             "account. A per-user cap alone does not bound the number's exposure when "
+             "several agents share one session. 0 = no limit.")
     waha_cold_resend_hours = fields.Integer(
         string='Cold re-send lock (hours)', default=24,
         help="A contact that never replied can only be messaged once per this many hours.")
@@ -122,6 +130,51 @@ class WhatsappAccount(models.Model):
     waha_balance_ratio_step = fields.Float(
         string='Ratio step / week', default=0.5,
         help="Weekly automatic increase of the send/receive ratio as the account ages.")
+
+    waha_require_mobile = fields.Boolean(
+        string='Mobile numbers only', default=True,
+        help="Refuse to send to numbers that are provably not mobile lines (landlines). "
+             "They can never receive WhatsApp, so every such attempt is a wasted send that "
+             "looks like automation. Numbers that cannot be classified are still allowed.")
+    waha_check_number_exists = fields.Boolean(
+        string='Verify new numbers on WhatsApp', default=True,
+        help="Before the FIRST message to a brand-new number, ask WAHA whether it is "
+             "registered on WhatsApp. Only a definitive 'not registered' blocks the send; "
+             "any API problem lets it through.")
+
+    # ---- Sending window (cold outreach only) ----
+    waha_send_window_active = fields.Boolean(
+        string='Restrict cold outreach hours', default=True,
+        help="Outside the window below, first contacts and other cold outreach are HELD "
+             "(not lost) until it reopens. Replies inside an ongoing conversation are "
+             "always allowed, at any hour.")
+    waha_send_window_start = fields.Float(string='Window start', default=8.0)
+    waha_send_window_end = fields.Float(string='Window end', default=21.0)
+    waha_tz = fields.Selection(
+        '_tz_get', string='Window timezone', default='Asia/Riyadh',
+        help="Timezone the sending window is expressed in.")
+    waha_hold_max_hours = fields.Integer(
+        string='Max hold (hours)', default=24,
+        help="A message held by the circuit breaker or the sending window fails with a "
+             "clear reason once it has waited this long, so nothing rots silently in the "
+             "queue. 0 = hold indefinitely.")
+
+    # ---- Circuit breaker (session flapping) ----
+    waha_flap_threshold = fields.Integer(
+        string='Flap threshold', default=6,
+        help="Status changes within the window below that trip the breaker and pause "
+             "outbound sending. Repeatedly re-registering a companion device is one of the "
+             "patterns WhatsApp treats as an unstable unofficial client. 0 = disabled.")
+    waha_flap_window_minutes = fields.Integer(string='Flap window (minutes)', default=60)
+    waha_flap_pause_minutes = fields.Integer(
+        string='Cooldown (minutes)', default=120,
+        help="How long outbound sending stays paused after the breaker trips.")
+    waha_paused_until = fields.Datetime(string='Sending paused until', readonly=True, copy=False)
+    waha_pause_reason = fields.Char(string='Pause reason', readonly=True, copy=False)
+    waha_is_paused = fields.Boolean(compute='_compute_waha_is_paused')
+    waha_session_event_ids = fields.One2many(
+        'whatsapp.waha.session.event', 'account_id', string='Session Log', readonly=True)
+    waha_last_reconcile = fields.Datetime(string='Last reconcile', readonly=True, copy=False)
 
     # ---- Account health monitoring ----
     waha_flap_count = fields.Integer(string='Status flaps (today)', default=0, copy=False)
@@ -226,7 +279,7 @@ class WhatsappAccount(models.Model):
             ]).unlink()
         self._waha_keep_channel_members_pinned()
 
-    def _waha_keep_channel_members_pinned(self):
+    def _waha_keep_channel_members_pinned(self, broadcast=True):
         """WAHA is a shared inbox: retain internal conversation history in Discuss."""
         self.ensure_one()
         members = self.env['discuss.channel.member'].sudo().search([
@@ -234,6 +287,11 @@ class WhatsappAccount(models.Model):
             ('partner_id.user_ids.share', '=', False),
         ])
         members.filtered('unpin_dt').write({'unpin_dt': False})
+        if not broadcast:
+            # Migration context: the registry is only partially loaded, so
+            # evaluating per-user access rules (done by _broadcast) can hit
+            # fields of modules not loaded yet. Browsers reload anyway.
+            return
         # Re-send the channel header to each member. Without this, an already-open
         # browser keeps its old unpinned sidebar cache until a full reload.
         for member in members:
@@ -449,7 +507,11 @@ class WhatsappAccount(models.Model):
         if self.waha_webhook_secret:
             webhook['hmac'] = {'key': self.waha_webhook_secret}
         return {
-            'noweb': {'store': {'enabled': True, 'full_sync': True}},
+            # `fullSync` (camelCase) is the key WAHA actually reads — the snake_case
+            # spelling was silently ignored. Kept False on purpose: a full history sync
+            # on every link is an anomaly a real phone never produces, and the per-channel
+            # backfill below already fetches everything the operators need.
+            'noweb': {'store': {'enabled': True, 'fullSync': False}},
             'webhooks': [webhook],
         }
 
@@ -468,13 +530,16 @@ class WhatsappAccount(models.Model):
         elif resp.status_code not in (200, 201):
             raise UserError(_("WAHA start session failed %(code)s: %(body)s") % {
                 'code': resp.status_code, 'body': self._waha_error_body(resp)})
-        self._waha_write_status('starting')
+        self._waha_write_status('starting', source='manual')
+        # A deliberate restart is the operator taking control; drop any breaker pause so
+        # the queue is not still held after they fixed the session.
+        self.action_waha_resume_sending()
         return self.action_waha_get_qr()
 
     def action_waha_stop_session(self):
         self.ensure_one()
         self._waha_request(f'sessions/{self.waha_session}', 'DELETE')
-        self._waha_write_status('stopped')
+        self._waha_write_status('stopped', source='manual')
         self._waha_update({'waha_qr_image': False, 'waha_qr_fetched': False})
         return self._waha_status_notification()
 
@@ -515,7 +580,9 @@ class WhatsappAccount(models.Model):
             data = self._waha_request(f'sessions/{self.waha_session}')
         except UserError as err:
             _logger.warning("WAHA status probe failed for %s: %s", self.waha_session, err)
-            self._waha_write_status('failed')
+            # Note why: an unreachable WAHA server and a session WhatsApp actually
+            # dropped both land here, and only the log tells the two apart afterwards.
+            self._waha_write_status('failed', note=_("Status probe could not reach WAHA"))
             return None
         if isinstance(data, dict):
             self._waha_apply_status(data.get('status'), data.get('me') or {})
@@ -536,7 +603,7 @@ class WhatsappAccount(models.Model):
             return self._waha_status_notification(status=live)
         return super().button_test_connection()
 
-    def _waha_update(self, vals):
+    def _waha_update(self, vals, event_vals=None):
         """Write volatile session fields (waha_status/phone_number/waha_qr_image) in a
         short *autonomous* transaction, swallowing concurrent-update failures.
 
@@ -549,19 +616,27 @@ class WhatsappAccount(models.Model):
         itself from ever failing; a lost write is corrected by the next event/refresh.
         """
         self.ensure_one()
-        if not vals:
+        if not vals and not event_vals:
             return False
         try:
             with Registry(self.env.cr.dbname).cursor() as cr:
-                api.Environment(cr, SUPERUSER_ID, {})['whatsapp.account'].browse(self.id).write(vals)
+                env = api.Environment(cr, SUPERUSER_ID, {})
+                if vals:
+                    env['whatsapp.account'].browse(self.id).write(vals)
+                if event_vals:
+                    # Logged in the SAME autonomous transaction as the status write, so the
+                    # log can never disagree with the status it describes.
+                    env['whatsapp.waha.session.event'].create(
+                        dict(event_vals, account_id=self.id))
                 cr.commit()
         except psycopg2.Error as err:
             _logger.debug("WAHA volatile write skipped for account %s: %s", self.id, err)
             return False
-        self.invalidate_recordset(list(vals))
+        if vals:
+            self.invalidate_recordset(list(vals))
         return True
 
-    def _waha_write_status(self, status, me=None):
+    def _waha_write_status(self, status, me=None, source='probe', note=None):
         """Change-guarded, out-of-band write of the session status (+ phone)."""
         self.ensure_one()
         status = (status or '').lower()
@@ -569,9 +644,17 @@ class WhatsappAccount(models.Model):
         if status not in WAHA_KNOWN_STATUSES:
             return False
         vals = {}
-        if status != self.waha_status:
+        event_vals = None
+        changed = status != self.waha_status
+        if changed:
             vals['waha_status'] = status
             vals['waha_flap_count'] = (self.waha_flap_count or 0) + 1  # health: status volatility
+            event_vals = {
+                'status': status,
+                'previous_status': self.waha_status or False,
+                'source': source,
+                'note': note or False,
+            }
         if status == 'working' and not self.waha_working_since:
             vals['waha_working_since'] = fields.Datetime.now()
         # Once the session leaves the scan state (linked, stopped or failed) any stored QR
@@ -584,13 +667,26 @@ class WhatsappAccount(models.Model):
             new_phone = re.sub(r'\D', '', me['id'].split('@')[0])
             if new_phone and new_phone != self.phone_number:
                 vals['phone_number'] = new_phone
-        return self._waha_update(vals)
+        written = self._waha_update(vals, event_vals=event_vals)
+        if changed:
+            # Evaluate the breaker AFTER the transition is durable, so the freshly
+            # logged event is part of the count.
+            self._waha_check_flapping()
+        return written
 
-    def _waha_apply_status(self, status, me):
+    def _waha_apply_status(self, status, me, source='probe'):
         self.ensure_one()
         was_working = self.waha_status == 'working'
-        self._waha_write_status(status, me)
+        self._waha_write_status(status, me, source=source)
         if not was_working and (status or '').lower() == 'working' and self.waha_reconcile_on_reconnect:
+            # Debounce: while a session flaps it reaches 'working' repeatedly, and each
+            # reconcile is a bulk chat-overview fetch. Re-running it every few seconds
+            # adds load without finding anything new.
+            last = self.waha_last_reconcile
+            if last and (fields.Datetime.now() - last) < timedelta(
+                    minutes=WAHA_RECONCILE_DEBOUNCE_MINUTES):
+                return
+            self._waha_update({'waha_last_reconcile': fields.Datetime.now()})
             # Defer the (heavy) history reconcile to its own transaction so it neither
             # lengthens this request nor adds to row contention.
             self.env.ref('era_waha_integration.ir_cron_waha_reconcile')._trigger()
@@ -1034,7 +1130,7 @@ class WhatsappAccount(models.Model):
 
     def _waha_process_session_status(self, payload):
         self.ensure_one()
-        self._waha_apply_status(payload.get('status'), payload.get('me') or {})
+        self._waha_apply_status(payload.get('status'), payload.get('me') or {}, source='webhook')
 
     # ------------------------------------------------------------------
     # History import (backfill)
@@ -1220,6 +1316,182 @@ class WhatsappAccount(models.Model):
                 _logger.exception("WAHA: reconcile failed for account %s", account.id)
 
     # ------------------------------------------------------------------
+    # Circuit breaker — pause sending while the session is unstable
+    # ------------------------------------------------------------------
+    @api.depends('waha_paused_until')
+    def _compute_waha_is_paused(self):
+        now = fields.Datetime.now()
+        for account in self:
+            account.waha_is_paused = bool(account.waha_paused_until and account.waha_paused_until > now)
+
+    def _waha_recent_flap_count(self):
+        """Status transitions logged within the configured flap window."""
+        self.ensure_one()
+        window = self.waha_flap_window_minutes or 60
+        since = fields.Datetime.now() - timedelta(minutes=window)
+        return self.env['whatsapp.waha.session.event'].sudo().search_count([
+            ('account_id', '=', self.id), ('create_date', '>=', since)])
+
+    def _waha_check_flapping(self):
+        """Trip the breaker when the session cycles too often in a short window.
+
+        A reconnect loop makes every send fail anyway, and each re-registration adds to
+        the very signal that gets an unofficial client logged out — so pausing is both
+        safer and cheaper than letting the queue hammer a dying session.
+        """
+        self.ensure_one()
+        threshold = self.waha_flap_threshold or 0
+        if not threshold or self.provider != 'waha':
+            return False
+        now = fields.Datetime.now()
+        if self.waha_paused_until and self.waha_paused_until > now:
+            return False  # already paused; let the current cooldown run its course
+        flaps = self._waha_recent_flap_count()
+        if flaps < threshold:
+            return False
+        window = self.waha_flap_window_minutes or 60
+        reason = _(
+            "Session changed status %(flaps)s times in %(window)s minutes — outbound "
+            "sending paused to protect the number.", flaps=flaps, window=window)
+        until = now + timedelta(minutes=self.waha_flap_pause_minutes or 120)
+        self._waha_update({'waha_paused_until': until, 'waha_pause_reason': reason})
+        try:
+            self._waha_pause_alert(reason, until)
+        except Exception:
+            _logger.exception("WAHA pause alert failed for account %s", self.id)
+        _logger.warning("WAHA: sending paused for account %s until %s (%s flaps/%smin)",
+                        self.id, until, flaps, window)
+        return True
+
+    def _waha_pause_alert(self, reason, until):
+        """Tell the administrator immediately — the 30-minute health cron is too slow
+        to be useful while a session is actively flapping."""
+        self.ensure_one()
+        admin = self.env.ref('base.user_admin').sudo()
+        if not admin.active or admin.share:
+            return
+        body = Markup(
+            "<p>⛔ <b>WhatsApp (WAHA) “%(name)s” — outbound sending paused</b></p>"
+            "<ul><li>%(reason)s</li>"
+            "<li>Session status: %(status)s</li>"
+            "<li>Resumes automatically at %(until)s UTC</li></ul>"
+            "<p>Queued messages are held, not lost. Check the WAHA server before resuming "
+            "manually.</p>"
+        ) % {
+            'name': self.name or self.waha_session or 'WAHA',
+            'reason': reason, 'status': self.waha_status or 'unknown', 'until': until,
+        }
+        odoobot_id = self.env['ir.model.data']._xmlid_to_res_id('base.partner_root')
+        channel = self.env['discuss.channel'].sudo()._get_or_create_chat(
+            [odoobot_id, admin.partner_id.id])
+        channel.message_post(author_id=odoobot_id, body=body, message_type='comment',
+                             subtype_xmlid='mail.mt_comment')
+
+    def action_waha_resume_sending(self):
+        """Manual override: clear the pause and let the queue flow again."""
+        for account in self:
+            account._waha_update({'waha_paused_until': False, 'waha_pause_reason': False})
+        return True
+
+    # ------------------------------------------------------------------
+    # Sending window / hold decisions
+    # ------------------------------------------------------------------
+    def _waha_now_local(self):
+        """Current time in the account's configured window timezone."""
+        self.ensure_one()
+        tz_name = self.waha_tz or self.env.company.partner_id.tz or 'Asia/Riyadh'
+        try:
+            tz = pytz.timezone(tz_name)
+        except pytz.UnknownTimeZoneError:
+            tz = pytz.timezone('Asia/Riyadh')
+        return pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
+
+    def _waha_in_send_window(self):
+        """True when cold outreach is allowed right now."""
+        self.ensure_one()
+        if not self.waha_send_window_active:
+            return True
+        start = self.waha_send_window_start or 0.0
+        end = self.waha_send_window_end or 0.0
+        if start == end:
+            return True
+        now_local = self._waha_now_local()
+        hour = now_local.hour + now_local.minute / 60.0
+        if start < end:
+            return start <= hour < end
+        # Window wrapping past midnight (e.g. 20:00 -> 06:00).
+        return hour >= start or hour < end
+
+    def _waha_hold_reason(self, is_cold=False):
+        """Why an outbound message must WAIT (not fail) right now, or None.
+
+        Holding differs from the anti-ban limits below: a limit is a deliberate policy
+        block that redirects the user to official WhatsApp, whereas a hold is temporary
+        and the message goes out by itself once the condition clears.
+        """
+        self.ensure_one()
+        if self.provider != 'waha':
+            return None
+        now = fields.Datetime.now()
+        if self.waha_paused_until and self.waha_paused_until > now:
+            return self.waha_pause_reason or _("Outbound sending is paused while the "
+                                               "WhatsApp session stabilises.")
+        if is_cold and not self._waha_in_send_window():
+            return _("Outside the allowed hours for contacting new numbers "
+                     "(%(start)s:00–%(end)s:00 %(tz)s).",
+                     start=int(self.waha_send_window_start or 0),
+                     end=int(self.waha_send_window_end or 0),
+                     tz=self.waha_tz or 'Asia/Riyadh')
+        return None
+
+    # ------------------------------------------------------------------
+    # Recipient validity
+    # ------------------------------------------------------------------
+    def _waha_number_is_mobile(self, formatted):
+        """False ONLY when the number is provably not a mobile line.
+
+        Landlines cannot receive WhatsApp, so messages to them sit at one tick forever —
+        a pattern that reads as automated dialling rather than a human picking contacts.
+        Anything unparseable stays allowed: a false block is worse than a wasted send.
+        """
+        self.ensure_one()
+        if not self.waha_require_mobile or not formatted:
+            return True
+        try:
+            import phonenumbers
+            raw = formatted if formatted.startswith('+') else '+' + re.sub(r'\D', '', formatted)
+            parsed = phonenumbers.parse(raw, None)
+            if not phonenumbers.is_valid_number(parsed):
+                return True  # unknown shape — not proof of a landline
+            return phonenumbers.number_type(parsed) in (
+                phonenumbers.PhoneNumberType.MOBILE,
+                phonenumbers.PhoneNumberType.FIXED_LINE_OR_MOBILE,
+            )
+        except Exception:
+            return True
+
+    def _waha_number_exists_on_whatsapp(self, formatted):
+        """Ask WAHA whether a number is registered. True unless it says otherwise.
+
+        Used once per brand-new contact only — never per send — so it adds no repeated
+        lookup traffic to the account.
+        """
+        self.ensure_one()
+        if not self.waha_check_number_exists or not formatted or not self.waha_session:
+            return True
+        digits = re.sub(r'\D', '', formatted)
+        if not digits:
+            return True
+        try:
+            data = self._waha_request('contacts/check-exists', params={
+                'phone': digits, 'session': self.waha_session}, timeout=10)
+        except Exception:
+            return True  # fail open: the session may be down, or the endpoint unsupported
+        if isinstance(data, dict) and data.get('numberExists') is False:
+            return False
+        return True
+
+    # ------------------------------------------------------------------
     # Account protection (anti-ban send guards)
     # ------------------------------------------------------------------
     def _waha_day_start_utc(self, user):
@@ -1237,25 +1509,47 @@ class WhatsappAccount(models.Model):
             ('message_type', '=', message_type),
         ])
 
-    def _waha_user_new_number_count_today(self, user):
-        """Distinct WAHA numbers this user first-contacted today that have not replied
-        (cold outreach) — the counter for the per-user daily new-number cap."""
+    def _waha_cold_start_count_today(self, user=None):
+        """Cold first contacts made today — by `user`, or account-wide when user is None.
+
+        A cold start is an outbound message to a conversation that had received nothing
+        inbound BEFORE it. Anchoring on that moment matters: counting only conversations
+        that are *still* silent (the previous behaviour) let every contact who happened to
+        reply drop back out of the count, so a user could keep first-contacting strangers
+        all day without the cap ever engaging.
+        """
         self.ensure_one()
+        params = [self.id]
+        author_clause = ''
+        if user is not None:
+            author_clause = 'AND mm.author_id = %s'
+            params.append(user.partner_id.id)
+        params.append(self._waha_day_start_utc(user or self.env.user))
         self.env.cr.execute("""
-            SELECT count(DISTINCT dc.id)
-            FROM discuss_channel dc
-            JOIN mail_message mm ON mm.model = 'discuss.channel' AND mm.res_id = dc.id
-            JOIN whatsapp_message wm ON wm.mail_message_id = mm.id AND wm.message_type = 'outbound'
-            WHERE dc.wa_account_id = %s
-              AND mm.author_id = %s
-              AND mm.create_date >= %s
-              AND NOT EXISTS (
-                  SELECT 1 FROM mail_message mi
-                  JOIN whatsapp_message wi ON wi.mail_message_id = mi.id AND wi.message_type = 'inbound'
-                  WHERE mi.model = 'discuss.channel' AND mi.res_id = dc.id
-              )
-        """, (self.id, user.partner_id.id, self._waha_day_start_utc(user)))
+            SELECT count(*) FROM (
+                SELECT dc.id AS channel_id, MIN(mm.create_date) AS first_out
+                FROM discuss_channel dc
+                JOIN mail_message mm ON mm.model = 'discuss.channel' AND mm.res_id = dc.id
+                JOIN whatsapp_message wm ON wm.mail_message_id = mm.id
+                                        AND wm.message_type = 'outbound'
+                WHERE dc.wa_account_id = %s
+                  {author_clause}
+                  AND mm.create_date >= %s
+                GROUP BY dc.id
+            ) t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM mail_message mi
+                JOIN whatsapp_message wi ON wi.mail_message_id = mi.id
+                                        AND wi.message_type = 'inbound'
+                WHERE mi.model = 'discuss.channel' AND mi.res_id = t.channel_id
+                  AND mi.create_date < t.first_out
+            )
+        """.format(author_clause=author_clause), tuple(params))
         return self.env.cr.fetchone()[0]
+
+    def _waha_user_new_number_count_today(self, user):
+        """Cold first contacts made by `user` today (per-user daily new-number cap)."""
+        return self._waha_cold_start_count_today(user=user)
 
     def _waha_effective_ratio(self):
         """Send/receive ratio, aged up from the stored base by account age."""
@@ -1296,6 +1590,16 @@ class WhatsappAccount(models.Model):
         has_inbound = bool(channel) and bool(self._waha_channel_messages(channel, 'inbound'))
         is_new = not channel or not channel.message_ids
 
+        # Rule 0 — recipient must be able to receive WhatsApp at all. Checked before the
+        # pacing rules because a landline or unregistered number is never worth a send.
+        if not self._waha_number_is_mobile(formatted):
+            raise WahaSendLimit(_(
+                "%(number)s is a landline, so it cannot receive WhatsApp. Use a mobile "
+                "number instead.", number=formatted))
+        if is_new and not self._waha_number_exists_on_whatsapp(formatted):
+            raise WahaSendLimit(_(
+                "%(number)s is not registered on WhatsApp.", number=formatted))
+
         # Rule A — a contact that never replied may be messaged only once per window.
         if channel and not has_inbound:
             hours = self.waha_cold_resend_hours or 0
@@ -1307,7 +1611,8 @@ class WhatsappAccount(models.Model):
                         "you can message it again after %(hours)s hours — or send now via the "
                         "official WhatsApp.", hours=hours))
 
-        # Rule B — per-user daily cap on brand-new numbers.
+        # Rule B — daily caps on brand-new numbers, per user and for the account as a
+        # whole (several agents sharing one session otherwise multiply the per-user cap).
         if check_new and is_new:
             limit = self.waha_new_number_daily_limit or 0
             if limit and self._waha_user_new_number_count_today(user) >= limit:
@@ -1315,6 +1620,12 @@ class WhatsappAccount(models.Model):
                     "You've reached today's limit of %(limit)s new WhatsApp numbers on this "
                     "(unofficial) account. Please contact new numbers via the official WhatsApp.",
                     limit=limit))
+            account_limit = self.waha_new_number_account_daily_limit or 0
+            if account_limit and self._waha_cold_start_count_today() >= account_limit:
+                raise WahaNewNumberLimit(_(
+                    "This WhatsApp number has already contacted %(limit)s new numbers today "
+                    "(the safe daily maximum for the whole account). Please contact new "
+                    "numbers via the official WhatsApp.", limit=account_limit))
 
         # Rule C — global conversational balance over the window.
         window = self.waha_balance_window_hours or 24
@@ -1398,6 +1709,10 @@ class WhatsappAccount(models.Model):
         if flap_pen:
             score -= flap_pen
             reasons.append((-flap_pen, _("Session flapped %s time(s) today (connection unstable).", self.waha_flap_count)))
+        if self.waha_paused_until and self.waha_paused_until > fields.Datetime.now():
+            score -= 30
+            reasons.append((-30, _("Outbound sending is paused until %s (circuit breaker).",
+                                   self.waha_paused_until)))
         score = max(0, min(100, score))
         label = 'good' if score >= 80 else ('warning' if score >= 50 else 'critical')
         if not reasons:
@@ -1408,7 +1723,8 @@ class WhatsappAccount(models.Model):
             'reasons': reasons,
         }
 
-    @api.depends('waha_status', 'waha_flap_count', 'waha_health_deliv_warn_pct',
+    @api.depends('waha_status', 'waha_flap_count', 'waha_paused_until',
+                 'waha_health_deliv_warn_pct',
                  'waha_health_deliv_warn_penalty', 'waha_health_deliv_crit_pct',
                  'waha_health_deliv_crit_penalty')
     def _compute_waha_health(self):
@@ -1527,3 +1843,4 @@ class WhatsappAccount(models.Model):
                 aged = account._waha_effective_ratio()
                 if aged > (account.waha_balance_ratio or 0.0):
                     account.waha_balance_ratio = aged
+        self.env['whatsapp.waha.session.event']._gc_session_events()

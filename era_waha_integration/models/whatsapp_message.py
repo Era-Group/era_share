@@ -1,6 +1,7 @@
 # Part of Era Group custom addons.
 import logging
 import re
+from datetime import timedelta
 
 from lxml import html as lxml_html
 
@@ -107,12 +108,44 @@ class WhatsappMessage(models.Model):
         for message in waha:
             message._waha_send_one(with_commit=with_commit)
 
+    def _waha_is_cold_outreach(self):
+        """True when this message goes to a conversation that never answered us.
+
+        Replies inside a live conversation are the safe kind of traffic and stay allowed
+        around the clock; only outreach to silent contacts is worth restricting to
+        business hours.
+        """
+        self.ensure_one()
+        message = self.mail_message_id
+        if not message or message.model != 'discuss.channel' or not message.res_id:
+            return True
+        return not self.env['whatsapp.message'].sudo().search_count([
+            ('mail_message_id.model', '=', 'discuss.channel'),
+            ('mail_message_id.res_id', '=', message.res_id),
+            ('message_type', '=', 'inbound'),
+        ])
+
     def _waha_send_one(self, with_commit=False):
         self.ensure_one()
         # We bypass super()'s per-message guards, so re-check them here.
         if self.state != 'outgoing':
             return
         account = self.wa_account_id
+        # Hold guard (circuit breaker / cold-outreach window). A hold is temporary, so the
+        # message stays 'outgoing' and the queue cron delivers it once the condition
+        # clears — deferring rather than failing keeps the conversation intact.
+        hold = account._waha_hold_reason(is_cold=self._waha_is_cold_outreach())
+        if hold:
+            max_hours = account.waha_hold_max_hours or 0
+            waited = fields.Datetime.now() - self.create_date
+            if max_hours and waited > timedelta(hours=max_hours):
+                self._handle_error(
+                    failure_type='network',
+                    error_message=_("Held for over %(hours)sh and never sent: %(reason)s",
+                                    hours=max_hours, reason=hold))
+            else:
+                _logger.info("WAHA: holding message %s — %s", self.id, hold)
+            return
         # Session pre-send guard: sending while the session is not 'working' yields a
         # phantom failure (WAHA 200 with no id, or a 422 "session status not as expected").
         # When the cached status looks non-working, probe WAHA live and branch on the

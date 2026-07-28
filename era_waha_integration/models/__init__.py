@@ -1,5 +1,6 @@
 from . import waha_exceptions
 from . import waha_group
+from . import waha_session_event
 from . import whatsapp_account
 from . import whatsapp_message
 from . import mail_message

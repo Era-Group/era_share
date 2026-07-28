@@ -143,10 +143,65 @@
                             Anti-ban limits. Sends beyond these are blocked with an error and the user is
                             offered the official WhatsApp instead — nothing is recorded as failed in chat.
                         </div>
+                        <field name="waha_is_paused" invisible="1"/>
+                        <div class="alert alert-warning" role="alert" invisible="not waha_is_paused">
+                            <b>Outbound sending is paused.</b>
+                            <field name="waha_pause_reason" readonly="1" nolabel="1" class="d-inline"/>
+                            Queued messages are held and go out automatically at
+                            <field name="waha_paused_until" readonly="1" nolabel="1" class="d-inline"/>.
+                            <button name="action_waha_resume_sending" type="object"
+                                    string="Resume now" class="btn-link"/>
+                        </div>
                         <div class="row mt16 o_settings_container">
                             <setting string="New numbers / user / day"
                                      help="Max brand-new numbers each user may first-contact per day. Beyond it the send is blocked and the user is redirected to the official WhatsApp. 0 = no limit.">
                                 <field name="waha_new_number_daily_limit"/>
+                            </setting>
+                            <setting string="New numbers / day (account)"
+                                     help="Max brand-new numbers first-contacted per day across all users of this account. Bounds the number's total exposure when several agents share one session. 0 = no limit.">
+                                <field name="waha_new_number_account_daily_limit"/>
+                            </setting>
+                            <setting string="Mobile numbers only"
+                                     help="Refuse sends to numbers that are provably landlines — they can never receive WhatsApp. Numbers that cannot be classified are still allowed.">
+                                <field name="waha_require_mobile"/>
+                            </setting>
+                            <setting string="Verify new numbers on WhatsApp"
+                                     help="Ask WAHA whether a brand-new number is registered before the first message. Only a definitive 'not registered' blocks the send.">
+                                <field name="waha_check_number_exists"/>
+                            </setting>
+                            <setting string="Restrict cold outreach hours"
+                                     help="Outside the window, first contacts are held until it reopens. Replies inside an ongoing conversation are always allowed.">
+                                <field name="waha_send_window_active"/>
+                                <div class="content-group" invisible="not waha_send_window_active">
+                                    <div class="row">
+                                        <label for="waha_send_window_start" string="From" class="col-lg-3 o_light_label"/>
+                                        <field name="waha_send_window_start" widget="float_time"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="waha_send_window_end" string="To" class="col-lg-3 o_light_label"/>
+                                        <field name="waha_send_window_end" widget="float_time"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="waha_tz" string="Timezone" class="col-lg-3 o_light_label"/>
+                                        <field name="waha_tz"/>
+                                    </div>
+                                </div>
+                            </setting>
+                            <setting string="Max hold (hours)"
+                                     help="A held message fails with a clear reason once it has waited this long, so nothing rots silently in the queue. 0 = hold indefinitely.">
+                                <field name="waha_hold_max_hours"/>
+                            </setting>
+                            <setting string="Flap threshold"
+                                     help="Status changes within the flap window that pause outbound sending. Repeated re-registration is what WhatsApp reads as an unstable unofficial client. 0 = disabled.">
+                                <field name="waha_flap_threshold"/>
+                            </setting>
+                            <setting string="Flap window (minutes)"
+                                     help="Length of the rolling window used to count status changes.">
+                                <field name="waha_flap_window_minutes"/>
+                            </setting>
+                            <setting string="Cooldown (minutes)"
+                                     help="How long outbound sending stays paused after the breaker trips.">
+                                <field name="waha_flap_pause_minutes"/>
                             </setting>
                             <setting string="Cold re-send lock (hours)"
                                      help="A contact who has never replied can be messaged again only once per this many hours.">
@@ -263,6 +318,22 @@
                                 <field name="waha_reconcile_on_reconnect"/>
                             </setting>
                         </div>
+                    </page>
+
+                    <page string="Session Log" name="waha_session_log" groups="whatsapp.group_whatsapp_admin">
+                        <div class="alert alert-info" role="alert">
+                            Every session status transition, with its timestamp. A tight cluster here is a
+                            reconnect loop — the pattern that trips the circuit breaker on the Protection page.
+                        </div>
+                        <field name="waha_session_event_ids" nolabel="1" readonly="1">
+                            <list create="0" delete="0" limit="100">
+                                <field name="create_date" string="When"/>
+                                <field name="previous_status"/>
+                                <field name="status"/>
+                                <field name="source"/>
+                                <field name="note" optional="hide"/>
+                            </list>
+                        </field>
                     </page>
 
                     <page string="Groups" name="waha_groups" groups="whatsapp.group_whatsapp_admin">

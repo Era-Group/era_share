@@ -2,6 +2,7 @@
 import logging
 
 import requests
+from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
@@ -50,10 +51,60 @@ class CrmEtimad(models.Model):
         help="Triage status of the tender within the studyable-tenders pipeline.")
     active = fields.Boolean("Active", default=True)
 
+    def init(self):
+        """Declare the AI-match candidate index on the model.
+
+        The scoring cron filters on (active, limit, ai_match_date) and no
+        field-level ``index=`` can express that combination, so the index is
+        created here instead. Keeping it in the model — rather than as manual
+        DDL — means a database restore recreates it instead of silently losing
+        it, leaving the cron to seq-scan the whole table again.
+        """
+        super().init()
+        self.env.cr.execute(f"""
+            CREATE INDEX IF NOT EXISTS idx_etimad_ai_candidates
+                ON {self._table} ("limit", id)
+             WHERE active IS TRUE AND ai_match_date IS NULL
+        """)
+
     def action_archive_old(self):
         """Archive tenders whose submission deadline has passed."""
         today = fields.Date.today()
         self.search([('limit', '<', today), ('active', '=', True)]).write({'active': False})
+
+    @api.model
+    def _cron_purge_expired(self, retention_months=3, batch_size=5000):
+        """Delete tenders whose deadline passed more than *retention_months* ago.
+
+        Archiving alone only flips ``active``; the rows stay and every scan over
+        the table still pays for them. The feed only ever scores or converts
+        tenders that are still open, so the expired backlog is dead weight.
+
+        Anything carrying business meaning is kept regardless of age: a tender
+        linked to an opportunity, or already marked converted, is a record of
+        work done rather than feed noise. Tenders with no deadline at all are
+        also left alone, since their age cannot be judged.
+
+        Batched so the first run against a large backlog never holds one long
+        transaction — the cron simply catches up over successive runs.
+        """
+        cutoff = fields.Date.today() - relativedelta(months=retention_months)
+        stale = self.with_context(active_test=False).search(
+            [
+                ('limit', '<', cutoff),
+                ('lead_id', '=', False),
+                ('study_state', '!=', 'converted'),
+            ],
+            limit=batch_size,
+        )
+        if not stale:
+            return 0
+        count = len(stale)
+        stale.unlink()
+        _logger.info(
+            "Etimad purge: deleted %s expired tender(s) with a deadline before %s",
+            count, cutoff)
+        return count
 
     def action_mark_studyable(self):
         self.write({'study_state': 'studyable'})
@@ -115,17 +166,34 @@ class CrmEtimad(models.Model):
             record = self.with_context(active_test=False).search([('ref', '=', ref)], limit=1)
             if record:
                 # Update feed fields in place; triage, tags and lead are preserved.
-                record.write(feed_vals)
+                # Only write what actually differs: the feed re-sends the same
+                # ~2000 tenders every hour, and an unconditional write() would
+                # create a new row version for each one — tens of thousands of
+                # dead tuples a day for values that never changed.
+                changed = {
+                    name: value
+                    for name, value in feed_vals.items()
+                    # Normalise falsy values: the ORM reads NULL back as False
+                    # while the feed may send None or '' for the same emptiness.
+                    if (record[name] or False) != (value or False)
+                }
+                if changed:
+                    record.write(changed)
             else:
                 self.create({**feed_vals, 'ref': ref})
         return True
 
     @api.model
-    def process_categories_to_tags(self, num_to_process=2):
+    def process_categories_to_tags(self, num_to_process=500):
         """Turn the dash-separated category string into tags.
 
-        Processes at most *num_to_process* untagged records per call to keep
-        the cron lightweight against a large backlog.
+        Processes at most *num_to_process* untagged records per call.
+
+        The previous limit of 2 per hourly run could never keep up: the untagged
+        backlog was 226k records, which at that rate needed roughly 13 years.
+        Most of that backlog was expired tenders that _cron_purge_expired now
+        removes, and 500 per run clears whatever genuinely open remainder is
+        left within a few hours.
         """
         Tag = self.env['crm.etimad.tag.client'].sudo()
         cache = {tag.name: tag.id for tag in Tag.search([])}

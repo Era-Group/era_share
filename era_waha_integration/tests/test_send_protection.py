@@ -131,13 +131,22 @@ class TestWahaSendProtection(TransactionCase):
 
     # -- circuit breaker ---------------------------------------------------
 
-    def test_breaker_trips_after_repeated_status_changes(self):
+    def test_breaker_trips_when_a_working_session_keeps_dropping(self):
         self.account.write({'waha_flap_threshold': 3, 'waha_flap_window_minutes': 60})
-        for status in ('starting', 'working', 'failed', 'starting'):
+        for status in ('working', 'failed', 'working', 'failed', 'working', 'failed'):
             self.account._waha_write_status(status)
         self.assertTrue(self.account.waha_paused_until,
                         "a reconnect loop must pause outbound sending")
         self.assertTrue(self.account._waha_hold_reason())
+
+    def test_pairing_a_session_does_not_trip_the_breaker(self):
+        """Linking walks stopped → starting → scan_qr_code → working. Counting those as
+        flaps paused sending on a session that had just come up healthy."""
+        self.account.write({'waha_flap_threshold': 3, 'waha_flap_window_minutes': 60})
+        for status in ('stopped', 'starting', 'scan_qr_code', 'working'):
+            self.account._waha_write_status(status)
+        self.assertFalse(self.account.waha_paused_until)
+        self.assertIsNone(self.account._waha_hold_reason())
 
     def test_resume_clears_the_pause(self):
         self.account.write({

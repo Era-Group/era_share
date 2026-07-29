@@ -1417,12 +1417,24 @@ class WhatsappAccount(models.Model):
             account.waha_is_paused = bool(account.waha_paused_until and account.waha_paused_until > now)
 
     def _waha_recent_flap_count(self):
-        """Status transitions logged within the configured flap window."""
+        """Lost connections within the flap window — not every status transition.
+
+        Linking a session walks a normal ladder (stopped → starting → scan_qr_code →
+        working) that is several transitions long, so counting transitions outright made
+        a successful pairing trip the breaker and pause sending on a healthy session.
+        What actually signals instability is losing a session that was working, or one
+        dropping into 'failed'; neither happens on the way up.
+        """
         self.ensure_one()
         window = self.waha_flap_window_minutes or 60
         since = fields.Datetime.now() - timedelta(minutes=window)
         return self.env['whatsapp.waha.session.event'].sudo().search_count([
-            ('account_id', '=', self.id), ('create_date', '>=', since)])
+            ('account_id', '=', self.id),
+            ('create_date', '>=', since),
+            '|',
+            ('previous_status', '=', 'working'),
+            ('status', '=', 'failed'),
+        ])
 
     def _waha_check_flapping(self):
         """Trip the breaker when the session cycles too often in a short window.

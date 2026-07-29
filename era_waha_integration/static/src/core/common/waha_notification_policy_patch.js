@@ -24,7 +24,13 @@ patch(DiscussCoreCommon.prototype, {
             !message.waha_notification_partner_ids.some(
                 (partner) => partner.id === this.store.self_partner?.id
             );
-        await super._handleNotificationNewMessage(payload, metadata);
+        // Discuss broadcasts every channel message to synchronize its members. Mark
+        // broadcasts for non-recipients as silent before the core handler emits the
+        // event that would otherwise open a WhatsApp chat window or show a browser alert.
+        await super._handleNotificationNewMessage(
+            isWahaNonRecipient ? { ...payload, silent: true } : payload,
+            metadata
+        );
         if (!message || !isWahaNonRecipient || message.isNotification) {
             return;
         }

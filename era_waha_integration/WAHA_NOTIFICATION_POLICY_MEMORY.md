@@ -15,7 +15,9 @@ direct-message chats.
 - A user becomes a participant by sending a WAHA reply, posting a WAHA internal
   note, or being mentioned in a WAHA internal note.
 - Once participants exist, later live inbound messages notify participants only.
-- Outbound WAHA messages and imported/history messages do not notify anyone.
+- Outbound WAHA messages and imported/history messages do not notify anyone. Their
+  mandatory Discuss synchronization broadcasts are marked client-side as silent for
+  non-recipients, preventing WhatsApp chat windows and out-of-focus alerts.
 - WAHA internal notes notify participants other than the note author.
 - A live inbound message unresolved for 60 minutes escalates once to Default
   Users during company working hours.
@@ -83,7 +85,7 @@ create retrospective notifications, inbound escalations, or new messages.
 
 ## Current Deployment State
 
-- Module version: `19.0.1.18.7`.
+- Module version: `19.0.1.19.1`.
 - After modifying Python, manifest, migrations, or assets, use:
   `cicdoo restart era_waha_integration`
 - Verify the active database version with:

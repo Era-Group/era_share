@@ -1486,7 +1486,11 @@ class WhatsappAccount(models.Model):
             'reason': reason, 'status': self.waha_status or 'unknown', 'until': until,
         }
         odoobot_id = self.env['ir.model.data']._xmlid_to_res_id('base.partner_root')
-        channel = self.env['discuss.channel'].sudo()._get_or_create_chat(
+        # _get_or_create_chat adds the CALLER's partner to the members and refuses more
+        # than two. The breaker fires from the session.status webhook, where the caller
+        # is the public user — a third person — so the alert never reached anyone. As
+        # superuser the caller IS OdooBot, which keeps the chat to the intended pair.
+        channel = self.env['discuss.channel'].with_user(SUPERUSER_ID).sudo()._get_or_create_chat(
             [odoobot_id, admin.partner_id.id])
         channel.message_post(author_id=odoobot_id, body=body, message_type='comment',
                              subtype_xmlid='mail.mt_comment')
@@ -1903,7 +1907,9 @@ class WhatsappAccount(models.Model):
             'flap': self.waha_flap_count or 0,
         }
         odoobot_id = self.env['ir.model.data']._xmlid_to_res_id('base.partner_root')
-        Channel = self.env['discuss.channel'].sudo()
+        # As superuser for the same reason as the pause alert: _get_or_create_chat counts
+        # the caller as a member, and only the health cron happens to run as OdooBot.
+        Channel = self.env['discuss.channel'].with_user(SUPERUSER_ID).sudo()
         for partner in partners:
             channel = Channel._get_or_create_chat([odoobot_id, partner.id])
             channel.message_post(

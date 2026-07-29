@@ -139,6 +139,25 @@ class TestWahaSendProtection(TransactionCase):
                         "a reconnect loop must pause outbound sending")
         self.assertTrue(self.account._waha_hold_reason())
 
+    def test_pause_alert_reaches_the_admin_from_the_webhook_context(self):
+        """The breaker fires from the session.status webhook, which runs as the public
+        user. _get_or_create_chat counts the caller as a member and refuses a third
+        person, so the alert used to fail exactly when it mattered."""
+        public = self.env.ref('base.public_user')
+        account = self.account.with_user(public).sudo()
+        account.write({'waha_flap_threshold': 2, 'waha_flap_window_minutes': 60})
+        for status in ('working', 'failed', 'working', 'failed'):
+            account._waha_write_status(status)
+        self.assertTrue(account.waha_paused_until)
+        admin = self.env.ref('base.user_admin')
+        alert = self.env['mail.message'].sudo().search([
+            ('model', '=', 'discuss.channel'),
+            ('body', 'ilike', 'outbound sending paused'),
+        ], limit=1)
+        self.assertTrue(alert, "the administrator must be told that sending stopped")
+        self.assertIn(admin.partner_id, alert.res_id and self.env['discuss.channel']
+                      .browse(alert.res_id).channel_partner_ids)
+
     def test_pairing_a_session_does_not_trip_the_breaker(self):
         """Linking walks stopped → starting → scan_qr_code → working. Counting those as
         flaps paused sending on a session that had just come up healthy."""

@@ -1492,9 +1492,18 @@ class WhatsappAccount(models.Model):
                              subtype_xmlid='mail.mt_comment')
 
     def action_waha_resume_sending(self):
-        """Manual override: clear the pause and let the queue flow again."""
+        """Manual override: clear the pause and flush whatever it held.
+
+        Clearing the pause alone leaves held messages sitting until the next queue run,
+        up to 15 minutes later — so pressing Resume looked like it had done nothing.
+        """
+        resumed = False
         for account in self:
+            if account.waha_paused_until or account.waha_pause_reason:
+                resumed = True
             account._waha_update({'waha_paused_until': False, 'waha_pause_reason': False})
+        if resumed:
+            self.env.ref('whatsapp.ir_cron_send_whatsapp_queue')._trigger()
         return True
 
     # ------------------------------------------------------------------

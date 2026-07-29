@@ -148,14 +148,25 @@ class TestWahaSendProtection(TransactionCase):
         self.assertFalse(self.account.waha_paused_until)
         self.assertIsNone(self.account._waha_hold_reason())
 
-    def test_resume_clears_the_pause(self):
+    def test_resume_clears_the_pause_and_flushes_the_queue(self):
+        """Clearing the pause without waking the queue left held messages waiting up to
+        a full cron interval, so Resume appeared to do nothing."""
         self.account.write({
             'waha_paused_until': fields.Datetime.now() + timedelta(hours=1),
             'waha_pause_reason': 'test',
         })
-        self.account.action_waha_resume_sending()
+        cron = self.env.ref('whatsapp.ir_cron_send_whatsapp_queue')
+        with patch.object(type(cron), '_trigger') as trigger:
+            self.account.action_waha_resume_sending()
         self.assertFalse(self.account.waha_paused_until)
         self.assertIsNone(self.account._waha_hold_reason())
+        self.assertTrue(trigger.called)
+
+    def test_resume_on_an_unpaused_account_does_not_wake_the_queue(self):
+        cron = self.env.ref('whatsapp.ir_cron_send_whatsapp_queue')
+        with patch.object(type(cron), '_trigger') as trigger:
+            self.account.action_waha_resume_sending()
+        self.assertFalse(trigger.called)
 
     def test_status_transitions_are_logged_with_timestamps(self):
         self.account._waha_write_status('working', source='webhook')

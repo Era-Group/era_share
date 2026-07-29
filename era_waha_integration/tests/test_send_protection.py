@@ -195,6 +195,40 @@ class TestWahaSendProtection(TransactionCase):
         self.assertTrue(request.called)
         self.assertTrue(self.account.waha_qr_fetched)
 
+    # -- ack matching across engines ---------------------------------------
+
+    def _outbound_with_uid(self, uid):
+        channel = self._make_channel('15550009001')
+        message = self.env['mail.message'].sudo().create({
+            'model': 'discuss.channel', 'res_id': channel.id, 'body': 'x',
+            'message_type': 'whatsapp_message', 'author_id': self.agent.partner_id.id,
+        })
+        return self.env['whatsapp.message'].sudo().create({
+            'mail_message_id': message.id, 'wa_account_id': self.account.id,
+            'message_type': 'outbound', 'state': 'sent', 'msg_uid': uid,
+        })
+
+    def test_ack_matches_when_gows_reserialises_the_id(self):
+        """GOWS rebuilds the id for acks from the delivery receipt: the fromMe flag is
+        inverted and the chat is addressed by its @lid alias. Only the trailing hash
+        survives, so ticks would otherwise never advance past 'sent'."""
+        wa = self._outbound_with_uid('true_966582595227@c.us_3EB0998A050D1D96C207E6')
+        found = self.account._waha_find_message(
+            'false_203779773329574@lid_3EB0998A050D1D96C207E6')
+        self.assertEqual(found, wa)
+
+    def test_ack_still_matches_the_plain_noweb_shapes(self):
+        wa = self._outbound_with_uid('3EB0AAA111')
+        self.assertEqual(
+            self.account._waha_find_message('true_966582595227@c.us_3EB0AAA111'), wa)
+        wa2 = self._outbound_with_uid('true_966582595227@c.us_3EB0BBB222')
+        self.assertEqual(
+            self.account._waha_find_message('true_966582595227@c.us_3EB0BBB222'), wa2)
+
+    def test_unknown_hash_matches_nothing(self):
+        self._outbound_with_uid('true_966582595227@c.us_3EB0CCC333')
+        self.assertFalse(self.account._waha_find_message('true_x@c.us_3EB0NOPE'))
+
     # -- session lifecycle -------------------------------------------------
 
     def test_stop_pauses_without_unlinking_the_device(self):

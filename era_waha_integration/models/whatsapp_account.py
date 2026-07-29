@@ -1027,10 +1027,19 @@ class WhatsappAccount(models.Model):
         (Mirrors the fallback in `_waha_find_message`.)"""
         if not uid:
             return False
+        Msg = self.env['whatsapp.message'].sudo()
         uids = [uid]
-        if '_' in uid:
-            uids.append(uid.rsplit('_', 1)[-1])
-        return bool(self.env['whatsapp.message'].sudo().search_count([('msg_uid', 'in', uids)]))
+        tail = uid.rsplit('_', 1)[-1] if '_' in uid else ''
+        if tail:
+            uids.append(tail)
+        if Msg.search_count([('msg_uid', 'in', uids)]):
+            return True
+        # A uid stored whole (GOWS send responses) is found by neither form above when
+        # the engine re-serializes the id differently, so match on the hash suffix.
+        return bool(tail and Msg.search_count([
+            ('wa_account_id', '=', self.id),
+            ('msg_uid', '=like', '%\\_' + tail),
+        ]))
 
     def _waha_message_known(self, waha_message):
         return self._waha_uid_exists(self._waha_extract_id(waha_message.get('id')))
@@ -1133,21 +1142,34 @@ class WhatsappAccount(models.Model):
     def _waha_find_message(self, raw_id):
         """Find a whatsapp.message for a WAHA event id.
 
-        Inbound msg_uids are stored as WAHA's full serialized id
-        (``fromMe_remoteJid_HASH``); outbound msg_uids come from the send response
-        as the bare HASH. Acks/reactions always reference messages by the full
-        serialized id, so fall back to the trailing hash segment to match our own
-        outbound messages (otherwise ticks never advance past 'sent' and reactions
-        on our messages are dropped).
+        Serialized ids look like ``fromMe_remoteJid_HASH``, but the three parts are not
+        stable across engines or across events: NOWEB send responses return the bare
+        HASH, while GOWS returns the whole serialized id — and GOWS then rebuilds that id
+        for acks out of the delivery receipt, which inverts the fromMe flag and addresses
+        the chat by its ``@lid`` alias instead of ``@c.us``. So an ack for one of our own
+        messages can differ from the stored uid in both the prefix and the middle.
+
+        Only the trailing HASH is the actual WhatsApp message id, so it is the last
+        resort here. Without it ticks never advance past 'sent' and reactions on our own
+        messages are dropped.
         """
         uid = self._waha_extract_id(raw_id)
         Msg = self.env['whatsapp.message'].sudo()
         if not uid:
             return Msg
         message = Msg.search([('msg_uid', '=', uid)], limit=1)
-        if not message and '_' in uid:
-            message = Msg.search([('msg_uid', '=', uid.rsplit('_', 1)[-1])], limit=1)
-        return message
+        if message or '_' not in uid:
+            return message
+        tail = uid.rsplit('_', 1)[-1]
+        message = Msg.search([('msg_uid', '=', tail)], limit=1)
+        if message or not tail:
+            return message
+        # Suffix match, scoped to this account: the hash cannot be looked up through the
+        # msg_uid index, and an unscoped scan could reach another account's message.
+        return Msg.search([
+            ('wa_account_id', '=', self.id),
+            ('msg_uid', '=like', '%\\_' + tail),
+        ], limit=1)
 
     def _waha_process_ack(self, payload):
         self.ensure_one()

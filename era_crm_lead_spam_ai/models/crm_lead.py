@@ -286,6 +286,18 @@ class CrmLead(models.Model):
             if not lead.is_incoming_email_lead:
                 continue
 
+            # Idempotency stamp. Every incoming email reaches this method
+            # TWICE: base.automation "Lead AI Spam Check On Create" fires
+            # inside create(), and message_new() calls it again right after
+            # super() returns. Neither knew about the other, so each lead was
+            # sent to the model twice. Measured 2026-07-30 across 776 CLI
+            # transcripts: 380 distinct prompts but 776 calls, 375 of them
+            # sent exactly twice — 51% of this workload was pure duplication,
+            # at a median 10.9 s apart and ~8.6 s of exclusive CLI slot each.
+            # Carrying either tag means this lead is already classified.
+            if spam_tag in lead.tag_ids or pass_tag in lead.tag_ids:
+                continue
+
             body_texts = lead._get_email_chatter_body_texts(limit=8)
             has_email_body = bool(body_texts or (lead.incoming_email_body or "").strip())
             if not has_email_body:

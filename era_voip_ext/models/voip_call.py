@@ -125,9 +125,11 @@ class VoipCall(models.Model):
             ("skipped", "Skipped"),
         ],
         string="Analysis Status",
-        default="pending",
         copy=False,
         index=True,
+        help="Set once there is something to analyse. It deliberately has no "
+             "default: every call used to be born 'pending', which built a "
+             "queue that could never drain.",
     )
     call_summary_long = fields.Text(string="ملخص المكالمة", copy=False)
     call_obstacles = fields.Text(string="المعوقات", copy=False)
@@ -188,6 +190,27 @@ class VoipCall(models.Model):
             arch.set("edit", "0")
             arch.set("delete", "0")
         return arch, view
+
+    #: Transcription outcomes that mean a transcript will never exist, so the
+    #: analyser has nothing to work with — ever. The re-transcribe cron
+    #: requires an ir_attachment audio file on the call, and by definition
+    #: these have none, so they cannot come back.
+    NO_TRANSCRIPT_STATES = ("no_audio", "unsupported")
+
+    def write(self, vals):
+        """Close analysis out when transcription ends without a transcript.
+
+        analysis_status used to default to 'pending' on every call, so calls
+        that could never be analysed piled up: measured 2026-07-30, 2,652 rows
+        sat at pending, every one of them no_audio (2,637) or unsupported
+        (15), none with a transcript. The default is gone; this closes the
+        other half, in one place rather than at the six sites that write a
+        terminal transcription_status.
+        """
+        if (vals.get("transcription_status") in self.NO_TRANSCRIPT_STATES
+                and "analysis_status" not in vals):
+            vals = dict(vals, analysis_status="skipped")
+        return super().write(vals)
 
     def _commit_if_needed(self):
         if not modules.module.current_test:

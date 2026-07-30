@@ -268,6 +268,22 @@ class TestWahaSendProtection(TransactionCase):
         self._outbound_with_uid('true_966582595227@c.us_3EB0CCC333')
         self.assertFalse(self.account._waha_find_message('true_x@c.us_3EB0NOPE'))
 
+    def test_group_ids_deduplicate_by_message_hash_not_sender_lid(self):
+        first = 'false_120363430227532375@g.us_3EB0FIRST_260400176201908@lid'
+        later = 'false_120363430227532375@g.us_3EB0LATER_260400176201908@lid'
+        self._outbound_with_uid(first)
+        self.assertTrue(self.account._waha_uid_exists(first))
+        self.assertFalse(self.account._waha_uid_exists(later))
+        self.assertFalse(self.account._waha_find_message(later))
+
+    def test_group_ack_matches_across_participant_jids(self):
+        stored = 'true_120363430227532375@g.us_3EB0GROUPHASH_966557428221@c.us'
+        wa = self._outbound_with_uid(stored)
+        self.assertEqual(
+            self.account._waha_find_message(
+                'false_120363430227532375@g.us_3EB0GROUPHASH_260400176201908@lid'),
+            wa)
+
     # -- session lifecycle -------------------------------------------------
 
     def test_stop_pauses_without_unlinking_the_device(self):

@@ -1014,31 +1014,43 @@ class WhatsappAccount(models.Model):
                 pass
         return content
 
-    def _waha_uid_exists(self, uid):
-        """Single source of truth for msg_uid idempotency: True if a whatsapp.message with
-        this uid already exists. Used by the webhook dedup lock and the history backfill.
+    def _waha_message_hash(self, uid):
+        """Return WAHA's immutable message hash from a serialized message id.
 
-        Matches the full serialized id OR its trailing hash segment, because the same
-        message is stored under different id shapes: live outbound as the bare send-response
-        HASH, inbound under its `@lid` serialized id, while the chat/messages and overview
-        APIs return the full `fromMe_remoteJid_HASH` (often with a `@c.us` remoteJid). The
-        HASH is the globally-unique part, so this is the reliable key — WITHOUT it, outbound
-        (and @lid-vs-@c.us inbound) read as unknown and the reconcile re-imports duplicates.
-        (Mirrors the fallback in `_waha_find_message`.)"""
+        One-to-one ids end with the hash. Group ids append the sender's stable JID after
+        the hash, so using their final segment would incorrectly deduplicate every later
+        message from that sender.
+        """
+        if not uid or not isinstance(uid, str):
+            return ''
+        parts = uid.split('_')
+        for index, part in enumerate(parts[:-1]):
+            if part.endswith('@g.us'):
+                return parts[index + 1]
+        return parts[-1] if len(parts) > 1 else uid
+
+    def _waha_uid_exists(self, uid):
+        """Return whether this WAHA message is already stored for this account.
+
+        WAHA reserializes some delivery events, so compare both the full id and its
+        immutable hash. Group ids place a participant JID after the hash.
+        """
         if not uid:
             return False
         Msg = self.env['whatsapp.message'].sudo()
-        uids = [uid]
-        tail = uid.rsplit('_', 1)[-1] if '_' in uid else ''
-        if tail:
-            uids.append(tail)
-        if Msg.search_count([('msg_uid', 'in', uids)]):
+        message_hash = self._waha_message_hash(uid)
+        uids = list({uid, message_hash})
+        if Msg.search_count([('wa_account_id', '=', self.id), ('msg_uid', 'in', uids)]):
             return True
-        # A uid stored whole (GOWS send responses) is found by neither form above when
-        # the engine re-serializes the id differently, so match on the hash suffix.
-        return bool(tail and Msg.search_count([
+        if not message_hash:
+            return False
+        # A serialized group id has a participant JID after its hash, while the
+        # one-to-one form ends with it. Support both without matching a participant JID.
+        return bool(Msg.search_count([
             ('wa_account_id', '=', self.id),
-            ('msg_uid', '=like', '%\\_' + tail),
+            '|',
+            ('msg_uid', '=like', '%\\_' + message_hash),
+            ('msg_uid', '=like', '%\\_' + message_hash + '\\_%'),
         ]))
 
     def _waha_message_known(self, waha_message):
@@ -1149,20 +1161,31 @@ class WhatsappAccount(models.Model):
         the chat by its ``@lid`` alias instead of ``@c.us``. So an ack for one of our own
         messages can differ from the stored uid in both the prefix and the middle.
 
-        Only the trailing HASH is the actual WhatsApp message id, so it is the last
-        resort here. Without it ticks never advance past 'sent' and reactions on our own
-        messages are dropped.
+        The immutable message hash is the last component for one-to-one messages but the
+        component after the group JID for group messages. Without it ticks never advance
+        past 'sent' and reactions on our own messages are dropped.
         """
         uid = self._waha_extract_id(raw_id)
         Msg = self.env['whatsapp.message'].sudo()
         if not uid:
             return Msg
-        message = Msg.search([('msg_uid', '=', uid)], limit=1)
-        if message or '_' not in uid:
+        message = Msg.search([
+            ('wa_account_id', '=', self.id), ('msg_uid', '=', uid)], limit=1)
+        if message:
             return message
-        tail = uid.rsplit('_', 1)[-1]
-        message = Msg.search([('msg_uid', '=', tail)], limit=1)
-        if message or not tail:
+        tail = self._waha_message_hash(uid)
+        if not tail:
+            return Msg
+        message = Msg.search([
+            ('wa_account_id', '=', self.id), ('msg_uid', '=', tail)], limit=1)
+        if message:
+            return message
+        # Group ids append the participant JID after the hash.
+        message = Msg.search([
+            ('wa_account_id', '=', self.id),
+            ('msg_uid', '=like', '%\\_' + tail + '\\_%'),
+        ], limit=1)
+        if message:
             return message
         # Suffix match, scoped to this account: the hash cannot be looked up through the
         # msg_uid index, and an unscoped scan could reach another account's message.

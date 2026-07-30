@@ -54,4 +54,35 @@
         <field name="active" eval="True"/>
     </record>
 
+    <!--
+      bus.bus garbage collection.
+
+      Core declares _gc_messages with @api.autovacuum, so its only caller is the
+      DAILY "Base: Auto-vacuum internal data" job. That means bus_bus accumulates
+      a full day between sweeps no matter what retention is configured — measured
+      2026-07-30: 31,928 rows / 93 MB spanning exactly 24.0 hours, for data whose
+      useful life is bus.TIMEOUT = 50 SECONDS (a reconnecting longpoll client
+      replays at most 50 s).
+
+      This cron lives here because this module produces the volume: 97% of those
+      rows (and 74 of the 75 MB) are mail.record/insert payloads carrying a whole
+      discuss.channel record, broadcast per WhatsApp channel at ~2.5 kB each.
+
+      Pairs with ir_config_parameter bus.gc_retention_seconds = 3600, which core
+      already reads at bus.py:102 — the parameter alone changes nothing while the
+      only sweep is daily. _gc_messages is a single indexed
+      DELETE FROM bus_bus WHERE create_date < %s, so this is cheap.
+
+      Reducing the 2.5 kB payload itself is a separate, larger fix.
+    -->
+    <record id="ir_cron_waha_bus_gc" model="ir.cron">
+        <field name="name">WAHA: Garbage-collect bus.bus notifications</field>
+        <field name="model_id" ref="bus.model_bus_bus"/>
+        <field name="state">code</field>
+        <field name="code">model._gc_messages()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
 </odoo>

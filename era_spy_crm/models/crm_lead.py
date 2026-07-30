@@ -128,7 +128,12 @@ class CrmLead(models.Model):
             client._raise_if_rate_limited()
         except UserError:
             return
-        leads = self.search(
+        # active_test=False on purpose: the ORM silently appends active = True to
+        # a bare search(), so a lead archived inside its one-minute pending window
+        # became invisible here and kept eraspy_auto_enrich_pending forever. Seven
+        # leads (12047, 12048, 12050, 12068, 12077, 12089, 12452) had been stuck
+        # that way since 2026-02/03 — never enriched, and nothing reported it.
+        leads = self.with_context(active_test=False).search(
             [
                 ("eraspy_auto_enrich_pending", "=", True),
                 ("eraspy_auto_enrich_at", "<=", fields.Datetime.now()),

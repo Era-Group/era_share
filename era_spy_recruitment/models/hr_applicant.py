@@ -209,7 +209,10 @@ class HrApplicant(models.Model):
             client._raise_if_rate_limited()
         except UserError:
             return
-        applicants = self.search(
+        # active_test=False for the same reason as era_spy_crm: a bare search()
+        # gets active = True appended by the ORM, so an applicant archived inside
+        # its pending window keeps the flag forever and is never enriched.
+        applicants = self.with_context(active_test=False).search(
             [
                 ("eraspy_auto_enrich_pending", "=", True),
                 ("eraspy_auto_enrich_at", "<=", fields.Datetime.now()),

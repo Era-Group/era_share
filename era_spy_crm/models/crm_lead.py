@@ -30,6 +30,17 @@ class CrmLead(models.Model):
                 "eraspy_auto_enrich_at": scheduled_at,
             }
         )
+        # We already know exactly when this work becomes due, so tell the
+        # scheduler instead of making it ask every 60 seconds. _trigger() writes
+        # an ir_cron_trigger row that _get_ready_sql_condition picks up; the
+        # cron's own interval is now only a safety net (see
+        # data/ir_cron_overrides.xml for the measurements behind this).
+        cron = self.env.ref(
+            "era_spy_crm.ir_cron_eraspy_auto_enrich_leads",
+            raise_if_not_found=False,
+        )
+        if cron:
+            cron.sudo()._trigger(at=scheduled_at)
         return records
 
     eraspy_last_status = fields.Char(string="Era Enrich Last Status", readonly=True)

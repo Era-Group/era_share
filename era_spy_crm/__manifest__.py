@@ -17,6 +17,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron.xml",
+        "data/ir_cron_overrides.xml",
         "views/crm_lead_views.xml",
         "views/eraspy_callback_queue_views.xml",
         "views/wizard_views.xml",

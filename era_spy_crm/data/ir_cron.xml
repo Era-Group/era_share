@@ -6,8 +6,11 @@
             <field name="model_id" ref="crm.model_crm_lead"/>
             <field name="state">code</field>
             <field name="code">model._cron_eraspy_auto_enrich()</field>
+            <!-- Safety net only. CrmLead.create() calls cron._trigger() with
+                 the exact due time, so this no longer needs to poll; at one
+                 minute it woke up 1,430 times a day for a median of 17 leads. -->
             <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
+            <field name="interval_type">hours</field>
             <field name="active">True</field>
         </record>
     </data>

@@ -6,9 +6,13 @@
             <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
             <field name="state">code</field>
             <field name="code">model._cron_eraspy_auto_enrich()</field>
+            <!-- Off since 2026-07-30: hr_applicant has received no record
+                 since 2026-01-13, yet this polled 1,429 times a day. Re-enable
+                 only together with the event-driven _trigger() call that
+                 era_spy_crm uses. -->
             <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="active">True</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="False"/>
         </record>
     </data>
     <data>

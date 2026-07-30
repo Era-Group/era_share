@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "ERA Era Enrich Recruitment",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Human Resources",
     "summary": "Enrich applicants via Era Enrich and AI matching",
     "icon": "static/description/icon.png",
@@ -17,7 +17,6 @@
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron.xml",
-        "data/ir_cron_overrides.xml",
         "views/res_config_settings_views.xml",
         "views/hr_applicant_views.xml",
         "views/eraspy_applicant_callback_queue_views.xml",

@@ -113,6 +113,20 @@ class CrmEtimad(models.Model):
         self.write({'study_state': 'rejected'})
 
     @staticmethod
+    def _clean_char(value):
+        """Coerce a feed value into what a Char field reads back as.
+
+        The feed sends ``id`` as a JSON number (31474) while ``etimad_id`` is a
+        Char, so the ORM reads it back as '31474'. Comparing those two directly
+        never matches, which defeated the write guard in get_etimad_data
+        entirely: measured 2026-07-30, it rewrote 2000 of 2000 unchanged rows
+        every hour and etimad_id was the only field that ever "differed".
+        """
+        if value is None or value is False or value == '':
+            return False
+        return str(value)
+
+    @staticmethod
     def _clean_date(value):
         """Coerce a feed date into something the Date field accepts.
 
@@ -152,14 +166,16 @@ class CrmEtimad(models.Model):
             if not ref or not name:
                 continue
             feed_vals = {
-                'etimad_id': data.get('id'),
+                # Every Char field goes through _clean_char: the guard below
+                # compares against what the ORM reads back, which is always str.
+                'etimad_id': self._clean_char(data.get('id')),
                 'name': name,
-                'link': data.get('link'),
-                'category': data.get('category'),
+                'link': self._clean_char(data.get('link')),
+                'category': self._clean_char(data.get('category')),
                 'limit': self._clean_date(data.get('limit')),
-                'company': data.get('company'),
-                'method': data.get('method'),
-                'cost': data.get('cost'),
+                'company': self._clean_char(data.get('company')),
+                'method': self._clean_char(data.get('method')),
+                'cost': self._clean_char(data.get('cost')),
                 'questions': self._clean_date(data.get('questions')),
                 'publish': self._clean_date(data.get('publish')),
             }

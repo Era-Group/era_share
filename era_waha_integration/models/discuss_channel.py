@@ -105,11 +105,15 @@ class DiscussChannel(models.Model):
 
     def message_post(self, *args, **kwargs):
         is_waha = _is_waha_channel(self)
+        # The internal-note policy (an explicit note, or a mention of a colleague,
+        # must never leave Odoo) applies to every WhatsApp channel regardless of
+        # provider — official Meta accounts included, not only WAHA.
+        is_whatsapp = self.channel_type == 'whatsapp'
         mentioned_partner_ids = []
-        if is_waha:
+        if is_whatsapp:
             mentioned_partner_ids = list(kwargs.get('partner_ids') or [])
             mentioned_partner_ids += list((kwargs.get('partner_ids_mention_token') or {}).keys())
-        has_internal_mention = is_waha and bool(self.env['res.partner'].browse(mentioned_partner_ids).filtered(
+        has_internal_mention = is_whatsapp and bool(self.env['res.partner'].browse(mentioned_partner_ids).filtered(
             lambda partner: partner.main_user_id and not partner.main_user_id.share))
         is_internal_note = kwargs.get('waha_internal_note') or has_internal_mention
         is_outbound = (
@@ -129,16 +133,17 @@ class DiscussChannel(models.Model):
             if participant_users:
                 self.waha_participant_user_ids |= participant_users
         if is_internal_note:
-            if not _is_waha_channel(self) or not self.env.user._is_internal():
-                raise AccessError(_('WAHA internal notes are restricted to internal users.'))
+            if not is_whatsapp or not self.env.user._is_internal():
+                raise AccessError(_('WhatsApp internal notes are restricted to internal users.'))
             # A standard internal log is deliberately not a whatsapp_message, so it
-            # cannot create a whatsapp.message or reach WAHA.
+            # cannot create a whatsapp.message or reach the provider.
             kwargs['message_type'] = 'comment'
             kwargs['subtype_xmlid'] = 'mail.mt_note'
             kwargs.pop('waha_internal_note', None)
             message = super(DiscussChannel, self.with_context(waha_internal_note=True)).message_post(
                 *args, **kwargs)
-            self._waha_resolve_pending_replies(message)
+            if is_waha:
+                self._waha_resolve_pending_replies(message)
             return message
         # Enforce WAHA account-protection limits on genuine outbound sends (a reply
         # typed in Discuss, or a composer send). Inbound and history-import posts,

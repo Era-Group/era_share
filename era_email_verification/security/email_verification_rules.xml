@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Multi-company isolation (global): only your allowed companies. -->
+    <record id="ev_batch_company_rule" model="ir.rule">
+        <field name="name">Email Verification Batch: multi-company</field>
+        <field name="model_id" ref="model_email_verification_batch"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="ev_item_company_rule" model="ir.rule">
+        <field name="name">Email Verification Item: multi-company</field>
+        <field name="model_id" ref="model_email_verification_item"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Users see only their own batches/items; managers see all (rules of
+         the two groups are OR'd for a manager, who is also a user). -->
+    <record id="ev_batch_user_own_rule" model="ir.rule">
+        <field name="name">Email Verification Batch: own only</field>
+        <field name="model_id" ref="model_email_verification_batch"/>
+        <field name="groups" eval="[(4, ref('group_email_verification_user'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="ev_batch_manager_all_rule" model="ir.rule">
+        <field name="name">Email Verification Batch: manager all</field>
+        <field name="model_id" ref="model_email_verification_batch"/>
+        <field name="groups" eval="[(4, ref('group_email_verification_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="ev_item_user_own_rule" model="ir.rule">
+        <field name="name">Email Verification Item: own only</field>
+        <field name="model_id" ref="model_email_verification_item"/>
+        <field name="groups" eval="[(4, ref('group_email_verification_user'))]"/>
+        <field name="domain_force">[('batch_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="ev_item_manager_all_rule" model="ir.rule">
+        <field name="name">Email Verification Item: manager all</field>
+        <field name="model_id" ref="model_email_verification_item"/>
+        <field name="groups" eval="[(4, ref('group_email_verification_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Contact form: status badge next to the email + Verify button,
+         a history smart button, and a details page. -->
+    <record id="view_partner_form_ev" model="ir.ui.view">
+        <field name="name">res.partner.form.email.verification</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_verification_history" type="object"
+                        class="oe_stat_button" icon="fa-shield"
+                        groups="era_email_verification.group_email_verification_user"
+                        invisible="email_verification_history_count == 0">
+                    <field name="email_verification_history_count"
+                           widget="statinfo" string="Verifications"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="email_verification_status" widget="badge" readonly="1"
+                       groups="era_email_verification.group_email_verification_user"
+                       decoration-success="email_verification_status == 'deliverable'"
+                       decoration-warning="email_verification_status == 'risky'"
+                       decoration-danger="email_verification_status == 'undeliverable'"
+                       decoration-muted="email_verification_status == 'unknown'"
+                       decoration-info="email_verification_status == 'not_checked'"/>
+                <button name="action_verify_email" type="object" string="Verify"
+                        class="btn-link" invisible="not email"
+                        groups="era_email_verification.group_email_verification_user"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Email Verification" name="email_verification"
+                      groups="era_email_verification.group_email_verification_user">
+                    <button name="action_verify_email" type="object"
+                            string="Verify Email Now" class="btn-primary mb-3"
+                            invisible="not email"/>
+                    <group>
+                        <group string="Result">
+                            <field name="email_verification_status" readonly="1"/>
+                            <field name="email_verification_score" readonly="1"/>
+                            <field name="email_verification_eligible" readonly="1"/>
+                            <field name="email_verification_reason" readonly="1"/>
+                            <field name="email_verification_checked_date" readonly="1"/>
+                            <field name="email_verification_checked_email" readonly="1"/>
+                            <field name="email_verification_needs_recheck" readonly="1"/>
+                        </group>
+                        <group string="Signals">
+                            <field name="email_verification_catch_all" readonly="1"/>
+                            <field name="email_verification_disposable" readonly="1"/>
+                            <field name="email_verification_role" readonly="1"/>
+                            <field name="email_verification_free_provider" readonly="1"/>
+                            <field name="email_verification_smtp_code" readonly="1"
+                                   groups="era_email_verification.group_email_verification_manager"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Optional status column on the contact list. -->
+    <record id="view_partner_tree_ev" model="ir.ui.view">
+        <field name="name">res.partner.list.email.verification</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="email_verification_status" widget="badge" optional="show"
+                       decoration-success="email_verification_status == 'deliverable'"
+                       decoration-warning="email_verification_status == 'risky'"
+                       decoration-danger="email_verification_status == 'undeliverable'"
+                       decoration-muted="email_verification_status == 'unknown'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search: filters + Group By. Both are placed relative to the base
+         view's own "group_by" group so the filters land in the Filters
+         dropdown and the groupings in Group By, rather than being appended
+         after it. -->
+    <record id="view_res_partner_filter_ev" model="ir.ui.view">
+        <field name="name">res.partner.search.email.verification</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[@name='group_by']" position="before">
+                <separator/>
+                <filter name="ev_not_checked" string="Email not checked"
+                        domain="[('email_verification_status','in',(False,'not_checked'))]"/>
+                <filter name="ev_deliverable" string="Deliverable"
+                        domain="[('email_verification_status','=','deliverable')]"/>
+                <filter name="ev_risky" string="Risky"
+                        domain="[('email_verification_status','=','risky')]"/>
+                <filter name="ev_undeliverable" string="Undeliverable"
+                        domain="[('email_verification_status','=','undeliverable')]"/>
+                <filter name="ev_unknown" string="Unknown"
+                        domain="[('email_verification_status','=','unknown')]"/>
+                <separator/>
+                <filter name="ev_catch_all" string="Catch-all"
+                        domain="[('email_verification_catch_all','=',True)]"/>
+                <filter name="ev_disposable" string="Disposable"
+                        domain="[('email_verification_disposable','=',True)]"/>
+                <filter name="ev_role" string="Role account"
+                        domain="[('email_verification_role','=',True)]"/>
+                <filter name="ev_free_provider" string="Free provider"
+                        domain="[('email_verification_free_provider','=',True)]"/>
+                <separator/>
+                <filter name="ev_eligible" string="Mailing-eligible"
+                        domain="[('email_verification_eligible','=',True)]"/>
+                <filter name="ev_needs_recheck" string="Needs re-check"
+                        domain="[('email_verification_needs_recheck','=',True)]"/>
+                <filter name="ev_stale" string="Stale (needs re-check)"
+                        domain="[('email_verification_is_stale','=',True)]"/>
+            </xpath>
+
+            <!-- email_verification_is_stale is computed and NOT stored, so it
+                 is searchable but cannot be grouped by; only stored fields
+                 are offered here. -->
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter name="group_ev_status" string="Email Status"
+                        context="{'group_by': 'email_verification_status'}"/>
+                <filter name="group_ev_eligible" string="Mailing-eligible"
+                        context="{'group_by': 'email_verification_eligible'}"/>
+                <filter name="group_ev_checked_date" string="Email Checked On"
+                        context="{'group_by': 'email_verification_checked_date'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- "Verify Email(s)" contextual action on the Contacts list. -->
+    <record id="action_partner_verify_email" model="ir.actions.server">
+        <field name="name">Verify Email(s)</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('group_email_verification_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_verify_email_bulk()</field>
+    </record>
+
+</odoo>

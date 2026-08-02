@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ev_wizard_form" model="ir.ui.view">
+        <field name="name">email.verification.wizard.form</field>
+        <field name="model">email.verification.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Verify Unchecked Emails">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Verify Unchecked Emails</h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="scope"/>
+                            <field name="limit"/>
+                        </group>
+                        <group>
+                            <field name="check_smtp"/>
+                            <field name="check_catch_all"/>
+                        </group>
+                    </group>
+                    <group string="To be queued">
+                        <field name="unchecked_partner_count"
+                               invisible="scope == 'mailing'"/>
+                        <field name="unchecked_contact_count"
+                               invisible="scope == 'contacts'"/>
+                    </group>
+                    <div class="text-muted">
+                        Only addresses that have never been checked (or were flagged
+                        for re-check) are queued. Work runs in the background in
+                        batches of up to the configured batch size.
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_verify" string="Verify" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ev_wizard" model="ir.actions.act_window">
+        <field name="name">Verify Unchecked Emails</field>
+        <field name="res_model">email.verification.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

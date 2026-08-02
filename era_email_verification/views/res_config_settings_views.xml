@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_ev" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.email.verification</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="80"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Email Verification" string="Email Verification"
+                     name="era_email_verification"
+                     groups="era_email_verification.group_email_verification_manager">
+
+                    <block title="Connection" name="ev_connection"
+                           groups="base.group_system">
+                        <setting string="Verifier service" help="HTTPS base URL and Bearer key of the private Email Verifier API. The key is stored for administrators only and never logged.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="era_ev_base_url" class="col-lg-4 o_light_label"/>
+                                    <field name="era_ev_base_url" placeholder="https://email-validation.letsw.com"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="era_ev_api_key" class="col-lg-4 o_light_label"/>
+                                    <field name="era_ev_api_key" password="True"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="era_ev_verify_tls" class="col-lg-4 o_light_label"/>
+                                    <field name="era_ev_verify_tls"/>
+                                </div>
+                                <div class="mt8">
+                                    <button name="action_test_verifier_connection" type="object"
+                                            string="Test connection" icon="fa-plug" class="btn-link"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Timeouts" help="Connect and read timeouts (seconds) for calls to the verifier.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="era_ev_timeout_connect" class="col-lg-6 o_light_label"/>
+                                    <field name="era_ev_timeout_connect"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="era_ev_timeout_read" class="col-lg-6 o_light_label"/>
+                                    <field name="era_ev_timeout_read"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+
+                    <block title="Verification defaults" name="ev_defaults">
+                        <setting string="Batch size" help="Addresses per remote job (max 5,000). Larger selections are split automatically.">
+                            <field name="era_ev_batch_size"/>
+                        </setting>
+                        <setting string="Probe SMTP by default" help="Connect to the mail server and issue an RCPT probe. Strongest signal; disable for DNS-only checks.">
+                            <field name="era_ev_default_check_smtp"/>
+                        </setting>
+                        <setting string="Detect catch-all by default" help="Probe a random address to spot domains that accept everything. Skipped automatically for known free providers.">
+                            <field name="era_ev_default_check_catch_all"/>
+                        </setting>
+                        <setting string="Eligibility threshold" help="Minimum score for a deliverable, non-disposable address to be flagged mailing-eligible.">
+                            <field name="era_ev_min_eligible_score"/>
+                        </setting>
+                        <setting string="Auto re-check" help="Periodically queue never-checked and stale contacts (opt-in).">
+                            <field name="era_ev_auto_recheck"/>
+                            <div class="content-group mt8" invisible="not era_ev_auto_recheck">
+                                <div class="row">
+                                    <label for="era_ev_stale_days" class="col-lg-6 o_light_label"/>
+                                    <field name="era_ev_stale_days"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+
+                    <block title="Result delivery" name="ev_delivery">
+                        <setting string="Push results (webhook)"
+                                 help="The verifier pushes completed results here as they finish (low latency); a poll reconciles as a fallback. Needs a public HTTPS URL for Odoo.">
+                            <field name="era_ev_push_enabled"/>
+                            <div class="content-group mt8" invisible="not era_ev_push_enabled">
+                                <div class="row mt8">
+                                    <label for="era_ev_callback_base_url" class="col-lg-5 o_light_label"/>
+                                    <field name="era_ev_callback_base_url"
+                                           placeholder="https://odoo.example.com (defaults to web.base.url)"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="era_ev_reconcile_stale_minutes" class="col-lg-5 o_light_label"/>
+                                    <field name="era_ev_reconcile_stale_minutes"/>
+                                </div>
+                                <div class="text-muted mt8">
+                                    The verifier signs each push with a per-batch secret
+                                    (HMAC-SHA256). Results still import via polling if a
+                                    push is missed, so no data is lost.
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Give up on a stuck batch after"
+                                 help="A running batch that imports no new result at all for this many hours is marked failed and its remote job deleted. Only one job runs at a time, so this keeps a hung job from blocking the queue. A batch that is still making progress is never affected, however long it takes.">
+                            <field name="era_ev_stuck_batch_hours"/>
+                        </setting>
+                    </block>
+
+                    <!-- One <setting> per outcome: the settings block lays them
+                         out two per row (col-12 col-lg-6) and renders each
+                         boolean as the checkbox in the setting's left pane,
+                         so the help text sits beside the box instead of the
+                         boxes stacking down a single narrow column. -->
+                    <block title="Automatic blacklist" name="ev_blacklist"
+                           help="Tick the verification outcomes that should be added to the mass-mailing blacklist (mail.blacklist) automatically, which then excludes those addresses from every mailing. Deliverable is never blacklisted, and leaving everything unticked disables automatic blacklisting entirely.">
+                        <setting string="Undeliverable" id="ev_bl_undeliverable"
+                                 help="The server rejected the address or the mailbox does not exist — a guaranteed hard bounce. Recommended.">
+                            <field name="era_ev_blacklist_undeliverable"/>
+                        </setting>
+                        <setting string="Risky" id="ev_bl_risky"
+                                 help="Accepted but uncertain: role accounts (info@, sales@, support@…) and full mailboxes. Mailing these can hurt sender reputation. Recommended.">
+                            <field name="era_ev_blacklist_risky"/>
+                        </setting>
+                        <setting string="Disposable" id="ev_bl_disposable"
+                                 help="Throwaway/temporary domains such as mailinator.com. Risky already covers them — tick this on its own to blacklist only these.">
+                            <field name="era_ev_blacklist_disposable"/>
+                        </setting>
+                        <setting string="Unknown" id="ev_bl_unknown"
+                                 help="Could not be determined: greylisting, timeouts, providers that block probing. The most aggressive box — it may blacklist good addresses that were only temporarily unreachable, so pair it with Auto re-check.">
+                            <field name="era_ev_blacklist_unknown"/>
+                        </setting>
+                        <setting string="Catch-all" id="ev_bl_catch_all"
+                                 help="A catch-all domain accepts every address, so 'risky' there means the mailbox could not be confirmed — not that it is invalid. A perfectly valid mailbox can live on one, so this has its own box instead of following Risky, and stays off by default.">
+                            <field name="era_ev_blacklist_catch_all"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_ev_config_settings" model="ir.actions.act_window">
+        <field name="name">Email Verification Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'era_email_verification'}</field>
+    </record>
+
+</odoo>

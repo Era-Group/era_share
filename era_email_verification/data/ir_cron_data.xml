@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- SAFETY NET, not the main path. Batches are submitted and chained
+             immediately via ir.cron._trigger() (see _trigger_cron), and
+             results arrive by webhook push, so this interval only governs how
+             quickly the module notices something the push path missed:
+             a lost/failed push, a verifier that went away, a stuck job, and
+             the optional auto re-check sweep. Quarter-hourly is deliberate —
+             polling the verifier more often buys nothing when push is
+             healthy, and a batch is only polled at all once its push has
+             been silent for reconcile_stale_minutes. -->
+        <record id="ir_cron_ev_process" model="ir.cron">
+            <field name="name">Email Verification: reconcile &amp; sweep (fallback)</field>
+            <field name="model_id" ref="model_email_verification_batch"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_process()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="priority">5</field>
+        </record>
+    </data>
+</odoo>

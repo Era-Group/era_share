@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ev_batch_user,ev.batch.user,model_email_verification_batch,group_email_verification_user,1,1,1,0
+access_ev_batch_manager,ev.batch.manager,model_email_verification_batch,group_email_verification_manager,1,1,1,1
+access_ev_item_user,ev.item.user,model_email_verification_item,group_email_verification_user,1,1,1,0
+access_ev_item_manager,ev.item.manager,model_email_verification_item,group_email_verification_manager,1,1,1,1
+access_ev_wizard_user,ev.wizard.user,model_email_verification_wizard,group_email_verification_user,1,1,1,1
+access_ev_wizard_manager,ev.wizard.manager,model_email_verification_wizard,group_email_verification_manager,1,1,1,1

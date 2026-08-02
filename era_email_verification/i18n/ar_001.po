@@ -1,0 +1,1607 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_email_verification
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-02 00:19+0000\n"
+"PO-Revision-Date: 2026-08-02 00:19+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"A catch-all domain accepts every address, so 'risky' there means the mailbox"
+" could not be confirmed — not that it is invalid. A perfectly valid mailbox "
+"can live on one, so this has its own box instead of following Risky, and "
+"stays off by default."
+msgstr ""
+"نطاق يقبل-الكل يقبل كل عنوان، لذا فإن «خطِر» هناك تعني تعذّر تأكيد الصندوق —"
+" لا أنه خاطئ. قد يوجد صندوق صحيح تماماً على مثل هذا النطاق، لذلك لها خانة "
+"مستقلة بدل أن تتبع «الخطِر»، وتبقى معطّلة افتراضياً."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_blacklist_catch_all
+msgid ""
+"A catch-all domain accepts every address, so a 'risky' result there means "
+"the mailbox could not be confirmed — NOT that it is invalid. A valid mailbox"
+" can live on such a domain, so this box is independent of Risky and off by "
+"default."
+msgstr ""
+"نطاق يقبل-الكل يقبل كل عنوان، لذا فإن نتيجة «خطِر» هناك تعني تعذّر تأكيد "
+"الصندوق — لا أنه خاطئ. قد يوجد صندوق صحيح على هذا النطاق، لذلك هذه الخانة "
+"مستقلة عن «الخطِر» ومعطّلة افتراضياً."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_min_eligible_score
+msgid ""
+"A deliverable, non-disposable address scoring at least this value is flagged"
+" eligible for mailing. Default 80."
+msgstr ""
+"العنوان القابل للتسليم وغير المؤقّت الذي يبلغ هذه الدرجة على الأقل يُعلَّم "
+"مؤهّلاً للمراسلة. الافتراضي 80."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_mailing_contact__email_verification_is_stale
+#: model:ir.model.fields,help:era_email_verification.field_res_partner__email_verification_is_stale
+#: model:ir.model.fields,help:era_email_verification.field_res_users__email_verification_is_stale
+msgid ""
+"A previously mailing-eligible address whose check is older than the "
+"configured re-check window (Settings ▸ Email Verification). Only matters if "
+"Auto re-check is enabled."
+msgstr ""
+"عنوان كان مؤهلاً للمراسلة وفحصه أقدم من نافذة إعادة الفحص المضبوطة "
+"(الإعدادات ▸ فحص البريد). لا أثر له إلا عند تفعيل إعادة الفحص التلقائية."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_stale_days
+msgid ""
+"A previously-checked address older than this many days is considered stale "
+"and eligible for an automatic re-check."
+msgstr ""
+"العنوان المفحوص سابقاً والأقدم من هذا العدد من الأيام يُعتبر قديماً ومؤهّلاً"
+" لإعادة فحص تلقائية."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_stuck_batch_hours
+msgid ""
+"A running batch that imports no new result at all for this many hours is "
+"marked failed and its remote job deleted. Only one job runs at a time, so "
+"this keeps a hung job from blocking the queue forever. A batch that is still"
+" making progress is never affected, however long it takes."
+msgstr ""
+"الدفعة قيد التشغيل التي لا تستورد أي نتيجة جديدة إطلاقاً خلال هذا العدد من "
+"الساعات تُعلَّم فاشلة وتُحذف مهمتها على السيرفر. تعمل مهمة واحدة فقط في كل "
+"وقت، لذا يمنع هذا مهمة معلّقة من تعطيل الطابور للأبد. أما الدفعة التي ما "
+"زالت تُحرز تقدّماً فلا تتأثر مهما طالت."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"A running batch that imports no new result at all for this many hours is "
+"marked failed and its remote job deleted. Only one job runs at a time, so "
+"this keeps a hung job from blocking the queue. A batch that is still making "
+"progress is never affected, however long it takes."
+msgstr ""
+"الدفعة قيد التشغيل التي لا تستورد أي نتيجة جديدة إطلاقاً خلال هذا العدد من "
+"الساعات تُعلَّم فاشلة وتُحذف مهمتها على السيرفر. تعمل مهمة واحدة فقط في كل "
+"وقت، لذا يمنع هذا مهمة معلّقة من تعطيل الطابور. أما الدفعة التي ما زالت "
+"تُحرز تقدّماً فلا تتأثر مهما طالت."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_blacklist_risky
+msgid ""
+"Accepted but uncertain addresses, such as role accounts (info@, sales@, "
+"support@…) and mailboxes reported as full. Catch-all and disposable have "
+"their own boxes below."
+msgstr ""
+"عناوين مقبولة لكن غير مؤكّدة، مثل الحسابات الوظيفية (info@، sales@، "
+"support@…) والصناديق الممتلئة. ولـيقبل-الكل والمؤقّت خانتان مستقلتان أدناه."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Accepted but uncertain: role accounts (info@, sales@, support@…) and full "
+"mailboxes. Mailing these can hurt sender reputation. Recommended."
+msgstr ""
+"مقبول لكن غير مؤكّد: الحسابات الوظيفية (info@، sales@، support@…) والصناديق "
+"الممتلئة. مراسلة هذه قد تضرّ بسمعة المُرسِل. يُنصح بتفعيلها."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__blacklisted
+msgid "Added to blacklist"
+msgstr "أُضيف للقائمة السوداء"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Addresses per remote job (max 5,000). Larger selections are split "
+"automatically."
+msgstr ""
+"عدد العناوين لكل مهمة بعيدة (بحد أقصى 5,000). التحديدات الأكبر تُقسَّم "
+"تلقائياً."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_blacklist_unknown
+msgid ""
+"Addresses that could not be determined (greylisting, timeouts, providers "
+"that block probing). The most aggressive option: it can blacklist good "
+"addresses that were only temporarily unreachable, so pair it with Auto re-"
+"check."
+msgstr ""
+"العناوين التي تعذّر تحديدها (القوائم الرمادية، انتهاء المهلة، مزوّدون يمنعون"
+" الفحص). الخيار الأكثر تشدداً: قد يحجب عناوين جيدة كانت متعذّرة مؤقتاً فقط، "
+"لذا استخدمه مع إعادة الفحص التلقائية."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_blacklist_undeliverable
+msgid ""
+"Addresses the mail server rejected or whose mailbox does not exist — a "
+"guaranteed hard bounce. The safest box to keep on."
+msgstr ""
+"العناوين التي رفضها خادم البريد أو التي لا يوجد لها صندوق — ارتداد قاطع "
+"مؤكّد. أأمن خانة يُنصح بإبقائها مفعّلة."
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_analysis
+msgid "Analysis"
+msgstr "التحليل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Auto re-check"
+msgstr "إعادة فحص تلقائية"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_auto_recheck
+msgid "Auto re-check unchecked / stale"
+msgstr "إعادة فحص تلقائية لغير المفحوص/القديم"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/email_verification_batch.py:0
+msgid "Auto-blacklisted by Email Verification (status: %s, batch %s)."
+msgstr "حُجب تلقائياً بواسطة التحقق من البريد (الحالة: %s، الدفعة %s)."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Automatic blacklist"
+msgstr "الحجب التلقائي"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__source__recheck
+msgid "Automatic re-check"
+msgstr "إعادة فحص تلقائية"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__batch_id
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+msgid "Batch"
+msgstr "الدفعة"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Batch size"
+msgstr "حجم الدفعة"
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_batches
+msgid "Batches"
+msgstr "الدُّفعات"
+
+#. module: era_email_verification
+#: model_terms:ir.actions.act_window,help:era_email_verification.action_ev_batch
+msgid ""
+"Batches are created from the Contacts list, mailing lists, or the\n"
+"               \"Verify Unchecked Emails\" tool, then processed in the background."
+msgstr ""
+"تُنشأ الدُّفعات من قائمة جهات الاتصال أو القوائم البريدية أو أداة \"فحص "
+"الإيميلات غير المفحوصة\"، ثم تُعالَج في الخلفية."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_api_key
+msgid ""
+"Bearer key sent as 'Authorization: Bearer <key>'. Stored in "
+"ir.config_parameter, restricted to administrators, and never logged or "
+"returned."
+msgstr ""
+"المفتاح يُرسَل كـ 'Authorization: Bearer <key>'. يُخزَّن في "
+"ir.config_parameter، ومقصور على المدراء، ولا يُسجَّل ولا يُعاد أبداً."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__blacklist_added_count
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+msgid "Blacklisted"
+msgstr "محجوب"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__callback_secret
+msgid "Callback secret"
+msgstr "سرّ الاستدعاء"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__catch_all
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Catch-all"
+msgstr "يقبل-الكل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_blacklist_catch_all
+msgid "Catch-all (accept-all domains)"
+msgstr "يقبل-الكل (نطاقات تقبل كل العناوين)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_catch_all
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_catch_all
+msgid "Catch-all domain"
+msgstr "نطاق يقبل الكل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_checked_email
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_checked_email
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_checked_email
+msgid "Checked Email"
+msgstr "البريد المفحوص"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__checked_at
+msgid "Checked at"
+msgstr "فُحِص في"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__company_id
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__date_done
+msgid "Completed on"
+msgstr "اكتمل في"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_res_config_settings
+msgid "Config Settings"
+msgstr "تهيئة الإعدادات"
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_config
+msgid "Configuration"
+msgstr "الإعداد"
+
+#. module: era_email_verification
+#: model:res.groups,comment:era_email_verification.group_email_verification_manager
+msgid ""
+"Configure the service, run bulk jobs, retry/cancel,\n"
+"            and view technical SMTP details."
+msgstr ""
+"ضبط الخدمة وتشغيل المهام الجماعية وإعادة المحاولة/الإلغاء، وعرض تفاصيل SMTP "
+"التقنية."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Connect and read timeouts (seconds) for calls to the verifier."
+msgstr "مهلتا الاتصال والقراءة (بالثواني) لطلبات المُحقِّق."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_timeout_connect
+msgid "Connect timeout (s)"
+msgstr "مهلة الاتصال (ث)"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Connect to the mail server and issue an RCPT probe. Strongest signal; "
+"disable for DNS-only checks."
+msgstr ""
+"الاتصال بخادم البريد وإصدار فحص RCPT. أقوى إشارة؛ عطّله للفحص عبر DNS فقط."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Connection"
+msgstr "الاتصال"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_config_settings.py:0
+msgid "Connection OK — test lookup returned status '%s'."
+msgstr "الاتصال ناجح — أعاد الفحص التجريبي الحالة '%s'."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__poll_failure_count
+msgid "Consecutive reconcile failures"
+msgstr "إخفاقات مواءمة متتالية"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_res_partner
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__partner_id
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_wizard__scope__contacts
+msgid "Contacts"
+msgstr "جهات الاتصال"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_wizard__scope__both
+msgid "Contacts + mailing-list contacts"
+msgstr "جهات الاتصال + جهات القوائم البريدية"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__source__partners
+msgid "Contacts sweep"
+msgstr "مسح جهات الاتصال"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Could not be determined: greylisting, timeouts, providers that block "
+"probing. The most aggressive box — it may blacklist good addresses that were"
+" only temporarily unreachable, so pair it with Auto re-check."
+msgstr ""
+"تعذّر تحديده: القوائم الرمادية، انتهاء المهلة، مزوّدون يمنعون الفحص. الخانة "
+"الأكثر تشدداً — قد تحجب عناوين جيدة كانت متعذّرة مؤقتاً فقط، لذا استخدمها مع"
+" إعادة الفحص التلقائية."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "Could not reach the Email Verifier service (%s)."
+msgstr "تعذّر الوصول إلى خدمة المُحقِّق (%s)."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__create_uid
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__user_id
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__create_uid
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__create_uid
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__create_date
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__create_date
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__deliverable_count
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__status__deliverable
+#: model:ir.model.fields.selection,name:era_email_verification.selection__mailing_contact__email_verification_status__deliverable
+#: model:ir.model.fields.selection,name:era_email_verification.selection__res_partner__email_verification_status__deliverable
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Deliverable"
+msgstr "قابل للتسليم"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__check_catch_all
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__check_catch_all
+msgid "Detect catch-all"
+msgstr "كشف يقبل-الكل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_default_check_catch_all
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Detect catch-all by default"
+msgstr "كشف يقبل-الكل افتراضياً"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_client__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__disposable
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_disposable
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_disposable
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Disposable"
+msgstr "المؤقّت"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_blacklist_disposable
+msgid "Disposable (temporary domains)"
+msgstr "المؤقّت (نطاقات مؤقتة)"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__done
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Done"
+msgstr "منتهٍ"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__draft
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__elapsed_ms
+msgid "Elapsed (ms)"
+msgstr "المدة (م.ث)"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Eligibility threshold"
+msgstr "عتبة التأهّل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__email
+msgid "Email (snapshot)"
+msgstr "البريد (لقطة)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_checked_date
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_checked_date
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_checked_date
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Email Checked On"
+msgstr "تاريخ فحص البريد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_reason
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_reason
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_reason
+msgid "Email Reason"
+msgstr "سبب البريد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_score
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_score
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_score
+msgid "Email Score"
+msgstr "درجة البريد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_status
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_status
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_status
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Email Status"
+msgstr "حالة البريد"
+
+#. module: era_email_verification
+#: model:ir.module.category,name:era_email_verification.module_category_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_root
+#: model:res.groups.privilege,name:era_email_verification.res_groups_privilege_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Email Verification"
+msgstr "التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_email_verification_batch
+msgid "Email Verification Batch"
+msgstr "دفعة التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_email_verification_item
+msgid "Email Verification Item"
+msgstr "عنصر التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.actions.act_window,name:era_email_verification.action_ev_config_settings
+msgid "Email Verification Settings"
+msgstr "إعدادات التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.actions.server,name:era_email_verification.ir_cron_ev_process_ir_actions_server
+msgid "Email Verification: reconcile & sweep (fallback)"
+msgstr "التحقق من البريد: معالجة الدفعات"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_email_verification_client
+msgid "Email Verifier API Client"
+msgstr "عميل API لمُحقِّق البريد"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_config_settings.py:0
+msgid "Email Verifier reachable"
+msgstr "المُحقِّق متاح"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_is_stale
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_is_stale
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_is_stale
+msgid "Email check is stale"
+msgstr "فحص البريد قديم"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Email not checked"
+msgstr "بريد غير مفحوص"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "Email verified"
+msgstr "تم التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__error_message
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__error_message
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__state__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__failed
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_reconcile_stale_minutes
+msgid "Fallback poll after (min)"
+msgstr "الاستطلاع الاحتياطي بعد (دقيقة)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__free_provider
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_free_provider
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_free_provider
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Free provider"
+msgstr "مزوّد مجاني"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Give up on a stuck batch after"
+msgstr "التخلي عن الدفعة المتوقفة بعد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_stuck_batch_hours
+msgid "Give up on a stuck batch after (h)"
+msgstr "التخلي عن الدفعة المتوقفة بعد (ساعة)"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"HTTPS base URL and Bearer key of the private Email Verifier API. The key is "
+"stored for administrators only and never logged."
+msgstr ""
+"رابط HTTPS الأساسي ومفتاح Bearer لـ API المُحقِّق الخاص. المفتاح يُخزَّن "
+"للمدراء فقط ولا يُسجَّل أبداً."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_base_url
+msgid ""
+"HTTPS base URL of the private Email Verifier API, e.g. https://email-"
+"validation.letsw.com . Plain http:// is only accepted for localhost."
+msgstr ""
+"رابط HTTPS الأساسي لـ API المُحقِّق الخاص، مثل https://email-"
+"validation.letsw.com . لا يُقبل http:// إلا لـ localhost."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_callback_base_url
+msgid ""
+"HTTPS base URL the verifier can reach this Odoo at, e.g. "
+"https://odoo.example.com . Defaults to the system 'web.base.url'. Push is "
+"only offered over HTTPS."
+msgstr ""
+"رابط HTTPS الذي يصل المُحقِّق منه إلى Odoo هذا، مثل https://odoo.example.com"
+" . الافتراضي هو 'web.base.url'. الدفع لا يُتاح إلا عبر HTTPS."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__id
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_client__id
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__id
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__id
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__id
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_error
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_reconcile_stale_minutes
+msgid ""
+"If no push has arrived for a running batch within this many minutes, the "
+"fallback poll pulls its results instead. Keep it below the scheduled "
+"action's interval (default: poll after 5 min, action runs every 15) — if the"
+" two are equal a batch waits two runs instead of one."
+msgstr ""
+"إذا لم يصل أي دفع لدفعة قيد التنفيذ خلال هذا العدد من الدقائق، يسحب "
+"الاستطلاع الاحتياطي نتائجها بدلاً من ذلك."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__import_offset
+msgid "Import cursor"
+msgstr "مؤشّر الاستيراد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__imported_count
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__state__done
+msgid "Imported"
+msgstr "مستورد"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__state
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+msgid "Item State"
+msgstr "حالة العنصر"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__item_count
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__item_ids
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+msgid "Items"
+msgstr "العناصر"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__write_uid
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__write_uid
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__write_date
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__write_date
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__last_progress_at
+msgid "Last progress"
+msgstr "آخر تقدّم"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__last_push_at
+msgid "Last result push"
+msgstr "آخر دفع للنتائج"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_form
+msgid "Links"
+msgstr "الروابط"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__mx_records
+msgid "MX records"
+msgstr "سجلات MX"
+
+#. module: era_email_verification
+#: model:ir.model,name:era_email_verification.model_mailing_contact
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__mailing_contact_id
+msgid "Mailing Contact"
+msgstr "جهة اتصال بريدية"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__source__mailing
+msgid "Mailing list"
+msgstr "قائمة بريدية"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_eligible
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_eligible
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_eligible
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Mailing-eligible"
+msgstr "مؤهّل للمراسلة"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_wizard__scope__mailing
+msgid "Mailing-list contacts"
+msgstr "جهات القوائم البريدية"
+
+#. module: era_email_verification
+#: model:res.groups,name:era_email_verification.group_email_verification_manager
+msgid "Manager"
+msgstr "مدير"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__source__manual
+msgid "Manual selection"
+msgstr "اختيار يدوي"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__limit
+msgid "Max addresses"
+msgstr "أقصى عدد عناوين"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_batch_size
+msgid "Max emails per batch"
+msgstr "أقصى عدد إيميلات لكل دفعة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_min_eligible_score
+msgid "Min score to be mailing-eligible"
+msgstr "أدنى درجة للتأهّل للمراسلة"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Minimum score for a deliverable, non-disposable address to be flagged "
+"mailing-eligible."
+msgstr "أدنى درجة لعنوان قابل للتسليم وغير مؤقّت ليُعلَّم مؤهّلاً للمراسلة."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "My Batches"
+msgstr "دفعاتي"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_mailing_contact__email_verification_needs_recheck
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_needs_recheck
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_needs_recheck
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Needs re-check"
+msgstr "يحتاج إعادة فحص"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/wizards/verify_email_wizard.py:0
+msgid "No unchecked emails were found for the chosen scope."
+msgstr "لم يُعثر على إيميلات غير مفحوصة للنطاق المختار."
+
+#. module: era_email_verification
+#: model_terms:ir.actions.act_window,help:era_email_verification.action_ev_batch
+msgid "No verification batches yet"
+msgstr "لا توجد دفعات تحقق بعد"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/mailing_contact.py:0
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "None of the selected contacts has an email address."
+msgstr "لا تحتوي أي من الجهات المحددة على بريد."
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__status__not_checked
+#: model:ir.model.fields.selection,name:era_email_verification.selection__mailing_contact__email_verification_status__not_checked
+#: model:ir.model.fields.selection,name:era_email_verification.selection__res_partner__email_verification_status__not_checked
+msgid "Not checked"
+msgstr "لم يُفحص"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
+msgid ""
+"Only addresses that have never been checked (or were flagged\n"
+"                        for re-check) are queued. Work runs in the background in\n"
+"                        batches of up to the configured batch size."
+msgstr ""
+"تُدرَج فقط العناوين التي لم تُفحص قط (أو المُعلَّمة لإعادة الفحص). يعمل "
+"الفحص في الخلفية على دفعات لا تتجاوز حجم الدفعة المضبوط."
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_operations
+msgid "Operations"
+msgstr "العمليات"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Periodically queue never-checked and stale contacts (opt-in)."
+msgstr "إدراج الجهات غير المفحوصة والقديمة في الطابور دورياً (اختياري)."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__check_smtp
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__check_smtp
+msgid "Probe SMTP"
+msgstr "فحص SMTP"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_default_check_smtp
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Probe SMTP by default"
+msgstr "فحص SMTP افتراضياً"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_default_check_catch_all
+msgid ""
+"Probe a random address to detect catch-all domains that accept everything. "
+"Skipped automatically for known free providers."
+msgstr ""
+"فحص عنوان عشوائي لكشف نطاقات يقبل-الكل التي تقبل كل شيء. يُتخطّى تلقائياً "
+"لمزوّدي البريد المجاني المعروفين."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Probe a random address to spot domains that accept everything. Skipped "
+"automatically for known free providers."
+msgstr ""
+"فحص عنوان عشوائي لرصد النطاقات التي تقبل كل شيء. يُتخطّى تلقائياً لمزوّدي "
+"البريد المجاني المعروفين."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__progress
+msgid "Progress %"
+msgstr "نسبة التقدّم %"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_callback_base_url
+msgid "Public Odoo URL for push"
+msgstr "رابط Odoo العام للدفع"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_push_enabled
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Push results (webhook)"
+msgstr "دفع النتائج (webhook)"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+msgid "Queue"
+msgstr "أدرج في الطابور"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__queued
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Queued"
+msgstr "في الطابور"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_stale_days
+msgid "Re-check after (days)"
+msgstr "إعادة الفحص بعد (أيام)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_timeout_read
+msgid "Read timeout (s)"
+msgstr "مهلة القراءة (ث)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__reason_summary
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__reason_codes
+msgid "Reason codes"
+msgstr "رموز السبب"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__name
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__job_id
+msgid "Remote Job ID"
+msgstr "معرّف المهمة البعيدة"
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_reporting
+msgid "Reporting"
+msgstr "التقارير"
+
+#. module: era_email_verification
+#: model:res.groups,comment:era_email_verification.group_email_verification_user
+msgid "Request verification and view email statuses."
+msgstr "طلب التحقق وعرض حالات البريد."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__status
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Result delivery"
+msgstr "توصيل النتائج"
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_results
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+msgid "Results"
+msgstr "النتائج"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__risky_count
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_blacklist_risky
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__status__risky
+#: model:ir.model.fields.selection,name:era_email_verification.selection__mailing_contact__email_verification_status__risky
+#: model:ir.model.fields.selection,name:era_email_verification.selection__res_partner__email_verification_status__risky
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Risky"
+msgstr "خطِر"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__role_account
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_role
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_role
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Role account"
+msgstr "حساب وظيفي"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_batch__state__running
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Running"
+msgstr "قيد التنفيذ"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__smtp_code
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_smtp_code
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_smtp_code
+msgid "SMTP code"
+msgstr "رمز SMTP"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_form
+msgid "SMTP details"
+msgstr "تفاصيل SMTP"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__smtp_message
+msgid "SMTP message"
+msgstr "رسالة SMTP"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__scope
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__score
+msgid "Score"
+msgstr "الدرجة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__last_progress_at
+msgid ""
+"Set on submit and bumped every time a push or a poll actually imports at "
+"least one new result. If this stays stale for too long the batch is treated "
+"as stuck (see the stuck-batch safety valve) so a hung remote job can never "
+"block the queue."
+msgstr ""
+"يُضبط عند الإرسال ويُحدَّث كلما استورد دفعٌ أو استعلامٌ نتيجة جديدة واحدة "
+"على الأقل. إذا بقي قديماً مدة طويلة تُعتبر الدفعة متوقفة (راجع صمّام أمان "
+"الدفعات المتوقفة) كي لا تعطّل مهمةٌ معلّقة الطابور."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_item__blacklisted
+msgid "Set when this address was added to mail.blacklist by policy."
+msgstr "يُضبط عند إضافة هذا العنوان إلى mail.blacklist وفق السياسة."
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_settings
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Signals"
+msgstr "الإشارات"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__source
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Source"
+msgstr "المصدر"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__stale_count
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+msgid "Stale"
+msgstr "قديم"
+
+#. module: era_email_verification
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__state__stale
+msgid "Stale (email changed)"
+msgstr "قديم (تغيّر الإيميل)"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Stale (needs re-check)"
+msgstr "قديم (يحتاج إعادة فحص)"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__state
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "Status: %(status)s (score %(score)s)."
+msgstr "الحالة: %(status)s (الدرجة %(score)s)."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__date_submitted
+msgid "Submitted on"
+msgstr "أُرسل في"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_partner__email_verification_eligible
+#: model:ir.model.fields,help:era_email_verification.field_res_users__email_verification_eligible
+msgid ""
+"Technically safe to email: a deliverable, non-disposable address scoring "
+"above the configured threshold. Not a proof of consent."
+msgstr ""
+"آمن تقنياً للمراسلة: عنوان قابل للتسليم وغير مؤقّت يتجاوز العتبة المضبوطة. "
+"ليس إثباتاً للموافقة."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Test connection"
+msgstr "اختبار الاتصال"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid ""
+"The Email Verifier API key is not configured. Set it in Settings ▸ Email "
+"Verification."
+msgstr ""
+"مفتاح API للمُحقِّق غير مضبوط. اضبطه في Settings ▸ Email Verification."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "The Email Verifier base URL is invalid: %s"
+msgstr "رابط المُحقِّق الأساسي غير صالح: %s"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid ""
+"The Email Verifier base URL is not configured. Set it in Settings ▸ Email "
+"Verification."
+msgstr ""
+"رابط المُحقِّق الأساسي غير مضبوط. اضبطه في Settings ▸ Email Verification."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid ""
+"The Email Verifier base URL must use HTTPS (plain HTTP is only allowed for "
+"localhost)."
+msgstr "يجب أن يستخدم رابط المُحقِّق HTTPS (يُسمح بـ HTTP فقط لـ localhost)."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "The Email Verifier rejected the API key (HTTP 401)."
+msgstr "رفض المُحقِّق مفتاح الـ API (HTTP 401)."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "The Email Verifier returned HTTP %s."
+msgstr "أعاد المُحقِّق HTTP %s."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/email_verification_batch.py:0
+msgid "The Email Verifier returned an invalid job response."
+msgstr ""
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/email_verification_batch.py:0
+msgid "The Email Verifier returned an invalid job total."
+msgstr ""
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "The Email Verifier returned an unexpected redirect."
+msgstr "أعاد المُحقِّق تحويلاً غير متوقّع."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/verifier_client.py:0
+msgid "The Python 'requests' library is required."
+msgstr "مكتبة Python 'requests' مطلوبة."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_config_settings.py:0
+msgid "The batch size must be at least 1."
+msgstr "يجب أن يكون حجم الدفعة 1 على الأقل."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_config_settings.py:0
+msgid "The eligibility score must be between 0 and 100."
+msgstr "يجب أن تكون درجة التأهّل بين 0 و100."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_partner__email_verification_checked_email
+#: model:ir.model.fields,help:era_email_verification.field_res_users__email_verification_checked_email
+msgid ""
+"The exact address that produced the current status. If the contact's email "
+"later differs from this, the status is reset."
+msgstr ""
+"العنوان الدقيق الذي أنتج الحالة الحالية. إذا اختلف بريد الجهة لاحقاً عن هذا،"
+" تُعاد الحالة إلى الصفر."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_config_settings.py:0
+msgid "The maximum batch size is 5,000."
+msgstr "أقصى حجم للدفعة هو 5,000."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"The server rejected the address or the mailbox does not exist — a guaranteed"
+" hard bounce. Recommended."
+msgstr ""
+"رفض الخادم العنوان أو أن الصندوق غير موجود — ارتداد قاطع مؤكّد. يُنصح "
+"بتفعيلها."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"The verifier pushes completed results here as they finish (low latency); a "
+"poll reconciles as a fallback. Needs a public HTTPS URL for Odoo."
+msgstr ""
+"يدفع المُحقِّق النتائج المكتملة إلى هنا فور انتهائها (زمن استجابة منخفض)؛ "
+"ويُصالح الاستطلاع احتياطياً. يحتاج رابط HTTPS عاماً لـ Odoo."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"The verifier signs each push with a per-batch secret\n"
+"                                    (HMAC-SHA256). Results still import via polling if a\n"
+"                                    push is missed, so no data is lost."
+msgstr ""
+"يوقّع المُحقِّق كل دفعة بسرّ خاص لكل دفعة (HMAC-SHA256). تظل النتائج "
+"تُستورَد عبر الاستطلاع إذا فات دفع، فلا تُفقد أي بيانات."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "This contact has no email address to verify."
+msgstr "لا يوجد بريد لهذه الجهة للتحقق منه."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Throwaway/temporary domains such as mailinator.com. Risky already covers "
+"them — tick this on its own to blacklist only these."
+msgstr ""
+"نطاقات مؤقتة للاستعمال العابر مثل mailinator.com. «الخطِر» يشملها أصلاً — "
+"فعّل هذه وحدها لحجبها فقط."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_blacklist_disposable
+msgid ""
+"Throwaway/temporary domains such as mailinator.com. Ticking Risky already "
+"covers them; use this to blacklist them without blacklisting the other risky"
+" addresses."
+msgstr ""
+"النطاقات المؤقّتة مثل mailinator.com. تفعيل «الخطِر» يشملها أصلاً؛ استخدم "
+"هذه الخانة لحجبها وحدها دون حجب بقية العناوين الخطِرة."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid ""
+"Tick the verification outcomes that should be added to the mass-mailing "
+"blacklist (mail.blacklist) automatically, which then excludes those "
+"addresses from every mailing. Deliverable is never blacklisted, and leaving "
+"everything unticked disables automatic blacklisting entirely."
+msgstr ""
+"فعّل نتائج التحقق التي ينبغي إضافتها تلقائياً إلى القائمة السوداء للتسويق "
+"(mail.blacklist)، والتي تستبعد تلك العناوين من كل حملة. «قابل للتسليم» لا "
+"يُحجب أبداً، وترك جميع الخانات معطّلة يوقف الحجب التلقائي تماماً."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Timeouts"
+msgstr "المهلات"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
+msgid "To be queued"
+msgstr "للإدراج في الطابور"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__total_count
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__poll_failure_count
+msgid ""
+"Transient polling/import failures are retried before the batch is failed and"
+" its remote job is deleted."
+msgstr ""
+"إخفاقات الاستعلام/الاستيراد العابرة يُعاد المحاولة عليها قبل إعلان فشل "
+"الدفعة وحذف مهمتها على السيرفر."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__unchecked_partner_count
+msgid "Unchecked contacts"
+msgstr "جهات اتصال غير مفحوصة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__unchecked_contact_count
+msgid "Unchecked mailing contacts"
+msgstr "جهات بريدية غير مفحوصة"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__undeliverable_count
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_blacklist_undeliverable
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__status__undeliverable
+#: model:ir.model.fields.selection,name:era_email_verification.selection__mailing_contact__email_verification_status__undeliverable
+#: model:ir.model.fields.selection,name:era_email_verification.selection__res_partner__email_verification_status__undeliverable
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Undeliverable"
+msgstr "غير قابل للتسليم"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__unknown_count
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_blacklist_unknown
+#: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__status__unknown
+#: model:ir.model.fields.selection,name:era_email_verification.selection__mailing_contact__email_verification_status__unknown
+#: model:ir.model.fields.selection,name:era_email_verification.selection__res_partner__email_verification_status__unknown
+#: model_terms:ir.ui.view,arch_db:era_email_verification.mailing_contact_view_search_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_res_partner_filter_ev
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_batch_size
+msgid ""
+"Upper bound on addresses per remote job. The verifier caps this at 5,000; "
+"larger selections are split into several batches."
+msgstr ""
+"الحد الأعلى لعدد العناوين لكل مهمة بعيدة. يحدّد المُحقِّق هذا بـ 5,000؛ "
+"التحديدات الأكبر تُقسَّم إلى عدة دفعات."
+
+#. module: era_email_verification
+#: model:res.groups,name:era_email_verification.group_email_verification_user
+msgid "User"
+msgstr "مستخدم"
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_verify_tls
+msgid ""
+"Validate the verifier's TLS certificate. Keep enabled in production; disable"
+" only against a trusted internal host."
+msgstr ""
+"التحقق من شهادة TLS للمُحقِّق. أبقِه مفعّلاً في الإنتاج؛ عطّله فقط مقابل "
+"مضيف داخلي موثوق."
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_graph
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_pivot
+msgid "Verification Analysis"
+msgstr "تحليل التحقق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_form
+msgid "Verification Batch"
+msgstr "دفعة التحقق"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/mailing_contact.py:0
+#: code:addons/era_email_verification/models/res_partner.py:0
+#: code:addons/era_email_verification/wizards/verify_email_wizard.py:0
+#: model:ir.actions.act_window,name:era_email_verification.action_ev_batch
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_list
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_batch_search
+msgid "Verification Batches"
+msgstr "دفعات التحقق"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "Verification History"
+msgstr "سجل التحقق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_form
+msgid "Verification Item"
+msgstr "عنصر التحقق"
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/email_verification_batch.py:0
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_list
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_item_search
+msgid "Verification Items"
+msgstr "عناصر التحقق"
+
+#. module: era_email_verification
+#: model:ir.actions.act_window,name:era_email_verification.action_ev_item
+msgid "Verification Results"
+msgstr "نتائج التحقق"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_history_count
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_history_count
+msgid "Verification count"
+msgstr "عدد مرات التحقق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Verification defaults"
+msgstr "إعدادات الفحص الافتراضية"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_partner__email_verification_item_ids
+#: model:ir.model.fields,field_description:era_email_verification.field_res_users__email_verification_item_ids
+msgid "Verification history"
+msgstr "سجل التحقق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Verifications"
+msgstr "مرات التحقق"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_api_key
+msgid "Verifier API Key"
+msgstr "مفتاح API للمُحقِّق"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_base_url
+msgid "Verifier Base URL"
+msgstr "رابط المُحقِّق الأساسي"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "Verifier service"
+msgstr "خدمة المُحقِّق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Verify"
+msgstr "تحقّق"
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
+msgid "Verify Email Now"
+msgstr "تحقّق من البريد الآن"
+
+#. module: era_email_verification
+#: model:ir.actions.server,name:era_email_verification.action_mailing_contact_verify_email
+#: model:ir.actions.server,name:era_email_verification.action_partner_verify_email
+msgid "Verify Email(s)"
+msgstr "فحص الإيميل/الإيميلات"
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_verify_tls
+msgid "Verify TLS certificate"
+msgstr "التحقق من شهادة TLS"
+
+#. module: era_email_verification
+#: model:ir.actions.act_window,name:era_email_verification.action_ev_wizard
+#: model:ir.model,name:era_email_verification.model_email_verification_wizard
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_verify_unchecked
+#: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
+msgid "Verify Unchecked Emails"
+msgstr "فحص الإيميلات غير المفحوصة"
+
+#. module: era_email_verification
+#: model:ir.module.category,description:era_email_verification.module_category_email_verification
+msgid "Verify contact and mailing-list email addresses."
+msgstr "التحقق من عناوين بريد جهات الاتصال والقوائم البريدية."
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_era_email_verification
+msgid "ERA Email Verification"
+msgstr "ERA فحص البريد الإلكتروني"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_era_email_verification
+msgid "Check email addresses, see clear results, and keep invalid addresses out of your mailings."
+msgstr "افحص عناوين البريد، واعرض النتائج بوضوح، واستبعد العناوين غير الصالحة من حملاتك البريدية."
+
+#. module: era_email_verification
+#: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_auto_recheck
+msgid ""
+"When on, a scheduled action periodically queues never-checked and stale "
+"mailing-eligible contacts for verification."
+msgstr ""
+"عند التفعيل، يُدرج إجراء مجدول دورياً الجهات غير المفحوصة والقديمة المؤهّلة "
+"للمراسلة بغرض التحقق."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_push_enabled
+msgid ""
+"When on, the verifier pushes completed results to this Odoo instance as they"
+" finish (low latency). A poll still reconciles as a fallback. Requires a "
+"public HTTPS URL for Odoo (below)."
+msgstr ""
+"عند التفعيل، يدفع المُحقِّق النتائج المكتملة إلى نسخة Odoo هذه فور انتهائها "
+"(زمن استجابة منخفض). ويظل الاستطلاع يُصالح احتياطياً. يتطلب رابط HTTPS عاماً"
+" لـ Odoo (بالأسفل)."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_default_check_smtp
+msgid ""
+"When on, verification connects to the mail server and issues an RCPT probe "
+"(strongest signal). When off, only DNS/MX is checked."
+msgstr ""
+"عند التفعيل، يتصل التحقق بخادم البريد ويُصدر فحص RCPT (أقوى إشارة). عند "
+"الإيقاف، يُفحص DNS/MX فقط."
+
+#. module: era_email_verification
+#: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__last_push_at
+msgid ""
+"When the verifier last pushed results for this batch. Used to decide when "
+"the reconcile poll should step in as a fallback."
+msgstr ""
+"وقت آخر دفع للمُحقِّق لنتائج هذه الدفعة. يُستخدَم لتحديد متى يتدخّل استطلاع "
+"المصالحة كاحتياط."
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/email_verification_batch.py:0
+msgid "batch_id"
+msgstr ""
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "https://email-validation.letsw.com"
+msgstr ""
+
+#. module: era_email_verification
+#: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
+msgid "https://odoo.example.com (defaults to web.base.url)"
+msgstr ""
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/mailing_contact.py:0
+#: code:addons/era_email_verification/models/res_partner.py:0
+#: code:addons/era_email_verification/wizards/verify_email_wizard.py:0
+msgid "id"
+msgstr ""
+
+#. module: era_email_verification
+#. odoo-python
+#: code:addons/era_email_verification/models/res_partner.py:0
+msgid "partner_id"
+msgstr ""

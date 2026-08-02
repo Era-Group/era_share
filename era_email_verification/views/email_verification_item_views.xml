@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ev_item_list" model="ir.ui.view">
+        <field name="name">email.verification.item.list</field>
+        <field name="model">email.verification.item</field>
+        <field name="arch" type="xml">
+            <list string="Verification Items" create="0"
+                  decoration-success="status == 'deliverable'"
+                  decoration-warning="status == 'risky'"
+                  decoration-danger="status == 'undeliverable'"
+                  decoration-muted="status == 'unknown'">
+                <field name="email"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'deliverable'"
+                       decoration-warning="status == 'risky'"
+                       decoration-danger="status == 'undeliverable'"
+                       decoration-muted="status == 'unknown'"/>
+                <field name="score"/>
+                <field name="reason_summary"/>
+                <field name="catch_all"/>
+                <field name="disposable"/>
+                <field name="role_account"/>
+                <field name="free_provider" optional="hide"/>
+                <field name="blacklisted"/>
+                <field name="state"/>
+                <field name="partner_id" optional="show"/>
+                <field name="mailing_contact_id" optional="hide"/>
+                <field name="checked_at" optional="hide"/>
+                <field name="batch_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ev_item_form" model="ir.ui.view">
+        <field name="name">email.verification.item.form</field>
+        <field name="model">email.verification.item</field>
+        <field name="arch" type="xml">
+            <form string="Verification Item" create="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="email" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="status"/>
+                            <field name="score"/>
+                            <field name="reason_summary"/>
+                            <field name="reason_codes"/>
+                            <field name="state"/>
+                            <field name="blacklisted"/>
+                        </group>
+                        <group>
+                            <field name="catch_all"/>
+                            <field name="disposable"/>
+                            <field name="role_account"/>
+                            <field name="free_provider"/>
+                            <field name="checked_at"/>
+                            <field name="elapsed_ms"/>
+                        </group>
+                    </group>
+                    <group string="Links">
+                        <field name="batch_id"/>
+                        <field name="partner_id"/>
+                        <field name="mailing_contact_id"/>
+                    </group>
+                    <group string="SMTP details"
+                           groups="era_email_verification.group_email_verification_manager">
+                        <field name="smtp_code"/>
+                        <field name="mx_records"/>
+                        <field name="smtp_message"/>
+                        <field name="error_message" invisible="not error_message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ev_item_search" model="ir.ui.view">
+        <field name="name">email.verification.item.search</field>
+        <field name="model">email.verification.item</field>
+        <field name="arch" type="xml">
+            <search string="Verification Items">
+                <field name="email"/>
+                <field name="partner_id"/>
+                <field name="batch_id"/>
+                <filter name="deliverable" string="Deliverable" domain="[('status','=','deliverable')]"/>
+                <filter name="risky" string="Risky" domain="[('status','=','risky')]"/>
+                <filter name="undeliverable" string="Undeliverable" domain="[('status','=','undeliverable')]"/>
+                <filter name="unknown" string="Unknown" domain="[('status','=','unknown')]"/>
+                <separator/>
+                <filter name="catch_all" string="Catch-all" domain="[('catch_all','=',True)]"/>
+                <filter name="disposable" string="Disposable" domain="[('disposable','=',True)]"/>
+                <filter name="role" string="Role account" domain="[('role_account','=',True)]"/>
+                <filter name="blacklisted" string="Blacklisted" domain="[('blacklisted','=',True)]"/>
+                <filter name="stale" string="Stale" domain="[('state','=','stale')]"/>
+                <group>
+                    <filter name="group_status" string="Result" context="{'group_by':'status'}"/>
+                    <filter name="group_batch" string="Batch" context="{'group_by':'batch_id'}"/>
+                    <filter name="group_state" string="Item State" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_ev_item_pivot" model="ir.ui.view">
+        <field name="name">email.verification.item.pivot</field>
+        <field name="model">email.verification.item</field>
+        <field name="arch" type="xml">
+            <pivot string="Verification Analysis">
+                <field name="status" type="row"/>
+                <field name="checked_at" interval="week" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_ev_item_graph" model="ir.ui.view">
+        <field name="name">email.verification.item.graph</field>
+        <field name="model">email.verification.item</field>
+        <field name="arch" type="xml">
+            <graph string="Verification Analysis" type="bar">
+                <field name="status"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_ev_item" model="ir.actions.act_window">
+        <field name="name">Verification Results</field>
+        <field name="res_model">email.verification.item</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_ev_item_search"/>
+    </record>
+
+</odoo>

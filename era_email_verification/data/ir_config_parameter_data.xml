@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Seed sane defaults once. base_url / api_key are left empty for the
+         administrator to fill in Settings ▸ Email Verification. -->
+    <record id="ev_param_verify_tls" model="ir.config_parameter">
+        <field name="key">era_email_verification.verify_tls</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_timeout_connect" model="ir.config_parameter">
+        <field name="key">era_email_verification.timeout_connect</field>
+        <field name="value">5</field>
+    </record>
+    <record id="ev_param_timeout_read" model="ir.config_parameter">
+        <field name="key">era_email_verification.timeout_read</field>
+        <field name="value">30</field>
+    </record>
+    <record id="ev_param_batch_size" model="ir.config_parameter">
+        <field name="key">era_email_verification.batch_size</field>
+        <field name="value">5000</field>
+    </record>
+    <record id="ev_param_check_smtp" model="ir.config_parameter">
+        <field name="key">era_email_verification.default_check_smtp</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_check_catch_all" model="ir.config_parameter">
+        <field name="key">era_email_verification.default_check_catch_all</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_min_score" model="ir.config_parameter">
+        <field name="key">era_email_verification.min_eligible_score</field>
+        <field name="value">80</field>
+    </record>
+    <record id="ev_param_stale_days" model="ir.config_parameter">
+        <field name="key">era_email_verification.stale_days</field>
+        <field name="value">180</field>
+    </record>
+    <record id="ev_param_auto_recheck" model="ir.config_parameter">
+        <field name="key">era_email_verification.auto_recheck</field>
+        <field name="value">False</field>
+    </record>
+    <!-- Auto-blacklist: one independent checkbox per outcome. The shipped
+         defaults match the old "Undeliverable + Risky (recommended)" policy. -->
+    <record id="ev_param_blacklist_undeliverable" model="ir.config_parameter">
+        <field name="key">era_email_verification.blacklist_undeliverable</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_blacklist_risky" model="ir.config_parameter">
+        <field name="key">era_email_verification.blacklist_risky</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_blacklist_disposable" model="ir.config_parameter">
+        <field name="key">era_email_verification.blacklist_disposable</field>
+        <field name="value">False</field>
+    </record>
+    <record id="ev_param_blacklist_unknown" model="ir.config_parameter">
+        <field name="key">era_email_verification.blacklist_unknown</field>
+        <field name="value">False</field>
+    </record>
+    <record id="ev_param_blacklist_catch_all" model="ir.config_parameter">
+        <field name="key">era_email_verification.blacklist_catch_all</field>
+        <field name="value">False</field>
+    </record>
+    <record id="ev_param_push_enabled" model="ir.config_parameter">
+        <field name="key">era_email_verification.push_enabled</field>
+        <field name="value">True</field>
+    </record>
+    <record id="ev_param_reconcile_stale_minutes" model="ir.config_parameter">
+        <field name="key">era_email_verification.reconcile_stale_minutes</field>
+        <field name="value">5</field>
+    </record>
+    <record id="ev_param_stuck_batch_hours" model="ir.config_parameter">
+        <field name="key">era_email_verification.stuck_batch_hours</field>
+        <field name="value">6</field>
+    </record>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mailing_contact_view_tree_ev" model="ir.ui.view">
+        <field name="name">mailing.contact.list.email.verification</field>
+        <field name="model">mailing.contact</field>
+        <field name="inherit_id" ref="mass_mailing.mailing_contact_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="email_verification_status" widget="badge" optional="show"
+                       decoration-success="email_verification_status == 'deliverable'"
+                       decoration-warning="email_verification_status == 'risky'"
+                       decoration-danger="email_verification_status == 'undeliverable'"
+                       decoration-muted="email_verification_status == 'unknown'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search: filters + Group By, placed relative to the base view's own
+         group-by block so each lands in the right dropdown. -->
+    <record id="mailing_contact_view_search_ev" model="ir.ui.view">
+        <field name="name">mailing.contact.search.email.verification</field>
+        <field name="model">mailing.contact</field>
+        <field name="inherit_id" ref="mass_mailing.mailing_contact_view_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//search/group[last()]" position="before">
+                <separator/>
+                <filter name="ev_not_checked" string="Email not checked"
+                        domain="[('email_verification_status','in',(False,'not_checked'))]"/>
+                <filter name="ev_deliverable" string="Deliverable"
+                        domain="[('email_verification_status','=','deliverable')]"/>
+                <filter name="ev_risky" string="Risky"
+                        domain="[('email_verification_status','=','risky')]"/>
+                <filter name="ev_undeliverable" string="Undeliverable"
+                        domain="[('email_verification_status','=','undeliverable')]"/>
+                <filter name="ev_unknown" string="Unknown"
+                        domain="[('email_verification_status','=','unknown')]"/>
+                <separator/>
+                <filter name="ev_eligible" string="Mailing-eligible"
+                        domain="[('email_verification_eligible','=',True)]"/>
+                <filter name="ev_needs_recheck" string="Needs re-check"
+                        domain="[('email_verification_needs_recheck','=',True)]"/>
+                <filter name="ev_stale" string="Stale (needs re-check)"
+                        domain="[('email_verification_is_stale','=',True)]"/>
+            </xpath>
+
+            <!-- email_verification_is_stale is computed and not stored, so it
+                 is searchable but cannot be grouped by. -->
+            <xpath expr="//search/group[last()]" position="inside">
+                <filter name="group_ev_status" string="Email Status"
+                        context="{'group_by': 'email_verification_status'}"/>
+                <filter name="group_ev_eligible" string="Mailing-eligible"
+                        context="{'group_by': 'email_verification_eligible'}"/>
+                <filter name="group_ev_checked_date" string="Email Checked On"
+                        context="{'group_by': 'email_verification_checked_date'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="action_mailing_contact_verify_email" model="ir.actions.server">
+        <field name="name">Verify Email(s)</field>
+        <field name="model_id" ref="mass_mailing.model_mailing_contact"/>
+        <field name="binding_model_id" ref="mass_mailing.model_mailing_contact"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('group_email_verification_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_verify_email_bulk()</field>
+    </record>
+
+</odoo>

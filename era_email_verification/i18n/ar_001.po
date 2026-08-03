@@ -117,7 +117,7 @@ msgstr ""
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "إجراء مطلوب"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__blacklisted
@@ -162,7 +162,7 @@ msgstr "التحليل"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_attachment_count
 msgid "Attachment Count"
-msgstr ""
+msgstr "عدد المرفقات"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__attempts
@@ -399,7 +399,7 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__create_date
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__create_date
 msgid "Created on"
-msgstr ""
+msgstr "أنشئ في"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__deliverable_count
@@ -589,12 +589,12 @@ msgstr "الاستطلاع الاحتياطي بعد (دقيقة)"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "المتابعون"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "المتابعون (الشركاء)"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__free_provider
@@ -645,7 +645,7 @@ msgstr ""
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__has_message
 msgid "Has Message"
-msgstr ""
+msgstr "يحتوي على رسالة"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__id
@@ -661,13 +661,13 @@ msgstr "المُعرف"
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr ""
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_error
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
+msgstr "عند التحديد، حدث خطأ في تسليم بعض الرسائل."
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_reconcile_stale_minutes
@@ -694,7 +694,7 @@ msgstr "مستورد"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_is_follower
 msgid "Is Follower"
-msgstr ""
+msgstr "متابِع"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__state
@@ -714,14 +714,14 @@ msgstr "العناصر"
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__write_uid
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__write_date
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__write_date
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_wizard__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "آخر تحديث في"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__last_progress_at
@@ -791,12 +791,12 @@ msgstr "أقصى عدد إيميلات لكل دفعة"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_error
 msgid "Message Delivery error"
-msgstr ""
+msgstr "خطأ في تسليم الرسالة"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_ids
 msgid "Messages"
-msgstr ""
+msgstr "الرسائل"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_res_config_settings__era_ev_min_eligible_score
@@ -852,22 +852,22 @@ msgstr "لم يُفحص"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_needaction_counter
 msgid "Number of Actions"
-msgstr ""
+msgstr "عدد الإجراءات"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_error_counter
 msgid "Number of errors"
-msgstr ""
+msgstr "عدد الأخطاء"
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_needaction_counter
 msgid "Number of messages requiring action"
-msgstr ""
+msgstr "عدد الرسائل التي تتطلب إجراءً"
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr ""
+msgstr "عدد الرسائل التي حدث بها خطأ في التسليم"
 
 #. module: era_email_verification
 #: model_terms:ir.ui.view,arch_db:era_email_verification.view_ev_wizard_form
@@ -1045,7 +1045,7 @@ msgstr "قيد التنفيذ"
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_has_sms_error
 msgid "SMS Delivery error"
-msgstr ""
+msgstr "خطأ في تسليم الرسالة النصية"
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_item__smtp_code
@@ -1204,13 +1204,13 @@ msgstr "أعاد المُحقِّق HTTP %s."
 #. odoo-python
 #: code:addons/era_email_verification/models/email_verification_batch.py:0
 msgid "The Email Verifier returned an invalid job response."
-msgstr ""
+msgstr "أعادت خدمة التحقق من البريد استجابةً غير صالحة للمهمة."
 
 #. module: era_email_verification
 #. odoo-python
 #: code:addons/era_email_verification/models/email_verification_batch.py:0
 msgid "The Email Verifier returned an invalid job total."
-msgstr ""
+msgstr "أعادت خدمة التحقق من البريد إجماليًا غير صالح للمهمة."
 
 #. module: era_email_verification
 #. odoo-python
@@ -1525,18 +1525,22 @@ msgstr "ERA فحص البريد الإلكتروني"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_era_email_verification
-msgid "Check email addresses, see clear results, and keep invalid addresses out of your mailings."
-msgstr "افحص عناوين البريد، واعرض النتائج بوضوح، واستبعد العناوين غير الصالحة من حملاتك البريدية."
+msgid ""
+"Check email addresses, see clear results, and keep invalid addresses out of "
+"your mailings."
+msgstr ""
+"افحص عناوين البريد، واعرض النتائج بوضوح، واستبعد العناوين غير الصالحة من "
+"حملاتك البريدية."
 
 #. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "رسائل الموقع الإلكتروني"
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_batch__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "سِجلّ تواصل الموقع الإلكتروني"
 
 #. module: era_email_verification
 #: model:ir.model.fields,help:era_email_verification.field_res_config_settings__era_ev_auto_recheck
@@ -1605,3 +1609,8 @@ msgstr ""
 #: code:addons/era_email_verification/models/res_partner.py:0
 msgid "partner_id"
 msgstr ""
+
+#. module: era_email_verification
+#: model:ir.actions.server,name:era_email_verification.ir_cron_ev_scrub_invalid_emails_ir_actions_server
+msgid "Email Verification: scrub non-email values from email field"
+msgstr "التحقق من البريد: مسح القيم غير البريدية من حقل البريد"

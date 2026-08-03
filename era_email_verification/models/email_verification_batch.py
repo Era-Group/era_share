@@ -20,6 +20,7 @@ Idempotency:
 * the remote job is deleted only after every result is imported and reconciled.
 """
 import logging
+import re
 import secrets
 
 from odoo import _, api, fields, models
@@ -688,6 +689,74 @@ class EmailVerificationBatch(models.Model):
             batch.blacklist_added_count = len(items.filtered("blacklisted"))
             batch.imported_count = len(items.filtered(
                 lambda i: i.state in (constants.ITEM_DONE, constants.ITEM_STALE)))
+
+    # -- data hygiene ---------------------------------------------------------
+    _EV_PHONE_RE = re.compile(r"^[+()\-\s0-9]{6,}$")
+    _EV_URL_RE = re.compile(r"^(https?://|www\.)", re.IGNORECASE)
+    # A domain must END in a real (alphabetic) TLD, so a bare username with a
+    # dot ("ahmed.alqodwa0") is NOT mistaken for a website.
+    _EV_DOMAIN_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.\-]*\.[A-Za-z]{2,}/?$")
+
+    @api.model
+    def _ev_classify_non_email(self, value):
+        """'phone' | 'website' | 'junk' for a value that is not an email."""
+        v = (value or "").strip()
+        if self._EV_PHONE_RE.match(v) and len(re.sub(r"\D", "", v)) >= 6:
+            return "phone"
+        if self._EV_URL_RE.match(v) or self._EV_DOMAIN_RE.match(v):
+            return "website"
+        return "junk"
+
+    @api.model
+    def _ev_scrub_invalid_emails(self, limit=5000):
+        """Salvage-then-clear email-field values that are not email addresses.
+
+        Junk like "00" and ".", plus misplaced phone numbers and website URLs,
+        ends up in the email field on import; it can never be verified and
+        permanently inflates the not_checked view. The signal is deliberately
+        strict and safe: a value with NO "@" is definitively not an email.
+        Values that DO contain "@" are left untouched even when malformed —
+        they routinely hold a real address (e.g. "a@x.com, b@x.com" or
+        'Name <x@y.com>'); deleting those would lose real data.
+
+        Before clearing, misplaced data is moved to where it belongs (only if
+        that field is empty, never overwriting): a phone number -> phone, a
+        website URL -> website (res.partner only; mailing.contact has neither
+        field, so its junk is simply cleared).
+
+        Bounded by ``limit`` per run so a huge import can't produce one giant
+        write; the daily cron drains the rest over subsequent runs.
+        """
+        cleared = moved_phone = moved_web = 0
+        partners = self.env["res.partner"].search(
+            [("email", "!=", False), ("email", "not like", "%@%")], limit=limit)
+        for p in partners:
+            vals = {"email": False}
+            kind = self._ev_classify_non_email(p.email)
+            value = (p.email or "").strip()
+            if kind == "phone" and not p.phone:
+                vals["phone"] = value
+                moved_phone += 1
+            elif kind == "website" and not p.website:
+                vals["website"] = value
+                moved_web += 1
+            # ev_apply_result skips the email-change reset hook: this is junk
+            # removal, not changing a real address that should be re-verified.
+            p.with_context(ev_apply_result=True).write(vals)
+            cleared += 1
+
+        contacts = self.env["mailing.contact"].search(
+            [("email", "!=", False), ("email", "not like", "%@%")], limit=limit)
+        if contacts:
+            contacts.with_context(ev_apply_result=True).write({"email": False})
+            cleared += len(contacts)
+
+        if cleared:
+            _logger.info(
+                "Email Verification: scrubbed %d non-email value(s) "
+                "(moved %d to website, %d to phone).",
+                cleared, moved_web, moved_phone)
+        return cleared
 
     # -- scheduled worker -----------------------------------------------------
     @api.model

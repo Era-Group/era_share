@@ -20,5 +20,22 @@
             <field name="interval_type">minutes</field>
             <field name="priority">5</field>
         </record>
+
+        <!-- Data hygiene: clear values in the email field that are not email
+             addresses at all (no "@": phone numbers, website URLs, "00", ".").
+             They can never be verified and otherwise inflate the not_checked
+             view forever. Misplaced phones/websites are moved to their proper
+             field first (only if empty). Daily is ample — this only mops up
+             what new imports introduce. -->
+        <record id="ir_cron_ev_scrub_invalid_emails" model="ir.cron">
+            <field name="name">Email Verification: scrub non-email values from email field</field>
+            <field name="model_id" ref="model_email_verification_batch"/>
+            <field name="state">code</field>
+            <field name="code">model._ev_scrub_invalid_emails()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="priority">10</field>
+        </record>
     </data>
 </odoo>

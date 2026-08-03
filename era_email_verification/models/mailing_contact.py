@@ -9,7 +9,11 @@ from . import constants
 
 
 def _norm(email):
-    return email_normalize(email or "") or (email or "").strip().lower()
+    # Strip FIRST so a leading/trailing non-breaking space (U+00A0) can't slip
+    # through email_normalize() unchanged and cause an endless re-verify loop
+    # (see the matching note in res_partner._norm).
+    e = (email or "").strip()
+    return email_normalize(e) or e.lower()
 
 
 class MailingContact(models.Model):

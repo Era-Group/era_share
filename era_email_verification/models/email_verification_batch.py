@@ -32,7 +32,14 @@ _logger = logging.getLogger(__name__)
 
 
 def _norm(email):
-    return email_normalize(email or "") or (email or "").strip().lower()
+    # Strip FIRST: a leading/trailing non-breaking space (U+00A0) is returned
+    # unchanged-and-truthy by email_normalize(), so without stripping it here an
+    # item's normalized email differs from its partner's, the write-back is
+    # marked stale, and the sweep re-verifies the same address indefinitely
+    # (observed as a 6000-batch storm re-probing one domain). .strip() removes
+    # unicode whitespace including NBSP.
+    e = (email or "").strip()
+    return email_normalize(e) or e.lower()
 
 
 class EmailVerificationBatch(models.Model):

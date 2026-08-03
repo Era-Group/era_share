@@ -7,7 +7,13 @@ from . import constants
 
 
 def _norm(email):
-    return email_normalize(email or "") or (email or "").strip().lower()
+    # Strip FIRST: email_normalize() returns a leading/trailing non-breaking
+    # space (U+00A0) address unchanged-and-truthy (e.g. "\xa0a@b.com"), which
+    # defeats the .lower() fallback and makes an item's normalized email differ
+    # from its own partner's -> the result is marked stale and the address is
+    # re-verified forever. .strip() removes unicode whitespace incl. NBSP.
+    e = (email or "").strip()
+    return email_normalize(e) or e.lower()
 
 
 class ResPartner(models.Model):

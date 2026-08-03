@@ -473,12 +473,17 @@ class WhatsappAccount(models.Model):
             groups = groups if isinstance(groups, list) else []
             for raw in groups:
                 raw = raw or {}
-                chat_id = raw.get('id') or raw.get('chatId') or (raw.get('_data') or {}).get('id')
+                # GOWS (whatsmeow) names its fields ``JID``/``Name``, where WEBJS and
+                # NOWEB use ``id``/``subject``. Miss the PascalCase spelling and every
+                # GOWS group is skipped, so the sync silently marks them unavailable.
+                chat_id = (raw.get('id') or raw.get('chatId') or raw.get('JID')
+                           or (raw.get('_data') or {}).get('id'))
                 if isinstance(chat_id, dict):
                     chat_id = chat_id.get('_serialized') or chat_id.get('id')
                 if not isinstance(chat_id, str) or not chat_id.endswith('@g.us'):
                     continue
-                subject = raw.get('subject') or raw.get('name') or raw.get('title') or (raw.get('_data') or {}).get('subject')
+                subject = (raw.get('subject') or raw.get('name') or raw.get('title')
+                           or raw.get('Name') or (raw.get('_data') or {}).get('subject'))
                 seen.add(chat_id)
                 group = Group.search([('account_id', '=', self.id), ('chat_id', '=', chat_id)], limit=1)
                 vals = {'subject': subject or chat_id, 'available': True, 'last_sync_at': fields.Datetime.now()}

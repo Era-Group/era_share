@@ -57,6 +57,22 @@ class TestWahaSendProtection(TransactionCase):
             'whatsapp_number': number,
         })
 
+    def _log_event_at(self, status, previous_status, when):
+        """Insert a session-event row as if it had been logged `when`, without going
+        through `_waha_write_status` — that would check the breaker against the *real*
+        clock immediately, defeating the point of simulating history spread over hours."""
+        event = self.env['whatsapp.waha.session.event'].sudo().create({
+            'account_id': self.account.id,
+            'status': status,
+            'previous_status': previous_status,
+            'source': 'webhook',
+        })
+        self.env.cr.execute(
+            "UPDATE whatsapp_waha_session_event SET create_date = %s WHERE id = %s",
+            (when, event.id))
+        event.invalidate_recordset(['create_date'])
+        return event
+
     def _post(self, channel, direction, author, when=None):
         """Create a mail.message + whatsapp.message pair the guards can count."""
         message = self.env['mail.message'].sudo().create({
@@ -166,6 +182,41 @@ class TestWahaSendProtection(TransactionCase):
             self.account._waha_write_status(status)
         self.assertFalse(self.account.waha_paused_until)
         self.assertIsNone(self.account._waha_hold_reason())
+
+    def test_breaker_trips_on_sustained_low_frequency_flapping(self):
+        """Hardening added after the 2026-08-05 session loss.
+
+        That session flapped roughly once every 30-90 minutes for two straight days —
+        never dense enough to trip the short (60-minute) window even once, so sending,
+        and the re-registration that comes with every reconnect, never stopped until
+        WhatsApp logged the device out and it needed a fresh QR scan. The long window
+        exists to catch that slow-burn pattern the short one is blind to.
+        """
+        self.account.write({
+            'waha_flap_threshold': 6, 'waha_flap_window_minutes': 60,
+            'waha_flap_long_window_hours': 6, 'waha_flap_long_window_threshold': 10,
+        })
+        now = fields.Datetime.now()
+        for i in range(10):
+            self._log_event_at('starting', 'working', now - timedelta(minutes=30 * i + 5))
+        # The short window alone never sees enough of that history to trip on its own.
+        self.assertLess(self.account._waha_recent_flap_count(window_minutes=60),
+                         self.account.waha_flap_threshold)
+        self.assertTrue(self.account._waha_check_flapping())
+        self.assertTrue(self.account.waha_paused_until,
+                         "sustained sparse flapping must pause outbound sending too")
+
+    def test_sparse_flapping_short_of_the_long_threshold_does_not_trip(self):
+        """Occasional drops over a long day must not be treated as a reconnect loop."""
+        self.account.write({
+            'waha_flap_threshold': 6, 'waha_flap_window_minutes': 60,
+            'waha_flap_long_window_hours': 6, 'waha_flap_long_window_threshold': 10,
+        })
+        now = fields.Datetime.now()
+        for i in range(4):
+            self._log_event_at('starting', 'working', now - timedelta(hours=1.2 * i + 0.1))
+        self.assertFalse(self.account._waha_check_flapping())
+        self.assertFalse(self.account.waha_paused_until)
 
     def test_resume_clears_the_pause_and_flushes_the_queue(self):
         """Clearing the pause without waking the queue left held messages waiting up to

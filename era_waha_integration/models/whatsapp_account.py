@@ -181,6 +181,17 @@ class WhatsappAccount(models.Model):
              "outbound sending. Repeatedly re-registering a companion device is one of the "
              "patterns WhatsApp treats as an unstable unofficial client. 0 = disabled.")
     waha_flap_window_minutes = fields.Integer(string='Flap window (minutes)', default=60)
+    waha_flap_long_window_hours = fields.Integer(
+        string='Long flap window (hours)', default=6,
+        help="A second, much longer window checked by the same breaker: catches a "
+             "session that flaps too sparsely to trip the short window above but keeps "
+             "doing it for hours — sparse, sustained flapping is just as much a sign of "
+             "an unstable unofficial client as a burst, and WhatsApp treats it the same "
+             "way. 0 = disabled.")
+    waha_flap_long_window_threshold = fields.Integer(
+        string='Long window flap threshold', default=10,
+        help="Status changes within the long window above that trip the breaker, same "
+             "effect as the short-window threshold. 0 = disabled.")
     waha_flap_pause_minutes = fields.Integer(
         string='Cooldown (minutes)', default=120,
         help="How long outbound sending stays paused after the breaker trips.")
@@ -1444,8 +1455,8 @@ class WhatsappAccount(models.Model):
         for account in self:
             account.waha_is_paused = bool(account.waha_paused_until and account.waha_paused_until > now)
 
-    def _waha_recent_flap_count(self):
-        """Lost connections within the flap window — not every status transition.
+    def _waha_recent_flap_count(self, window_minutes=None):
+        """Lost connections within the given window — not every status transition.
 
         Linking a session walks a normal ladder (stopped → starting → scan_qr_code →
         working) that is several transitions long, so counting transitions outright made
@@ -1454,7 +1465,7 @@ class WhatsappAccount(models.Model):
         dropping into 'failed'; neither happens on the way up.
         """
         self.ensure_one()
-        window = self.waha_flap_window_minutes or 60
+        window = window_minutes or self.waha_flap_window_minutes or 60
         since = fields.Datetime.now() - timedelta(minutes=window)
         return self.env['whatsapp.waha.session.event'].sudo().search_count([
             ('account_id', '=', self.id),
@@ -1465,35 +1476,48 @@ class WhatsappAccount(models.Model):
         ])
 
     def _waha_check_flapping(self):
-        """Trip the breaker when the session cycles too often in a short window.
+        """Trip the breaker when the session cycles too often — either in a short burst
+        or, just as dangerously, sparsely but persistently over many hours.
 
         A reconnect loop makes every send fail anyway, and each re-registration adds to
         the very signal that gets an unofficial client logged out — so pausing is both
         safer and cheaper than letting the queue hammer a dying session.
+
+        2026-08-05: this account lost its link and needed re-pairing after flapping
+        roughly once every 30-90 minutes for two straight days — never dense enough to
+        trip the short window (6 drops/60 min) even once, so sending, and the
+        re-registration that comes with every reconnect, never stopped. A second, much
+        longer window now catches that slow-burn pattern the short one is blind to.
         """
         self.ensure_one()
-        threshold = self.waha_flap_threshold or 0
-        if not threshold or self.provider != 'waha':
+        if self.provider != 'waha':
             return False
         now = fields.Datetime.now()
         if self.waha_paused_until and self.waha_paused_until > now:
             return False  # already paused; let the current cooldown run its course
-        flaps = self._waha_recent_flap_count()
-        if flaps < threshold:
-            return False
-        window = self.waha_flap_window_minutes or 60
-        reason = _(
-            "Session changed status %(flaps)s times in %(window)s minutes — outbound "
-            "sending paused to protect the number.", flaps=flaps, window=window)
-        until = now + timedelta(minutes=self.waha_flap_pause_minutes or 120)
-        self._waha_update({'waha_paused_until': until, 'waha_pause_reason': reason})
-        try:
-            self._waha_pause_alert(reason, until)
-        except Exception:
-            _logger.exception("WAHA pause alert failed for account %s", self.id)
-        _logger.warning("WAHA: sending paused for account %s until %s (%s flaps/%smin)",
-                        self.id, until, flaps, window)
-        return True
+        for threshold, window in (
+            (self.waha_flap_threshold or 0, self.waha_flap_window_minutes or 60),
+            (self.waha_flap_long_window_threshold or 0,
+             (self.waha_flap_long_window_hours or 0) * 60),
+        ):
+            if not threshold or not window:
+                continue
+            flaps = self._waha_recent_flap_count(window_minutes=window)
+            if flaps < threshold:
+                continue
+            reason = _(
+                "Session changed status %(flaps)s times in %(window)s minutes — outbound "
+                "sending paused to protect the number.", flaps=flaps, window=window)
+            until = now + timedelta(minutes=self.waha_flap_pause_minutes or 120)
+            self._waha_update({'waha_paused_until': until, 'waha_pause_reason': reason})
+            try:
+                self._waha_pause_alert(reason, until)
+            except Exception:
+                _logger.exception("WAHA pause alert failed for account %s", self.id)
+            _logger.warning("WAHA: sending paused for account %s until %s (%s flaps/%smin)",
+                            self.id, until, flaps, window)
+            return True
+        return False
 
     def _waha_pause_alert(self, reason, until):
         """Tell the administrator immediately — the 30-minute health cron is too slow

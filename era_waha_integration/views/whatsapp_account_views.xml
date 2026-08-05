@@ -219,6 +219,14 @@
                                      help="Length of the rolling window used to count status changes.">
                                 <field name="waha_flap_window_minutes"/>
                             </setting>
+                            <setting string="Long flap window (hours)"
+                                     help="A second, much longer window checked by the same breaker: catches sparse but sustained flapping (e.g. once an hour for days) that never gets dense enough to trip the short window above. 0 = disabled.">
+                                <field name="waha_flap_long_window_hours"/>
+                            </setting>
+                            <setting string="Long window flap threshold"
+                                     help="Status changes within the long window above that trip the breaker, same effect as the short-window threshold. 0 = disabled.">
+                                <field name="waha_flap_long_window_threshold"/>
+                            </setting>
                             <setting string="Cooldown (minutes)"
                                      help="How long outbound sending stays paused after the breaker trips.">
                                 <field name="waha_flap_pause_minutes"/>

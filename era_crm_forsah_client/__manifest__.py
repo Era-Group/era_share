@@ -20,7 +20,7 @@ them as a triage pipeline of studyable tenders:
   Uses Odoo's standard AI agent (ai.agent) — soft dependency on the `ai` app.
     """,
     'author': 'Era group',
-    'email': 'aqlan@era.net.sa',
+    'email': 'info@era.net.sa',
     'website': 'https://era.net.sa',
     'license': 'AGPL-3',
     'depends': ['base', 'contacts', 'crm', 'mail', 'utm'],

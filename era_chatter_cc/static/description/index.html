@@ -1,0 +1,95 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="text-align:center; padding:32px 16px;">
+        <h1 style="color:#1f2d3d; font-size:40px; margin-bottom:8px;">Chatter Cc</h1>
+        <h2 style="color:#714B67; font-weight:300; font-size:22px; margin-top:0;">Copy people on a chatter message, the way e-mail has always worked.</h2>
+        <h3 dir="rtl" style="color:#1f2d3d; font-size:30px; margin-bottom:6px;">نسخة إلى في المحادثة</h3>
+        <h3 dir="rtl" style="color:#714B67; font-weight:300; font-size:20px; margin-top:0;">أضف نسخة إلى رسالة المحادثة، تمامًا كما في البريد الإلكتروني.</h3>
+        <p style="color:#5b6b7c; font-size:16px; max-width:760px; margin:20px auto 0;">
+            The Odoo chatter lets you choose who a message goes <b>To</b>, but there is no way to simply copy somebody in.
+            People work around it by adding the person to the To line - which is not the same thing - or by sending a second message.
+            This module adds a real <b>Cc:</b> line to the chatter composer, notifies everybody on it, and puts a genuine <b>Cc:</b> header on every notification e-mail.
+        </p>
+        <p dir="rtl" style="color:#5b6b7c; font-size:16px; max-width:760px; margin:12px auto 0;">
+            تتيح لك محادثة أودو اختيار من ترسل إليه الرسالة في حقل <b>إلى</b>، لكن لا توجد وسيلة لإضافة شخص في نسخة فقط.
+            يلجأ المستخدمون إلى إضافته في حقل "إلى" - وهذا ليس الأمر نفسه - أو إلى إرسال رسالة ثانية.
+            تضيف هذه الوحدة سطر <b>نسخة إلى</b> حقيقيًا في محرر المحادثة، وتُشعر كل من فيه، وتضع ترويسة <b>Cc:</b> فعلية في كل بريد إشعار.
+        </p>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="display:flex; flex-wrap:wrap; gap:18px; justify-content:center; padding:8px 16px 32px;">
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">✉️</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">A Cc line, right where you expect it</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">سطر "نسخة إلى" في مكانه الطبيعي</h4>
+            <p style="color:#6b7785; margin:0;">A <b>Cc:</b> row sits under the existing <b>To:</b> row when you click "Send message". It disappears for internal notes, where a Cc means nothing.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">يظهر سطر <b>نسخة إلى</b> أسفل سطر <b>إلى</b> عند الضغط على "إرسال رسالة"، ويختفي في الملاحظات الداخلية حيث لا معنى للنسخة.</p>
+        </div>
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">🔍</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">The same autocomplete as "To"</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">نفس الإكمال التلقائي لحقل "إلى"</h4>
+            <p style="color:#6b7785; margin:0;">Search contacts, create one on the fly from a typed e-mail address, or open the full contact list. Somebody already on To cannot also be put on Cc.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">ابحث في جهات الاتصال، أو أنشئ واحدة فورًا من عنوان بريد مكتوب، أو افتح القائمة الكاملة. ولا يمكن وضع شخص موجود في "إلى" ضمن النسخة.</p>
+        </div>
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">📬</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">A real Cc header, no duplicate copy</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">ترويسة نسخة حقيقية بلا رسالة مكرّرة</h4>
+            <p style="color:#6b7785; margin:0;">Every notification e-mail carries a visible <b>Cc:</b> header, so readers see who was copied and "Reply All" reaches them - without anybody receiving the message twice.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">يحمل كل بريد إشعار ترويسة <b>Cc:</b> ظاهرة، فيرى القارئ من في النسخة ويصل إليهم "الرد على الكل" - دون أن يستلم أحد الرسالة مرتين.</p>
+        </div>
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">🔔</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">Notified like everybody else</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">إشعارات كاملة كباقي المستلمين</h4>
+            <p style="color:#6b7785; margin:0;">Cc recipients go through Odoo's own notification machinery: their own e-mail in their own language, their own notification record, the usual delivery-failure handling.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">يمرّ مستلمو النسخة عبر آلية الإشعارات القياسية في أودو: بريد خاص بكل منهم بلغته، وسجل إشعار خاص، ومعالجة إخفاق التسليم المعتادة.</p>
+        </div>
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">🗂️</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">Recorded on the message</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">محفوظ على الرسالة</h4>
+            <p style="color:#6b7785; margin:0;">The To/Cc distinction is stored, not guessed. Click the notification icon on a posted message and a <b>Cc</b> section lists exactly who was copied.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">يُحفظ الفرق بين "إلى" و"نسخة" ولا يُخمَّن. اضغط أيقونة الإشعار على الرسالة ليظهر قسم <b>نسخة إلى</b> بمن نُسخت إليهم.</p>
+        </div>
+
+        <div style="flex:1 1 280px; max-width:340px; background:#f8f9fb; border-radius:12px; padding:22px;">
+            <div style="font-size:38px; line-height:1;">⏰</div>
+            <h4 style="color:#1f2d3d; margin:12px 0 4px;">Survives the full composer</h4>
+            <h4 dir="rtl" style="color:#1f2d3d; margin:0 0 10px;">يبقى في المحرر الكامل</h4>
+            <p style="color:#6b7785; margin:0;">Open the full composer and the <b>Cc</b> field comes along, pre-filled. Schedule the message for later and the Cc is still there when it goes out.</p>
+            <p dir="rtl" style="color:#6b7785; margin:8px 0 0;">افتح المحرر الكامل فينتقل حقل <b>نسخة إلى</b> معك ممتلئًا مسبقًا، وجدوِل الرسالة لوقت لاحق فتبقى النسخة قائمة عند الإرسال.</p>
+        </div>
+
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="background:#714B67; border-radius:14px; padding:28px; color:#ffffff;">
+        <h3 style="color:#ffffff; margin-top:0;">How it works</h3>
+        <h3 dir="rtl" style="color:#ffffff; margin-top:0;">كيف تعمل</h3>
+        <p style="color:#f2ecf1; margin:10px 0;"><b>1.</b> Click <b>Send message</b> on any record and fill the new <b>Cc:</b> row.</p>
+        <p dir="rtl" style="color:#f2ecf1; margin:0 0 14px;"><b>١.</b> اضغط <b>إرسال رسالة</b> على أي سجل واملأ سطر <b>نسخة إلى</b> الجديد.</p>
+        <p style="color:#f2ecf1; margin:10px 0;"><b>2.</b> Send. Everybody on To and on Cc receives their own notification e-mail.</p>
+        <p dir="rtl" style="color:#f2ecf1; margin:0 0 14px;"><b>٢.</b> أرسل. يستلم كل من في "إلى" وفي "نسخة" بريد إشعار خاصًا به.</p>
+        <p style="color:#f2ecf1; margin:10px 0;"><b>3.</b> Each of those e-mails shows a real <b>Cc:</b> header, so the copy is visible and "Reply All" works.</p>
+        <p dir="rtl" style="color:#f2ecf1; margin:0 0 14px;"><b>٣.</b> يعرض كل بريد منها ترويسة <b>Cc:</b> حقيقية، فتكون النسخة ظاهرة ويعمل "الرد على الكل".</p>
+        <p style="color:#f2ecf1; margin:10px 0;"><b>4.</b> Open the notification icon on the posted message to see exactly who was To and who was Cc.</p>
+        <p dir="rtl" style="color:#f2ecf1; margin:0;"><b>٤.</b> افتح أيقونة الإشعار على الرسالة المنشورة لترى بالضبط من كان في "إلى" ومن كان في "نسخة".</p>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="text-align:center; padding:24px 16px 40px;">
+        <p style="color:#6b7785; margin:0;">Cc is not a workaround. It is a line in the composer.</p>
+        <p dir="rtl" style="color:#6b7785; margin:6px 0 16px;">النسخة ليست حيلة التفافية، بل سطر في محرر الرسالة.</p>
+        <p style="color:#5b6b7c; margin:0;">Era Group · https://era.net.sa · License: LGPL-3</p>
+    </div>
+</section>

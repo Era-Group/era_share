@@ -1,0 +1,7 @@
+.o-era-Chatter-cc {
+    // align the "Cc:" input with the "To:" input right above it
+    .o-mail-RecipientsInput {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}

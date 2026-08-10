@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_chatter_cc.Chatter" t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//RecipientsInput/parent::div" position="after">
+            <div class="d-flex py-1 ps-3 o-era-Chatter-cc">
+                <span class="flex-shrink-0 text-end fw-bold px-2" style="width:46px">Cc: </span>
+                <CcRecipientsInput thread="state.thread"/>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

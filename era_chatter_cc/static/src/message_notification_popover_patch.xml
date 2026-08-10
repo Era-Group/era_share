@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="era_chatter_cc.MessageNotificationPopover" t-inherit="mail.MessageNotificationPopover" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o-mail-MessageNotificationPopover')]" position="inside">
+            <div t-if="props.message.partner_cc_ids.length" class="o-era-MessageNotificationPopover-cc mt-1 pt-1 border-top">
+                <div class="fw-bold">Cc</div>
+                <div t-foreach="props.message.partner_cc_ids" t-as="ccPartner" t-key="ccPartner.id">
+                    <i class="me-2 fa fa-fw fa-copy"/>
+                    <span t-out="ccPartner.name"/>
+                    <t t-if="ccPartner.email"> (<t t-out="ccPartner.email"/>)</t>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

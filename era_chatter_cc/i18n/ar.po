@@ -1,0 +1,104 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_chatter_cc
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: Era Group\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: era_chatter_cc
+#. odoo-javascript
+#: code:addons/era_chatter_cc/static/src/cc_recipients_input.js:0
+msgid "Add people in copy..."
+msgstr "أضف أشخاصًا في نسخة..."
+
+#. module: era_chatter_cc
+#: model_terms:ir.ui.view,arch_db:era_chatter_cc.email_compose_message_wizard_form_cc
+msgid "Add recipients in copy..."
+msgstr "أضف مستلمين في نسخة..."
+
+#. module: era_chatter_cc
+#. odoo-javascript
+#: code:addons/era_chatter_cc/static/src/message_notification_popover_patch.xml:0
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_compose_message__partner_cc_ids
+#: model_terms:ir.ui.view,arch_db:era_chatter_cc.email_compose_message_wizard_form_cc
+msgid "Cc"
+msgstr "نسخة إلى"
+
+#. module: era_chatter_cc
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_mail__partner_cc_ids
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_message__partner_cc_ids
+msgid "Cc Recipients"
+msgstr "مستلمو النسخة"
+
+#. module: era_chatter_cc
+#. odoo-javascript
+#: code:addons/era_chatter_cc/static/src/chatter_patch.xml:0
+msgid "Cc:"
+msgstr "نسخة إلى:"
+
+#. module: era_chatter_cc
+#: model:ir.model.fields,field_description:era_chatter_cc.field_ir_mail_server__display_name
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_compose_message__display_name
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_message__display_name
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_scheduled_message__display_name
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_thread__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_chatter_cc
+#: model:ir.model,name:era_chatter_cc.model_mail_thread
+msgid "Email Thread"
+msgstr "سلسلة البريد الإلكتروني"
+
+#. module: era_chatter_cc
+#: model:ir.model,name:era_chatter_cc.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "معالج إنشاء البريد الإلكتروني"
+
+#. module: era_chatter_cc
+#: model:ir.model.fields,field_description:era_chatter_cc.field_ir_mail_server__id
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_compose_message__id
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_message__id
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_scheduled_message__id
+#: model:ir.model.fields,field_description:era_chatter_cc.field_mail_thread__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: era_chatter_cc
+#: model:ir.model,name:era_chatter_cc.model_ir_mail_server
+msgid "Mail Server"
+msgstr "خادم البريد"
+
+#. module: era_chatter_cc
+#: model:ir.model,name:era_chatter_cc.model_mail_message
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: era_chatter_cc
+#: model:ir.model.fields,help:era_chatter_cc.field_mail_mail__partner_cc_ids
+#: model:ir.model.fields,help:era_chatter_cc.field_mail_message__partner_cc_ids
+msgid ""
+"Recipients that were put in copy of this message. They are also part of "
+"'Recipients' (partner_ids) and notified as such; this field only records "
+"which of them were on the Cc line."
+msgstr "المستلمون الذين وُضعوا في نسخة من هذه الرسالة. هم أيضًا ضمن 'المستلمون' (partner_ids) ويتم إشعارهم على هذا الأساس؛ ولا يسجل هذا الحقل سوى من كان منهم في سطر النسخة."
+
+#. module: era_chatter_cc
+#: model:ir.model,name:era_chatter_cc.model_mail_scheduled_message
+msgid "Scheduled Message"
+msgstr "الرسالة المجدولة"
+
+#. module: era_chatter_cc
+#. odoo-javascript
+#: code:addons/era_chatter_cc/static/src/cc_recipients_input.js:0
+msgid "Unnamed"
+msgstr "بلا اسم"

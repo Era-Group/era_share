@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="whatsapp_cloud_group_view_list" model="ir.ui.view">
+        <field name="name">whatsapp.cloud.group.list</field>
+        <field name="model">whatsapp.cloud.group</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Groups" create="0">
+                <field name="subject"/>
+                <field name="account_id"/>
+                <field name="group_uid" optional="hide"/>
+                <field name="participant_count"/>
+                <field name="available"/>
+                <field name="enabled" widget="boolean_toggle"/>
+                <field name="channel_id" optional="hide"/>
+                <field name="last_sync_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="whatsapp_cloud_group_view_form" model="ir.ui.view">
+        <field name="name">whatsapp.cloud.group.form</field>
+        <field name="model">whatsapp.cloud.group</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Group" create="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="subject" placeholder="Group name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="group_uid"/>
+                            <field name="participant_count"/>
+                        </group>
+                        <group>
+                            <field name="enabled"/>
+                            <field name="available"/>
+                            <field name="channel_id"/>
+                            <field name="last_sync_at"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="whatsapp_cloud_group_action" model="ir.actions.act_window">
+        <field name="name">WhatsApp Groups</field>
+        <field name="res_model">whatsapp.cloud.group</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No WhatsApp groups yet</p>
+            <p>Open a Meta WhatsApp account and press <b>Sync Groups</b> to discover them.
+               Discovered groups stay disabled until you approve each one.</p>
+        </field>
+    </record>
+
+    <menuitem id="whatsapp_cloud_group_menu"
+              name="Groups (Cloud API)"
+              parent="whatsapp.whatsapp_configuration_menu"
+              action="whatsapp_cloud_group_action"
+              groups="whatsapp.group_whatsapp_admin"
+              sequence="35"/>
+
+</odoo>

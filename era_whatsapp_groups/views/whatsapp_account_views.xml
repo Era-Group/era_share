@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="whatsapp_account_view_form_groups" model="ir.ui.view">
+        <field name="name">whatsapp.account.view.form.wag.groups</field>
+        <field name="model">whatsapp.account</field>
+        <field name="inherit_id" ref="whatsapp.whatsapp_account_view_form"/>
+        <field name="arch" type="xml">
+            <!--
+              Appended to the sheet rather than into a notebook page: the base account
+              form has no notebook, and era_waha_integration adds its own. Anchoring to
+              the sheet keeps the two modules from fighting over the same node.
+            -->
+            <xpath expr="//sheet" position="inside">
+                <group string="WhatsApp Groups (Cloud API)" name="wag_groups">
+                    <div class="alert alert-info" role="alert" colspan="2">
+                        Sync discovers groups but never enables them. Enable only approved groups.
+                        Meta caps a group at <b>8 participants</b>, and the number must be an
+                        Official Business Account — an ineligible number answers every group call
+                        with error 131215.
+                    </div>
+                    <button name="action_wag_sync_groups" type="object" string="Sync Groups"
+                            icon="fa-refresh" class="btn btn-primary mb-2" colspan="2"/>
+                    <field name="wag_group_ids" nolabel="1" colspan="2">
+                        <list editable="bottom" create="0" delete="0">
+                            <field name="subject"/>
+                            <field name="group_uid" readonly="1"/>
+                            <field name="participant_count" readonly="1"/>
+                            <field name="available" readonly="1"/>
+                            <field name="enabled"/>
+                            <field name="last_sync_at" readonly="1"/>
+                        </list>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

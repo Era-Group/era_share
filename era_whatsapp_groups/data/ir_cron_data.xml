@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+      Group metadata (subject, participant count, availability) is refreshed on a
+      schedule rather than from the group_lifecycle_update / group_participants_update
+      webhooks. Those four webhook fields must be subscribed by hand in the Meta app
+      dashboard, and their payload shapes could not be verified against a live
+      account, so relying on them would make correctness depend on something we
+      cannot test. Polling is slower but its failure mode is "slightly stale", not
+      "silently wrong".
+    -->
+    <record id="ir_cron_wag_sync_groups" model="ir.cron">
+        <field name="name">WhatsApp Groups: Sync Cloud API groups</field>
+        <field name="model_id" ref="whatsapp.model_whatsapp_account"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_wag_sync_groups()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>

@@ -80,8 +80,9 @@ serialization, the incremental fallback, and the webhook controller
 
 ### Live smoke test on the Odoo server
 1. Pick a few contacts with emails → list **Action → Verify Email(s)**, or run
-   **Email Verification ▸ Operations ▸ Verify Unchecked Emails**.
-2. Watch **Operations ▸ Batches**: `queued → running → done`, with live counts.
+   **Email Marketing ▸ Email Verification ▸ Verify Unchecked Emails**.
+2. Watch **Email Verification ▸ Batches**: `queued → running → done`, with live
+   counts.
 3. Confirm push is arriving (not just the fallback): on the verifier,
    `docker compose logs -f` shows callback POSTs; in Odoo the batch's
    *Last result push* updates within seconds. Risky/undeliverable addresses

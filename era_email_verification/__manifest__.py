@@ -20,7 +20,7 @@ The module connects only to your private, administrator-configured verifier.
     "author": "ERA",
     "website": "https://letsw.com",
     "category": "Marketing/Email Marketing",
-    "version": "19.0.1.5.2",
+    "version": "19.0.1.5.3",
     "icon": "/era_email_verification/static/description/icon.png",
     "license": "LGPL-3",
     "depends": ["mail", "contacts", "mass_mailing"],
@@ -40,5 +40,6 @@ The module connects only to your private, administrator-configured verifier.
         "views/menus.xml",
     ],
     "installable": True,
-    "application": True,
+    # Not a standalone app: the menus live inside Email Marketing.
+    "application": False,
 }

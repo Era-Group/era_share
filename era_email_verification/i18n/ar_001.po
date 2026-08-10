@@ -155,11 +155,6 @@ msgstr ""
 "مؤكّد. أأمن خانة يُنصح بإبقائها مفعّلة."
 
 #. module: era_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_analysis
-msgid "Analysis"
-msgstr "التحليل"
-
-#. module: era_email_verification
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__message_attachment_count
 msgid "Attachment Count"
 msgstr "عدد المرفقات"
@@ -298,11 +293,6 @@ msgstr "اكتمل في"
 #: model:ir.model,name:era_email_verification.model_res_config_settings
 msgid "Config Settings"
 msgstr "تهيئة الإعدادات"
-
-#. module: era_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_config
-msgid "Configuration"
-msgstr "الإعداد"
 
 #. module: era_email_verification
 #: model:res.groups,comment:era_email_verification.group_email_verification_manager
@@ -511,12 +501,17 @@ msgstr "حالة البريد"
 
 #. module: era_email_verification
 #: model:ir.module.category,name:era_email_verification.module_category_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_root
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_operations
 #: model:res.groups.privilege,name:era_email_verification.res_groups_privilege_email_verification
 #: model_terms:ir.ui.view,arch_db:era_email_verification.res_config_settings_view_form_ev
 #: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev
 msgid "Email Verification"
 msgstr "التحقق من البريد"
+
+#. module: era_email_verification
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_analysis
+msgid "Email Verification Analysis"
+msgstr "تحليل التحقق من البريد"
 
 #. module: era_email_verification
 #: model:ir.model,name:era_email_verification.model_email_verification_batch
@@ -530,6 +525,7 @@ msgstr "عنصر التحقق من البريد"
 
 #. module: era_email_verification
 #: model:ir.actions.act_window,name:era_email_verification.action_ev_config_settings
+#: model:ir.ui.menu,name:era_email_verification.menu_ev_settings
 msgid "Email Verification Settings"
 msgstr "إعدادات التحقق من البريد"
 
@@ -880,11 +876,6 @@ msgstr ""
 "الفحص في الخلفية على دفعات لا تتجاوز حجم الدفعة المضبوط."
 
 #. module: era_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_operations
-msgid "Operations"
-msgstr "العمليات"
-
-#. module: era_email_verification
 #: model:ir.model.fields.selection,name:era_email_verification.selection__email_verification_item__state__pending
 msgid "Pending"
 msgstr "قيد الانتظار"
@@ -980,11 +971,6 @@ msgstr "المرجع"
 #: model:ir.model.fields,field_description:era_email_verification.field_email_verification_batch__job_id
 msgid "Remote Job ID"
 msgstr "معرّف المهمة البعيدة"
-
-#. module: era_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_reporting
-msgid "Reporting"
-msgstr "التقارير"
 
 #. module: era_email_verification
 #: model:res.groups,comment:era_email_verification.group_email_verification_user
@@ -1090,11 +1076,6 @@ msgstr ""
 #: model:ir.model.fields,help:era_email_verification.field_email_verification_item__blacklisted
 msgid "Set when this address was added to mail.blacklist by policy."
 msgstr "يُضبط عند إضافة هذا العنوان إلى mail.blacklist وفق السياسة."
-
-#. module: era_email_verification
-#: model:ir.ui.menu,name:era_email_verification.menu_ev_settings
-msgid "Settings"
-msgstr "الإعدادات"
 
 #. module: era_email_verification
 #: model_terms:ir.ui.view,arch_db:era_email_verification.view_partner_form_ev

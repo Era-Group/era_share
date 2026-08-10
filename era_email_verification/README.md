@@ -13,7 +13,7 @@ worker — everything goes through the single, administrator-configured verifier
   a *Verify* button for an immediate check and an *Email Verification* tab
   showing score, reason, catch-all/disposable/role signals and last-checked date.
 - **Bulk & sweep** — *Verify Email(s)* on the Contacts and Mailing Contacts list
-  actions, plus **Verify Unchecked Emails** (Email Verification ▸ Operations)
+  actions, plus **Verify Unchecked Emails** (Email Marketing ▸ Email Verification)
   which queues every never-checked address in the background.
 - **Asynchronous batches** — jobs (≤ 5,000 addresses each) are submitted the
   moment they are queued and chained as each one finishes, via
@@ -75,7 +75,7 @@ Use **Test connection** to confirm the base URL and key.
 5. Confirm the cron **"Email Verification: reconcile & sweep (fallback)"** is
    active (every 15 min; batches themselves start immediately, not on this tick).
 6. Run **Verify Unchecked Emails** once to seed statuses, then watch
-   Operations ▸ Batches.
+   Email Marketing ▸ Email Verification ▸ Batches.
 
 ## Tests
 

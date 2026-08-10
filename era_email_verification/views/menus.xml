@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem id="menu_ev_root" name="Email Verification"
-              web_icon="era_email_verification,static/description/icon.png"
-              groups="era_email_verification.group_email_verification_user"
-              sequence="95"/>
+    <!-- No top-level app menu: verification is an add-on to the models it
+         serves, so everything hangs off Email Marketing (mass_mailing), the
+         app that owns mailing contacts and lists. Contacts get their entry
+         points from the buttons injected into the partner form/list. -->
 
-    <menuitem id="menu_ev_operations" name="Operations"
-              parent="menu_ev_root" sequence="10"/>
+    <menuitem id="menu_ev_operations" name="Email Verification"
+              parent="mass_mailing.mass_mailing_menu_root" sequence="4"
+              groups="era_email_verification.group_email_verification_user"/>
 
     <menuitem id="menu_ev_verify_unchecked" name="Verify Unchecked Emails"
               parent="menu_ev_operations" action="action_ev_wizard" sequence="10"/>
@@ -16,16 +17,16 @@
     <menuitem id="menu_ev_results" name="Results"
               parent="menu_ev_operations" action="action_ev_item" sequence="30"/>
 
-    <menuitem id="menu_ev_reporting" name="Reporting"
-              parent="menu_ev_root" sequence="20"
+    <!-- Email Marketing / Reporting -->
+    <menuitem id="menu_ev_analysis" name="Email Verification Analysis"
+              parent="mass_mailing.menu_mass_mailing_report" action="action_ev_item"
+              sequence="20"
               groups="era_email_verification.group_email_verification_manager"/>
-    <menuitem id="menu_ev_analysis" name="Analysis"
-              parent="menu_ev_reporting" action="action_ev_item" sequence="10"/>
 
-    <menuitem id="menu_ev_config" name="Configuration"
-              parent="menu_ev_root" sequence="30"
+    <!-- Email Marketing / Configuration -->
+    <menuitem id="menu_ev_settings" name="Email Verification Settings"
+              parent="mass_mailing.mass_mailing_configuration"
+              action="action_ev_config_settings" sequence="25"
               groups="era_email_verification.group_email_verification_manager"/>
-    <menuitem id="menu_ev_settings" name="Settings"
-              parent="menu_ev_config" action="action_ev_config_settings" sequence="10"/>
 
 </odoo>

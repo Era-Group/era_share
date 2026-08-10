@@ -195,6 +195,15 @@ class WhatsappAccount(models.Model):
     waha_flap_pause_minutes = fields.Integer(
         string='Cooldown (minutes)', default=120,
         help="How long outbound sending stays paused after the breaker trips.")
+    waha_flap_settle_seconds = fields.Integer(
+        string='Transient reconnect grace (seconds)', default=5,
+        help="A session that drops and is working again within this many seconds only "
+             "recycled its websocket — it re-authenticated from stored credentials, with "
+             "no new device registration. Those recoveries are normal for the GOWS engine "
+             "(measured here: 153 drops, 152 instant recoveries, zero re-pairings) and are "
+             "NOT counted as flaps, because scoring them 'critical' pushes operators into "
+             "re-scanning the QR — and a fresh device registration is the actual ban "
+             "signal. 0 = count every drop, however brief.")
     waha_paused_until = fields.Datetime(string='Sending paused until', readonly=True, copy=False)
     waha_pause_reason = fields.Char(string='Pause reason', readonly=True, copy=False)
     waha_is_paused = fields.Boolean(compute='_compute_waha_is_paused')
@@ -729,7 +738,13 @@ class WhatsappAccount(models.Model):
         changed = status != self.waha_status
         if changed:
             vals['waha_status'] = status
-            vals['waha_flap_count'] = (self.waha_flap_count or 0) + 1  # health: status volatility
+            # health: status volatility. A drop that comes straight back is a websocket
+            # recycle, not instability — undo the increment its 'starting' leg already
+            # made rather than charging the account a second time for the recovery.
+            if self._waha_is_transient_recovery(status):
+                vals['waha_flap_count'] = max(0, (self.waha_flap_count or 0) - 1)
+            else:
+                vals['waha_flap_count'] = (self.waha_flap_count or 0) + 1
             event_vals = {
                 'status': status,
                 'previous_status': self.waha_status or False,
@@ -1463,25 +1478,70 @@ class WhatsappAccount(models.Model):
         a successful pairing trip the breaker and pause sending on a healthy session.
         What actually signals instability is losing a session that was working, or one
         dropping into 'failed'; neither happens on the way up.
+
+        2026-08-10: a drop that comes straight back is not instability either. The GOWS
+        engine recycles its WhatsApp websocket several times a day and re-authenticates
+        from stored credentials in the same second — measured on this deployment over ten
+        days: 153 drops, 152 instant recoveries, zero re-pairings. Counting those drove
+        the health score to 'critical' and pushed operators into re-scanning the QR, and
+        a fresh device registration is the real ban signal. Only a drop that has NOT
+        recovered within `waha_flap_settle_seconds` counts.
         """
         self.ensure_one()
         window = window_minutes or self.waha_flap_window_minutes or 60
         since = fields.Datetime.now() - timedelta(minutes=window)
-        return self.env['whatsapp.waha.session.event'].sudo().search_count([
-            ('account_id', '=', self.id),
-            ('create_date', '>=', since),
-            '|',
-            ('previous_status', '=', 'working'),
-            ('status', '=', 'failed'),
-        ])
+        settle = max(0, self.waha_flap_settle_seconds or 0)
+        # Raw SQL: the "did it come back?" test is a correlated lookup per candidate row,
+        # which the ORM cannot express. flush_model() first so events written earlier in
+        # this transaction (the drop we may be closing) are visible to the query.
+        self.env['whatsapp.waha.session.event'].flush_model()
+        self.env.cr.execute("""
+            SELECT count(*)
+              FROM whatsapp_waha_session_event e
+             WHERE e.account_id = %s
+               AND e.create_date >= %s
+               AND (e.previous_status = 'working' OR e.status = 'failed')
+               AND NOT (
+                        e.previous_status = 'working'
+                    AND e.status = 'starting'
+                    -- Ordered by id, not create_date: create_date defaults to
+                    -- transaction_timestamp(), so two events written in one transaction
+                    -- carry the SAME create_date and a strict `>` would never match.
+                    -- id is monotonic, so it orders them correctly either way.
+                    AND EXISTS (SELECT 1
+                                  FROM whatsapp_waha_session_event r
+                                 WHERE r.account_id = e.account_id
+                                   AND r.status = 'working'
+                                   AND r.id > e.id
+                                   AND r.create_date >= e.create_date
+                                   AND r.create_date <=
+                                       e.create_date + (%s * interval '1 second'))
+               )
+        """, (self.id, since, settle))
+        return self.env.cr.fetchone()[0]
+
+    def _waha_is_transient_recovery(self, status):
+        """True when this transition closes a working → starting → working cycle that
+        completed inside the settle window — the socket came straight back."""
+        self.ensure_one()
+        settle = max(0, self.waha_flap_settle_seconds or 0)
+        if not settle or status != 'working' or self.waha_status != 'starting':
+            return False
+        drop = self.env['whatsapp.waha.session.event'].sudo().search(
+            [('account_id', '=', self.id)], order='create_date desc, id desc', limit=1)
+        return bool(
+            drop and drop.previous_status == 'working' and drop.status == 'starting'
+            and (fields.Datetime.now() - drop.create_date).total_seconds() <= settle)
 
     def _waha_check_flapping(self):
         """Trip the breaker when the session cycles too often — either in a short burst
         or, just as dangerously, sparsely but persistently over many hours.
 
-        A reconnect loop makes every send fail anyway, and each re-registration adds to
-        the very signal that gets an unofficial client logged out — so pausing is both
-        safer and cheaper than letting the queue hammer a dying session.
+        A reconnect loop makes every send fail anyway, so pausing is both safer and
+        cheaper than letting the queue hammer a dying session. Note that a reconnect does
+        NOT re-register the device — that was assumed here until the WAHA logs were read
+        on 2026-08-10 — so what is being protected against is a session that cannot hold a
+        connection, not a per-reconnect ban signal.
 
         2026-08-05: this account lost its link and needed re-pairing after flapping
         roughly once every 30-90 minutes for two straight days — never dense enough to

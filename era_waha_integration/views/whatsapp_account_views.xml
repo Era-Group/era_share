@@ -231,6 +231,10 @@
                                      help="How long outbound sending stays paused after the breaker trips.">
                                 <field name="waha_flap_pause_minutes"/>
                             </setting>
+                            <setting string="Transient reconnect grace (seconds)"
+                                     help="A drop that is working again within this many seconds only recycled its websocket — it re-authenticated from stored credentials with no new device registration. Normal for the GOWS engine, so it is not counted as a flap. 0 = count every drop, however brief.">
+                                <field name="waha_flap_settle_seconds"/>
+                            </setting>
                             <setting string="Cold re-send lock (hours)"
                                      help="A contact who has never replied can be messaged again only once per this many hours.">
                                 <field name="waha_cold_resend_hours"/>

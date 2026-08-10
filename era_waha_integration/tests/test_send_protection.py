@@ -187,10 +187,12 @@ class TestWahaSendProtection(TransactionCase):
         """Hardening added after the 2026-08-05 session loss.
 
         That session flapped roughly once every 30-90 minutes for two straight days —
-        never dense enough to trip the short (60-minute) window even once, so sending,
-        and the re-registration that comes with every reconnect, never stopped until
-        WhatsApp logged the device out and it needed a fresh QR scan. The long window
-        exists to catch that slow-burn pattern the short one is blind to.
+        never dense enough to trip the short (60-minute) window even once, so sending
+        never stopped until WhatsApp logged the device out and it needed a fresh QR scan.
+        The long window exists to catch that slow-burn pattern the short one is blind to.
+
+        These drops never recover, so the settle-window grace added on 2026-08-10 must
+        not swallow them.
         """
         self.account.write({
             'waha_flap_threshold': 6, 'waha_flap_window_minutes': 60,
@@ -204,7 +206,53 @@ class TestWahaSendProtection(TransactionCase):
                          self.account.waha_flap_threshold)
         self.assertTrue(self.account._waha_check_flapping())
         self.assertTrue(self.account.waha_paused_until,
-                         "sustained sparse flapping must pause outbound sending too")
+                        "sustained sparse flapping must pause outbound sending too")
+
+    def test_a_websocket_recycle_is_not_counted_as_a_flap(self):
+        """Regression for the 2026-08-10 investigation.
+
+        GOWS drops and re-authenticates from stored credentials in the same second —
+        153 drops produced 152 instant recoveries and zero re-pairings on this
+        deployment. Scoring those as instability drove the health card to 'critical'
+        and pushed operators into re-scanning the QR, which is the one thing that
+        really does register a new device.
+        """
+        self.account.write({'waha_flap_threshold': 3, 'waha_flap_window_minutes': 60,
+                            'waha_flap_settle_seconds': 5})
+        self.account._waha_write_status('working')
+        baseline = self.account.waha_flap_count
+        for _ in range(6):
+            self.account._waha_write_status('starting')
+            self.account._waha_write_status('working')
+        self.assertEqual(self.account.waha_flap_count, baseline,
+                         "an instant recovery must leave the health counter where it was")
+        self.assertEqual(self.account._waha_recent_flap_count(window_minutes=60), 0)
+        self.assertFalse(self.account.waha_paused_until,
+                         "six websocket recycles are not a reconnect loop")
+
+    def test_a_drop_that_never_recovers_still_counts(self):
+        self.account.write({'waha_flap_settle_seconds': 5})
+        now = fields.Datetime.now()
+        for i in range(4):
+            self._log_event_at('starting', 'working', now - timedelta(minutes=5 * i + 1))
+        self.assertEqual(self.account._waha_recent_flap_count(window_minutes=60), 4)
+
+    def test_a_slow_recovery_still_counts(self):
+        """A minute of downtime is a real drop, not a websocket recycle."""
+        self.account.write({'waha_flap_settle_seconds': 5})
+        dropped_at = fields.Datetime.now() - timedelta(minutes=10)
+        self._log_event_at('starting', 'working', dropped_at)
+        self._log_event_at('working', 'starting', dropped_at + timedelta(seconds=60))
+        self.assertEqual(self.account._waha_recent_flap_count(window_minutes=60), 1)
+
+    def test_a_failed_status_is_never_excused_by_a_quick_recovery(self):
+        """'failed' means the engine gave up, not that a socket blinked — the settle
+        grace must not reach it."""
+        self.account.write({'waha_flap_settle_seconds': 5})
+        dropped_at = fields.Datetime.now() - timedelta(minutes=10)
+        self._log_event_at('failed', 'working', dropped_at)
+        self._log_event_at('working', 'failed', dropped_at + timedelta(seconds=1))
+        self.assertEqual(self.account._waha_recent_flap_count(window_minutes=60), 1)
 
     def test_sparse_flapping_short_of_the_long_threshold_does_not_trip(self):
         """Occasional drops over a long day must not be treated as a reconnect loop."""

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_sembly" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sembly</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Sembly" string="Sembly" name="era_sembly_meetings"
+                     logo="/era_sembly_meetings/static/description/icon.png"
+                     groups="era_sembly_meetings.group_sembly_manager">
+
+                    <block title="الاتصال (MCP)" name="sembly_connection">
+                        <setting string="المنطقة"
+                                 help="Picks the MCP host. Sembly offers US and EU only.">
+                            <field name="sembly_region"/>
+                        </setting>
+
+                        <setting string="رمز MCP"
+                                 help="Sembly → My Automations → MCP. Requires a PRO/MAX/ENTERPRISE workspace with MCP enabled by a Workspace Admin. Stored write-only — the field shows a mask once set.">
+                            <field name="sembly_mcp_token" password="True"
+                                   placeholder="••••••"/>
+                            <div class="text-warning mt-2" invisible="not sembly_token_rotation_due">
+                                <i class="fa fa-exclamation-triangle"/>
+                                هذا الرمز مضى عليه أكثر من 90 يوماً — يُنصح بتدويره.
+                            </div>
+                            <div class="text-muted mt-2" invisible="sembly_token_is_set">
+                                <i class="fa fa-info-circle"/>
+                                لا يوجد رمز بعد. المزامنة المجدولة معطّلة حتى يتم ضبطه وتفعيل المهام المجدولة.
+                            </div>
+                        </setting>
+
+                        <setting string="رابط MCP (تجاوز)"
+                                 help="Leave empty to derive the URL from the region.">
+                            <field name="sembly_mcp_url" placeholder="https://mcp.sembly.ai/mcp"/>
+                        </setting>
+
+                        <setting string="اختبار الاتصال"
+                                 help="tools/list needs no token, so this separates 'network unreachable' from 'credential missing'.">
+                            <button name="action_sembly_test_connection" type="object"
+                                    string="اختبار الاتصال" class="btn-primary"/>
+                        </setting>
+                    </block>
+
+                    <block title="الويب هوك (التفريغ النصي ورابط التسجيل)" name="sembly_webhook">
+                        <setting string="رابط الويب هوك"
+                                 help="In Sembly: My/Workspace Automations → Custom → New Automation. Create ONE automation for Transcription and ONE for Notes, both pointing at this URL, rule 'Apply to all meetings'. MCP carries no transcript and no recording link, so this is what delivers them.">
+                            <field name="sembly_webhook_url" readonly="1"
+                                   class="w-100 text-break"/>
+                        </setting>
+                    </block>
+
+                    <!-- ANCHOR: era_sembly_meetings_tasks adds the bucket-task
+                         settings into this block. -->
+                    <block title="الربط الذكي" name="sembly_ai">
+                        <setting string="وكيل الذكاء الاصطناعي"
+                                 help="الوكيل الذي يقترح الفرصة أو المهمة أو التذكرة. لا يُرسل التفريغ النصي إطلاقاً — يُرسل العنوان والتاريخ وأسماء المشاركين والملخص فقط.">
+                            <field name="sembly_ai_agent_id"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   placeholder="اختر وكيلاً..."/>
+                        </setting>
+                        <setting string="تلخيص تنفيذي قبل النشر"
+                                 help="قبل نشر الملخص على الفرصة/المهمة/التذكرة يختصره وكيل الذكاء إلى: حالة العميل، الإيجابيات، السلبيات والمخاطر، نطاق العمل، والخطوة القادمة. عند فشل التوليد يُنشر الملخص الخام كما هو.">
+                            <field name="sembly_ai_brief_enabled"/>
+                        </setting>
+                        <setting string="سجل الاجتماعات الداخلية"
+                                 help="عند عدم ارتباط الاجتماع بأي سجل، وتقييمه أنه اجتماع فريق داخلي، يُسنَد إلى هذا السجل. اتركه فارغاً لتعطيل الميزة — عندها لا يُجرى أي تقييم ولا تُستهلك أي كلفة.">
+                            <field name="sembly_internal_fallback_ref"
+                                   options="{'no_create': True}"/>
+                        </setting>
+                        <setting string="نطاقات داخلية إضافية"
+                                 help="نطاقاتنا تُشتق تلقائياً من الشركة ومستخدميها؛ هذا الحقل لما لا يمكن اشتقاقه كنطاق شركة تابعة. مزودو البريد المجاني (gmail وoutlook وغيرها) لا يُحسبون لا لصالح الاجتماع ولا ضده.">
+                            <field name="sembly_internal_domains"
+                                   placeholder="sub.era.net.sa, era-group.com"/>
+                        </setting>
+                        <setting string="نطاقات محايدة (تُستبعد من التقييم)"
+                                 help="تُعامَل تماماً كـ gmail وoutlook: لا تُحسب لصالح الاجتماع ولا ضده. ضع هنا نطاق حساب Sembly نفسه — فهو يحضر كل اجتماع، وإن كان على نطاق مختلف عن نطاق شركتك فسيجعل كل اجتماع يُقرأ خارجياً.">
+                            <field name="sembly_ignored_domains"
+                                   placeholder="letsw.com"/>
+                        </setting>
+                        <setting string="حد الثقة للربط الآلي"
+                                 help="At or above this the link is applied automatically; below it the meeting shows a suggestion with a one-click apply.">
+                            <field name="sembly_ai_confidence_threshold"/>
+                        </setting>
+                    </block>
+
+                    <block title="المزامنة والصيانة" name="sembly_sync">
+                        <setting string="استيراد سجل Sembly التاريخي"
+                                 help="يمشي في التاريخ للخلف على نوافذ، يحفظ بعد كل اجتماع، ويكمل من حيث توقف، ويوقف نفسه حين ينضب السجل. لا يمكن تشغيله داخل طلب ويب لأن كل اجتماع يكلّف نداءً شبكياً مستقلاً.">
+                            <field name="sembly_backfill_state" readonly="1"/>
+                            <div class="mt-2">
+                                <button name="action_sembly_start_backfill" type="object"
+                                        string="ابدأ استيراد السجل" class="btn-primary"/>
+                                <button name="action_sembly_stop_backfill" type="object"
+                                        string="إيقاف" class="btn-secondary ms-2"/>
+                            </div>
+                        </setting>
+
+                        <setting string="نافذة المزامنة (أيام)"
+                                 help="The MCP sync cron lists meetings started within this many days back.">
+                            <field name="sembly_sync_window_days"/>
+                        </setting>
+                        <setting string="حجم دفعة المزامنة"
+                                 help="Maximum get_meeting calls per run, so a large backfill is paced rather than hammering the API.">
+                            <field name="sembly_sync_batch_size"/>
+                        </setting>
+                        <setting string="حجم دفعة المطابقة">
+                            <field name="sembly_match_batch_size"/>
+                        </setting>
+                        <setting string="إعادة البحث عن ربط بعد (أيام)"
+                                 help="الاجتماع الذي بقي غير مرتبط يُعاد عرضه على المطابق بعد هذه المدة — لأن الجواب قد يتغيّر: الفرصة التي يخصّها كثيراً ما تُنشأ بعد الاجتماع نفسه. اجعلها -1 لإيقاف إعادة البحث.">
+                            <field name="sembly_rematch_after_days"/>
+                        </setting>
+                        <setting string="مدة الاحتفاظ بالحمولة الخام (أيام)">
+                            <field name="sembly_raw_retention_days"/>
+                        </setting>
+                        <setting string="المنطقة الزمنية"
+                                 help="Used for the 'today or yesterday' window when posting the latest meeting summary to the chatter.">
+                            <field name="sembly_timezone" placeholder="Asia/Riyadh"/>
+                        </setting>
+                        <setting string="قالب رابط الاجتماع"
+                                 help="رابط مساحة العمل، ويتطلب حساب Sembly. تتجاوزه الروابط القادمة من الويب هوك.">
+                            <field name="sembly_meeting_url_template"/>
+                        </setting>
+                        <setting string="قالب رابط المشاركة (ضيف)"
+                                 help="يُستخدم فقط عندما تصلنا معرّفات UUID للاجتماعات: {token} هو الـ UUID مُرمَّزاً بـ base64. لا يمكن اشتقاقه من رقم الاجتماع، وهو كل ما توفره أدوات MCP.">
+                            <field name="sembly_share_url_template"
+                                   placeholder="https://webapp.sembly.ai/guest-access/meeting/{token}"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

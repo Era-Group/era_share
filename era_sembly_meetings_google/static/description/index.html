@@ -1,0 +1,108 @@
+<!--
+    Apps store description for "ERA Sembly.ai Meetings — Google Meet & Gemini".
+    Self-contained: no external asset, image or font. Styling is INLINE on purpose —
+    Odoo's html_sanitize strips <style> blocks out of ir.module.module.description_html,
+    so a scoped stylesheet would render unstyled on the Apps detail page.
+    Bilingual: each heading and paragraph appears in English, then in Arabic (dir="rtl").
+-->
+<section class="oe_container">
+  <div class="oe_row oe_spaced" style="max-width:1100px;margin:0 auto;padding:24px 16px 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2d3d;line-height:1.6">
+
+    <!-- HERO -->
+    <div style="background:linear-gradient(135deg,#1A73E8 0%,#1558b0 60%,#0f3f80 100%);border-radius:16px;padding:42px 38px;color:#eaf1fd">
+      <p style="text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;opacity:.82;margin:0 0 10px">Odoo 19 &middot; Productivity &middot; Era Group</p>
+      <h1 style="color:#fff;font-size:31px;font-weight:800;margin:0 0 6px">ERA Sembly.ai Meetings &mdash; Google Meet &amp; Gemini</h1>
+      <h2 dir="rtl" style="color:#c3d9f8;font-size:21px;font-weight:400;margin:0 0 16px">اجتماعات Sembly.ai من Era — Google Meet و Gemini</h2>
+      <p style="color:#dbe8fb;font-size:16px;max-width:780px;margin:0">
+        Google as a <b>second provider</b> on the same meeting record: the real recording, a share link that
+        opens without an account &mdash; and can be revoked again &mdash; and Gemini's notes translated into Arabic.</p>
+      <p dir="rtl" style="color:#c3d9f8;font-size:16px;line-height:1.85;max-width:780px;margin:10px 0 0">
+        Google كمزوّد <b>ثانٍ</b> على سجل الاجتماع نفسه: التسجيل الحقيقي، ورابط مشاركة يفتحه من لا يملك حسابًا
+        &mdash; ويمكن سحبه &mdash; وملاحظات Gemini مترجمة إلى العربية.</p>
+      <div style="margin-top:20px">
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf1fd;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Auto-install</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf1fd;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Google Drive API</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf1fd;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Odoo AI</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf1fd;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">LGPL-3</span>
+      </div>
+    </div>
+
+    <!-- WHY -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1A73E8;margin:40px 0 6px">Why a second provider</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Sembly cannot hand you a link, and Google cannot read Arabic</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#1A73E8;margin:0 0 4px">Sembly لا يمنحك رابطًا، وGoogle لا يقرأ العربية</h3>
+    <p style="color:#6b7785;margin:0 0 18px">Sembly's own support confirmed in writing that it has no public API, exposes no media file, and offers no way to obtain a guest link programmatically &mdash; so most staff, who have no Sembly account, cannot open anything. Google Meet holds the recording for 98&nbsp;% of our meetings and shares it in one API call. Neither vendor is complete alone, so this module runs them side by side.</p>
+    <p dir="rtl" style="color:#1A73E8;line-height:1.75;margin:0 0 18px">أكّد فريق دعم Sembly كتابةً أنه لا يملك API عامة، ولا يُخرج ملف وسائط، ولا يوفّر طريقة برمجية للحصول على رابط ضيف &mdash; فلا يستطيع معظم الموظفين، ممن لا حسابات لهم، فتح شيء. وGoogle Meet يحتفظ بتسجيل 98&nbsp;% من اجتماعاتنا ويشاركه بنداء واحد. لا أحد منهما كافٍ وحده، لذا يعملان معًا هنا.</p>
+
+    <!-- WHAT IT ADDS -->
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128279;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">A link anyone can open &mdash; and you can close</h4>
+        <h4 dir="rtl" style="color:#1A73E8;margin:0 0 6px;font-size:15.5px;font-weight:600">رابط يفتحه الجميع، وتستطيع إغلاقه</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">One button grants <b>anyone with the link</b> on the Drive recording; a second withdraws it. Sembly's guest links never expire and cannot be revoked at all.</p>
+        <p dir="rtl" style="color:#6b7785;line-height:1.7;margin:8px 0 0">زر يمنح صلاحية <b>anyone with the link</b> على التسجيل، وآخر يسحبها. روابط Sembly لا تنتهي ولا تُلغى إطلاقًا.</p>
+      </div>
+
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#127916;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">The actual recording</h4>
+        <h4 dir="rtl" style="color:#1A73E8;margin:0 0 6px;font-size:15.5px;font-weight:600">التسجيل نفسه</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">The Drive <b>fileId</b> and player link, on the meeting. Sembly publishes no media URL anywhere, in either of its channels.</p>
+        <p dir="rtl" style="color:#6b7785;line-height:1.7;margin:8px 0 0">معرّف الملف في Drive ورابط التشغيل، على الاجتماع. Sembly لا ينشر رابط وسائط في أيٍّ من قناتيه.</p>
+      </div>
+
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#10024;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">Gemini's notes, in Arabic</h4>
+        <h4 dir="rtl" style="color:#1A73E8;margin:0 0 6px;font-size:15.5px;font-weight:600">ملاحظات Gemini بالعربية</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">When Google produced notes, they are imported and translated by the same configured agent, and shown beside the original.</p>
+        <p dir="rtl" style="color:#6b7785;line-height:1.7;margin:8px 0 0">حين ينتج Google ملاحظات، تُستورَد ويترجمها الوكيل المُعدّ نفسه، وتُعرض بجانب الأصل.</p>
+      </div>
+    </div>
+
+    <!-- THE ARABIC CAVEAT -->
+    <div style="background:#fff8e6;border:1px solid #f2d98c;border-left:5px solid #E8A317;border-radius:12px;padding:22px;margin:26px 0 0">
+      <h4 style="color:#8a6100;margin:0 0 4px;font-size:16px">Read this before expecting Gemini notes</h4>
+      <h4 dir="rtl" style="color:#8a6100;margin:0 0 10px;font-size:15.5px;font-weight:600">اقرأ هذا قبل أن تتوقّع ملاحظات Gemini</h4>
+      <p style="color:#6b5b2e;line-height:1.6;margin:0">Google's note-taker supports English, French, German, Italian, Japanese, Korean, Portuguese and Spanish &mdash; <b>Arabic is not among them</b>. An Arabic meeting therefore produces <b>no Gemini document at all</b>, and the module treats that as the normal case rather than an error. The recording is language-neutral and still arrives, and it is the recording that closes Sembly's biggest gap.</p>
+      <p dir="rtl" style="color:#6b5b2e;line-height:1.8;margin:10px 0 0">يدعم مُلاحِظ Google ثماني لغات ليست العربية منها. لذلك <b>لا يُنتج الاجتماع العربي أي ملف ملاحظات</b>، وتعامل الوحدة ذلك كوضع طبيعي لا كخطأ. أما التسجيل فمحايد لغويًا ويصل دائمًا، وهو ما يسدّ أكبر فجوة لدى Sembly.</p>
+    </div>
+
+    <!-- HOW IT MATCHES -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1A73E8;margin:40px 0 6px">How a recording finds its meeting</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">By time, then owner, then title &mdash; and it refuses to guess</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#1A73E8;margin:0 0 12px">بالوقت ثم المالك ثم العنوان — ويرفض التخمين</h3>
+    <p style="color:#6b7785;margin:0 0 14px">Google carries no Sembly id, only a Drive file and a creation time, so the two are matched heuristically. Recording starts when a human presses record, always a little after the meeting opens, so time is the primary key. Where two meetings share a window, the owner and then the title decide &mdash; and where nothing decides, the recording is left unmatched for a person to file. A wrong match would attach one meeting's recording to another meeting's opportunity, which is worse than no match at all.</p>
+    <p dir="rtl" style="color:#1A73E8;line-height:1.8;margin:0 0 8px">لا يحمل Google معرّف Sembly، بل ملف Drive ووقت إنشاء، فالمطابقة استدلالية. يبدأ التسجيل حين يضغط إنسان الزر، أي بعد بداية الاجتماع دائمًا، فالوقت هو المفتاح الأول. وحين يقع اجتماعان في النافذة نفسها يحسم المالك ثم العنوان &mdash; وحين لا يحسم شيء يُترك التسجيل بلا ربط ليتولّاه إنسان. فربطٌ خاطئ يُلصق تسجيل اجتماع بفرصة اجتماع آخر، وهو أسوأ من عدم الربط.</p>
+
+    <!-- SETUP -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1A73E8;margin:40px 0 6px">Setup</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">A service account, authorised once</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#1A73E8;margin:0 0 12px">حساب خدمة، يُفوَّض مرة واحدة</h3>
+    <p style="color:#6b7785;margin:0 0 14px">Meet recordings land in the <b>organiser's own My Drive</b>, not in any shared folder, so finding every meeting means reading a different person's Drive each time &mdash; in a cron, with no browser. A service account with domain-wide delegation does that with one authorisation instead of a consent flow per employee.</p>
+    <p dir="rtl" style="color:#1A73E8;line-height:1.8;margin:0 0 14px">تهبط تسجيلات Meet في درايف المنظّم نفسه لا في مجلد مشترك، فإيجاد كل الاجتماعات يعني قراءة درايف شخص مختلف في كل مرة &mdash; داخل مهمة مجدولة وبلا متصفح. وحساب الخدمة بتفويض على مستوى النطاق يفعل ذلك بتفويض واحد بدل موافقة لكل موظف.</p>
+
+    <div style="background:#f1f5fb;border:1px solid #d3e0f5;border-radius:12px;padding:20px 22px">
+      <p style="margin:0 0 8px;color:#1f2d3d"><b>1.</b> Google Cloud: create a service account, enable the <b>Drive API</b> and <b>Meet API</b>, download the JSON key.</p>
+      <p style="margin:0 0 8px;color:#1f2d3d"><b>2.</b> Workspace Admin: authorise that account for domain-wide delegation on <code style="background:#e3ebf7;padding:1px 5px;border-radius:4px">auth/drive</code> and <code style="background:#e3ebf7;padding:1px 5px;border-radius:4px">auth/meetings.space.readonly</code>. The settings screen prints both, ready to copy.</p>
+      <p style="margin:0 0 8px;color:#1f2d3d"><b>3.</b> Odoo: Settings &rarr; Sembly &rarr; Google. Paste the JSON, press <b>Test connection</b>, enable the provider, then enable its scheduled action.</p>
+      <p style="margin:0;color:#8a6100"><b>Note on scope:</b> issuing the share link requires the full <code style="background:#f2e6c8;padding:1px 5px;border-radius:4px">auth/drive</code> scope, because <code style="background:#f2e6c8;padding:1px 5px;border-radius:4px">drive.file</code> covers only files this app created and Meet created these. That is read and write access to each employee's whole Drive &mdash; a real security decision, stated here rather than buried.</p>
+      <p dir="rtl" style="margin:10px 0 0;color:#8a6100"><b>ملاحظة على الصلاحية:</b> إصدار رابط المشاركة يتطلب صلاحية <code style="background:#f2e6c8;padding:1px 5px;border-radius:4px">auth/drive</code> الكاملة، لأن <code style="background:#f2e6c8;padding:1px 5px;border-radius:4px">drive.file</code> لا يغطي إلا ملفات أنشأها هذا التطبيق، وMeet هو من أنشأ هذه. أي قراءة وكتابة على كامل درايف كل موظف &mdash; قرار أمني حقيقي، ذُكر هنا صراحةً لا مدفونًا.</p>
+    </div>
+
+    <!-- SAFETY -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1A73E8;margin:40px 0 6px">Safe by default</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Installing it reaches nobody</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#1A73E8;margin:0 0 12px">تثبيتها لا يتصل بأحد</h3>
+    <p style="color:#6b7785;margin:0 0 14px">The provider ships <b>off</b>, with no key and an <b>inactive</b> scheduled action, so installation cannot call Google or spend anything. The share link is issued by a deliberate click, never automatically &mdash; opening a public link on a meeting recording is a human's decision, not a cron's. The service-account JSON is stored <b>write-only</b>: the field shows a mask once set and saving the mask keeps it, so the private key can never be read back through the UI.</p>
+    <p dir="rtl" style="color:#1A73E8;line-height:1.8;margin:0 0 8px">تصل الوحدة <b>معطّلة</b>، بلا مفتاح وبمهمة مجدولة <b>خامدة</b>، فلا يستطيع التثبيت الاتصال بـ Google ولا إنفاق شيء. ورابط المشاركة يُصدر بضغطة مقصودة لا تلقائيًا &mdash; ففتح رابط عام على تسجيل اجتماع قرار إنسان لا قرار مهمة مجدولة. ويُخزَّن ملف حساب الخدمة <b>بلا قراءة</b>: يظهر مقنّعًا بعد الحفظ، فلا يمكن استرجاع المفتاح الخاص من الواجهة أبدًا.</p>
+
+    <!-- FOOTER -->
+    <div style="border-top:1px solid #e5e7eb;margin-top:34px;padding-top:18px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center">
+      <p style="margin:0;color:#8a94a6;font-size:13px">Era Group &middot; <a href="https://era.net.sa" style="color:#1A73E8;text-decoration:none">era.net.sa</a> &middot; LGPL-3 &middot; Odoo 19</p>
+      <p dir="rtl" style="margin:0;color:#8a94a6;font-size:13px">يتطلب <b>era_sembly_meetings</b> &mdash; ويُثبَّت معه تلقائيًا</p>
+    </div>
+
+  </div>
+</section>

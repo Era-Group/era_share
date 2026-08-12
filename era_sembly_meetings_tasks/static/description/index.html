@@ -1,0 +1,88 @@
+<!--
+    Apps store description for "ERA Sembly.ai Meetings — Projects & Tasks".
+    Self-contained: no external asset, image or font. Styling is INLINE on purpose —
+    Odoo's html_sanitize strips <style> blocks out of ir.module.module.description_html,
+    so a scoped stylesheet would render unstyled on the Apps detail page.
+    Bilingual: each heading and paragraph appears in English, then in Arabic (dir="rtl").
+-->
+<section class="oe_container">
+  <div class="oe_row oe_spaced" style="max-width:1100px;margin:0 auto;padding:24px 16px 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2d3d;line-height:1.6">
+
+    <!-- HERO -->
+    <div style="background:linear-gradient(135deg,#3F7D3A 0%,#356a31 60%,#2a5527 100%);border-radius:16px;padding:42px 38px;color:#eaf6e8">
+      <p style="text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;opacity:.82;margin:0 0 10px">Odoo 19 &middot; Productivity &middot; Era Group</p>
+      <h1 style="color:#fff;font-size:31px;font-weight:800;margin:0 0 6px">ERA Sembly.ai Meetings &mdash; Projects &amp; Tasks</h1>
+      <h2 dir="rtl" style="color:#c9e4c4;font-size:21px;font-weight:400;margin:0 0 16px">اجتماعات Sembly.ai من Era — المشاريع والمهام</h2>
+      <p style="color:#dcefd8;font-size:16px;max-width:780px;margin:0">
+        The delivery half of the Sembly meeting linking. It appears by itself the moment the Project app is
+        enabled, and keeps the base meetings app installable on databases that have no Project.</p>
+      <p dir="rtl" style="color:#c9e4c4;font-size:16px;line-height:1.85;max-width:780px;margin:10px 0 0">
+        الشق الخاص بالتنفيذ في ربط اجتماعات Sembly. يظهر تلقائيًا بمجرد تفعيل تطبيق المشاريع،
+        ويُبقي تطبيق الاجتماعات الأساسي قابلًا للتثبيت على قواعد البيانات التي لا تملكه.</p>
+      <div style="margin-top:20px">
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf6e8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Auto-install</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf6e8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Project</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf6e8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Odoo AI</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#eaf6e8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">LGPL-3</span>
+      </div>
+    </div>
+
+    <!-- WHAT IT ADDS -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#3F7D3A;margin:40px 0 6px">What it adds</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Four additions, nothing else</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#3F7D3A;margin:0 0 4px">أربع إضافات، لا أكثر</h3>
+    <p style="color:#6b7785;margin:0 0 18px">This module adds no menu and no scheduled action of its own — it extends what <b>era_sembly_meetings</b> already runs, and contributes two settings to the same Sembly settings page.</p>
+    <p dir="rtl" style="color:#3F7D3A;line-height:1.75;margin:0 0 18px">لا تضيف هذه الوحدة قائمة ولا مهمة مجدولة خاصة بها — بل توسّع ما يشغّله <b>era_sembly_meetings</b> أصلًا، وتضيف إعدادين إلى صفحة إعدادات Sembly نفسها.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128203;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">Project and Task fields on the meeting</h4>
+        <h4 dir="rtl" style="color:#3F7D3A;margin:0 0 6px;font-size:15.5px;font-weight:600">حقلا المشروع والمهمة على الاجتماع</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">Every meeting gains a <b>project_id</b> and a <b>task_id</b>, each with its own column and filter. Picking either by hand always wins: the matcher never overwrites a human decision.</p>
+        <p dir="rtl" style="color:#3F7D3A;line-height:1.75;margin:8px 0 0">يكتسب كل اجتماع حقلي <b>project_id</b> و<b>task_id</b>، لكلٍّ عموده وفلتره. والاختيار اليدوي هو الأعلى دائمًا: لا يستبدل المطابق قرار الإنسان أبدًا.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#129504;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">A task implies its project</h4>
+        <h4 dir="rtl" style="color:#3F7D3A;margin:0 0 6px;font-size:15.5px;font-weight:600">المهمة تستلزم مشروعها</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">Projects and still-open tasks join the shortlist the matcher reasons over. When the model picks a task but no project, the project is filled in from the task, so the link is never half made.</p>
+        <p dir="rtl" style="color:#3F7D3A;line-height:1.75;margin:8px 0 0">تنضم المشاريع والمهام المفتوحة إلى القائمة المختصرة التي يفكر فيها المطابق. وحين يختار النموذج مهمة دون مشروع، يُستكمل المشروع من المهمة، فلا يبقى الارتباط ناقصًا.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128193;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">The &laquo;الاجتماعات&raquo; bucket task</h4>
+        <h4 dir="rtl" style="color:#3F7D3A;margin:0 0 6px;font-size:15.5px;font-weight:600">تاسك «الاجتماعات»</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">A meeting about the project at large, with no task of its own and nothing more specific claiming it, is filed under a per-project bucket task — created once and reused. Switchable off in the settings.</p>
+        <p dir="rtl" style="color:#3F7D3A;line-height:1.75;margin:8px 0 0">الاجتماع الذي يخص المشروع ككل، بلا مهمة خاصة به ودون ارتباط أكثر تحديدًا، يُسجَّل تحت تاسك تجميعي للمشروع — يُنشأ مرة ويُعاد استخدامه. ويمكن تعطيله من الإعدادات.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128279;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">Smart buttons and a chatter note</h4>
+        <h4 dir="rtl" style="color:#3F7D3A;margin:0 0 6px;font-size:15.5px;font-weight:600">أزرار ذكية وملاحظة في الشاتر</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">Both the project and the task forms get a meetings count button — the project's folds in the meetings sitting on its tasks — and the task receives the latest-meeting summary as an <b>internal note</b>.</p>
+        <p dir="rtl" style="color:#3F7D3A;line-height:1.75;margin:8px 0 0">يحصل نموذجا المشروع والمهمة على زر عدد الاجتماعات — ويضم عدّاد المشروع اجتماعات مهامه — وتستقبل المهمة ملخص آخر اجتماع بوصفه <b>ملاحظة داخلية</b>.</p>
+      </div>
+    </div>
+
+    <!-- WHY SEPARATE -->
+    <div style="margin-top:24px;background:#f3f8f2;border:1px solid #d3e6d0;border-left:4px solid #3F7D3A;border-radius:12px;padding:20px 22px">
+      <h3 style="color:#3F7D3A;margin:0 0 2px;font-size:16.5px">&#129513; Why this is a separate module</h3>
+      <h3 dir="rtl" style="color:#3F7D3A;margin:0 0 8px;font-size:16px;font-weight:600">&#129513; لماذا وحدة منفصلة؟</h3>
+      <p style="color:#4b5563;margin:0">The base app owns the meeting, the two Sembly channels and the AI machinery, but links a meeting to nothing by itself. Keeping the project and task links here means <b>era_sembly_meetings</b> never depends on Project, while <b>auto_install</b> makes this module appear on its own once both apps are present. The project and the task ship together because they are not independent: a task implies its project, and the bucket task belongs to both ideas.</p>
+      <p dir="rtl" style="color:#3F7D3A;line-height:1.85;margin:8px 0 0">يملك التطبيق الأساسي الاجتماع وقناتَي Sembly وآلة الذكاء الاصطناعي، لكنه لا يربط الاجتماع بشيء من تلقاء نفسه. وبإبقاء ارتباطي المشروع والمهمة هنا لا يعتمد <b>era_sembly_meetings</b> على تطبيق المشاريع، بينما تجعل خاصية <b>auto_install</b> هذه الوحدة تظهر وحدها متى وُجد التطبيقان. ويأتي المشروع والمهمة معًا لأنهما غير مستقلين: المهمة تستلزم مشروعها، والتاسك التجميعي ينتمي إلى الفكرتين.</p>
+      <p style="color:#4b5563;margin:12px 0 0">Uninstalling Project later is equally safe: this module goes with it, and the meetings, their transcripts and their other links are untouched.</p>
+      <p dir="rtl" style="color:#3F7D3A;line-height:1.85;margin:8px 0 0">وإلغاء تثبيت تطبيق المشاريع لاحقًا آمن بالقدر نفسه: تزول هذه الوحدة معه، وتبقى الاجتماعات وتفريغاتها وارتباطاتها الأخرى كما هي.</p>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="margin:38px 0 8px;padding-top:20px;border-top:1px solid #e5e7eb;font-size:13px;color:#6b7785">
+      <span style="margin-right:20px"><b style="color:#374151">Technical name:</b> era_sembly_meetings_tasks</span>
+      <span style="margin-right:20px"><b style="color:#374151">Author:</b> Era Group</span>
+      <span style="margin-right:20px"><b style="color:#374151">Depends:</b> era_sembly_meetings, project</span>
+      <span style="margin-right:20px"><b style="color:#374151">License:</b> LGPL-3</span>
+      <span><b style="color:#3F7D3A">Era Group</b> &middot; https://era.net.sa</span>
+    </div>
+
+  </div>
+</section>

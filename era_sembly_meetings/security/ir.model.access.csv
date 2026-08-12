@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sembly_meeting_user,sembly.meeting.user,model_sembly_meeting,era_sembly_meetings.group_sembly_user,1,1,0,0
+access_sembly_meeting_manager,sembly.meeting.manager,model_sembly_meeting,era_sembly_meetings.group_sembly_manager,1,1,1,1
+access_sembly_meeting_item_user,sembly.meeting.item.user,model_sembly_meeting_item,era_sembly_meetings.group_sembly_user,1,0,0,0
+access_sembly_meeting_item_manager,sembly.meeting.item.manager,model_sembly_meeting_item,era_sembly_meetings.group_sembly_manager,1,1,1,1
+access_sembly_sync_log_manager,sembly.sync.log.manager,model_sembly_sync_log,era_sembly_meetings.group_sembly_manager,1,0,0,1
+access_sembly_import_wizard_manager,sembly.import.wizard.manager,model_sembly_import_wizard,era_sembly_meetings.group_sembly_manager,1,1,1,1
+access_sembly_text_dialog_user,sembly.text.dialog.user,model_sembly_text_dialog,era_sembly_meetings.group_sembly_user,1,1,1,0

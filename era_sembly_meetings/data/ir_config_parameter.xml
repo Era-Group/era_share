@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: a module upgrade must never reset a rotated token or a tuned
+     value back to the shipped default. -->
+<odoo noupdate="1">
+
+    <record id="param_sembly_region" model="ir.config_parameter">
+        <field name="key">sembly.region</field>
+        <field name="value">us</field>
+    </record>
+
+    <!-- Explicit MCP URL override. Empty = derived from the region. -->
+    <record id="param_sembly_mcp_url" model="ir.config_parameter">
+        <field name="key">sembly.mcp_url</field>
+        <field name="value"></field>
+    </record>
+
+    <!-- Fallback when the SEMBLY_MCP_TOKEN environment variable is unset.
+         Ships EMPTY: a secret is never shipped in source (rule 03).
+         sembly.webhook_token is NOT declared here — it is generated as a
+         32-byte secret by the post_init hook. -->
+    <record id="param_sembly_mcp_token" model="ir.config_parameter">
+        <field name="key">sembly.mcp_token</field>
+        <field name="value"></field>
+    </record>
+
+    <record id="param_sembly_webhook_max_bytes" model="ir.config_parameter">
+        <field name="key">sembly.webhook_max_bytes</field>
+        <field name="value">4194304</field>
+    </record>
+
+    <!-- Sembly publishes no direct media URL; this builds the meeting-page link
+         that the recording plays on. A wrong guess is a one-field correction,
+         and the webhook overwrites it with the authoritative link anyway. -->
+    <record id="param_sembly_meeting_url_template" model="ir.config_parameter">
+        <field name="key">sembly.meeting_url_template</field>
+        <field name="value">https://webapp.sembly.ai/meeting/{id}</field>
+    </record>
+
+    <record id="param_sembly_share_url_template" model="ir.config_parameter">
+        <field name="key">sembly.share_url_template</field>
+        <field name="value">https://webapp.sembly.ai/guest-access/meeting/{token}</field>
+    </record>
+
+    <!-- sembly.meetings_task_name and sembly.auto_create_meetings_task are NOT
+         here: they configure the per-project bucket task and ship with
+         era_sembly_meetings_tasks. -->
+
+    <!-- 'Odoo Agent', the same ai.agent era_domain_industry routes through. -->
+    <record id="param_sembly_ai_agent_id" model="ir.config_parameter">
+        <field name="key">sembly.ai_agent_id</field>
+        <field name="value">1</field>
+    </record>
+
+    <record id="param_sembly_ai_brief_enabled" model="ir.config_parameter">
+        <field name="key">sembly.ai_brief_enabled</field>
+        <field name="value">1</field>
+    </record>
+
+    <record id="param_sembly_ai_confidence_threshold" model="ir.config_parameter">
+        <field name="key">sembly.ai_confidence_threshold</field>
+        <field name="value">0.7</field>
+    </record>
+
+    <record id="param_sembly_sync_window_days" model="ir.config_parameter">
+        <field name="key">sembly.sync_window_days</field>
+        <field name="value">7</field>
+    </record>
+
+    <record id="param_sembly_sync_batch_size" model="ir.config_parameter">
+        <field name="key">sembly.sync_batch_size</field>
+        <field name="value">50</field>
+    </record>
+
+    <record id="param_sembly_rematch_after_days" model="ir.config_parameter">
+        <field name="key">sembly.rematch_after_days</field>
+        <field name="value">7</field>
+    </record>
+
+    <record id="param_sembly_match_batch_size" model="ir.config_parameter">
+        <field name="key">sembly.match_batch_size</field>
+        <field name="value">20</field>
+    </record>
+
+    <record id="param_sembly_raw_retention_days" model="ir.config_parameter">
+        <field name="key">sembly.raw_retention_days</field>
+        <field name="value">30</field>
+    </record>
+
+    <!-- res.company has no tz field and this company's partner has none set, so
+         the 'today or yesterday' window of requirement 6 needs an explicit one.
+         Era Group is Saudi-based. -->
+    <record id="param_sembly_timezone" model="ir.config_parameter">
+        <field name="key">sembly.timezone</field>
+        <field name="value">Asia/Riyadh</field>
+    </record>
+
+</odoo>

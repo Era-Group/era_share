@@ -1,0 +1,81 @@
+<!--
+    Apps store description for "ERA Sembly.ai Meetings — CRM".
+    Self-contained: no external asset, image or font. Styling is INLINE on purpose —
+    Odoo's html_sanitize strips <style> blocks out of ir.module.module.description_html,
+    so a scoped stylesheet would render unstyled on the Apps detail page.
+    Bilingual: each heading and paragraph appears in English, then in Arabic (dir="rtl").
+-->
+<section class="oe_container">
+  <div class="oe_row oe_spaced" style="max-width:1100px;margin:0 auto;padding:24px 16px 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2d3d;line-height:1.6">
+
+    <!-- HERO -->
+    <div style="background:linear-gradient(135deg,#6B3FA0 0%,#5a3488 60%,#472a6b 100%);border-radius:16px;padding:42px 38px;color:#f1eaf8">
+      <p style="text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;opacity:.82;margin:0 0 10px">Odoo 19 &middot; Productivity &middot; Era Group</p>
+      <h1 style="color:#fff;font-size:31px;font-weight:800;margin:0 0 6px">ERA Sembly.ai Meetings &mdash; CRM</h1>
+      <h2 dir="rtl" style="color:#dcc9ef;font-size:21px;font-weight:400;margin:0 0 16px">اجتماعات Sembly.ai من Era — إدارة علاقات العملاء</h2>
+      <p style="color:#e8ddf5;font-size:16px;max-width:780px;margin:0">
+        The CRM half of the Sembly meeting linking. It appears by itself the moment the CRM app is
+        enabled, and keeps the base meetings app installable on databases that have no CRM.</p>
+      <p dir="rtl" style="color:#dcc9ef;font-size:16px;line-height:1.85;max-width:780px;margin:10px 0 0">
+        الشق الخاص بإدارة علاقات العملاء في ربط اجتماعات Sembly. يظهر تلقائيًا بمجرد تفعيل تطبيق
+        إدارة علاقات العملاء، ويُبقي تطبيق الاجتماعات الأساسي قابلًا للتثبيت على قواعد البيانات التي لا تملكه.</p>
+      <div style="margin-top:20px">
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#f1eaf8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Auto-install</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#f1eaf8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">CRM</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#f1eaf8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Odoo AI</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#f1eaf8;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">LGPL-3</span>
+      </div>
+    </div>
+
+    <!-- WHAT IT ADDS -->
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6B3FA0;margin:40px 0 6px">What it adds</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Three additions, nothing else</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#6B3FA0;margin:0 0 4px">ثلاث إضافات، لا أكثر</h3>
+    <p style="color:#6b7785;margin:0 0 18px">This module adds no menu, no setting and no scheduled action of its own — it extends what <b>era_sembly_meetings</b> already runs.</p>
+    <p dir="rtl" style="color:#6B3FA0;line-height:1.75;margin:0 0 18px">لا تضيف هذه الوحدة قائمة ولا إعدادًا ولا مهمة مجدولة خاصة بها — بل توسّع ما يشغّله <b>era_sembly_meetings</b> أصلًا.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#11088;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">An Opportunity field on the meeting</h4>
+        <h4 dir="rtl" style="color:#6B3FA0;margin:0 0 6px;font-size:15.5px;font-weight:600">حقل الفرصة على الاجتماع</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">Every meeting gains a <b>lead_id</b>, with its own column, filter and group-by. Picking it by hand always wins: the matcher never overwrites a human decision.</p>
+        <p dir="rtl" style="color:#6B3FA0;line-height:1.75;margin:8px 0 0">يكتسب كل اجتماع حقل <b>lead_id</b>، بعموده وفلتره وتجميعه. والاختيار اليدوي هو الأعلى دائمًا: لا يستبدل المطابق قرار الإنسان أبدًا.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#129504;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">Opportunities become AI candidates</h4>
+        <h4 dir="rtl" style="color:#6B3FA0;margin:0 0 6px;font-size:15.5px;font-weight:600">الفرص تصبح مرشحة للذكاء الاصطناعي</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">Opportunities of the people in the room, and those whose name or customer matches a significant word of the meeting title, join the shortlist the matcher reasons over — capped at 60, never the whole pipeline.</p>
+        <p dir="rtl" style="color:#6B3FA0;line-height:1.75;margin:8px 0 0">تنضم فرص الحاضرين في الاجتماع، والفرص التي يطابق اسمها أو عميلها كلمة دالة من عنوان الاجتماع، إلى القائمة المختصرة التي يفكر فيها المطابق — بحد أقصى 60، وليس خط الأنابيب كله.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128279;</div>
+        <h4 style="color:#1f2d3d;margin:8px 0 2px;font-size:16px">A smart button and a chatter note</h4>
+        <h4 dir="rtl" style="color:#6B3FA0;margin:0 0 6px;font-size:15.5px;font-weight:600">زر ذكي وملاحظة في الشاتر</h4>
+        <p style="color:#6b7785;line-height:1.55;margin:0">The opportunity form gets the meetings count button, and the opportunity receives the latest-meeting summary as an <b>internal note</b> — never an email to the customer's followers.</p>
+        <p dir="rtl" style="color:#6B3FA0;line-height:1.75;margin:8px 0 0">يحصل نموذج الفرصة على زر عدد الاجتماعات، وتستقبل الفرصة ملخص آخر اجتماع بوصفه <b>ملاحظة داخلية</b> — لا رسالة بريد إلى متابعي العميل.</p>
+      </div>
+    </div>
+
+    <!-- WHY SEPARATE -->
+    <div style="margin-top:24px;background:#f6f2fb;border:1px solid #ddd0ee;border-left:4px solid #6B3FA0;border-radius:12px;padding:20px 22px">
+      <h3 style="color:#6B3FA0;margin:0 0 2px;font-size:16.5px">&#129513; Why this is a separate module</h3>
+      <h3 dir="rtl" style="color:#6B3FA0;margin:0 0 8px;font-size:16px;font-weight:600">&#129513; لماذا وحدة منفصلة؟</h3>
+      <p style="color:#4b5563;margin:0">The base app owns the meeting, the two Sembly channels and the AI machinery, but links a meeting to nothing by itself. Keeping the opportunity link here means <b>era_sembly_meetings</b> never depends on CRM and stays installable on a database that does not sell anything, while <b>auto_install</b> makes this module appear on its own once both apps are present. Nothing here needs configuring.</p>
+      <p dir="rtl" style="color:#6B3FA0;line-height:1.85;margin:8px 0 0">يملك التطبيق الأساسي الاجتماع وقناتَي Sembly وآلة الذكاء الاصطناعي، لكنه لا يربط الاجتماع بشيء من تلقاء نفسه. وبإبقاء ارتباط الفرصة هنا لا يعتمد <b>era_sembly_meetings</b> على إدارة علاقات العملاء ويبقى قابلًا للتثبيت على قاعدة بيانات لا تبيع شيئًا، بينما تجعل خاصية <b>auto_install</b> هذه الوحدة تظهر وحدها متى وُجد التطبيقان. ولا شيء هنا يحتاج إلى إعداد.</p>
+      <p style="color:#4b5563;margin:12px 0 0">Uninstalling CRM later is equally safe: this module goes with it, and the meetings, their transcripts and their other links are untouched.</p>
+      <p dir="rtl" style="color:#6B3FA0;line-height:1.85;margin:8px 0 0">وإلغاء تثبيت إدارة علاقات العملاء لاحقًا آمن بالقدر نفسه: تزول هذه الوحدة معه، وتبقى الاجتماعات وتفريغاتها وارتباطاتها الأخرى كما هي.</p>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="margin:38px 0 8px;padding-top:20px;border-top:1px solid #e5e7eb;font-size:13px;color:#6b7785">
+      <span style="margin-right:20px"><b style="color:#374151">Technical name:</b> era_sembly_meetings_crm</span>
+      <span style="margin-right:20px"><b style="color:#374151">Author:</b> Era Group</span>
+      <span style="margin-right:20px"><b style="color:#374151">Depends:</b> era_sembly_meetings, crm</span>
+      <span style="margin-right:20px"><b style="color:#374151">License:</b> LGPL-3</span>
+      <span><b style="color:#6B3FA0">Era Group</b> &middot; https://era.net.sa</span>
+    </div>
+
+  </div>
+</section>

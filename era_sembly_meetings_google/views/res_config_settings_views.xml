@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_sembly_google" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sembly.google</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="era_sembly_meetings.res_config_settings_view_form_sembly"/>
+        <field name="arch" type="xml">
+            <!-- ANCHOR rule: only onto an element the BASE declares. -->
+            <xpath expr="//block[@name='sembly_webhook']" position="after">
+                <block title="Google Meet و Gemini (مزوّد ثانٍ)" name="sembly_google">
+                    <setting string="تفعيل Google كمزوّد"
+                             help="يعمل Google إلى جانب Sembly أو بدلاً منه أو لا يعمل إطلاقاً — المزوّدان مستقلان. معطّل افتراضياً.">
+                        <field name="sembly_google_enabled"/>
+                    </setting>
+
+                    <setting string="مفتاح حساب الخدمة (JSON)"
+                             help="الصق ملف JSON كاملاً من Google Cloud. يُخزَّن بلا قراءة: يحتوي مفتاحاً خاصاً، فيظهر مقنّعاً بعد الحفظ، وحفظ القناع كما هو يبقيه.">
+                        <field name="sembly_google_service_account" password="True"
+                               placeholder='{"type": "service_account", ...}'/>
+                        <div class="text-muted mt-2" invisible="not sembly_google_sa_is_set">
+                            <i class="fa fa-key"/>
+                            فوّض هذا العنوان على مستوى النطاق في Workspace Admin:
+                            <strong><field name="sembly_google_sa_email" class="oe_inline" readonly="1"/></strong>
+                            <div class="mt-1">
+                                بالنطاقين:
+                                <code>https://www.googleapis.com/auth/drive</code> و
+                                <code>https://www.googleapis.com/auth/meetings.space.readonly</code>
+                            </div>
+                        </div>
+                        <div class="text-warning mt-2" invisible="sembly_google_sa_is_set">
+                            <i class="fa fa-info-circle"/>
+                            لا مفتاح بعد. لن تتصل المزامنة بـ Google حتى يُضبط.
+                        </div>
+                    </setting>
+
+                    <setting string="المستخدم الافتراضي للانتحال"
+                             help="لنداءات لا تخص درايف شخص بعينه. عنوان مدير Workspace هو الخيار المعتاد.">
+                        <field name="sembly_google_subject" placeholder="admin@era.net.sa"/>
+                    </setting>
+
+                    <setting string="اختبار اتصال Google"
+                             help="يفصل بين 'المفتاح غير صالح' و'التفويض على مستوى النطاق غير مُصرَّح به' — وهما خطآن مختلفان تماماً ورسالة Google عنهما غامضة.">
+                        <button name="action_sembly_google_test" type="object"
+                                string="اختبار اتصال Google" class="btn-primary"/>
+                    </setting>
+
+                    <setting string="حسابات محددة للمسح"
+                             help="اتركه فارغاً لمسح كل المستخدمين الداخليين — وهو ما يجد كل الاجتماعات، لأن تسجيل Meet يسكن درايف منظّم الاجتماع لا مجلداً مركزياً.">
+                        <field name="sembly_google_subjects"
+                               placeholder="(فارغ = كل المستخدمين الداخليين)"/>
+                    </setting>
+
+                    <setting string="نافذة مسح Drive (أيام)">
+                        <field name="sembly_google_window_days"/>
+                    </setting>
+
+                    <setting string="تسامح المطابقة الزمني (دقائق)"
+                             help="Google لا يعطينا معرّف Sembly، فالمطابقة بالوقت ثم العنوان. التسجيل يبدأ حين يضغط أحدهم زر التسجيل، أي بعد بداية الاجتماع دائماً.">
+                        <field name="sembly_google_match_minutes"/>
+                    </setting>
+
+                    <setting string="ملخص عربي موحّد من المصدرين"
+                             help="ملخص عربي واحد لكل اجتماع. إن وُجد ملخص Sembly أيضاً فيُدمج الاثنان في نداء واحد — لأن كل مصدر يغطي ما فوّته الآخر: Sembly يستخرج القرارات والمهام والمخاطر، وGemini يكتب سرداً على تفريغ Google. وإن لم يوجد ملخص Sembly تُترجم ملاحظات Google. يكتب Gemini بالإنجليزية حتى للاجتماع العربي، فالمخرج العربي مطلوب في الحالتين.">
+                        <field name="sembly_google_translate_notes"/>
+                    </setting>
+
+                    <setting string="سحب السجل التاريخي من Drive"
+                             help="يمشي على كل ملفات Drive بلا فلتر تاريخ — وهو المصدر الوحيد للقديم، لأن Google يحذف conferenceRecords بعد 30 يوماً بينما تبقى ملفات MP4 بلا انتهاء. لا يستهلك أي نداء ذكاء اصطناعي، ولا يحمّل أي فيديو: يخزّن المعرّف والرابط فقط.">
+                        <field name="sembly_google_backfill_state" readonly="1"/>
+                        <div class="mt-2">
+                            <button name="action_google_start_backfill" type="object"
+                                    string="ابدأ سحب التسجيلات" class="btn-primary"/>
+                            <button name="action_google_start_notes_backfill" type="object"
+                                    string="ابدأ سحب الملاحظات (يستهلك ذكاءً اصطناعياً)"
+                                    class="btn-secondary ms-2"
+                                    confirm="سيُستهلك نداء ذكاء اصطناعي واحد لكل اجتماع لدمج الملخصين أو ترجمتهما. متابعة؟"/>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

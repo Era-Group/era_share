@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_ticket_form_sembly" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.sembly</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_sembly_meetings" type="object"
+                        class="oe_stat_button" icon="fa-video-camera"
+                        groups="era_sembly_meetings.group_sembly_user"
+                        invisible="sembly_meeting_count == 0">
+                    <field name="sembly_meeting_count" widget="statinfo"
+                           string="اجتماعات"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

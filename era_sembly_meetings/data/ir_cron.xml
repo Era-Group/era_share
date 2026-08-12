@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: cron records are created on install but their active/interval
+     state is never reset by a later upgrade, so a manual on/off toggle sticks.
+
+     The three crons that make a NETWORK call or spend AI budget ship INACTIVE,
+     exactly as cron_classify_domains does in era_domain_industry. Installing
+     this module therefore cannot fire an unauthenticated request or burn AI
+     credit before a human has pasted a token and turned them on. -->
+<odoo noupdate="1">
+
+    <record id="cron_sembly_sync_meetings" model="ir.cron">
+        <field name="name">Sembly: مزامنة الاجتماعات (MCP)</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_meetings()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="cron_sembly_ai_match" model="ir.cron">
+        <field name="name">Sembly: ربط الاجتماعات بالذكاء الاصطناعي</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_ai_match_batch()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="cron_sembly_post_summaries" model="ir.cron">
+        <field name="name">Sembly: نشر ملخص آخر اجتماع</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_post_recent_summaries()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- The historical backfill. Ships INACTIVE and stays that way until a human
+         presses "استيراد كامل السجل" in the import wizard, which arms it; it
+         disables itself again when the history runs dry. It exists because a
+         full backfill costs one get_meeting round trip per meeting and cannot
+         possibly finish inside limit_time_real — the HTTP worker is killed at
+         240s with nothing saved. Every 5 minutes so a large history still
+         progresses steadily without hammering the API. -->
+    <record id="cron_sembly_backfill" model="ir.cron">
+        <field name="name">Sembly: استيراد السجل التاريخي</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_backfill_history()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Drains the list's bulk "ربط بالذكاء الاصطناعي" queue. ACTIVE from
+         install — deliberately, despite the ship-network-crons-disabled rule:
+         it spends nothing on its own, because only the bulk action ever puts a
+         record in the queue, and that click IS the human authorisation. The
+         hourly schedule is just a sweeper for triggers lost to a restart; real
+         work starts within seconds via _trigger(). -->
+    <record id="cron_sembly_ai_match_queue" model="ir.cron">
+        <field name="name">Sembly: طابور الربط بالذكاء الاصطناعي</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_ai_match_queue()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Local housekeeping only: no network, no AI. Safe to run from install. -->
+    <record id="cron_sembly_purge" model="ir.cron">
+        <field name="name">Sembly: تنظيف السجلات</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_purge_raw()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

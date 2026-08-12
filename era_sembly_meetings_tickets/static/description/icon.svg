@@ -1,0 +1,26 @@
+<!--
+    ERA Sembly.ai Meetings — Helpdesk Tickets — module icon (editable source).
+
+    Sibling of era_sembly_meetings/static/description/icon.svg: same silhouette and
+    the same 140-unit coordinate system, teal colourway (#0D6E6E + accent #FFC72C,
+    as used by era_crm_ai_agents_campaign) so the pair reads as one product family.
+
+    The PNG beside this file is rendered from the SAME coordinate system (see the
+    "Branding" section of era_sembly_meetings/README.md). Keep the two in sync.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">
+  <!-- brand plate -->
+  <rect x="0" y="0" width="140" height="140" rx="30" fill="#0D6E6E"/>
+
+  <!-- ticket card with a notched left edge -->
+  <rect x="26" y="40" width="88" height="60" rx="12" fill="#FFFFFF"/>
+  <circle cx="26" cy="70" r="10" fill="#0D6E6E"/>
+
+  <!-- ticket lines -->
+  <rect x="46" y="58" width="48" height="8" rx="4" fill="#0D6E6E"/>
+  <rect x="46" y="76" width="34" height="8" rx="4" fill="#0D6E6E"/>
+
+  <!-- accent: linked-meeting badge -->
+  <circle cx="102" cy="94" r="13" fill="#FFC72C"/>
+  <circle cx="102" cy="94" r="5" fill="#FFFFFF"/>
+</svg>

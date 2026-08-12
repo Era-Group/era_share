@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sembly_import_wizard_form" model="ir.ui.view">
+        <field name="name">sembly.import.wizard.form</field>
+        <field name="model">sembly.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="استيراد من Sembly">
+                <div class="alert alert-info" role="alert">
+                    يجلب هذا المعالج الاجتماعات السابقة عبر MCP. أتمتة الويب هوك
+                    ترى الاجتماعات الجديدة فقط، لذا هذه هي الطريقة الوحيدة لاستيراد
+                    السجل التاريخي. التفريغ النصي ورابط التسجيل لا يصلان عبر MCP.
+                </div>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="title_contains"/>
+                    </group>
+                    <group>
+                        <field name="limit"/>
+                        <field name="fetch_details"/>
+                        <field name="run_ai_match"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert">
+                    <strong>لاستيراد السجل كاملاً استخدم زر «استيراد كامل السجل».</strong>
+                    الاستيراد المباشر يعمل داخل طلب ويب يُقتل بعد 240 ثانية، وكل اجتماع
+                    يحتاج نداءً شبكياً مستقلاً لجلب تفاصيله — فالسجل الكامل يتجاوز المهلة
+                    حتماً. الاستيراد في الخلفية يمشي عبر التاريخ على نوافذ، ويحفظ بعد كل
+                    اجتماع، ويكمل من حيث توقف. ويتجاهل حقلي «الحد الأقصى» و«العنوان يحتوي».
+                </div>
+                <footer>
+                    <button name="action_import" type="object" string="استيراد الآن"
+                            class="btn-primary"
+                            help="For a bounded range. Stops at the 240s worker limit."/>
+                    <button name="action_start_backfill" type="object"
+                            string="استيراد كامل السجل (في الخلفية)"
+                            class="btn-primary"/>
+                    <button name="action_stop_backfill" type="object"
+                            string="إيقاف الاستيراد الخلفي" class="btn-secondary"/>
+                    <button name="action_test_connection" type="object"
+                            string="اختبار الاتصال" class="btn-secondary"/>
+                    <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sembly_import_wizard" model="ir.actions.act_window">
+        <field name="name">استيراد من Sembly</field>
+        <field name="res_model">sembly.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

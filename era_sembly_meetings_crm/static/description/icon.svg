@@ -1,0 +1,31 @@
+<!--
+    ERA Sembly.ai Meetings — CRM — module icon (editable source).
+
+    Sibling of era_sembly_meetings/static/description/icon.svg: same silhouette and
+    the same 140-unit coordinate system, plum colourway (#6B3FA0 + accent #FFC72C)
+    so the four Sembly modules read as one family while staying distinguishable
+    from the base navy (#304375) and the ticket teal (#0D6E6E).
+
+    Glyph: the transcript card of the base app, with the opportunity star as the
+    accent instead of the "recorded" dot.
+
+    The PNG beside this file is rendered from the SAME coordinate system (see the
+    "Branding" section of era_sembly_meetings/README.md). Keep the two in sync.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">
+  <!-- brand plate -->
+  <rect x="0" y="0" width="140" height="140" rx="30" fill="#6B3FA0"/>
+
+  <!-- transcript card + tail, as on the base app -->
+  <path d="M44 96 L44 113 L66 96 Z" fill="#FFFFFF"/>
+  <rect x="28" y="34" width="84" height="62" rx="12" fill="#FFFFFF"/>
+
+  <!-- transcript lines -->
+  <rect x="40" y="50" width="60" height="8" rx="4" fill="#6B3FA0"/>
+  <rect x="40" y="64" width="48" height="8" rx="4" fill="#6B3FA0"/>
+  <rect x="40" y="78" width="34" height="8" rx="4" fill="#6B3FA0"/>
+
+  <!-- accent: opportunity badge -->
+  <circle cx="102" cy="94" r="13" fill="#FFC72C"/>
+  <circle cx="102" cy="94" r="5" fill="#FFFFFF"/>
+</svg>

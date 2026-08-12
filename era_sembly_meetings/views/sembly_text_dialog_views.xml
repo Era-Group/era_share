@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- One dialog for every "show me the original" button. A transient of its
+         own, because an act_window pointing back at the record already on
+         screen is not honoured as a modal — Odoo replaces the page with it. -->
+    <record id="view_sembly_text_dialog_form" model="ir.ui.view">
+        <field name="name">sembly.text.dialog.form</field>
+        <field name="model">sembly.text.dialog</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="alert alert-info" role="alert" invisible="not note">
+                    <field name="note" nolabel="1" readonly="1"/>
+                </div>
+                <div class="mb-2" invisible="not link">
+                    <i class="fa fa-external-link me-1"/>
+                    <field name="link" widget="url" nolabel="1" readonly="1"
+                           class="oe_inline"/>
+                </div>
+                <field name="body" nolabel="1" readonly="1" class="w-100"
+                       style="max-height:60vh;overflow-y:auto;display:block"/>
+                <footer>
+                    <button string="إغلاق" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

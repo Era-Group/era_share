@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherits the BASE app's settings view rather than base.res_config_settings_view_form,
+         so the Sembly <app> block is guaranteed to exist by the time this
+         xpath runs. -->
+    <record id="res_config_settings_view_form_sembly_tasks" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sembly.tasks</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id"
+               ref="era_sembly_meetings.res_config_settings_view_form_sembly"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='sembly_ai']" position="inside">
+                <setting string="إنشاء تاسك 'الاجتماعات' تلقائياً"
+                         help="When a project matches but no task and nothing more specific does, file the meeting under a per-project bucket task, created once and reused.">
+                    <field name="sembly_auto_create_meetings_task"/>
+                </setting>
+                <setting string="اسم تاسك الاجتماعات">
+                    <field name="sembly_meetings_task_name"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

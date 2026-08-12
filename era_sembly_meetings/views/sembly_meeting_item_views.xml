@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sembly_meeting_item_list" model="ir.ui.view">
+        <field name="name">sembly.meeting.item.list</field>
+        <field name="model">sembly.meeting.item</field>
+        <field name="arch" type="xml">
+            <list string="عناصر الاجتماعات" create="0">
+                <field name="meeting_date"/>
+                <field name="meeting_id"/>
+                <field name="item_type" widget="badge"/>
+                <field name="name"/>
+                <field name="assigned_to" optional="show"/>
+                <field name="raw_timing" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_item_form" model="ir.ui.view">
+        <field name="name">sembly.meeting.item.form</field>
+        <field name="model">sembly.meeting.item</field>
+        <field name="arch" type="xml">
+            <form string="عنصر اجتماع">
+                <sheet>
+                    <group>
+                        <field name="meeting_id" readonly="1"/>
+                        <field name="item_type"/>
+                        <field name="name"/>
+                        <field name="assigned_to"/>
+                        <field name="assigned_by"/>
+                        <field name="due_date"/>
+                        <field name="raw_timing"/>
+                        <field name="item_url" widget="url"/>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_item_search" model="ir.ui.view">
+        <field name="name">sembly.meeting.item.search</field>
+        <field name="model">sembly.meeting.item</field>
+        <field name="arch" type="xml">
+            <search string="بحث">
+                <field name="name"/>
+                <field name="meeting_id"/>
+                <field name="assigned_to"/>
+                <filter name="filter_tasks" string="المهام"
+                        domain="[('item_type', '=', 'task')]"/>
+                <filter name="filter_decisions" string="القرارات"
+                        domain="[('item_type', '=', 'decision')]"/>
+                <filter name="filter_risks" string="المخاطر"
+                        domain="[('item_type', '=', 'risk')]"/>
+                <group>
+                    <filter name="group_type" string="النوع"
+                            context="{'group_by': 'item_type'}"/>
+                    <filter name="group_meeting" string="الاجتماع"
+                            context="{'group_by': 'meeting_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sembly_meeting_item" model="ir.actions.act_window">
+        <field name="name">عناصر الاجتماعات</field>
+        <field name="res_model">sembly.meeting.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_sembly_meeting_item_search"/>
+        <field name="context">{'search_default_group_type': 1}</field>
+    </record>
+
+</odoo>

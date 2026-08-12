@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Every xpath below targets an ANCHOR the base app declares on purpose,
+         never an element a sibling link module contributes — that is what lets
+         the three link modules be installed in any combination and any order. -->
+
+    <record id="view_sembly_meeting_form_crm" model="ir.ui.view">
+        <field name="name">sembly.meeting.form.crm</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sembly_link_fields']" position="inside">
+                <field name="lead_id" options="{'no_create': True}"
+                       context="{'active_test': False}"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_linked_lead" type="object"
+                        class="oe_stat_button" icon="fa-star"
+                        invisible="not lead_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">الفرصة</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_list_crm" model="ir.ui.view">
+        <field name="name">sembly.meeting.list.crm</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_summary']" position="before">
+                <field name="lead_id" optional="show" options="{'no_create': True}"
+                       context="{'active_test': False}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_kanban_crm" model="ir.ui.view">
+        <field name="name">sembly.meeting.kanban.crm</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='sembly_kanban_links']" position="inside">
+                <div t-if="record.lead_id.raw_value">
+                    <i class="fa fa-star me-1" title="الفرصة"/><field name="lead_id"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The pre-split calendar showed the opportunity on each event; keep it. -->
+    <record id="view_sembly_meeting_calendar_crm" model="ir.ui.view">
+        <field name="name">sembly.meeting.calendar.crm</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_calendar"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="lead_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_search_crm" model="ir.ui.view">
+        <field name="name">sembly.meeting.search.crm</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sembly_meeting_id']" position="before">
+                <field name="lead_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='group_source']" position="before">
+                <filter name="group_lead" string="الفرصة"
+                        context="{'group_by': 'lead_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

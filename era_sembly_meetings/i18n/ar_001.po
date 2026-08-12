@@ -1,0 +1,139 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_sembly_meetings
+#
+# Field labels, menus, views and help text are authored directly in Arabic in
+# this module, so this catalogue only carries the strings that are emitted from
+# Python in English — error messages, notifications and action names.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: era_sembly_meetings
+#: model:ir.actions.act_window,name:era_sembly_meetings.action_sembly_meeting
+msgid "الاجتماعات"
+msgstr "الاجتماعات"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid "Sembly meeting %s"
+msgstr "اجتماع Sembly %s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid ""
+"No Sembly AI agent is configured, or the one that was configured has been "
+"deleted. Choose one in Settings → Sembly."
+msgstr ""
+"لم يتم ضبط وكيل ذكاء اصطناعي لـ Sembly، أو أن الوكيل المضبوط قد حُذف. اختر "
+"وكيلاً من: الإعدادات ← Sembly."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid "Summary posted on %s record(s)."
+msgstr "تم نشر الملخص على %s سجل."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid ""
+"Nothing to post: the meeting has no summary, or it is not linked to any "
+"record yet."
+msgstr "لا يوجد ما يُنشر: الاجتماع بلا ملخص، أو أنه غير مرتبط بأي سجل بعد."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid "Sembly refresh failed: %s"
+msgstr "فشل التحديث من Sembly: %s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/sembly_meeting.py:0
+msgid "Sembly returned no details for meeting %s."
+msgstr "لم تُرجع Sembly أي تفاصيل للاجتماع %s."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/res_config_settings.py:0
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid "Could not reach the Sembly MCP server: %s"
+msgstr "تعذّر الوصول إلى خادم Sembly MCP: %s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/res_config_settings.py:0
+msgid "Token rejected by Sembly: %s"
+msgstr "رفضت Sembly الرمز: %s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/res_config_settings.py:0
+msgid ""
+"Reachable. Tools: %s.\n"
+"No token configured yet, so no meeting data can be pulled."
+msgstr ""
+"الخادم متاح. الأدوات: %s.\n"
+"لم يتم ضبط رمز بعد، لذا لا يمكن سحب بيانات الاجتماعات."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/models/res_config_settings.py:0
+msgid ""
+"Connected. Tools: %s.\n"
+"Token %s accepted; %s recent meeting(s) visible."
+msgstr ""
+"تم الاتصال. الأدوات: %s.\n"
+"تم قبول الرمز %s؛ عدد الاجتماعات الحديثة الظاهرة: %s."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid ""
+"No Sembly MCP token is configured. Set it in Settings → Sembly (or the "
+"SEMBLY_MCP_TOKEN environment variable) first."
+msgstr ""
+"لم يتم ضبط رمز Sembly MCP. اضبطه أولاً من: الإعدادات ← Sembly (أو عبر متغيّر "
+"البيئة SEMBLY_MCP_TOKEN)."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid "Sembly import failed: %s"
+msgstr "فشل الاستيراد من Sembly: %s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid "Server reachable. Tools: %s.%s"
+msgstr "الخادم متاح. الأدوات: %s.%s"
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid " No token configured yet."
+msgstr " لم يتم ضبط رمز بعد."
+
+#. module: era_sembly_meetings
+#: code:addons/era_sembly_meetings/wizard/sembly_import_wizard.py:0
+msgid "الاجتماعات المستوردة"
+msgstr "الاجتماعات المستوردة"
+
+#. module: era_sembly_meetings
+#: model:ir.model.fields,field_description:era_sembly_meetings.field_sembly_meeting__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_sembly_meetings
+#: model:res.groups,name:era_sembly_meetings.group_sembly_user
+msgid "User"
+msgstr "مستخدم"
+
+#. module: era_sembly_meetings
+#: model:res.groups,name:era_sembly_meetings.group_sembly_manager
+msgid "Manager"
+msgstr "مدير"
+
+#. module: era_sembly_meetings
+#: model:ir.module.category,name:era_sembly_meetings.module_category_sembly
+#: model:res.groups.privilege,name:era_sembly_meetings.res_groups_privilege_sembly
+msgid "Sembly Meetings"
+msgstr "اجتماعات Sembly"

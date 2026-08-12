@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Editable SPEC for icon.png. The PNG is rendered from these same coordinates
+     with Pillow (see the README): no SVG rasteriser exists in the Odoo
+     container, so keep the two in sync by hand — this is the spec, the PNG is
+     what Odoo serves. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <rect x="0" y="0" width="140" height="140" rx="30" ry="30" fill="#1A73E8"/>
+  <!-- video frame + tail: the recording, which is what Google adds -->
+  <rect x="26" y="44" width="60" height="52" rx="10" ry="10" fill="#FFFFFF"/>
+  <polygon points="90,60 112,48 112,92 90,80" fill="#FFFFFF"/>
+  <!-- play triangle, cut out in the plate colour -->
+  <polygon points="48,58 48,82 70,70" fill="#1A73E8"/>
+  <!-- the single accent: a four-point Gemini spark with a white core -->
+  <polygon points="103,86 107.6,101 103,116 98.4,101" fill="#FBBC05"/>
+  <polygon points="88,101 103,96.4 118,101 103,105.6" fill="#FBBC05"/>
+  <circle cx="103" cy="101" r="4" fill="#FFFFFF"/>
+</svg>

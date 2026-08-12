@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Requirement 5 — meetings count + navigation on the project.
+         The count folds in meetings attached to the project's TASKS (including
+         the auto-created "الاجتماعات" bucket), so it is actually meaningful. -->
+    <record id="view_project_project_form_sembly" model="ir.ui.view">
+        <field name="name">project.project.form.sembly</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_sembly_meetings" type="object"
+                        class="oe_stat_button" icon="fa-video-camera"
+                        groups="era_sembly_meetings.group_sembly_user"
+                        invisible="sembly_meeting_count == 0">
+                    <field name="sembly_meeting_count" widget="statinfo"
+                           string="اجتماعات"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Requirement 5 — meetings count + navigation on the task. -->
+    <record id="view_project_task_form_sembly" model="ir.ui.view">
+        <field name="name">project.task.form.sembly</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_sembly_meetings" type="object"
+                        class="oe_stat_button" icon="fa-video-camera"
+                        groups="era_sembly_meetings.group_sembly_user"
+                        invisible="sembly_meeting_count == 0">
+                    <field name="sembly_meeting_count" widget="statinfo"
+                           string="اجتماعات"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

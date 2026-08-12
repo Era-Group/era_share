@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sembly_sync_log_list" model="ir.ui.view">
+        <field name="name">sembly.sync.log.list</field>
+        <field name="model">sembly.sync.log</field>
+        <field name="arch" type="xml">
+            <list string="سجل المزامنة" create="0" edit="0"
+                  decoration-danger="state == 'error'">
+                <field name="create_date" string="التاريخ"/>
+                <field name="channel"/>
+                <field name="operation"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'ok'"
+                       decoration-danger="state == 'error'"/>
+                <field name="meeting_count"/>
+                <field name="duration_ms" optional="show"/>
+                <field name="remote_ip" optional="hide"/>
+                <field name="message" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sembly_sync_log_search" model="ir.ui.view">
+        <field name="name">sembly.sync.log.search</field>
+        <field name="model">sembly.sync.log</field>
+        <field name="arch" type="xml">
+            <search string="بحث">
+                <field name="operation"/>
+                <field name="message"/>
+                <filter name="filter_errors" string="الأخطاء فقط"
+                        domain="[('state', '=', 'error')]"/>
+                <filter name="filter_mcp" string="MCP" domain="[('channel', '=', 'mcp')]"/>
+                <filter name="filter_webhook" string="Webhook"
+                        domain="[('channel', '=', 'webhook')]"/>
+                <group>
+                    <filter name="group_channel" string="القناة"
+                            context="{'group_by': 'channel'}"/>
+                    <filter name="group_state" string="الحالة"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sembly_sync_log" model="ir.actions.act_window">
+        <field name="name">سجل المزامنة</field>
+        <field name="res_model">sembly.sync.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_sembly_sync_log_search"/>
+    </record>
+
+</odoo>

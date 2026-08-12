@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Grants the base's "publish a recording" capability to the project manager.
+         This module is the only one that may name that group: the base cannot,
+         because the group does not exist on a database without this app. -->
+    <record id="project.group_project_manager" model="res.groups">
+        <field name="implied_ids"
+               eval="[(4, ref('era_sembly_meetings.group_sembly_share'))]"/>
+    </record>
+
+</odoo>

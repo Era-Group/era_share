@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Every xpath below targets an ANCHOR the base app declares on purpose,
+         never an element a sibling link module contributes. -->
+
+    <record id="view_sembly_meeting_form_ticket" model="ir.ui.view">
+        <field name="name">sembly.meeting.form.ticket</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sembly_link_fields']" position="inside">
+                <field name="ticket_id" options="{'no_create': True}"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_linked_ticket" type="object"
+                        class="oe_stat_button" icon="fa-life-ring"
+                        invisible="not ticket_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">التذكرة</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_list_ticket" model="ir.ui.view">
+        <field name="name">sembly.meeting.list.ticket</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_summary']" position="before">
+                <field name="ticket_id" optional="show" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_kanban_ticket" model="ir.ui.view">
+        <field name="name">sembly.meeting.kanban.ticket</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='sembly_kanban_links']" position="inside">
+                <div t-if="record.ticket_id.raw_value">
+                    <i class="fa fa-life-ring me-1" title="التذكرة"/><field name="ticket_id"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_search_ticket" model="ir.ui.view">
+        <field name="name">sembly.meeting.search.ticket</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sembly_meeting_id']" position="before">
+                <field name="ticket_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='group_source']" position="before">
+                <filter name="group_ticket" string="التذكرة"
+                        context="{'group_by': 'ticket_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

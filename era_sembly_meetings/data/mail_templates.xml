@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Requirement 6's chatter note. A QWeb template rather than an f-string so
+         the labels stay translatable and the markup stays reviewable. -->
+    <template id="sembly_summary_note">
+        <div>
+            <p>
+                <strong>ملخص الاجتماع / Meeting summary</strong>
+            </p>
+            <p>
+                <strong t-esc="meeting.name"/><br/>
+                <span t-if="meeting.started_at">
+                    <t t-esc="meeting.started_at"/> (UTC)
+                </span>
+                <span t-if="meeting.duration_display">
+                    — <t t-esc="meeting.duration_display"/>
+                </span>
+                <span t-if="meeting.platform">
+                    — <t t-esc="meeting.platform"/>
+                </span>
+            </p>
+            <p t-if="meeting.participant_names">
+                <strong>المشاركون:</strong>
+                <t t-esc="meeting.participant_names.replace('\n', '، ')"/>
+            </p>
+
+            <!-- The executive brief when the agent produced one; the raw
+                 summary only as the fallback — never both. -->
+            <div t-if="meeting.ai_brief" t-out="meeting.ai_brief"/>
+            <div t-elif="meeting.summary" t-out="meeting.summary"/>
+
+            <t t-set="decisions" t-value="meeting.item_ids.filtered(lambda i: i.item_type == 'decision')[:5]"/>
+            <div t-if="decisions">
+                <p><strong>القرارات / Decisions</strong></p>
+                <ul>
+                    <li t-foreach="decisions" t-as="item" t-key="item.id">
+                        <t t-esc="item.name"/>
+                    </li>
+                </ul>
+            </div>
+
+            <t t-set="tasks" t-value="meeting.item_ids.filtered(lambda i: i.item_type == 'task')[:5]"/>
+            <div t-if="tasks">
+                <p><strong>المهام / Tasks</strong></p>
+                <ul>
+                    <li t-foreach="tasks" t-as="item" t-key="item.id">
+                        <t t-esc="item.name"/>
+                        <span t-if="item.assigned_to"> — <t t-esc="item.assigned_to"/></span>
+                    </li>
+                </ul>
+            </div>
+
+            <p>
+                <!-- media_url prefers the guest link, which matters most here:
+                     this note is read by people who often have no Sembly
+                     account, and the workspace link would just ask them to log
+                     into a workspace they are not in. -->
+                <a t-if="meeting.media_url" t-att-href="meeting.media_url" target="_blank">
+                    تسجيل الاجتماع / Recording
+                </a>
+                <span t-if="meeting.media_url and base_url"> — </span>
+                <a t-if="base_url"
+                   t-att-href="'%s/odoo/action-era_sembly_meetings.action_sembly_meeting/%s' % (base_url, meeting.id)">
+                    فتح سجل الاجتماع في أودو
+                </a>
+            </p>
+        </div>
+    </template>
+
+</odoo>

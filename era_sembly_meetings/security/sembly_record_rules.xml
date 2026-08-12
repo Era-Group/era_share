@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Multi-company safety. Global (no group), so it applies to everyone. -->
+    <record id="sembly_meeting_company_rule" model="ir.rule">
+        <field name="name">Sembly Meeting: multi-company</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- An employee READS EVERY meeting: a meeting is only useful once whoever
+         recognises what it was about can find it, and that is rarely the
+         person who attended or imported it.
+
+         What an employee may CHANGE is not a record-rule question — it is per
+         FIELD, not per record: they may file a meeting against an opportunity,
+         task or ticket, and may not rewrite what it says. Record rules cannot
+         express that, so it is enforced in
+         ``sembly.meeting._check_content_access``. Creating and deleting are
+         plain ACL columns in ir.model.access.csv, manager-only.
+
+         Rule 19 nonetheless holds: every one of those three is checked
+         server-side. -->
+    <record id="sembly_meeting_user_rule" model="ir.rule">
+        <field name="name">Sembly Meeting: employees read every meeting</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="groups" eval="[(4, ref('era_sembly_meetings.group_sembly_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="sembly_meeting_manager_rule" model="ir.rule">
+        <field name="name">Sembly Meeting: managers see all</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="groups" eval="[(4, ref('era_sembly_meetings.group_sembly_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Items inherit their meeting's visibility. -->
+    <record id="sembly_meeting_item_user_rule" model="ir.rule">
+        <field name="name">Sembly Meeting Item: follows the meeting</field>
+        <field name="model_id" ref="model_sembly_meeting_item"/>
+        <field name="groups" eval="[(4, ref('era_sembly_meetings.group_sembly_user'))]"/>
+        <field name="domain_force">[('meeting_id', '!=', False)]</field>
+    </record>
+
+</odoo>

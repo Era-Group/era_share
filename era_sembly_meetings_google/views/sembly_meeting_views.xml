@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sembly_meeting_form_google" model="ir.ui.view">
+        <field name="name">sembly.meeting.form.google</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_google_share_link" type="object"
+                        string="إصدار رابط مشاركة مفتوح" icon="fa-share-alt"
+                        invisible="not google_file_id or google_share_url"
+                        groups="era_sembly_meetings.group_sembly_share"/>
+                <button name="action_google_revoke_link" type="object"
+                        string="سحب رابط المشاركة" icon="fa-ban"
+                        invisible="not google_share_url"
+                        groups="era_sembly_meetings.group_sembly_share"
+                        confirm="سيتوقف كل من يملك الرابط عن الوصول إلى التسجيل. متابعة؟"/>
+            </xpath>
+
+            <!-- Buttons under the facts line, raw URLs in the تقني tab.
+                 A 90-character Drive URL printed on the front of the record
+                 costs two lines and tells a reader nothing they can act on —
+                 they want to OPEN it. So the front carries one-click buttons
+                 and the addresses themselves live with the other technical
+                 facts, where an operator goes looking for them. -->
+            <xpath expr="//group[@name='provider_links']" position="inside">
+                <div class="o_row" invisible="not has_google and not gemini_notes"
+                     name="google_buttons">
+                    <button name="action_open_google_recording" type="object"
+                            string="مشاهدة التسجيل" class="btn-secondary btn-sm me-2"
+                            icon="fa-play-circle"
+                            invisible="not google_recording_url"/>
+                    <button name="action_open_gemini_document" type="object"
+                            string="فتح ملف Gemini" class="btn-secondary btn-sm me-2"
+                            icon="fa-file-text-o"
+                            invisible="not gemini_notes_url"/>
+                    <button name="action_open_google_share" type="object"
+                            string="فتح رابط المشاركة" class="btn-secondary btn-sm"
+                            icon="fa-share-alt"
+                            invisible="not google_share_url"/>
+                </div>
+            </xpath>
+
+            <!-- Ids and provenance belong with the other technical facts, not
+                 beside the links a reader actually clicks. -->
+            <xpath expr="//group[@name='provider_technical']" position="inside">
+                <group string="Google" invisible="not has_google">
+                    <field name="provider_summary"/>
+                    <field name="google_recording_url" widget="url" readonly="1"
+                           string="رابط التسجيل"/>
+                    <field name="gemini_notes_url" widget="url" readonly="1"
+                           string="رابط ملف Gemini"
+                           invisible="not gemini_notes_url"/>
+                    <field name="google_share_url" widget="url" readonly="1"
+                           string="رابط المشاركة المفتوح"
+                           invisible="not google_share_url"/>
+                    <field name="google_owner_email" readonly="1"/>
+                    <field name="google_file_id" readonly="1"/>
+                    <field name="google_notes_file_id" readonly="1"/>
+                    <field name="merged_summary_source" readonly="1"/>
+                </group>
+            </xpath>
+
+            <!-- One button beside the others: the original Gemini text is
+                 one click away, not stacked onto the page. -->
+            <xpath expr="//div[@name='summary_originals']" position="inside">
+                <button name="action_show_gemini_text" type="object"
+                        string="نص Gemini الأصلي" class="btn-link btn-sm"
+                        icon="fa-google" invisible="not gemini_notes"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_list_google" model="ir.ui.view">
+        <field name="name">sembly.meeting.list.google</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings.view_sembly_meeting_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_summary']" position="before">
+                <field name="has_google" widget="boolean_toggle" readonly="1"
+                       optional="show" string="Google"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

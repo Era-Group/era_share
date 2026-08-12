@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Requirement 2 — a new root application section named "الاجتماعات". -->
+    <menuitem id="menu_sembly_root"
+              name="الاجتماعات"
+              web_icon="era_sembly_meetings,static/description/icon.png"
+              sequence="52"
+              groups="era_sembly_meetings.group_sembly_user"/>
+
+    <menuitem id="menu_sembly_meetings"
+              name="الاجتماعات"
+              parent="menu_sembly_root"
+              action="action_sembly_meeting"
+              sequence="10"/>
+
+    <menuitem id="menu_sembly_meetings_unlinked"
+              name="غير مرتبطة"
+              parent="menu_sembly_root"
+              action="action_sembly_meeting_unlinked"
+              sequence="20"/>
+
+    <menuitem id="menu_sembly_items"
+              name="عناصر الاجتماعات"
+              parent="menu_sembly_root"
+              action="action_sembly_meeting_item"
+              sequence="30"/>
+
+    <menuitem id="menu_sembly_config"
+              name="الإعدادات"
+              parent="menu_sembly_root"
+              sequence="90"
+              groups="era_sembly_meetings.group_sembly_manager"/>
+
+    <menuitem id="menu_sembly_import"
+              name="استيراد من Sembly"
+              parent="menu_sembly_config"
+              action="action_sembly_import_wizard"
+              sequence="10"/>
+
+    <menuitem id="menu_sembly_sync_log"
+              name="سجل المزامنة"
+              parent="menu_sembly_config"
+              action="action_sembly_sync_log"
+              sequence="20"/>
+
+    <record id="action_sembly_settings" model="ir.actions.act_window">
+        <field name="name">إعدادات Sembly</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'era_sembly_meetings', 'bin_size': False}</field>
+    </record>
+
+    <menuitem id="menu_sembly_settings"
+              name="الإعدادات"
+              parent="menu_sembly_config"
+              action="action_sembly_settings"
+              sequence="30"/>
+
+</odoo>

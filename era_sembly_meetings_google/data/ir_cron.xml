@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Ships INACTIVE, like every other network cron here: nothing reaches
+         Google until a human has entered the key and turned the provider on.
+         Hourly because Drive is where the artefacts land minutes after a
+         meeting ends, and conferenceRecords are kept for only 30 days. -->
+    <record id="cron_sembly_google_sync" model="ir.cron">
+        <field name="name">Sembly: مزامنة Google Drive (تسجيلات وملاحظات)</field>
+        <field name="model_id" ref="era_sembly_meetings.model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_google()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="False"/>
+    </record>
+
+
+    <!-- HISTORY. Drive is the only route to it: Google deletes
+         conferenceRecords after 30 days while the MP4s never expire. Armed by
+         the settings button, resumes on Drive's own pageToken, and marks
+         itself done in a PARAMETER — never by writing its own ir_cron row,
+         which deadlocks. -->
+    <record id="cron_google_backfill" model="ir.cron">
+        <field name="name">Sembly: سحب سجل Google Drive التاريخي</field>
+        <field name="model_id" ref="era_sembly_meetings.model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_google_backfill()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Notes are a SEPARATE cron on purpose: each one costs an LLM call,
+         while the recordings cost nothing. Split, the recordings and their
+         share links land immediately and for free, and the summarising can be
+         paced or postponed without holding that up. -->
+    <record id="cron_google_notes_backfill" model="ir.cron">
+        <field name="name">Sembly: سحب ملاحظات Gemini التاريخية</field>
+        <field name="model_id" ref="era_sembly_meetings.model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_google_notes_backfill()</field>
+        <field name="interval_number">10</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sembly_meeting_list" model="ir.ui.view">
+        <field name="name">sembly.meeting.list</field>
+        <field name="model">sembly.meeting</field>
+        <field name="arch" type="xml">
+            <!-- ANCHOR: the link modules each add their column with
+                 xpath="//field[@name='has_summary']" position="before", so
+                 they stack in install order and never depend on each other.
+
+                 multi_edit: select rows, edit one cell, and the value applies
+                 to every selected row — this is how a batch of meetings gets
+                 filed on one opportunity/task in a single gesture. The link
+                 columns the satellites insert are editable for everyone (each
+                 hand edit still sets link_state='manual', per record); the
+                 CONTENT columns follow can_edit_content, mirroring what
+                 _check_content_access enforces server-side anyway. No
+                 editable="bottom": rows are created by the sync, not typed in. -->
+            <list string="الاجتماعات" sample="1" multi_edit="1">
+                <field name="can_edit_content" column_invisible="1"/>
+                <field name="started_at" readonly="not can_edit_content"/>
+                <field name="name" readonly="not can_edit_content"/>
+                <field name="duration_display" string="المدة"/>
+                <field name="participant_names" optional="hide"
+                       readonly="not can_edit_content"/>
+                <field name="has_summary" widget="boolean_toggle" readonly="1" optional="show"/>
+                <field name="has_transcript" widget="boolean_toggle" readonly="1" optional="show"/>
+                <!-- The matcher's and the write-guard's business, never typed in
+                     directly — a hand edit of a LINK column is what moves it. -->
+                <field name="link_state" widget="badge" readonly="1"
+                       decoration-success="link_state == 'manual'"
+                       decoration-info="link_state == 'auto'"
+                       decoration-warning="link_state == 'suggested'"
+                       decoration-danger="link_state == 'unlinked'"/>
+                <field name="source" optional="hide" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_kanban" model="ir.ui.view">
+        <field name="name">sembly.meeting.kanban</field>
+        <field name="model">sembly.meeting</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between">
+                            <strong class="fs-5"><field name="name"/></strong>
+                            <field name="link_state" widget="badge"
+                                   decoration-success="link_state == 'manual'"
+                                   decoration-info="link_state == 'auto'"
+                                   decoration-warning="link_state == 'suggested'"
+                                   decoration-danger="link_state == 'unlinked'"/>
+                        </div>
+                        <div class="text-muted">
+                            <field name="started_at"/> · <field name="duration_display"/>
+                        </div>
+                        <!-- ANCHOR: the link modules add their line inside. -->
+                        <div name="sembly_kanban_links"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_calendar" model="ir.ui.view">
+        <field name="name">sembly.meeting.calendar</field>
+        <field name="model">sembly.meeting</field>
+        <field name="arch" type="xml">
+            <calendar string="الاجتماعات" date_start="started_at" date_stop="finished_at"
+                      mode="month" quick_create="0" color="link_state">
+                <field name="name"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_form" model="ir.ui.view">
+        <field name="name">sembly.meeting.form</field>
+        <field name="model">sembly.meeting</field>
+        <field name="arch" type="xml">
+            <form string="اجتماع">
+                <header>
+                    <button name="action_ai_match" type="object"
+                            string="ربط بالذكاء الاصطناعي" icon="fa-magic"/>
+                    <button name="action_post_summary_to_chatter" type="object"
+                            string="نشر الملخص في الشاتر" icon="fa-comment"
+                            invisible="not has_summary"/>
+                    <button name="action_open_sembly" type="object"
+                            string="فتح في Sembly" icon="fa-external-link"/>
+                    <button name="action_refresh_from_sembly" type="object"
+                            string="تحديث من Sembly" icon="fa-refresh"
+                            groups="era_sembly_meetings.group_sembly_manager"/>
+                    <field name="link_state" widget="statusbar"
+                           statusbar_visible="unlinked,suggested,auto,manual"/>
+                </header>
+                <sheet>
+                    <!-- ANCHOR: the link modules add their "open the linked
+                         record" smart button inside. -->
+                    <div class="oe_button_box" name="button_box"/>
+
+                    <div class="alert alert-warning" role="alert"
+                         invisible="link_state != 'suggested'">
+                        <strong>اقتراح من الذكاء الاصطناعي</strong>
+                        <span> (الثقة: <field name="ai_confidence" class="oe_inline"/>)</span>
+                        <div><field name="ai_reasoning" readonly="1" nolabel="1"
+                                    class="w-100"
+                                    style="max-height:60vh;overflow-y:auto;display:block"/></div>
+                        <button name="action_apply_ai_suggestion" type="object"
+                                string="تطبيق الاقتراح" class="btn-primary btn-sm mt-2"/>
+                    </div>
+
+                    <!-- Only mirrors what _check_content_access enforces on the
+                         server; it is a courtesy, not the control. -->
+                    <field name="can_edit_content" invisible="1"/>
+                    <field name="has_summary" invisible="1"/>
+
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="عنوان الاجتماع"
+                                   readonly="not can_edit_content"/></h1>
+                    </div>
+
+                    <!-- The facts are a CAPTION on the title, not a grid.
+                         A labelled group of three short lines is what made the
+                         right column end after three rows and then sit empty
+                         for the rest of the sheet. One muted line costs ~24px
+                         instead of ~90px and cannot go ragged. -->
+                    <div name="meeting_facts"
+                         class="d-flex flex-wrap align-items-center gap-3 text-muted mb-2">
+                        <span class="d-inline-flex align-items-center">
+                            <i class="fa fa-calendar me-1" role="img"
+                               title="البداية" aria-label="البداية"/>
+                            <field name="started_at" nolabel="1" class="oe_inline"
+                                   readonly="not can_edit_content"/>
+                        </span>
+                        <span class="d-inline-flex align-items-center"
+                              invisible="not duration_display">
+                            <i class="fa fa-clock-o me-1" role="img"
+                               title="المدة" aria-label="المدة"/>
+                            <field name="duration_display" nolabel="1" class="oe_inline"/>
+                        </span>
+                        <span class="d-inline-flex align-items-center"
+                              invisible="not owner_name">
+                            <i class="fa fa-user-o me-1" role="img"
+                               title="منظّم الاجتماع" aria-label="منظّم الاجتماع"/>
+                            <field name="owner_name" nolabel="1" class="oe_inline"
+                                   readonly="not can_edit_content"/>
+                        </span>
+                    </div>
+
+                    <!-- ANCHOR: provider modules put their links HERE. Moved up
+                         from the bottom: "watch the recording" is a property of
+                         the MEETING, not of the record it is filed against, and
+                         at the bottom it read as an orphaned strip.
+                         grid-template-columns pins every contribution to a
+                         full-width row — without it a group cell falls into
+                         Odoo's fit-content(150px) track as soon as a SECOND
+                         provider contributes, and both get crushed silently. -->
+                    <group name="provider_links" col="2"
+                           style="grid-template-columns:1fr"/>
+
+                    <!-- Exactly TWO children, so one row and no fourth cell.
+                         The empty <group/> that used to push the participants
+                         across is gone — it was literally the blank bottom-right
+                         quarter in the screenshot. -->
+                    <group>
+                        <!-- ANCHOR: each link module adds its m2o field here.
+                             The NAME is the contract — all three satellites
+                             xpath onto sembly_link_fields, and renaming it is a
+                             hard ValidationError at their install, not a silent
+                             no-op. First child = RIGHT in RTL, which is where
+                             "which customer" belongs. -->
+                        <group string="مرتبط بـ" name="sembly_link_fields"/>
+
+                        <group string="المشاركون" name="participants">
+                            <!-- colspan="2" is the fix: without it the cell
+                                 lands in the fit-content(150px) track and every
+                                 long Arabic tag takes a line of its own. -->
+                            <field name="partner_ids" widget="many2many_tags"
+                                   nolabel="1" colspan="2"
+                                   readonly="not can_edit_content"/>
+                        </group>
+                    </group>
+
+                    <!-- ANCHOR: a provider module adds its own page inside. -->
+                    <notebook>
+                        <page string="الملخص" name="summary">
+                            <!-- ONE text: the merge when both providers spoke,
+                                 otherwise whichever single one did. Every
+                                 original stays one click away rather than
+                                 stacked on the page — a reader wants the
+                                 answer, not the working. -->
+                            <div class="text-muted mb-1" invisible="not final_summary_label">
+                                <i class="fa fa-info-circle me-1"/>
+                                <field name="final_summary_label" nolabel="1" readonly="1"
+                                       class="oe_inline"/>
+                            </div>
+                            <field name="final_summary" nolabel="1" readonly="1"
+                                   class="w-100"
+                                   style="max-height:60vh;overflow-y:auto;display:block"
+                                   invisible="not final_summary"/>
+                            <div class="text-muted" invisible="has_summary">
+                                لا يوجد ملخص بعد — يصل عبر MCP أو أتمتة Notes أو من مزوّد آخر.
+                            </div>
+
+                            <!-- ANCHOR: a provider module adds a button for its
+                                 own original text here. -->
+                            <div class="mt-3" name="summary_originals">
+                                <span class="text-muted me-2">النصوص الأصلية:</span>
+                                <button name="action_show_sembly_text" type="object"
+                                        string="ملخص Sembly" class="btn-link btn-sm"
+                                        icon="fa-file-text-o"
+                                        invisible="not summary"/>
+                                <button name="action_show_brief_text" type="object"
+                                        string="مختصر الشاتر" class="btn-link btn-sm"
+                                        icon="fa-comment-o"
+                                        invisible="not ai_brief"/>
+                            </div>
+                        </page>
+
+                        <page string="التفريغ النصي" name="transcript">
+                            <field name="transcript" nolabel="1" class="w-100"
+                                   style="max-height:60vh;overflow-y:auto;display:block"
+                                   readonly="not can_edit_content"
+                                   placeholder="لا يوجد تفريغ — يصل حصراً عبر أتمتة Transcription في Sembly (لا يوفره MCP)."/>
+                        </page>
+
+                        <page string="العناصر" name="items">
+                            <field name="item_ids" readonly="1" nolabel="1">
+                                <list default_order="item_type">
+                                    <field name="item_type" widget="badge"/>
+                                    <field name="name"/>
+                                    <field name="assigned_to" optional="show"/>
+                                    <field name="raw_timing" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Everything an operator needs and a reader does not:
+                             ids, urls, provenance, and the matcher's workings. -->
+                        <page string="تقني" name="technical"
+                              groups="era_sembly_meetings.group_sembly_manager">
+                            <group>
+                                <group string="المصدر والمعرّفات">
+                                    <field name="sembly_meeting_id" readonly="1"/>
+                                    <field name="source" readonly="1"/>
+                                    <field name="workspace_id" readonly="1"/>
+                                    <field name="team_name" readonly="1"/>
+                                    <field name="platform" readonly="not can_edit_content"/>
+                                    <field name="meeting_type" readonly="1"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                                <group string="التوقيت والمشاركون">
+                                    <field name="finished_at" readonly="not can_edit_content"/>
+                                    <field name="owner_email" readonly="not can_edit_content"/>
+                                    <field name="participant_names"
+                                           readonly="not can_edit_content"/>
+                                    <field name="participant_emails" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="روابط Sembly">
+                                    <field name="meeting_url" widget="url"/>
+                                    <field name="share_url" widget="url"
+                                           placeholder="https://webapp.sembly.ai/guest-access/meeting/..."/>
+                                    <field name="media_url" widget="url" readonly="1"/>
+                                </group>
+                                <group string="الربط الآلي والنشر">
+                                    <field name="ai_confidence" readonly="1"/>
+                                    <field name="ai_matched_on" readonly="1"/>
+                                    <field name="ai_last_attempt" readonly="1"/>
+                                    <field name="summary_posted" readonly="1"/>
+                                    <field name="summary_posted_on" readonly="1"
+                                           invisible="not summary_posted"/>
+                                </group>
+                            </group>
+                            <!-- ANCHOR: provider modules add their technical
+                                 group here rather than inventing a tab. -->
+                            <group name="provider_technical" col="2"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sembly_meeting_search" model="ir.ui.view">
+        <field name="name">sembly.meeting.search</field>
+        <field name="model">sembly.meeting</field>
+        <field name="arch" type="xml">
+            <search string="بحث في الاجتماعات">
+                <!-- ANCHOR: the link modules add their searchable field with
+                     xpath="//field[@name='sembly_meeting_id']" position="before". -->
+                <field name="name" string="العنوان"/>
+                <field name="participant_names"/>
+                <field name="sembly_meeting_id"/>
+                <filter name="filter_today" string="اليوم"
+                        domain="[('started_at', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <filter name="filter_this_week" string="هذا الأسبوع"
+                        domain="[('started_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="filter_unlinked" string="غير مرتبطة"
+                        domain="[('link_state', '=', 'unlinked')]"/>
+                <filter name="filter_suggested" string="لديها اقتراح"
+                        domain="[('link_state', '=', 'suggested')]"/>
+                <separator/>
+                <filter name="filter_has_transcript" string="لديها تفريغ نصي"
+                        domain="[('has_transcript', '=', True)]"/>
+                <filter name="filter_has_summary" string="لديها ملخص"
+                        domain="[('has_summary', '=', True)]"/>
+                <!-- ANCHOR: the link modules add their group-by with
+                     xpath="//filter[@name='group_source']" position="before". -->
+                <group>
+                    <filter name="group_date" string="التاريخ"
+                            context="{'group_by': 'started_at:day'}"/>
+                    <filter name="group_link_state" string="حالة الربط"
+                            context="{'group_by': 'link_state'}"/>
+                    <filter name="group_source" string="المصدر"
+                            context="{'group_by': 'source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- The gear-menu bulk action on the list: select rows → ربط بالذكاء
+         الاصطناعي. It queues (see action_queue_ai_match) — never loops inline. -->
+    <record id="action_server_queue_ai_match" model="ir.actions.server">
+        <field name="name">ربط بالذكاء الاصطناعي</field>
+        <field name="model_id" ref="model_sembly_meeting"/>
+        <field name="binding_model_id" ref="model_sembly_meeting"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_queue_ai_match()</field>
+        <field name="group_ids" eval="[(4, ref('era_sembly_meetings.group_sembly_user'))]"/>
+    </record>
+
+    <record id="action_sembly_meeting" model="ir.actions.act_window">
+        <field name="name">الاجتماعات</field>
+        <field name="res_model">sembly.meeting</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="search_view_id" ref="view_sembly_meeting_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">لا توجد اجتماعات بعد</p>
+            <p>
+                تصل الاجتماعات تلقائياً من Sembly.ai عبر MCP (المزامنة المجدولة)
+                وعبر أتمتة الويب هوك التي تجلب التفريغ النصي ورابط التسجيل.
+                يمكنك أيضاً استيراد الاجتماعات السابقة من: الإعدادات ← استيراد من Sembly.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_sembly_meeting_unlinked" model="ir.actions.act_window">
+        <field name="name">اجتماعات غير مرتبطة</field>
+        <field name="res_model">sembly.meeting</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_sembly_meeting_search"/>
+        <field name="domain">[('link_state', 'in', ['unlinked', 'suggested'])]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">كل الاجتماعات مرتبطة</p>
+            <p>الاجتماعات التي لم يتمكن الذكاء الاصطناعي من ربطها بثقة كافية تظهر هنا لربطها يدوياً.</p>
+        </field>
+    </record>
+
+</odoo>

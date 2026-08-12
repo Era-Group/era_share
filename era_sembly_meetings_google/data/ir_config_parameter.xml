@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- noupdate: an upgrade must never reset a tuned value, and must never
+     resurrect a service-account key the admin deliberately cleared. -->
+<odoo noupdate="1">
+
+    <!-- Ships OFF. Google is opt-in exactly like every other network channel
+         in this app: installing the module must not start reaching out. -->
+    <record id="param_google_enabled" model="ir.config_parameter">
+        <field name="key">sembly.google_enabled</field>
+        <field name="value">0</field>
+    </record>
+
+    <!-- NOT declared here: sembly.google_service_account. A private key is
+         never shipped in source (rule 03); it is entered in the settings. -->
+
+    <record id="param_google_window_days" model="ir.config_parameter">
+        <field name="key">sembly.google_window_days</field>
+        <field name="value">7</field>
+    </record>
+
+    <record id="param_google_match_minutes" model="ir.config_parameter">
+        <field name="key">sembly.google_match_minutes</field>
+        <field name="value">20</field>
+    </record>
+
+    <record id="param_google_translate_notes" model="ir.config_parameter">
+        <field name="key">sembly.google_translate_notes</field>
+        <field name="value">1</field>
+    </record>
+
+</odoo>

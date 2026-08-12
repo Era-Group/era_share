@@ -175,7 +175,8 @@ class GoogleWorkspaceClient:
         return self._list_files(
             " and ".join(clauses),
             'id, name, createdTime, modifiedTime, size, webViewLink, '
-            'webContentLink, videoMediaMetadata, owners(emailAddress), parents')
+            'webContentLink, videoMediaMetadata, owners(emailAddress), parents',
+            page_limit=page_limit)
 
     def list_gemini_notes(self, after=None, page_limit=10):
         """Gemini meeting-notes documents.
@@ -192,7 +193,8 @@ class GoogleWorkspaceClient:
         clauses.append("(%s)" % name_clause)
         return self._list_files(
             " and ".join(clauses),
-            'id, name, createdTime, modifiedTime, webViewLink, owners(emailAddress)')
+            'id, name, createdTime, modifiedTime, webViewLink, owners(emailAddress)',
+            page_limit=page_limit)
 
     def export_document_text(self, file_id):
         """A Google Doc as plain text, for the notes body."""

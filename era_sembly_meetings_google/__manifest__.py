@@ -37,7 +37,7 @@ is the part that closes Sembly's biggest gap.
     'author': "Era Group",
     'website': "https://era.net.sa",
     'category': "Productivity",
-    'version': "19.0.1.2.0",
+    'version': "19.0.1.3.0",
     'license': "LGPL-3",
     'depends': ['era_sembly_meetings'],
     # NOT declared as an external_dependency: Odoo needs the `packaging`

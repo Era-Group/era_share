@@ -14,6 +14,8 @@ from odoo import fields
 from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.era_sembly_meetings.tests import fixtures
+from odoo.addons.era_sembly_meetings_google.services.google_workspace_client \
+    import GoogleWorkspaceError
 
 
 @tagged('post_install', '-at_install', 'sembly')
@@ -310,6 +312,229 @@ class TestSemblyGoogle(TransactionCase):
         self.assertIsNone(
             self.Meeting._meeting_start_from_name("ماس - دورة الموافقات 2026-08-09"))
 
+    def test_a_zone_NAME_is_read_as_well_as_an_offset(self):
+        """277 recordings are stamped "AST"/"EEST"/"EET" instead of GMT+n.
+
+        The offsets are measured, not looked up: AST as +3 gives a shortest
+        upload lag of 15 minutes over 205 recordings and never a negative one,
+        while AST as Atlantic -4 would put 203 of those 205 meetings after
+        their own upload.
+        """
+        for name, expected in (
+            ("عرض - 2026/06/09 13:56 AST", "2026-06-09 10:56:00"),
+            ("X - 2025/07/14 10:58 EEST", "2025-07-14 07:58:00"),
+            ("Y - 2024/02/13 10:56 EET", "2024-02-13 08:56:00"),
+        ):
+            self.assertEqual(
+                fields.Datetime.to_string(
+                    self.Meeting._meeting_start_from_name(name)),
+                expected, "misread: %s" % name)
+
+    # ------------------------------------------------------------ notes twins
+    def test_a_gemini_document_lands_on_the_record_its_own_recording_made(self):
+        """THE 0-of-953 regression.
+
+        _match_google_artifact refuses to return a Google-only record, so on a
+        Drive-only database every Gemini document matched nothing at all and
+        the backfill reported that as success.
+        """
+        orphan = self._orphan("Zaghibi fuel stations", minutes_ago=0,
+                              file_id='drive-twin')
+        twin = self.Meeting._google_notes_twin(
+            "%s - Notes by Gemini" % orphan.name.replace(' - Recording', ''))
+        self.assertEqual(twin, orphan)
+
+    def test_the_document_and_the_recording_must_share_the_MINUTE(self):
+        """A window would guess; an identity does not. Both halves are named by
+        Meet from the same session, so the stamps are equal, not merely near."""
+        orphan = self._orphan("Falcon handover", minutes_ago=0, file_id='drive-min')
+        stamped = self._meet_name("Falcon handover", minutes_ago=31)
+        self.assertFalse(
+            self.Meeting._google_notes_twin("%s - Notes by Gemini" % stamped),
+            "a document 31 minutes off is a different meeting")
+
+    def test_two_titled_meetings_in_one_minute_need_the_title_to_agree(self):
+        """45 start-minutes in this workspace hold more than one meeting."""
+        name_a = self._meet_name("Alpha rollout", minutes_ago=0)
+        name_b = self._meet_name("Beta migration", minutes_ago=0)
+        self._orphan_named(name_a, 'drive-alpha')
+        beta = self._orphan_named(name_b, 'drive-beta')
+        self.assertEqual(
+            self.Meeting._google_notes_twin("Beta migration - %s - Notes by Gemini"
+                                            % name_b.split(' - ', 1)[1]),
+            beta)
+
+    def test_a_generic_word_is_not_agreement(self):
+        """"شركة" sits on half the customer names here, and on its own it once
+        decided a match between two unrelated meetings sharing a minute."""
+        name_a = self._meet_name("شركة الحلول العربية", minutes_ago=0)
+        name_b = self._meet_name("شركة طرق التنمية", minutes_ago=0)
+        self._orphan_named(name_a, 'drive-gen-a')
+        self._orphan_named(name_b, 'drive-gen-b')
+        self.assertFalse(
+            self.Meeting._google_notes_twin(
+                "شركة أخرى - %s - Notes by Gemini" % name_a.split(' - ', 1)[1]),
+            "one generic token shared by both candidates must not decide")
+
+    def test_an_untitled_meeting_matches_on_the_stamp_but_only_symmetrically(self):
+        """Meet writes "Meeting started <stamp>" for the notes and names the
+        video after the meeting CODE — the same session, sharing not one word.
+        Both halves must say "untitled": accepting either alone re-admits three
+        of the misattachments the replay found."""
+        stamp = self._meet_name("zzz", minutes_ago=0).split(' - ', 1)[1]
+        coded = self._orphan_named("yxq-rpys-wno - %s" % stamp, 'drive-code')
+        self.assertEqual(
+            self.Meeting._google_notes_twin("Meeting started %s - Notes by Gemini" % stamp),
+            coded)
+        titled = self._orphan_named("Real customer demo - %s" % stamp, 'drive-titled')
+        coded.sudo().unlink()
+        self.assertFalse(
+            self.Meeting._google_notes_twin("Meeting started %s - Notes by Gemini" % stamp),
+            "an untitled document must not claim a TITLED recording on time alone")
+        self.assertTrue(titled.exists())
+
+    def test_a_document_with_no_stamp_matches_nothing(self):
+        """12 of the 953 are user documents that merely contain the word
+        "notes". They must cost no match and no LLM call."""
+        self._orphan("Anything at all", minutes_ago=0, file_id='drive-nostamp')
+        self.assertFalse(
+            self.Meeting._google_notes_twin("ملاحظات اجتماع البيانات الاساسيه"))
+
+    def test_a_recording_still_never_lands_on_another_ones_placeholder(self):
+        """The constraint that must not bend. Recordings do not go near the
+        twin route: two recordings a few minutes apart stay two records."""
+        first = self._upsert_recording("Shared window", minutes_ago=0, file_id='rec-1')
+        second = self._upsert_recording("Shared window", minutes_ago=3, file_id='rec-2')
+        self.assertNotEqual(first, second)
+        self.assertEqual(first.google_file_id, 'rec-1')
+        self.assertEqual(second.google_file_id, 'rec-2')
+
+    def test_adoption_carries_the_arabic_not_just_the_notes(self):
+        """The translation cost an LLM call and the orphan is about to be
+        deleted; the regeneration below only fires when Sembly brought a
+        summary to merge with."""
+        orphan = self._orphan("Adoption keeps arabic", minutes_ago=0,
+                              file_id='drive-ar')
+        orphan.sudo().with_context(sembly_sync=True).write({
+            'gemini_notes': '<p>english notes</p>',
+            'gemini_notes_ar': '<p>ملاحظات بالعربية</p>',
+            'merged_summary_source': 'translated',
+            'google_notes_file_id': 'doc-ar',
+        })
+        meeting = self._meeting(970101, "Adoption keeps arabic", minutes_ago=0)
+        self.assertFalse(orphan.exists(), "the orphan should have been folded in")
+        self.assertEqual(meeting.gemini_notes_ar, '<p>ملاحظات بالعربية</p>')
+        self.assertEqual(meeting.merged_summary_source, 'translated')
+
+    def test_an_empty_document_is_not_stored_and_buys_no_call(self):
+        """plaintext2html('') is '<p></p>', which is truthy — so the guard that
+        was there never fired, and an empty export was stored as blank notes,
+        marked imported for good, and paid for a translation of nothing."""
+        meeting = self._orphan("Empty export", minutes_ago=0, file_id='drive-empty')
+        calls = []
+        with patch.object(type(self.Meeting), '_ask_agent',
+                          lambda self, prompt: calls.append(prompt) or 'x'):
+            self.assertFalse(meeting._apply_gemini_notes('   ', 'doc-empty'))
+        self.assertFalse(meeting.gemini_notes)
+        self.assertFalse(meeting.google_notes_file_id)
+        self.assertFalse(calls, "an empty document must not reach the model")
+
+    def test_a_fruitless_tick_no_longer_ends_the_backfill(self):
+        """"Nothing imported" is not "nothing left to do". Conflating them is
+        what ended the real run after one tick in which all 953 documents
+        failed to match — and wrote it to the log as a success."""
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('sembly.google_notes_state', 'running')
+        icp.set_param('sembly.google_enabled', '1')
+        icp.set_param('sembly.google_service_account', '{"client_email":"x","private_key":"y"}')
+        icp.set_param('sembly.google_subject', 'crm@era.net.sa')
+
+        class _Client:
+            def list_gemini_notes(self, **kw):
+                # one document that matches nothing, and one that fails
+                return [{'id': 'doc-nomatch', 'name': 'ملاحظات عامة',
+                         'createdTime': '2020-01-01T00:00:00Z'}]
+            def export_document_text(self, file_id):
+                raise GoogleWorkspaceError('boom')
+
+        with patch.object(type(self.Meeting), '_google_client',
+                          lambda self, subject=None: _Client()):
+            self.Meeting._cron_google_notes_backfill()
+        self.assertEqual(icp.get_param('sembly.google_notes_state'), 'done',
+                         "a clean, fully-walked, zero-import tick may finish")
+        log = self.env['sembly.sync.log'].search(
+            [('operation', '=', 'notes-backfill')], order='id desc', limit=1)
+        self.assertIn('matched no meeting', log.message,
+                      "the log must say WHICH kind of nothing it was")
+
+    def test_a_failing_tick_leaves_the_backfill_armed(self):
+        """A Google outage must not be mistaken for completion."""
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('sembly.google_notes_state', 'running')
+        icp.set_param('sembly.google_enabled', '1')
+        icp.set_param('sembly.google_service_account', '{"client_email":"x","private_key":"y"}')
+        icp.set_param('sembly.google_subject', 'crm@era.net.sa')
+        orphan = self._orphan("Outage case", minutes_ago=0, file_id='drive-outage')
+        stamp = orphan.name.split(' - ', 1)[1].rsplit(' - ', 1)[0]
+
+        class _Client:
+            def list_gemini_notes(self, **kw):
+                return [{'id': 'doc-boom',
+                         'name': 'Outage case - %s - Notes by Gemini' % stamp,
+                         'createdTime': '2026-01-01T00:00:00Z'}]
+            def export_document_text(self, file_id):
+                raise GoogleWorkspaceError('Google 503')
+
+        with patch.object(type(self.Meeting), '_google_client',
+                          lambda self, subject=None: _Client()):
+            self.Meeting._cron_google_notes_backfill()
+        self.assertEqual(icp.get_param('sembly.google_notes_state'), 'running',
+                         "a tick that only FAILED must stay armed")
+
+    def test_the_backfill_does_not_overwrite_notes_a_meeting_already_has(self):
+        """The live sync always guarded this; the backfill did not, so a second
+        document for one meeting overwrote the first and paid for it again."""
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('sembly.google_notes_state', 'running')
+        icp.set_param('sembly.google_enabled', '1')
+        icp.set_param('sembly.google_service_account', '{"client_email":"x","private_key":"y"}')
+        icp.set_param('sembly.google_subject', 'crm@era.net.sa')
+        orphan = self._orphan("Already noted", minutes_ago=0, file_id='drive-dup')
+        orphan.sudo().with_context(sembly_sync=True).write(
+            {'gemini_notes': '<p>the first one</p>', 'google_notes_file_id': 'doc-first'})
+        stamp = orphan.name.split(' - ', 1)[1].rsplit(' - ', 1)[0]
+
+        class _Client:
+            def list_gemini_notes(self, **kw):
+                return [{'id': 'doc-second',
+                         'name': 'Already noted - %s - Notes by Gemini' % stamp,
+                         'createdTime': '2026-01-01T00:00:00Z'}]
+            def export_document_text(self, file_id):
+                return 'the second one'
+
+        with patch.object(type(self.Meeting), '_google_client',
+                          lambda self, subject=None: _Client()):
+            self.Meeting._cron_google_notes_backfill()
+        self.assertEqual(orphan.gemini_notes, '<p>the first one</p>')
+        self.assertEqual(orphan.google_notes_file_id, 'doc-first')
+
+    def test_the_notes_listing_honours_its_page_limit(self):
+        """page_limit was accepted and never forwarded, so both listings were
+        pinned at 10 pages / 1000 files — 47 away from silently truncating the
+        953 documents this workspace holds."""
+        from odoo.addons.era_sembly_meetings_google.services.google_workspace_client \
+            import GoogleWorkspaceClient
+        client = GoogleWorkspaceClient({'client_email': 'x', 'private_key': 'y'})
+        pages = []
+
+        def _call(method, url, params=None, payload=None):
+            pages.append(params.get('pageToken'))
+            return {'files': [{'id': 'f%d' % len(pages)}], 'nextPageToken': 'tok%d' % len(pages)}
+
+        client._call = _call
+        client.list_gemini_notes(page_limit=2)
+        self.assertEqual(len(pages), 2)
+
     def test_a_legacy_name_puts_the_record_at_the_meetings_hour(self):
         """The whole point of reading the older spellings: a Google-only record
         must sit at the meeting's hour, not the upload's, or it lands outside
@@ -354,6 +579,22 @@ class TestSemblyGoogle(TransactionCase):
                          "the record must sit at the meeting's hour, not the upload's")
 
     # -------------------------------------------- Sembly arriving second
+    def _orphan_named(self, name, file_id):
+        """A Google-only record built from an EXACT Drive file name."""
+        return self.Meeting._upsert_from_google({
+            'id': file_id,
+            'name': name,
+            'createdTime': fields.Datetime.to_string(
+                self.now + timedelta(minutes=68)).replace(' ', 'T') + 'Z',
+            'webViewLink': 'https://drive.google.com/file/d/%s/view' % file_id,
+        }, 'crm@era.net.sa')
+
+    def _upsert_recording(self, title, minutes_ago=0, file_id='rec'):
+        return self.Meeting._upsert_from_google(
+            self._recording(self._meet_name(title, minutes_ago=minutes_ago),
+                            minutes_ago=minutes_ago, file_id=file_id),
+            'crm@era.net.sa')
+
     def _orphan(self, title, minutes_ago=0, file_id='drive-orphan', **extra):
         """A Google-only record, as created when the recording arrives first."""
         recording = dict({

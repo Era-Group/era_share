@@ -73,8 +73,47 @@ MEET_NAME_TIME = re.compile(
     r'(\d{4})[/-](\d{2})[/-](\d{2})\s+(?:at\s+)?(\d{1,2})[:_ ](\d{2})'
     r'\s*GMT(?:([+-])(\d{1,2})(?::(\d{2}))?)?', re.IGNORECASE)
 
+# Meet does not always write an offset — sometimes it writes the zone's NAME.
+# 277 more of this Drive's recordings are stamped that way, and without these
+# they fall back to createdTime exactly as the unparsed spellings did.
+#
+# The offsets are not looked up in a table of world timezones, which would be
+# guessing: AST is Arabia Standard Time (+3) here but Atlantic Standard Time
+# (-4) elsewhere. They are MEASURED against the same invariant the rest of this
+# file leans on — an upload never precedes its meeting. Reading AST as +3 gives
+# a shortest lag of 15 minutes over 205 recordings and not one negative; as -4
+# it puts 203 of those 205 meetings AFTER their own upload, which is
+# impossible. EEST (+3, 42 recordings) and EET (+2, 30) check out the same way.
+MEET_NAME_ZONES = {'AST': 3, 'EEST': 3, 'EET': 2}
+MEET_NAME_ZONE = re.compile(
+    r'(\d{4})[/-](\d{2})[/-](\d{2})\s+(?:at\s+)?(\d{1,2})[:_ ](\d{2})'
+    r'\s*(%s)\b' % '|'.join(MEET_NAME_ZONES))
+
 # Tokens too generic to confirm anything on their own.
 NOISE = re.compile(r'\b(meet|meeting|recording|\d{4}-\d{2}-\d{2}|\(\d+\))\b', re.I)
+
+# ---------------------------------------------------------------- notes twins
+# Meet writes BOTH halves of one session with the same stem: the video as
+# "<title> - 2026/08/11 14:32 GMT+03:00 - Recording" and Gemini's notes as
+# "<title> - 2026/08/11 14:32 GMT+03:00 - Notes by Gemini". Measured on this
+# workspace: 941 of the 953 Gemini documents in Drive carry that stamp. So a
+# document does not have to be matched to a meeting by a time WINDOW at all —
+# it can be matched by IDENTITY, which is what _google_notes_twin does.
+NOTES_DECORATION = re.compile(
+    r'[-–—]?\s*(notes by gemini|meeting notes|recording)\s*\d*\s*$', re.I)
+NOTES_COPY_PREFIX = re.compile(r'^\s*(translated copy of|copy of)\s+', re.I)
+# The two shapes Meet uses when the meeting had NO title of its own: the
+# document becomes "Meeting started <stamp>" and the video is named after the
+# meeting CODE. They are the same event, and they share not one word — so for
+# these, and only these, the timestamp alone is allowed to decide.
+NOTES_UNTITLED_DOC = re.compile(
+    r'^\s*(?:translated copy of\s+|copy of\s+)?meeting started\b', re.I)
+MEET_CODE_NAME = re.compile(
+    r'^\s*(?:copy of\s+)?[a-z]{3}-[a-z]{4}-[a-z]{3}\b', re.I)
+# Words that identify nobody. "شركة" (company) is on half the customer names
+# here, and it alone once decided a match between two unrelated meetings that
+# started in the same minute.
+GENERIC_TITLE_TOKENS = {'شركة', 'مؤسسة', 'company', 'notes', 'gemini'}
 
 
 class SemblyMeeting(models.Model):
@@ -264,17 +303,105 @@ class SemblyMeeting(models.Model):
         with NO offset: "GMT" alone is UTC, so the local time IS the UTC time.
         """
         match = MEET_NAME_TIME.search(name or '')
-        if not match:
-            return None
-        year, month, day, hour, minute, sign, off_h, off_m = match.groups()
+        if match:
+            year, month, day, hour, minute, sign, off_h, off_m = match.groups()
+            # A bare "GMT" leaves sign and offset unmatched: zero, and the
+            # branch below is then a no-op either way.
+            offset = timedelta(hours=int(off_h or 0), minutes=int(off_m or 0))
+            if sign == '-':
+                offset = -offset
+        else:
+            # Then the spellings that name the zone instead of offsetting it.
+            match = MEET_NAME_ZONE.search(name or '')
+            if not match:
+                return None
+            year, month, day, hour, minute, label = match.groups()
+            offset = timedelta(hours=MEET_NAME_ZONES[label.upper()])
         try:
             local = datetime(int(year), int(month), int(day), int(hour), int(minute))
         except ValueError:
             return None
-        # A bare "GMT" leaves sign and offset unmatched: zero, and the branch
-        # below is then a no-op either way.
-        offset = timedelta(hours=int(off_h or 0), minutes=int(off_m or 0))
-        return local + offset if sign == '-' else local - offset
+        return local - offset
+
+    # ------------------------------------------------------------ notes twins
+    @api.model
+    def _notes_title_tokens(self, title):
+        """The words of a Meet artefact's name, with the decoration removed.
+
+        Deliberately NOT ``_google_title_tokens``: that one feeds the recording
+        matcher, and the recording path must keep behaving exactly as it does.
+        This one additionally strips the "- Notes by Gemini" / "- Recording"
+        tail, the "Copy of" prefix, and the words that identify nobody.
+        """
+        text = MEET_NAME_TIME.sub(' ', title or '')
+        text = MEET_NAME_ZONE.sub(' ', text)
+        text = NOTES_DECORATION.sub(' ', text)
+        text = NOTES_COPY_PREFIX.sub(' ', text)
+        return self._google_title_tokens(text) - GENERIC_TITLE_TOKENS
+
+    @api.model
+    def _google_notes_twin(self, name):
+        """The meeting a Gemini document is the other half OF.
+
+        This is an IDENTITY, not a heuristic, and that is the whole point. The
+        video and the notes are two files Meet named from the same session, so
+        their stamps are the same instant to the minute — not "close", equal.
+        _upsert_from_google stores exactly that instant on the record, so the
+        lookup is an equality test, and the 8-hour createdTime window that
+        _match_google_artifact must fall back on never comes into it.
+
+        Why this exists at all: _match_google_artifact refuses to return a
+        Google-only record, and rightly so — see the comment on its domain, a
+        second RECORDING must never attach itself to the placeholder that a
+        first one created. But a Gemini document is not a second recording, it
+        is the same session's other half, and on a Drive-only database the
+        placeholder is the ONLY record its meeting has. That exclusion is why
+        all 953 documents in this workspace imported as zero.
+
+        MEASURED over the real 953 documents and 3 155 recordings, replayed
+        offline before this shipped: 783 documents land on their own record,
+        170 are refused (126 whose meeting has no video in Drive at all, 30
+        where two meetings share the minute and the titles do not decide, 12
+        junk documents the Drive query drags in and 2 more). Then the test that
+        matters — deleting each document's true twin first, i.e. pretending its
+        own meeting was never recorded — leaves exactly ONE document out of 783
+        attaching to a neighbour, against 25 before the title rules below.
+
+        The rules, each earned by one of those failures:
+
+        * the stamp must be EQUAL, to the minute;
+        * when both names carry a real title, the titles must agree, and agree
+          more than any rival at that minute does — "شركة" alone is not
+          agreement, which is why GENERIC_TITLE_TOKENS exists;
+        * when Meet wrote NO title, the stamp may decide alone — but only if
+          BOTH halves say so, the document by being "Meeting started …" and
+          the video by being named after the meeting code. Accepting either
+          one on its own re-admits three of the misattachments.
+        """
+        started = self._meeting_start_from_name(name)
+        if not started:
+            # A document with no stamp is not a Meet artefact — on this Drive
+            # they are user documents that merely contain the word "notes".
+            # They match nothing, and so cost no LLM call.
+            return self.browse()
+        candidates = self.sudo().with_context(active_test=False).search([
+            ('started_at', '=', fields.Datetime.to_string(started)),
+        ])
+        if not candidates:
+            return self.browse()
+
+        wanted = self._notes_title_tokens(name)
+        if wanted:
+            scored = sorted(
+                ((len(wanted & self._notes_title_tokens(rec.name)), rec)
+                 for rec in candidates),
+                key=lambda pair: pair[0], reverse=True)
+            if scored[0][0] and (len(scored) == 1 or scored[0][0] > scored[1][0]):
+                return scored[0][1]
+        if len(candidates) == 1 and NOTES_UNTITLED_DOC.match(name or '') \
+                and MEET_CODE_NAME.match(candidates.name or ''):
+            return candidates
+        return self.browse()
 
     @api.model
     def _match_google_artifact(self, name, created_at, owner_email):
@@ -449,7 +576,13 @@ class SemblyMeeting(models.Model):
         own, so a model error leaves them in place and simply skips the Arabic.
         """
         self.ensure_one()
-        body = html_sanitize(plaintext2html(text or ''))
+        # Test the TEXT, not the markup built from it: plaintext2html('')
+        # returns '<p></p>', which survives html_sanitize and is truthy — so
+        # this guard never fired. An empty export was stored as blank notes,
+        # marked imported for good, and paid for a translation of nothing.
+        if not (text or '').strip():
+            return False
+        body = html_sanitize(plaintext2html(text))
         if not body:
             return False
         values = {'gemini_notes': body}
@@ -557,8 +690,14 @@ class SemblyMeeting(models.Model):
                 Log._log('google', 'notes', 'error', "%s: %s" % (subject, exc))
                 continue
             for doc in docs:
-                meeting = self._match_google_artifact(
-                    doc.get('name'), self._parse_dt(doc.get('createdTime')), subject)
+                # The twin FIRST: it is an identity, so when it answers it is
+                # right, and it is the only route that can reach a Google-only
+                # record at all. The window heuristic stays as the fallback for
+                # a document Meet did not stamp.
+                meeting = self._google_notes_twin(doc.get('name')) or \
+                    self._match_google_artifact(
+                        doc.get('name'), self._parse_dt(doc.get('createdTime')),
+                        subject)
                 if not meeting or meeting.gemini_notes:
                     continue
                 try:
@@ -641,9 +780,17 @@ class SemblyMeeting(models.Model):
             'google_owner_email': orphan.google_owner_email,
         }
         # Carry the notes across only if Sembly's arrival has none of its own.
+        # The ARABIC comes with them: it cost an LLM call, the orphan is about
+        # to be unlinked, and the regeneration below only fires when Sembly
+        # brought a summary to merge with — so leaving gemini_notes_ar behind
+        # threw the translation away for good whenever it did not. Harmless
+        # until now only because a placeholder could never hold notes in the
+        # first place; _google_notes_twin is exactly what changes that.
         if orphan.gemini_notes and not meeting.gemini_notes:
             values.update({
                 'gemini_notes': orphan.gemini_notes,
+                'gemini_notes_ar': orphan.gemini_notes_ar,
+                'merged_summary_source': orphan.merged_summary_source,
                 'google_notes_file_id': orphan.google_notes_file_id,
             })
         if orphan.google_share_url:
@@ -800,38 +947,58 @@ class SemblyMeeting(models.Model):
             Log._log('google', 'notes-backfill', 'error', str(exc))
             return True
 
-        done = skipped = 0
+        done = already = unmatched = failed = 0
+        exhausted = True
         for doc in docs:
             if time.monotonic() >= deadline:
+                # Out of budget, NOT out of work — and the difference decides
+                # whether this run is allowed to call itself finished below.
+                exhausted = False
                 break
-            if self.sudo().search_count(
+            if self.sudo().with_context(active_test=False).search_count(
                     [('google_notes_file_id', '=', doc['id'])]):
-                skipped += 1
+                already += 1
                 continue
-            meeting = self._match_google_artifact(
-                doc.get('name'), self._parse_dt(doc.get('createdTime')),
-                ((doc.get('owners') or [{}])[0]).get('emailAddress'))
+            # See _cron_sync_google: identity first, heuristic as the fallback.
+            meeting = self._google_notes_twin(doc.get('name')) or \
+                self._match_google_artifact(
+                    doc.get('name'), self._parse_dt(doc.get('createdTime')),
+                    ((doc.get('owners') or [{}])[0]).get('emailAddress'))
             if not meeting:
-                skipped += 1
+                unmatched += 1
+                continue
+            if meeting.gemini_notes:
+                # The live sync has always guarded this; the backfill did not,
+                # so a second document for one meeting overwrote the first's
+                # notes and spent a second LLM call doing it.
+                already += 1
                 continue
             try:
                 meeting._apply_gemini_notes(
                     client.export_document_text(doc['id']), doc['id'])
                 done += 1
             except GoogleWorkspaceError as exc:
+                failed += 1
                 Log._log('google', 'notes-backfill', 'error',
                          "%s: %s" % (doc.get('id'), exc))
             if self._may_commit():
                 self.env.cr.commit()
 
-        if not done:
+        # "Nothing imported" is NOT "nothing left to do". Treating the two as
+        # the same is what ended this backfill after a single tick in which all
+        # 953 documents failed to match, and wrote it to the log as a success —
+        # the run then latched off and nothing revisited it. Finish only when
+        # the listing was walked to its end AND nothing errored on the way; a
+        # Google outage must leave the run armed for the next tick.
+        summary = ("%s imported, %s already had notes, %s matched no meeting, "
+                   "%s failed, out of %s document(s) listed."
+                   % (done, already, unmatched, failed, len(docs)))
+        if exhausted and not done and not failed:
             icp.set_param('sembly.google_notes_state', 'done')
             Log._log('google', 'notes-backfill', 'ok',
-                     "Nothing left to import (%s already done or unmatched)." % skipped)
+                     "Finished — nothing left to import. " + summary)
         else:
-            Log._log('google', 'notes-backfill', 'ok',
-                     "%s note(s) imported and summarised, %s skipped."
-                     % (done, skipped), meeting_count=done)
+            Log._log('google', 'notes-backfill', 'ok', summary, meeting_count=done)
         return True
 
     @api.model

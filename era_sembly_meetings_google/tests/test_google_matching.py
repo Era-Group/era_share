@@ -261,11 +261,69 @@ class TestSemblyGoogle(TransactionCase):
                 "X - 2026/08/11 15:21 GMT+04:00 - Recording")),
             "2026-08-11 11:21:00")
 
+    def test_every_spelling_meet_has_ever_used_is_read(self):
+        """Meet renamed its recordings several times, and Drive holds all of it.
+
+        Counted over this workspace's 3 155 recordings, matching only the
+        current spelling left 1 146 of them (36%) with no start time — they
+        fell back to createdTime, the UPLOAD time, a median of 64 minutes late
+        and 89% of them outside the ±20 minute window adoption uses. Each row
+        below is a real name from that Drive.
+        """
+        for name, expected in (
+            # the current one — dashes in the date, offset with a colon
+            ("X - 2026/08/12 12:53 GMT+03:00 - Recording", "2026-08-12 09:53:00"),
+            # 960 records: dashes, short offset, wrapped in parentheses
+            ("yxq-rpys-wno (2026-08-12 12:53 GMT+3)", "2026-08-12 09:53:00"),
+            # 53 records, the oldest: the word "at", and a NEGATIVE offset
+            ("wgd-vsxa-fnp (2020-10-21 at 03:03 GMT-7)", "2020-10-21 10:03:00"),
+            # 1 record: the colon survived the upload as an underscore
+            ("سواعد (2024-03-20 10_11 GMT+3).", "2024-03-20 07:11:00"),
+            # 1 record: the colon did not survive at all
+            ("اجتماع فريق 1 (2023-06-08 19 00 GMT+3) - approvals", "2023-06-08 16:00:00"),
+        ):
+            self.assertEqual(
+                fields.Datetime.to_string(
+                    self.Meeting._meeting_start_from_name(name)),
+                expected, "misread: %s" % name)
+
+    def test_a_bare_GMT_is_read_as_UTC(self):
+        """131 names carry "GMT" with no offset, and it means exactly that.
+
+        Read literally, those uploads follow their meeting by 8 minutes at the
+        shortest and never precede it — which is the measured shape of an
+        upload lag. Read as the workspace's own +3 the shortest would be 188
+        minutes, which no recording does. So the label is taken at its word.
+        """
+        self.assertEqual(
+            fields.Datetime.to_string(self.Meeting._meeting_start_from_name(
+                "dir-eqey-sxw (2024-02-14 12:07 GMT)")),
+            "2024-02-14 12:07:00")
+
     def test_a_name_without_a_timestamp_returns_nothing(self):
-        """36% of real names carry none, and inventing one would be worse than
-        falling back to createdTime with a wide tolerance."""
+        """21% of real names carry none — a renamed or hand-uploaded video —
+        and inventing one would be worse than falling back to createdTime with
+        a wide tolerance."""
         self.assertIsNone(self.Meeting._meeting_start_from_name("Recording (7)"))
         self.assertIsNone(self.Meeting._meeting_start_from_name(""))
+        # A date with no clock time is not a start time either.
+        self.assertIsNone(
+            self.Meeting._meeting_start_from_name("ماس - دورة الموافقات 2026-08-09"))
+
+    def test_a_legacy_name_puts_the_record_at_the_meetings_hour(self):
+        """The whole point of reading the older spellings: a Google-only record
+        must sit at the meeting's hour, not the upload's, or it lands outside
+        the chatter window and outside the window Sembly adopts it through."""
+        recording = {
+            'id': 'drive-legacy',
+            'name': "uzr-wtjc-rjz (2026-07-23 10:55 GMT+3)",
+            # Drive reports the upload 2h20 later, as it really did here.
+            'createdTime': '2026-07-23T08:35:26Z',
+            'webViewLink': 'https://x/view',
+        }
+        created = self.Meeting._upsert_from_google(recording, 'crm@era.net.sa')
+        self.assertEqual(fields.Datetime.to_string(created.started_at),
+                         "2026-07-23 07:55:00")
 
     def test_a_late_upload_still_matches_its_meeting(self):
         """THE regression this whole change exists for: the sample recording was

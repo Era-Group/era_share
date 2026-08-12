@@ -47,8 +47,31 @@ DEFAULT_UPLOAD_LAG_MINUTES = 480
 # 98% of them fall outside any sane window around createdTime, and the filename
 # is the only trustworthy key. The offset is captured too: this workspace mixes
 # GMT+03:00 and GMT+04:00, so ignoring it would import a whole hour wrong.
+#
+# Meet has used SIX spellings of that timestamp over the years, and this
+# workspace's Drive holds all of them. Counted over its 3 155 recordings:
+#
+#     2026/08/12 12:53 GMT+03:00     1 344   the current one
+#     (2026-08-12 12:53 GMT+3)         960   dashes, short offset
+#     (2024-02-14 12:07 GMT)           131   no offset at all — means UTC
+#     (2020-10-21 at 03:03 GMT-7)       53   the oldest, with "at"
+#     (2024-03-20 10_11 GMT+3)           1   colon replaced on upload
+#     (2023-06-08 19 00 GMT+3)           1   colon dropped altogether
+#
+# Matching only the first left 1 146 recordings (36% of the workspace) falling
+# back to createdTime — a MEDIAN OF 64 MINUTES LATE, mean 89, worst 853 — and
+# 89% of them outside the ±20 minute window _adopt_orphan_google_record uses,
+# so Sembly could never adopt them and every one of those meetings ended up
+# split across two records. Hence: separator-agnostic, "at" optional, offset
+# optional.
+#
+# A BARE "GMT" IS READ AS UTC+0, which is what the label says and what the data
+# confirms: taken literally those 131 uploads follow their meeting by 8 minutes
+# at the shortest and NEVER precede it, matching the measured lag; read as +3
+# the shortest would be 188 minutes, which no recording does.
 MEET_NAME_TIME = re.compile(
-    r'(\d{4})/(\d{2})/(\d{2})\s+(\d{1,2}):(\d{2})\s*GMT([+-])(\d{1,2})(?::(\d{2}))?')
+    r'(\d{4})[/-](\d{2})[/-](\d{2})\s+(?:at\s+)?(\d{1,2})[:_ ](\d{2})'
+    r'\s*GMT(?:([+-])(\d{1,2})(?::(\d{2}))?)?', re.IGNORECASE)
 
 # Tokens too generic to confirm anything on their own.
 NOISE = re.compile(r'\b(meet|meeting|recording|\d{4}-\d{2}-\d{2}|\(\d+\))\b', re.I)
@@ -232,9 +255,13 @@ class SemblyMeeting(models.Model):
     def _meeting_start_from_name(self, name):
         """The meeting's real start, out of the file name, in UTC.
 
-        Returns None when the name carries no timestamp — 36% of them do not,
-        and for those the caller falls back to createdTime with a much wider
-        tolerance rather than pretending to precision it does not have.
+        Returns None when the name carries no timestamp — 21% of them carry
+        none at all (a renamed or hand-uploaded video), and for those the caller
+        falls back to createdTime with a much wider tolerance rather than
+        pretending to precision it does not have.
+
+        Every spelling MEET_NAME_TIME accepts is handled here, including the one
+        with NO offset: "GMT" alone is UTC, so the local time IS the UTC time.
         """
         match = MEET_NAME_TIME.search(name or '')
         if not match:
@@ -244,8 +271,10 @@ class SemblyMeeting(models.Model):
             local = datetime(int(year), int(month), int(day), int(hour), int(minute))
         except ValueError:
             return None
-        offset = timedelta(hours=int(off_h), minutes=int(off_m or 0))
-        return local - offset if sign == '+' else local + offset
+        # A bare "GMT" leaves sign and offset unmatched: zero, and the branch
+        # below is then a no-op either way.
+        offset = timedelta(hours=int(off_h or 0), minutes=int(off_m or 0))
+        return local + offset if sign == '-' else local - offset
 
     @api.model
     def _match_google_artifact(self, name, created_at, owner_email):

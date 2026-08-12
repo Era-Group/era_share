@@ -850,6 +850,30 @@ class TestSemblyGoogle(TransactionCase):
         with self.assertRaises(UserError):
             meeting.action_open_google_share()
 
+    def test_the_hourly_sync_ships_ON_but_reaches_nobody(self):
+        """New meetings must arrive without anyone arming anything.
+
+        The two backfills import HISTORY; before this, nothing picked up what
+        happened afterwards unless somebody found the row in Technical
+        Settings. Shipping it on is safe because the job gates itself at
+        runtime, not at install: no credential, no call — which is what
+        test_nothing_reaches_google_until_it_is_enabled pins from the other
+        side. The two backfills stay off: they are armed by a button, and one
+        of them spends an AI call per meeting.
+        """
+        sync = self.env.ref('era_sembly_meetings_google.cron_sembly_google_sync')
+        self.assertTrue(sync.active, "new meetings must arrive by default")
+        self.assertEqual((sync.interval_number, sync.interval_type), (1, 'hours'))
+        for xmlid in ('era_sembly_meetings_google.cron_google_backfill',
+                      'era_sembly_meetings_google.cron_google_notes_backfill'):
+            self.assertFalse(self.env.ref(xmlid).active,
+                             "%s is armed by a human, never by an install" % xmlid)
+        # ...and on a database with no key it still calls nobody.
+        self.assertFalse(self.Meeting._google_enabled())
+        with patch.object(type(self.Meeting), '_google_client') as client:
+            self.Meeting._cron_sync_google()
+        client.assert_not_called()
+
     def test_the_crons_survive_a_module_upgrade(self):
         """A cron armed at runtime must not be disarmed by an unrelated deploy.
 

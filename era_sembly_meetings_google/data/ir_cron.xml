@@ -8,10 +8,27 @@
      The base module's cron file carries the same flag for the same reason. -->
 <odoo noupdate="1">
 
-    <!-- Ships INACTIVE, like every other network cron here: nothing reaches
-         Google until a human has entered the key and turned the provider on.
+    <!-- Ships ACTIVE, and unlike the two backfills below that is safe here,
+         because this job gates itself at RUNTIME rather than at install:
+         _cron_sync_google returns on its first line unless _google_enabled(),
+         which demands BOTH sembly.google_enabled and a non-empty service
+         account JSON. Both ship off and empty, so on a fresh database this
+         cron wakes up hourly, reads two parameters, finds no credential and
+         goes back to sleep — it reaches nobody. That is exactly what
+         test_nothing_reaches_google_until_it_is_enabled pins.
+
+         The rule the other crons follow — ship disabled so an install cannot
+         fire an unauthenticated request — is therefore already satisfied by
+         the guard, and leaving this one off only meant that a workspace which
+         HAD entered its key still received no new meeting until somebody found
+         this row in Technical Settings. That is the failure this flip fixes:
+         the two backfills import history, and nothing was picking up what
+         happened since.
+
          Hourly because Drive is where the artefacts land minutes after a
-         meeting ends, and conferenceRecords are kept for only 30 days. -->
+         meeting ends, and conferenceRecords are kept for only 30 days. The
+         window it asks Drive for is sembly.google_window_days (7), so the
+         sweep overlaps itself six days deep and an outage loses nothing. -->
     <record id="cron_sembly_google_sync" model="ir.cron">
         <field name="name">Sembly: مزامنة Google Drive (تسجيلات وملاحظات)</field>
         <field name="model_id" ref="era_sembly_meetings.model_sembly_meeting"/>
@@ -20,7 +37,7 @@
         <field name="code">model._cron_sync_google()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">hours</field>
-        <field name="active" eval="False"/>
+        <field name="active" eval="True"/>
     </record>
 
 

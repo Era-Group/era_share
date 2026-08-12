@@ -37,7 +37,7 @@ is the part that closes Sembly's biggest gap.
     'author': "Era Group",
     'website': "https://era.net.sa",
     'category': "Productivity",
-    'version': "19.0.1.3.0",
+    'version': "19.0.1.4.0",
     'license': "LGPL-3",
     'depends': ['era_sembly_meetings'],
     # NOT declared as an external_dependency: Odoo needs the `packaging`
@@ -54,8 +54,9 @@ is the part that closes Sembly's biggest gap.
         'views/sembly_meeting_views.xml',
     ],
     # auto_install: Google is part of the meetings app on this
-    # deployment. Safe because the provider ships OFF with no key
-    # and an inactive cron, so installing it reaches nobody.
+    # deployment. Safe because the provider ships OFF with no key: the
+    # hourly sync gates itself on _google_enabled(), which needs both the
+    # flag and a service account, so installing it reaches nobody.
     'auto_install': True,
     'installable': True,
     'application': False,

@@ -550,3 +550,21 @@ class TestSemblyGoogle(TransactionCase):
         meeting = self._meeting(996002, "Nothing to open", minutes_ago=0)
         with self.assertRaises(UserError):
             meeting.action_open_google_share()
+
+    def test_the_crons_survive_a_module_upgrade(self):
+        """A cron armed at runtime must not be disarmed by an unrelated deploy.
+
+        Observed in production: the Gemini notes backfill was running, an
+        unrelated change was deployed, the module upgraded, and Odoo re-applied
+        active="False" from the data file — the job stopped silently at 53 of
+        398 and nobody would have known without the monitor. noupdate on the
+        record is what makes the runtime state stick.
+        """
+        for xmlid in ('cron_sembly_google_sync', 'cron_google_backfill',
+                      'cron_google_notes_backfill'):
+            record = self.env['ir.model.data'].search([
+                ('module', '=', 'era_sembly_meetings_google'),
+                ('name', '=', xmlid)], limit=1)
+            self.assertTrue(record, xmlid)
+            self.assertTrue(record.noupdate,
+                            "%s must be noupdate or an upgrade resets it" % xmlid)

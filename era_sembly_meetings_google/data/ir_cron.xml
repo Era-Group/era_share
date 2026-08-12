@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<!-- noupdate: these crons are armed at RUNTIME — the sync by a settings toggle,
+     the two backfills by their buttons — so their `active` state is state, not
+     configuration. Without this flag every module upgrade re-applies
+     active="False" and silently stops whatever was running: observed in
+     production, where deploying an unrelated change disarmed the Gemini notes
+     backfill mid-run and it sat stopped at 53 of 398 until someone noticed.
+     The base module's cron file carries the same flag for the same reason. -->
+<odoo noupdate="1">
 
     <!-- Ships INACTIVE, like every other network cron here: nothing reaches
          Google until a human has entered the key and turned the provider on.

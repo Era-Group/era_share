@@ -9,6 +9,7 @@ from werkzeug.exceptions import Forbidden
 
 from odoo import http
 from odoo.http import request
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 from odoo.tools import consteq
 
 _logger = logging.getLogger(__name__)
@@ -86,6 +87,12 @@ class WahaWebhook(http.Controller):
                 account._waha_process_session_status(payload)
             else:
                 _logger.debug("WAHA webhook: unhandled event %s", event)
+        except PG_CONCURRENCY_EXCEPTIONS_TO_RETRY:
+            # Serialization/deadlock conflicts are retried IN-PROCESS by Odoo's request
+            # dispatcher (service.model.retrying, fresh transaction each attempt) — much
+            # faster than answering 500 and waiting for WAHA's redelivery. If all attempts
+            # fail, the request errors out and WAHA's own retry policy takes over.
+            raise
         except Exception:
             # Return a RETRYABLE status so WAHA re-delivers instead of dropping the message.
             # A processing error is usually transient (a DB serialization blip, a brief lock);

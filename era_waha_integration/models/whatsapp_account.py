@@ -19,6 +19,7 @@ from odoo.addons.era_waha_integration.models.waha_exceptions import (
 from odoo.addons.mail.tools.discuss import Store
 from odoo.exceptions import UserError, ValidationError
 from odoo.modules.registry import Registry
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 from odoo.tools import plaintext2html
 
 _logger = logging.getLogger(__name__)
@@ -1130,6 +1131,12 @@ class WhatsappAccount(models.Model):
                         waha_live_inbound=True,
                         message_type='whatsapp_message', author_id=partner.id,
                         subtype_xmlid='mail.mt_comment', **content)
+            except PG_CONCURRENCY_EXCEPTIONS_TO_RETRY:
+                # A retryable DB conflict (e.g. a browser updating the same
+                # discuss_channel_member rows). Swallowing it here answered the
+                # webhook with 200, so neither Odoo's request retry nor WAHA's
+                # redelivery ever ran and the customer message was LOST.
+                raise
             except Exception:
                 _logger.exception('WAHA: failed posting inbound group message %s', msg_uid)
                 return
@@ -1173,6 +1180,10 @@ class WhatsappAccount(models.Model):
                     subtype_xmlid='mail.mt_comment',
                     **content,
                 )
+        except PG_CONCURRENCY_EXCEPTIONS_TO_RETRY:
+            # Same as the group branch: a concurrency error must propagate so the
+            # message is retried (in-process first, then by WAHA), never dropped.
+            raise
         except Exception:
             _logger.exception("WAHA: failed posting inbound message %s", msg_uid)
             return

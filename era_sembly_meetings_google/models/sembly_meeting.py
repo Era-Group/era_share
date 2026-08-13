@@ -941,11 +941,33 @@ class SemblyMeeting(models.Model):
         budget = self._icp_int('sembly.google_backfill_seconds', 90)
         deadline = time.monotonic() + budget
 
+        # page_limit is the ONLY thing standing between this sweep and a silent
+        # gap. _list_files stops after that many pages of 100 and throws the
+        # remaining pageToken away, so documents past the ceiling are not
+        # "later" — they are unreachable, by this tick and by every tick after
+        # it, because the listing restarts from the newest each time. This
+        # workspace holds 953 of them: at the old ceiling of 10 pages it was 47
+        # documents away from losing the tail without a word in the log.
+        # Raised to a size no Drive of meeting notes reaches soon, and the
+        # count is reported below so the day it IS reached is visible.
+        pages = max(10, self._icp_int('sembly.google_notes_pages', 60))
         try:
-            docs = client.list_gemini_notes(page_limit=10)
+            docs = client.list_gemini_notes(page_limit=pages)
         except GoogleWorkspaceError as exc:
             Log._log('google', 'notes-backfill', 'error', str(exc))
             return True
+        if len(docs) >= pages * 100:
+            Log._log('google', 'notes-backfill', 'error',
+                     "The listing came back full at %s documents, so Drive may "
+                     "hold more that this sweep cannot see. Raise "
+                     "sembly.google_notes_pages." % len(docs))
+
+        # Which documents are already in, asked ONCE. This used to be a
+        # search_count per document — 1 ms each on an unindexed column, so
+        # nothing at 40 documents and about a second at 800, every tick,
+        # forever. One query costs the same as one of them.
+        imported_ids = set(self.sudo().with_context(active_test=False).search(
+            [('google_notes_file_id', '!=', False)]).mapped('google_notes_file_id'))
 
         done = already = unmatched = failed = 0
         exhausted = True
@@ -955,8 +977,7 @@ class SemblyMeeting(models.Model):
                 # whether this run is allowed to call itself finished below.
                 exhausted = False
                 break
-            if self.sudo().with_context(active_test=False).search_count(
-                    [('google_notes_file_id', '=', doc['id'])]):
+            if doc['id'] in imported_ids:
                 already += 1
                 continue
             # See _cron_sync_google: identity first, heuristic as the fallback.
@@ -976,6 +997,7 @@ class SemblyMeeting(models.Model):
             try:
                 meeting._apply_gemini_notes(
                     client.export_document_text(doc['id']), doc['id'])
+                imported_ids.add(doc['id'])
                 done += 1
             except GoogleWorkspaceError as exc:
                 failed += 1

@@ -518,6 +518,59 @@ class TestSemblyGoogle(TransactionCase):
         self.assertEqual(orphan.gemini_notes, '<p>the first one</p>')
         self.assertEqual(orphan.google_notes_file_id, 'doc-first')
 
+    def test_the_sweep_reaches_past_a_thousand_documents(self):
+        """The page ceiling is the only thing between this sweep and a silent
+        gap: _list_files throws the remaining pageToken away, and the listing
+        restarts from the newest every tick, so anything past the ceiling is
+        unreachable forever rather than merely late. This workspace's 953
+        documents were 47 away from losing the tail without a word."""
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('sembly.google_notes_state', 'running')
+        icp.set_param('sembly.google_enabled', '1')
+        icp.set_param('sembly.google_service_account', '{"client_email":"x","private_key":"y"}')
+        icp.set_param('sembly.google_subject', 'crm@era.net.sa')
+        asked = []
+
+        class _Client:
+            def list_gemini_notes(self, **kw):
+                asked.append(kw.get('page_limit'))
+                return []
+            def export_document_text(self, file_id):
+                return ''
+
+        with patch.object(type(self.Meeting), '_google_client',
+                          lambda self, subject=None: _Client()):
+            self.Meeting._cron_google_notes_backfill()
+        self.assertTrue(asked and asked[0] >= 10)
+        self.assertGreaterEqual(asked[0] * 100, 5000,
+                                "the ceiling must clear a realistic Drive")
+
+    def test_a_full_listing_is_reported_instead_of_truncating_in_silence(self):
+        """A listing that comes back exactly full is indistinguishable from one
+        that was cut off — the same trap the Sembly backfill documents for its
+        200-meeting cap. Say so rather than hide it."""
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('sembly.google_notes_state', 'running')
+        icp.set_param('sembly.google_enabled', '1')
+        icp.set_param('sembly.google_service_account', '{"client_email":"x","private_key":"y"}')
+        icp.set_param('sembly.google_subject', 'crm@era.net.sa')
+        icp.set_param('sembly.google_notes_pages', '1')   # ceiling of 100
+
+        class _Client:
+            def list_gemini_notes(self, **kw):
+                return [{'id': 'd%d' % i, 'name': 'x', 'createdTime': '2026-01-01T00:00:00Z'}
+                        for i in range(1000)]
+            def export_document_text(self, file_id):
+                return ''
+
+        with patch.object(type(self.Meeting), '_google_client',
+                          lambda self, subject=None: _Client()):
+            self.Meeting._cron_google_notes_backfill()
+        errors = self.env['sembly.sync.log'].search(
+            [('operation', '=', 'notes-backfill'), ('state', '=', 'error')])
+        self.assertTrue(any('came back full' in e.message for e in errors),
+                        "a full listing must be reported, not swallowed")
+
     def test_the_notes_listing_honours_its_page_limit(self):
         """page_limit was accepted and never forwarded, so both listings were
         pinned at 10 pages / 1000 files — 47 away from silently truncating the

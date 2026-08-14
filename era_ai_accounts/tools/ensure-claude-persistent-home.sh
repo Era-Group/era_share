@@ -138,8 +138,12 @@ json_has_account() { [ -s "$1" ] && grep -q '"oauthAccount"' "$1" 2>/dev/null; }
 
 if json_has_account "$JSON_LIVE"; then
     # Keep the previous good copy one generation back, so a bad refresh is
-    # never the end of the line.
-    [ -f "$JSON_BAK" ] && cp -a "$JSON_BAK" "$JSON_BAK.prev" 2>/dev/null
+    # never the end of the line. Rotate only a HEALTHY backup: pushing a stub
+    # into .prev would spend the second generation on something worthless and
+    # leave the real fallback nowhere.
+    if json_has_account "$JSON_BAK"; then
+        cp -a "$JSON_BAK" "$JSON_BAK.prev" 2>/dev/null
+    fi
     cp -a "$JSON_LIVE" "$JSON_BAK" 2>/dev/null &&
         log "backed up .claude.json ($(du -h "$JSON_BAK" | cut -f1))"
 elif json_has_account "$JSON_BAK"; then

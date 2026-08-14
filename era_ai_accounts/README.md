@@ -340,7 +340,7 @@ bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-claude-p
 * **`ensure-kimi-cli.sh`** — installs the Kimi Code CLI where Odoo can find it
   (see the Kimi section above).
 * **`ensure-claude-persistent-home.sh`** — makes `/opt/odoo/.claude` a symlink to
-  `/var/lib/odoo/claude-home`, so Claude Code's transcripts, memory and login
+  `/var/lib/odoo/.claude`, so Claude Code's transcripts, memory and login
   survive a container rebuild. On this host only `/var/lib/odoo`,
   `/var/log/odoo` and `/opt/odoo/{ce,ee,themes}` are real mounts; everything
   else is overlay and is destroyed on rebuild. A symlink is used rather than

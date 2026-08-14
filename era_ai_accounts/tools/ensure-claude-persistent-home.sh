@@ -20,9 +20,14 @@
 # shows the seeded history in the already-running process. The cost of losing
 # the race is a ~15 s window at boot, not lost history.
 #
-# What it does: makes /opt/odoo/.claude a SYMLINK to /var/lib/odoo/claude-home
+# What it does: makes /opt/odoo/.claude a SYMLINK to /var/lib/odoo/.claude
 # (migrating whatever is already there on the first run), and exports
 # CLAUDE_CONFIG_DIR in ~/.bashrc.
+#
+# The volume-side directory was named claude-home until 2026-08-14; it is now
+# /var/lib/odoo/.claude so both ends of the symlink carry the same name. Step 2
+# rewrites a stale CLAUDE_CONFIG_DIR line in ~/.bashrc, so an old checkout that
+# already exported the previous path corrects itself on the next boot.
 #
 # Why both:
 #   * The Claude Code VS Code extension spawns the CLI *directly* from the
@@ -45,7 +50,7 @@ set -uo pipefail
 ODOO_USER=odoo
 ODOO_HOME=/opt/odoo
 LIVE="$ODOO_HOME/.claude"
-PERSIST=/var/lib/odoo/claude-home
+PERSIST=/var/lib/odoo/.claude
 BASHRC="$ODOO_HOME/.bashrc"
 EXPORT_LINE="export CLAUDE_CONFIG_DIR=$PERSIST"
 
@@ -115,8 +120,18 @@ else
 fi
 
 # --- 2. env var for shell-launched claude (the more complete fix) ------------
-if [ -f "$BASHRC" ] && grep -qF "CLAUDE_CONFIG_DIR" "$BASHRC"; then
+# Match on the exact line, not just the variable name: testing for the name
+# alone left a stale value in place forever, silently exporting a path that no
+# longer exists once PERSIST was renamed.
+if [ -f "$BASHRC" ] && grep -qxF "$EXPORT_LINE" "$BASHRC"; then
     log "CLAUDE_CONFIG_DIR already in $BASHRC"
+elif [ -f "$BASHRC" ] && grep -q "^export CLAUDE_CONFIG_DIR=" "$BASHRC"; then
+    old=$(grep -m1 "^export CLAUDE_CONFIG_DIR=" "$BASHRC" | cut -d= -f2-)
+    if sed -i "s#^export CLAUDE_CONFIG_DIR=.*#$EXPORT_LINE#" "$BASHRC"; then
+        log "CLAUDE_CONFIG_DIR pointed at $old — rewritten to $PERSIST"
+    else
+        log "ERROR: could not rewrite CLAUDE_CONFIG_DIR in $BASHRC (still $old)"
+    fi
 else
     printf '\n# Keep Claude Code state on the persistent volume (survives rebuilds).\n%s\n' \
         "$EXPORT_LINE" >> "$BASHRC" && log "added CLAUDE_CONFIG_DIR to $BASHRC"

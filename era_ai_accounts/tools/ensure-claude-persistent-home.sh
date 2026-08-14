@@ -82,6 +82,20 @@ else
         "$EXPORT_LINE" >> "$BASHRC" && log "added CLAUDE_CONFIG_DIR to $BASHRC"
 fi
 
+# --- 2b. ~/.claude.json ------------------------------------------------------
+# It lives BESIDE the directory, not inside it, and Claude rewrites it with
+# temp+rename — which replaces a symlink with a regular file, so linking it is
+# not an option. Keep a copy on the volume instead: seed it when missing (right
+# after a rebuild) and refresh it whenever the live file is present.
+JSON_LIVE="$ODOO_HOME/.claude.json"
+JSON_BAK="$PERSIST/.claude-json.backup"
+if [ -f "$JSON_LIVE" ]; then
+    cp -a "$JSON_LIVE" "$JSON_BAK" 2>/dev/null && log "backed up .claude.json ($(du -h "$JSON_BAK" | cut -f1))"
+elif [ -f "$JSON_BAK" ]; then
+    cp -a "$JSON_BAK" "$JSON_LIVE" && chmod 600 "$JSON_LIVE" &&
+        log "restored .claude.json from the volume (account + MCP connectors)"
+fi
+
 # --- 3. report --------------------------------------------------------------
 if [ -d "$PERSIST/projects/-opt-odoo" ]; then
     log "state: $(find "$PERSIST/projects/-opt-odoo" -maxdepth 1 -name '*.jsonl' | wc -l) transcript(s), $(ls -1 "$PERSIST/projects/-opt-odoo/memory" 2>/dev/null | wc -l) memory file(s)"

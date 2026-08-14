@@ -220,6 +220,31 @@ KIMI_CLI_MODELS = [
     ("kimi-k2.5", "Kimi K2.5"),
 ]
 
+# --- Kimi Code plan (flat-rate monthly subscription) -------------------------
+# A second, separate Kimi surface: the "Kimi Code" plan billed monthly instead
+# of per token (see https://www.kimi.com/code). It is NOT the same account as
+# the Open Platform above — the two have separate billing, and a consumer
+# kimi.com chat subscription funds neither.
+#
+# Two things differ from the platform endpoint and both matter:
+#   * it speaks the **Anthropic** protocol, not the OpenAI one (verified: POST
+#     /messages exists, and the CLI's own catalog maps this provider to
+#     @ai-sdk/anthropic), so the transport must export
+#     KIMI_MODEL_PROVIDER_TYPE=anthropic;
+#   * it serves its own model ids ("kimi-for-coding", "k3", …), not the
+#     platform's ("kimi-k2.7-code", "kimi-k3", …).
+# Auth is a Bearer API key all the same, and GET /models is a token-free check.
+KIMI_CODING_BASE_URL = "https://api.kimi.com/coding/v1"
+
+# Model ids, labels and context windows read out of the CLI binary's own
+# provider catalog (kimi-code 0.36.1).
+KIMI_CODING_MODELS = [
+    ("kimi-for-coding", "Kimi K2.7 Code (plan)"),
+    ("kimi-for-coding-highspeed", "Kimi K2.7 Code — high speed (plan)"),
+    ("k3", "Kimi K3 — 1M context (plan)"),
+    ("k3-256k", "Kimi K3 — 256K context (plan)"),
+]
+
 
 def _codex_plan_from_id_token(id_token):
     """Best-effort ChatGPT plan name ('plus', 'pro', …) from a Codex id_token.
@@ -341,6 +366,23 @@ class EraAiAccount(models.Model):
     auth_prefix = fields.Char(default="Bearer")
     referer = fields.Char(help="Optional HTTP-Referer header (custom/OpenRouter).")
     title = fields.Char(help="Optional X-Title header (custom/OpenRouter).")
+
+    # --- Kimi (Moonshot AI) ---------------------------------------------------
+    kimi_plan = fields.Selection(
+        selection=[
+            ("platform", "Open Platform — pay per token"),
+            ("coding", "Kimi Code plan — monthly subscription"),
+        ],
+        string="Kimi plan",
+        default="platform",
+        help="Which Kimi surface this account's key belongs to. They are "
+             "separate products with separate billing: the Open Platform "
+             "(platform.kimi.ai) bills per token at api.moonshot.ai, while the "
+             "Kimi Code plan (kimi.com/code) is a flat monthly subscription "
+             "served from api.kimi.com/coding over the Anthropic protocol, with "
+             "its own model ids. A consumer kimi.com chat subscription funds "
+             "neither.",
+    )
 
     # --- Cloudflare Workers AI -----------------------------------------------
     cf_account_id = fields.Char(
@@ -556,6 +598,23 @@ class EraAiAccount(models.Model):
                         "connected account. Remove it from 'CLI extra arguments'.",
                         flag))
 
+    @api.constrains("kimi_plan", "auth_mode", "provider")
+    def _check_kimi_plan(self):
+        # The Kimi Code plan's endpoint speaks the Anthropic protocol, which the
+        # account's HTTP transport (OpenAI-compatible /chat/completions) does not
+        # talk. The CLI does — it selects the protocol per provider — so the
+        # subscription is routed through the CLI proxy, exactly like Z.AI's GLM
+        # Coding Plan. Pay-per-token keys work in either mode.
+        for rec in self:
+            if (rec.provider == "kimi" and rec.kimi_plan == "coding"
+                    and rec.auth_mode != "cli_proxy"):
+                raise ValidationError(_(
+                    "The Kimi Code plan (monthly subscription) is served over "
+                    "the Anthropic protocol, so it runs through the local CLI "
+                    "proxy. Set the auth mode to 'Local CLI proxy', or pick the "
+                    "'Open Platform — pay per token' plan for a direct API "
+                    "account."))
+
     @api.constrains("base_url")
     def _check_base_url(self):
         # Keys/tokens are attached to whatever this URL is — restrict it to real
@@ -599,6 +658,25 @@ class EraAiAccount(models.Model):
         "zai": "glm-4.6",
         "kimi": "kimi-k2.6",
     }
+
+    # ------------------------------------------------------------------- Kimi
+    def _kimi_is_coding_plan(self):
+        """True when this Kimi account's key belongs to the Kimi Code plan."""
+        self.ensure_one()
+        return self.provider == "kimi" and self.kimi_plan == "coding"
+
+    def _kimi_base_url(self):
+        """Endpoint for this Kimi account: the explicit override, else the
+        default of the selected plan."""
+        self.ensure_one()
+        default = KIMI_CODING_BASE_URL if self._kimi_is_coding_plan() else KIMI_OPENAI_BASE_URL
+        return (self.base_url or default).strip().rstrip("/")
+
+    def _kimi_protocol(self):
+        """Wire protocol the selected Kimi endpoint speaks. The Code plan is
+        Anthropic-shaped (POST /messages); the Open Platform is OpenAI-shaped."""
+        self.ensure_one()
+        return "anthropic" if self._kimi_is_coding_plan() else "openai"
 
     # ------------------------------------------------------------- Cloudflare
     def _cloudflare_account(self):
@@ -871,7 +949,8 @@ class EraAiAccount(models.Model):
             if self.provider == "zai":
                 return ZAI_CLI_MODELS[0][0]
             if self.provider == "kimi":
-                return KIMI_CLI_MODELS[0][0]
+                return (KIMI_CODING_MODELS if self._kimi_is_coding_plan()
+                        else KIMI_CLI_MODELS)[0][0]
         return self._PROVIDER_DEFAULT_MODEL.get(self.provider)
 
     def _default_chat_model(self):
@@ -1476,8 +1555,10 @@ class EraAiAccount(models.Model):
                     "non-interactively here and cannot use its own browser "
                     "login.", self.name))
             cfg["kimi_api_key"] = token
-            cfg["kimi_base_url"] = (
-                self.base_url or kimi_cli_transport.KIMI_DEFAULT_BASE_URL).strip()
+            cfg["kimi_base_url"] = self._kimi_base_url()
+            # The Code plan's endpoint is Anthropic-shaped; the Open Platform's
+            # is OpenAI-shaped. Getting this wrong fails every call.
+            cfg["kimi_provider_type"] = self._kimi_protocol()
             cfg["config_dir"] = self._cli_managed_config_dir(create=True)
         return cfg
 
@@ -1562,8 +1643,10 @@ class EraAiAccount(models.Model):
                 # separately over HTTP (the same key serves both Kimi surfaces).
                 # There is no token-free credential probe in the CLI itself.
                 kimi_cli_transport.check_cli(self._cli_cfg())
+                # Both Kimi surfaces authenticate with a Bearer key and expose a
+                # token-free GET /models (verified live on each).
                 self._http_get_json(
-                    (self.base_url or KIMI_OPENAI_BASE_URL).rstrip("/") + "/models",
+                    self._kimi_base_url() + "/models",
                     {"Authorization": "Bearer %s" % self._get_secret()}, 30)
                 return True
             binary = llm_cli_transport.resolve_cli_binary(self.cli_path or None)
@@ -1598,8 +1681,8 @@ class EraAiAccount(models.Model):
             token = self._get_secret()
             if not token:
                 raise UserError(_("Set the API key before validating."))
-            default_base = ZAI_OPENAI_BASE_URL if self.provider == "zai" else KIMI_OPENAI_BASE_URL
-            base = (self.base_url or default_base).rstrip("/")
+            base = (self._kimi_base_url() if self.provider == "kimi"
+                    else (self.base_url or ZAI_OPENAI_BASE_URL).rstrip("/"))
             self._http_get_json(base + "/models", {"Authorization": "Bearer %s" % token}, 30)
             return True
         # API-key: list models (no token spend) to prove the key works.
@@ -1621,7 +1704,8 @@ class EraAiAccount(models.Model):
             elif self.provider == "zai":
                 cli_models = ZAI_CLI_MODELS
             elif self.provider == "kimi":
-                cli_models = KIMI_CLI_MODELS
+                cli_models = (KIMI_CODING_MODELS if self._kimi_is_coding_plan()
+                              else KIMI_CLI_MODELS)
             else:
                 cli_models = CLAUDE_CLI_MODELS
             rows = [(mid, label, "chat", "") for mid, label in cli_models]

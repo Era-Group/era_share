@@ -174,6 +174,29 @@ mode:
    **Validate connection** runs `kimi --version` plus the token-free `/models`
    check; **Sync models** gives the curated Kimi list.
 
+### Which Kimi key: plan or platform?
+
+Two separate products with **separate billing** — a consumer kimi.com chat
+subscription funds neither. Pick the matching *Kimi plan* on the account:
+
+| | **Kimi Code plan** (`coding`) | **Open Platform** (`platform`) |
+|---|---|---|
+| Get the key at | [kimi.com/code](https://www.kimi.com/code) | [platform.kimi.ai](https://platform.kimi.ai) |
+| Billing | flat monthly subscription | per token (K2.6/K2.7-code ≈ $0.95 in / $4 out per 1M; K3 ≈ $3 / $15) |
+| Endpoint | `api.kimi.com/coding/v1` | `api.moonshot.ai/v1` |
+| Wire protocol | **Anthropic** (`POST /messages`) | OpenAI (`/chat/completions`) |
+| Model ids | `kimi-for-coding`, `kimi-for-coding-highspeed`, `k3`, `k3-256k` | `kimi-k2.6`, `kimi-k3`, `kimi-k2.7-code`, `kimi-k2.5` |
+| Auth mode | **CLI proxy only** | CLI proxy *or* API key |
+
+The plan runs through the CLI proxy because its endpoint is Anthropic-shaped and
+this module's HTTP transport speaks OpenAI chat-completions; the CLI selects the
+protocol per provider, so it handles both. This mirrors Z.AI's GLM Coding Plan.
+**Sync models after switching plans** — the two surfaces share no model ids, and
+the account refuses `coding` in API-key mode.
+
+The plan's usage quota is shared with any other use of that Kimi account, so the
+kill switch and pacing apply as with the other subscription-backed providers.
+
 > **The shipped binary does not match Moonshot's published docs.** Everything
 > below was verified live against **kimi-code 0.36.1**; the docs still describe
 > the older Python `kimi-cli`. There is no `--print`, `--config`, `--work-dir`,

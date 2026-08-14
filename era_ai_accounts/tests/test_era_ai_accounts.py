@@ -1843,6 +1843,115 @@ class TestEraAiAccounts(TransactionCase):
                 acc.cli_extra_args = flag
                 acc.flush_recordset()
 
+    # ---- Kimi Code plan (flat monthly subscription) ----
+    def _kimi_plan_account(self, name="Kimi plan", **vals):
+        return self.Account.create(dict({
+            "name": name, "provider": "kimi", "auth_mode": "cli_proxy",
+            "kimi_plan": "coding", "secret": "sk-plan",
+        }, **vals))
+
+    def test_kimi_coding_plan_endpoint_and_protocol(self):
+        # The plan is a different product from the pay-per-token platform: its
+        # own host AND its own wire protocol (verified live — the CLI posts to
+        # /v1/messages with x-api-key when told the provider is anthropic).
+        acc = self._kimi_plan_account()
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["kimi_base_url"], era_ai_account.KIMI_CODING_BASE_URL)
+        self.assertEqual(cfg["kimi_provider_type"], "anthropic")
+        self.assertEqual(cfg["kimi_api_key"], "sk-plan")
+        self.assertTrue(cfg["config_dir"].endswith("/.kimi-code"))
+        # The platform account stays OpenAI-shaped on the other host.
+        platform = self.Account.create({
+            "name": "Kimi pf", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "sk-pf"})
+        pcfg = platform._cli_cfg()
+        self.assertEqual(pcfg["kimi_base_url"], era_ai_account.KIMI_OPENAI_BASE_URL)
+        self.assertEqual(pcfg["kimi_provider_type"], "openai")
+
+    def test_kimi_coding_plan_has_its_own_model_ids(self):
+        # The plan serves "kimi-for-coding"/"k3", not the platform's
+        # "kimi-k2.7-code"/"kimi-k3" — mixing them up 404s every call.
+        acc = self._kimi_plan_account("Kimi plan sync")
+        acc.action_sync_models()
+        ids = set(acc.model_ids.mapped("model_id"))
+        self.assertEqual(ids, {m[0] for m in era_ai_account.KIMI_CODING_MODELS})
+        self.assertIn("kimi-for-coding", ids)
+        self.assertNotIn("kimi-k2.6", ids)
+        self.assertEqual(acc._default_chat_model(), "kimi-for-coding")
+
+    def test_kimi_plan_switch_reconciles_the_catalog(self):
+        # Switching plans must not leave the other surface's ids selectable.
+        acc = self._kimi_plan_account("Kimi switch")
+        acc.action_sync_models()
+        self.assertIn("kimi-for-coding", acc.model_ids.mapped("model_id"))
+        acc.kimi_plan = "platform"
+        acc.action_sync_models()
+        active = acc.model_ids.filtered("active").mapped("model_id")
+        self.assertIn("kimi-k2.6", active)
+        self.assertNotIn("kimi-for-coding", active)
+
+    def test_kimi_coding_plan_requires_cli_proxy(self):
+        # The plan endpoint is Anthropic-shaped; the account's HTTP transport
+        # only speaks OpenAI chat-completions, so it must go through the CLI.
+        with self.assertRaises(ValidationError):
+            self.Account.create({
+                "name": "Kimi plan api", "provider": "kimi",
+                "auth_mode": "api_key", "kimi_plan": "coding", "secret": "sk"})
+
+    def test_kimi_coding_plan_validate_hits_plan_host(self):
+        acc = self._kimi_plan_account("Kimi plan val")
+        seen = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "0.36.1"
+            stderr = ""
+
+        def fake_get(self2, url, headers, timeout):
+            seen["url"], seen["headers"] = url, headers
+            return {"data": []}
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", return_value=_Proc()), \
+             patch.object(type(acc), "_http_get_json", fake_get):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertEqual(seen["url"], "https://api.kimi.com/coding/v1/models")
+        self.assertEqual(seen["headers"]["Authorization"], "Bearer sk-plan")
+
+    def test_kimi_coding_plan_agent_routes(self):
+        acc = self._kimi_plan_account("Kimi plan route")
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Kimi plan agent", "llm_model": "gpt-4o",
+            "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        with patch.object(kimi_cli_transport, "cli_complete",
+                          return_value="plan answer") as mocked:
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["plan answer"])
+        self.assertEqual(mocked.call_args.args[1], "kimi-for-coding")
+        cfg = mocked.call_args.args[0]
+        self.assertEqual(cfg["kimi_provider_type"], "anthropic")
+        self.assertEqual(cfg["kimi_base_url"], era_ai_account.KIMI_CODING_BASE_URL)
+
+    def test_kimi_context_size_per_model(self):
+        # The CLI needs a context window for the env-synthesized model; the 1M
+        # models are named differently on each surface.
+        self.assertEqual(kimi_cli_transport._context_size("kimi-k3"), 1048576)
+        self.assertEqual(kimi_cli_transport._context_size("k3"), 1048576)
+        self.assertEqual(kimi_cli_transport._context_size("kimi-for-coding"),
+                         kimi_cli_transport.KIMI_DEFAULT_CONTEXT_SIZE)
+
+    def test_kimi_plan_base_url_override_wins(self):
+        acc = self._kimi_plan_account(
+            "Kimi plan proxy", base_url="https://gateway.internal/coding/v1")
+        self.assertEqual(acc._cli_cfg()["kimi_base_url"],
+                         "https://gateway.internal/coding/v1")
+        # ...but the protocol still follows the selected plan.
+        self.assertEqual(acc._cli_cfg()["kimi_provider_type"], "anthropic")
+
     # ---- API key mode (OpenAI-compatible /chat/completions) ----
     def test_kimi_api_sync_models(self):
         acc = self.Account.create({

@@ -74,13 +74,19 @@ _STATE_FILE = "era_ai_cli_proxy.kimi.last"
 
 # Default endpoint of Moonshot's OpenAI-compatible API.
 KIMI_DEFAULT_BASE_URL = "https://api.moonshot.ai/v1"
-# Protocol adapter the synthesized provider speaks. Moonshot's API is
-# OpenAI-compatible, and this is a free-form string in the CLI's schema.
+# Protocol the synthesized provider speaks. The CLI accepts "anthropic",
+# "openai", "openai_responses" and "google-genai"; Moonshot's Open Platform is
+# OpenAI-shaped, while the Kimi Code plan's endpoint is Anthropic-shaped, so the
+# caller passes the right one per account (cfg["kimi_provider_type"]).
 KIMI_PROVIDER_TYPE = "openai"
 # The CLI requires a context size for the env-synthesized model; it only drives
-# its own context management, so a sane default per family is enough.
+# its own context management, so a sane default per family is enough. Values
+# come from the CLI's own provider catalog.
 KIMI_DEFAULT_CONTEXT_SIZE = 262144
-KIMI_CONTEXT_SIZES = {"kimi-k3": 1048576}
+KIMI_CONTEXT_SIZES = {
+    "kimi-k3": 1048576,   # Open Platform
+    "k3": 1048576,        # Kimi Code plan
+}
 
 # Files written into the account's managed KIMI_CODE_HOME before each call.
 _CONFIG_FILE = "config.toml"

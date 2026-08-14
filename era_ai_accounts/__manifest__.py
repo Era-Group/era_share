@@ -27,10 +27,12 @@ stack with first-class **AI accounts**:
 * **Z.AI (GLM) two ways** — either the OpenAI-compatible **API key** route, or
   the **CLI proxy** (the Claude binary pointed at Z.AI's Anthropic-compatible
   endpoint with a GLM Coding Plan key — flat-rate, no per-token billing).
-* **Kimi (Moonshot AI) two ways** — the OpenAI-compatible **API key** route
-  (``api.moonshot.ai/v1``, native tool-calling), or the **CLI proxy** running
-  the first-party ``kimi`` binary in print mode, fenced down to pure text
-  generation (no tools, no shell, one step, empty working directory).
+* **Kimi (Moonshot AI) three ways** — the **Kimi Code plan** (flat monthly
+  subscription at ``api.kimi.com/coding``, Anthropic protocol) through the CLI
+  proxy, the pay-per-token **Open Platform** (``api.moonshot.ai/v1``) through
+  either the CLI proxy or a direct API key, all running the first-party ``kimi``
+  binary fenced down to pure text generation (no tools, one step, empty working
+  directory, built-in agent persona replaced).
 * **Speech-to-text** — transcribe audio through an OpenAI API-key account
   (Whisper / ``gpt-4o-transcribe``) via ``account.transcribe()``; the CLI proxies
   are text-only.
@@ -42,7 +44,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.13.0",
+    "version": "19.0.1.14.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

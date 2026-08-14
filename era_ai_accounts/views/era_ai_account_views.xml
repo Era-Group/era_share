@@ -93,6 +93,16 @@
                                 no API key, one shared login. If you don't link one, the CLI falls back
                                 to the server's own <code>~/.codex</code> login under the HOME below.
                             </div>
+                            <div class="text-muted mt-2" invisible="provider != 'kimi' or kimi_plan != 'coding'">
+                                <b>Kimi Code plan</b> (flat monthly subscription, <a
+                                href="https://www.kimi.com/code" target="_blank">kimi.com/code</a>):
+                                paste the plan's API key below. Calls go to
+                                <code>api.kimi.com/coding/v1</code> over the <b>Anthropic</b>
+                                protocol with the plan's own model ids
+                                (<code>kimi-for-coding</code>, <code>k3</code>…) — <b>Sync models</b>
+                                after switching plans. No per-token billing; the plan's usage quota
+                                is shared with any other use of that Kimi account.
+                            </div>
                             <div class="text-muted mt-2" invisible="provider != 'kimi'">
                                 <b>Kimi (Moonshot AI)</b> over the CLI: the local <code>kimi</code>
                                 binary (Kimi Code CLI) runs in <b>prompt mode</b>, locked down to
@@ -115,6 +125,7 @@
                         </div>
                         <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex / kimi on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
+                        <field name="kimi_plan" invisible="provider != 'kimi'"/>
                         <field name="secret" password="True" string="Provider API key"
                                invisible="provider not in ['zai', 'kimi']"
                                placeholder="paste the provider API key (write-only)"

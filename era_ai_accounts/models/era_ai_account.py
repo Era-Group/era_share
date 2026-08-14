@@ -20,6 +20,7 @@ from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 from ..utils import codex_cli_transport
 from ..utils import crypto
+from ..utils import kimi_cli_transport
 from ..utils import llm_cli_transport
 
 _logger = logging.getLogger(__name__)
@@ -47,12 +48,12 @@ _PKCE_PARAM = "era_ai_accounts.oauth_pkce.%s"
 # once the login completes, fails, or is superseded.
 _DEVICE_PARAM = "era_ai_accounts.codex_device.%s"
 
-# Providers that can route through the local CLI proxy. Anthropic's `claude`
-# and OpenAI's `codex` use their own first-party binary under the connected
-# account's auth; Z.AI (GLM) reuses the SAME `claude` binary but pointed at
-# Z.AI's Anthropic-compatible endpoint with a GLM Coding Plan API key (see
-# _cli_cfg / llm_cli_transport).
-CLI_PROXY_PROVIDERS = ("anthropic", "openai", "zai")
+# Providers that can route through the local CLI proxy. Anthropic's `claude`,
+# OpenAI's `codex` and Moonshot's `kimi` use their own first-party binary under
+# the connected account's auth; Z.AI (GLM) reuses the SAME `claude` binary but
+# pointed at Z.AI's Anthropic-compatible endpoint with a GLM Coding Plan API key
+# (see _cli_cfg / llm_cli_transport).
+CLI_PROXY_PROVIDERS = ("anthropic", "openai", "zai", "kimi")
 
 # Per-provider layout of the linked-account credential store, mirroring what
 # each first-party CLI expects:
@@ -166,6 +167,55 @@ ZAI_CLI_MODELS = [
     ("glm-4.5-air", "GLM-4.5 Air (fast)"),
 ]
 
+# --- Kimi (Moonshot AI) ------------------------------------------------------
+# Like Z.AI, Kimi is reachable two ways with the SAME API key:
+#   * "api_key"   -> OpenAI-compatible chat at api.moonshot.ai/v1
+#                    (/chat/completions, Bearer auth, native tool-calling).
+#   * "cli_proxy" -> Moonshot's first-party `kimi` binary (Kimi Code CLI) in
+#                    print mode. The key is handed to it through KIMI_API_KEY /
+#                    KIMI_BASE_URL; with no key the CLI uses its own `kimi login`
+#                    under the account's CLI HOME (see kimi_cli_transport).
+# Kimi has no per-model price API, so the rows below carry indicative USD rates
+# captured from the public pricing page (2026-08) — verify the live page:
+#   https://platform.kimi.ai/docs/pricing/chat
+# One source of truth for the endpoint: the transport owns it (it is also the
+# KIMI_BASE_URL it hands to the CLI), and the HTTP paths here reuse it.
+KIMI_OPENAI_BASE_URL = kimi_cli_transport.KIMI_DEFAULT_BASE_URL
+
+# Curated Kimi chat models for the OpenAI-compatible API ("api_key" mode).
+# Editable per account; "Sync models" re-applies this set.
+KIMI_MODELS = [
+    # (model_id, label, kind, rate)
+    ("kimi-k2.6", "Kimi K2.6 (recommended, multimodal)", "chat",
+     "≈$0.95 in / $4.00 out per 1M tokens"),
+    ("kimi-k3", "Kimi K3 (flagship, 1M context)", "chat",
+     "≈$3.00 in / $15.00 out per 1M tokens"),
+    ("kimi-k2.7-code", "Kimi K2.7 Code (coding)", "chat",
+     "≈$0.95 in / $4.00 out per 1M tokens"),
+    ("kimi-k2.7-code-highspeed", "Kimi K2.7 Code — high speed", "chat",
+     "≈$0.95 in / $4.00 out per 1M tokens"),
+    ("kimi-k2.5", "Kimi K2.5", "chat", "≈$0.60 in / $3.00 out per 1M tokens"),
+    # The moonshot-v1 generation is being retired (announced sunset 2026-08-31);
+    # kept so an existing integration pinned to one keeps working until then.
+    ("moonshot-v1-128k", "Moonshot v1 128k (legacy)", "chat",
+     "legacy — retiring 2026-08-31, see pricing page"),
+    ("moonshot-v1-32k", "Moonshot v1 32k (legacy)", "chat",
+     "legacy — retiring 2026-08-31, see pricing page"),
+    ("moonshot-v1-8k", "Moonshot v1 8k (legacy)", "chat",
+     "legacy — retiring 2026-08-31, see pricing page"),
+]
+
+# Curated Kimi models for the CLI proxy ("cli_proxy" mode). The id is exported
+# as KIMI_MODEL_NAME rather than passed to --model, which expects an alias
+# declared in the CLI's own [models] config table (see kimi_cli_transport).
+# Chat only — the CLI is text-only here.
+KIMI_CLI_MODELS = [
+    ("kimi-k2.6", "Kimi K2.6 (recommended)"),
+    ("kimi-k3", "Kimi K3 (flagship)"),
+    ("kimi-k2.7-code", "Kimi K2.7 Code"),
+    ("kimi-k2.5", "Kimi K2.5"),
+]
+
 
 def _codex_plan_from_id_token(id_token):
     """Best-effort ChatGPT plan name ('plus', 'pro', …) from a Codex id_token.
@@ -199,6 +249,7 @@ class EraAiAccount(models.Model):
             ("anthropic", "Anthropic (Claude)"),
             ("openai", "OpenAI"),
             ("zai", "Z.AI (GLM / Zhipu)"),
+            ("kimi", "Kimi (Moonshot AI)"),
             ("google", "Google Gemini"),
             ("cloudflare", "Cloudflare Workers AI"),
             ("custom", "Custom (OpenAI-compatible)"),
@@ -214,9 +265,10 @@ class EraAiAccount(models.Model):
         required=True,
         default="cli_proxy",
         help="CLI proxy routes calls through a locally-authenticated first-party "
-             "CLI — Claude Code for Anthropic, Codex for OpenAI, or the Claude "
-             "binary pointed at Z.AI's endpoint for GLM. API key calls the "
-             "provider over HTTP (OpenAI/Gemini/Cloudflare/Z.AI/custom).",
+             "CLI — Claude Code for Anthropic, Codex for OpenAI, Kimi Code for "
+             "Moonshot, or the Claude binary pointed at Z.AI's endpoint for GLM. "
+             "API key calls the provider over HTTP "
+             "(OpenAI/Gemini/Cloudflare/Z.AI/Kimi/custom).",
     )
 
     # --- Sharing / ownership -------------------------------------------------
@@ -299,14 +351,16 @@ class EraAiAccount(models.Model):
         string="CLI binary path",
         help="Optional override for the AI CLI binary. Auto-detected when empty: "
              "the Claude Code extension binary for Anthropic, `codex` on PATH "
-             "(or ERA_AI_CODEX_BIN) for OpenAI.",
+             "(or ERA_AI_CODEX_BIN) for OpenAI, `kimi` on PATH (or "
+             "ERA_AI_KIMI_BIN) for Kimi.",
     )
     cli_home_dir = fields.Char(
         string="CLI HOME",
         default="/opt/odoo",
         help="HOME directory whose connected-account auth the CLI should use "
-             "(~/.claude for Claude, ~/.codex for Codex). Ignored once you link "
-             "an account below (the linked credentials take over).",
+             "(~/.claude for Claude, ~/.codex for Codex, ~/.kimi for Kimi). "
+             "Ignored once you link an account below (the linked credentials "
+             "take over).",
     )
     cli_extra_args = fields.Char(
         string="CLI extra arguments", groups=MANAGER_GROUP,
@@ -442,7 +496,8 @@ class EraAiAccount(models.Model):
             if rec.auth_mode == "cli_proxy" and rec.provider not in CLI_PROXY_PROVIDERS:
                 raise ValidationError(_(
                     "The local CLI proxy is only available for the Anthropic "
-                    "(Claude CLI) and OpenAI (Codex CLI) providers."
+                    "(Claude CLI), OpenAI (Codex CLI), Z.AI (GLM) and Kimi "
+                    "(Kimi Code CLI) providers."
                 ))
 
     # Flags an admin must NOT pass via cli_extra_args: they override the
@@ -453,7 +508,7 @@ class EraAiAccount(models.Model):
     _CLI_DENYLIST_TOKENS = (
         "--dangerously-skip-permissions", "--dangerously", "--bypass",
         "--allow-write", "--allow-net", "--allow-all", "--full-auto",
-        "--yolo", "--y", "--no-sandbox", "--disable-sandbox",
+        "--yolo", "--y", "-y", "--no-sandbox", "--disable-sandbox",
         # Claude Code permission grants / tool overrides
         "--allowedTools", "--allow-tools", "--disallowedTools",
         "--permission-mode", "--add-dir", "--resume", "--continue",
@@ -461,6 +516,15 @@ class EraAiAccount(models.Model):
         "--enable", "--config", "--config-file", "-c",
         "--ask-for-approval", "--sandbox-mode",
         "--project-doc", "--project-doc-max-bytes",
+        # Kimi (Kimi Code CLI) capability re-enablers: approval bypasses, the
+        # workspace/tool fences the transport sets, and session resumption
+        # (which would replay another conversation's context into this call).
+        "--yes", "--auto-approve", "--afk",
+        "--work-dir", "-w", "--skills-dir",
+        "--agent", "--agent-file",
+        "--mcp-config", "--mcp-config-file",
+        "--max-ralph-iterations",
+        "--session", "-S", "-r", "-C",
     )
 
     @api.constrains("cli_extra_args")
@@ -513,10 +577,15 @@ class EraAiAccount(models.Model):
         if self.auth_mode == "cli_proxy":
             # Z.AI cli_proxy reuses the Claude (anthropic_cli) transport — the
             # same `claude` binary, redirected to Z.AI via _cli_cfg's env keys.
-            return "openai_cli" if self.provider == "openai" else "anthropic_cli"
+            # Kimi has its own first-party binary, hence its own token.
+            if self.provider == "openai":
+                return "openai_cli"
+            if self.provider == "kimi":
+                return "kimi_cli"
+            return "anthropic_cli"
         if self.provider == "custom":
             return "custom_llm"
-        return self.provider  # openai / google / anthropic / cloudflare / zai
+        return self.provider  # openai / google / anthropic / cloudflare / zai / kimi
 
     _PROVIDER_DEFAULT_MODEL = {
         "anthropic": "claude-opus-4-8",
@@ -524,6 +593,7 @@ class EraAiAccount(models.Model):
         "google": "gemini-2.5-flash",
         "cloudflare": "@cf/meta/llama-3.1-8b-instruct",
         "zai": "glm-4.6",
+        "kimi": "kimi-k2.6",
     }
 
     # ------------------------------------------------------------- Cloudflare
@@ -796,6 +866,8 @@ class EraAiAccount(models.Model):
                 return CODEX_CLI_MODELS[0][0]
             if self.provider == "zai":
                 return ZAI_CLI_MODELS[0][0]
+            if self.provider == "kimi":
+                return KIMI_CLI_MODELS[0][0]
         return self._PROVIDER_DEFAULT_MODEL.get(self.provider)
 
     def _default_chat_model(self):
@@ -889,6 +961,12 @@ class EraAiAccount(models.Model):
         {active, stale}``.
         """
         self.ensure_one()
+        if self.provider not in _CLI_PROFILES:
+            # Key-authenticated CLI providers (Z.AI, Kimi): there is no in-app
+            # subscription link to read, and no credential layout of their own.
+            # Answer 'none' rather than falling through to the Anthropic layout
+            # and probing another provider's credential file.
+            return {"state": "none", "linked": False}
         try:
             with open(self._cli_credentials_path(), "r") as f:
                 data = json.load(f)
@@ -1378,6 +1456,17 @@ class EraAiAccount(models.Model):
                     "ANTHROPIC_AUTH_TOKEN).", self.name))
             cfg["anthropic_base_url"] = (self.base_url or ZAI_ANTHROPIC_BASE_URL).strip()
             cfg["anthropic_auth_token"] = token
+        # Kimi over its own CLI: hand the account's key to the `kimi` binary as
+        # KIMI_API_KEY / KIMI_BASE_URL. The key is OPTIONAL here — with none the
+        # CLI uses whatever `kimi login` stored under the account's CLI HOME
+        # (~/.kimi), which is a supported way to run it. It is the transport,
+        # not this method, that decides what that implies for concurrency.
+        if self.provider == "kimi":
+            token = self._get_secret()
+            if token:
+                cfg["kimi_api_key"] = token
+                cfg["kimi_base_url"] = (
+                    self.base_url or kimi_cli_transport.KIMI_DEFAULT_BASE_URL).strip()
         return cfg
 
     def _assert_usable(self):
@@ -1456,6 +1545,18 @@ class EraAiAccount(models.Model):
                 # `codex login status` proves both that the binary runs and that
                 # the account's credentials (linked or ambient) are accepted.
                 return codex_cli_transport.check_login(self._cli_cfg())
+            if self.provider == "kimi":
+                # `kimi --version` proves the binary runs; the key (when one is
+                # set) is checked separately over HTTP — the same key serves
+                # both Kimi surfaces. With no key the CLI's own `kimi login`
+                # is in charge, and there is nothing token-free to probe.
+                kimi_cli_transport.check_cli(self._cli_cfg())
+                token = self._get_secret()
+                if token:
+                    self._http_get_json(
+                        (self.base_url or KIMI_OPENAI_BASE_URL).rstrip("/") + "/models",
+                        {"Authorization": "Bearer %s" % token}, 30)
+                return True
             binary = llm_cli_transport.resolve_cli_binary(self.cli_path or None)
             if not binary:
                 raise UserError(_("Claude CLI binary not found on this server."))
@@ -1483,12 +1584,13 @@ class EraAiAccount(models.Model):
                    % self._cloudflare_account())
             self._http_get_json(url, {"Authorization": "Bearer %s" % token}, 30)
             return True
-        if self.provider == "zai":
+        if self.provider in ("zai", "kimi"):
             # OpenAI-compatible /models listing — token-free key check.
             token = self._get_secret()
             if not token:
-                raise UserError(_("Set the Z.AI API key before validating."))
-            base = (self.base_url or ZAI_OPENAI_BASE_URL).rstrip("/")
+                raise UserError(_("Set the API key before validating."))
+            default_base = ZAI_OPENAI_BASE_URL if self.provider == "zai" else KIMI_OPENAI_BASE_URL
+            base = (self.base_url or default_base).rstrip("/")
             self._http_get_json(base + "/models", {"Authorization": "Bearer %s" % token}, 30)
             return True
         # API-key: list models (no token spend) to prove the key works.
@@ -1509,6 +1611,8 @@ class EraAiAccount(models.Model):
                 cli_models = CODEX_CLI_MODELS
             elif self.provider == "zai":
                 cli_models = ZAI_CLI_MODELS
+            elif self.provider == "kimi":
+                cli_models = KIMI_CLI_MODELS
             else:
                 cli_models = CLAUDE_CLI_MODELS
             rows = [(mid, label, "chat", "") for mid, label in cli_models]
@@ -1520,6 +1624,10 @@ class EraAiAccount(models.Model):
             # Z.AI has no per-model price API either; ship the curated GLM catalog
             # with indicative USD rates (editable per account).
             rows = list(ZAI_MODELS)
+        elif self.provider == "kimi":
+            # Same for Kimi: /models lists ids without prices, so ship the
+            # curated catalog with indicative USD rates (editable per account).
+            rows = list(KIMI_MODELS)
         elif self.provider == "openai":
             # /models lists chat models only — add the image models so they can be
             # picked for cover generation (gpt-image-1 / DALL·E).
@@ -1572,8 +1680,9 @@ class EraAiAccount(models.Model):
                 if "generateContent" in methods or kind == "embedding":
                     out.append((mid, m.get("displayName") or mid, kind))
             return out
-        # openai / custom (OpenAI-compatible)
-        base = (self.base_url or "https://api.openai.com/v1").rstrip("/")
+        # openai / kimi / custom (OpenAI-compatible)
+        default_base = KIMI_OPENAI_BASE_URL if self.provider == "kimi" else "https://api.openai.com/v1"
+        base = (self.base_url or default_base).rstrip("/")
         header = self.auth_header or "Authorization"
         prefix = self.auth_prefix or "Bearer"
         headers = {header: f"{prefix} {key}".strip() if prefix else key}

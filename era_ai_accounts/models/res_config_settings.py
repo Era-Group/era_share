@@ -98,9 +98,11 @@ class ResConfigSettings(models.TransientModel):
         string="Max concurrent calls", config_parameter="ai.cli_max_concurrency", default=1,
         readonly=False, groups="base.group_system",
         help="How many Claude CLI calls may run at the same time across ALL workers "
-             "and users. 1 = strictly one at a time (recommended). The Codex pool "
-             "is always exactly 1, regardless of this setting — its auth.json is "
-             "single-writer (tokens rotate on refresh).",
+             "and users. 1 = strictly one at a time (recommended). Each CLI provider "
+             "has its own slot pool of this size, except: the Codex pool is always "
+             "exactly 1 (its auth.json is single-writer — tokens rotate on refresh), "
+             "and the Kimi pool falls back to 1 when the account has no API key and "
+             "relies on the CLI's own ~/.kimi login instead.",
     )
     cli_lock_wait = fields.Integer(
         string="Max wait for a free slot (seconds)", config_parameter="ai.cli_lock_wait", default=300,

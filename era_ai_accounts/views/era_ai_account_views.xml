@@ -93,6 +93,16 @@
                                 no API key, one shared login. If you don't link one, the CLI falls back
                                 to the server's own <code>~/.codex</code> login under the HOME below.
                             </div>
+                            <div class="text-muted mt-2" invisible="provider != 'kimi'">
+                                <b>Kimi (Moonshot AI)</b> over the CLI: the local <code>kimi</code>
+                                binary (Kimi Code CLI) runs in <b>print mode</b>, locked down to pure
+                                text — no tools, no shell, single step, empty working directory.
+                                Paste a Kimi / Moonshot API key below and <b>every user</b> routes
+                                through it; leave it empty to use the login stored by
+                                <code>kimi login</code> under the HOME below. <b>Sync models</b> to
+                                pick a Kimi model — it is selected via <code>KIMI_MODEL_NAME</code>,
+                                so no Kimi account login is needed when a key is set.
+                            </div>
                             <div class="text-muted mt-2" invisible="provider != 'zai'">
                                 <b>Z.AI (GLM)</b> over the CLI: the local <code>claude</code> binary is
                                 pointed at Z.AI's Anthropic-compatible endpoint
@@ -102,18 +112,21 @@
                                 server-side, so no Claude login is needed.
                             </div>
                         </div>
-                        <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex on PATH)"/>
+                        <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex / kimi on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
-                        <field name="secret" password="True" string="Z.AI API key"
-                               invisible="provider != 'zai'"
-                               placeholder="paste your Z.AI / GLM Coding Plan API key (write-only)"
+                        <field name="secret" password="True" string="Provider API key"
+                               invisible="provider not in ['zai', 'kimi']"
+                               placeholder="paste the provider API key (write-only)"
                                groups="era_ai_accounts.group_ai_account_manager"/>
-                        <field name="secret_masked" string="Stored key" invisible="provider != 'zai'"
+                        <field name="secret_masked" string="Stored key"
+                               invisible="provider not in ['zai', 'kimi']"
                                groups="era_ai_accounts.group_ai_account_manager"/>
+                        <field name="base_url" string="API base URL" invisible="provider != 'kimi'"
+                               placeholder="leave empty for https://api.moonshot.ai/v1 (use api.moonshot.cn in China)"/>
                         <field name="cli_tools_enabled"/>
                         <field name="max_concurrency"/>
                         <field name="cli_extra_args" placeholder="optional, e.g. --add-dir /tmp"/>
-                        <div class="text-muted" colspan="2" invisible="provider == 'zai'">
+                        <div class="text-muted" colspan="2" invisible="provider in ['zai', 'kimi']">
                             Routes calls through the locally-authenticated first-party CLI
                             (Claude Code for Anthropic, Codex for OpenAI). No API key is used.
                             Serving many users draws on that subscription's rate limits — use the kill
@@ -142,8 +155,15 @@
                             models). Billed per token in USD — see
                             <a href="https://docs.z.ai/guides/overview/pricing" target="_blank">z.ai pricing</a>.
                         </div>
-                        <field name="base_url" invisible="provider != 'custom'"
-                               placeholder="https://openrouter.ai/api/v1"/>
+                        <div class="text-muted" colspan="2" invisible="provider != 'kimi'">
+                            <b>Kimi (Moonshot AI)</b> direct API: OpenAI-compatible chat via
+                            <code>api.moonshot.ai/v1</code>, with native tool-calling. Paste your
+                            Kimi / Moonshot API key above and <b>Sync models</b> for the Kimi
+                            catalog (K3, K2.7 Code, K2.6, K2.5). Billed per token in USD — see
+                            <a href="https://platform.kimi.ai/docs/pricing/chat" target="_blank">Kimi pricing</a>.
+                        </div>
+                        <field name="base_url" invisible="provider not in ['custom', 'kimi']"
+                               placeholder="leave empty for the provider default (e.g. https://api.moonshot.ai/v1)"/>
                         <field name="auth_header" invisible="provider != 'custom'"/>
                         <field name="auth_prefix" invisible="provider != 'custom'"/>
                         <field name="referer" invisible="provider != 'custom'"/>

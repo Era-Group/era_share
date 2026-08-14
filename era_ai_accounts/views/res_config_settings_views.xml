@@ -9,7 +9,7 @@
                 <setting
                     id="era_ai_accounts_link"
                     string="AI Accounts"
-                    help="Link Claude or ChatGPT via the local CLI proxy (no API key) or OpenAI/Gemini/custom via API keys, and share them with users."
+                    help="Link Claude, ChatGPT or Kimi via the local CLI proxy (no API key) or OpenAI/Gemini/Cloudflare/Z.AI/Kimi/custom via API keys, and share them with users."
                     groups="base.group_system">
                     <button name="%(era_ai_accounts.era_ai_account_action)d" type="action"
                             string="Open AI Accounts" class="btn-link"/>
@@ -17,7 +17,7 @@
                 <setting
                     id="era_cli_protection"
                     string="AI CLI rate protection"
-                    help="Keep the connected Claude/ChatGPT accounts safe from concurrent or rapid-fire calls. Calls are serialized and paced per provider; tune the limits below."
+                    help="Keep the connected Claude/ChatGPT/Kimi accounts safe from concurrent or rapid-fire calls. Calls are serialized and paced per provider; tune the limits below."
                     groups="base.group_system">
                     <field name="cli_gap_enabled"/>
                     <group class="mt-2">

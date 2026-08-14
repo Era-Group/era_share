@@ -6,8 +6,10 @@ preserved untouched. This layer only adds:
 
 * binding of the request's ``era.ai.account`` (from ``env.context['era_ai_account_id']``);
 * per-account credential resolution for api_key accounts (openai/google/anthropic/custom);
-* the ``anthropic`` (Messages API) and ``anthropic_cli`` / ``openai_cli``
-  (local Claude / Codex CLI) transports.
+* the ``anthropic`` (Messages API), ``cloudflare`` and shared OpenAI-compatible
+  (``zai`` / ``kimi``) HTTP transports;
+* the ``anthropic_cli`` / ``openai_cli`` / ``kimi_cli`` transports (local Claude,
+  Codex and Kimi Code CLIs).
 
 Tool calling over the CLI transports
 ------------------------------------
@@ -35,17 +37,30 @@ from odoo.exceptions import UserError
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 from ..utils import codex_cli_transport
+from ..utils import kimi_cli_transport
 from ..utils import llm_cli_transport
 from .custom_llm_service_patch import (
     _autofill_required_tool_arguments,
     _coerce_tool_arguments_for_schema,
     _extract_tool_calls_from_text,
 )
-from .era_ai_account import ZAI_OPENAI_BASE_URL
+from .era_ai_account import KIMI_OPENAI_BASE_URL, ZAI_OPENAI_BASE_URL
 
 _logger = logging.getLogger(__name__)
 
-_CLI_PROVIDERS = ("anthropic_cli", "openai_cli")
+_CLI_PROVIDERS = ("anthropic_cli", "openai_cli", "kimi_cli")
+
+# Providers served by one shared OpenAI-compatible /chat/completions transport
+# (native tool-calling included). Their only differences are the base URL and
+# the model catalog, both resolved from the bound era.ai.account.
+_OPENAI_COMPAT_PROVIDERS = ("zai", "kimi")
+
+# Which utils module drives each CLI-proxy provider's binary. Z.AI is absent on
+# purpose: it reuses the Claude binary (llm_cli_transport), redirected by env.
+_CLI_TRANSPORTS = {
+    "openai": codex_cli_transport,
+    "kimi": kimi_cli_transport,
+}
 
 _ANTHROPIC_VERSION = "2023-06-01"
 
@@ -126,16 +141,18 @@ def _coerce_message_text(content):
     return str(content)
 
 
-def _zai_build_messages(system_prompts, user_prompts, inputs):
+def _openai_compat_build_messages(system_prompts, user_prompts, inputs):
     """Build OpenAI chat-completions ``messages`` from Odoo's (system, user, inputs).
 
     Besides plain role/content turns, ``inputs`` carries the OpenAI-style tool
     entries this module appends during the tool loop — ``function_call`` (the
     assistant's own call) and ``function_call_output`` (the executed result) —
     which must be rendered as a native ``assistant``/``tool`` message pair so
-    Z.AI's chat-completions endpoint can continue the call. Consecutive
+    the provider's chat-completions endpoint can continue the call. Consecutive
     ``function_call`` entries collapse into a single assistant message (parallel
     tool calls), as the chat-completions schema requires.
+
+    Provider-agnostic: shared by every ``_OPENAI_COMPAT_PROVIDERS`` entry.
     """
     messages = []
     for prompt in (system_prompts or []):
@@ -184,12 +201,17 @@ def _zai_build_messages(system_prompts, user_prompts, inputs):
     return messages
 
 
-def _zai_tools_payload(tools):
+def _openai_compat_tools_payload(tools):
     """OpenAI chat-completions ``tools`` array from upstream's tools dict."""
     return [{
         "type": "function",
         "function": {"name": name, "description": description, "parameters": schema},
     } for name, (description, _allow_end, _fn, schema) in tools.items()]
+
+
+# Historical names, kept so existing callers/tests keep importing them.
+_zai_build_messages = _openai_compat_build_messages
+_zai_tools_payload = _openai_compat_tools_payload
 
 
 def _cli_tool_instructions(env, tools):
@@ -338,7 +360,7 @@ def _patch():
         self._era_account = (
             env["era.ai.account"].sudo().browse(account_id) if account_id else None
         )
-        if provider in ("anthropic_cli", "openai_cli"):
+        if provider in _CLI_PROVIDERS:
             self.provider, self.env, self.base_url = provider, env, None
             return
         if provider == "anthropic":
@@ -357,11 +379,13 @@ def _patch():
             self.provider, self.env = "cloudflare", env
             self.base_url = self._era_account._cloudflare_base_url()
             return
-        if provider == "zai":
-            # Z.AI (GLM) OpenAI-compatible chat at api.z.ai/api/paas/v4.
-            self.provider, self.env = "zai", env
+        if provider in _OPENAI_COMPAT_PROVIDERS:
+            # Z.AI (GLM) at api.z.ai/api/paas/v4, Kimi at api.moonshot.ai/v1 —
+            # both plain OpenAI-compatible chat, so only the base URL differs.
+            self.provider, self.env = provider, env
+            default_base = ZAI_OPENAI_BASE_URL if provider == "zai" else KIMI_OPENAI_BASE_URL
             self.base_url = (
-                (self._era_account and self._era_account.base_url) or ZAI_OPENAI_BASE_URL)
+                (self._era_account and self._era_account.base_url) or default_base)
             return
         return original_init(self, env, provider)
 
@@ -399,7 +423,7 @@ def _patch():
             if acc.title:
                 headers["X-Title"] = _h(acc.title)
             return headers
-        if self.provider in ("cloudflare", "zai"):
+        if self.provider == "cloudflare" or self.provider in _OPENAI_COMPAT_PROVIDERS:
             return {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self._get_api_token()}",
@@ -413,15 +437,16 @@ def _patch():
             return _request_llm_anthropic(self, *args, **kwargs)
         if self.provider == "cloudflare":
             return _request_llm_cloudflare(self, *args, **kwargs)
-        if self.provider == "zai":
-            return _request_llm_zai(self, *args, **kwargs)
+        if self.provider in _OPENAI_COMPAT_PROVIDERS:
+            return _request_llm_openai_compat(self, *args, **kwargs)
         return original_request_llm(self, *args, **kwargs)
 
     def _build_tool_call_response(self, tool_call_id, return_value):
         # Upstream raises NotImplementedError for unknown providers; the CLI
-        # tool loop and the Z.AI chat-completions loop reuse the OpenAI
-        # function_call_output envelope (rendered back into the next request).
-        if self.provider in _CLI_PROVIDERS or self.provider == "zai":
+        # tool loop and the OpenAI-compatible chat-completions loop reuse the
+        # OpenAI function_call_output envelope (rendered back into the next
+        # request).
+        if self.provider in _CLI_PROVIDERS or self.provider in _OPENAI_COMPAT_PROVIDERS:
             return {
                 "type": "function_call_output",
                 "call_id": tool_call_id,
@@ -458,7 +483,7 @@ def _patch():
                 "account at a simpler chat agent. (Raise ai.cli_max_prompt_chars to override.)",
                 n=total, max=max_chars))
         timeout = _cfg_int(self.env, "ai.cli_timeout", 180)
-        transport = codex_cli_transport if acc.provider == "openai" else llm_cli_transport
+        transport = _CLI_TRANSPORTS.get(acc.provider, llm_cli_transport)
         text = transport.cli_complete(
             acc._cli_cfg(), llm_model, system_full, user_text, timeout=timeout)
         next_inputs = list(inputs or ())
@@ -540,18 +565,20 @@ def _patch():
             raise UserError(_("Cloudflare Workers AI returned no text."))
         return [text], [], list(inputs or ())
 
-    def _request_llm_zai(self, llm_model, system_prompts, user_prompts, tools=None,
-                         files=None, schema=None, temperature=0.2, inputs=(), web_grounding=False):
-        # Z.AI (GLM) via its OpenAI-compatible /chat/completions endpoint, with
-        # native tool-calling (GLM emits standard OpenAI tool_calls). Plugs into
-        # upstream's request_llm loop the same way the OpenAI path does: return
-        # (responses, to_call, next_inputs); tool results come back through
-        # `inputs` as function_call_output entries that _zai_build_messages
+    def _request_llm_openai_compat(self, llm_model, system_prompts, user_prompts, tools=None,
+                                   files=None, schema=None, temperature=0.2, inputs=(),
+                                   web_grounding=False):
+        # Z.AI (GLM) and Kimi (Moonshot) via their OpenAI-compatible
+        # /chat/completions endpoints, with native tool-calling (both emit
+        # standard OpenAI tool_calls). Plugs into upstream's request_llm loop
+        # the same way the OpenAI path does: return (responses, to_call,
+        # next_inputs); tool results come back through `inputs` as
+        # function_call_output entries that _openai_compat_build_messages
         # renders into the next round's messages.
-        messages = _zai_build_messages(system_prompts, user_prompts, inputs)
+        messages = _openai_compat_build_messages(system_prompts, user_prompts, inputs)
         body = {"model": llm_model, "messages": messages, "temperature": temperature}
         if tools:
-            body["tools"] = _zai_tools_payload(tools)
+            body["tools"] = _openai_compat_tools_payload(tools)
             body["tool_choice"] = "auto"
         elif schema:
             # No tools: nudge strict JSON when the caller expects structured output.
@@ -594,8 +621,8 @@ def _patch():
             })
 
         text = _coerce_message_text(message.get("content"))
-        # Some GLM models emit tool calls as plain-text JSON instead of the
-        # native tool_calls field — salvage them (same helper as custom_llm).
+        # Some models emit tool calls as plain-text JSON instead of the native
+        # tool_calls field — salvage them (same helper as custom_llm).
         if tools and not to_call and text:
             for name, call_id, arguments in _extract_tool_calls_from_text(
                     text, tools, self.env.context):
@@ -608,8 +635,9 @@ def _patch():
         if to_call:
             return [], to_call, next_inputs
         if not (text and text.strip()):
-            raise UserError(_("Z.AI returned no text (finish_reason=%s).",
-                              (choices[0].get("finish_reason") if choices else None)))
+            raise UserError(_("%(provider)s returned no text (finish_reason=%(reason)s).",
+                              provider="Kimi" if self.provider == "kimi" else "Z.AI",
+                              reason=(choices[0].get("finish_reason") if choices else None)))
         return [text], [], next_inputs
 
     LLMApiService.__init__ = __init__
@@ -620,11 +648,13 @@ def _patch():
     LLMApiService._request_llm_cli = _request_llm_cli
     LLMApiService._request_llm_anthropic = _request_llm_anthropic
     LLMApiService._request_llm_cloudflare = _request_llm_cloudflare
-    LLMApiService._request_llm_zai = _request_llm_zai
+    LLMApiService._request_llm_openai_compat = _request_llm_openai_compat
+    # Historical name, kept for callers that reference it directly.
+    LLMApiService._request_llm_zai = _request_llm_openai_compat
     LLMApiService._era_ai_accounts_patched = True
     _logger.info(
         "era_ai_accounts: account-aware LLMApiService layer active "
-        "(Claude/Codex CLI + Anthropic + Z.AI)")
+        "(Claude/Codex/Kimi CLI + Anthropic + Z.AI + Kimi)")
 
 
 _patch()

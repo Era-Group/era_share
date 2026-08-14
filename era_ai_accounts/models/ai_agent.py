@@ -66,13 +66,14 @@ class AIAgent(models.Model):
         if rag_context:
             system_messages.extend(rag_context)
 
-        # api_key: native tool calling (OpenAI/Gemini/custom/Z.AI all speak the
-        # OpenAI tool-call format). cli_proxy: the JSON-envelope tool loop in
-        # llm_service_patch (claude/codex, and Z.AI through the claude binary),
-        # gated by the account's "Allow agent tools" switch.
+        # api_key: native tool calling (OpenAI/Gemini/custom/Z.AI/Kimi all speak
+        # the OpenAI tool-call format). cli_proxy: the JSON-envelope tool loop in
+        # llm_service_patch (claude/codex/kimi, and Z.AI through the claude
+        # binary), gated by the account's "Allow agent tools" switch.
         supports_tools = (
             (acc.auth_mode == "cli_proxy" and acc.cli_tools_enabled)
-            or (acc.auth_mode == "api_key" and acc.provider in ("openai", "google", "custom", "zai"))
+            or (acc.auth_mode == "api_key"
+                and acc.provider in ("openai", "google", "custom", "zai", "kimi"))
         )
         service = LLMApiService(
             env=self.with_context(era_ai_account_id=acc.id).env,

@@ -17,9 +17,13 @@ OpenAI/Google, and exposes a fixed model list. This module adds:
   route chat through the first-party `codex` binary signed in with a ChatGPT
   subscription (Plus/Pro/Business/Edu/Enterprise), **no API key**. See
   "OpenAI via Codex CLI" below.
+- **Kimi (Moonshot AI) via Kimi Code CLI proxy** — route chat through the
+  first-party `kimi` binary in print mode, fenced down to pure text generation.
+  See "Kimi (Moonshot AI)" below.
 - **API-key accounts** — OpenAI, Google Gemini, Anthropic (Messages API),
-  **Cloudflare Workers AI**, and any OpenAI-compatible custom endpoint, with
-  secrets stored **encrypted** and restricted to *AI Account Managers*.
+  **Cloudflare Workers AI**, **Z.AI (GLM)**, **Kimi (Moonshot AI)**, and any
+  OpenAI-compatible custom endpoint, with secrets stored **encrypted** and
+  restricted to *AI Account Managers*.
 - **Shared vs personal accounts** — one account for everyone or per-user accounts,
   with `owner` + `allowed users` + record rules controlling who may use each.
 - **Dynamic model catalog** — synced from each account (curated set for the CLI
@@ -138,6 +142,63 @@ mode:
 Image generation and transcription are **not** offered for Z.AI here (use
 Cloudflare/OpenAI for those).
 
+## Kimi (Moonshot AI) — API key *or* Kimi CLI proxy
+
+Kimi serves the K3 / K2.x family through two surfaces, and — as with Z.AI — the
+**same key works for both**. Pick **provider Kimi (Moonshot AI)**, then the auth
+mode:
+
+1. **API key** (auth mode *API key*) — OpenAI-compatible chat at
+   `https://api.moonshot.ai/v1` (`/chat/completions`, Bearer auth). Paste the
+   key, **Validate connection** (token-free `/models` check), **Sync models**
+   for the curated Kimi catalog with indicative USD rates. This route supports
+   **native tool-calling**, so it can drive tool-using agents. Set *API base URL*
+   to `https://api.moonshot.cn/v1` for the China region, or to a gateway.
+
+2. **CLI proxy** (auth mode *Local CLI proxy*) — Moonshot's first-party **Kimi
+   Code CLI**. Requirements: the `kimi` binary on the server
+   (`uv tool install --python 3.13 kimi-cli`; or set the account's *CLI binary
+   path* / `ERA_AI_KIMI_BIN`). Two ways to authenticate it:
+   - paste a **Kimi / Moonshot API key** in the *CLI proxy* box — it is exported
+     to the CLI as `KIMI_API_KEY` / `KIMI_BASE_URL` per call, so nothing is
+     written to any config file; **or**
+   - leave the key empty and run **`kimi login`** once on the server under the
+     account's *CLI HOME* — the CLI then uses its own `~/.kimi` credentials.
+
+   **Validate connection** runs `kimi --version` (and, when a key is set, the
+   token-free `/models` check). **Sync models** gives the curated Kimi list.
+
+   *Model selection:* the chosen id is exported as `KIMI_MODEL_NAME`; the
+   transport passes **no `--model`**, because that flag takes an *alias* declared
+   in the CLI's own `[models]` config table, not a raw model id — the same shape
+   as the Z.AI mapping above.
+
+### How the Kimi CLI is fenced (important)
+
+`kimi --print` **implicitly enables `--yolo`**: every tool call, file write and
+shell command is auto-approved. Since Odoo drives it with end-user prompts, each
+call is locked down to pure text by three independent measures:
+
+| Measure | Effect |
+|---|---|
+| `--config '{"tools":{"enabled":["EraAiAccountsNoTools"]}}'` | `[tools].enabled` is an allowlist when non-empty, and this name matches no registered tool ⇒ the model is offered **no tools** |
+| `--max-steps-per-turn 1` | bounds the agent loop to a single step |
+| `--work-dir <fresh empty temp dir>` (also the `cwd`) | file tools have nothing to reach, and no project context (`AGENTS.md`/`KIMI.md`, the Odoo tree) is loaded |
+
+The directory is created per call and removed afterwards. If a future `kimi`
+version rejects one of these flags the call **fails loudly** rather than running
+unfenced — but re-verify them after a CLI upgrade, and keep the *CLI extra
+arguments* denylist (which blocks `--yolo`, `--afk`, `--work-dir`, `--agent-file`,
+`--mcp-config*`, `--skills-dir`, session-resume flags, …) in place.
+
+Concurrency: Kimi has its own slot pool (`<data_dir>/era_ai_cli_proxy.kimi.<n>.lock`),
+sized by `ai.cli_max_concurrency` when the account carries an API key (each call
+is then stateless). With no key — i.e. relying on the CLI's own `kimi login` —
+it is clamped to **1**, because a token refresh rewrites `~/.kimi`.
+
+Image generation and transcription are **not** offered for Kimi here (use
+Cloudflare/OpenAI for those).
+
 ## Configure
 
 1. **AI ▸ AI Accounts ▸ New** (managers only).
@@ -212,6 +273,9 @@ off to keep an account strictly single-shot chat).
   pick that account (and a specific image model) directly. Use the account's
   **Note** field to record what it is linked for.
 - The `gemini` CLI is not bridged, so Google Gemini uses API keys.
+- The Kimi CLI proxy has **no in-app subscription link** (no "Login with Kimi"
+  button): authenticate it with an API key on the account, or run `kimi login`
+  once on the server under the account's *CLI HOME*.
 
 ## Security
 
@@ -231,7 +295,7 @@ off to keep an account strictly single-shot chat).
 | `ai.cli_min_gap` | 1.0 | Base gap (s) enforced between consecutive CLI calls |
 | `ai.cli_gap_per_kb` | 0.05 | Extra gap (s) per KB of request body — bigger requests wait longer |
 | `ai.cli_max_gap` | 30 | Cap (s) on the inter-call gap |
-| `ai.cli_max_concurrency` | 1 | Max simultaneous CLI calls host-wide (1 = strictly one at a time) |
+| `ai.cli_max_concurrency` | 1 | Max simultaneous CLI calls host-wide, per provider pool (1 = strictly one at a time). Codex is always 1; Kimi is 1 when the account has no API key |
 | `ai.cli_lock_wait` | 300 | Max time (s) a request waits for a free slot before erroring |
 | `ai.http_timeout` | 120 | Anthropic HTTP timeout (s) |
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |

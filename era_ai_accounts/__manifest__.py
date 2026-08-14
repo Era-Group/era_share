@@ -1,8 +1,8 @@
 # Part of the ERA Group custom addon layer. License: LGPL-3.
 {
     "name": "ERA AI Accounts",
-    "summary": "Link AI provider accounts (Claude/ChatGPT/GLM via local CLI proxy — no API key — "
-               "or OpenAI/Gemini/Cloudflare/Z.AI-GLM/custom via key), share them with users, "
+    "summary": "Link AI provider accounts (Claude/ChatGPT/GLM/Kimi via local CLI proxy — no API key — "
+               "or OpenAI/Gemini/Cloudflare/Z.AI-GLM/Kimi/custom via key), share them with users, "
                "generate text or images, and pick models dynamically per account.",
     "description": """
 ERA AI Accounts
@@ -11,21 +11,26 @@ ERA AI Accounts
 Supersedes ``era_odoo_ai_ext`` and extends Odoo 19's standard ``ai`` / ``ai_app``
 stack with first-class **AI accounts**:
 
-* **Local CLI proxy** transport — route Claude through the Claude Code CLI, or
-  OpenAI through the Codex CLI, already authenticated on this server (the
-  "connected account"), so AI works without per-token API billing. The
-  first-party ``claude`` / ``codex`` binary makes the call itself under its own
-  auth; we never replay its OAuth tokens to the raw API.
+* **Local CLI proxy** transport — route Claude through the Claude Code CLI,
+  OpenAI through the Codex CLI, or Kimi through Moonshot's Kimi Code CLI,
+  already authenticated on this server (the "connected account"), so AI works
+  without per-token API billing. The first-party ``claude`` / ``codex`` /
+  ``kimi`` binary makes the call itself under its own auth; we never replay its
+  OAuth tokens to the raw API.
 * **Login with Claude / Connect ChatGPT** — link a Claude subscription in-app
   (OAuth, no API key) or a ChatGPT subscription (paste the Codex CLI's
   ``auth.json``), stored once on the server and used by every user in the system.
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API),
-  Cloudflare Workers AI, **Z.AI (GLM / Zhipu)** and any OpenAI-compatible custom
-  provider, with credentials stored per account (encrypted at rest, restricted
-  to AI Account Managers).
+  Cloudflare Workers AI, **Z.AI (GLM / Zhipu)**, **Kimi (Moonshot AI)** and any
+  OpenAI-compatible custom provider, with credentials stored per account
+  (encrypted at rest, restricted to AI Account Managers).
 * **Z.AI (GLM) two ways** — either the OpenAI-compatible **API key** route, or
   the **CLI proxy** (the Claude binary pointed at Z.AI's Anthropic-compatible
   endpoint with a GLM Coding Plan key — flat-rate, no per-token billing).
+* **Kimi (Moonshot AI) two ways** — the OpenAI-compatible **API key** route
+  (``api.moonshot.ai/v1``, native tool-calling), or the **CLI proxy** running
+  the first-party ``kimi`` binary in print mode, fenced down to pure text
+  generation (no tools, no shell, one step, empty working directory).
 * **Speech-to-text** — transcribe audio through an OpenAI API-key account
   (Whisper / ``gpt-4o-transcribe``) via ``account.transcribe()``; the CLI proxies
   are text-only.
@@ -37,7 +42,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.12.0",
+    "version": "19.0.1.13.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

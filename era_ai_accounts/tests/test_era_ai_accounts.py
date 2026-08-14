@@ -1,4 +1,5 @@
 import base64
+import contextlib
 import json
 import os
 import shutil
@@ -8,7 +9,12 @@ from unittest.mock import patch
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
-from odoo.addons.era_ai_accounts.utils import codex_cli_transport, crypto, llm_cli_transport
+from odoo.addons.era_ai_accounts.utils import (
+    codex_cli_transport,
+    crypto,
+    kimi_cli_transport,
+    llm_cli_transport,
+)
 from odoo.addons.era_ai_accounts.models import era_ai_account
 from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
@@ -1536,6 +1542,359 @@ class TestEraAiAccounts(TransactionCase):
                 tools=self._fake_tools(calls))
         self.assertEqual(out, ["done"])
         self.assertEqual(calls, [{"q": 9}])  # dict args preserved, not {}
+
+    # --------------------------------------------------- Kimi (Moonshot AI)
+    def test_kimi_service_provider_and_modes(self):
+        # Kimi supports BOTH auth modes. cli_proxy drives its own first-party
+        # `kimi` binary (kimi_cli); api_key uses the shared OpenAI-compatible
+        # transport under the "kimi" token.
+        cli = self.Account.create({
+            "name": "Kimi cli", "provider": "kimi", "auth_mode": "cli_proxy"})
+        api = self.Account.create({
+            "name": "Kimi api", "provider": "kimi", "auth_mode": "api_key", "secret": "mk"})
+        self.assertEqual(cli._service_provider(), "kimi_cli")
+        self.assertEqual(api._service_provider(), "kimi")
+
+    # ---- CLI proxy mode (the `kimi` binary in print mode) ----
+    def test_kimi_cli_sync_models_and_default(self):
+        acc = self.Account.create({
+            "name": "Kimi cli2", "provider": "kimi", "auth_mode": "cli_proxy"})
+        acc.action_sync_models()
+        self.assertEqual(set(acc.model_ids.mapped("model_id")),
+                         {m[0] for m in era_ai_account.KIMI_CLI_MODELS})
+        self.assertEqual(acc._default_chat_model(), "kimi-k2.6")
+        # CLI is text-only -> all chat rows.
+        self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
+
+    def test_kimi_cli_cfg_injects_key_and_endpoint(self):
+        acc = self.Account.create({
+            "name": "Kimi cfg", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "mk-2"})
+        cfg = acc._cli_cfg()
+        self.assertEqual(cfg["provider"], "kimi")
+        self.assertEqual(cfg["kimi_api_key"], "mk-2")
+        self.assertEqual(cfg["kimi_base_url"], kimi_cli_transport.KIMI_DEFAULT_BASE_URL)
+
+    def test_kimi_cli_cfg_without_key_uses_ambient_login(self):
+        # Unlike Z.AI, a key is optional: `kimi login` under the CLI HOME is a
+        # supported way to authenticate, so _cli_cfg must not raise.
+        acc = self.Account.create({
+            "name": "Kimi nokey", "provider": "kimi", "auth_mode": "cli_proxy"})
+        cfg = acc._cli_cfg()
+        self.assertNotIn("kimi_api_key", cfg)
+        self.assertEqual(cfg["home_dir"], "/opt/odoo")
+
+    def test_kimi_cli_never_probes_another_providers_credentials(self):
+        # Kimi has no in-app subscription link; the link machinery must answer
+        # 'none' instead of falling back to the Anthropic credential layout.
+        acc = self.Account.create({
+            "name": "Kimi link", "provider": "kimi", "auth_mode": "cli_proxy"})
+        self.assertEqual(acc._cli_oauth_info(), {"state": "none", "linked": False})
+        self.assertEqual(acc.cli_link_state, "none")
+        self.assertFalse(acc.cli_oauth_linked)
+
+    def test_kimi_cli_complete_is_fenced_and_parses(self):
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "kimi says hi\n"
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["env"] = kwargs.get("env")
+            captured["input"] = kwargs.get("input")
+            captured["cwd"] = kwargs.get("cwd")
+            # The per-call working directory must exist and be empty while the
+            # subprocess runs (it is the tool fence).
+            captured["workdir_entries"] = os.listdir(kwargs.get("cwd"))
+            return _Proc()
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", side_effect=fake_run), \
+             patch.dict(kimi_cli_transport.os.environ,
+                        {"KIMI_API_KEY": "leaked", "OPENAI_API_KEY": "sk-leak"}):
+            text = kimi_cli_transport.cli_complete(
+                {"account_id": 1, "home_dir": "/opt/odoo",
+                 "kimi_api_key": "mk-token",
+                 "kimi_base_url": "https://api.moonshot.ai/v1",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                "kimi-k2.6", "system here", "user asks", timeout=30)
+
+        self.assertEqual(text, "kimi says hi")
+        args = captured["args"]
+        # Non-interactive, final message only, no tools, single step.
+        self.assertIn("--print", args)
+        self.assertIn("--final-message-only", args)
+        self.assertEqual(args[args.index("--output-format") + 1], "text")
+        self.assertEqual(args[args.index("--max-steps-per-turn") + 1], "1")
+        tools_cfg = json.loads(args[args.index("--config") + 1])
+        self.assertEqual(tools_cfg["tools"]["enabled"],
+                         [kimi_cli_transport._NO_TOOLS_SENTINEL])
+        # The workspace fence: a fresh, empty dir, also used as cwd.
+        work_dir = args[args.index("--work-dir") + 1]
+        self.assertEqual(captured["cwd"], work_dir)
+        self.assertEqual(captured["workdir_entries"], [])
+        self.assertFalse(os.path.exists(work_dir), "the work dir must be cleaned up")
+        # The model is selected by env, never by --model (which wants an alias).
+        self.assertNotIn("--model", args)
+        env = captured["env"]
+        self.assertEqual(env["KIMI_MODEL_NAME"], "kimi-k2.6")
+        self.assertEqual(env["KIMI_API_KEY"], "mk-token")
+        self.assertEqual(env["KIMI_BASE_URL"], "https://api.moonshot.ai/v1")
+        self.assertEqual(env["KIMI_CLI_NO_AUTO_UPDATE"], "1")
+        # An operator's ambient key never reaches the subprocess.
+        self.assertNotIn("OPENAI_API_KEY", env)
+        # The system prompt is folded into stdin (kimi has no system flag).
+        self.assertIn("<system_instructions>\nsystem here\n</system_instructions>",
+                      captured["input"])
+        self.assertTrue(captured["input"].endswith("user asks"))
+
+    def test_kimi_cli_without_key_falls_back_to_ambient_and_one_slot(self):
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "ambient answer"
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        def fake_slot(slots, wait, lock_name=None):
+            captured["slots"] = slots
+            return contextlib.nullcontext()
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", side_effect=fake_run), \
+             patch.object(kimi_cli_transport, "_global_slot", fake_slot), \
+             patch.dict(kimi_cli_transport.os.environ, {"KIMI_API_KEY": "leaked"}):
+            text = kimi_cli_transport.cli_complete(
+                {"home_dir": "/opt/odoo", "concurrency": 4,
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                "kimi-k3", "", "hello", timeout=30)
+        self.assertEqual(text, "ambient answer")
+        # No account key -> the CLI's own ~/.kimi login is in charge, and a token
+        # refresh there is single-writer: one slot regardless of concurrency=4.
+        self.assertEqual(captured["slots"], 1)
+        self.assertNotIn("KIMI_API_KEY", captured["env"])
+
+    def test_kimi_cli_uses_configured_concurrency_with_key(self):
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "ok"
+            stderr = ""
+
+        def fake_slot(slots, wait, lock_name=None):
+            captured["slots"] = slots
+            captured["lock_name"] = lock_name
+            return contextlib.nullcontext()
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", return_value=_Proc()), \
+             patch.object(kimi_cli_transport, "_global_slot", fake_slot):
+            kimi_cli_transport.cli_complete(
+                {"home_dir": "/opt/odoo", "concurrency": 3, "kimi_api_key": "mk",
+                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                "kimi-k2.6", "", "hi", timeout=30)
+        self.assertEqual(captured["slots"], 3)
+        # Its own lock namespace: a Kimi call never queues behind Claude/Codex.
+        self.assertEqual(captured["lock_name"], kimi_cli_transport._LOCK_SLOT)
+        self.assertNotEqual(kimi_cli_transport._LOCK_SLOT, llm_cli_transport._LOCK_SLOT)
+        self.assertNotEqual(kimi_cli_transport._LOCK_SLOT, codex_cli_transport._LOCK_SLOT)
+
+    def test_kimi_cli_error_exit_codes(self):
+        # 75 is kimi's documented "retryable" exit; anything else non-zero is fatal.
+        with self.assertRaises(UserError) as retryable:
+            kimi_cli_transport._parse_kimi_output("", 75, "rate limited")
+        self.assertIn("retry", str(retryable.exception).lower())
+        with self.assertRaises(UserError) as fatal:
+            kimi_cli_transport._parse_kimi_output("", 1, "bad api key")
+        self.assertIn("bad api key", str(fatal.exception))
+        with self.assertRaises(UserError):
+            kimi_cli_transport._parse_kimi_output("   ", 0, "")
+        self.assertEqual(kimi_cli_transport._parse_kimi_output(" answer \n", 0, ""), "answer")
+
+    def test_kimi_cli_validate_checks_binary_and_key(self):
+        acc = self.Account.create({
+            "name": "Kimi cval", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "mk"})
+        seen = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = "kimi 1.0.0"
+            stderr = ""
+
+        def fake_get(self2, url, headers, timeout):
+            seen["url"], seen["headers"] = url, headers
+            return {"data": []}
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", return_value=_Proc()), \
+             patch.object(type(acc), "_http_get_json", fake_get):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertEqual(seen["url"], "https://api.moonshot.ai/v1/models")
+        self.assertEqual(seen["headers"]["Authorization"], "Bearer mk")
+
+    def test_kimi_cli_validate_fails_without_binary(self):
+        # _validate_connection, not action_validate: the latter persists the
+        # error through a second cursor, which a TransactionCase cannot provide.
+        acc = self.Account.create({
+            "name": "Kimi noBin", "provider": "kimi", "auth_mode": "cli_proxy"})
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value=None):
+            with self.assertRaises(UserError) as err:
+                acc._validate_connection()
+        self.assertIn("Kimi CLI was not found", str(err.exception))
+
+    def test_kimi_cli_agent_routes(self):
+        acc = self.Account.create({
+            "name": "Kimi route", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "mk"})
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Kimi routed", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        with patch.object(kimi_cli_transport, "cli_complete", return_value="kimi answer") as mocked:
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["kimi answer"])
+        self.assertEqual(mocked.call_args.args[1], "kimi-k2.6")
+        self.assertEqual(mocked.call_args.args[0]["kimi_api_key"], "mk")
+
+    def test_kimi_cli_proxy_refuses_non_chat_models(self):
+        acc = self.Account.create({
+            "name": "Kimi img", "provider": "kimi", "auth_mode": "cli_proxy"})
+        with self.assertRaises(ValidationError):
+            self.env["era.ai.model"].create({
+                "account_id": acc.id, "model_id": "some-image", "kind": "image"})
+
+    def test_kimi_denylist_blocks_cli_capability_flags(self):
+        acc = self.Account.create({
+            "name": "Kimi deny", "provider": "kimi", "auth_mode": "cli_proxy"})
+        for flag in ("--yes", "--auto-approve", "--afk", "--work-dir /opt/odoo",
+                     "--agent-file /tmp/a.yaml", "--mcp-config-file /tmp/m.json",
+                     "--skills-dir /tmp", "--session abc"):
+            with self.assertRaises(ValidationError, msg=f"flag={flag}"):
+                acc.cli_extra_args = flag
+                acc.flush_recordset()
+
+    # ---- API key mode (OpenAI-compatible /chat/completions) ----
+    def test_kimi_api_sync_models(self):
+        acc = self.Account.create({
+            "name": "Kimi apisync", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk"})
+        acc.action_sync_models()
+        ids = set(acc.model_ids.mapped("model_id"))
+        self.assertIn("kimi-k3", ids)
+        self.assertIn("kimi-k2.6", ids)
+        self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
+        self.assertEqual(acc._default_chat_model(), "kimi-k2.6")
+
+    def test_kimi_api_validate(self):
+        acc = self.Account.create({
+            "name": "Kimi apival", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk"})
+        seen = {}
+
+        def fake_get(self2, url, headers, timeout):
+            seen["url"], seen["headers"] = url, headers
+            return {"data": [{"id": "kimi-k2.6"}]}
+
+        with patch.object(type(acc), "_http_get_json", fake_get):
+            acc.action_validate()
+        self.assertEqual(acc.state, "valid")
+        self.assertEqual(seen["url"], "https://api.moonshot.ai/v1/models")
+        self.assertEqual(seen["headers"]["Authorization"], "Bearer mk")
+
+    def test_kimi_api_content_via_agent(self):
+        acc = self.Account.create({
+            "name": "Kimi apichat", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk-a"})
+        acc.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Kimi api agent", "llm_model": "gpt-4o", "era_account_id": acc.id,
+            "era_model_id": acc._default_chat_model_record().id,
+        })
+        captured = {}
+
+        def fake_request(self2, method, endpoint, headers=None, body=None, **kwargs):
+            captured["endpoint"], captured["body"], captured["headers"] = endpoint, body, headers
+            return {"choices": [{"message": {"content": "kimi says hi"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = agent._generate_response("hello")
+        self.assertEqual(out, ["kimi says hi"])
+        self.assertEqual(captured["endpoint"], "/chat/completions")
+        self.assertEqual(captured["body"]["model"], "kimi-k2.6")
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer mk-a")
+
+    def test_kimi_api_base_url_override(self):
+        # China region / gateway: the account's base URL wins over the default.
+        acc = self.Account.create({
+            "name": "Kimi cn", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk", "base_url": "https://api.moonshot.cn/v1"})
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env, provider="kimi")
+        self.assertEqual(service.base_url, "https://api.moonshot.cn/v1")
+
+    def test_kimi_api_tool_loop_roundtrip(self):
+        acc = self.Account.create({
+            "name": "Kimi tools", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk-1"})
+        calls = []
+        replies = iter([
+            {"choices": [{"message": {"content": None, "tool_calls": [
+                {"id": "tc1", "type": "function",
+                 "function": {"name": "get_data", "arguments": '{"q": 7}'}}]}}]},
+            {"choices": [{"message": {"content": "the answer is 7"}}]},
+        ])
+        bodies = []
+
+        def fake_request(self2, method, endpoint, headers=None, body=None, **kw):
+            bodies.append(body)
+            return next(replies)
+
+        service = LLMApiService(
+            env=acc.with_context(era_ai_account_id=acc.id).env, provider="kimi")
+        with patch.object(LLMApiService, "_request", fake_request):
+            out = service.request_llm(
+                "kimi-k2.6", [], [], inputs=[{"role": "user", "content": "q"}],
+                tools=self._fake_tools(calls))
+        self.assertEqual(out, ["the answer is 7"])
+        self.assertEqual(calls, [{"q": 7}])
+        # Round 2 replays the call + its result as native assistant/tool turns.
+        round2 = bodies[1]["messages"]
+        self.assertTrue(any(m.get("role") == "assistant" and m.get("tool_calls") for m in round2))
+        self.assertTrue(any(
+            m.get("role") == "tool" and "result:7" in (m.get("content") or "")
+            for m in round2))
+
+    def test_kimi_api_generate_text(self):
+        acc = self.Account.create({
+            "name": "Kimi apitext", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk-t"})
+        acc.action_sync_models()
+
+        def fake_request(self2, method, endpoint, headers=None, body=None, **kwargs):
+            return {"choices": [{"message": {"content": "generated"}}]}
+
+        with patch.object(LLMApiService, "_request", fake_request):
+            self.assertEqual(acc.generate_text("write something"), "generated")
+
+    def test_kimi_refuses_images_and_transcription(self):
+        acc = self.Account.create({
+            "name": "Kimi noimg", "provider": "kimi", "auth_mode": "api_key",
+            "secret": "mk"})
+        with self.assertRaises(UserError):
+            acc.generate_image("a cat")
+        with self.assertRaises(UserError):
+            acc.transcribe(b"audio-bytes")
 
     # ------------------------------------------------------------- new safeguards
     def test_cli_denylist_blocks_dangerous_flags(self):

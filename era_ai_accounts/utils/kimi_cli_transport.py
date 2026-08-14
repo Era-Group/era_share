@@ -1,40 +1,49 @@
 """Local Kimi CLI-proxy transport for Kimi (Moonshot AI) accounts.
 
 Routes a chat request through Moonshot's first-party ``kimi`` binary (Kimi Code
-CLI) in **print mode** — its documented non-interactive / automation mode. The
-CLI performs the model call itself, either under the credentials of its own
-``~/.kimi`` login (``kimi login``) or under the API key this account exports to
-it; we never read or replay a stored OAuth token against the API ourselves.
+CLI) in **prompt mode** (``-p``), its non-interactive automation mode. The CLI
+performs the model call itself; the account's API key is handed to it through
+the environment only, so nothing is ever written to a credential file.
 
-Locking the invocation down to pure text
-----------------------------------------
-``--print`` implicitly enables ``--yolo``: every tool call — file writes and
-shell commands included — is auto-approved. That is unacceptable for a server
-driven by end-user chat prompts, so each call is fenced by three independent
-measures, none of which is load-bearing on its own:
+Everything below was verified live against **kimi-code 0.36.1** — the published
+docs still describe the older Python ``kimi-cli`` and disagree with the shipped
+binary on almost every flag (there is no ``--print``, ``--config``,
+``--work-dir``, ``--max-steps-per-turn`` or ``--final-message-only``, and stdin
+is rejected outright with "Output format is only supported in prompt mode").
+Re-verify after a CLI upgrade rather than trusting the documentation.
 
-* ``--config`` supplies an inline tool **allowlist that matches nothing** —
-  kimi's ``[tools].enabled`` acts as an allowlist when non-empty, and a name
-  matching no registered tool matches nothing, so the model is offered no tools;
-* ``--max-steps-per-turn 1`` bounds the agent loop to a single step;
-* ``--work-dir`` points at a **fresh empty directory** created per call, so file
-  tools have nothing to reach and no project context (AGENTS.md / KIMI.md, the
-  Odoo tree) is picked up.
+How one call is assembled
+-------------------------
+``kimi -p <user text> --output-format stream-json`` with:
 
-If a future kimi version rejects one of these flags the call fails loudly with a
-non-zero exit rather than silently running unfenced — but re-verify them after a
-CLI upgrade all the same.
+* **credentials + model via env.** ``KIMI_MODEL_API_KEY`` / ``_BASE_URL`` /
+  ``_NAME`` / ``_PROVIDER_TYPE`` / ``_MAX_CONTEXT_SIZE`` synthesize a private
+  provider (``__kimi_env__``) and model alias, and the CLI makes that alias the
+  default — so no ``-m`` is needed, and the on-disk config is never touched.
+* **an isolated ``KIMI_CODE_HOME``** per account, holding the two files below.
+  Never the server's own ``~/.kimi-code``, which stays the operator's.
+* **``config.toml`` with an empty tool policy.** Prompt mode otherwise offers
+  the model all 25 built-in tools — ``Bash``, ``Write``, ``Edit``, ``CronCreate``
+  included (verified). ``[tools].enabled`` is an allowlist when non-empty, and a
+  name matching no registered tool leaves it empty, so the model gets none.
+  ``[loop_control].max_steps_per_turn = 1`` bounds the agent loop as well.
+* **``SYSTEM.md``**, which wholly replaces the built-in agent persona. This is
+  both how Odoo's system prompt is injected and how the ~21 KB "you are a coding
+  agent" preamble is dropped (measured: 20,959 -> 69 chars for a bare call).
+* **a fresh empty cwd.** There is no ``--work-dir`` flag; the process working
+  directory *is* the workspace, so a per-call temp dir keeps file tools away
+  from the Odoo tree and stops project context (AGENTS.md, KIMI.md) loading.
 
-Model selection goes through ``KIMI_MODEL_NAME`` rather than ``--model``: kimi's
-``--model`` takes an *alias* declared in the config's ``[models]`` table, while
-the env vars configure the built-in ``kimi`` provider directly — the same
-pattern as the Z.AI transport's ``ANTHROPIC_DEFAULT_*_MODEL`` mapping.
+The user text rides in argv, which Linux caps at 128 KiB per argument
+(``MAX_ARG_STRLEN``); 127 KB was accepted and 130 KB raised E2BIG. Only the
+*user* turn is affected — the bulk (RAG context, tool instructions) goes to
+SYSTEM.md, which is a file and unbounded.
 
-Throttling (slot semaphore + size-scaled gap) reuses the Claude transport's
-helpers under its own lock-file namespace, so Kimi, Claude and Codex calls never
-queue behind one another. With an account API key the CLI is stateless and may
-use the configured concurrency; falling back to its own on-disk login, it is
-clamped to one call at a time (a token refresh rewrites ``~/.kimi``).
+Throttling reuses the Claude transport's helpers under its own lock-file
+namespace, so Kimi, Claude and Codex calls never queue behind one another. The
+pool is **hard-clamped to one call at a time**: config.toml and SYSTEM.md are
+per-account single-writer, and two concurrent calls would race each other's
+system prompt.
 """
 import glob
 import json
@@ -63,40 +72,74 @@ _logger = logging.getLogger(__name__)
 _LOCK_SLOT = "era_ai_cli_proxy.kimi.%d.lock"
 _STATE_FILE = "era_ai_cli_proxy.kimi.last"
 
-# Default endpoint of the built-in ``kimi`` provider (OpenAI-compatible).
+# Default endpoint of Moonshot's OpenAI-compatible API.
 KIMI_DEFAULT_BASE_URL = "https://api.moonshot.ai/v1"
+# Protocol adapter the synthesized provider speaks. Moonshot's API is
+# OpenAI-compatible, and this is a free-form string in the CLI's schema.
+KIMI_PROVIDER_TYPE = "openai"
+# The CLI requires a context size for the env-synthesized model; it only drives
+# its own context management, so a sane default per family is enough.
+KIMI_DEFAULT_CONTEXT_SIZE = 262144
+KIMI_CONTEXT_SIZES = {"kimi-k3": 1048576}
 
-# Search globs for a ``kimi`` binary that is not on PATH. kimi-cli ships on PyPI
-# and is normally installed with ``uv tool install kimi-cli``, which links the
-# entry point into ~/.local/bin. Newest mtime wins, like the other transports.
+# Files written into the account's managed KIMI_CODE_HOME before each call.
+_CONFIG_FILE = "config.toml"
+_SYSTEM_FILE = "SYSTEM.md"
+
+# An allowlist entry that deliberately matches no registered tool: with a
+# non-empty [tools].enabled the CLI treats it as an allowlist, so the resolved
+# tool set is empty (verified: 25 tools -> 0).
+_NO_TOOLS_SENTINEL = "EraAiAccountsNoTools"
+_TOOL_FENCE_CONFIG = (
+    "# Generated by Odoo (era_ai_accounts) before every call — do not edit.\n"
+    "# An allowlist that matches no tool: prompt mode would otherwise expose\n"
+    "# Bash/Write/Edit to a model driven by end-user chat prompts.\n"
+    "[tools]\n"
+    'enabled = ["%s"]\n'
+    "\n"
+    "[loop_control]\n"
+    "max_steps_per_turn = 1\n"
+) % _NO_TOOLS_SENTINEL
+
+# Used when the caller supplies no system prompt: without a SYSTEM.md the CLI
+# falls back to its built-in coding-agent persona, which is wrong for chat.
+_DEFAULT_SYSTEM_PROMPT = (
+    "You are a helpful assistant. Answer the user directly in plain text."
+)
+
+# Linux caps one argv entry at MAX_ARG_STRLEN (32 pages = 128 KiB). Stay clear
+# of the edge so the failure is a clean message, not OSError E2BIG.
+_MAX_PROMPT_ARG_BYTES = 96 * 1024
+
+# Provider credentials / routing that must never be inherited from the ambient
+# environment: a call may only use this account's own key.
+_PURGED_ENV = (
+    "KIMI_API_KEY", "KIMI_BASE_URL",
+    "KIMI_MODEL_API_KEY", "KIMI_MODEL_BASE_URL", "KIMI_MODEL_NAME",
+    "KIMI_MODEL_PROVIDER_TYPE", "KIMI_MODEL_MAX_CONTEXT_SIZE",
+    "KIMI_MODEL_CAPABILITIES", "KIMI_MODEL_TEMPERATURE", "KIMI_MODEL_TOP_P",
+    "KIMI_MODEL_MAX_COMPLETION_TOKENS", "KIMI_MODEL_MAX_TOKENS",
+    "KIMI_MODEL_THINKING_EFFORT", "KIMI_CODE_HOME",
+    "OPENAI_API_KEY", "OPENAI_BASE_URL",
+)
+
+# Search globs for a ``kimi`` binary that is not on PATH — Odoo's PATH is the
+# service manager's, which rarely includes a user bin dir. Two distributions
+# both install a `kimi`:
+#   * Kimi Code (current): a native binary from code.kimi.com/kimi-code, landing
+#     in `$KIMI_INSTALL_DIR/bin` (default `~/.kimi-code/bin`);
+#   * kimi-cli (legacy Python package, deprecated upstream): `uv tool install
+#     kimi-cli`, whose entry point is linked into `~/.local/bin`.
+# Newest mtime wins, like the other transports.
 _KIMI_GLOBS = [
+    "/opt/odoo/.kimi-code/bin/kimi",
     "/opt/odoo/.local/bin/kimi",
     "/usr/local/bin/kimi",
+    os.path.expanduser("~/.kimi-code/bin/kimi"),
     os.path.expanduser("~/.local/bin/kimi"),
     os.path.expanduser("~/.local/share/uv/tools/kimi-cli/bin/kimi"),
     os.path.expanduser("~/.npm-global/bin/kimi"),
 ]
-
-# An allowlist entry that deliberately matches no registered tool. kimi warns
-# about the unknown name and ends up with an empty tool set — which is exactly
-# what a pure chat completion needs.
-_NO_TOOLS_SENTINEL = "EraAiAccountsNoTools"
-_NO_TOOLS_CONFIG = json.dumps({"tools": {"enabled": [_NO_TOOLS_SENTINEL]}})
-
-# Provider credentials / routing that must never be inherited from the ambient
-# environment: a call may only use this account's own key or the CLI's own
-# login, never an operator's personal key exported for interactive `kimi` use.
-_PURGED_ENV = (
-    "KIMI_API_KEY", "KIMI_BASE_URL", "KIMI_MODEL_NAME",
-    "KIMI_MODEL_MAX_CONTEXT_SIZE", "KIMI_MODEL_CAPABILITIES",
-    "KIMI_MODEL_TEMPERATURE", "KIMI_MODEL_TOP_P",
-    "KIMI_MODEL_MAX_COMPLETION_TOKENS", "KIMI_MODEL_MAX_TOKENS",
-    "OPENAI_API_KEY", "OPENAI_BASE_URL",
-)
-
-# kimi's documented exit codes: 0 success, 1 non-retryable (auth/config/quota),
-# 75 retryable (rate limit, timeout, 5xx).
-_EXIT_RETRYABLE = 75
 
 
 def resolve_cli_binary(override=None):
@@ -126,42 +169,77 @@ def _require_binary(cfg):
     binary = resolve_cli_binary(cfg.get("cli_path"))
     if not binary:
         raise UserError(_(
-            "The Kimi CLI was not found on this server. Install it (uv tool "
-            "install kimi-cli), or set the account's 'CLI binary path' or the "
-            "ERA_AI_KIMI_BIN environment variable."))
+            "The Kimi CLI was not found on this server. Install it "
+            "(curl -fsSL https://code.kimi.com/kimi-code/install.sh | bash), or "
+            "set the account's 'CLI binary path' or the ERA_AI_KIMI_BIN "
+            "environment variable."))
     return binary
+
+
+def _context_size(model):
+    return KIMI_CONTEXT_SIZES.get(model or "", KIMI_DEFAULT_CONTEXT_SIZE)
 
 
 def _build_env(cfg, model=None):
     """Subprocess environment for one kimi call bound to one account.
 
-    ``HOME`` selects which ``~/.kimi`` (config, sessions, ``kimi login``
-    credentials) the CLI uses. When the account carries an API key it is
-    exported as ``KIMI_API_KEY`` / ``KIMI_BASE_URL``, which configures the
-    built-in ``kimi`` provider without touching any config file; without a key
-    the CLI falls back to whatever that HOME is logged in as.
+    The API key, endpoint and model are passed here rather than through any
+    config file: the CLI synthesizes a private provider + model alias from these
+    and makes it the default, and strips them again before it ever persists a
+    config — so a shared key never lands on disk.
     """
     run_env = dict(os.environ)
     run_env["HOME"] = cfg.get("home_dir") or "/opt/odoo"
     for var in _PURGED_ENV:
         run_env.pop(var, None)
+    config_dir = cfg.get("config_dir")
+    if config_dir:
+        run_env["KIMI_CODE_HOME"] = config_dir
     if cfg.get("kimi_api_key"):
-        run_env["KIMI_API_KEY"] = cfg["kimi_api_key"]
-        run_env["KIMI_BASE_URL"] = cfg.get("kimi_base_url") or KIMI_DEFAULT_BASE_URL
+        run_env["KIMI_MODEL_API_KEY"] = cfg["kimi_api_key"]
+    run_env["KIMI_MODEL_BASE_URL"] = cfg.get("kimi_base_url") or KIMI_DEFAULT_BASE_URL
+    run_env["KIMI_MODEL_PROVIDER_TYPE"] = cfg.get("kimi_provider_type") or KIMI_PROVIDER_TYPE
     if model:
-        # See the module docstring: the model is chosen here, not via --model.
         run_env["KIMI_MODEL_NAME"] = model
-    # A self-update in the middle of an Odoo request would stall or break it.
+        run_env["KIMI_MODEL_MAX_CONTEXT_SIZE"] = str(_context_size(model))
+    # A self-update mid-request would stall or break it.
     run_env["KIMI_CLI_NO_AUTO_UPDATE"] = "1"
     return run_env
 
 
-def check_cli(cfg, timeout=30):
+def _write_runtime_files(config_dir, system_prompt):
+    """Refresh the account's managed KIMI_CODE_HOME for this call.
+
+    ``config.toml`` carries the tool fence and ``SYSTEM.md`` the system prompt;
+    both are rewritten every call so an edited or stale file can never weaken
+    the fence. Called while holding the (single) slot, so there is no writer
+    race between concurrent requests.
+    """
+    if not config_dir:
+        raise UserError(_("The Kimi CLI transport needs a managed config directory."))
+    try:
+        os.makedirs(config_dir, mode=0o700, exist_ok=True)
+        for name, content in (
+            (_CONFIG_FILE, _TOOL_FENCE_CONFIG),
+            (_SYSTEM_FILE, (system_prompt or "").strip() or _DEFAULT_SYSTEM_PROMPT),
+        ):
+            path = os.path.join(config_dir, name)
+            tmp = path + ".tmp"
+            fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(content)
+            os.replace(tmp, path)
+    except OSError as exc:
+        raise UserError(_("Cannot prepare the Kimi CLI config dir %(dir)s: %(err)s",
+                          dir=config_dir, err=exc))
+
+
+def check_cli(cfg, timeout=60):
     """Prove the ``kimi`` binary exists and runs, without spending any tokens.
 
-    Unlike ``codex login status`` there is no credential probe that is
-    guaranteed side-effect-free across kimi versions, so this only checks the
-    binary; the account's API key is validated separately over HTTP.
+    There is no side-effect-free credential probe (``kimi login`` is an
+    interactive device-code flow), so this checks the binary only; the account's
+    API key is validated separately over HTTP.
     """
     binary = _require_binary(cfg)
     try:
@@ -181,23 +259,29 @@ def check_cli(cfg, timeout=30):
 
 
 def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
-    """Run a single chat completion through ``kimi --print`` and return the text.
+    """Run a single chat completion through ``kimi -p`` and return the text.
 
     ``cfg`` is the plain dict built by ``era.ai.account._cli_cfg()`` (no ORM
     coupling) — same contract as the Claude and Codex transports.
     """
     binary = _require_binary(cfg)
+    if not cfg.get("kimi_api_key"):
+        raise UserError(_(
+            "No Kimi API key is set on this AI account. Add one on the account "
+            "form — the Kimi CLI is driven non-interactively here, so its own "
+            "browser/device login cannot be used."))
 
-    # Pure text generation, nothing else — see the module docstring for why each
-    # of these is here and why none of them may be dropped.
-    args = [
-        binary,
-        "--print",
-        "--output-format", "text",
-        "--final-message-only",
-        "--config", _NO_TOOLS_CONFIG,
-        "--max-steps-per-turn", "1",
-    ]
+    user_text = user_prompt or ""
+    # The prompt is an argv entry, so it is bounded by the OS, not by us.
+    size = len(user_text.encode("utf-8"))
+    if size > _MAX_PROMPT_ARG_BYTES:
+        raise UserError(_(
+            "This message is too large for the Kimi CLI (%(n)s KB; the limit is "
+            "%(max)s KB because the CLI only accepts a prompt as a command-line "
+            "argument). Assign an API-key account to this agent instead.",
+            n=size // 1024, max=_MAX_PROMPT_ARG_BYTES // 1024))
+
+    args = [binary, "-p", user_text, "--output-format", "stream-json"]
     if cfg.get("extra_args"):
         try:
             args += shlex.split(cfg["extra_args"])
@@ -205,29 +289,20 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
             raise UserError(_(
                 "Invalid 'CLI extra arguments' on this AI account: %s", exc))
 
-    # kimi has no system-prompt flag; fold the system text into the stdin
-    # document as a clearly delimited instructions block ahead of the user turn
-    # (same shape as the Codex transport).
-    if system_prompt:
-        stdin_doc = (
-            "<system_instructions>\n%s\n</system_instructions>\n\n%s"
-            % (system_prompt, user_prompt or "")
-        )
-    else:
-        stdin_doc = user_prompt or ""
-
-    req_size = len(stdin_doc)
+    req_size = len(system_prompt or "") + len(user_text)
     gap = _compute_gap(cfg, req_size) if cfg.get("gap_enabled", True) else 0.0
     lock_wait = float(cfg.get("lock_wait", 300.0))
-    # With an account API key each call is stateless, so the pool may be as wide
-    # as the admin configured. Relying on the CLI's own login instead, a token
-    # refresh rewrites ~/.kimi — single-writer, so clamp to one at a time.
-    slots = int(cfg.get("concurrency", 1) or 1) if cfg.get("kimi_api_key") else 1
+    # config.toml and SYSTEM.md are per-account single-writer: two concurrent
+    # calls would overwrite each other's system prompt. Always one slot,
+    # deliberately ignoring ai.cli_max_concurrency (same stance as Codex).
+    slots = 1
 
+    # No --work-dir flag exists; the cwd *is* the workspace. A fresh empty dir
+    # is therefore the file fence, and also keeps project context out.
     work_dir = tempfile.mkdtemp(prefix="era_ai_kimi_")
-    args += ["--work-dir", work_dir]
     try:
         with _global_slot(slots, lock_wait, lock_name=_LOCK_SLOT):
+            _write_runtime_files(cfg.get("config_dir"), system_prompt)
             _enforce_gap(gap, state_file=_STATE_FILE)
             try:
                 _logger.info(
@@ -235,7 +310,7 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
                     binary, model or "default", req_size, gap)
                 proc = subprocess.run(
                     args,
-                    input=stdin_doc,
+                    input="",
                     capture_output=True,
                     text=True,
                     timeout=timeout,
@@ -261,23 +336,41 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
 
 
 def _parse_kimi_output(stdout, returncode, stderr):
-    """Return the final assistant message, or raise a clean UserError.
+    """Extract the assistant's answer from a ``--output-format stream-json`` run.
 
-    ``--final-message-only`` in text mode prints exactly that message, so the
-    exit code is the authoritative success signal: 0 succeeded, 75 is a
-    retryable condition (rate limit / timeout / 5xx), anything else is fatal.
+    The stream is JSONL of ``{"role": ...}`` objects: ``assistant`` carries the
+    answer, ``meta`` carries the version banner and a session-resume hint. On
+    failure the CLI exits non-zero and puts ``error: ...`` on stderr, leaving
+    stdout with the meta line only.
     """
-    text = (stdout or "").strip()
+    parts = []
+    for line in (stdout or "").splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict) or event.get("role") != "assistant":
+            continue
+        content = event.get("content")
+        if isinstance(content, list):  # content-block shape, just in case
+            content = "".join(b.get("text", "") for b in content if isinstance(b, dict))
+        if isinstance(content, str) and content.strip():
+            parts.append(content)
+
+    if returncode == 0 and parts:
+        return "\n".join(parts).strip()
+
+    detail = (stderr or "").strip().splitlines()
+    # Drop the "kimi version X" banner and the "See log: ..." footer, keeping
+    # the actual error line.
+    detail = " ".join(
+        ln for ln in detail
+        if ln and not ln.startswith("kimi version") and not ln.startswith("See log:")
+    )[:500]
     if returncode == 0:
-        if not text:
-            raise UserError(_("The Kimi CLI returned an empty response."))
-        return text
-    detail = ((stderr or "").strip() or text)[:500]
-    _logger.warning(
-        "era_ai_accounts: Kimi CLI exited %s: %s", returncode, detail)
-    if returncode == _EXIT_RETRYABLE:
-        raise UserError(_(
-            "The Kimi service is temporarily unavailable (rate limit or "
-            "timeout). Please retry in a moment. Details: %s",
-            detail or "no details"))
+        raise UserError(_("The Kimi CLI returned an empty response. %s", detail).strip())
+    _logger.warning("era_ai_accounts: Kimi CLI exited %s: %s", returncode, detail)
     raise UserError(_("Kimi CLI error: %s", detail or "unknown error"))

@@ -1566,7 +1566,7 @@ class TestEraAiAccounts(TransactionCase):
         # CLI is text-only -> all chat rows.
         self.assertEqual(set(acc.model_ids.mapped("kind")), {"chat"})
 
-    def test_kimi_cli_cfg_injects_key_and_endpoint(self):
+    def test_kimi_cli_cfg_injects_key_endpoint_and_managed_home(self):
         acc = self.Account.create({
             "name": "Kimi cfg", "provider": "kimi", "auth_mode": "cli_proxy",
             "secret": "mk-2"})
@@ -1574,119 +1574,127 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(cfg["provider"], "kimi")
         self.assertEqual(cfg["kimi_api_key"], "mk-2")
         self.assertEqual(cfg["kimi_base_url"], kimi_cli_transport.KIMI_DEFAULT_BASE_URL)
+        # A managed KIMI_CODE_HOME is always provided (it holds the tool fence
+        # and SYSTEM.md), never the server's own ~/.kimi-code.
+        self.assertTrue(cfg["config_dir"].endswith("/.kimi-code"))
+        self.assertNotIn("/opt/odoo/.kimi-code", cfg["config_dir"])
 
-    def test_kimi_cli_cfg_without_key_uses_ambient_login(self):
-        # Unlike Z.AI, a key is optional: `kimi login` under the CLI HOME is a
-        # supported way to authenticate, so _cli_cfg must not raise.
+    def test_kimi_cli_cfg_requires_key(self):
+        # `kimi login` is an interactive device-code flow, so an API key is the
+        # only way to drive the CLI from Odoo — fail early and clearly.
         acc = self.Account.create({
             "name": "Kimi nokey", "provider": "kimi", "auth_mode": "cli_proxy"})
-        cfg = acc._cli_cfg()
-        self.assertNotIn("kimi_api_key", cfg)
-        self.assertEqual(cfg["home_dir"], "/opt/odoo")
+        with self.assertRaises(UserError):
+            acc._cli_cfg()
 
     def test_kimi_cli_never_probes_another_providers_credentials(self):
-        # Kimi has no in-app subscription link; the link machinery must answer
-        # 'none' instead of falling back to the Anthropic credential layout.
+        # Kimi has a managed config dir but no credential file and no in-app
+        # subscription link: the link machinery must answer 'none' rather than
+        # falling through to the Anthropic credential layout.
         acc = self.Account.create({
-            "name": "Kimi link", "provider": "kimi", "auth_mode": "cli_proxy"})
+            "name": "Kimi link", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "mk"})
         self.assertEqual(acc._cli_oauth_info(), {"state": "none", "linked": False})
         self.assertEqual(acc.cli_link_state, "none")
         self.assertFalse(acc.cli_oauth_linked)
 
     def test_kimi_cli_complete_is_fenced_and_parses(self):
+        """The invocation verified live against kimi-code 0.36.1."""
         captured = {}
+        home = tempfile.mkdtemp(prefix="era_kimi_home_")
+        self.addCleanup(shutil.rmtree, home, True)
 
         class _Proc:
             returncode = 0
-            stdout = "kimi says hi\n"
-            stderr = ""
+            stdout = (
+                '{"role":"meta","type":"system.version","version":"0.36.1"}\n'
+                '{"role":"assistant","content":"kimi says hi"}\n'
+                '{"role":"meta","type":"session.resume_hint","content":"resume me"}\n'
+            )
+            stderr = "kimi version 0.36.1\n"
 
         def fake_run(args, **kwargs):
             captured["args"] = args
             captured["env"] = kwargs.get("env")
-            captured["input"] = kwargs.get("input")
             captured["cwd"] = kwargs.get("cwd")
-            # The per-call working directory must exist and be empty while the
-            # subprocess runs (it is the tool fence).
             captured["workdir_entries"] = os.listdir(kwargs.get("cwd"))
+            captured["config"] = open(os.path.join(home, "config.toml")).read()
+            captured["system_md"] = open(os.path.join(home, "SYSTEM.md")).read()
             return _Proc()
 
         with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
              patch.object(kimi_cli_transport.subprocess, "run", side_effect=fake_run), \
              patch.dict(kimi_cli_transport.os.environ,
-                        {"KIMI_API_KEY": "leaked", "OPENAI_API_KEY": "sk-leak"}):
+                        {"KIMI_MODEL_API_KEY": "leaked", "OPENAI_API_KEY": "sk-leak"}):
             text = kimi_cli_transport.cli_complete(
-                {"account_id": 1, "home_dir": "/opt/odoo",
+                {"account_id": 1, "home_dir": "/opt/odoo", "config_dir": home,
                  "kimi_api_key": "mk-token",
                  "kimi_base_url": "https://api.moonshot.ai/v1",
                  "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
                 "kimi-k2.6", "system here", "user asks", timeout=30)
 
+        # Only the assistant events form the answer; meta lines are dropped.
         self.assertEqual(text, "kimi says hi")
         args = captured["args"]
-        # Non-interactive, final message only, no tools, single step.
-        self.assertIn("--print", args)
-        self.assertIn("--final-message-only", args)
-        self.assertEqual(args[args.index("--output-format") + 1], "text")
-        self.assertEqual(args[args.index("--max-steps-per-turn") + 1], "1")
-        tools_cfg = json.loads(args[args.index("--config") + 1])
-        self.assertEqual(tools_cfg["tools"]["enabled"],
-                         [kimi_cli_transport._NO_TOOLS_SENTINEL])
-        # The workspace fence: a fresh, empty dir, also used as cwd.
-        work_dir = args[args.index("--work-dir") + 1]
-        self.assertEqual(captured["cwd"], work_dir)
+        # Prompt mode: the text is an argv entry (stdin is rejected by the CLI).
+        self.assertEqual(args[args.index("-p") + 1], "user asks")
+        self.assertEqual(args[args.index("--output-format") + 1], "stream-json")
+        # The tool fence lives in config.toml — there is no --config flag.
+        self.assertIn(kimi_cli_transport._NO_TOOLS_SENTINEL, captured["config"])
+        self.assertIn("max_steps_per_turn = 1", captured["config"])
+        # The system prompt replaces the built-in coding-agent persona.
+        self.assertEqual(captured["system_md"], "system here")
+        # The workspace fence: a fresh empty dir, also the cwd (no --work-dir).
         self.assertEqual(captured["workdir_entries"], [])
-        self.assertFalse(os.path.exists(work_dir), "the work dir must be cleaned up")
-        # The model is selected by env, never by --model (which wants an alias).
-        self.assertNotIn("--model", args)
+        self.assertNotIn("--work-dir", args)
+        self.assertFalse(os.path.exists(captured["cwd"]), "work dir must be cleaned up")
+        # The model is selected by env, never by -m (which wants a config alias).
+        self.assertNotIn("-m", args)
         env = captured["env"]
         self.assertEqual(env["KIMI_MODEL_NAME"], "kimi-k2.6")
-        self.assertEqual(env["KIMI_API_KEY"], "mk-token")
-        self.assertEqual(env["KIMI_BASE_URL"], "https://api.moonshot.ai/v1")
+        self.assertEqual(env["KIMI_MODEL_API_KEY"], "mk-token")
+        self.assertEqual(env["KIMI_MODEL_BASE_URL"], "https://api.moonshot.ai/v1")
+        self.assertEqual(env["KIMI_MODEL_PROVIDER_TYPE"], "openai")
+        self.assertEqual(env["KIMI_CODE_HOME"], home)
         self.assertEqual(env["KIMI_CLI_NO_AUTO_UPDATE"], "1")
         # An operator's ambient key never reaches the subprocess.
         self.assertNotIn("OPENAI_API_KEY", env)
-        # The system prompt is folded into stdin (kimi has no system flag).
-        self.assertIn("<system_instructions>\nsystem here\n</system_instructions>",
-                      captured["input"])
-        self.assertTrue(captured["input"].endswith("user asks"))
 
-    def test_kimi_cli_without_key_falls_back_to_ambient_and_one_slot(self):
+    def test_kimi_cli_default_system_prompt_when_none_given(self):
+        # With no SYSTEM.md the CLI falls back to its built-in coding-agent
+        # persona, which is wrong for chat — always write one.
+        home = tempfile.mkdtemp(prefix="era_kimi_home_")
+        self.addCleanup(shutil.rmtree, home, True)
+        kimi_cli_transport._write_runtime_files(home, "")
+        self.assertEqual(open(os.path.join(home, "SYSTEM.md")).read(),
+                         kimi_cli_transport._DEFAULT_SYSTEM_PROMPT)
+        # Regenerated every call, so an edited file cannot weaken the fence.
+        with open(os.path.join(home, "config.toml"), "w") as fh:
+            fh.write("[tools]\nenabled = []\n")
+        kimi_cli_transport._write_runtime_files(home, "sys")
+        self.assertIn(kimi_cli_transport._NO_TOOLS_SENTINEL,
+                      open(os.path.join(home, "config.toml")).read())
+
+    def test_kimi_cli_rejects_oversized_prompt(self):
+        # The CLI only accepts a prompt as an argv entry, which Linux caps at
+        # 128 KiB (verified: 127 KB ok, 130 KB -> E2BIG). Fail with a clear
+        # message instead of an OSError from the fork.
+        home = tempfile.mkdtemp(prefix="era_kimi_home_")
+        self.addCleanup(shutil.rmtree, home, True)
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"):
+            with self.assertRaises(UserError) as err:
+                kimi_cli_transport.cli_complete(
+                    {"home_dir": "/opt/odoo", "config_dir": home, "kimi_api_key": "mk",
+                     "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                    "kimi-k2.6", "", "x" * (200 * 1024), timeout=30)
+        self.assertIn("too large", str(err.exception))
+
+    def test_kimi_cli_is_always_single_slot(self):
         captured = {}
 
         class _Proc:
             returncode = 0
-            stdout = "ambient answer"
-            stderr = ""
-
-        def fake_run(args, **kwargs):
-            captured["env"] = kwargs.get("env")
-            return _Proc()
-
-        def fake_slot(slots, wait, lock_name=None):
-            captured["slots"] = slots
-            return contextlib.nullcontext()
-
-        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
-             patch.object(kimi_cli_transport.subprocess, "run", side_effect=fake_run), \
-             patch.object(kimi_cli_transport, "_global_slot", fake_slot), \
-             patch.dict(kimi_cli_transport.os.environ, {"KIMI_API_KEY": "leaked"}):
-            text = kimi_cli_transport.cli_complete(
-                {"home_dir": "/opt/odoo", "concurrency": 4,
-                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
-                "kimi-k3", "", "hello", timeout=30)
-        self.assertEqual(text, "ambient answer")
-        # No account key -> the CLI's own ~/.kimi login is in charge, and a token
-        # refresh there is single-writer: one slot regardless of concurrency=4.
-        self.assertEqual(captured["slots"], 1)
-        self.assertNotIn("KIMI_API_KEY", captured["env"])
-
-    def test_kimi_cli_uses_configured_concurrency_with_key(self):
-        captured = {}
-
-        class _Proc:
-            returncode = 0
-            stdout = "ok"
+            stdout = '{"role":"assistant","content":"ok"}'
             stderr = ""
 
         def fake_slot(slots, wait, lock_name=None):
@@ -1694,30 +1702,78 @@ class TestEraAiAccounts(TransactionCase):
             captured["lock_name"] = lock_name
             return contextlib.nullcontext()
 
+        home = tempfile.mkdtemp(prefix="era_kimi_home_")
+        self.addCleanup(shutil.rmtree, home, True)
         with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
              patch.object(kimi_cli_transport.subprocess, "run", return_value=_Proc()), \
              patch.object(kimi_cli_transport, "_global_slot", fake_slot):
             kimi_cli_transport.cli_complete(
-                {"home_dir": "/opt/odoo", "concurrency": 3, "kimi_api_key": "mk",
-                 "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
+                {"home_dir": "/opt/odoo", "config_dir": home, "concurrency": 8,
+                 "kimi_api_key": "mk", "min_gap": 0, "gap_per_kb": 0, "lock_wait": 5},
                 "kimi-k2.6", "", "hi", timeout=30)
-        self.assertEqual(captured["slots"], 3)
+        # SYSTEM.md/config.toml are single-writer per account: concurrency=8 in
+        # the settings must NOT widen this pool.
+        self.assertEqual(captured["slots"], 1)
         # Its own lock namespace: a Kimi call never queues behind Claude/Codex.
         self.assertEqual(captured["lock_name"], kimi_cli_transport._LOCK_SLOT)
         self.assertNotEqual(kimi_cli_transport._LOCK_SLOT, llm_cli_transport._LOCK_SLOT)
         self.assertNotEqual(kimi_cli_transport._LOCK_SLOT, codex_cli_transport._LOCK_SLOT)
 
-    def test_kimi_cli_error_exit_codes(self):
-        # 75 is kimi's documented "retryable" exit; anything else non-zero is fatal.
-        with self.assertRaises(UserError) as retryable:
-            kimi_cli_transport._parse_kimi_output("", 75, "rate limited")
-        self.assertIn("retry", str(retryable.exception).lower())
-        with self.assertRaises(UserError) as fatal:
-            kimi_cli_transport._parse_kimi_output("", 1, "bad api key")
-        self.assertIn("bad api key", str(fatal.exception))
+    def test_kimi_binary_resolution_order(self):
+        # Odoo's service PATH rarely carries a user bin dir, so the glob list is
+        # the real discovery path — it must cover BOTH distributions' install
+        # locations (Kimi Code's ~/.kimi-code/bin and kimi-cli's ~/.local/bin).
+        globs = kimi_cli_transport._KIMI_GLOBS
+        self.assertTrue(any(g.endswith("/.kimi-code/bin/kimi") for g in globs))
+        self.assertTrue(any(g.endswith("/.local/bin/kimi") for g in globs))
+        with tempfile.TemporaryDirectory() as tmp:
+            binary = os.path.join(tmp, "kimi")
+            with open(binary, "w") as fh:
+                fh.write("#!/bin/sh\n")
+            # An explicit override always wins, even over a PATH hit.
+            with patch.object(kimi_cli_transport.shutil, "which",
+                              return_value="/usr/bin/kimi"):
+                self.assertEqual(
+                    kimi_cli_transport.resolve_cli_binary(binary), binary)
+                # ERA_AI_KIMI_BIN is the next-highest precedence.
+                with patch.dict(kimi_cli_transport.os.environ,
+                                {"ERA_AI_KIMI_BIN": binary}):
+                    self.assertEqual(kimi_cli_transport.resolve_cli_binary(), binary)
+                # Then PATH.
+                self.assertEqual(kimi_cli_transport.resolve_cli_binary(),
+                                 "/usr/bin/kimi")
+            # Nothing anywhere -> None (the caller raises a clear UserError).
+            with patch.object(kimi_cli_transport.shutil, "which", return_value=None), \
+                 patch.object(kimi_cli_transport, "_KIMI_GLOBS", []):
+                self.assertIsNone(kimi_cli_transport.resolve_cli_binary())
+
+    def test_kimi_cli_error_output_is_cleaned(self):
+        # A failed run exits non-zero with the message on stderr, wrapped in a
+        # version banner and a "See log:" footer that must not reach the user
+        # (shape verified live on kimi-code 0.36.1).
+        stderr = (
+            "kimi version 0.36.1\n"
+            "error: failed to run prompt: provider.auth_error: 401 Invalid Authentication\n"
+            "See log: /opt/odoo/.kimi-code/logs/kimi-code.log\n"
+        )
+        with self.assertRaises(UserError) as err:
+            kimi_cli_transport._parse_kimi_output(
+                '{"role":"meta","type":"system.version","version":"0.36.1"}', 1, stderr)
+        message = str(err.exception)
+        self.assertIn("401 Invalid Authentication", message)
+        self.assertNotIn("See log:", message)
+        self.assertNotIn("kimi version", message)
+        # Exit 0 but no assistant event -> empty answer, not a silent "".
         with self.assertRaises(UserError):
-            kimi_cli_transport._parse_kimi_output("   ", 0, "")
-        self.assertEqual(kimi_cli_transport._parse_kimi_output(" answer \n", 0, ""), "answer")
+            kimi_cli_transport._parse_kimi_output(
+                '{"role":"meta","type":"system.version","version":"0.36.1"}', 0, "")
+        # Multiple assistant events are joined in order.
+        self.assertEqual(
+            kimi_cli_transport._parse_kimi_output(
+                '{"role":"assistant","content":"one"}\n'
+                '{"role":"meta","type":"x"}\n'
+                '{"role":"assistant","content":"two"}\n', 0, ""),
+            "one\ntwo")
 
     def test_kimi_cli_validate_checks_binary_and_key(self):
         acc = self.Account.create({
@@ -1746,7 +1802,8 @@ class TestEraAiAccounts(TransactionCase):
         # _validate_connection, not action_validate: the latter persists the
         # error through a second cursor, which a TransactionCase cannot provide.
         acc = self.Account.create({
-            "name": "Kimi noBin", "provider": "kimi", "auth_mode": "cli_proxy"})
+            "name": "Kimi noBin", "provider": "kimi", "auth_mode": "cli_proxy",
+            "secret": "mk"})
         with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value=None):
             with self.assertRaises(UserError) as err:
                 acc._validate_connection()
@@ -1765,7 +1822,9 @@ class TestEraAiAccounts(TransactionCase):
             out = agent._generate_response("hello")
         self.assertEqual(out, ["kimi answer"])
         self.assertEqual(mocked.call_args.args[1], "kimi-k2.6")
-        self.assertEqual(mocked.call_args.args[0]["kimi_api_key"], "mk")
+        cfg = mocked.call_args.args[0]
+        self.assertEqual(cfg["kimi_api_key"], "mk")
+        self.assertTrue(cfg["config_dir"].endswith("/.kimi-code"))
 
     def test_kimi_cli_proxy_refuses_non_chat_models(self):
         acc = self.Account.create({

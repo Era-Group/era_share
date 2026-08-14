@@ -60,9 +60,13 @@ CLI_PROXY_PROVIDERS = ("anthropic", "openai", "zai", "kimi")
 #  - claude reads `$CLAUDE_CONFIG_DIR/.credentials.json`;
 #  - codex reads `$CODEX_HOME/auth.json` (CODEX_HOME *is* the config dir).
 # The matching env var is exported by each transport, not stored here.
+#  - kimi reads `$KIMI_CODE_HOME/config.toml` + `SYSTEM.md`, which the transport
+#    regenerates per call; its API key travels in the environment, so there is
+#    no credential file and no in-app subscription link (cred_file is None).
 _CLI_PROFILES = {
     "anthropic": {"subdir": ".claude", "cred_file": ".credentials.json"},
     "openai": {"subdir": ".codex", "cred_file": "auth.json"},
+    "kimi": {"subdir": ".kimi-code", "cred_file": None},
 }
 
 # Curated chat models for the Claude CLI-proxy (the CLI has no list endpoint).
@@ -961,11 +965,13 @@ class EraAiAccount(models.Model):
         {active, stale}``.
         """
         self.ensure_one()
-        if self.provider not in _CLI_PROFILES:
+        profile = _CLI_PROFILES.get(self.provider)
+        if not profile or not profile.get("cred_file"):
             # Key-authenticated CLI providers (Z.AI, Kimi): there is no in-app
-            # subscription link to read, and no credential layout of their own.
-            # Answer 'none' rather than falling through to the Anthropic layout
-            # and probing another provider's credential file.
+            # subscription link to read. Answer 'none' rather than falling
+            # through to the Anthropic layout and probing another provider's
+            # credential file (Z.AI has no _CLI_PROFILES entry at all; Kimi has
+            # one for its config dir, but no credential file).
             return {"state": "none", "linked": False}
         try:
             with open(self._cli_credentials_path(), "r") as f:
@@ -1456,17 +1462,23 @@ class EraAiAccount(models.Model):
                     "ANTHROPIC_AUTH_TOKEN).", self.name))
             cfg["anthropic_base_url"] = (self.base_url or ZAI_ANTHROPIC_BASE_URL).strip()
             cfg["anthropic_auth_token"] = token
-        # Kimi over its own CLI: hand the account's key to the `kimi` binary as
-        # KIMI_API_KEY / KIMI_BASE_URL. The key is OPTIONAL here — with none the
-        # CLI uses whatever `kimi login` stored under the account's CLI HOME
-        # (~/.kimi), which is a supported way to run it. It is the transport,
-        # not this method, that decides what that implies for concurrency.
+        # Kimi over its own CLI: the key travels in the environment (never a
+        # config file), and the transport regenerates config.toml + SYSTEM.md in
+        # this isolated KIMI_CODE_HOME before every call — so the account gets a
+        # managed dir unconditionally, not only when a subscription is linked.
+        # A key is required: `kimi login` is an interactive device-code flow and
+        # cannot be driven from here.
         if self.provider == "kimi":
             token = self._get_secret()
-            if token:
-                cfg["kimi_api_key"] = token
-                cfg["kimi_base_url"] = (
-                    self.base_url or kimi_cli_transport.KIMI_DEFAULT_BASE_URL).strip()
+            if not token:
+                raise UserError(_(
+                    "Set the Kimi API key on account '%s' — the Kimi CLI runs "
+                    "non-interactively here and cannot use its own browser "
+                    "login.", self.name))
+            cfg["kimi_api_key"] = token
+            cfg["kimi_base_url"] = (
+                self.base_url or kimi_cli_transport.KIMI_DEFAULT_BASE_URL).strip()
+            cfg["config_dir"] = self._cli_managed_config_dir(create=True)
         return cfg
 
     def _assert_usable(self):
@@ -1546,16 +1558,13 @@ class EraAiAccount(models.Model):
                 # the account's credentials (linked or ambient) are accepted.
                 return codex_cli_transport.check_login(self._cli_cfg())
             if self.provider == "kimi":
-                # `kimi --version` proves the binary runs; the key (when one is
-                # set) is checked separately over HTTP — the same key serves
-                # both Kimi surfaces. With no key the CLI's own `kimi login`
-                # is in charge, and there is nothing token-free to probe.
+                # `kimi --version` proves the binary runs; the key is checked
+                # separately over HTTP (the same key serves both Kimi surfaces).
+                # There is no token-free credential probe in the CLI itself.
                 kimi_cli_transport.check_cli(self._cli_cfg())
-                token = self._get_secret()
-                if token:
-                    self._http_get_json(
-                        (self.base_url or KIMI_OPENAI_BASE_URL).rstrip("/") + "/models",
-                        {"Authorization": "Bearer %s" % token}, 30)
+                self._http_get_json(
+                    (self.base_url or KIMI_OPENAI_BASE_URL).rstrip("/") + "/models",
+                    {"Authorization": "Bearer %s" % self._get_secret()}, 30)
                 return True
             binary = llm_cli_transport.resolve_cli_binary(self.cli_path or None)
             if not binary:

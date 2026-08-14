@@ -95,13 +95,14 @@
                             </div>
                             <div class="text-muted mt-2" invisible="provider != 'kimi'">
                                 <b>Kimi (Moonshot AI)</b> over the CLI: the local <code>kimi</code>
-                                binary (Kimi Code CLI) runs in <b>print mode</b>, locked down to pure
-                                text — no tools, no shell, single step, empty working directory.
-                                Paste a Kimi / Moonshot API key below and <b>every user</b> routes
-                                through it; leave it empty to use the login stored by
-                                <code>kimi login</code> under the HOME below. <b>Sync models</b> to
-                                pick a Kimi model — it is selected via <code>KIMI_MODEL_NAME</code>,
-                                so no Kimi account login is needed when a key is set.
+                                binary (Kimi Code CLI) runs in <b>prompt mode</b>, locked down to
+                                pure text — no tools, single step, empty working directory, and the
+                                built-in coding-agent persona replaced. An <b>API key is required</b>
+                                (paste it below): <code>kimi login</code> is an interactive
+                                device-code flow that cannot be driven from Odoo. The key is passed
+                                to the CLI per call through the environment and never written to
+                                disk, and <b>every user</b> routes through it. <b>Sync models</b> to
+                                pick a Kimi model.
                             </div>
                             <div class="text-muted mt-2" invisible="provider != 'zai'">
                                 <b>Z.AI (GLM)</b> over the CLI: the local <code>claude</code> binary is

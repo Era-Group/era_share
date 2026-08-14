@@ -156,45 +156,63 @@ mode:
    to `https://api.moonshot.cn/v1` for the China region, or to a gateway.
 
 2. **CLI proxy** (auth mode *Local CLI proxy*) — Moonshot's first-party **Kimi
-   Code CLI**. Requirements: the `kimi` binary on the server
-   (`uv tool install --python 3.13 kimi-cli`; or set the account's *CLI binary
-   path* / `ERA_AI_KIMI_BIN`). Two ways to authenticate it:
-   - paste a **Kimi / Moonshot API key** in the *CLI proxy* box — it is exported
-     to the CLI as `KIMI_API_KEY` / `KIMI_BASE_URL` per call, so nothing is
-     written to any config file; **or**
-   - leave the key empty and run **`kimi login`** once on the server under the
-     account's *CLI HOME* — the CLI then uses its own `~/.kimi` credentials.
+   Code CLI**. Install it as the `odoo` user with
 
-   **Validate connection** runs `kimi --version` (and, when a key is set, the
-   token-free `/models` check). **Sync models** gives the curated Kimi list.
+   ```
+   curl -fsSL https://code.kimi.com/kimi-code/install.sh | KIMI_NO_MODIFY_PATH=1 bash
+   ```
 
-   *Model selection:* the chosen id is exported as `KIMI_MODEL_NAME`; the
-   transport passes **no `--model`**, because that flag takes an *alias* declared
-   in the CLI's own `[models]` config table, not a raw model id — the same shape
-   as the Z.AI mapping above.
+   which drops a checksum-verified native binary in `~/.kimi-code/bin/kimi`
+   (auto-detected — no PATH change needed, and Odoo's service PATH would not
+   pick one up anyway). The older Python package (`uv tool install kimi-cli`,
+   entry point in `~/.local/bin`) is also detected but is **deprecated
+   upstream**. Or set the account's *CLI binary path* / `ERA_AI_KIMI_BIN`.
 
-### How the Kimi CLI is fenced (important)
+   An **API key is required** even in CLI mode: `kimi login` is an interactive
+   device-code flow that cannot be driven from Odoo. The key is passed to the
+   CLI through the environment on every call and never written to any file.
+   **Validate connection** runs `kimi --version` plus the token-free `/models`
+   check; **Sync models** gives the curated Kimi list.
 
-`kimi --print` **implicitly enables `--yolo`**: every tool call, file write and
-shell command is auto-approved. Since Odoo drives it with end-user prompts, each
-call is locked down to pure text by three independent measures:
+> **The shipped binary does not match Moonshot's published docs.** Everything
+> below was verified live against **kimi-code 0.36.1**; the docs still describe
+> the older Python `kimi-cli`. There is no `--print`, `--config`, `--work-dir`,
+> `--max-steps-per-turn` or `--final-message-only`, stdin is rejected
+> ("Output format is only supported in prompt mode"), and the credential env
+> vars are `KIMI_MODEL_API_KEY` / `KIMI_MODEL_BASE_URL` / `KIMI_MODEL_NAME` —
+> not the documented `KIMI_API_KEY` / `KIMI_BASE_URL`. **Re-verify after a CLI
+> upgrade rather than trusting the documentation.**
 
-| Measure | Effect |
+### How one call is assembled
+
+`kimi -p <user text> --output-format stream-json`, with:
+
+| Piece | Why |
 |---|---|
-| `--config '{"tools":{"enabled":["EraAiAccountsNoTools"]}}'` | `[tools].enabled` is an allowlist when non-empty, and this name matches no registered tool ⇒ the model is offered **no tools** |
-| `--max-steps-per-turn 1` | bounds the agent loop to a single step |
-| `--work-dir <fresh empty temp dir>` (also the `cwd`) | file tools have nothing to reach, and no project context (`AGENTS.md`/`KIMI.md`, the Odoo tree) is loaded |
+| `KIMI_MODEL_API_KEY` / `_BASE_URL` / `_NAME` / `_PROVIDER_TYPE` / `_MAX_CONTEXT_SIZE` | synthesize a private provider + model alias that the CLI makes the default — so no `-m` (which wants an alias declared in the config's `[models]` table) and no key on disk |
+| an isolated `KIMI_CODE_HOME` per account, mode 0700 | never the operator's own `~/.kimi-code` |
+| `config.toml` → `[tools] enabled = ["EraAiAccountsNoTools"]` | prompt mode otherwise offers the model **all 25 built-in tools — `Bash`, `Write`, `Edit`, `CronCreate` included** (measured). A non-empty `enabled` is an allowlist, and a name matching no tool leaves it empty: **25 → 0 tools** |
+| `config.toml` → `[loop_control] max_steps_per_turn = 1` | bounds the agent loop |
+| `SYSTEM.md` | wholly replaces the built-in coding-agent persona — this is both how Odoo's system prompt is injected and how a ~21 KB preamble is dropped (**20,959 → 69 chars** for a bare call) |
+| a fresh empty **cwd** | there is no `--work-dir` flag; the working directory *is* the workspace, so file tools reach nothing and no project context (`AGENTS.md`, `KIMI.md`, the Odoo tree) is loaded |
 
-The directory is created per call and removed afterwards. If a future `kimi`
-version rejects one of these flags the call **fails loudly** rather than running
-unfenced — but re-verify them after a CLI upgrade, and keep the *CLI extra
-arguments* denylist (which blocks `--yolo`, `--afk`, `--work-dir`, `--agent-file`,
-`--mcp-config*`, `--skills-dir`, session-resume flags, …) in place.
+Both files are rewritten before every call, so an edited or stale one cannot
+weaken the fence. `kimi doctor` validates the generated `config.toml`.
 
-Concurrency: Kimi has its own slot pool (`<data_dir>/era_ai_cli_proxy.kimi.<n>.lock`),
-sized by `ai.cli_max_concurrency` when the account carries an API key (each call
-is then stateless). With no key — i.e. relying on the CLI's own `kimi login` —
-it is clamped to **1**, because a token refresh rewrites `~/.kimi`.
+**Prompt size:** the user turn rides in `argv`, which Linux caps at 128 KiB per
+argument (verified: 127 KB accepted, 130 KB → `E2BIG`). Odoo refuses anything
+over 96 KB with a clear message. Only the *user* turn is affected — the bulk
+(RAG context, tool instructions) goes to `SYSTEM.md`, which is a file.
+
+**Concurrency:** Kimi has its own slot pool
+(`<data_dir>/era_ai_cli_proxy.kimi.<n>.lock`) so it never queues behind Claude
+or Codex, but it is **hard-clamped to one call at a time** regardless of
+`ai.cli_max_concurrency` — `config.toml` and `SYSTEM.md` are per-account
+single-writer, and two concurrent calls would race each other's system prompt.
+
+**Housekeeping:** each call creates a session record under the account's
+`KIMI_CODE_HOME` (session index, caches, search index — a few KB per call).
+Deleting the account removes the whole directory.
 
 Image generation and transcription are **not** offered for Kimi here (use
 Cloudflare/OpenAI for those).
@@ -274,8 +292,8 @@ off to keep an account strictly single-shot chat).
   **Note** field to record what it is linked for.
 - The `gemini` CLI is not bridged, so Google Gemini uses API keys.
 - The Kimi CLI proxy has **no in-app subscription link** (no "Login with Kimi"
-  button): authenticate it with an API key on the account, or run `kimi login`
-  once on the server under the account's *CLI HOME*.
+  button) and **requires an API key**: `kimi login` is an interactive
+  device-code flow that cannot be driven from Odoo.
 
 ## Security
 
@@ -295,7 +313,7 @@ off to keep an account strictly single-shot chat).
 | `ai.cli_min_gap` | 1.0 | Base gap (s) enforced between consecutive CLI calls |
 | `ai.cli_gap_per_kb` | 0.05 | Extra gap (s) per KB of request body — bigger requests wait longer |
 | `ai.cli_max_gap` | 30 | Cap (s) on the inter-call gap |
-| `ai.cli_max_concurrency` | 1 | Max simultaneous CLI calls host-wide, per provider pool (1 = strictly one at a time). Codex is always 1; Kimi is 1 when the account has no API key |
+| `ai.cli_max_concurrency` | 1 | Max simultaneous CLI calls host-wide, per provider pool (1 = strictly one at a time). Codex and Kimi are always 1 |
 | `ai.cli_lock_wait` | 300 | Max time (s) a request waits for a free slot before erroring |
 | `ai.http_timeout` | 120 | Anthropic HTTP timeout (s) |
 | `ai.anthropic_max_tokens` | 4096 | `max_tokens` for the Messages API |

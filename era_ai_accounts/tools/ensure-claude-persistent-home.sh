@@ -6,6 +6,16 @@
 #
 #     bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-claude-persistent-home.sh
 #
+# ORDER MATTERS: it must run BEFORE code-server starts. The VS Code extension
+# launches the CLI within a second or two of the editor coming up, and Claude
+# creates $HOME/.claude itself the moment it finds none. Lose that race and the
+# symlink can no longer be created (step 1 will not swap a directory out from
+# under a live process), so the session starts against an empty overlay dir with
+# no history. Observed on 2026-08-14: code-server 17:24:46, this script 17:24:59
+# — 13 s late, and every transcript looked lost until it was copied back.
+# Losing the race is now survivable (step 1b seeds the fresh dir), but the fix
+# is to run this first, not to rely on the fallback.
+#
 # What it does: makes /opt/odoo/.claude a SYMLINK to /var/lib/odoo/claude-home
 # (migrating whatever is already there on the first run), and exports
 # CLAUDE_CONFIG_DIR in ~/.bashrc.
@@ -58,6 +68,30 @@ elif [ -d "$LIVE" ]; then
     if pgrep -f "native-binary/claude" >/dev/null 2>&1; then
         log "Claude is running — not migrating now. Re-run this when it is closed"
         log "(at boot nothing is running, so the startup script will do it)."
+
+        # --- 1b. lost-race fallback ------------------------------------------
+        # We cannot link, but we can still make the history reachable: copy the
+        # volume's state INTO the live directory. -n never overwrites, so the
+        # running session's own transcript is untouched, and the next boot's
+        # migration copies everything back the other way.
+        #
+        # Only worth doing when the live dir is the empty shell Claude just made
+        # after a rebuild — if it already holds transcripts it is the real thing
+        # (or an earlier seed) and there is nothing to rescue.
+        live_n=$(find "$LIVE/projects" -name '*.jsonl' 2>/dev/null | wc -l)
+        pers_n=$(find "$PERSIST/projects" -name '*.jsonl' 2>/dev/null | wc -l)
+        if [ "$pers_n" -gt "$live_n" ]; then
+            log "lost the startup race: $LIVE has $live_n transcript(s), volume has $pers_n"
+            if cp -an "$PERSIST/." "$LIVE/" 2>/dev/null; then
+                log "seeded $LIVE from the volume — $(find "$LIVE/projects" -name '*.jsonl' 2>/dev/null | wc -l) transcript(s) now present"
+                log "ACTION: restart the Claude extension session, then /resume."
+                log "  Claude reads its history only at launch, so the session that is"
+                log "  open right now still shows none of it."
+                log "  Then move this script BEFORE code-server in the startup script."
+            else
+                log "ERROR: could not seed $LIVE — history stays on the volume only"
+            fi
+        fi
     else
         log "migrating $LIVE ($(du -sh "$LIVE" 2>/dev/null | cut -f1)) into $PERSIST ..."
         # Merge without deleting: an existing volume copy wins nothing, but no
@@ -87,13 +121,37 @@ fi
 # temp+rename — which replaces a symlink with a regular file, so linking it is
 # not an option. Keep a copy on the volume instead: seed it when missing (right
 # after a rebuild) and refresh it whenever the live file is present.
+#
+# Backing it up UNCONDITIONALLY was a data-loss bug. When this script loses the
+# startup race, Claude has already written a fresh stub over the wiped overlay,
+# and copying that stub over a good backup destroys the only saved login. It
+# happened on 2026-08-14: the backup went from ~37K down to 389 bytes, and the
+# account survived only because snapshot-claude.sh keeps a second copy.
+#
+# So decide by content, not by presence: a file is worth keeping only if it
+# carries the logged-in account. Direction of the copy follows from that.
 JSON_LIVE="$ODOO_HOME/.claude.json"
 JSON_BAK="$PERSIST/.claude-json.backup"
-if [ -f "$JSON_LIVE" ]; then
-    cp -a "$JSON_LIVE" "$JSON_BAK" 2>/dev/null && log "backed up .claude.json ($(du -h "$JSON_BAK" | cut -f1))"
-elif [ -f "$JSON_BAK" ]; then
+
+# A real config has an oauthAccount key; a post-rebuild stub has almost nothing.
+json_has_account() { [ -s "$1" ] && grep -q '"oauthAccount"' "$1" 2>/dev/null; }
+
+if json_has_account "$JSON_LIVE"; then
+    # Keep the previous good copy one generation back, so a bad refresh is
+    # never the end of the line.
+    [ -f "$JSON_BAK" ] && cp -a "$JSON_BAK" "$JSON_BAK.prev" 2>/dev/null
+    cp -a "$JSON_LIVE" "$JSON_BAK" 2>/dev/null &&
+        log "backed up .claude.json ($(du -h "$JSON_BAK" | cut -f1))"
+elif json_has_account "$JSON_BAK"; then
+    # Live file is missing or a stub, and the volume has the real thing.
+    if [ -f "$JSON_LIVE" ]; then
+        cp -a "$JSON_LIVE" "$PERSIST/.claude-json.stub" 2>/dev/null
+        log "live .claude.json has no account (stub after rebuild) — restoring"
+    fi
     cp -a "$JSON_BAK" "$JSON_LIVE" && chmod 600 "$JSON_LIVE" &&
         log "restored .claude.json from the volume (account + MCP connectors)"
+else
+    log "NOTE: no .claude.json with an account, live or on the volume — expect a login prompt"
 fi
 
 # --- 3. report --------------------------------------------------------------

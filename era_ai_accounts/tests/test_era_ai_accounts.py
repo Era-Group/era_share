@@ -1594,7 +1594,9 @@ class TestEraAiAccounts(TransactionCase):
         acc = self.Account.create({
             "name": "Kimi link", "provider": "kimi", "auth_mode": "cli_proxy",
             "secret": "mk"})
-        self.assertEqual(acc._cli_oauth_info(), {"state": "none", "linked": False})
+        info = acc._cli_oauth_info()
+        self.assertEqual(info["state"], "none")
+        self.assertFalse(info["linked"])
         self.assertEqual(acc.cli_link_state, "none")
         self.assertFalse(acc.cli_oauth_linked)
 
@@ -1951,6 +1953,196 @@ class TestEraAiAccounts(TransactionCase):
                          "https://gateway.internal/coding/v1")
         # ...but the protocol still follows the selected plan.
         self.assertEqual(acc._cli_cfg()["kimi_provider_type"], "anthropic")
+
+    # ---- Kimi device login (subscription linked in-app) ----
+    _LINKED_CONFIG = (
+        'default_model = "kimi-for-coding"\n'
+        "\n"
+        "[providers.kimi-code]\n"
+        'type = "kimi"\n'
+        'base_url = "https://api.kimi.com/coding/v1"\n'
+        "# NB: no api_key here — the CLI rejects a provider carrying both\n"
+        "# apiKey and oauth ('they are mutually exclusive', verified live).\n"
+        "\n"
+        "[providers.kimi-code.oauth]\n"
+        'storage = "file"\n'
+        'key = "oauth/kimi-code"\n'
+        "\n"
+        '[models.kimi-for-coding]\n'
+        'provider = "kimi-code"\n'
+        'model = "kimi-for-coding"\n'
+        'display_name = "Kimi K2.7 Code"\n'
+        "max_context_size = 262144\n"
+        "\n"
+        "[models.k3]\n"
+        'provider = "kimi-code"\n'
+        'model = "k3"\n'
+        "max_context_size = 1048576\n"
+    )
+
+    def _linked_kimi_account(self, name="Kimi linked"):
+        """An account whose managed home already holds a provisioned login."""
+        acc = self.Account.create({
+            "name": name, "provider": "kimi", "auth_mode": "cli_proxy"})
+        home = acc._cli_managed_config_dir(create=True)
+        with open(os.path.join(home, "config.toml"), "w") as fh:
+            fh.write(self._LINKED_CONFIG)
+        self.addCleanup(shutil.rmtree, acc._cli_managed_home(), True)
+        acc.invalidate_recordset()
+        return acc, home
+
+    def test_kimi_link_detected_from_provisioned_config(self):
+        acc, _home = self._linked_kimi_account()
+        self.assertTrue(acc.cli_oauth_linked)
+        self.assertEqual(acc.cli_link_state, "active")
+        # The banner must name Kimi, not fall through to the Claude wording.
+        self.assertEqual(acc.cli_oauth_label, "Kimi Code subscription linked")
+        self.assertNotIn("Claude", acc.cli_oauth_label)
+
+    def test_kimi_linked_account_needs_no_api_key(self):
+        acc, home = self._linked_kimi_account("Kimi linked nokey")
+        cfg = acc._cli_cfg()
+        self.assertTrue(cfg["kimi_oauth"])
+        self.assertNotIn("kimi_api_key", cfg)
+        self.assertEqual(cfg["config_dir"], home)
+
+    def test_kimi_linked_models_come_from_the_subscription(self):
+        acc, _home = self._linked_kimi_account("Kimi linked models")
+        acc.action_sync_models()
+        self.assertEqual(set(acc.model_ids.mapped("model_id")),
+                         {"k3", "kimi-for-coding"})
+        # default_model from the provisioned config wins over any curated list.
+        self.assertEqual(acc._default_chat_model(), "kimi-for-coding")
+
+    def test_kimi_linked_call_does_not_inject_the_env_provider(self):
+        # Exporting KIMI_MODEL_* would synthesize the private "__kimi_env__"
+        # provider AND make it the default model, silently bypassing the linked
+        # subscription. A linked account must select the model with -m instead.
+        acc, home = self._linked_kimi_account("Kimi linked call")
+        captured = {}
+
+        class _Proc:
+            returncode = 0
+            stdout = '{"role":"assistant","content":"linked answer"}'
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            captured["args"] = args
+            captured["env"] = kwargs.get("env")
+            return _Proc()
+
+        with patch.object(kimi_cli_transport, "resolve_cli_binary", return_value="/usr/bin/kimi"), \
+             patch.object(kimi_cli_transport.subprocess, "run", side_effect=fake_run):
+            text = kimi_cli_transport.cli_complete(
+                dict(acc._cli_cfg(), min_gap=0, gap_per_kb=0, lock_wait=5),
+                "kimi-for-coding", "sys", "hi", timeout=30)
+        self.assertEqual(text, "linked answer")
+        env = captured["env"]
+        for var in ("KIMI_MODEL_API_KEY", "KIMI_MODEL_NAME", "KIMI_MODEL_BASE_URL",
+                    "KIMI_MODEL_PROVIDER_TYPE"):
+            self.assertNotIn(var, env, "%s must not be injected for a linked account" % var)
+        self.assertEqual(env["KIMI_CODE_HOME"], home)
+        args = captured["args"]
+        self.assertEqual(args[args.index("-m") + 1], "kimi-for-coding")
+
+    def test_kimi_call_preserves_the_login_in_config_toml(self):
+        # The fence is rewritten before every call; if that rewrite replaced the
+        # file, the first call after a login would erase the subscription.
+        acc, home = self._linked_kimi_account("Kimi linked merge")
+        config_path = os.path.join(home, "config.toml")
+        kimi_cli_transport._write_runtime_files(home, "system prompt")
+        merged = open(config_path).read()
+        # The login's provisioning survives verbatim...
+        self.assertIn('[providers.kimi-code.oauth]', merged)
+        self.assertIn('key = "oauth/kimi-code"', merged)
+        self.assertIn("[models.k3]", merged)
+        self.assertIn('default_model = "kimi-for-coding"', merged)
+        # ...and the fence is still applied.
+        self.assertIn(kimi_cli_transport._NO_TOOLS_SENTINEL, merged)
+        self.assertIn("max_steps_per_turn = 1", merged)
+        # Still parses, and the account still reads as linked.
+        self.assertTrue(kimi_cli_transport.read_link_info(home)["linked"])
+        # Repeated calls must not accumulate duplicate [tools] tables.
+        kimi_cli_transport._write_runtime_files(home, "system prompt")
+        self.assertEqual(open(config_path).read().count("[tools]"), 1)
+
+    def test_kimi_call_overrides_a_tampered_fence(self):
+        # An operator (or the CLI itself) widening [tools] must not survive.
+        acc, home = self._linked_kimi_account("Kimi linked tamper")
+        with open(os.path.join(home, "config.toml"), "a") as fh:
+            fh.write('\n[tools]\nenabled = ["Bash", "Write"]\n')
+        kimi_cli_transport._write_runtime_files(home, "s")
+        merged = open(os.path.join(home, "config.toml")).read()
+        self.assertNotIn('"Bash"', merged)
+        self.assertIn(kimi_cli_transport._NO_TOOLS_SENTINEL, merged)
+        self.assertIn("[providers.kimi-code.oauth]", merged)
+
+    def test_kimi_device_login_flow(self):
+        acc = self.Account.create({
+            "name": "Kimi dev", "provider": "kimi", "auth_mode": "cli_proxy"})
+        self.addCleanup(shutil.rmtree, acc._cli_managed_home(), True)
+        output = (
+            "\nOpening browser for Kimi device login: "
+            "https://www.kimi.com/code/authorize_device?user_code=N9Z1-6I0B\n"
+            "If the browser did not open, paste the URL above and enter code: N9Z1-6I0B\n"
+            "Code expires in 1800s.\nWaiting for authorization to complete...\n"
+        )
+
+        def fake_start(cfg):
+            path = os.path.join(cfg["config_dir"], "device_login.out")
+            with open(path, "w") as fh:
+                fh.write(output)
+            return 4242, path
+
+        with patch.object(kimi_cli_transport, "device_login_start", side_effect=fake_start), \
+             patch.object(kimi_cli_transport, "pid_is_pending_login", return_value=True):
+            info = acc._kimi_device_login_start()
+            self.assertEqual(info["code"], "N9Z1-6I0B")
+            self.assertIn("authorize_device", info["url"])
+            # Not approved yet.
+            self.assertEqual(acc._kimi_device_login_status(), "pending")
+            # The CLI provisions the link once the manager approves.
+            with open(os.path.join(acc._cli_managed_config_dir(), "config.toml"), "w") as fh:
+                fh.write(self._LINKED_CONFIG)
+            acc.invalidate_recordset()
+            self.assertEqual(acc._kimi_device_login_status(), "linked")
+        self.assertTrue(acc.cli_oauth_linked)
+
+    def test_kimi_device_login_parser(self):
+        url, code = kimi_cli_transport.parse_device_login(
+            "Opening browser for Kimi device login: "
+            "https://www.kimi.com/code/authorize_device?user_code=YZOF-LTAX\n"
+            "Code expires in 1800s.")
+        self.assertEqual(url,
+                         "https://www.kimi.com/code/authorize_device?user_code=YZOF-LTAX")
+        self.assertEqual(code, "YZOF-LTAX")
+        self.assertEqual(kimi_cli_transport.parse_device_login(""), ("", ""))
+
+    def test_kimi_unlink_removes_the_provisioned_config(self):
+        acc, home = self._linked_kimi_account("Kimi unlink")
+        self.assertTrue(acc.cli_oauth_linked)
+        acc.action_ai_claude_logout()
+        acc.invalidate_recordset()
+        self.assertFalse(acc.cli_oauth_linked)
+        self.assertFalse(os.path.exists(os.path.join(home, "config.toml")))
+
+    def test_kimi_wizard_routes_to_the_kimi_device_flow(self):
+        acc = self.Account.create({
+            "name": "Kimi wiz", "provider": "kimi", "auth_mode": "cli_proxy"})
+        self.addCleanup(shutil.rmtree, acc._cli_managed_home(), True)
+        wizard = self.env["era.ai.account.login"].create({"account_id": acc.id})
+        called = {}
+
+        def fake_start():
+            called["started"] = True
+            return {"url": "https://www.kimi.com/code/authorize_device?user_code=AAAA-BBBB",
+                    "code": "AAAA-BBBB", "raw": ""}
+
+        with patch.object(type(acc), "_kimi_device_login_start", side_effect=fake_start):
+            wizard.action_device_start()
+        self.assertTrue(called.get("started"))
+        self.assertEqual(wizard.device_code, "AAAA-BBBB")
+        self.assertIn("30 minutes", wizard.device_status)
 
     # ---- API key mode (OpenAI-compatible /chat/completions) ----
     def test_kimi_api_sync_models(self):

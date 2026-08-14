@@ -36,6 +36,53 @@
                     </group>
                 </div>
 
+                <!-- Kimi: device-code login (the CLI provisions the link itself) -->
+                <div invisible="provider != 'kimi'">
+                    <div class="alert alert-info" role="status">
+                        Connect a <b>Kimi Code</b> subscription once, for <b>all users</b> in
+                        this system — no API key and no per-user login. The Kimi CLI stores the
+                        credentials on the server and keeps them refreshed.
+                    </div>
+
+                    <!-- Step 1: start -->
+                    <div invisible="device_code">
+                        <b>Sign in with a code — like signing in on a TV</b>
+                        <div class="mt-1">
+                            <button name="action_device_start" type="object" class="btn-primary"
+                                    string="Start device login" icon="fa-mobile"/>
+                        </div>
+                        <div class="text-muted mt-1">
+                            You'll get a link and a short code: open the link on your phone or
+                            computer, sign in to the Kimi account that holds the subscription,
+                            enter the code, approve — done.
+                        </div>
+                    </div>
+
+                    <!-- Step 2: approve + check -->
+                    <div invisible="not device_code" class="mb-2">
+                        <div class="alert alert-success" role="status">
+                            <div>1. Open
+                                <button name="action_device_open_url" type="object"
+                                        class="btn-link p-0 align-baseline"
+                                        string="the Kimi device page" icon="fa-external-link"/>
+                                on any device.</div>
+                            <div>2. Enter this one-time code:
+                                <span class="h3 ms-2"><field name="device_code" readonly="1" nolabel="1" class="fw-bold"/></span>
+                            </div>
+                            <div>3. Approve, then come back and click <b>Check status</b>.</div>
+                        </div>
+                        <button name="action_device_check" type="object" class="btn-primary"
+                                string="Check status" icon="fa-refresh"/>
+                    </div>
+                    <div class="text-muted mb-2" invisible="not device_status">
+                        <field name="device_status" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="text-muted">
+                        After approval, <b>Sync models</b> on the account: the models offered
+                        come from the subscription itself, not from a fixed list.
+                    </div>
+                </div>
+
                 <!-- OpenAI: device-code login (simple) or paste auth.json (fallback) -->
                 <div invisible="provider != 'openai'">
                     <field name="device_url" invisible="1"/>
@@ -108,7 +155,8 @@
 
                 <footer>
                     <button name="action_complete" type="object" string="Complete login"
-                            class="btn-primary" invisible="provider == 'openai' and not auth_json"/>
+                            class="btn-primary"
+                            invisible="(provider == 'openai' and not auth_json) or provider == 'kimi'"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

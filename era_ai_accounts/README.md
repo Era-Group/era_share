@@ -174,6 +174,37 @@ mode:
    **Validate connection** runs `kimi --version` plus the token-free `/models`
    check; **Sync models** gives the curated Kimi list.
 
+### Linking a Kimi Code subscription (no key to handle)
+
+Click **Connect Kimi account** on a Kimi CLI-proxy account. The wizard runs
+`kimi login` on the server, which prints a verification URL plus a one-time code
+(valid ~30 minutes) and then polls; open the link on any device, sign in to the
+Kimi account holding the subscription, enter the code, approve, then click
+**Check status**. Same flow as *Connect ChatGPT account*.
+
+The CLI itself writes the link into the account's managed `KIMI_CODE_HOME` — a
+provider carrying an `oauth` ref plus the model aliases the plan serves — and
+that file is what Odoo reads to decide the account is linked. So after linking:
+
+* **no API key is needed or stored** (the key box disappears);
+* **Sync models** lists the aliases the *subscription* provisions, not a curated
+  guess, and the plan's own `default_model` becomes the default;
+* calls select the model with `-m <alias>` and export **no** `KIMI_MODEL_*` —
+  those would synthesize a private provider and silently bypass the
+  subscription;
+* the per-call fence rewrite **merges** into `config.toml`: only `[tools]` and
+  `[loop_control]` are re-emitted, and everything the login provisioned is
+  copied through byte for byte. Without that, the first call after a login would
+  erase it.
+
+*Not detected:* token expiry. The CLI refreshes its own token, and it exposes no
+token-free credential probe, so there is no "link expired" banner for Kimi — a
+dead login surfaces as the CLI's own error on the next call. **Disconnect**
+removes the provisioned config and returns the account to key-based auth.
+
+An API key remains supported and is Moonshot's documented route for third-party
+integrations; the table below covers where each key comes from.
+
 ### Which Kimi key: plan or platform?
 
 Two separate products with **separate billing** — a consumer kimi.com chat
@@ -314,9 +345,8 @@ off to keep an account strictly single-shot chat).
   pick that account (and a specific image model) directly. Use the account's
   **Note** field to record what it is linked for.
 - The `gemini` CLI is not bridged, so Google Gemini uses API keys.
-- The Kimi CLI proxy has **no in-app subscription link** (no "Login with Kimi"
-  button) and **requires an API key**: `kimi login` is an interactive
-  device-code flow that cannot be driven from Odoo.
+- Kimi link health is binary (linked / not linked): unlike Claude and ChatGPT
+  there is no readable expiry, so no "link expired" banner — see above.
 
 ## Security
 

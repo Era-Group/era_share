@@ -522,6 +522,8 @@ class EraAiAccount(models.Model):
                 plan = info.get("subscription") or ""
                 base = _("ChatGPT %s linked", plan) if plan else _("ChatGPT account linked")
                 rec.cli_oauth_label = _("%s (renewing)", base) if renewing else base
+            elif rec.provider == "kimi":
+                rec.cli_oauth_label = _("Kimi Code subscription linked")
             else:
                 sub = info.get("subscription") or "subscription"
                 base = _("Claude %s linked", sub)
@@ -949,6 +951,13 @@ class EraAiAccount(models.Model):
             if self.provider == "zai":
                 return ZAI_CLI_MODELS[0][0]
             if self.provider == "kimi":
+                if self._cli_is_linked():
+                    info = kimi_cli_transport.read_link_info(
+                        self._cli_managed_config_dir())
+                    if info["default"]:
+                        return info["default"]
+                    if info["models"]:
+                        return info["models"][0][0]
                 return (KIMI_CODING_MODELS if self._kimi_is_coding_plan()
                         else KIMI_CLI_MODELS)[0][0]
         return self._PROVIDER_DEFAULT_MODEL.get(self.provider)
@@ -1044,6 +1053,17 @@ class EraAiAccount(models.Model):
         {active, stale}``.
         """
         self.ensure_one()
+        if self.provider == "kimi":
+            # Kimi keeps no credential file of its own shape: `kimi login`
+            # provisions a provider carrying an oauth ref into config.toml, and
+            # that file is the CLI's own source of truth for which credential
+            # slot the environment uses. There is no readable expiry, so a live
+            # link is 'active' and a failed call reports the CLI's own error
+            # rather than a guessed 'expired' state.
+            info = kimi_cli_transport.read_link_info(self._cli_managed_config_dir())
+            return {"state": "active" if info["linked"] else "none",
+                    "linked": info["linked"],
+                    "subscription": "Kimi Code"}
         profile = _CLI_PROFILES.get(self.provider)
         if not profile or not profile.get("cred_file"):
             # Key-authenticated CLI providers (Z.AI, Kimi): there is no in-app
@@ -1257,6 +1277,9 @@ class EraAiAccount(models.Model):
         """Remove the linked account's stored credentials (forces re-link)."""
         self.ensure_one()
         self._assert_oauth_manager()
+        if self.provider == "kimi":
+            self._kimi_unlink()
+            return True
         self._cli_drop_linked_credentials()
         return True
 
@@ -1418,8 +1441,85 @@ class EraAiAccount(models.Model):
             codex_cli_transport.device_login_kill(state["pid"])
         self._codex_device_clear()
 
+    # ------------------------------------------- Kimi (device-code) login
+    def _kimi_device_login_start(self):
+        """Kick off ``kimi login``; return {url, code, raw}.
+
+        The CLI prints a verification URL plus a one-time code (valid ~30
+        minutes) and then polls until the manager approves from any browser,
+        writing the provisioned provider into the managed config itself. Same
+        shape as the Codex device flow.
+        """
+        self.ensure_one()
+        self._assert_oauth_manager()
+        if self.auth_mode != "cli_proxy" or self.provider != "kimi":
+            raise UserError(_("Device login only applies to Kimi CLI-proxy accounts."))
+        # Supersede any previous attempt (its one-time code dies with it).
+        self._kimi_device_login_cancel()
+        # NOT _cli_cfg(): that demands credentials, which is precisely what this
+        # login is about to obtain. The login only needs where to run and where
+        # to write.
+        pid, out_path = kimi_cli_transport.device_login_start({
+            "cli_path": self.cli_path or False,
+            "home_dir": self.cli_home_dir or "/opt/odoo",
+            "config_dir": self._cli_managed_config_dir(create=True),
+        })
+        self.env["ir.config_parameter"].sudo().set_param(
+            _DEVICE_PARAM % self.id,
+            json.dumps({"pid": pid, "out": out_path, "started_at": time.time()}))
+        # The CLI contacts the auth server before printing the URL/code — poll
+        # its output briefly so the wizard shows the code right away.
+        url = code = raw = ""
+        for _attempt in range(20):
+            time.sleep(0.25)
+            raw = kimi_cli_transport.device_login_read(out_path)
+            url, code = kimi_cli_transport.parse_device_login(raw)
+            if url and code:
+                break
+            if not kimi_cli_transport.pid_is_pending_login(pid):
+                break
+        if url and code:
+            return {"url": url, "code": code, "raw": raw}
+        self._codex_device_clear()
+        detail = (raw or "").strip()[-300:] or _("no output from the kimi CLI")
+        raise UserError(_("Could not start the device login: %s", detail))
+
+    def _kimi_device_login_status(self):
+        """Poll a pending device login: 'linked' | 'pending' | 'failed:<detail>'."""
+        self.ensure_one()
+        if self._cli_is_linked():
+            self._codex_device_clear()
+            return "linked"
+        state = self._codex_device_state()
+        if not state:
+            return "failed:%s" % _("No device login in progress — start one first.")
+        if kimi_cli_transport.pid_is_pending_login(state.get("pid")):
+            return "pending"
+        raw = kimi_cli_transport.device_login_read(state.get("out") or "")
+        self._codex_device_clear()
+        return "failed:%s" % ((raw or "").strip()[-300:] or _("the login attempt ended"))
+
+    def _kimi_device_login_cancel(self):
+        self.ensure_one()
+        state = self._codex_device_state()
+        if state.get("pid"):
+            kimi_cli_transport.device_login_kill(state["pid"])
+        self._codex_device_clear()
+
+    def _kimi_unlink(self):
+        """Drop a linked Kimi subscription by removing its provisioned config."""
+        self.ensure_one()
+        config_dir = self.sudo()._cli_managed_config_dir()
+        for name in ("config.toml", "device_login.out"):
+            try:
+                os.remove(os.path.join(config_dir, name))
+            except OSError:
+                pass
+        self._kimi_device_login_cancel()
+
     def action_ai_claude_login(self):
-        """Button: open the link-account wizard (Claude OAuth / ChatGPT auth.json)."""
+        """Button: open the link-account wizard (Claude OAuth / ChatGPT auth.json
+        / Kimi device code)."""
         self.ensure_one()
         self._assert_oauth_manager()
         if not self.id:
@@ -1427,6 +1527,7 @@ class EraAiAccount(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Connect ChatGPT account") if self.provider == "openai"
+                    else _("Connect Kimi account") if self.provider == "kimi"
                     else _("Login with Claude"),
             "res_model": "era.ai.account.login",
             "view_mode": "form",
@@ -1548,18 +1649,23 @@ class EraAiAccount(models.Model):
         # A key is required: `kimi login` is an interactive device-code flow and
         # cannot be driven from here.
         if self.provider == "kimi":
+            cfg["config_dir"] = self._cli_managed_config_dir(create=True)
+            if self._cli_is_linked():
+                # Linked by device login: the CLI's own provisioned config
+                # supplies the provider, credentials and model aliases.
+                cfg["kimi_oauth"] = True
+                return cfg
             token = self._get_secret()
             if not token:
                 raise UserError(_(
-                    "Set the Kimi API key on account '%s' — the Kimi CLI runs "
-                    "non-interactively here and cannot use its own browser "
-                    "login.", self.name))
+                    "AI account '%s' has no Kimi credentials. Open it and click "
+                    "“Connect Kimi account” to link a Kimi Code subscription, "
+                    "or paste an API key.", self.name))
             cfg["kimi_api_key"] = token
             cfg["kimi_base_url"] = self._kimi_base_url()
             # The Code plan's endpoint is Anthropic-shaped; the Open Platform's
             # is OpenAI-shaped. Getting this wrong fails every call.
             cfg["kimi_provider_type"] = self._kimi_protocol()
-            cfg["config_dir"] = self._cli_managed_config_dir(create=True)
         return cfg
 
     def _assert_usable(self):
@@ -1639,12 +1745,14 @@ class EraAiAccount(models.Model):
                 # the account's credentials (linked or ambient) are accepted.
                 return codex_cli_transport.check_login(self._cli_cfg())
             if self.provider == "kimi":
-                # `kimi --version` proves the binary runs; the key is checked
-                # separately over HTTP (the same key serves both Kimi surfaces).
-                # There is no token-free credential probe in the CLI itself.
+                # `kimi --version` proves the binary runs. A key is then checked
+                # over HTTP — both Kimi surfaces take a Bearer key and expose a
+                # token-free GET /models (verified live on each). A device-linked
+                # account has no key to check and the CLI offers no token-free
+                # credential probe, so its provisioned link is the answer.
                 kimi_cli_transport.check_cli(self._cli_cfg())
-                # Both Kimi surfaces authenticate with a Bearer key and expose a
-                # token-free GET /models (verified live on each).
+                if self._cli_is_linked():
+                    return True
                 self._http_get_json(
                     self._kimi_base_url() + "/models",
                     {"Authorization": "Bearer %s" % self._get_secret()}, 30)
@@ -1704,8 +1812,15 @@ class EraAiAccount(models.Model):
             elif self.provider == "zai":
                 cli_models = ZAI_CLI_MODELS
             elif self.provider == "kimi":
-                cli_models = (KIMI_CODING_MODELS if self._kimi_is_coding_plan()
-                              else KIMI_CLI_MODELS)
+                if self._cli_is_linked():
+                    # A linked subscription serves exactly the aliases its login
+                    # provisioned — read them instead of guessing a catalog.
+                    info = kimi_cli_transport.read_link_info(
+                        self._cli_managed_config_dir())
+                    cli_models = info["models"] or KIMI_CODING_MODELS
+                else:
+                    cli_models = (KIMI_CODING_MODELS if self._kimi_is_coding_plan()
+                                  else KIMI_CLI_MODELS)
             else:
                 cli_models = CLAUDE_CLI_MODELS
             rows = [(mid, label, "chat", "") for mid, label in cli_models]

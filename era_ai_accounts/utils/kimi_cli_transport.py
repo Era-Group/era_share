@@ -49,10 +49,17 @@ import glob
 import json
 import logging
 import os
+import re
 import shlex
 import shutil
+import signal
 import subprocess
 import tempfile
+
+try:
+    import tomllib
+except ImportError:  # pragma: no cover - Python < 3.11
+    tomllib = None
 
 from odoo import _
 from odoo.exceptions import UserError
@@ -201,43 +208,215 @@ def _build_env(cfg, model=None):
     config_dir = cfg.get("config_dir")
     if config_dir:
         run_env["KIMI_CODE_HOME"] = config_dir
-    if cfg.get("kimi_api_key"):
-        run_env["KIMI_MODEL_API_KEY"] = cfg["kimi_api_key"]
-    run_env["KIMI_MODEL_BASE_URL"] = cfg.get("kimi_base_url") or KIMI_DEFAULT_BASE_URL
-    run_env["KIMI_MODEL_PROVIDER_TYPE"] = cfg.get("kimi_provider_type") or KIMI_PROVIDER_TYPE
-    if model:
-        run_env["KIMI_MODEL_NAME"] = model
-        run_env["KIMI_MODEL_MAX_CONTEXT_SIZE"] = str(_context_size(model))
+    # A linked (device-login) account is driven entirely by what the login
+    # provisioned in config.toml. Injecting KIMI_MODEL_* here would synthesize
+    # the private "__kimi_env__" provider AND make it the default model,
+    # silently bypassing the subscription — so for a linked account we set
+    # none of it and select the model with -m instead.
+    if not cfg.get("kimi_oauth"):
+        if cfg.get("kimi_api_key"):
+            run_env["KIMI_MODEL_API_KEY"] = cfg["kimi_api_key"]
+        run_env["KIMI_MODEL_BASE_URL"] = cfg.get("kimi_base_url") or KIMI_DEFAULT_BASE_URL
+        run_env["KIMI_MODEL_PROVIDER_TYPE"] = (
+            cfg.get("kimi_provider_type") or KIMI_PROVIDER_TYPE)
+        if model:
+            run_env["KIMI_MODEL_NAME"] = model
+            run_env["KIMI_MODEL_MAX_CONTEXT_SIZE"] = str(_context_size(model))
     # A self-update mid-request would stall or break it.
     run_env["KIMI_CLI_NO_AUTO_UPDATE"] = "1"
     return run_env
 
 
+# Top-level TOML tables this module owns in the managed config.toml. Everything
+# else in that file belongs to the CLI — most importantly the [providers] and
+# [models] tables plus `default_model` that `kimi login` provisions — and must
+# survive our rewrite, or the first call after a login would erase the link.
+_OWNED_SECTIONS = ("tools", "loop_control")
+_TOML_SECTION_RE = re.compile(r"^\s*\[\[?([^]]+?)\]\]?\s*(?:#.*)?$")
+
+
+def _strip_owned_sections(existing):
+    """Return ``existing`` config.toml text with our own tables removed.
+
+    Line-based on purpose: the surviving text is copied through byte for byte
+    rather than re-serialized, so nothing the CLI wrote can be reshaped or lost
+    by a round-trip through a TOML writer.
+    """
+    kept, skipping = [], False
+    for line in (existing or "").splitlines(keepends=True):
+        match = _TOML_SECTION_RE.match(line)
+        if match:
+            top = match.group(1).strip().split(".", 1)[0].strip().strip('"\'')
+            skipping = top in _OWNED_SECTIONS
+        if not skipping:
+            kept.append(line)
+    text = "".join(kept).rstrip()
+    return text + "\n\n" if text else ""
+
+
 def _write_runtime_files(config_dir, system_prompt):
     """Refresh the account's managed KIMI_CODE_HOME for this call.
 
-    ``config.toml`` carries the tool fence and ``SYSTEM.md`` the system prompt;
-    both are rewritten every call so an edited or stale file can never weaken
-    the fence. Called while holding the (single) slot, so there is no writer
-    race between concurrent requests.
+    ``config.toml`` carries the tool fence and ``SYSTEM.md`` the system prompt.
+    Both are rewritten every call so an edited or stale file can never weaken
+    the fence — but the config is *merged*, not replaced: only the tables this
+    module owns are re-emitted, and whatever ``kimi login`` provisioned
+    (providers, models, default_model) is preserved verbatim. Called while
+    holding the (single) slot, so there is no writer race between requests.
     """
     if not config_dir:
         raise UserError(_("The Kimi CLI transport needs a managed config directory."))
+    path = os.path.join(config_dir, _CONFIG_FILE)
     try:
         os.makedirs(config_dir, mode=0o700, exist_ok=True)
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                preserved = _strip_owned_sections(fh.read())
+        except OSError:
+            preserved = ""
         for name, content in (
-            (_CONFIG_FILE, _TOOL_FENCE_CONFIG),
+            (_CONFIG_FILE, preserved + _TOOL_FENCE_CONFIG),
             (_SYSTEM_FILE, (system_prompt or "").strip() or _DEFAULT_SYSTEM_PROMPT),
         ):
-            path = os.path.join(config_dir, name)
-            tmp = path + ".tmp"
+            target = os.path.join(config_dir, name)
+            tmp = target + ".tmp"
             fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(content)
-            os.replace(tmp, path)
+            os.replace(tmp, target)
     except OSError as exc:
         raise UserError(_("Cannot prepare the Kimi CLI config dir %(dir)s: %(err)s",
                           dir=config_dir, err=exc))
+
+
+# ---------------------------------------------------------- linked account
+def read_link_info(config_dir):
+    """Inspect a managed KIMI_CODE_HOME for a completed ``kimi login``.
+
+    A successful device login provisions a provider carrying an ``oauth`` ref
+    into ``config.toml`` — the CLI's own single source of truth for "which
+    credential slot does this environment use" — plus the model aliases the
+    plan serves. Reading that file is therefore how the link is detected, and
+    it doubles as the model catalog for a linked account.
+
+    Returns ``{"linked": bool, "models": [(alias, label)], "default": str}``.
+    """
+    if not config_dir or tomllib is None:
+        return {"linked": False, "models": [], "default": ""}
+    try:
+        with open(os.path.join(config_dir, _CONFIG_FILE), "rb") as fh:
+            data = tomllib.load(fh)
+    except (OSError, ValueError):
+        return {"linked": False, "models": [], "default": ""}
+    if not isinstance(data, dict):
+        return {"linked": False, "models": [], "default": ""}
+    providers = data.get("providers")
+    linked = False
+    oauth_providers = set()
+    if isinstance(providers, dict):
+        for name, provider in providers.items():
+            if isinstance(provider, dict) and isinstance(provider.get("oauth"), dict):
+                linked = True
+                oauth_providers.add(name)
+    models = []
+    raw_models = data.get("models")
+    if isinstance(raw_models, dict):
+        for alias, spec in raw_models.items():
+            if not isinstance(spec, dict):
+                continue
+            # Only the aliases served by the linked provider are usable.
+            if oauth_providers and spec.get("provider") not in oauth_providers:
+                continue
+            models.append((alias, str(spec.get("display_name") or spec.get("model") or alias)))
+    default = data.get("default_model")
+    return {
+        "linked": linked,
+        "models": sorted(models),
+        "default": default if isinstance(default, str) else "",
+    }
+
+
+# ---------------------------------------------------------- device-code login
+# `kimi login` prints a verification URL plus a one-time code and then polls for
+# up to 30 minutes (verified live: it keeps running with no TTY). We spawn it
+# detached, stream its output to a file in the managed config dir, and parse the
+# URL/code out of that file for the wizard — the same shape as the Codex flow.
+_DEVICE_OUT_FILE = "device_login.out"
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+_DEVICE_URL_RE = re.compile(r"https://[^\s'\"<>]+authorize_device[^\s'\"<>]*")
+# Kimi prints codes as two groups, e.g. "N9Z1-6I0B".
+_DEVICE_CODE_RE = re.compile(r"\b([A-Z0-9]{4}-[A-Z0-9]{4})\b")
+
+
+def device_login_start(cfg):
+    """Spawn ``kimi login`` for this account; return (pid, out_path).
+
+    ``cfg`` must carry the managed ``config_dir`` (the link target). The child is
+    detached into its own session so an Odoo worker recycle does not kill the
+    pending login; it exits by itself on approval, denial, or code expiry.
+    """
+    binary = _require_binary(cfg)
+    config_dir = cfg.get("config_dir")
+    if not config_dir:
+        raise UserError(_("Device login needs the account's managed credentials directory."))
+    os.makedirs(config_dir, mode=0o700, exist_ok=True)
+    out_path = os.path.join(config_dir, _DEVICE_OUT_FILE)
+    out_fd = os.open(out_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        proc = subprocess.Popen(
+            [binary, "login"],
+            stdin=subprocess.DEVNULL, stdout=out_fd, stderr=subprocess.STDOUT,
+            env=_build_env(cfg),
+            cwd=cfg.get("home_dir") or "/opt/odoo",
+            start_new_session=True,
+            preexec_fn=_preexec_unlimit_as if resource else None,
+        )
+    except Exception as exc:  # noqa: BLE001
+        raise UserError(_("Failed to launch the Kimi CLI: %s", exc))
+    finally:
+        os.close(out_fd)
+    _logger.info("era_ai_accounts: kimi device login started (pid %s)", proc.pid)
+    return proc.pid, out_path
+
+
+def device_login_read(out_path):
+    """Raw output of a pending device login, ANSI-escape-stripped."""
+    try:
+        with open(out_path, "r", errors="replace") as fh:
+            raw = fh.read()
+    except OSError:
+        return ""
+    return _ANSI_RE.sub("", raw)
+
+
+def parse_device_login(raw):
+    """Best-effort (url, code) from ``kimi login`` output."""
+    url = ""
+    match = _DEVICE_URL_RE.search(raw or "")
+    if match:
+        url = match.group(0).rstrip(").,;:")
+    code_match = _DEVICE_CODE_RE.search(raw or "")
+    return url, (code_match.group(0) if code_match else "")
+
+
+def pid_is_pending_login(pid):
+    """True while ``pid`` is alive and is a kimi process (guards stale pids)."""
+    if not pid:
+        return False
+    try:
+        with open("/proc/%d/cmdline" % pid, "rb") as fh:
+            return b"kimi" in fh.read()
+    except OSError:
+        return False
+
+
+def device_login_kill(pid):
+    """Terminate a pending device login if (and only if) it is still kimi."""
+    if pid_is_pending_login(pid):
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
 
 
 def check_cli(cfg, timeout=60):
@@ -271,11 +450,11 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
     coupling) — same contract as the Claude and Codex transports.
     """
     binary = _require_binary(cfg)
-    if not cfg.get("kimi_api_key"):
+    if not (cfg.get("kimi_api_key") or cfg.get("kimi_oauth")):
         raise UserError(_(
-            "No Kimi API key is set on this AI account. Add one on the account "
-            "form — the Kimi CLI is driven non-interactively here, so its own "
-            "browser/device login cannot be used."))
+            "This Kimi account is neither linked nor configured with an API "
+            "key. Open the account and either click “Connect Kimi account” or "
+            "paste a key."))
 
     user_text = user_prompt or ""
     # The prompt is an argv entry, so it is bounded by the OS, not by us.
@@ -288,6 +467,11 @@ def cli_complete(cfg, model, system_prompt, user_prompt, timeout=180):
             n=size // 1024, max=_MAX_PROMPT_ARG_BYTES // 1024))
 
     args = [binary, "-p", user_text, "--output-format", "stream-json"]
+    # A linked account picks the model by the alias the login provisioned in
+    # config.toml, which is exactly what -m expects. (The key-based path selects
+    # it through KIMI_MODEL_NAME instead — see _build_env.)
+    if cfg.get("kimi_oauth") and model:
+        args += ["-m", model]
     if cfg.get("extra_args"):
         try:
             args += shlex.split(cfg["extra_args"])

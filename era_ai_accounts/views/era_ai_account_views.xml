@@ -75,6 +75,9 @@
                             <button name="action_ai_claude_login" type="object" class="btn-primary"
                                     string="Connect ChatGPT account" icon="fa-sign-in"
                                     invisible="cli_oauth_linked or provider != 'openai'"/>
+                            <button name="action_ai_claude_login" type="object" class="btn-primary"
+                                    string="Connect Kimi account" icon="fa-sign-in"
+                                    invisible="cli_oauth_linked or provider != 'kimi'"/>
                             <button name="action_ai_claude_login" type="object" class="btn-secondary"
                                     string="Re-link account" icon="fa-refresh"
                                     invisible="not cli_oauth_linked"/>
@@ -93,7 +96,17 @@
                                 no API key, one shared login. If you don't link one, the CLI falls back
                                 to the server's own <code>~/.codex</code> login under the HOME below.
                             </div>
-                            <div class="text-muted mt-2" invisible="provider != 'kimi' or kimi_plan != 'coding'">
+                            <div class="text-muted mt-2" invisible="provider != 'kimi' or cli_oauth_linked">
+                                <b>Two ways to connect Kimi.</b> Click <b>Connect Kimi account</b>
+                                above to link a <b>Kimi Code</b> subscription with a one-time code
+                                (no key to handle, models come from the subscription). Or paste an
+                                API key below — from
+                                <a href="https://www.kimi.com/code" target="_blank">kimi.com/code</a>
+                                for the subscription, or
+                                <a href="https://platform.kimi.ai" target="_blank">platform.kimi.ai</a>
+                                for pay-per-token.
+                            </div>
+                            <div class="text-muted mt-2" invisible="provider != 'kimi' or kimi_plan != 'coding' or cli_oauth_linked">
                                 <b>Kimi Code plan</b> (flat monthly subscription, <a
                                 href="https://www.kimi.com/code" target="_blank">kimi.com/code</a>):
                                 paste the plan's API key below. Calls go to
@@ -103,7 +116,7 @@
                                 after switching plans. No per-token billing; the plan's usage quota
                                 is shared with any other use of that Kimi account.
                             </div>
-                            <div class="text-muted mt-2" invisible="provider != 'kimi'">
+                            <div class="text-muted mt-2" invisible="provider != 'kimi' or cli_oauth_linked">
                                 <b>Kimi (Moonshot AI)</b> over the CLI: the local <code>kimi</code>
                                 binary (Kimi Code CLI) runs in <b>prompt mode</b>, locked down to
                                 pure text — no tools, single step, empty working directory, and the
@@ -125,15 +138,16 @@
                         </div>
                         <field name="cli_path" placeholder="auto-detected (Claude Code extension / codex / kimi on PATH)"/>
                         <field name="cli_home_dir" invisible="cli_oauth_linked"/>
-                        <field name="kimi_plan" invisible="provider != 'kimi'"/>
+                        <field name="kimi_plan" invisible="provider != 'kimi' or cli_oauth_linked"/>
                         <field name="secret" password="True" string="Provider API key"
-                               invisible="provider not in ['zai', 'kimi']"
+                               invisible="provider not in ['zai', 'kimi'] or (provider == 'kimi' and cli_oauth_linked)"
                                placeholder="paste the provider API key (write-only)"
                                groups="era_ai_accounts.group_ai_account_manager"/>
                         <field name="secret_masked" string="Stored key"
-                               invisible="provider not in ['zai', 'kimi']"
+                               invisible="provider not in ['zai', 'kimi'] or (provider == 'kimi' and cli_oauth_linked)"
                                groups="era_ai_accounts.group_ai_account_manager"/>
-                        <field name="base_url" string="API base URL" invisible="provider != 'kimi'"
+                        <field name="base_url" string="API base URL"
+                               invisible="provider != 'kimi' or cli_oauth_linked"
                                placeholder="leave empty for https://api.moonshot.ai/v1 (use api.moonshot.cn in China)"/>
                         <field name="cli_tools_enabled"/>
                         <field name="max_concurrency"/>

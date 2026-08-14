@@ -17,9 +17,10 @@ stack with first-class **AI accounts**:
   without per-token API billing. The first-party ``claude`` / ``codex`` /
   ``kimi`` binary makes the call itself under its own auth; we never replay its
   OAuth tokens to the raw API.
-* **Login with Claude / Connect ChatGPT** — link a Claude subscription in-app
-  (OAuth, no API key) or a ChatGPT subscription (paste the Codex CLI's
-  ``auth.json``), stored once on the server and used by every user in the system.
+* **Login with Claude / Connect ChatGPT / Connect Kimi** — link a Claude
+  subscription in-app (OAuth, no API key), a ChatGPT subscription (device code or
+  the Codex CLI's ``auth.json``), or a Kimi Code subscription (device code),
+  stored once on the server and used by every user in the system.
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API),
   Cloudflare Workers AI, **Z.AI (GLM / Zhipu)**, **Kimi (Moonshot AI)** and any
   OpenAI-compatible custom provider, with credentials stored per account
@@ -44,7 +45,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.14.0",
+    "version": "19.0.1.15.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

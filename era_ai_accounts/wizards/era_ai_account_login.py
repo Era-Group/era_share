@@ -10,6 +10,11 @@ class EraAiAccountLogin(models.TransientModel):
       authorize URL in their own browser, approves access, and pastes back the
       ``code#state`` Claude shows. We exchange it and store the token once, for
       the whole system (see era.ai.account._oauth_*).
+    * Kimi — device login only: the wizard runs ``kimi login`` on the server,
+      which prints a verification URL plus a one-time code (valid ~30 minutes)
+      and polls until the manager approves from any browser. The CLI then
+      provisions the subscription's provider and models into the account's
+      managed config itself (see era.ai.account._kimi_device_login_*).
     * OpenAI — two ways, simplest first:
       - **Device login**: the wizard runs ``codex login --device-auth`` on the
         server; the manager opens the shown link on any device, types the
@@ -20,7 +25,7 @@ class EraAiAccountLogin(models.TransientModel):
         era.ai.account._codex_link_with_auth_json).
     """
     _name = "era.ai.account.login"
-    _description = "Link a subscription AI account (Claude / ChatGPT)"
+    _description = "Link a subscription AI account (Claude / ChatGPT / Kimi)"
 
     account_id = fields.Many2one(
         "era.ai.account", required=True, ondelete="cascade")
@@ -30,7 +35,7 @@ class EraAiAccountLogin(models.TransientModel):
     auth_json = fields.Text(string="auth.json contents")
     linked = fields.Boolean(related="account_id.cli_oauth_linked")
 
-    # Device-code login (OpenAI): filled once the codex CLI prints them.
+    # Device-code login (OpenAI, Kimi): filled once the CLI prints them.
     device_url = fields.Char(readonly=True)
     device_code = fields.Char(readonly=True)
     device_status = fields.Char(readonly=True)
@@ -60,6 +65,7 @@ class EraAiAccountLogin(models.TransientModel):
             "view_mode": "form",
             "target": "new",
             "name": _("Connect ChatGPT account") if self.provider == "openai"
+                    else _("Connect Kimi account") if self.provider == "kimi"
                     else _("Login with Claude"),
         }
 
@@ -69,16 +75,23 @@ class EraAiAccountLogin(models.TransientModel):
             raise UserError(_("No authorization URL — reopen the dialog."))
         return {"type": "ir.actions.act_url", "url": self.authorize_url, "target": "new"}
 
-    # ----------------------------------------------------- device login (codex)
+    # --------------------------------------------- device login (codex / kimi)
+    def _device_api(self, suffix):
+        """The provider's device-login method (both flows are the same shape)."""
+        self.ensure_one()
+        prefix = "_kimi" if self.account_id.provider == "kimi" else "_codex"
+        return getattr(self.account_id, prefix + suffix)
+
     def action_device_start(self):
         self.ensure_one()
-        info = self.account_id._codex_device_login_start()
+        info = self._device_api("_device_login_start")()
         self.write({
             "device_url": info["url"],
             "device_code": info["code"],
             "device_status": _(
                 "Waiting for approval — open the link, enter the code, then "
-                "click 'Check status'. The code expires in about 15 minutes."),
+                "click 'Check status'. The code expires in about %s minutes.",
+                30 if self.provider == "kimi" else 15),
         })
         return self._reopen()
 
@@ -90,7 +103,7 @@ class EraAiAccountLogin(models.TransientModel):
 
     def action_device_check(self):
         self.ensure_one()
-        status = self.account_id._codex_device_login_status()
+        status = self._device_api("_device_login_status")()
         if status == "linked":
             # Reload so the account form behind the dialog shows the banner.
             return {"type": "ir.actions.client", "tag": "soft_reload"}
@@ -102,13 +115,23 @@ class EraAiAccountLogin(models.TransientModel):
             detail = status.split(":", 1)[1] if ":" in status else status
             self.write({
                 "device_url": False, "device_code": False,
-                "device_status": _("Device login did not complete (%s). Start "
-                                   "again, or paste auth.json below.", detail),
+                "device_status": (
+                    _("Device login did not complete (%s). Start again.", detail)
+                    if self.provider == "kimi"
+                    else _("Device login did not complete (%s). Start again, or "
+                           "paste auth.json below.", detail)),
             })
         return self._reopen()
 
     def action_complete(self):
         self.ensure_one()
+        if self.account_id.provider == "kimi":
+            # Nothing to paste: the CLI writes the link itself once approved.
+            if self.account_id._kimi_device_login_status() != "linked":
+                raise UserError(_(
+                    "The Kimi login is not approved yet. Open the link, enter "
+                    "the code, approve, then click 'Check status'."))
+            return {"type": "ir.actions.client", "tag": "soft_reload"}
         if self.account_id.provider == "openai":
             self.account_id._codex_link_with_auth_json(self.auth_json)
         else:

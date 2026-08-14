@@ -159,14 +159,29 @@ mode:
    Code CLI**. Install it as the `odoo` user with
 
    ```
-   curl -fsSL https://code.kimi.com/kimi-code/install.sh | KIMI_NO_MODIFY_PATH=1 bash
+   bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-kimi-cli.sh
    ```
 
-   which drops a checksum-verified native binary in `~/.kimi-code/bin/kimi`
-   (auto-detected — no PATH change needed, and Odoo's service PATH would not
-   pick one up anyway). The older Python package (`uv tool install kimi-cli`,
-   entry point in `~/.local/bin`) is also detected but is **deprecated
-   upstream**. Or set the account's *CLI binary path* / `ERA_AI_KIMI_BIN`.
+   That helper ships with this module, so **every server gets it from the git
+   clone** — put exactly that line in the cicdoo startup script and no new
+   server needs hand-setup. It is idempotent, and it exists because the startup
+   script runs **as root** while the installer writes to `$HOME`: a plain
+   `curl … | bash` there lands the binary in `/root/.kimi-code`, which the
+   `odoo` user cannot even read. The helper re-executes itself as `odoo`
+   (`su -`; neither `sudo` nor `runuser` is in the image), removes any stray
+   root-owned copy, skips the download when a working binary is present, deletes
+   the 172 MB `.bak` the installer leaves behind, and finishes with a
+   `--version` run — the only check that catches a too-old glibc, which installs
+   cleanly and fails only at run time.
+
+   The binary lands in `~/.kimi-code/bin/kimi` and is auto-detected (no PATH
+   change needed; Odoo's service PATH would not pick one up anyway). The older
+   Python package (`uv tool install kimi-cli`, entry point in `~/.local/bin`) is
+   also detected but is **deprecated upstream**. To point elsewhere, set the
+   account's *CLI binary path* or `ERA_AI_KIMI_BIN`.
+
+   Requirements: Linux/macOS, x64/arm64, **glibc ≥ 2.28**, not musl,
+   `curl` + `sha256sum`, ~175 MB free.
 
    An **API key is required** even in CLI mode: `kimi login` is an interactive
    device-code flow that cannot be driven from Odoo. The key is passed to the

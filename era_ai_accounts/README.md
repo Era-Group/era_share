@@ -325,6 +325,31 @@ A linked subscription has four on-disk states, shown on the account form
 > After re-linking (browser OAuth for Claude / device-code or `auth.json` for
 > ChatGPT), the state returns to *active* for every user immediately.
 
+## Server persistence (`tools/`)
+
+Two boot-time helpers ship with this module. Both are idempotent, both
+re-execute themselves as `odoo` (the cicdoo startup script runs as **root**, and
+`$HOME` is what decides where things land), and both belong on one line each in
+the platform's startup-script field:
+
+```
+bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-kimi-cli.sh
+bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-claude-persistent-home.sh
+```
+
+* **`ensure-kimi-cli.sh`** — installs the Kimi Code CLI where Odoo can find it
+  (see the Kimi section above).
+* **`ensure-claude-persistent-home.sh`** — makes `/opt/odoo/.claude` a symlink to
+  `/var/lib/odoo/claude-home`, so Claude Code's transcripts, memory and login
+  survive a container rebuild. On this host only `/var/lib/odoo`,
+  `/var/log/odoo` and `/opt/odoo/{ce,ee,themes}` are real mounts; everything
+  else is overlay and is destroyed on rebuild. A symlink is used rather than
+  `CLAUDE_CONFIG_DIR` alone because the VS Code extension spawns the CLI
+  directly, never through a shell, so no `~/.bashrc` export can reach it — the
+  script sets the env var too, for shell-launched `claude`, pointing at the same
+  directory. It refuses to migrate while Claude is running and keeps the old
+  directory as `.claude.migrated.<epoch>`.
+
 ## Compliance note
 
 Using a **subscription** (Claude Pro/Max or ChatGPT Plus/Pro/…) through the

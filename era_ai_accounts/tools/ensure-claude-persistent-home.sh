@@ -6,15 +6,19 @@
 #
 #     bash /opt/odoo/submodules/era_share_latest/era_ai_accounts/tools/ensure-claude-persistent-home.sh
 #
-# ORDER MATTERS: it must run BEFORE code-server starts. The VS Code extension
-# launches the CLI within a second or two of the editor coming up, and Claude
-# creates $HOME/.claude itself the moment it finds none. Lose that race and the
-# symlink can no longer be created (step 1 will not swap a directory out from
-# under a live process), so the session starts against an empty overlay dir with
-# no history. Observed on 2026-08-14: code-server 17:24:46, this script 17:24:59
-# — 13 s late, and every transcript looked lost until it was copied back.
-# Losing the race is now survivable (step 1b seeds the fresh dir), but the fix
-# is to run this first, not to rely on the fallback.
+# ORDER: run this BEFORE code-server if the startup script lets you. The VS Code
+# extension launches the CLI within a second or two of the editor coming up, and
+# Claude creates $HOME/.claude itself the moment it finds none. Lose that race
+# and the symlink can no longer be created — step 1 will not swap a directory
+# out from under a live process — so the session starts against an empty overlay
+# dir. Observed 2026-08-14: code-server 17:24:46, this script 17:24:59, 13 s
+# late, and every transcript looked lost.
+#
+# Running late is NOT fatal, though, and on cicdoo the startup script is not
+# ours to reorder. Step 1b seeds the fresh directory from the volume instead,
+# and that is enough: the CLI scans its transcript list on demand, so /resume
+# shows the seeded history in the already-running process. The cost of losing
+# the race is a ~15 s window at boot, not lost history.
 #
 # What it does: makes /opt/odoo/.claude a SYMLINK to /var/lib/odoo/claude-home
 # (migrating whatever is already there on the first run), and exports
@@ -66,8 +70,7 @@ if [ -L "$LIVE" ]; then
 elif [ -d "$LIVE" ]; then
     # Never yank the directory away from a running session.
     if pgrep -f "native-binary/claude" >/dev/null 2>&1; then
-        log "Claude is running — not migrating now. Re-run this when it is closed"
-        log "(at boot nothing is running, so the startup script will do it)."
+        log "Claude is running — not linking now (see step 1b for what happens instead)."
 
         # --- 1b. lost-race fallback ------------------------------------------
         # We cannot link, but we can still make the history reachable: copy the
@@ -84,10 +87,13 @@ elif [ -d "$LIVE" ]; then
             log "lost the startup race: $LIVE has $live_n transcript(s), volume has $pers_n"
             if cp -an "$PERSIST/." "$LIVE/" 2>/dev/null; then
                 log "seeded $LIVE from the volume — $(find "$LIVE/projects" -name '*.jsonl' 2>/dev/null | wc -l) transcript(s) now present"
-                log "ACTION: restart the Claude extension session, then /resume."
-                log "  Claude reads its history only at launch, so the session that is"
-                log "  open right now still shows none of it."
-                log "  Then move this script BEFORE code-server in the startup script."
+                log "/resume picks these up immediately — no restart needed. Verified"
+                log "  2026-08-14: the CLI launched 17:24:55 against an empty dir, the"
+                log "  seed landed 17:28:06, and /resume listed everything in that same"
+                log "  process. The transcript list is scanned on demand, not at launch."
+                log "  Memory files ARE read at session start, so they only reach a"
+                log "  conversation started after this point — open a new one if a"
+                log "  session was already running."
             else
                 log "ERROR: could not seed $LIVE — history stays on the volume only"
             fi

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_sembly_assemblyai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sembly.assemblyai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="era_sembly_meetings_google.res_config_settings_view_form_sembly_google"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='sembly_google']" position="after">
+                <block title="AssemblyAI للتفريغ الاحتياطي" name="sembly_assemblyai">
+                    <setting string="تفعيل التفريغ الاحتياطي"
+                             help="يفرّغ تسجيل Google الخاص فقط إذا لم يصل تفريغ Sembly، ولا يقبل إلا تسجيلات اليوم واليومين السابقين ومدتها 10 دقائق فأكثر.">
+                        <field name="sembly_assemblyai_enabled"/>
+                    </setting>
+                    <setting string="مفتاح AssemblyAI API"
+                             help="يُخزن بلا قراءة ولا يظهر بعد الحفظ. يمكن بدلاً منه استخدام ASSEMBLYAI_API_KEY.">
+                        <field name="sembly_assemblyai_api_key" password="True"/>
+                        <div class="text-muted mt-2" invisible="not sembly_assemblyai_key_is_set">
+                            <i class="fa fa-key"/> المفتاح مُعرّف
+                            <span invisible="not sembly_assemblyai_key_from_env"> من متغير البيئة</span>
+                        </div>
+                    </setting>
+                    <setting string="منطقة معالجة البيانات">
+                        <field name="sembly_assemblyai_region"/>
+                    </setting>
+                    <setting string="سياسة انتظار Sembly"
+                             help="تلقائي ينتظر عند وجود SEMBLY_MCP_TOKEN أو رمز MCP محفوظ، وإلا يبدأ فوراً.">
+                        <field name="sembly_assemblyai_sembly_policy"/>
+                    </setting>
+                    <setting string="مهلة وصول تفريغ Sembly">
+                        <field name="sembly_assemblyai_wait_hours"/> ساعة
+                    </setting>
+                    <setting string="السقف الشهري">
+                        <field name="sembly_assemblyai_monthly_hours"/> ساعة
+                        <div class="text-muted mt-2">
+                            المستخدم هذا الشهر: <field name="sembly_assemblyai_month_usage" readonly="1"/>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

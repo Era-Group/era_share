@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_sembly_assemblyai_transcriptions" model="ir.cron">
+        <field name="name">Sembly: تفريغ تسجيلات Google عبر AssemblyAI</field>
+        <field name="model_id" ref="era_sembly_meetings.model_sembly_meeting"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_assemblyai_transcriptions()</field>
+        <field name="interval_number">2</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

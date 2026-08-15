@@ -124,18 +124,22 @@ class TestSemblyGoogle(TransactionCase):
     def test_gemini_notes_are_stored_and_translated(self):
         meeting = self._meeting(910008, "English planning call", minutes_ago=2)
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>خطة الإطلاق أُقرّت.</p>") as ask:
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>خطة الإطلاق أُقرّت.</p>"}')) as ask:
             meeting._apply_gemini_notes("The launch plan was agreed.", 'doc-1')
         ask.assert_called_once()
         self.assertIn("launch plan", meeting.gemini_notes)
         self.assertIn("خطة الإطلاق", meeting.gemini_notes_ar)
         self.assertEqual(meeting.google_notes_file_id, 'doc-1')
 
-    def test_a_failed_translation_keeps_the_original_notes(self):
-        """The translation is an improvement, never a gate."""
+    def test_valid_notes_are_kept_when_the_model_returns_no_translation(self):
+        """A positive validation is the gate; Arabic remains an improvement."""
         meeting = self._meeting(910009, "English review", minutes_ago=2)
         with patch.object(type(self.Meeting), '_ask_agent',
-                          side_effect=ValueError("provider down")):
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": ""}')):
             meeting._apply_gemini_notes("Original English notes.", 'doc-2')
         self.assertIn("Original English notes", meeting.gemini_notes)
         self.assertFalse(meeting.gemini_notes_ar)
@@ -144,10 +148,33 @@ class TestSemblyGoogle(TransactionCase):
         self.env['ir.config_parameter'].sudo().set_param(
             'sembly.google_translate_notes', '0')
         meeting = self._meeting(910010, "English review", minutes_ago=2)
-        with patch.object(type(self.Meeting), '_ask_agent') as ask:
+        with patch.object(type(self.Meeting), '_ask_agent',
+                          return_value='{"is_summary": true, "reason": ""}') as ask:
             meeting._apply_gemini_notes("Notes.", 'doc-3')
-        ask.assert_not_called()
+        ask.assert_called_once()
         self.assertTrue(meeting.gemini_notes)
+
+    def test_gemini_failure_notice_is_not_stored_as_meeting_notes(self):
+        meeting = self._meeting(910011, "Unsupported conversation", minutes_ago=2)
+        notice = ("A summary wasn't produced for this meeting because there "
+                  "wasn't enough conversation in a supported language")
+        answer = ('{"is_summary": false, "reason": '
+                  '"Google did not produce a meeting summary", "arabic_html": ""}')
+        with patch.object(type(self.Meeting), '_ask_agent', return_value=answer) as ask:
+            self.assertFalse(meeting._apply_gemini_notes(notice, 'doc-rejected'))
+        ask.assert_called_once()
+        self.assertFalse(meeting.gemini_notes)
+        self.assertFalse(meeting.gemini_notes_ar)
+        self.assertEqual(meeting.google_notes_file_id, 'doc-rejected')
+
+    def test_an_ai_validation_failure_stores_nothing_and_can_retry(self):
+        meeting = self._meeting(910012, "Retry validation", minutes_ago=2)
+        with patch.object(type(self.Meeting), '_ask_agent',
+                          side_effect=ValueError("provider down")):
+            self.assertFalse(meeting._apply_gemini_notes(
+                "Potentially valid meeting content.", 'doc-retry'))
+        self.assertFalse(meeting.gemini_notes)
+        self.assertFalse(meeting.google_notes_file_id)
 
     # ----------------------------------------------------------------- guards
     def test_nothing_reaches_google_until_it_is_enabled(self):
@@ -178,7 +205,9 @@ class TestSemblyGoogle(TransactionCase):
         meeting.sudo().with_context(sembly_sync=True).write(
             {'summary': "<p>Sembly: decisions and risks.</p>"})
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<h4>الملخص</h4><p>مدموج.</p>") as ask:
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<h4>الملخص</h4><p>مدموج.</p>"}')) as ask:
             meeting._apply_gemini_notes("Gemini prose about the same meeting.")
         ask.assert_called_once()
         prompt = ask.call_args[0][0]
@@ -191,7 +220,9 @@ class TestSemblyGoogle(TransactionCase):
         meeting = self._meeting(920002, "Google-only meeting", minutes_ago=2)
         meeting.sudo().with_context(sembly_sync=True).write({'summary': False})
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>مترجم.</p>") as ask:
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>مترجم.</p>"}')) as ask:
             meeting._apply_gemini_notes("English notes only.")
         prompt = ask.call_args[0][0]
         self.assertIn("ترجم", prompt)
@@ -205,7 +236,9 @@ class TestSemblyGoogle(TransactionCase):
         meeting.sudo().with_context(sembly_sync=True).write(
             {'summary': "<p>Sembly original.</p>"})
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>مدموج.</p>"):
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>مدموج.</p>"}')):
             meeting._apply_gemini_notes("Gemini text.")
         self.assertIn("Sembly original", meeting.summary)
         self.assertIn("Gemini text", meeting.gemini_notes)
@@ -683,6 +716,18 @@ class TestSemblyGoogle(TransactionCase):
         self.assertEqual(arrived.sembly_meeting_id, '950002')
         self.assertEqual(arrived.google_file_id, 'drive-keep')
 
+    def test_adoption_keeps_the_marker_for_rejected_gemini_notes(self):
+        """A failure notice was processed, even though no notes were stored."""
+        orphan = self._orphan(
+            "Rejected Gemini", minutes_ago=0, file_id='drive-rejected')
+        orphan.sudo().with_context(sembly_sync=True).write({
+            'google_notes_file_id': 'rejected-document-id',
+        })
+        arrived = self._meeting(950009, "Rejected Gemini", minutes_ago=0)
+        self.assertEqual(arrived.google_notes_file_id, 'rejected-document-id')
+        self.assertFalse(arrived.gemini_notes)
+        self.assertFalse(orphan.exists())
+
     def test_two_candidate_orphans_are_left_for_a_person(self):
         """Merging the wrong recording into a meeting is worse than a duplicate,
         so ambiguity is reported rather than resolved."""
@@ -709,12 +754,16 @@ class TestSemblyGoogle(TransactionCase):
         with. Now that its summary exists, the merge is the better answer."""
         orphan = self._orphan("Late summary", minutes_ago=0, file_id='drive-notes')
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>مترجم.</p>"):
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>مترجم.</p>"}')):
             orphan._apply_gemini_notes("English notes from Gemini.")
         self.assertEqual(orphan.merged_summary_source, 'translated')
 
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>مدموج.</p>") as ask:
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>مدموج.</p>"}')) as ask:
             # Sembly's arrival must actually CARRY a summary, otherwise there is
             # nothing to merge with and not re-merging is the correct answer.
             arrived = self._meeting(950005, "Late summary", minutes_ago=0,
@@ -834,7 +883,9 @@ class TestSemblyGoogle(TransactionCase):
                                file_id='drive-narrative')
         self.assertFalse(meeting.summary)
         with patch.object(type(self.Meeting), '_ask_agent',
-                          return_value="<p>مترجم.</p>"):
+                          return_value=(
+                              '{"is_summary": true, "reason": "", '
+                              '"arabic_html": "<p>مترجم.</p>"}')):
             meeting._apply_gemini_notes("English notes from Gemini.")
         self.assertTrue(meeting.gemini_notes_ar)
         self.assertTrue(meeting.has_summary,

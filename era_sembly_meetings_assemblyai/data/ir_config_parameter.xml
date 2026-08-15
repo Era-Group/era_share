@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_assemblyai_enabled" model="ir.config_parameter">
+        <field name="key">sembly.assemblyai_enabled</field>
+        <field name="value">0</field>
+    </record>
+    <record id="param_assemblyai_region" model="ir.config_parameter">
+        <field name="key">sembly.assemblyai_region</field>
+        <field name="value">us</field>
+    </record>
+    <record id="param_assemblyai_sembly_policy" model="ir.config_parameter">
+        <field name="key">sembly.assemblyai_sembly_policy</field>
+        <field name="value">auto</field>
+    </record>
+    <record id="param_assemblyai_wait_hours" model="ir.config_parameter">
+        <field name="key">sembly.assemblyai_wait_hours</field>
+        <field name="value">2</field>
+    </record>
+    <record id="param_assemblyai_monthly_hours" model="ir.config_parameter">
+        <field name="key">sembly.assemblyai_monthly_hours</field>
+        <field name="value">150</field>
+    </record>
+</odoo>

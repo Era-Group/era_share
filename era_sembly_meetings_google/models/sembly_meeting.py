@@ -558,7 +558,7 @@ class SemblyMeeting(models.Model):
         return self.sudo().with_context(sembly_sync=True).create(values)
 
     def _apply_gemini_notes(self, text, file_id=None):
-        """Store Google's notes, then produce ONE Arabic summary.
+        """Accept only real meeting notes, then produce ONE Arabic summary.
 
         Three routes, and which one runs is decided by what we actually hold:
 
@@ -576,8 +576,11 @@ class SemblyMeeting(models.Model):
         letters, the rest English prose. So an Arabic output is required either
         way.
 
-        Failure is never fatal. The imported notes are worth having on their
-        own, so a model error leaves them in place and simply skips the Arabic.
+        Validation and translation/merging deliberately share one model call:
+        every document must be judged before it is stored, without doubling
+        the cost of importing useful notes. Explicit rejections remember only
+        the Drive id so the same failure notice is not paid for every hour.
+        An unavailable model or malformed answer remembers nothing and retries.
         """
         self.ensure_one()
         # Test the TEXT, not the markup built from it: plaintext2html('')
@@ -586,23 +589,21 @@ class SemblyMeeting(models.Model):
         # marked imported for good, and paid for a translation of nothing.
         if not (text or '').strip():
             return False
-        body = html_sanitize(plaintext2html(text))
-        if not body:
-            return False
-        values = {'gemini_notes': body}
-        if file_id:
-            values['google_notes_file_id'] = file_id
-        self.sudo().with_context(sembly_sync=True).write(values)
-
-        if self._icp('sembly.google_translate_notes', '1') not in ('1', 'True', 'true'):
-            return True
 
         from odoo.tools import html2plaintext
         sembly_text = html2plaintext(self.summary or '').strip()
         google_text = (text or '').strip()
+        translate = self._icp(
+            'sembly.google_translate_notes', '1') in ('1', 'True', 'true')
 
-        if sembly_text:
+        instruction = (
+            "افحص أولاً هل محتوى مستند Gemini أدناه ملخص حقيقي خاص بهذا "
+            "الاجتماع. ارفض رسائل الفشل أو الاعتذار، وعدم كفاية المحادثة، "
+            "وعدم دعم اللغة، والقوالب الفارغة، وأي نص لا يذكر معلومات فعلية "
+            "عن نقاش الاجتماع. لا تستنتج ملخصاً من رسالة الفشل ولا من العنوان.\n")
+        if translate and sembly_text:
             prompt = (
+                "%s"
                 "لديك ملخّصان لاجتماع واحد من مصدرين مختلفين. ادمجهما في ملخّص "
                 "عربي واحد متكامل، بلا تكرار وبلا تناقض.\n"
                 "المصدر الأول (Sembly) يستخرج القرارات والمهام والمخاطر، "
@@ -610,31 +611,74 @@ class SemblyMeeting(models.Model):
                 "منهما يغطي ما فوّته الآخر، فاحتفظ بكل معلومة فريدة.\n"
                 "عند التعارض في رقم أو اسم أو تاريخ، أورد ما تتفق عليه المصادر "
                 "ونبّه على الاختلاف بإيجاز بدل اختيار أحدهما.\n"
-                "أعد HTML بسيطاً فقط (<h4> و<ul><li>) بلا أي مقدمة أو تعليق.\n\n"
+                "أعد JSON فقط بالشكل "
+                "{\"is_summary\": true, \"reason\": \"\", "
+                "\"arabic_html\": \"<h4>...</h4>\"}. عند الرفض اجعل "
+                "is_summary=false وarabic_html فارغاً، واكتب سبباً عاماً قصيراً "
+                "لا يقتبس محتوى الاجتماع.\n\n"
                 "=== ملخص Sembly ===\n%s\n\n=== ملاحظات Gemini ===\n%s"
-            ) % (sembly_text[:8000], google_text[:8000])
+            ) % (instruction, sembly_text[:8000], google_text[:8000])
             operation = 'gemini-merge'
-        else:
+        elif translate:
             prompt = (
+                "%s"
                 "ترجم ملاحظات الاجتماع التالية إلى العربية ترجمة دقيقة، مع "
                 "الحفاظ على البنية والعناوين والنقاط كما هي، وأعد HTML بسيطاً "
-                "فقط بلا أي مقدمة أو تعليق:\n\n%s" % google_text[:12000])
+                "داخل JSON فقط بالشكل {\"is_summary\": true, "
+                "\"reason\": \"\", \"arabic_html\": \"<h4>...</h4>\"}. "
+                "عند الرفض اجعل is_summary=false وarabic_html فارغاً، واكتب "
+                "سبباً عاماً قصيراً لا يقتبس محتوى الاجتماع.\n\n%s"
+                % (instruction, google_text[:12000]))
             operation = 'gemini-translate'
+        else:
+            prompt = (
+                "%sأعد JSON فقط بالشكل {\"is_summary\": true, "
+                "\"reason\": \"\"}. عند الرفض اجعل is_summary=false واكتب "
+                "سبباً عاماً قصيراً لا يقتبس محتوى الاجتماع.\n\n%s"
+                % (instruction, google_text[:12000]))
+            operation = 'gemini-validate'
 
         try:
-            answer = self._ask_agent(prompt)
-        except Exception as exc:  # noqa: BLE001 - the notes still stand
+            data = self._extract_json(self._ask_agent(prompt)) or {}
+        except Exception as exc:  # noqa: BLE001 - retry on the next sweep
             self.env['sembly.sync.log']._log(
                 'ai', operation, 'error',
                 "meeting %s: %s" % (self.sembly_meeting_id, exc))
-            return True
+            return False
 
-        arabic = self._coerce_html(answer)
+        verdict = data.get('is_summary')
+        if verdict is not True:
+            if verdict is False:
+                if file_id:
+                    self.sudo().with_context(sembly_sync=True).write({
+                        'google_notes_file_id': file_id,
+                    })
+                self.env['sembly.sync.log']._log(
+                    'ai', 'gemini-rejected', 'ok',
+                    "meeting %s: %s" % (
+                        self.sembly_meeting_id,
+                        str(data.get('reason') or 'not a real meeting summary')[:300]))
+            else:
+                self.env['sembly.sync.log']._log(
+                    'ai', operation, 'error',
+                    "meeting %s: validation returned no boolean verdict"
+                    % self.sembly_meeting_id)
+            return False
+
+        body = html_sanitize(plaintext2html(text))
+        if not body:
+            return False
+        values = {'gemini_notes': body}
+        if file_id:
+            values['google_notes_file_id'] = file_id
+
+        arabic = self._coerce_html(data.get('arabic_html')) if translate else False
         if arabic:
-            self.sudo().with_context(sembly_sync=True).write({
+            values.update({
                 'gemini_notes_ar': arabic,
                 'merged_summary_source': 'merged' if sembly_text else 'translated',
             })
+        self.sudo().with_context(sembly_sync=True).write(values)
         return True
 
     # ------------------------------------------------------------------ crons
@@ -702,12 +746,12 @@ class SemblyMeeting(models.Model):
                     self._match_google_artifact(
                         doc.get('name'), self._parse_dt(doc.get('createdTime')),
                         subject)
-                if not meeting or meeting.gemini_notes:
+                if not meeting or meeting.gemini_notes or meeting.google_notes_file_id:
                     continue
                 try:
-                    meeting._apply_gemini_notes(
-                        client.export_document_text(doc['id']), doc['id'])
-                    notes += 1
+                    if meeting._apply_gemini_notes(
+                            client.export_document_text(doc['id']), doc['id']):
+                        notes += 1
                 except GoogleWorkspaceError as exc:
                     Log._log('google', 'notes', 'error', "%s: %s" % (doc.get('id'), exc))
                 if self._may_commit():
@@ -797,9 +841,18 @@ class SemblyMeeting(models.Model):
                 'merged_summary_source': orphan.merged_summary_source,
                 'google_notes_file_id': orphan.google_notes_file_id,
             })
+        elif orphan.google_notes_file_id and not meeting.google_notes_file_id:
+            # A rejected Gemini failure notice intentionally stores only its
+            # Drive id. Carry that processed marker too, or adoption deletes it
+            # and the next sweep pays to classify the same failure again.
+            values['google_notes_file_id'] = orphan.google_notes_file_id
         if orphan.google_share_url:
             values['google_share_url'] = orphan.google_share_url
             values.setdefault('share_url', orphan.google_share_url)
+        # Optional providers that operate on Google's recording can carry their
+        # in-flight state before this orphan is deleted, without duplicating the
+        # deliberately conservative matching logic above.
+        values.update(self._extra_google_adoption_values(orphan, meeting))
         meeting.sudo().with_context(sembly_sync=True).write(values)
 
         self.env['sembly.sync.log']._log(
@@ -818,6 +871,11 @@ class SemblyMeeting(models.Model):
             from odoo.tools import html2plaintext
             meeting._apply_gemini_notes(html2plaintext(meeting.gemini_notes))
         return True
+
+    @api.model
+    def _extra_google_adoption_values(self, orphan, meeting):
+        """Extension seam for state tied to the Google recording."""
+        return {}
 
     # --------------------------------------------------------------- backfill
     # Drive is the ONLY route to history: Google deletes conferenceRecords after
@@ -973,7 +1031,7 @@ class SemblyMeeting(models.Model):
         imported_ids = set(self.sudo().with_context(active_test=False).search(
             [('google_notes_file_id', '!=', False)]).mapped('google_notes_file_id'))
 
-        done = already = unmatched = failed = 0
+        done = rejected = already = unmatched = failed = 0
         exhausted = True
         for doc in docs:
             if time.monotonic() >= deadline:
@@ -999,10 +1057,16 @@ class SemblyMeeting(models.Model):
                 already += 1
                 continue
             try:
-                meeting._apply_gemini_notes(
+                applied = meeting._apply_gemini_notes(
                     client.export_document_text(doc['id']), doc['id'])
-                imported_ids.add(doc['id'])
-                done += 1
+                if applied:
+                    imported_ids.add(doc['id'])
+                    done += 1
+                elif meeting.google_notes_file_id == doc['id']:
+                    imported_ids.add(doc['id'])
+                    rejected += 1
+                else:
+                    failed += 1
             except GoogleWorkspaceError as exc:
                 failed += 1
                 Log._log('google', 'notes-backfill', 'error',
@@ -1016,9 +1080,10 @@ class SemblyMeeting(models.Model):
         # the run then latched off and nothing revisited it. Finish only when
         # the listing was walked to its end AND nothing errored on the way; a
         # Google outage must leave the run armed for the next tick.
-        summary = ("%s imported, %s already had notes, %s matched no meeting, "
-                   "%s failed, out of %s document(s) listed."
-                   % (done, already, unmatched, failed, len(docs)))
+        summary = ("%s imported, %s rejected as non-summaries, %s already "
+                   "processed, %s matched no meeting, %s failed, out of %s "
+                   "document(s) listed."
+                   % (done, rejected, already, unmatched, failed, len(docs)))
         if exhausted and not done and not failed:
             icp.set_param('sembly.google_notes_state', 'done')
             Log._log('google', 'notes-backfill', 'ok',

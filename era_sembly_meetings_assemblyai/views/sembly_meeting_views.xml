@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sembly_meeting_form_assemblyai" model="ir.ui.view">
+        <field name="name">sembly.meeting.form.assemblyai</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings_google.view_sembly_meeting_form_google"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_assemblyai_retry" type="object"
+                        string="إعادة محاولة التفريغ" icon="fa-repeat"
+                        groups="era_sembly_meetings.group_sembly_manager"
+                        invisible="assemblyai_state not in ['failed', 'budget_blocked']"/>
+                <button name="action_assemblyai_retry_summary" type="object"
+                        string="إعادة محاولة التلخيص" icon="fa-refresh"
+                        groups="era_sembly_meetings.group_sembly_manager"
+                        invisible="assemblyai_summary_state != 'failed'"/>
+            </xpath>
+            <xpath expr="//div[@name='summary_originals']" position="inside">
+                <button name="action_show_assemblyai_summary" type="object"
+                        string="ملخص AssemblyAI" class="btn-link btn-sm"
+                        icon="fa-file-text-o" invisible="not assemblyai_summary"/>
+            </xpath>
+            <xpath expr="//page[@name='transcript']/field[@name='transcript']" position="before">
+                <field name="assemblyai_can_request" invisible="1"/>
+                <div class="alert alert-info d-flex align-items-center justify-content-between mb-3"
+                     invisible="not assemblyai_can_request">
+                    <span>
+                        لا يوجد تفريغ لهذا التسجيل. يمكن طلبه الآن عبر AssemblyAI.
+                    </span>
+                    <button name="action_assemblyai_request_now" type="object"
+                            string="طلب التفريغ الآن" icon="fa-microphone"
+                            class="btn btn-primary ms-3"
+                            groups="era_sembly_meetings.group_sembly_manager,project.group_project_manager"/>
+                </div>
+            </xpath>
+            <xpath expr="//group[@name='provider_technical']" position="inside">
+                <group string="AssemblyAI" invisible="not assemblyai_state">
+                    <field name="assemblyai_state" readonly="1"/>
+                    <field name="assemblyai_provider" readonly="1"/>
+                    <field name="assemblyai_due_at" readonly="1"/>
+                    <field name="assemblyai_transcript_id" readonly="1"/>
+                    <field name="assemblyai_model" readonly="1"/>
+                    <field name="assemblyai_language_code" readonly="1"/>
+                    <field name="assemblyai_speaker_count" readonly="1"/>
+                    <field name="assemblyai_audio_seconds" readonly="1"/>
+                    <field name="assemblyai_estimated_cost" readonly="1"/>
+                    <field name="assemblyai_remote_deleted" readonly="1"/>
+                    <field name="assemblyai_manual_request" readonly="1"/>
+                    <field name="assemblyai_error" readonly="1"/>
+                    <field name="assemblyai_summary_source" readonly="1"/>
+                    <field name="assemblyai_summary_state" readonly="1"/>
+                    <field name="assemblyai_summary_attempts" readonly="1"/>
+                    <field name="assemblyai_summary_error" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_sembly_meeting_list_assemblyai" model="ir.ui.view">
+        <field name="name">sembly.meeting.list.assemblyai</field>
+        <field name="model">sembly.meeting</field>
+        <field name="inherit_id" ref="era_sembly_meetings_google.view_sembly_meeting_list_google"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_google']" position="after">
+                <field name="assemblyai_state" widget="badge" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

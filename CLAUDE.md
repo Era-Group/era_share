@@ -1,5 +1,8 @@
 AI Vibe Coding – Security Playbook
 
+# AssemblyAI API
+Always fetch `https://www.assemblyai.com/docs/llms.txt` before writing AssemblyAI code. The API changes; do not rely on memorized parameter names.
+
 # Authentication & Sessions
 01 – Session Lifetime. Set session expiration limits. JWT sessions should never exceed 7 days and must use refresh token rotation.
 02 – Never use AI-built auth. Use Clerk, Supabase, or Auth0.

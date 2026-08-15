@@ -212,6 +212,60 @@ class GoogleWorkspaceClient:
         # Drive sends UTF-8 without always saying so — the same trap Sembly set.
         return response.content.decode('utf-8', 'replace')
 
+    def download_file_to(self, file_id, destination, max_bytes=None):
+        """Stream one private Drive blob into a seekable binary destination.
+
+        This is intentionally separate from ``_call``: media responses are
+        binary and can be gigabytes, while that helper parses small JSON bodies.
+        It never changes the file's sharing permissions.
+        """
+        metadata = self._call(
+            'GET', '%s/files/%s' % (DRIVE_API, file_id),
+            params={'fields': 'id,name,mimeType,size,capabilities(canDownload)',
+                    'supportsAllDrives': 'true'}) or {}
+        if metadata.get('mimeType') != 'video/mp4':
+            raise GoogleWorkspaceError("The Drive recording is not an MP4 file")
+        if not (metadata.get('capabilities') or {}).get('canDownload', True):
+            raise GoogleWorkspaceError("Google Drive has disabled this download")
+        try:
+            expected = int(metadata.get('size') or 0)
+        except (TypeError, ValueError):
+            expected = 0
+        if max_bytes and expected and expected > max_bytes:
+            raise GoogleWorkspaceError("The Drive recording exceeds the upload limit")
+        try:
+            response = requests.get(
+                '%s/files/%s' % (DRIVE_API, file_id),
+                headers={'Authorization': 'Bearer %s' % self._access_token()},
+                params={'alt': 'media', 'supportsAllDrives': 'true'},
+                stream=True, timeout=(10, max(self.timeout, 600)))
+        except requests.RequestException as exc:
+            raise GoogleWorkspaceError("Google download failed: %s" % exc) from exc
+        try:
+            if response.status_code >= 400:
+                raise GoogleWorkspaceError(
+                    "Google download %s: %s"
+                    % (response.status_code, response.text[:300]),
+                    status=response.status_code)
+            written = 0
+            for chunk in response.iter_content(1024 * 1024):
+                if not chunk:
+                    continue
+                written += len(chunk)
+                if max_bytes and written > max_bytes:
+                    raise GoogleWorkspaceError(
+                        "The Drive recording exceeds the upload limit")
+                destination.write(chunk)
+        finally:
+            response.close()
+        if expected and written != expected:
+            raise GoogleWorkspaceError(
+                "Google Drive download was incomplete (%s of %s bytes)"
+                % (written, expected))
+        destination.flush()
+        destination.seek(0)
+        return {'size': written, 'name': metadata.get('name') or ''}
+
     def share_anyone_with_link(self, file_id):
         """Grant "anyone with the link can view" and return the view URL.
 

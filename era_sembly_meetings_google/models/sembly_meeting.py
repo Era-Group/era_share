@@ -162,7 +162,7 @@ class SemblyMeeting(models.Model):
     has_google = fields.Boolean(
         string="من Google", compute='_compute_has_google', store=True, index=True)
     provider_summary = fields.Char(
-        string="المزوّدون", compute='_compute_has_google',
+        string="المزوّدون", compute='_compute_provider_summary',
         help="Which providers have contributed to this record.")
 
     @api.depends('google_notes_file_id')
@@ -176,6 +176,10 @@ class SemblyMeeting(models.Model):
     def _compute_has_google(self):
         for record in self:
             record.has_google = bool(record.google_file_id)
+
+    @api.depends('google_file_id', 'sembly_meeting_id', 'source')
+    def _compute_provider_summary(self):
+        for record in self:
             names = []
             if record.source != 'google' or record.sembly_meeting_id_is_real():
                 names.append('Sembly')

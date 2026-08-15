@@ -1304,8 +1304,9 @@ class SemblyMeeting(models.Model):
         self.ensure_one()
         neutral = FREE_EMAIL_DOMAINS | self._internal_domains() | self._ignored_domains()
         haystack = "%s %s %s" % (self.participant_emails or '',
-                                 self.owner_email or '',
-                                 " ".join(self.partner_ids.mapped('email') or []))
+                                  self.owner_email or '',
+                                  " ".join(email for email in self.partner_ids.mapped('email')
+                                           if email))
         found = {m.group(1).lower() for m in EMAIL_DOMAIN_RE.finditer(haystack)}
         return found - neutral
 

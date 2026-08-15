@@ -459,6 +459,12 @@ class TestSemblyMatching(TransactionCase):
         with self._as_fallback_target():
             self.assertFalse(self.meeting._external_attendee_domains())
 
+    def test_partner_without_email_does_not_break_domain_analysis(self):
+        """Odoo returns False for an empty Char; str.join must not receive it."""
+        partner = self.env['res.partner'].create({'name': "No Email Attendee"})
+        self.meeting.sudo().write({'partner_ids': [(6, 0, [partner.id])]})
+        self.assertFalse(self.meeting._external_attendee_domains())
+
     def test_a_meeting_something_else_claimed_is_left_alone(self):
         """The fallback is for the UNCLAIMED only."""
         with self._as_fallback_target(), self._with_pools([self._pool()]), \

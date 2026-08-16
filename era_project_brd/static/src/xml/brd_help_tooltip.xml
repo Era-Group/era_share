@@ -8,12 +8,23 @@
     </t>
 
     <t t-name="era_project_brd.BrdWorkflowHelpDialog">
-        <Dialog title.translate="خطوات الوصول إلى BRD النهائي" size="'xl'"
+        <Dialog size="'xl'"
                 contentClass="'o_brd_help_dialog'">
+            <t t-set-slot="header">
+                <div class="d-flex align-items-center w-100" dir="rtl">
+                    <h4 class="modal-title flex-grow-1 text-end">
+                        خطوات الوصول إلى وثيقة المتطلبات النهائية
+                    </h4>
+                    <button type="button" class="btn-close"
+                            aria-label="إغلاق" t-on-click="props.close"/>
+                </div>
+            </t>
             <t t-call="era_project_brd.BrdWorkflowHelpContent"/>
             <t t-set-slot="footer">
-                <button type="button" class="btn btn-primary"
-                        t-on-click="props.close">إغلاق</button>
+                <div class="o_brd_help_footer">
+                    <button type="button" class="btn btn-primary"
+                            t-on-click="props.close">إغلاق</button>
+                </div>
             </t>
         </Dialog>
     </t>
@@ -31,7 +42,7 @@
                 </li>
                 <li>
                     <strong>مطابقة النطاق:</strong>
-                    يقارن النظام كل عمل في المسودة بخط أساس العقد ويقترح: ضمن النطاق، خارج النطاق صراحةً، مرشح طلب تغيير، غير محسوم، أو مؤجل.
+                    ينشئ النظام قائمة المتطلبات من تحليل الاجتماعات المحفوظ فقط، ثم يستخدم خط أساس العقد لتصنيفها: ضمن النطاق، خارج النطاق صراحةً، مرشح طلب تغيير، غير محسوم، أو مؤجل. لا تتحول بنود العقد وحدها إلى متطلبات جديدة.
                 </li>
                 <li>
                     <strong>مراجعة مدير المشروع:</strong>

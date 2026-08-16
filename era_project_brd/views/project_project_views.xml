@@ -104,9 +104,9 @@
                                     groups="base.group_system"/>
                         </div>
                     </div>
-                    <separator string="خط أساس نطاق العقد"/>
+                    <separator string="خط أساس نطاق العقد (مرجع المقارنة فقط)"/>
                     <div class="alert alert-info" role="status">
-                        يستخدم النظام هذا النص كمرجع تعاقدي للمقارنة. عند بدء التحليل تحفظ نسخة ثابتة منه ولا تؤثر التعديلات اللاحقة على التشغيل الجاري.
+                        يستخدم النظام هذا النص للتصنيف ومرجع العقد فقط، ولا يعيد تحويله إلى متطلبات. المتطلبات تأتي من تحليل الاجتماعات المحفوظ. عند بدء التحليل تحفظ نسخة ثابتة منه.
                     </div>
                     <div class="alert alert-warning" role="status"
                          invisible="brd_state != 'scope_review'">
@@ -146,16 +146,13 @@
                     <div class="alert alert-info" role="status" invisible="not brd_document">
                         يمكن لمدير المشروع تعديل الوثيقة هنا ثم حفظ المشروع. تتم مزامنة التعديلات تلقائياً إلى نفس الملف في تطبيق المستندات.
                     </div>
-                    <separator string="مراجعة مطابقة النطاق"
+                    <separator string="المتطلبات المستخرجة من الاجتماعات ومطابقتها بالعقد"
                                groups="project.group_project_user"
                                invisible="brd_state != 'scope_review' and not brd_scope_item_ids"/>
                     <div class="alert alert-warning" role="status"
                          invisible="brd_state != 'scope_review'">
                         راجع كل تصنيف. يجب حسم البنود غير الواضحة، واختيار أساس قرار المدير عند تغيير اقتراح الذكاء الاصطناعي، ثم اضغط «اعتماد النطاق وإصدار BRD النهائي».
                     </div>
-                    <field name="brd_contract_scope_snapshot" widget="html" readonly="1"
-                           string="نسخة نطاق العقد المستخدمة"
-                           invisible="brd_state != 'scope_review'"/>
                     <field name="brd_scope_item_ids" nolabel="1" mode="list"
                            class="o_brd_scope_review"
                            readonly="brd_state != 'scope_review'"

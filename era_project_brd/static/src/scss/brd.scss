@@ -41,7 +41,7 @@
     }
 
     .modal-footer {
-        justify-content: flex-start;
+        justify-content: flex-end !important;
     }
 }
 
@@ -60,16 +60,36 @@
     overflow-y: auto;
 
     ol {
-        padding-right: 1.5rem;
+        padding-right: 0;
         padding-left: 0;
+        list-style: none;
+        counter-reset: brd-help-step;
+    }
+
+    li {
+        position: relative;
+        padding-right: 2.25rem;
+        counter-increment: brd-help-step;
+    }
+
+    li::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1.75rem;
+        content: counter(brd-help-step) ".";
+        direction: ltr;
+        color: #1e3a5f;
+        font-weight: 700;
+        text-align: right;
     }
 
     li,
     .o_brd_help_example,
     .o_brd_help_guard {
-        direction: rtl;
+        direction: rtl !important;
         text-align: right;
-        unicode-bidi: plaintext;
+        unicode-bidi: isolate;
     }
 
     h5 {
@@ -82,7 +102,6 @@
 
     ol {
         margin: 0;
-        padding-right: 1.35rem;
     }
 
     li {
@@ -104,6 +123,13 @@
         background: #fffbeb;
         color: #713f12;
     }
+}
+
+.o_brd_help_footer {
+    display: flex;
+    width: 100%;
+    direction: rtl;
+    justify-content: flex-end;
 }
 
 .o_brd_scope_review {

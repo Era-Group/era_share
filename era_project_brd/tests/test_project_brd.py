@@ -119,7 +119,7 @@ class TestProjectBrd(TransactionCase):
         self.assertTrue(all(chunk.meeting_id == meeting for chunk in chunks))
 
     def test_end_to_end_existing_transcript_builds_html_brd(self):
-        self._meeting(
+        meeting = self._meeting(
             'pipeline',
             transcript='[00:01:00] العميل: نحتاج اعتماد عروض الأسعار قبل البيع.',
             project=self.project)
@@ -138,7 +138,7 @@ class TestProjectBrd(TransactionCase):
             '<script>alert(1)</script>')
         scope_result = {'items': [{
             'requirement': 'اعتماد عرض السعر قبل البيع',
-            'source_reference': 'FR-001',
+            'source_reference': 'M%s-C1-BR1' % meeting.id,
             'classification': 'change_candidate',
             'confidence': 'high',
             'contract_reference': 'لا يوجد بند مطابق',
@@ -182,7 +182,8 @@ class TestProjectBrd(TransactionCase):
         self.assertTrue(scope_document)
         self.assertEqual(scope_document.folder_id, self.project.documents_folder_id)
         self.assertIn('Change Requests', scope_document.name)
-        self.assertIn('FR-001'.encode(), scope_document.raw)
+        self.assertIn(
+            ('M%s-C1-BR1' % meeting.id).encode(), scope_document.raw)
 
     def test_scope_reconciliation_requires_strict_classification_schema(self):
         invalid = {'items': [{
@@ -197,6 +198,53 @@ class TestProjectBrd(TransactionCase):
         }]}
         with self.assertRaises(UserError):
             self.project._brd_scope_extract_json(json.dumps(invalid))
+
+    def test_scope_inventory_uses_meeting_analysis_not_contract_text(self):
+        self._meeting('scope-source', project=self.project)
+        self._start()
+        self.project._brd_process_one_step()
+        extraction = self._empty_extraction()
+        extraction['functional_requirements'] = [{
+            'odoo_area': 'Sales',
+            'requirement': 'متطلب مستخرج حصراً من الاجتماع',
+            'status': 'confirmed',
+            'evidence': 'Meeting | speaker A | 00:03:00',
+        }]
+        chunk = self.project.brd_chunk_ids[0]
+        chunk.write({
+            'state': 'done',
+            'extraction': json.dumps(extraction, ensure_ascii=False),
+        })
+        self.project.write({
+            'brd_draft_document': '<h2>BRD draft</h2>',
+            'brd_contract_scope_snapshot': (
+                '<p>بند تعاقدي لا يجوز تحويله إلى متطلب</p>'),
+        })
+
+        inventory, references = \
+            self.project._brd_scope_requirement_inventory()
+
+        self.assertIn('متطلب مستخرج حصراً من الاجتماع', inventory)
+        self.assertNotIn('بند تعاقدي لا يجوز تحويله', inventory)
+        self.assertEqual(len(references), 1)
+        valid = {'items': [{
+            'requirement': 'متطلب مستخرج حصراً من الاجتماع',
+            'source_reference': next(iter(references)),
+            'classification': 'change_candidate',
+            'confidence': 'high',
+            'contract_reference': 'لا يوجد بند مطابق',
+            'reason': 'غير مغطى تعاقدياً',
+            'impact': 'يحتاج تحليل أثر',
+            'recommended_action': 'إعداد طلب تغيير',
+        }]}
+        self.project._brd_scope_extract_json(
+            json.dumps(valid, ensure_ascii=False),
+            allowed_references=references)
+        valid['items'][0]['source_reference'] = 'CONTRACT-ONLY'
+        with self.assertRaises(UserError):
+            self.project._brd_scope_extract_json(
+                json.dumps(valid, ensure_ascii=False),
+                allowed_references=references)
 
     def test_scope_baseline_is_frozen_for_active_run(self):
         self._meeting('frozen-scope', project=self.project)

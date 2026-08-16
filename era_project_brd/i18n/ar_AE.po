@@ -1,0 +1,1602 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_project_brd
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-16 02:14+0000\n"
+"PO-Revision-Date: 2026-08-16 02:14+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_AE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+". تحفظ منه نسخة ثابتة لكل تشغيل حتى لا تتغير نتيجة المقارنة أثناء العمل."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "A BRD build is already running for this project."
+msgstr "يوجد بناء لوثيقة المتطلبات قيد التشغيل بالفعل لهذا المشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "A BRD build or scope analysis is already active for this project."
+msgstr "يوجد بناء لوثيقة المتطلبات أو تحليل للنطاق قيد التشغيل لهذا المشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "A BRD extraction value exceeds the safe size limit."
+msgstr "تتجاوز إحدى قيم استخراج وثيقة المتطلبات حد الحجم الآمن."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"A meeting transcript changed during BRD generation; rebuild the BRD to use "
+"one consistent evidence set."
+msgstr ""
+"تغير تفريغ أحد الاجتماعات أثناء إنشاء الوثيقة؛ أعد البناء لاستخدام مجموعة "
+"أدلة متسقة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"A scope item does not reference a requirement extracted from the meeting "
+"analysis."
+msgstr "لا يشير أحد بنود النطاق إلى متطلب مستخرج من تحليل الاجتماعات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "A scope reconciliation item has an invalid schema."
+msgstr "يحتوي أحد بنود مطابقة النطاق على بنية غير صالحة."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__ai_classification
+msgid "Ai Classification"
+msgstr "تصنيف الذكاء الاصطناعي"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "All linked project videos were removed."
+msgstr "تمت إزالة جميع فيديوهات الاجتماعات المرتبطة بالمشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Analysis retry is scheduled for %s"
+msgstr "تمت جدولة إعادة محاولة التحليل في %s"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Analyzed %s of %s transcript sections"
+msgstr "تم تحليل %s من أصل %s مقطع تفريغ"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Analyzing transcript requirements"
+msgstr "جارٍ تحليل متطلبات تفريغات الاجتماعات"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Approve the scope review before opening its register."
+msgstr "اعتمد مراجعة النطاق قبل فتح سجلها."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid ""
+"Approved scope classifications are locked. Only commercial follow-up fields "
+"can be updated."
+msgstr "تصنيفات النطاق المعتمدة مقفلة؛ يمكن تحديث حقول المتابعة التجارية فقط."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Approved scope reconciliation and change request register for project %s, "
+"BRD version %s."
+msgstr ""
+"سجل مطابقة النطاق وطلبات التغيير المعتمد للمشروع %s، إصدار وثيقة المتطلبات "
+"%s."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__attempts
+msgid "Attempts"
+msgstr "عدد المحاولات"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "BRD"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD analysis failed three times for meeting '%s': %s"
+msgstr "فشل تحليل وثيقة المتطلبات ثلاث مرات للاجتماع «%s»: %s"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD and scope review approved"
+msgstr "تم اعتماد وثيقة المتطلبات ومراجعة النطاق"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD approved"
+msgstr "تم اعتماد وثيقة المتطلبات"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD extraction category '%s' must be a list."
+msgstr "يجب أن تكون فئة استخراج وثيقة المتطلبات «%s» قائمة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD generation failed"
+msgstr "فشل إنشاء وثيقة المتطلبات"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD generation started in the background for %s video(s)."
+msgstr "بدأ إنشاء وثيقة المتطلبات في الخلفية لعدد %s من الفيديوهات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "BRD generation timed out"
+msgstr "انتهت مهلة إنشاء وثيقة المتطلبات"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/js/brd_help_field.js:0
+msgid "BRD workflow help"
+msgstr "شرح خطوات وثيقة المتطلبات"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_generation_attempts
+msgid "Brd Generation Attempts"
+msgstr "محاولات إنشاء وثيقة المتطلبات"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_generation_next_retry_at
+msgid "Brd Generation Next Retry At"
+msgstr "موعد إعادة محاولة إنشاء الوثيقة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_pending_version
+msgid "Brd Pending Version"
+msgstr "إصدار وثيقة المتطلبات المنتظر"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_analysis_attempts
+msgid "Brd Scope Analysis Attempts"
+msgstr "محاولات تحليل نطاق وثيقة المتطلبات"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_next_retry_at
+msgid "Brd Scope Next Retry At"
+msgstr "موعد إعادة محاولة تحليل النطاق"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_run
+msgid "Brd Scope Run"
+msgstr "جولة مطابقة نطاق الوثيقة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_source_signature
+msgid "Brd Source Signature"
+msgstr "بصمة مصادر وثيقة المتطلبات"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__brd_version
+msgid "Brd Version"
+msgstr "إصدار وثيقة المتطلبات"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Build BRD"
+msgstr "بناء وثيقة المتطلبات"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Build the BRD before analyzing contract scope."
+msgstr "أنشئ وثيقة المتطلبات قبل تحليل نطاق العقد."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Build the BRD before opening it in Documents."
+msgstr "أنشئ وثيقة المتطلبات قبل فتحها في تطبيق المستندات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Business Requirements Document BRD version %s and its contract scope review "
+"are approved."
+msgstr ""
+"تم اعتماد وثيقة متطلبات الأعمال، الإصدار %s، ومراجعة نطاق العقد الخاصة بها."
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "CR"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "CR-2026-001"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "CREDO"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__can_review
+msgid "Can Review"
+msgstr "يمكنه المراجعة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__char_end
+msgid "Char End"
+msgstr "نهاية المقطع"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__char_start
+msgid "Char Start"
+msgstr "بداية المقطع"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Choose a manager decision reason for every classification changed from the "
+"AI recommendation."
+msgstr "اختر أساس قرار المدير لكل تصنيف تم تغييره عن توصية الذكاء الاصطناعي."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__classification
+msgid "Classification"
+msgstr "التصنيف"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Collecting linked project videos"
+msgstr "جارٍ جمع فيديوهات الاجتماعات المرتبطة بالمشروع"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__commercial_status
+msgid "Commercial Status"
+msgstr "الحالة التجارية"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__company_id
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__confidence
+msgid "Confidence"
+msgstr "درجة الثقة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__contract_reference
+msgid "Contract Reference"
+msgstr "مرجع العقد"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Contract scope reconciliation failed three times: %s"
+msgstr "فشلت مطابقة نطاق العقد ثلاث مرات: %s"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Contract scope reconciliation is ready for manager review."
+msgstr "مطابقة نطاق العقد جاهزة لمراجعة مدير المشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Contract scope reconciliation started in the background."
+msgstr "بدأت مطابقة نطاق العقد في الخلفية."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Contract scope reconciliation will retry automatically"
+msgstr "ستتم إعادة محاولة مطابقة نطاق العقد تلقائياً"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Contract scope review"
+msgstr "مراجعة نطاق العقد"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Could not request transcription for meeting '%s': %s"
+msgstr "تعذر طلب تفريغ الاجتماع «%s»: %s"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__create_uid
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__create_date
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Define the agreed contractual scope before analyzing variances."
+msgstr "حدد نطاق العمل التعاقدي المتفق عليه قبل تحليل الفروقات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Define the agreed contractual scope in the BRD tab or the project "
+"description before building the BRD."
+msgstr ""
+"حدد نطاق العمل التعاقدي في تبويب وثيقة المتطلبات أو وصف المشروع قبل بدء "
+"البناء."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__display_name
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__display_name
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_chunk__state__done
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Drafting the final Odoo BRD"
+msgstr "جارٍ إعداد مسودة وثيقة متطلبات Odoo النهائية"
+
+#. module: era_project_brd
+#: model:ir.model.constraint,message:era_project_brd.constraint_project_brd_scope_item_project_version_code_unique
+msgid ""
+"Each scope reconciliation item must have a unique code per BRD version."
+msgstr ""
+"يجب أن يكون لكل بند مطابقة نطاق رمز فريد في كل إصدار من وثيقة المتطلبات."
+
+#. module: era_project_brd
+#: model:ir.model.constraint,message:era_project_brd.constraint_project_brd_chunk_project_meeting_sequence_unique
+msgid "Each transcript chunk can only be analyzed once per project run."
+msgstr "لا يمكن تحليل مقطع التفريغ إلا مرة واحدة في كل تشغيل للمشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Editable source: the BRD tab of project %s. Version %s."
+msgstr ""
+"المصدر القابل للتعديل: تبويب وثيقة المتطلبات في المشروع %s، الإصدار %s."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__error
+msgid "Error"
+msgstr "الخطأ"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Every BRD extraction value must be text."
+msgstr "يجب أن تكون جميع قيم استخراج وثيقة المتطلبات نصية."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Every extracted BRD item must carry evidence."
+msgstr "يجب أن يحتوي كل بند مستخرج من وثيقة المتطلبات على دليل."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Every required BRD extraction field must contain text."
+msgstr "يجب أن يحتوي كل حقل مطلوب في استخراج وثيقة المتطلبات على نص."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Every scope reconciliation field must contain text."
+msgstr "يجب أن يحتوي كل حقل في مطابقة النطاق على نص."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__extraction
+msgid "Extraction"
+msgstr "نتيجة الاستخراج"
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_chunk__state__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Final BRD generation failed three times: %s"
+msgstr "فشل إنشاء وثيقة المتطلبات النهائية ثلاث مرات: %s"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Final document generation will retry automatically"
+msgstr "ستتم إعادة محاولة إنشاء الوثيقة النهائية تلقائياً"
+
+#. module: era_project_brd
+#: model:ir.model.fields,help:era_project_brd.field_project_brd_chunk__company_id
+msgid "Frozen company whose meeting evidence was used for this run."
+msgstr "الشركة المثبتة التي استخدمت أدلة اجتماعاتها في هذا التشغيل."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__id
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__id
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__id
+msgid "ID"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__impact
+msgid "Impact"
+msgstr "الأثر"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__write_uid
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__write_date
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__meeting_id
+msgid "Meeting"
+msgstr "الاجتماع"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Meeting '%s' still has no transcript."
+msgstr "لا يزال الاجتماع «%s» دون تفريغ."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Meeting transcription failed: %s"
+msgstr "فشل تفريغ الاجتماع: %s"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__next_retry_at
+msgid "Next Retry At"
+msgstr "موعد المحاولة التالية"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"No BRD run may remain active for more than 24 hours. Review meeting "
+"transcription errors and rebuild."
+msgstr ""
+"لا يجوز أن يظل تشغيل وثيقة المتطلبات نشطاً لأكثر من 24 ساعة؛ راجع أخطاء "
+"التفريغ ثم أعد البناء."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "No analyzed transcript evidence is available."
+msgstr "لا تتوفر أدلة محللة من تفريغات الاجتماعات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"No completed meeting analysis or BRD draft is available for scope "
+"reconciliation."
+msgstr "لا يتوفر تحليل اجتماعات مكتمل أو مسودة وثيقة متطلبات لمطابقة النطاق."
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "Odoo"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Odoo Project BRD Analyst"
+msgstr "محلل وثيقة متطلبات مشروع Odoo"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid "Only a project manager can add BRD scope review items."
+msgstr "يمكن لمدير المشروع فقط إضافة بنود مراجعة نطاق وثيقة المتطلبات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Only a project manager can build a project BRD."
+msgstr "يمكن لمدير المشروع فقط بناء وثيقة متطلبات المشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid "Only a project manager can edit BRD scope review items."
+msgstr "يمكن لمدير المشروع فقط تعديل بنود مراجعة نطاق وثيقة المتطلبات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Only a project manager can edit a project BRD or its contractual scope "
+"baseline."
+msgstr ""
+"يمكن لمدير المشروع فقط تعديل وثيقة متطلبات المشروع أو خط أساس نطاقها "
+"التعاقدي."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid "Only a project manager can remove BRD scope review items."
+msgstr "يمكن لمدير المشروع فقط حذف بنود مراجعة نطاق وثيقة المتطلبات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Only a settings administrator can edit the BRD prompt."
+msgstr "يمكن لمسؤول الإعدادات فقط تعديل برومبت وثيقة المتطلبات."
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_chunk__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Preparing transcript analysis"
+msgstr "جارٍ تجهيز تحليل تفريغات الاجتماعات"
+
+#. module: era_project_brd
+#: model:ir.model,name:era_project_brd.model_project_project
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__project_id
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__project_id
+msgid "Project"
+msgstr "المشروع"
+
+#. module: era_project_brd
+#: model:ir.model,name:era_project_brd.model_project_brd_scope_item
+msgid "Project BRD Contract Scope Reconciliation Item"
+msgstr "بند مطابقة نطاق عقد وثيقة متطلبات المشروع"
+
+#. module: era_project_brd
+#: model:ir.model,name:era_project_brd.model_project_brd_chunk
+msgid "Project BRD Transcript Analysis Chunk"
+msgstr "مقطع تحليل تفريغ وثيقة متطلبات المشروع"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Project meetings or transcripts changed during BRD generation. Rebuild to "
+"create a consistent document from the new evidence."
+msgstr ""
+"تغيرت اجتماعات المشروع أو تفريغاتها أثناء إنشاء الوثيقة؛ أعد البناء لإنشاء "
+"وثيقة متسقة من الأدلة الجديدة."
+
+#. module: era_project_brd
+#: model:ir.actions.server,name:era_project_brd.cron_project_brd_ir_actions_server
+msgid "Projects: Build BRD from meeting transcripts"
+msgstr "المشاريع: بناء وثيقة المتطلبات من تفريغات الاجتماعات"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__recommended_action
+msgid "Recommended Action"
+msgstr "الإجراء المقترح"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Reconciling the BRD draft with the contractual scope"
+msgstr "جارٍ مطابقة مسودة وثيقة المتطلبات مع النطاق التعاقدي"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Reconciling the BRD with the contractual scope"
+msgstr "جارٍ مطابقة وثيقة المتطلبات مع النطاق التعاقدي"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__requirement
+msgid "Requirement"
+msgstr "المتطلب"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Resolve every unclear scope item before issuing the final BRD."
+msgstr "احسم جميع بنود النطاق غير الواضحة قبل إصدار وثيقة المتطلبات النهائية."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Retrying analysis of meeting '%s'"
+msgstr "جارٍ إعادة محاولة تحليل الاجتماع «%s»"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Retrying contractual scope reconciliation"
+msgstr "جارٍ إعادة محاولة مطابقة النطاق التعاقدي"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Retrying final BRD draft generation"
+msgstr "جارٍ إعادة محاولة إنشاء مسودة وثيقة المتطلبات النهائية"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "SOW"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__scope_run
+msgid "Scope Run"
+msgstr "جولة مطابقة النطاق"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "Scope Variance & Change Requests"
+msgstr "فروقات النطاق وطلبات التغيير"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid "Scope items can only be added during scope review."
+msgstr "لا يمكن إضافة بنود النطاق إلا أثناء مراجعة النطاق."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_brd_scope_item.py:0
+msgid "Scope items can only be removed during scope review."
+msgstr "لا يمكن حذف بنود النطاق إلا أثناء مراجعة النطاق."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Scope reconciliation awaits project manager approval"
+msgstr "مطابقة النطاق بانتظار اعتماد مدير المشروع"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__sequence
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"Some project videos need transcription, but AssemblyAI is disabled or its "
+"API key is not configured."
+msgstr ""
+"بعض فيديوهات المشروع تحتاج إلى تفريغ، لكن AssemblyAI معطل أو مفتاح API غير "
+"مضبوط."
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__source_hash
+msgid "Source Hash"
+msgstr "بصمة المصدر"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__source_reference
+msgid "Source Reference"
+msgstr "مرجع المتطلب من الاجتماع"
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_chunk__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD agent returned an empty document."
+msgstr "أعاد وكيل وثيقة المتطلبات وثيقة فارغة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD agent returned invalid extraction JSON."
+msgstr "أعاد وكيل وثيقة المتطلبات بيانات استخراج JSON غير صالحة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD agent returned invalid scope reconciliation JSON."
+msgstr "أعاد وكيل وثيقة المتطلبات بيانات JSON غير صالحة لمطابقة النطاق."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD agent returned malformed extraction JSON."
+msgstr "أعاد وكيل وثيقة المتطلبات بيانات استخراج JSON مشوهة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD draft exceeds the safe scope review context limit."
+msgstr "تتجاوز مسودة وثيقة المتطلبات حد سياق مراجعة النطاق الآمن."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD extraction is missing required evidence categories."
+msgstr "يفتقد استخراج وثيقة المتطلبات فئات الأدلة المطلوبة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"The BRD extraction is too large; the agent must return a more concise "
+"evidence set."
+msgstr ""
+"استخراج وثيقة المتطلبات كبير جداً؛ يجب أن يعيد الوكيل مجموعة أدلة أكثر "
+"إيجازاً."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD extraction item is missing required fields."
+msgstr "يفتقد أحد بنود استخراج وثيقة المتطلبات حقولاً مطلوبة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD extraction must be a JSON object."
+msgstr "يجب أن يكون استخراج وثيقة المتطلبات كائن JSON."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The BRD must be awaiting scope review before approval."
+msgstr "يجب أن تكون وثيقة المتطلبات بانتظار مراجعة النطاق قبل اعتمادها."
+
+#. module: era_project_brd
+#: model:ir.model.fields,help:era_project_brd.field_project_project__brd_contract_scope
+msgid "The agreed contractual scope used to identify scope variances."
+msgstr "نطاق العمل التعاقدي المتفق عليه والمستخدم لتحديد فروقات النطاق."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"The analyzed evidence exceeds the safe AI context limit. Split the project "
+"or archive irrelevant meeting links."
+msgstr ""
+"تتجاوز الأدلة المحللة حد سياق الذكاء الاصطناعي الآمن؛ قسّم المشروع أو أرشف "
+"روابط الاجتماعات غير المتعلقة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The contractual scope exceeds the safe AI context limit."
+msgstr "يتجاوز نطاق العقد حد سياق الذكاء الاصطناعي الآمن."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The dedicated Project BRD AI agent is unavailable."
+msgstr "وكيل الذكاء الاصطناعي المخصص لوثيقة متطلبات المشروع غير متاح."
+
+#. module: era_project_brd
+#: model:ir.model.fields,help:era_project_brd.field_project_brd_scope_item__manager_decision_reason
+msgid ""
+"The explicit contractual or written basis for overriding the AI scope "
+"classification."
+msgstr ""
+"الأساس التعاقدي أو المكتوب الصريح لتغيير تصنيف النطاق المقترح من الذكاء "
+"الاصطناعي."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The final BRD and change request register were published to Documents."
+msgstr ""
+"تم نشر وثيقة المتطلبات النهائية وسجل طلبات التغيير في تطبيق المستندات."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The frozen contractual scope baseline is empty."
+msgstr "نسخة خط أساس نطاق العقد المحفوظة فارغة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"The meeting-derived requirement inventory exceeds the safe scope review "
+"context limit."
+msgstr ""
+"يتجاوز سجل المتطلبات المستخرج من الاجتماعات حد سياق مراجعة النطاق الآمن."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The project Documents folder could not be created."
+msgstr "تعذر إنشاء مجلد مستندات المشروع."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation contains an unknown classification."
+msgstr "تحتوي مطابقة النطاق على تصنيف غير معروف."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation contains an unknown confidence."
+msgstr "تحتوي مطابقة النطاق على درجة ثقة غير معروفة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation did not contain distinct work items."
+msgstr "لم تتضمن مطابقة النطاق بنود عمل مميزة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation must contain a non-empty items list."
+msgstr "يجب أن تحتوي مطابقة النطاق على قائمة بنود غير فارغة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation response exceeded the safe limit."
+msgstr "تجاوزت استجابة مطابقة النطاق الحد الآمن."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "The scope reconciliation returned too many work items."
+msgstr "أعادت مطابقة النطاق عدداً كبيراً جداً من بنود العمل."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid ""
+"The selected manager decision basis does not match the final classification "
+"for: %s"
+msgstr "لا يتوافق أساس قرار المدير المختار مع التصنيف النهائي للبنود: %s"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "There are no scope items to approve."
+msgstr "لا توجد بنود نطاق لاعتمادها."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "This project has no linked Google meeting recordings."
+msgstr "لا يحتوي هذا المشروع على تسجيلات اجتماعات Google مرتبطة."
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Transcribed %s of %s project videos"
+msgstr "تم تفريغ %s من أصل %s فيديو للمشروع"
+
+#. module: era_project_brd
+#. odoo-python
+#: code:addons/era_project_brd/models/project_project.py:0
+msgid "Waiting for %s meeting transcription(s)"
+msgstr "بانتظار تفريغ %s من الاجتماعات"
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "، والحالة: «قيد التسعير»."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "أدخل نطاق العمل المتفق عليه من العقد أو"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__manager_decision_reason
+msgid "أساس قرار المدير"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"ألصق نطاق العمل المتفق عليه حسب العقد أو SOW. عند تركه فارغاً يستخدم وصف "
+"المشروع عند بدء البناء."
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"إذا تغير العقد، عدل النطاق أدناه ثم اضغط «إعادة مطابقة النطاق». ستبقى "
+"المراجعة الحالية محفوظة في السجل التاريخي."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_version
+msgid "إصدار BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "إعادة بناء وثيقة المتطلبات"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "إعادة مطابقة النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "إعداد برومبت وكيل BRD"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"إعداد مسار اعتماد مشتريات قياسي مذكور صراحةً في العقد. التصنيف: «ضمن "
+"النطاق». إذا عدّل المدير اقتراح النظام، يختار: «نص العقد يذكر العمل صراحةً "
+"ضمن النطاق»."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "إغلاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__generating
+msgid "إنشاء مسودة الوثيقة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_meeting_count
+msgid "اجتماعات الفيديو"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_brd_scope_item_form
+msgid "اختر الأساس التعاقدي أو التأكيد المكتوب للقرار"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "اضغط «اعتماد النطاق وإصدار"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "اضغط لعرض خطوات العمل والأمثلة"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "اعتماد النطاق وإصدار BRD النهائي"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "الإصدار النهائي:"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_transcript_count
+msgid "التفريغات المكتملة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__customization_beyond_standard
+msgid "الطلب تخصيص إضافي يتجاوز الإعداد القياسي المتفق عليه"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_brd_scope_item_form
+msgid "العمل المطلوب"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__standard_configuration_only
+msgid "العمل مغطى ضمن إعداد Odoo القياسي فقط"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__customer_confirms_in_scope
+msgid "العميل أكد كتابياً أن العمل ضمن العقد الحالي"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__customer_confirms_change_request
+msgid "العميل أكد كتابياً أن العمل طلب تغيير خارج العقد"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "المتابعة التجارية:"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "المتطلبات المستخرجة من الاجتماعات ومطابقتها بالعقد"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_progress_message
+msgid "المرحلة الحالية"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_brd_scope_item_form
+msgid "المطابقة التعاقدية"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_chunk_done
+msgid "المقاطع المحللة"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "النهائي وسجل"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "النهائي». ينشر النظام"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"الوثيقة المعروضة أدناه هي الإصدار السابق؛ لم تستبدلها عملية البناء الحالية "
+"بعد."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__pending_assessment
+msgid "بانتظار التقييم"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__scope_review
+msgid "بانتظار مراجعة النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "بناء مسودة"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "بناء وثيقة المتطلبات (Build BRD)"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "تثبيت نطاق العقد:"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "تحليل الأعمال خارج النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__extracting
+msgid "تحليل المتطلبات"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__manager_note
+msgid "تفاصيل إضافية"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_brd_scope_item_form
+msgid "تفاصيل إضافية اختيارية"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__transcribing
+msgid "تفريغ الاجتماعات"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_progress
+msgid "تقدم بناء BRD"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "تكامل"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__project_brd_state
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_state
+msgid "حالة وثيقة المتطلبات"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__ai_classification__out_of_scope
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__classification__out_of_scope
+msgid "خارج النطاق صراحةً"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "خط أساس نطاق العقد (مرجع المقارنة فقط)"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_error
+msgid "خطأ بناء BRD"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "خطوات الوصول إلى وثيقة المتطلبات النهائية"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "داخل مستندات المشروع."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"راجع التصنيف ومرجع العقد والسبب والأثر. يجب حسم كل بند غير محسوم، واختيار "
+"«أساس قرار المدير» عند تغيير تصنيف الذكاء الاصطناعي."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_reviewed_by_id
+msgid "راجع النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"راجع كل تصنيف. يجب حسم البنود غير الواضحة، واختيار أساس قرار المدير عند "
+"تغيير اقتراح الذكاء الاصطناعي، ثم اضغط «اعتماد النطاق وإصدار BRD النهائي»."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_brd_scope_item__cr_number
+msgid "رقم طلب التغيير"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"ستحفظ المراجعة الحالية تاريخياً، ثم تعاد مقارنة مسودة BRD مع نطاق العقد "
+"المعدل دون إعادة تحليل الاجتماعات. هل تريد المتابعة؟"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_document_id
+msgid "سجل طلبات التغيير في المستندات"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"سيتم إصدار BRD النهائي وسجل طلبات التغيير حسب التصنيفات الحالية. هل تريد "
+"الاعتماد؟"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"سيتم بناء نسخة جديدة من جميع تفريغات الاجتماعات الحالية. هل تريد المتابعة؟"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_company_id
+msgid "شركة أدلة BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__ai_classification__in_scope
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__classification__in_scope
+msgid "ضمن النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_requested_by_id
+msgid "طلبها"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"عدل «نطاق العمل التعاقدي» ثم اضغط «إعادة مطابقة النطاق». يحفظ النظام "
+"المراجعة السابقة تاريخياً ويعيد المقارنة فقط، دون إعادة تفريغ الاجتماعات أو "
+"بناء مسودة BRD."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "عند تعديل العقد:"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__ai_classification__unclear
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__classification__unclear
+msgid "غير محسوم"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"غير وارد في العقد. التصنيف: «مرشح طلب تغيير». أساس القرار: «لا يوجد بند يغطي"
+" العمل؛ يلزم طلب تغيير وتسعير مستقل». رقم الطلب:"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "فتح سجل طلبات التغيير"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "فتح شرح خطوات بناء واعتماد وثيقة BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "فتح في المستندات"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__failed
+msgid "فشلت"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__queued
+msgid "في قائمة الانتظار"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__pricing
+msgid "قيد التسعير"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__not_covered_change_required
+msgid "لا يوجد بند يغطي العمل؛ يلزم طلب تغيير وتسعير مستقل"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "للبنود الإضافية، سجل رقم"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__idle
+msgid "لم يبدأ"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "لم يتم بناء وثيقة متطلبات لهذا المشروع بعد."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"لن يسمح النظام بالإصدار النهائي إذا بقي بند «غير محسوم»، أو تغير تصنيف دون "
+"أساس قرار، أو كان أساس القرار لا يتوافق مع التصنيف النهائي."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__ai_classification__deferred
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__classification__deferred
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__deferred
+msgid "مؤجل"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__confidence__medium
+msgid "متوسطة"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "مثال ضمن النطاق:"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "مثال طلب تغيير:"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "مراجعة مدير المشروع:"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_brd_scope_item_form
+msgid "مراجعة نطاق متطلب BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__confidence__high
+msgid "مرتفعة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__ai_classification__change_candidate
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__classification__change_candidate
+msgid "مرشح طلب تغيير"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__rejected
+msgid "مرفوض"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_draft_document
+msgid "مسودة BRD قبل مراجعة النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "مسودة BRD قيد المراجعة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__included_no_charge
+msgid "مشمول دون تكلفة"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "مطابقة النطاق:"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_item_ids
+msgid "مطابقة نطاق BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__scope_analyzing
+msgid "مطابقة نطاق العقد"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid "مع"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__approved
+msgid "معتمد"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_chunk_ids
+msgid "مقاطع BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_chunk_count
+msgid "مقاطع التحليل"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__commercial_status__submitted
+msgid "مقدم للعميل"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_project__brd_state__done
+msgid "مكتملة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_document_id
+msgid "ملف BRD في المستندات"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__confidence__low
+msgid "منخفضة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_contract_scope_snapshot
+msgid "نسخة نطاق العقد المستخدمة"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__contract_explicitly_covers
+msgid "نص العقد يذكر العمل صراحةً ضمن النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__contract_explicitly_excludes
+msgid "نص العقد يستبعد العمل صراحةً"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_contract_scope
+msgid "نطاق العمل التعاقدي"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"والحالة التجارية مثل: بانتظار التقييم، قيد التسعير، مقدم للعميل، أو معتمد."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_document
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid "وثيقة المتطلبات BRD"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_scope_reviewed_at
+msgid "وقت اعتماد النطاق"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_completed_at
+msgid "وقت الاكتمال"
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields,field_description:era_project_brd.field_project_project__brd_requested_at
+msgid "وقت الطلب"
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"يجمع النظام الاجتماعات المرتبطة بالمشروع، ويتحقق من التفريغات، ثم يستخرج "
+"المتطلبات والأدلة وينشئ مسودة قابلة للمراجعة."
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"يستخدم النظام هذا النص للتصنيف ومرجع العقد فقط، ولا يعيد تحويله إلى متطلبات."
+" المتطلبات تأتي من تحليل الاجتماعات المحفوظ. عند بدء التحليل تحفظ نسخة ثابتة"
+" منه."
+msgstr ""
+
+#. module: era_project_brd
+#: model_terms:ir.ui.view,arch_db:era_project_brd.view_project_project_form_brd
+msgid ""
+"يمكن لمدير المشروع تعديل الوثيقة هنا ثم حفظ المشروع. تتم مزامنة التعديلات "
+"تلقائياً إلى نفس الملف في تطبيق المستندات."
+msgstr ""
+
+#. module: era_project_brd
+#. odoo-javascript
+#: code:addons/era_project_brd/static/src/xml/brd_help_tooltip.xml:0
+msgid ""
+"ينشئ النظام قائمة المتطلبات من تحليل الاجتماعات المحفوظ فقط، ثم يستخدم خط "
+"أساس العقد لتصنيفها: ضمن النطاق، خارج النطاق صراحةً، مرشح طلب تغيير، غير "
+"محسوم، أو مؤجل. لا تتحول بنود العقد وحدها إلى متطلبات جديدة."
+msgstr ""
+
+#. module: era_project_brd
+#: model:ir.model.fields.selection,name:era_project_brd.selection__project_brd_scope_item__manager_decision_reason__deferred_by_agreement
+msgid "يوجد اتفاق مكتوب على تأجيل العمل لمرحلة لاحقة"
+msgstr ""

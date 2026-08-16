@@ -1,0 +1,141 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_sembly_meetings_assemblyai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: Era Group\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.module.module,name:era_sembly_meetings_assemblyai.module_era_sembly_meetings_assemblyai
+msgid "ERA Sembly.ai Meetings - AssemblyAI"
+msgstr "اجتماعات ERA Sembly.ai - AssemblyAI"
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.module.module,summary:era_sembly_meetings_assemblyai.module_era_sembly_meetings_assemblyai
+msgid "Fallback Arabic transcription for private Google Meet recordings"
+msgstr "تفريغ عربي احتياطي لتسجيلات Google Meet الخاصة"
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.model.fields,help:era_sembly_meetings_assemblyai.field_sembly_meeting__assemblyai_upload_url
+msgid "Temporary private AssemblyAI URL used only to recover an uncertain submit."
+msgstr "رابط AssemblyAI خاص ومؤقت، لا يُستخدم إلا لاستعادة طلب إرسال غير مؤكّد."
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.model.fields,help:era_sembly_meetings_assemblyai.field_sembly_meeting__assemblyai_manual_request
+msgid "Allows an explicit manager request to bypass the automatic 10-minute minimum while preserving all billing safeguards."
+msgstr "يسمح لطلب المدير الصريح بتجاوز الحد الأدنى التلقائي البالغ 10 دقائق، مع إبقاء جميع ضوابط الفوترة."
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.model.fields,help:era_sembly_meetings_assemblyai.field_sembly_meeting__assemblyai_summary
+msgid "Arabic summary generated from the transcript, optionally merged with Sembly's original summary."
+msgstr "ملخص عربي يُنشأ من التفريغ النصي، ويمكن دمجه مع ملخص Sembly الأصلي."
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.model.fields,help:era_sembly_meetings_assemblyai.field_res_config_settings__sembly_assemblyai_api_key
+msgid "Stored write-only. ASSEMBLYAI_API_KEY takes precedence when set."
+msgstr "يُخزّن بلا إمكانية للقراءة. تكون الأولوية لمتغير ASSEMBLYAI_API_KEY عند تعريفه."
+
+#. module: era_sembly_meetings_assemblyai
+#: model:ir.model.constraint,message:era_sembly_meetings_assemblyai.constraint_sembly_meeting_assemblyai_transcript_id_unique
+msgid "This AssemblyAI transcript is already attached to another meeting."
+msgstr "تفريغ AssemblyAI هذا مرتبط باجتماع آخر بالفعل."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Generated from the transcript and merged with Sembly when available."
+msgstr "أُنشئ من التفريغ النصي ودُمج مع Sembly عند توفره."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Recording is older than two calendar days"
+msgstr "التسجيل أقدم من يومين تقويميين"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Recording is shorter than 10 minutes"
+msgstr "التسجيل أقصر من 10 دقائق"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "AI agent returned no meeting summary"
+msgstr "لم يُرجع وكيل الذكاء الاصطناعي ملخصًا للاجتماع"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Monthly transcription limit reached"
+msgstr "تم بلوغ الحد الشهري للتفريغ"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "The private recording exceeds AssemblyAI's upload limit; install ffmpeg so only its audio track is uploaded."
+msgstr "يتجاوز التسجيل الخاص حد الرفع لدى AssemblyAI؛ ثبّت ffmpeg ليُرفع المسار الصوتي فقط."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Submit was not found and new submissions are disabled"
+msgstr "لم يُعثر على طلب الإرسال، وطلبات الإرسال الجديدة معطلة"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Upload worker stopped before submission"
+msgstr "توقفت عملية الرفع قبل إرسال طلب التفريغ"
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Only a Sembly manager can retry transcription."
+msgstr "لا يمكن إعادة محاولة التفريغ إلا لمدير Sembly."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "The previous submit may have succeeded. Resolve its remote state before retrying to avoid duplicate billing."
+msgstr "ربما نجح طلب الإرسال السابق. تحقّق من حالته البعيدة قبل إعادة المحاولة لتجنّب تكرار الفوترة."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Only a Sembly manager can retry summarization."
+msgstr "لا يمكن إعادة محاولة التلخيص إلا لمدير Sembly."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Only a meeting manager or project manager can request transcription."
+msgstr "لا يمكن طلب التفريغ إلا لمدير الاجتماعات أو مدير المشاريع."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "AssemblyAI is disabled or its API key is not configured."
+msgstr "AssemblyAI معطل أو لم يُضبط مفتاح API الخاص به."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "This meeting already has a transcript."
+msgstr "يوجد تفريغ نصي لهذا الاجتماع بالفعل."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "This meeting has no Google recording."
+msgstr "لا يوجد تسجيل Google لهذا الاجتماع."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "Transcription is already in progress."
+msgstr "التفريغ قيد التنفيذ بالفعل."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "A previous remote request may still exist. Resolve it before creating another billable request."
+msgstr "قد يظل طلب بعيد سابق موجودًا. عالج حالته قبل إنشاء طلب آخر قابل للفوترة."
+
+#. module: era_sembly_meetings_assemblyai
+#: code:addons/era_sembly_meetings_assemblyai/models/sembly_meeting.py:0
+msgid "The meeting was queued for immediate transcription."
+msgstr "أُضيف الاجتماع إلى قائمة انتظار التفريغ الفوري."

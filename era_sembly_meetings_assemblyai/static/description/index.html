@@ -1,0 +1,76 @@
+<!-- Self-contained bilingual Odoo Apps description. Inline styles survive Odoo sanitization. -->
+<section class="oe_container">
+  <div class="oe_row oe_spaced" style="max-width:1100px;margin:0 auto;padding:24px 16px 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#20243a;line-height:1.6">
+    <div style="background:linear-gradient(135deg,#6C4CF1 0%,#5134bd 58%,#32206f 100%);border-radius:16px;padding:42px 38px;color:#f2efff">
+      <p style="text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;opacity:.82;margin:0 0 10px">Odoo 19 &middot; Arabic AI &middot; Era Group</p>
+      <h1 style="color:#fff;font-size:31px;font-weight:800;margin:0 0 6px">ERA Sembly.ai Meetings &mdash; AssemblyAI</h1>
+      <h2 dir="rtl" style="color:#d9d0ff;font-size:21px;font-weight:400;margin:0 0 16px">اجتماعات Sembly.ai من ERA &mdash; التفريغ عبر AssemblyAI</h2>
+      <p style="color:#ebe7ff;font-size:16px;max-width:790px;margin:0">A private Arabic transcription fallback for Google Meet recordings. It waits for Sembly when appropriate, submits only when needed, and brings the transcript and an Arabic AI summary back to the same Odoo meeting.</p>
+      <p dir="rtl" style="color:#d9d0ff;font-size:16px;line-height:1.85;max-width:790px;margin:10px 0 0">بديل خاص لتفريغ تسجيلات Google Meet العربية. ينتظر Sembly عند الحاجة، ولا يرسل التسجيل إلا عند غياب التفريغ، ثم يعيد النص وملخصًا عربيًا إلى سجل الاجتماع نفسه في أودو.</p>
+      <div style="margin-top:20px">
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Arabic</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Private upload</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">Speaker labels</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:999px;display:inline-block;margin:0 6px 6px 0">LGPL-3</span>
+      </div>
+    </div>
+
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6C4CF1;margin:40px 0 6px">Why it exists</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Arabic meetings no longer end with only a recording</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#6C4CF1;margin:0 0 12px">الاجتماع العربي لا يبقى تسجيلًا بلا نص</h3>
+    <p style="color:#657084;margin:0 0 8px">Google Meet reliably supplies the recording, but its meeting notes do not cover Arabic. Sembly may supply the transcript; when it does not, this module uses AssemblyAI as a controlled fallback instead of leaving the meeting incomplete.</p>
+    <p dir="rtl" style="color:#5134bd;line-height:1.8;margin:0 0 20px">يوفّر Google Meet التسجيل، لكن ملاحظاته لا تغطي العربية. وقد يصل التفريغ من Sembly؛ فإن لم يصل تستخدم هذه الوحدة AssemblyAI كبديل مضبوط بدل ترك الاجتماع ناقصًا.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <div style="flex:1 1 290px;background:#f8f7ff;border:1px solid #e2ddfb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128274;</div>
+        <h4 style="margin:8px 0 2px;font-size:16px">Private from download to deletion</h4>
+        <h4 dir="rtl" style="color:#6C4CF1;margin:0 0 6px;font-size:15.5px">خصوصية من التنزيل حتى الحذف</h4>
+        <p style="color:#657084;margin:0">The module downloads through the authorised Google API and never creates a public Drive permission. Temporary files use restricted permissions, and the remote AssemblyAI transcript is deleted after completion.</p>
+        <p dir="rtl" style="color:#657084;line-height:1.75;margin:8px 0 0">يُنزّل التسجيل عبر Google API المصرّح به ولا ينشئ صلاحية عامة على Drive. تُحمى الملفات المؤقتة، ويُحذف التفريغ البعيد من AssemblyAI بعد اكتماله.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f7ff;border:1px solid #e2ddfb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#128483;</div>
+        <h4 style="margin:8px 0 2px;font-size:16px">Arabic transcript with speakers</h4>
+        <h4 dir="rtl" style="color:#6C4CF1;margin:0 0 6px;font-size:15.5px">تفريغ عربي مع تمييز المتحدثين</h4>
+        <p style="color:#657084;margin:0">AssemblyAI runs the Arabic Universal-2 speech model with speaker labels. Odoo stores timestamped utterances, detected language, model, speaker count, billed seconds, and estimated cost.</p>
+        <p dir="rtl" style="color:#657084;line-height:1.75;margin:8px 0 0">يعمل نموذج Universal-2 العربي مع تمييز المتحدثين. ويحفظ أودو المقاطع بأوقاتها واللغة والنموذج وعدد المتحدثين والثواني المفوترة والتكلفة التقديرية.</p>
+      </div>
+      <div style="flex:1 1 290px;background:#f8f7ff;border:1px solid #e2ddfb;border-radius:12px;padding:22px">
+        <div style="font-size:28px">&#10024;</div>
+        <h4 style="margin:8px 0 2px;font-size:16px">One useful Arabic summary</h4>
+        <h4 dir="rtl" style="color:#6C4CF1;margin:0 0 6px;font-size:15.5px">ملخص عربي واحد مفيد</h4>
+        <p style="color:#657084;margin:0">The configured Odoo AI agent turns the transcript into structured Arabic notes. If Sembly arrives later, both sources are merged into one non-repetitive summary with decisions, owners, dates, risks, and next steps.</p>
+        <p dir="rtl" style="color:#657084;line-height:1.75;margin:8px 0 0">يحوّل وكيل أودو المضبوط التفريغ إلى ملاحظات عربية منظمة. وإذا وصل Sembly لاحقًا يُدمج المصدران في ملخص واحد بلا تكرار يغطي القرارات والمسؤولين والمواعيد والمخاطر والخطوات التالية.</p>
+      </div>
+    </div>
+
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6C4CF1;margin:40px 0 6px">Controlled automation</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Spend only when the meeting needs it</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#6C4CF1;margin:0 0 14px">الإنفاق فقط حين يحتاج الاجتماع</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <div style="flex:1 1 205px;border-top:4px solid #6C4CF1;background:#f4f3fa;padding:17px;border-radius:8px"><b>1. Observe</b><p style="color:#657084;font-size:13.5px;margin:6px 0 0">A private Google recording enters the existing meeting record.</p><p dir="rtl" style="color:#5134bd;font-size:13.5px;margin:6px 0 0">يدخل تسجيل Google الخاص إلى سجل الاجتماع الحالي.</p></div>
+      <div style="flex:1 1 205px;border-top:4px solid #6C4CF1;background:#f4f3fa;padding:17px;border-radius:8px"><b>2. Wait</b><p style="color:#657084;font-size:13.5px;margin:6px 0 0">In hybrid mode, Sembly gets at least two hours to deliver first.</p><p dir="rtl" style="color:#5134bd;font-size:13.5px;margin:6px 0 0">في الوضع الهجين يُمنح Sembly ساعتين على الأقل.</p></div>
+      <div style="flex:1 1 205px;border-top:4px solid #6C4CF1;background:#f4f3fa;padding:17px;border-radius:8px"><b>3. Transcribe</b><p style="color:#657084;font-size:13.5px;margin:6px 0 0">Only an eligible missing transcript is uploaded and submitted.</p><p dir="rtl" style="color:#5134bd;font-size:13.5px;margin:6px 0 0">لا يُرفع إلا تسجيل مؤهل ما زال بلا تفريغ.</p></div>
+      <div style="flex:1 1 205px;border-top:4px solid #18a979;background:#f4f3fa;padding:17px;border-radius:8px"><b>4. Retain locally</b><p style="color:#657084;font-size:13.5px;margin:6px 0 0">The result stays in Odoo and the remote copy is removed.</p><p dir="rtl" style="color:#377461;font-size:13.5px;margin:6px 0 0">تبقى النتيجة في أودو وتُحذف النسخة البعيدة.</p></div>
+    </div>
+
+    <div style="margin-top:26px;background:#fff8e8;border:1px solid #ecd18c;border-left:5px solid #d99a18;border-radius:12px;padding:22px">
+      <h3 style="color:#825b08;margin:0 0 4px;font-size:17px">Billing and duplicate-request safeguards</h3>
+      <h3 dir="rtl" style="color:#825b08;margin:0 0 10px;font-size:16px">ضوابط الفوترة ومنع الطلبات المكررة</h3>
+      <p style="color:#665a3d;margin:0">Automatic processing accepts recordings from today and the two preceding calendar dates, skips recordings under 10 minutes, and enforces a configurable monthly-hours cap under a database lock. Lost submit responses are recovered by the private upload URL; an uncertain request is never blindly submitted again. Managers can explicitly request an older or shorter recording, while every billing and duplicate guard remains active.</p>
+      <p dir="rtl" style="color:#665a3d;line-height:1.85;margin:10px 0 0">تقبل المعالجة التلقائية تسجيلات اليوم واليومين السابقين، وتتجاوز ما دون 10 دقائق، وتفرض سقف ساعات شهريًا قابلًا للضبط داخل قفل قاعدة بيانات. تُستعاد استجابة الإرسال المفقودة عبر رابط الرفع الخاص، ولا يُعاد إرسال طلب غير مؤكّد عشوائيًا. ويمكن للمدير طلب تسجيل أقدم أو أقصر صراحةً مع بقاء ضوابط الفوترة ومنع التكرار.</p>
+    </div>
+
+    <p style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6C4CF1;margin:40px 0 6px">Setup</p>
+    <h2 style="font-size:25px;font-weight:800;color:#111827;margin:0 0 2px">Five settings, visible usage</h2>
+    <h3 dir="rtl" style="font-size:20px;font-weight:400;color:#6C4CF1;margin:0 0 12px">خمسة إعدادات واستخدام ظاهر</h3>
+    <p style="color:#657084;margin:0">Open Settings &rarr; Sembly &rarr; AssemblyAI. Enable the provider, enter the write-only API key (or use <b>ASSEMBLYAI_API_KEY</b>), select US or EU processing, choose the Sembly waiting policy, then set the wait and monthly-hour cap. The current month's usage appears beside the cap.</p>
+    <p dir="rtl" style="color:#5134bd;line-height:1.85;margin:8px 0 0">افتح الإعدادات ← Sembly ← AssemblyAI. فعّل المزوّد، وأدخل مفتاح API المحفوظ بلا قراءة أو استخدم <b>ASSEMBLYAI_API_KEY</b>، واختر المعالجة في الولايات المتحدة أو الاتحاد الأوروبي، ثم سياسة انتظار Sembly والمهلة والسقف الشهري. يظهر استخدام الشهر الحالي بجانب السقف.</p>
+
+    <div style="border-top:1px solid #e5e7eb;margin-top:34px;padding-top:18px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;color:#7d8797;font-size:13px">
+      <span>Era Group &middot; <a href="https://era.net.sa" style="color:#6C4CF1;text-decoration:none">era.net.sa</a> &middot; LGPL-3 &middot; Odoo 19</span>
+      <span dir="rtl">يتطلب <b>era_sembly_meetings_google</b> و<b>project</b></span>
+    </div>
+  </div>
+</section>

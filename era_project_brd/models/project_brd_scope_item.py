@@ -46,14 +46,24 @@ class ProjectBrdScopeItem(models.Model):
     impact = fields.Text(required=True)
     recommended_action = fields.Text(required=True)
     manager_decision_reason = fields.Selection([
-        ('contract_explicitly_covers', 'العقد يغطي العمل صراحةً'),
-        ('standard_configuration_only', 'مشمول ضمن التهيئة القياسية فقط'),
-        ('contract_explicitly_excludes', 'العقد يستبعد العمل صراحةً'),
-        ('not_covered_change_required', 'غير مغطى ويحتاج طلب تغيير'),
-        ('deferred_by_agreement', 'مؤجل باتفاق الأطراف'),
-        ('customer_confirmation', 'حُسم بناءً على تأكيد العميل أو مالك النطاق'),
-        ('commercial_exception', 'استثناء تجاري معتمد'),
-    ], string="سبب قرار المدير")
+        ('contract_explicitly_covers',
+         'نص العقد يذكر العمل صراحةً ضمن النطاق'),
+        ('standard_configuration_only',
+         'العمل مغطى ضمن إعداد Odoo القياسي فقط'),
+        ('customization_beyond_standard',
+         'الطلب تخصيص إضافي يتجاوز الإعداد القياسي المتفق عليه'),
+        ('contract_explicitly_excludes',
+         'نص العقد يستبعد العمل صراحةً'),
+        ('not_covered_change_required',
+         'لا يوجد بند يغطي العمل؛ يلزم طلب تغيير وتسعير مستقل'),
+        ('deferred_by_agreement',
+         'يوجد اتفاق مكتوب على تأجيل العمل لمرحلة لاحقة'),
+        ('customer_confirms_in_scope',
+         'العميل أكد كتابياً أن العمل ضمن العقد الحالي'),
+        ('customer_confirms_change_request',
+         'العميل أكد كتابياً أن العمل طلب تغيير خارج العقد'),
+    ], string="أساس قرار المدير",
+        help="The explicit contractual or written basis for overriding the AI scope classification.")
     manager_note = fields.Text(string="تفاصيل إضافية")
     cr_number = fields.Char(string="رقم طلب التغيير")
     commercial_status = fields.Selection([

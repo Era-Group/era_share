@@ -17,10 +17,10 @@
                         </group>
                         <group>
                             <field name="ai_classification" widget="badge"/>
-                            <field name="classification" widget="badge"
+                            <field name="classification"
                                    readonly="not can_review or project_brd_state != 'scope_review'"/>
                             <field name="confidence" widget="badge" readonly="1"/>
-                            <field name="commercial_status" widget="badge" readonly="not can_review"/>
+                            <field name="commercial_status" readonly="not can_review"/>
                             <field name="cr_number" readonly="not can_review"/>
                         </group>
                     </group>
@@ -35,9 +35,9 @@
                                readonly="not can_review or project_brd_state != 'scope_review'"/>
                         <field name="impact" readonly="not can_review"/>
                         <field name="recommended_action" readonly="not can_review"/>
-                        <field name="manager_decision_reason" widget="badge"
+                        <field name="manager_decision_reason"
                                readonly="not can_review"
-                               placeholder="إلزامي عند تغيير تصنيف الذكاء الاصطناعي"/>
+                               placeholder="اختر الأساس التعاقدي أو التأكيد المكتوب للقرار"/>
                         <field name="manager_note" readonly="not can_review"
                                placeholder="تفاصيل إضافية اختيارية"/>
                     </group>
@@ -137,12 +137,13 @@
                                invisible="brd_state != 'scope_review' and not brd_scope_item_ids"/>
                     <div class="alert alert-warning" role="status"
                          invisible="brd_state != 'scope_review'">
-                        راجع كل تصنيف. يجب حسم البنود غير الواضحة، واختيار سبب قرار المدير عند تغيير اقتراح الذكاء الاصطناعي، ثم اضغط «اعتماد النطاق وإصدار BRD النهائي».
+                        راجع كل تصنيف. يجب حسم البنود غير الواضحة، واختيار أساس قرار المدير عند تغيير اقتراح الذكاء الاصطناعي، ثم اضغط «اعتماد النطاق وإصدار BRD النهائي».
                     </div>
                     <field name="brd_contract_scope_snapshot" widget="html" readonly="1"
                            string="نسخة نطاق العقد المستخدمة"
                            invisible="brd_state != 'scope_review'"/>
                     <field name="brd_scope_item_ids" nolabel="1" mode="list"
+                           class="o_brd_scope_review"
                            readonly="brd_state != 'scope_review'"
                            groups="project.group_project_manager"
                            context="{'form_view_ref': 'era_project_brd.view_project_brd_scope_item_form'}">
@@ -156,19 +157,20 @@
                             <field name="requirement"/>
                             <field name="source_reference" optional="hide"/>
                             <field name="ai_classification" widget="badge" readonly="1" optional="show"/>
-                            <field name="classification" widget="badge"/>
+                            <field name="classification"/>
                             <field name="confidence" widget="badge" readonly="1" optional="show"/>
                             <field name="contract_reference" optional="show"/>
                             <field name="reason" optional="show"/>
                             <field name="impact" optional="hide"/>
                             <field name="recommended_action" optional="hide"/>
-                            <field name="manager_decision_reason" widget="badge" optional="show"/>
+                            <field name="manager_decision_reason" optional="show"/>
                             <field name="manager_note" optional="hide"/>
                             <field name="cr_number" optional="show"/>
-                            <field name="commercial_status" widget="badge" optional="show"/>
+                            <field name="commercial_status" optional="show"/>
                         </list>
                     </field>
                     <field name="brd_scope_item_ids" nolabel="1" mode="list" readonly="1"
+                           class="o_brd_scope_review"
                            groups="project.group_project_user,!project.group_project_manager"
                            context="{'form_view_ref': 'era_project_brd.view_project_brd_scope_item_form'}">
                         <list open_form_view="True">
@@ -184,13 +186,14 @@
                     <separator string="مسودة BRD قيد المراجعة"
                                invisible="brd_state != 'scope_review'"/>
                     <field name="brd_draft_document" widget="html" readonly="1" nolabel="1"
+                           class="o_brd_document_content"
                            invisible="brd_state != 'scope_review'"/>
                     <field name="brd_document" widget="html" nolabel="1"
-                           class="w-100" invisible="not brd_document"
+                           class="w-100 o_brd_document_content" invisible="not brd_document"
                            readonly="brd_state != 'done'"
                            groups="project.group_project_manager"/>
                     <field name="brd_document" widget="html" nolabel="1"
-                           class="w-100" invisible="not brd_document" readonly="1"
+                           class="w-100 o_brd_document_content" invisible="not brd_document" readonly="1"
                            groups="!project.group_project_manager"/>
                     <div class="text-muted" invisible="brd_document or brd_draft_document or brd_state in ['queued', 'transcribing', 'extracting', 'generating', 'scope_analyzing', 'scope_review']">
                         لم يتم بناء وثيقة متطلبات لهذا المشروع بعد.

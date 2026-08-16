@@ -1,0 +1,119 @@
+.o_brd_scope_review {
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(15, 23, 42, 0.06);
+    overflow: auto;
+
+    .o_list_table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem;
+            background: #dbe7f3 !important;
+            color: #1e3a5f;
+            border-bottom: 2px solid #94a9bf !important;
+            border-inline-start: 1px solid #c2cfdd;
+            font-weight: 700;
+            white-space: normal;
+        }
+
+        tbody td {
+            min-width: 8rem;
+            max-width: 28rem;
+            padding: 0.7rem 0.75rem;
+            border-bottom: 1px solid #d8e0e8;
+            border-inline-start: 1px solid #e2e8f0;
+            line-height: 1.55;
+            vertical-align: top;
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+        }
+
+        tbody tr:nth-child(even) > td {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover > td {
+            background: #edf5fc;
+        }
+
+        tbody tr.text-danger > td {
+            background: #fff1f2;
+        }
+
+        tbody tr.text-warning > td {
+            background: #fffbeb;
+        }
+
+        tbody tr.text-success > td {
+            background: #f0fdf4;
+        }
+
+        .o_field_widget,
+        .o_input {
+            width: 100%;
+        }
+    }
+}
+
+.o_brd_document_content {
+    border: 1px solid #d5dde6;
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: 0 0.125rem 0.625rem rgba(15, 23, 42, 0.05);
+    padding: 1.25rem;
+
+    h1,
+    h2,
+    h3 {
+        color: #1e3a5f;
+    }
+
+    h2 {
+        margin-top: 1.75rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 2px solid #b9cadb;
+    }
+
+    table {
+        width: 100%;
+        margin: 1rem 0 1.5rem;
+        border: 1px solid #94a9bf;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #c5d1de;
+        line-height: 1.55;
+        text-align: start;
+        vertical-align: top;
+    }
+
+    th {
+        background: #dbe7f3;
+        color: #1e3a5f;
+        font-weight: 700;
+    }
+
+    tbody tr:nth-child(even) td {
+        background: #f8fafc;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .o_brd_scope_review .o_list_table tbody td {
+        min-width: 10rem;
+    }
+
+    .o_brd_document_content {
+        padding: 0.75rem;
+        overflow-x: auto;
+    }
+}

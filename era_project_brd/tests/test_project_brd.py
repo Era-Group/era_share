@@ -296,6 +296,12 @@ class TestProjectBrd(TransactionCase):
             self.project.with_user(
                 self.project_manager).action_finalize_brd_scope()
         item.with_user(self.project_manager).write({
+            'manager_decision_reason': 'contract_explicitly_covers',
+        })
+        with self.assertRaises(UserError):
+            self.project.with_user(
+                self.project_manager).action_finalize_brd_scope()
+        item.with_user(self.project_manager).write({
             'manager_decision_reason': 'not_covered_change_required',
             'manager_note': 'أكد مدير المشروع عدم وجود تغطية تعاقدية.',
         })

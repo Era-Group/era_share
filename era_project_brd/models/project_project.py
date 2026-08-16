@@ -47,13 +47,30 @@ COMMERCIAL_STATUS_LABELS = {
     'deferred': 'مؤجل',
 }
 MANAGER_DECISION_LABELS = {
-    'contract_explicitly_covers': 'العقد يغطي العمل صراحةً',
-    'standard_configuration_only': 'مشمول ضمن التهيئة القياسية فقط',
-    'contract_explicitly_excludes': 'العقد يستبعد العمل صراحةً',
-    'not_covered_change_required': 'غير مغطى ويحتاج طلب تغيير',
-    'deferred_by_agreement': 'مؤجل باتفاق الأطراف',
-    'customer_confirmation': 'حُسم بناءً على تأكيد العميل أو مالك النطاق',
-    'commercial_exception': 'استثناء تجاري معتمد',
+    'contract_explicitly_covers': 'نص العقد يذكر العمل صراحةً ضمن النطاق',
+    'standard_configuration_only': 'العمل مغطى ضمن إعداد Odoo القياسي فقط',
+    'customization_beyond_standard': (
+        'الطلب تخصيص إضافي يتجاوز الإعداد القياسي المتفق عليه'),
+    'contract_explicitly_excludes': 'نص العقد يستبعد العمل صراحةً',
+    'not_covered_change_required': (
+        'لا يوجد بند يغطي العمل؛ يلزم طلب تغيير وتسعير مستقل'),
+    'deferred_by_agreement': (
+        'يوجد اتفاق مكتوب على تأجيل العمل لمرحلة لاحقة'),
+    'customer_confirms_in_scope': (
+        'العميل أكد كتابياً أن العمل ضمن العقد الحالي'),
+    'customer_confirms_change_request': (
+        'العميل أكد كتابياً أن العمل طلب تغيير خارج العقد'),
+}
+MANAGER_DECISION_ALLOWED_CLASSIFICATIONS = {
+    'contract_explicitly_covers': {'in_scope'},
+    'standard_configuration_only': {'in_scope'},
+    'customization_beyond_standard': {'change_candidate'},
+    'contract_explicitly_excludes': {'out_of_scope'},
+    'not_covered_change_required': {'change_candidate'},
+    'deferred_by_agreement': {'deferred'},
+    'customer_confirms_in_scope': {'in_scope'},
+    'customer_confirms_change_request': {
+        'out_of_scope', 'change_candidate'},
 }
 EXTRACTION_SCHEMA = {
     'facts': {'text', 'evidence'},
@@ -198,13 +215,20 @@ class ProjectProject(models.Model):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>%(title)s</title>
 <style>
-body { margin: 0; background: #f4f5f7; color: #202124; font-family: Arial, sans-serif; line-height: 1.7; }
-main { box-sizing: border-box; max-width: 1100px; margin: 32px auto; padding: 40px 48px; background: white; }
-h1, h2, h3 { color: #1f3a5f; }
-table { width: 100%%; border-collapse: collapse; margin: 16px 0; }
-th, td { padding: 8px 10px; border: 1px solid #cfd5dc; text-align: right; vertical-align: top; }
-th { background: #eef2f6; }
-@media (max-width: 700px) { main { margin: 0; padding: 20px; } }
+body { margin: 0; background: #eef2f6; color: #1f2937; font-family: Arial, sans-serif; line-height: 1.75; }
+main { box-sizing: border-box; max-width: 1180px; margin: 32px auto; padding: 42px 50px; background: white; border: 1px solid #d5dde6; border-radius: 8px; box-shadow: 0 4px 18px rgba(15, 23, 42, .08); }
+h1, h2, h3 { color: #1e3a5f; line-height: 1.4; }
+h1 { margin-top: 0; padding-bottom: 14px; border-bottom: 3px solid #7894b2; }
+h2 { margin-top: 32px; padding-bottom: 8px; border-bottom: 2px solid #b9cadb; }
+p, li { max-width: 100%%; }
+table { width: 100%%; border: 1px solid #94a9bf; border-collapse: collapse; margin: 18px 0 26px; }
+th, td { padding: 10px 12px; border: 1px solid #c5d1de; text-align: right; vertical-align: top; overflow-wrap: anywhere; }
+th { background: #dbe7f3; color: #1e3a5f; font-weight: 700; }
+tbody tr:nth-child(even) td { background: #f8fafc; }
+tbody tr:hover td { background: #edf5fc; }
+blockquote { margin: 18px 0; padding: 12px 18px; background: #f8fafc; border-right: 4px solid #7894b2; }
+@media print { body { background: white; } main { max-width: none; margin: 0; border: 0; box-shadow: none; } }
+@media (max-width: 700px) { main { margin: 0; padding: 20px; border-radius: 0; } table { display: block; overflow-x: auto; } }
 </style>
 </head>
 <body><main>%(body)s</main></body>
@@ -1199,7 +1223,7 @@ th { background: #eef2f6; }
 <li>مرشح طلب تغيير: %(change_candidate)s</li>
 <li>مؤجل: %(deferred)s</li>
 </ul>
-<table><thead><tr><th>المرجع</th><th>العمل المطلوب</th><th>التصنيف</th><th>مرجع العقد</th><th>سبب المطابقة</th><th>سبب قرار المدير</th><th>الإجراء</th></tr></thead><tbody>%(rows)s</tbody></table>
+<table><thead><tr><th>المرجع</th><th>العمل المطلوب</th><th>التصنيف</th><th>مرجع العقد</th><th>سبب المطابقة</th><th>أساس قرار المدير</th><th>الإجراء</th></tr></thead><tbody>%(rows)s</tbody></table>
 <p><strong>تنبيه تجاري:</strong> البنود المصنفة خارج النطاق أو مرشحة لطلب تغيير غير مشمولة بالتنفيذ ضمن العقد الحالي، وتخضع لتحليل أثر وتسعير واعتماد طلب تغيير مستقل قبل التنفيذ.</p>
 </section>""" % (counts | {'rows': rows})
 
@@ -1227,7 +1251,7 @@ th { background: #eef2f6; }
 <p><strong>المشروع:</strong> %(project)s</p>
 <p><strong>إصدار BRD:</strong> %(version)s</p>
 <p>هذا السجل أداة متابعة تجارية. لا يعد أي طلب تغيير معتمداً للتنفيذ قبل اكتمال التسعير وموافقة العميل وفق إجراءات التغيير.</p>
-<table><thead><tr><th>المرجع</th><th>العمل المطلوب</th><th>مرجع BRD</th><th>التصنيف</th><th>مرجع العقد</th><th>سبب المطابقة</th><th>الأثر</th><th>سبب قرار المدير</th><th>تفاصيل إضافية</th><th>رقم CR</th><th>الحالة التجارية</th></tr></thead><tbody>%(rows)s</tbody></table>""" % {
+<table><thead><tr><th>المرجع</th><th>العمل المطلوب</th><th>مرجع BRD</th><th>التصنيف</th><th>مرجع العقد</th><th>سبب المطابقة</th><th>الأثر</th><th>أساس قرار المدير</th><th>تفاصيل إضافية</th><th>رقم CR</th><th>الحالة التجارية</th></tr></thead><tbody>%(rows)s</tbody></table>""" % {
             'project': self._brd_html_text(self.display_name),
             'version': self.brd_version or self.brd_pending_version,
             'rows': rows,
@@ -1257,6 +1281,16 @@ th { background: #eef2f6; }
             raise UserError(_(
                 "Choose a manager decision reason for every classification "
                 "changed from the AI recommendation."))
+        inconsistent_reasons = self.brd_scope_item_ids.filtered(
+            lambda item: item.manager_decision_reason
+            and item.classification not in
+            MANAGER_DECISION_ALLOWED_CLASSIFICATIONS.get(
+                item.manager_decision_reason, set()))
+        if inconsistent_reasons:
+            raise UserError(_(
+                "The selected manager decision basis does not match the final "
+                "classification for: %s",
+                ', '.join(inconsistent_reasons.mapped('code'))))
         draft = self._brd_strip_scope_appendix(self.brd_draft_document)
         final_document = html_sanitize(
             '%s%s' % (draft, self._brd_scope_appendix_html()))

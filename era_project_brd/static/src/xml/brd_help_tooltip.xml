@@ -11,8 +11,10 @@
         <Dialog size="'xl'"
                 contentClass="'o_brd_help_dialog'">
             <t t-set-slot="header">
-                <div class="d-flex align-items-center w-100" dir="rtl">
-                    <h4 class="modal-title flex-grow-1 text-end">
+                <div class="d-flex align-items-center w-100" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <h4 class="modal-title flex-grow-1"
+                        style="direction: rtl !important; text-align: right !important;">
                         خطوات الوصول إلى وثيقة المتطلبات النهائية
                     </h4>
                     <button type="button" class="btn-close"
@@ -21,7 +23,8 @@
             </t>
             <t t-call="era_project_brd.BrdWorkflowHelpContent"/>
             <t t-set-slot="footer">
-                <div class="o_brd_help_footer">
+                <div class="o_brd_help_footer" dir="rtl"
+                     style="direction: rtl !important; justify-content: flex-end !important; text-align: right !important;">
                     <button type="button" class="btn btn-primary"
                             t-on-click="props.close">إغلاق</button>
                 </div>
@@ -30,46 +33,79 @@
     </t>
 
     <t t-name="era_project_brd.BrdWorkflowHelpContent">
-        <div class="o_brd_help_content" dir="rtl">
-            <ol>
-                <li>
+        <div class="o_brd_help_content" dir="rtl"
+             style="direction: rtl !important; text-align: right !important;">
+            <div class="o_brd_help_steps" dir="rtl"
+                 style="direction: rtl !important; text-align: right !important;">
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">1.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>تثبيت نطاق العقد:</strong>
                     أدخل نطاق العمل المتفق عليه من العقد أو <bdi>SOW</bdi>. تحفظ منه نسخة ثابتة لكل تشغيل حتى لا تتغير نتيجة المقارنة أثناء العمل.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">2.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>بناء مسودة <bdi>BRD</bdi>:</strong>
                     يجمع النظام الاجتماعات المرتبطة بالمشروع، ويتحقق من التفريغات، ثم يستخرج المتطلبات والأدلة وينشئ مسودة قابلة للمراجعة.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">3.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>مطابقة النطاق:</strong>
                     ينشئ النظام قائمة المتطلبات من تحليل الاجتماعات المحفوظ فقط، ثم يستخدم خط أساس العقد لتصنيفها: ضمن النطاق، خارج النطاق صراحةً، مرشح طلب تغيير، غير محسوم، أو مؤجل. لا تتحول بنود العقد وحدها إلى متطلبات جديدة.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">4.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>مراجعة مدير المشروع:</strong>
                     راجع التصنيف ومرجع العقد والسبب والأثر. يجب حسم كل بند غير محسوم، واختيار «أساس قرار المدير» عند تغيير تصنيف الذكاء الاصطناعي.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">5.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>عند تعديل العقد:</strong>
                     عدل «نطاق العمل التعاقدي» ثم اضغط «إعادة مطابقة النطاق». يحفظ النظام المراجعة السابقة تاريخياً ويعيد المقارنة فقط، دون إعادة تفريغ الاجتماعات أو بناء مسودة BRD.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">6.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>المتابعة التجارية:</strong>
                     للبنود الإضافية، سجل رقم <bdi>CR</bdi> والحالة التجارية مثل: بانتظار التقييم، قيد التسعير، مقدم للعميل، أو معتمد.
-                </li>
-                <li>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start gap-2 mb-3" dir="rtl"
+                     style="direction: rtl !important; text-align: right !important;">
+                    <strong class="flex-shrink-0" style="min-width: 1.75rem; text-align: right;">7.</strong>
+                    <div class="flex-grow-1" dir="rtl" style="direction: rtl !important; text-align: right !important;">
                     <strong>الإصدار النهائي:</strong>
                     اضغط «اعتماد النطاق وإصدار <bdi>BRD</bdi> النهائي». ينشر النظام <bdi>BRD</bdi> النهائي وسجل <bdi>Scope Variance &amp; Change Requests</bdi> داخل مستندات المشروع.
-                </li>
-            </ol>
-            <div class="o_brd_help_example">
+                    </div>
+                </div>
+            </div>
+            <div class="o_brd_help_example" dir="rtl"
+                 style="direction: rtl !important; text-align: right !important;">
                 <strong>مثال طلب تغيير:</strong>
                 تكامل <bdi>Odoo</bdi> مع <bdi>CREDO</bdi> غير وارد في العقد. التصنيف: «مرشح طلب تغيير». أساس القرار: «لا يوجد بند يغطي العمل؛ يلزم طلب تغيير وتسعير مستقل». رقم الطلب: <bdi>CR-2026-001</bdi>، والحالة: «قيد التسعير».
             </div>
-            <div class="o_brd_help_example">
+            <div class="o_brd_help_example" dir="rtl"
+                 style="direction: rtl !important; text-align: right !important;">
                 <strong>مثال ضمن النطاق:</strong>
                 إعداد مسار اعتماد مشتريات قياسي مذكور صراحةً في العقد. التصنيف: «ضمن النطاق». إذا عدّل المدير اقتراح النظام، يختار: «نص العقد يذكر العمل صراحةً ضمن النطاق».
             </div>
-            <p class="o_brd_help_guard mb-0">
+            <p class="o_brd_help_guard mb-0" dir="rtl"
+               style="direction: rtl !important; text-align: right !important;">
                 لن يسمح النظام بالإصدار النهائي إذا بقي بند «غير محسوم»، أو تغير تصنيف دون أساس قرار، أو كان أساس القرار لا يتوافق مع التصنيف النهائي.
             </p>
         </div>

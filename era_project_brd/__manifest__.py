@@ -1,7 +1,7 @@
 {
     'name': "ERA Project BRD from Meetings",
     'summary': "Build an Odoo implementation BRD from project meeting transcripts",
-    'version': "19.0.2.5.0",
+    'version': "19.0.2.5.1",
     'category': "Services/Project",
     'author': "Era Group",
     'website': "https://era.net.sa",

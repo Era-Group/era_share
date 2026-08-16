@@ -1,7 +1,7 @@
 {
     'name': "ERA Project BRD from Meetings",
     'summary': "Build an Odoo implementation BRD from project meeting transcripts",
-    'version': "19.0.2.2.1",
+    'version': "19.0.2.3.1",
     'category': "Services/Project",
     'author': "Era Group",
     'website': "https://era.net.sa",
@@ -21,8 +21,10 @@
     ],
     'assets': {
         'web.assets_backend': [
+            'era_project_brd/static/src/js/brd_help_field.js',
             'era_project_brd/static/src/js/brd_progress_field.js',
             'era_project_brd/static/src/scss/brd.scss',
+            'era_project_brd/static/src/xml/brd_help_tooltip.xml',
         ],
     },
     'post_init_hook': 'post_init_hook',

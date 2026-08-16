@@ -74,33 +74,47 @@
                         groups="project.group_project_manager"
                         confirm="سيتم إصدار BRD النهائي وسجل طلبات التغيير حسب التصنيفات الحالية. هل تريد الاعتماد؟"
                         invisible="brd_state != 'scope_review'"/>
+                <button name="action_analyze_brd_scope" type="object"
+                        string="إعادة مطابقة النطاق"
+                        class="btn-secondary" icon="fa-refresh"
+                        groups="project.group_project_manager"
+                        confirm="ستحفظ المراجعة الحالية تاريخياً، ثم تعاد مقارنة مسودة BRD مع نطاق العقد المعدل دون إعادة تحليل الاجتماعات. هل تريد المتابعة؟"
+                        invisible="brd_state != 'scope_review'"/>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="وثيقة المتطلبات BRD" name="project_brd">
                     <field name="brd_document_id" invisible="1"/>
                     <field name="brd_scope_document_id" invisible="1"/>
                     <field name="brd_draft_document" invisible="1"/>
-                    <div class="d-flex justify-content-end mb-2">
-                        <button name="action_open_brd_document" type="object"
-                                string="فتح في المستندات" icon="fa-folder-open-o"
-                                class="btn btn-primary me-2"
-                                invisible="not brd_document_id"/>
-                        <button name="action_open_brd_scope_document" type="object"
-                                string="فتح سجل طلبات التغيير" icon="fa-external-link"
-                                class="btn btn-secondary me-2"
-                                invisible="not brd_scope_document_id"/>
-                        <button name="action_open_brd_agent" type="object"
-                                string="إعداد برومبت وكيل BRD" icon="fa-cog"
-                                class="btn btn-secondary"
-                                groups="base.group_system"/>
+                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                        <field name="brd_help" widget="brd_workflow_help"
+                               nolabel="1" readonly="1"/>
+                        <div class="d-flex justify-content-end flex-wrap gap-2">
+                            <button name="action_open_brd_document" type="object"
+                                    string="فتح في المستندات" icon="fa-folder-open-o"
+                                    class="btn btn-primary"
+                                    invisible="not brd_document_id"/>
+                            <button name="action_open_brd_scope_document" type="object"
+                                    string="فتح سجل طلبات التغيير" icon="fa-external-link"
+                                    class="btn btn-secondary"
+                                    invisible="not brd_scope_document_id"/>
+                            <button name="action_open_brd_agent" type="object"
+                                    string="إعداد برومبت وكيل BRD" icon="fa-cog"
+                                    class="btn btn-secondary"
+                                    groups="base.group_system"/>
+                        </div>
                     </div>
                     <separator string="خط أساس نطاق العقد"/>
                     <div class="alert alert-info" role="status">
                         يستخدم النظام هذا النص كمرجع تعاقدي للمقارنة. عند بدء التحليل تحفظ نسخة ثابتة منه ولا تؤثر التعديلات اللاحقة على التشغيل الجاري.
                     </div>
+                    <div class="alert alert-warning" role="status"
+                         invisible="brd_state != 'scope_review'">
+                        إذا تغير العقد، عدل النطاق أدناه ثم اضغط «إعادة مطابقة النطاق». ستبقى المراجعة الحالية محفوظة في السجل التاريخي.
+                    </div>
                     <field name="brd_contract_scope" widget="html" nolabel="1"
                            placeholder="ألصق نطاق العمل المتفق عليه حسب العقد أو SOW. عند تركه فارغاً يستخدم وصف المشروع عند بدء البناء."
-                           readonly="brd_state in ['queued', 'transcribing', 'extracting', 'generating', 'scope_analyzing', 'scope_review']"
+                           readonly="brd_state in ['queued', 'transcribing', 'extracting', 'generating', 'scope_analyzing']"
                            groups="project.group_project_manager"/>
                     <field name="brd_contract_scope" widget="html" nolabel="1"
                            readonly="1" groups="!project.group_project_manager"/>

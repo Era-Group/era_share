@@ -108,6 +108,7 @@ ALLOWED_DEFERRED_CLASSIFICATIONS = {
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
+    brd_help = fields.Boolean(compute='_compute_brd_help', export_string_translation=False)
     brd_state = fields.Selection([
         ('idle', 'لم يبدأ'),
         ('queued', 'في قائمة الانتظار'),
@@ -179,6 +180,10 @@ class ProjectProject(models.Model):
     brd_generation_attempts = fields.Integer(readonly=True, copy=False)
     brd_generation_next_retry_at = fields.Datetime(
         readonly=True, copy=False, index=True)
+
+    def _compute_brd_help(self):
+        for project in self:
+            project.brd_help = True
 
     def write(self, vals):
         protected_fields = {'brd_document', 'brd_contract_scope'}
@@ -1132,11 +1137,12 @@ blockquote { margin: 18px 0; padding: 12px 18px; background: #f8fafc; border-rig
     def action_analyze_brd_scope(self):
         self.ensure_one()
         self._brd_check_manager()
-        if self.brd_state in BUILD_LOCK_STATES:
+        if self.brd_state in ACTIVE_STATES:
             raise UserError(_(
-                "A BRD build or scope review is already active for this project."))
+                "A BRD build or scope analysis is already active for this project."))
         draft = self.brd_draft_document \
-            if self.brd_state == 'failed' and self.brd_draft_document \
+            if self.brd_state in ('failed', 'scope_review') \
+            and self.brd_draft_document \
             else self.brd_document or self.brd_draft_document
         if not draft:
             raise UserError(_("Build the BRD before analyzing contract scope."))
@@ -1155,7 +1161,8 @@ blockquote { margin: 18px 0; padding: 12px 18px; background: #f8fafc; border-rig
             'brd_draft_document': self._brd_strip_scope_appendix(draft),
             'brd_pending_version': (
                 self.brd_pending_version
-                if self.brd_state == 'failed' and self.brd_pending_version
+                if self.brd_state in ('failed', 'scope_review')
+                and self.brd_pending_version
                 else self.brd_version or 1),
             'brd_scope_run': self.brd_scope_run + 1,
             'brd_requested_by_id': self.env.user.id,

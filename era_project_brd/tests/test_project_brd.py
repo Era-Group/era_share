@@ -261,6 +261,50 @@ class TestProjectBrd(TransactionCase):
         self.assertNotIn('Published version 1', self.project.brd_draft_document)
         self.assertEqual(self.project.brd_pending_version, 2)
 
+    def test_changed_contract_reconciles_draft_and_preserves_old_review(self):
+        self.project.write({
+            'brd_state': 'scope_review',
+            'brd_draft_document': '<h2>Current BRD draft</h2>',
+            'brd_contract_scope': '<p>Old contractual scope</p>',
+            'brd_contract_scope_snapshot': '<p>Old contractual scope</p>',
+            'brd_pending_version': 1,
+            'brd_scope_run': 1,
+        })
+        old_item = self.env['project.brd.scope.item'].sudo().create({
+            'project_id': self.project.id,
+            'company_id': self.env.company.id,
+            'brd_version': 1,
+            'scope_run': 1,
+            'sequence': 10,
+            'code': 'SCOPE-001',
+            'requirement': 'Original reviewed requirement',
+            'source_reference': 'FR-001',
+            'ai_classification': 'change_candidate',
+            'classification': 'change_candidate',
+            'confidence': 'high',
+            'contract_reference': 'No matching clause',
+            'reason': 'Not covered by the old scope',
+            'impact': 'Requires assessment',
+            'recommended_action': 'Prepare a change request',
+            'cr_number': 'CR-OLD-001',
+        })
+        self.project.with_user(self.project_manager).write({
+            'brd_contract_scope': '<p>New amended contractual scope</p>',
+        })
+
+        self.project.with_user(
+            self.project_manager).action_analyze_brd_scope()
+
+        self.assertEqual(self.project.brd_state, 'scope_analyzing')
+        self.assertIn(
+            'New amended contractual scope',
+            self.project.brd_contract_scope_snapshot)
+        self.assertIn('Current BRD draft', self.project.brd_draft_document)
+        self.assertEqual(self.project.brd_pending_version, 1)
+        self.assertEqual(self.project.brd_scope_run, 2)
+        self.assertFalse(old_item.active)
+        self.assertEqual(old_item.cr_number, 'CR-OLD-001')
+
     def test_scope_review_blocks_unclear_and_unexplained_override(self):
         self.project.write({
             'brd_state': 'scope_review',

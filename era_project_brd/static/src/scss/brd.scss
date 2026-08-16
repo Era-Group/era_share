@@ -24,6 +24,27 @@
     outline: 0;
 }
 
+.o_brd_help_dialog {
+    direction: rtl;
+    text-align: right;
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .modal-title {
+        flex-grow: 1;
+        text-align: right;
+    }
+
+    .modal-footer {
+        justify-content: flex-start;
+    }
+}
+
 .o_brd_help_dialog .modal-body {
     padding: 0;
 }
@@ -37,6 +58,19 @@
     text-align: right;
     white-space: normal;
     overflow-y: auto;
+
+    ol {
+        padding-right: 1.5rem;
+        padding-left: 0;
+    }
+
+    li,
+    .o_brd_help_example,
+    .o_brd_help_guard {
+        direction: rtl;
+        text-align: right;
+        unicode-bidi: plaintext;
+    }
 
     h5 {
         margin-bottom: 0.75rem;

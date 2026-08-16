@@ -10,7 +10,7 @@ recording older than 48 hours.
     'author': "Era Group",
     'website': "https://era.net.sa",
     'category': "Productivity",
-    'version': "19.0.1.0.0",
+    'version': "19.0.1.1.0",
     'license': "LGPL-3",
     'depends': ['era_sembly_meetings_google', 'project'],
     'data': [

@@ -10,7 +10,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 
 from ..services.assemblyai_client import AssemblyAIClient, AssemblyAIError
-from ..services.media import prepare_audio
+from ..services.media import ffmpeg_executable, prepare_audio
 
 
 MAX_SOURCE_BYTES = 10 * 1024 * 1024 * 1024
@@ -70,6 +70,8 @@ class SemblyMeeting(models.Model):
     assemblyai_attempts = fields.Integer(string="عدد المحاولات", copy=False)
     assemblyai_audio_seconds = fields.Integer(
         string="الثواني المفوترة", copy=False)
+    assemblyai_audio_channels = fields.Integer(
+        string="قنوات الصوت المرفوعة", copy=False)
     assemblyai_estimated_cost = fields.Float(
         string="التكلفة التقديرية ($)", digits=(10, 4), copy=False)
     assemblyai_speaker_count = fields.Integer(
@@ -509,7 +511,7 @@ class SemblyMeeting(models.Model):
                     os.chmod(source, 0o600)
                     google.download_file_to(
                         self.google_file_id, destination,
-                        max_bytes=(MAX_SOURCE_BYTES if shutil.which('ffmpeg')
+                        max_bytes=(MAX_SOURCE_BYTES if ffmpeg_executable()
                                    else MAX_UPLOAD_BYTES))
                 media = prepare_audio(source, directory)
                 if os.path.getsize(media) > MAX_UPLOAD_BYTES:
@@ -524,6 +526,7 @@ class SemblyMeeting(models.Model):
                     'assemblyai_region': region,
                     'assemblyai_key_fingerprint': fingerprint,
                     'assemblyai_submitting_at': fields.Datetime.now(),
+                    'assemblyai_audio_channels': 1,
                 })
                 if self._may_commit():
                     self.env.cr.commit()
@@ -577,6 +580,7 @@ class SemblyMeeting(models.Model):
                 'assemblyai_provider': 'sembly' if superseded else False,
                 'assemblyai_requested_at': billed_at,
                 'assemblyai_audio_seconds': estimate,
+                'assemblyai_audio_channels': 1,
                 'assemblyai_estimated_cost': estimate / 3600.0 * PRICE_PER_HOUR,
                 'assemblyai_attempts': 0,
                 'assemblyai_next_retry_at': False,

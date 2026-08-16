@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
 import os
+import tempfile
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -10,6 +11,7 @@ from odoo.tests import TransactionCase, tagged
 
 from ..models.res_config_settings import API_KEY_PARAM
 from ..services.assemblyai_client import AssemblyAIClient
+from ..services.media import MediaPreparationError, prepare_audio
 from odoo.addons.era_sembly_meetings_google.services.google_workspace_client import (
     GoogleWorkspaceClient)
 
@@ -97,6 +99,37 @@ class _DownloadResponse:
 
 @tagged('post_install', '-at_install', 'sembly')
 class TestAssemblyAI(TransactionCase):
+
+    def test_media_preparation_downmixes_to_one_audio_channel(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = os.path.join(directory, 'recording.mp4')
+            with open(source, 'wb') as stream:
+                stream.write(b'stereo-google-meet')
+
+            def _convert(command, **_kwargs):
+                self.assertIn('-ac', command)
+                self.assertEqual(command[command.index('-ac') + 1], '1')
+                self.assertEqual(command[command.index('-c:a') + 1], 'aac')
+                self.assertNotIn('copy', command)
+                with open(command[-1], 'wb') as stream:
+                    stream.write(b'mono-aac')
+                return type('Result', (), {'returncode': 0, 'stderr': b''})()
+
+            with patch(
+                    'odoo.addons.era_sembly_meetings_assemblyai.services.media.'
+                    'ffmpeg_executable', return_value='/private/ffmpeg'), patch(
+                    'odoo.addons.era_sembly_meetings_assemblyai.services.media.'
+                    'subprocess.run', side_effect=_convert):
+                output = prepare_audio(source, directory)
+            with open(output, 'rb') as stream:
+                self.assertEqual(stream.read(), b'mono-aac')
+
+    def test_media_preparation_fails_closed_without_ffmpeg(self):
+        with tempfile.TemporaryDirectory() as directory, patch(
+                'odoo.addons.era_sembly_meetings_assemblyai.services.media.'
+                'ffmpeg_executable', return_value=None), self.assertRaises(
+                    MediaPreparationError):
+            prepare_audio(os.path.join(directory, 'recording.mp4'), directory)
 
     @classmethod
     def setUpClass(cls):
@@ -506,6 +539,7 @@ class TestAssemblyAI(TransactionCase):
         self.assertEqual(payload['speech_models'], ['universal-2'])
         self.assertEqual(payload['language_code'], 'ar')
         self.assertIs(payload['speaker_labels'], True)
+        self.assertIs(payload['multichannel'], False)
         self.assertEqual(transcript_id, 'transcript-1')
 
     def test_google_blob_download_uses_oauth_without_public_permissions(self):

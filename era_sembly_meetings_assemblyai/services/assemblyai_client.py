@@ -137,6 +137,7 @@ class AssemblyAIClient:
                 'speech_models': ['universal-2'],
                 'language_code': 'ar',
                 'speaker_labels': True,
+                'multichannel': False,
             }, timeout=self.timeout)
         transcript_id = self._json(response).get('id')
         if not transcript_id:

@@ -42,6 +42,7 @@
                     <field name="assemblyai_model" readonly="1"/>
                     <field name="assemblyai_language_code" readonly="1"/>
                     <field name="assemblyai_speaker_count" readonly="1"/>
+                    <field name="assemblyai_audio_channels" readonly="1"/>
                     <field name="assemblyai_audio_seconds" readonly="1"/>
                     <field name="assemblyai_estimated_cost" readonly="1"/>
                     <field name="assemblyai_remote_deleted" readonly="1"/>

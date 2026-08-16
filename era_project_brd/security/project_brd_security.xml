@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_brd_chunk_company_rule" model="ir.rule">
+        <field name="name">Project BRD chunks: allowed companies</field>
+        <field name="model_id" ref="model_project_brd_chunk"/>
+        <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
+        <field name="groups" eval="[(4, ref('project.group_project_manager'))]"/>
+    </record>
+    <record id="project_brd_scope_item_company_rule" model="ir.rule">
+        <field name="name">Project BRD scope items: allowed companies</field>
+        <field name="model_id" ref="model_project_brd_scope_item"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="project_brd_scope_item_user_rule" model="ir.rule">
+        <field name="name">Project BRD scope items: visible projects</field>
+        <field name="model_id" ref="model_project_brd_scope_item"/>
+        <field name="domain_force">['|', ('project_id.privacy_visibility', 'in', ['employees', 'portal']), ('project_id.message_partner_ids', 'in', [user.partner_id.id])]</field>
+        <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+    </record>
+    <record id="project_brd_scope_item_manager_rule" model="ir.rule">
+        <field name="name">Project BRD scope items: manager sees all</field>
+        <field name="model_id" ref="model_project_brd_scope_item"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('project.group_project_manager'))]"/>
+    </record>
+</odoo>

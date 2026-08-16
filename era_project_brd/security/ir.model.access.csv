@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_brd_chunk_manager,project.brd.chunk manager,model_project_brd_chunk,project.group_project_manager,1,0,0,0
+access_project_brd_scope_item_user,project.brd.scope.item user,model_project_brd_scope_item,project.group_project_user,1,0,0,0
+access_project_brd_scope_item_manager,project.brd.scope.item manager,model_project_brd_scope_item,project.group_project_manager,1,1,1,1

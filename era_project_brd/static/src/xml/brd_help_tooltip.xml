@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="era_project_brd.BrdWorkflowHelpField">
-        <sup class="o_brd_help_icon d-print-none" tabindex="0"
-             role="img" aria-label="شرح خطوات بناء واعتماد وثيقة BRD"
-             data-tooltip-template="era_project_brd.BrdWorkflowHelpTooltip"
-             data-tooltip-position="bottom"
-             data-tooltip-touch-tap-to-show="true">?</sup>
+        <button type="button" class="o_brd_help_icon d-print-none" tabindex="0"
+                aria-label="فتح شرح خطوات بناء واعتماد وثيقة BRD"
+                data-tooltip="اضغط لعرض خطوات العمل والأمثلة"
+                t-on-click.stop.prevent="openHelp">?</button>
     </t>
 
-    <t t-name="era_project_brd.BrdWorkflowHelpTooltip">
-        <div class="o_brd_help_tooltip" dir="rtl">
-            <h5>خطوات الوصول إلى BRD النهائي</h5>
+    <t t-name="era_project_brd.BrdWorkflowHelpDialog">
+        <Dialog title.translate="خطوات الوصول إلى BRD النهائي" size="'xl'"
+                contentClass="'o_brd_help_dialog'">
+            <t t-call="era_project_brd.BrdWorkflowHelpContent"/>
+            <t t-set-slot="footer">
+                <button type="button" class="btn btn-primary"
+                        t-on-click="props.close">إغلاق</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="era_project_brd.BrdWorkflowHelpContent">
+        <div class="o_brd_help_content" dir="rtl">
             <ol>
                 <li>
                     <strong>تثبيت نطاق العقد:</strong>

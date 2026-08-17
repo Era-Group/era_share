@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_plan_view_form" model="ir.ui.view">
+        <field name="name">era.commission.plan.form</field>
+        <field name="model">era.commission.plan</field>
+        <field name="arch" type="xml">
+            <form string="Commission Plan">
+                <header>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,approved,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Standard 3% on collection"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="state != 'draft'">
+                        Only an approved plan is computed. A plan needs either rules
+                        or agents carrying a rate of their own. The rules are read from
+                        top to bottom and <strong>the first one that matches a line is
+                        the one applied</strong>; they are never added up, and the rate
+                        set on the agent wins over the rate of a rule.
+                    </div>
+                    <group>
+                        <group string="Earned On">
+                            <field name="basis"/>
+                            <field name="amount_base"/>
+                            <field name="periodicity"/>
+                            <field name="active" invisible="1"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Period">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="use_target"/>
+                            <field name="target_mode" invisible="not use_target"/>
+                        </group>
+                    </group>
+                    <group string="Tax">
+                        <group>
+                            <field name="deduct_tax"
+                                   invisible="basis in ('qty_sold', 'qty_collected')"/>
+                            <field name="tax_method"
+                                   invisible="not deduct_tax or basis in ('qty_sold', 'qty_collected')"/>
+                        </group>
+                        <group>
+                            <div class="text-muted"
+                                 invisible="basis not in ('qty_sold', 'qty_collected')">
+                                A unit price is not an amount, so no tax is ever
+                                taken off a quantity commission.
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Exclusions">
+                        <group>
+                            <field name="exclude_downpayment"/>
+                            <field name="deduct_refunds"/>
+                        </group>
+                        <group>
+                            <field name="excluded_product_ids" widget="many2many_tags"
+                                   placeholder="Shipping, handling, ..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Rules" name="rules">
+                            <field name="rule_ids">
+                                <list string="Rules">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="product_id" optional="show"/>
+                                    <field name="product_categ_id" optional="show"/>
+                                    <field name="partner_id" optional="hide"/>
+                                    <field name="team_id" optional="hide"/>
+                                    <field name="agent_id" optional="hide"/>
+                                    <field name="base_field" optional="hide"/>
+                                    <field name="calc_type"/>
+                                    <field name="rate" optional="show"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="amount_fixed" optional="hide"/>
+                                    <field name="amount_max" optional="hide"/>
+                                </list>
+                                <form string="Rule">
+                                    <sheet>
+                                        <div class="oe_title">
+                                            <label for="name"/>
+                                            <h1><field name="name" placeholder="e.g. 5% on fabrics"/></h1>
+                                        </div>
+                                        <group>
+                                            <group string="Applies To">
+                                                <field name="product_id"/>
+                                                <field name="product_categ_id"/>
+                                                <field name="product_tag_ids" widget="many2many_tags"/>
+                                                <field name="partner_id"/>
+                                                <field name="partner_category_id"/>
+                                                <field name="country_id"/>
+                                                <field name="state_id"/>
+                                                <field name="team_id"/>
+                                                <field name="agent_id"/>
+                                            </group>
+                                            <group string="Computation">
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="base_field"/>
+                                                <field name="calc_type"/>
+                                                <field name="rate" invisible="calc_type != 'percent'"
+                                                       required="calc_type == 'percent'"/>
+                                                <field name="amount_fixed"
+                                                       invisible="calc_type not in ('fixed_qty', 'fixed_doc')"
+                                                       required="calc_type in ('fixed_qty', 'fixed_doc')"/>
+                                                <field name="tier_mode" invisible="calc_type != 'tier'"/>
+                                                <field name="min_base"/>
+                                                <field name="amount_max"/>
+                                                <field name="active" invisible="1"/>
+                                                <field name="sequence"/>
+                                            </group>
+                                        </group>
+                                        <field name="tier_ids" invisible="calc_type != 'tier'">
+                                            <list string="Tiers" editable="bottom">
+                                                <field name="base_from"/>
+                                                <field name="rate"/>
+                                                <field name="currency_id" column_invisible="True"/>
+                                            </list>
+                                        </field>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Achievement Tiers" name="target_tiers"
+                              invisible="not use_target or target_mode != 'factor'">
+                            <div class="alert alert-info" role="alert">
+                                The whole commission of a period is multiplied by the
+                                factor of the highest tier the agent reached. Without a
+                                target on file the factor stays at 100%.
+                            </div>
+                            <field name="target_tier_ids">
+                                <list string="Achievement Tiers" editable="bottom">
+                                    <field name="achievement_from"/>
+                                    <field name="factor"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Agents" name="agents">
+                            <field name="assignment_ids" readonly="1">
+                                <list string="Agents">
+                                    <field name="agent_id"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="share"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_plan_view_list" model="ir.ui.view">
+        <field name="name">era.commission.plan.list</field>
+        <field name="model">era.commission.plan</field>
+        <field name="arch" type="xml">
+            <list string="Commission Plans">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="basis"/>
+                <field name="amount_base" optional="show"/>
+                <field name="periodicity" optional="hide"/>
+                <field name="date_from" optional="hide"/>
+                <field name="date_to" optional="hide"/>
+                <field name="agent_count" string="Agents"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-muted="state == 'closed'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_plan_view_search" model="ir.ui.view">
+        <field name="name">era.commission.plan.search</field>
+        <field name="model">era.commission.plan</field>
+        <field name="arch" type="xml">
+            <search string="Commission Plans">
+                <field name="name"/>
+                <filter name="filter_approved" string="Approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <filter name="filter_collection" string="On Collection"
+                        domain="[('basis', '=', 'collection')]"/>
+                <filter name="filter_quantity" string="On Quantity"
+                        domain="[('basis', 'in', ('qty_sold', 'qty_collected'))]"/>
+                <group>
+                    <filter name="group_by_basis" string="Earned On" context="{'group_by': 'basis'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_plan_action" model="ir.actions.act_window">
+        <field name="name">Commission Plans</field>
+        <field name="res_model">era.commission.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_commission_plan_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Write your first commission plan</p>
+            <p>
+                A plan says when a commission is earned -- on a confirmed order,
+                on a posted invoice, on the money actually collected, on the units
+                sold or collected, or on the margin -- and how the tax and the
+                target are taken off before the rate.
+            </p>
+        </field>
+    </record>
+
+</odoo>

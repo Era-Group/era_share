@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_line_view_list" model="ir.ui.view">
+        <field name="name">era.commission.line.list</field>
+        <field name="model">era.commission.line</field>
+        <field name="arch" type="xml">
+            <list string="Commission Lines" create="0" multi_edit="1"
+                  decoration-muted="state == 'cancel'"
+                  decoration-success="state == 'settled'"
+                  decoration-danger="commission_amount &lt; 0">
+                <field name="date"/>
+                <field name="agent_id"/>
+                <field name="commission_type" optional="show"/>
+                <field name="partner_id" optional="show"/>
+                <field name="product_id" optional="show"/>
+                <field name="plan_id" optional="hide"/>
+                <field name="rule_id" optional="hide"/>
+                <field name="line_type" optional="hide"/>
+                <field name="quantity" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="base_amount" sum="Base" readonly="1"/>
+                <field name="era_refund_amount" sum="Refunds" optional="hide" readonly="1"/>
+                <field name="tax_deducted" sum="Tax" optional="hide" readonly="1"/>
+                <field name="target_amount" sum="Target" optional="hide"
+                       readonly="state == 'settled'"/>
+                <field name="rate" optional="show" readonly="state == 'settled'"/>
+                <field name="unit_price" optional="hide" readonly="state == 'settled'"/>
+                <field name="era_collection_ratio" optional="hide" readonly="1"/>
+                <field name="share_rate" optional="hide" readonly="1"/>
+                <field name="manual_amount" optional="hide"
+                       readonly="state == 'settled'"/>
+                <field name="commission_amount" sum="Commission" readonly="1"/>
+                <field name="settlement_id" optional="show" readonly="1"/>
+                <field name="state" widget="badge" readonly="1"
+                       decoration-info="state == 'confirmed'"
+                       decoration-success="state == 'settled'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_line_view_form" model="ir.ui.view">
+        <field name="name">era.commission.line.form</field>
+        <field name="model">era.commission.line</field>
+        <field name="arch" type="xml">
+            <form string="Commission Line" create="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_source" type="object"
+                                class="oe_stat_button" icon="fa-external-link"
+                                string="Source Document"
+                                invisible="not move_id and not sale_order_id and not payment_id"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="state == 'settled'">
+                        Correct the rate, the unit price or the deductions below
+                        and the commission follows immediately -- there is no need
+                        to re-run the engine.
+                    </div>
+                    <group>
+                        <group string="Who and What">
+                            <field name="agent_id" readonly="1"/>
+                            <field name="commission_type" readonly="1"/>
+                            <field name="plan_id" readonly="1"/>
+                            <field name="rule_id" readonly="1"/>
+                            <field name="line_type" readonly="1"/>
+                            <field name="parent_line_id" readonly="1"
+                                   invisible="line_type != 'override'"/>
+                            <field name="reversed_line_id" readonly="1"
+                                   invisible="line_type != 'reversal'"/>
+                            <field name="date" readonly="1"/>
+                            <field name="date_from" readonly="1"
+                                   invisible="not date_from"/>
+                            <field name="date_to" readonly="1"
+                                   invisible="not date_to"/>
+                        </group>
+                        <group string="Amounts">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="quantity" readonly="1"/>
+                            <field name="base_amount" readonly="1"
+                                   invisible="commission_type == 'adjustment'"/>
+                            <field name="era_refund_amount" readonly="1"
+                                   invisible="not era_refund_amount"/>
+                            <field name="share_rate" readonly="1"/>
+                            <field name="rate" readonly="state == 'settled'"
+                                   invisible="commission_type not in ('sales', 'collection')"/>
+                            <field name="unit_price" readonly="state == 'settled'"
+                                   invisible="commission_type not in ('qty_sold', 'qty_collected')"/>
+                            <field name="manual_amount" readonly="state == 'settled'"
+                                   invisible="commission_type != 'adjustment'"/>
+                            <field name="commission_amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Deductions">
+                            <field name="deduct_tax" readonly="state == 'settled'"/>
+                            <field name="tax_method" readonly="state == 'settled'"
+                                   invisible="not deduct_tax"/>
+                            <field name="tax_deducted" readonly="state == 'settled'"
+                                   invisible="not deduct_tax"/>
+                            <field name="use_target" readonly="state == 'settled'"/>
+                            <field name="target_amount" readonly="state == 'settled'"
+                                   invisible="not use_target or commission_type in ('qty_sold', 'qty_collected')"/>
+                            <field name="target_qty" readonly="state == 'settled'"
+                                   invisible="not use_target or commission_type not in ('qty_sold', 'qty_collected')"/>
+                            <field name="era_collection_ratio" readonly="1"
+                                   invisible="not era_collection_ratio"/>
+                            <field name="margin_amount" readonly="1"
+                                   groups="base.group_no_one"/>
+                        </group>
+                        <group string="Source">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="team_id" readonly="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                            <field name="partial_id" readonly="1" groups="base.group_no_one"/>
+                            <field name="payment_id" readonly="1"/>
+                            <field name="origin_key" readonly="1" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                    <group string="Status">
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="settlement_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="company_id" readonly="1"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_line_view_search" model="ir.ui.view">
+        <field name="name">era.commission.line.search</field>
+        <field name="model">era.commission.line</field>
+        <field name="arch" type="xml">
+            <search string="Commission Lines">
+                <field name="agent_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="plan_id"/>
+                <field name="settlement_id"/>
+                <field name="sale_order_id"/>
+                <field name="move_id"/>
+                <filter name="filter_this_month" string="This Month"
+                        domain="[('date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                 ('date', '&lt;=', (context_today() + relativedelta(day=1, months=1, days=-1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_last_month" string="Last Month"
+                        domain="[('date', '&gt;=', (context_today() + relativedelta(day=1, months=-1)).strftime('%Y-%m-%d')),
+                                 ('date', '&lt;=', (context_today() + relativedelta(day=1, days=-1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="filter_sales" string="On Sales"
+                        domain="[('commission_type', '=', 'sales')]"/>
+                <filter name="filter_collection" string="On Collection"
+                        domain="[('commission_type', '=', 'collection')]"/>
+                <filter name="filter_quantity" string="On Quantity"
+                        domain="[('commission_type', 'in', ('qty_sold', 'qty_collected'))]"/>
+                <separator/>
+                <filter name="filter_unsettled" string="Not Settled"
+                        domain="[('state', 'in', ('draft', 'confirmed'))]"/>
+                <filter name="filter_settled" string="Settled"
+                        domain="[('state', '=', 'settled')]"/>
+                <filter name="filter_free" string="Free to Settle"
+                        domain="[('settlement_id', '=', False), ('state', '=', 'draft')]"/>
+                <separator/>
+                <filter name="filter_override" string="Overrides"
+                        domain="[('line_type', '=', 'override')]"/>
+                <filter name="filter_reversal" string="Reversals"
+                        domain="[('line_type', '=', 'reversal')]"/>
+                <group>
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_type" string="Commission Type"
+                            context="{'group_by': 'commission_type'}"/>
+                    <filter name="group_by_plan" string="Plan" context="{'group_by': 'plan_id'}"/>
+                    <filter name="group_by_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_team" string="Sales Team" context="{'group_by': 'team_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_line_view_pivot" model="ir.ui.view">
+        <field name="name">era.commission.line.pivot</field>
+        <field name="model">era.commission.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Commission Analysis">
+                <field name="agent_id" type="row"/>
+                <field name="commission_type" type="col"/>
+                <field name="base_amount" type="measure"/>
+                <field name="commission_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="era_commission_line_view_graph" model="ir.ui.view">
+        <field name="name">era.commission.line.graph</field>
+        <field name="model">era.commission.line</field>
+        <field name="arch" type="xml">
+            <graph string="Commission Analysis" type="bar">
+                <field name="agent_id"/>
+                <field name="commission_type"/>
+                <field name="commission_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="era_commission_line_action" model="ir.actions.act_window">
+        <field name="name">Commission Lines</field>
+        <field name="res_model">era.commission.line</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="search_view_id" ref="era_commission_line_view_search"/>
+        <field name="context">{'search_default_filter_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No commission line yet</p>
+            <p>
+                Lines are produced by the computation engine: run
+                <b>Generate Settlements</b>, press <b>Compute</b> on a settlement,
+                or wait for the nightly scheduled action.
+            </p>
+        </field>
+    </record>
+
+    <record id="era_commission_analysis_action" model="ir.actions.act_window">
+        <field name="name">Commission Analysis</field>
+        <field name="res_model">era.commission.line</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="search_view_id" ref="era_commission_line_view_search"/>
+    </record>
+
+    <record id="era_commission_my_lines_action" model="ir.actions.act_window">
+        <field name="name">My Commissions</field>
+        <field name="res_model">era.commission.line</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="search_view_id" ref="era_commission_line_view_search"/>
+        <field name="domain">[('agent_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

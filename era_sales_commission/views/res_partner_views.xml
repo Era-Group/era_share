@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_res_partner_view_form" model="ir.ui.view">
+        <field name="name">res.partner.form.era.commission</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="era_agent_id"
+                       groups="era_sales_commission.group_era_commission_officer"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

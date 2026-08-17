@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_generate_view_form" model="ir.ui.view">
+        <field name="name">era.commission.generate.form</field>
+        <field name="model">era.commission.generate</field>
+        <field name="arch" type="xml">
+            <form string="Generate Commission Settlements">
+                <div class="alert alert-info" role="alert">
+                    The period is recomputed first, then one settlement is opened per
+                    agent with something to be paid. Lines already settled are never
+                    touched.
+                </div>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="commission_type"
+                               placeholder="Every kind of commission"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="plan_domain" invisible="1"/>
+                        <field name="plan_ids" widget="many2many_tags"
+                               domain="plan_domain"
+                               placeholder="Every approved plan"/>
+                        <field name="agent_ids" widget="many2many_tags"
+                               placeholder="Every agent"/>
+                        <field name="reuse_draft"/>
+                    </group>
+                </group>
+                <group string="Deductions">
+                    <group>
+                        <field name="deduct_tax"
+                               invisible="commission_type not in (False, 'sales', 'collection')"/>
+                        <field name="tax_method"
+                               invisible="not deduct_tax or commission_type not in (False, 'sales', 'collection')"/>
+                    </group>
+                    <group>
+                        <field name="use_target"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object" string="Generate"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_generate_action" model="ir.actions.act_window">
+        <field name="name">Generate Settlements</field>
+        <field name="res_model">era.commission.generate</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

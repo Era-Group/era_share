@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_target_view_form" model="ir.ui.view">
+        <field name="name">era.commission.target.form</field>
+        <field name="model">era.commission.target</field>
+        <field name="arch" type="xml">
+            <form string="Commission Target">
+                <header>
+                    <button name="action_recompute" type="object" string="Recompute"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lines" type="object"
+                                class="oe_stat_button" icon="fa-list-ul"
+                                string="Commission Lines"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="commission_type"/>
+                            <field name="product_id"
+                                   placeholder="Everything the agent sells"/>
+                            <field name="plan_id" placeholder="Every plan"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <group string="Achievement">
+                        <group>
+                            <field name="target_amount"
+                                   invisible="commission_type in ('qty_sold', 'qty_collected')"/>
+                            <field name="target_qty"
+                                   invisible="commission_type not in ('qty_sold', 'qty_collected')"/>
+                            <field name="achieved_amount"/>
+                        </group>
+                        <group>
+                            <field name="achievement_rate"/>
+                            <field name="factor" invisible="not plan_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_target_view_list" model="ir.ui.view">
+        <field name="name">era.commission.target.list</field>
+        <field name="model">era.commission.target</field>
+        <field name="arch" type="xml">
+            <list string="Commission Targets" editable="bottom"
+                  decoration-success="achievement_rate &gt;= 100"
+                  decoration-warning="achievement_rate &lt; 60">
+                <field name="agent_id"/>
+                <field name="commission_type"/>
+                <field name="product_id" optional="show"
+                       placeholder="Everything"/>
+                <field name="plan_id" optional="hide" placeholder="Every plan"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="target_amount" sum="Target"/>
+                <field name="target_qty" sum="Target Qty" optional="show"/>
+                <field name="achieved_amount" sum="Achieved" readonly="1"/>
+                <field name="achievement_rate" readonly="1"/>
+                <field name="factor" optional="hide" readonly="1"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_target_view_graph" model="ir.ui.view">
+        <field name="name">era.commission.target.graph</field>
+        <field name="model">era.commission.target</field>
+        <field name="arch" type="xml">
+            <graph string="Targets" type="bar">
+                <field name="agent_id"/>
+                <field name="target_amount" type="measure"/>
+                <field name="achieved_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="era_commission_target_view_search" model="ir.ui.view">
+        <field name="name">era.commission.target.search</field>
+        <field name="model">era.commission.target</field>
+        <field name="arch" type="xml">
+            <search string="Commission Targets">
+                <field name="agent_id"/>
+                <field name="product_id"/>
+                <field name="plan_id"/>
+                <filter name="filter_reached" string="Reached"
+                        domain="[('achievement_rate', '&gt;=', 100)]"/>
+                <filter name="filter_missed" string="Missed"
+                        domain="[('achievement_rate', '&lt;', 100)]"/>
+                <group>
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_type" string="Commission Type"
+                            context="{'group_by': 'commission_type'}"/>
+                    <filter name="group_by_plan" string="Plan" context="{'group_by': 'plan_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_target_action" model="ir.actions.act_window">
+        <field name="name">Commission Targets</field>
+        <field name="res_model">era.commission.target</field>
+        <field name="view_mode">list,graph,form</field>
+        <field name="search_view_id" ref="era_commission_target_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set your first target</p>
+            <p>
+                A target belongs to an agent and a commission type. Depending on
+                the plan it is either taken off the base before the rate, spread
+                over the lines of the period, or turned into a factor that
+                multiplies the whole commission -- never both.
+            </p>
+        </field>
+    </record>
+
+    <record id="era_commission_my_targets_action" model="ir.actions.act_window">
+        <field name="name">My Targets</field>
+        <field name="res_model">era.commission.target</field>
+        <field name="view_mode">list,graph,form</field>
+        <field name="search_view_id" ref="era_commission_target_view_search"/>
+        <field name="domain">[('agent_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

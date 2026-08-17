@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_agent_view_form" model="ir.ui.view">
+        <field name="name">era.commission.agent.form</field>
+        <field name="model">era.commission.agent</field>
+        <field name="arch" type="xml">
+            <form string="Commission Agent">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_commission_lines" type="object"
+                                class="oe_stat_button" icon="fa-list-ul">
+                            <field name="line_count" widget="statinfo" string="Lines"/>
+                        </button>
+                        <button name="action_view_settlements" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="settlement_count" widget="statinfo"
+                                   string="Settlements"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Agent name"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="active" invisible="1"/>
+                            <field name="user_id"/>
+                            <field name="employee_id"/>
+                            <field name="partner_id"/>
+                            <field name="team_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Terms">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="payout_mode"/>
+                            <field name="parent_id"/>
+                            <field name="override_rate"
+                                   invisible="not child_ids"/>
+                            <field name="override_basis"
+                                   invisible="not child_ids or not override_rate"/>
+                            <field name="child_ids" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Earnings">
+                        <group>
+                            <field name="amount_draft"/>
+                            <field name="amount_confirmed"/>
+                        </group>
+                        <group>
+                            <field name="amount_settled"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Commission Plans" name="plans">
+                            <field name="assignment_ids">
+                                <list string="Plans" editable="bottom">
+                                    <field name="plan_id"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="share"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rates and Unit Prices" name="rates">
+                            <div class="alert alert-info" role="alert">
+                                The percentage set here wins over the percentage of
+                                a plan rule. Any value: the business decides it.
+                            </div>
+                            <field name="rate_ids">
+                                <list string="Rates" editable="bottom">
+                                    <field name="commission_type"/>
+                                    <field name="product_id"
+                                           placeholder="Every product"/>
+                                    <field name="rate"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="unit_price"/>
+                                    <field name="company_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Team" name="team" invisible="not child_ids">
+                            <field name="child_ids" readonly="1">
+                                <list string="Team">
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="user_id"/>
+                                    <field name="team_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note" placeholder="Anything worth remembering about this agent."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_view_list" model="ir.ui.view">
+        <field name="name">era.commission.agent.list</field>
+        <field name="model">era.commission.agent</field>
+        <field name="arch" type="xml">
+            <list string="Commission Agents">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="user_id" optional="show"/>
+                <field name="team_id" optional="show"/>
+                <field name="parent_id" optional="show"/>
+                <field name="payout_mode" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="amount_confirmed" sum="To Settle"/>
+                <field name="amount_settled" sum="Settled" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_view_kanban" model="ir.ui.view">
+        <field name="name">era.commission.agent.kanban</field>
+        <field name="model">era.commission.agent</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted"><field name="code"/></div>
+                                <div><field name="team_id"/></div>
+                            </div>
+                            <div class="text-end">
+                                <field name="amount_confirmed" widget="monetary"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_view_search" model="ir.ui.view">
+        <field name="name">era.commission.agent.search</field>
+        <field name="model">era.commission.agent</field>
+        <field name="arch" type="xml">
+            <search string="Commission Agents">
+                <field name="name" string="Agent"
+                       filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="parent_id"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_by_team" string="Sales Team" context="{'group_by': 'team_id'}"/>
+                    <filter name="group_by_manager" string="Manager" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_action" model="ir.actions.act_window">
+        <field name="name">Commission Agents</field>
+        <field name="res_model">era.commission.agent</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="era_commission_agent_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first commission agent</p>
+            <p>
+                An agent is whoever earns a commission: an employee, an outside
+                representative, or a manager paid on what their team sells.
+            </p>
+        </field>
+    </record>
+
+</odoo>

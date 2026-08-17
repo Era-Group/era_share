@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="era_payment_receipt_document" inherit_id="account.report_payment_receipt_document">
+        <xpath expr="//t[@t-call='web.external_layout']" position="replace">
+            <t>
+                <!-- read every value in en_US so figures and dates stay latin -->
+                <t t-set="doc" t-value="o.with_context(lang='en_US')"/>
+                <t t-set="H" t-value="env['era.report.helper']"/>
+                <t t-set="partner" t-value="doc.partner_id"/>
+                <t t-set="cmp" t-value="doc.company_id.sudo().with_context(lang='en_US')"/>
+                <t t-set="cur" t-value="doc.currency_id"/>
+                <t t-set="values" t-value="doc._get_payment_receipt_report_values()"/>
+                <t t-set="words" t-value="doc._era_amount_in_words()"/>
+                <t t-set="inbound" t-value="doc.partner_type == 'customer'"/>
+                <t t-set="invoices" t-value="doc.reconciled_invoice_ids or doc.reconciled_bill_ids"/>
+
+                <t t-set="era_title_ar" t-value="'سند قبض' if inbound else 'سند صرف'"/>
+                <t t-set="era_title_en" t-value="'RECEIPT VOUCHER' if inbound else 'PAYMENT VOUCHER'"/>
+                <t t-set="era_identity_name" t-value="cmp.name"/>
+                <t t-set="era_identity_sub" t-value="' | '.join(
+                    (['C.R. ' + cmp.company_registry] if cmp.company_registry else [])
+                    + (['VAT ' + cmp.partner_id.vat] if cmp.partner_id.vat else []))"/>
+
+                <t t-set="era_meta" t-value="[
+                    {'ar': 'رقم السند', 'en': 'Voucher No.', 'val': doc.name},
+                    {'ar': 'التاريخ', 'en': 'Date', 'val': H.doc_date(doc.date)},
+                    {'ar': 'طريقة الدفع', 'en': 'Payment Method', 'val': doc.payment_method_line_id.name or '-'},
+                    {'ar': 'الحساب / البنك', 'en': 'Journal', 'val': doc.journal_id.name or '-'},
+                    {'ar': 'العملة', 'en': 'Currency', 'val': cur.name},
+                ]"/>
+
+                <t t-set="era_parties" t-value="[
+                    {
+                        'variant': 'teal',
+                        'title_ar': 'الشركة',
+                        'title_en': 'Company',
+                        'name': cmp.name,
+                        'rows': [
+                            ('العنوان', H.address_line(cmp.partner_id)),
+                            ('السجل التجاري', cmp.company_registry or '-'),
+                            ('الرقم الضريبي', cmp.partner_id.vat or '-'),
+                            ('الهاتف', cmp.phone or '-'),
+                        ],
+                    },
+                    {
+                        'variant': 'indigo',
+                        'title_ar': 'العميل' if inbound else 'المستفيد',
+                        'title_en': 'Customer' if inbound else 'Beneficiary',
+                        'name': partner.name or '-',
+                        'rows': [
+                            ('العنوان', H.address_line(partner)),
+                            ('الهاتف', partner.phone or '-'),
+                        ] + ([('الرقم الضريبي', partner.vat)] if partner.vat else []),
+                    },
+                ]"/>
+
+                <t t-set="era_signatures" t-value="[
+                    ('المستلم', 'Received by'),
+                    ('أمين الصندوق', 'Cashier'),
+                    ('اعتماد / الإدارة المالية', 'Approved by — Finance'),
+                ]"/>
+
+                <t t-call="era_report_designs.era_document_layout">
+
+                    <div class="o_era_amount">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="o_era_amount__lbl">
+                                        <t t-if="inbound">المبلغ المستلم</t>
+                                        <t t-else="">المبلغ المدفوع</t>
+                                    </div>
+                                    <div class="o_era_amount__sub">
+                                        <t t-if="inbound">Amount Received</t>
+                                        <t t-else="">Amount Paid</t>
+                                        (<t t-out="cur.name"/>)
+                                    </div>
+                                </td>
+                                <td class="o_era_amount__val" t-out="H.money(doc.amount, cur)"/>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="o_era_words">
+                        <div class="o_era_words__lbl">المبلغ بالحروف / Amount in words</div>
+                        <div class="o_era_words__ar" t-out="words['ar']"/>
+                        <div class="o_era_words__en" t-out="words['en']"/>
+                    </div>
+
+                    <t t-if="doc.memo" t-call="era_report_designs.era_notes_box">
+                        <div><strong>البيان / Memo:</strong> <t t-out="doc.memo"/></div>
+                    </t>
+
+                    <!-- Odoo's own voucher prints an empty table head when the payment
+                         is not reconciled with anything; the table is dropped instead. -->
+                    <table t-if="values['display_invoices'] and invoices" class="o_era_table" style="margin-top: 12px">
+                        <colgroup>
+                            <col style="width: 14%"/>
+                            <col style="width: 22%"/>
+                            <col style="width: 22%"/>
+                            <col style="width: 14%"/>
+                            <col style="width: 14%"/>
+                            <col style="width: 14%"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th><span class="o_era_table__hd-ar">تاريخ الفاتورة</span><span class="o_era_table__hd-en">Invoice Date</span></th>
+                                <th><span class="o_era_table__hd-ar">رقم الفاتورة</span><span class="o_era_table__hd-en">Invoice Number</span></th>
+                                <th><span class="o_era_table__hd-ar">المرجع</span><span class="o_era_table__hd-en">Reference</span></th>
+                                <th><span class="o_era_table__hd-ar">إجمالي الفاتورة</span><span class="o_era_table__hd-en">Invoice Total</span></th>
+                                <th><span class="o_era_table__hd-ar">المسدد</span><span class="o_era_table__hd-en">Paid</span></th>
+                                <th><span class="o_era_table__hd-ar">المتبقي</span><span class="o_era_table__hd-en">Residual</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="invoices" t-as="inv">
+                                <td t-out="H.doc_date(inv.invoice_date or inv.date)"/>
+                                <td t-out="inv.name"/>
+                                <td t-out="inv.ref or '-'"/>
+                                <td t-out="H.money(inv.amount_total, inv.currency_id)"/>
+                                <td t-out="H.money(inv.amount_total - inv.amount_residual, inv.currency_id)"/>
+                                <td t-out="H.money(inv.amount_residual, inv.currency_id)"/>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

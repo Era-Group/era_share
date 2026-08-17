@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="module_category_commission" model="ir.module.category">
+            <field name="name">Sales Commissions</field>
+            <field name="description">Access rights for sales representative commissions.</field>
+            <field name="sequence">24</field>
+        </record>
+
+        <record id="res_groups_privilege_commission" model="res.groups.privilege">
+            <field name="name">Sales Commissions</field>
+            <field name="sequence">10</field>
+            <field name="category_id" ref="module_category_commission"/>
+        </record>
+
+        <record id="group_era_commission_agent" model="res.groups">
+            <field name="name">Agent</field>
+            <field name="sequence">10</field>
+            <field name="privilege_id" ref="res_groups_privilege_commission"/>
+            <field name="comment">Reads their own commission lines, settlements and targets. Nothing else, and nothing of anyone else.</field>
+        </record>
+
+        <record id="group_era_commission_officer" model="res.groups">
+            <field name="name">Commission Officer</field>
+            <field name="sequence">20</field>
+            <field name="privilege_id" ref="res_groups_privilege_commission"/>
+            <field name="implied_ids" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="comment">Computes commissions, prepares settlements and records bonuses and deductions for every agent.</field>
+        </record>
+
+        <record id="group_era_commission_manager" model="res.groups">
+            <field name="name">Commission Manager</field>
+            <field name="sequence">30</field>
+            <field name="privilege_id" ref="res_groups_privilege_commission"/>
+            <field name="implied_ids" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="comment">Writes the plans and the rules, sets the targets, and is the only signature that releases a settlement and posts it.</field>
+            <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Multi-company rules. No group set => global. -->
+        <record id="commission_agent_company_rule" model="ir.rule">
+            <field name="name">Commission Agent: multi-company</field>
+            <field name="model_id" ref="model_era_commission_agent"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_agent_plan_company_rule" model="ir.rule">
+            <field name="name">Commission Agent Plan: multi-company</field>
+            <field name="model_id" ref="model_era_commission_agent_plan"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_plan_company_rule" model="ir.rule">
+            <field name="name">Commission Plan: multi-company</field>
+            <field name="model_id" ref="model_era_commission_plan"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_rule_company_rule" model="ir.rule">
+            <field name="name">Commission Rule: multi-company</field>
+            <field name="model_id" ref="model_era_commission_rule"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_line_company_rule" model="ir.rule">
+            <field name="name">Commission Line: multi-company</field>
+            <field name="model_id" ref="model_era_commission_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_target_company_rule" model="ir.rule">
+            <field name="name">Commission Target: multi-company</field>
+            <field name="model_id" ref="model_era_commission_target"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_agent_rate_company_rule" model="ir.rule">
+            <field name="name">Commission Agent Rate: multi-company</field>
+            <field name="model_id" ref="model_era_commission_agent_rate"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_unit_price_tier_company_rule" model="ir.rule">
+            <field name="name">Commission Unit Price Tier: multi-company</field>
+            <field name="model_id" ref="model_era_commission_unit_price_tier"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_settlement_company_rule" model="ir.rule">
+            <field name="name">Commission Settlement: multi-company</field>
+            <field name="model_id" ref="model_era_commission_settlement"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_adjustment_company_rule" model="ir.rule">
+            <field name="name">Commission Adjustment: multi-company</field>
+            <field name="model_id" ref="model_era_commission_adjustment"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="commission_share_company_rule" model="ir.rule">
+            <field name="name">Commission Share: multi-company</field>
+            <field name="model_id" ref="model_era_commission_share"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- An agent reads their own money and nothing of the person next to
+             them. Odoo ORs the rules of the groups a user belongs to, so every
+             "own records" rule is paired with an officer rule of (1,'=',1) that
+             lifts it for whoever runs the commissions. -->
+        <record id="commission_line_own_rule" model="ir.rule">
+            <field name="name">Commission Lines: own lines</field>
+            <field name="model_id" ref="model_era_commission_line"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="domain_force">[('agent_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="commission_line_officer_rule" model="ir.rule">
+            <field name="name">Commission Lines: every agent</field>
+            <field name="model_id" ref="model_era_commission_line"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="commission_settlement_own_rule" model="ir.rule">
+            <field name="name">Commission Settlements: own statements</field>
+            <field name="model_id" ref="model_era_commission_settlement"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="domain_force">[('agent_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="commission_settlement_officer_rule" model="ir.rule">
+            <field name="name">Commission Settlements: every agent</field>
+            <field name="model_id" ref="model_era_commission_settlement"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="commission_target_own_rule" model="ir.rule">
+            <field name="name">Commission Targets: own target</field>
+            <field name="model_id" ref="model_era_commission_target"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="domain_force">[('agent_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="commission_target_officer_rule" model="ir.rule">
+            <field name="name">Commission Targets: every agent</field>
+            <field name="model_id" ref="model_era_commission_target"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="commission_agent_rate_own_rule" model="ir.rule">
+            <field name="name">Agent Rates: own rates</field>
+            <field name="model_id" ref="model_era_commission_agent_rate"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="domain_force">[('agent_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="commission_agent_rate_officer_rule" model="ir.rule">
+            <field name="name">Agent Rates: every agent</field>
+            <field name="model_id" ref="model_era_commission_agent_rate"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="commission_adjustment_own_rule" model="ir.rule">
+            <field name="name">Commission Adjustments: own statements</field>
+            <field name="model_id" ref="model_era_commission_adjustment"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_agent'))]"/>
+            <field name="domain_force">[('settlement_id.agent_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="commission_adjustment_officer_rule" model="ir.rule">
+            <field name="name">Commission Adjustments: every agent</field>
+            <field name="model_id" ref="model_era_commission_adjustment"/>
+            <field name="groups" eval="[(4, ref('group_era_commission_officer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

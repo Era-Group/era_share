@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Commissions are part of Sales, not an app of their own: the people who
+        run them already live in the Sales menu, and a second icon on the home
+        screen for something nobody opens on its own is noise.
+
+        The Sales root ships inactive and is switched on by sale_management. It
+        is switched on here too, so the commission menu is reachable on an
+        instance that runs Sales without the quotation-builder module.
+    -->
+    <record id="sale.sale_menu_root" model="ir.ui.menu">
+        <field name="active">True</field>
+    </record>
+
+    <menuitem id="menu_era_commission_root"
+              name="Commissions"
+              parent="sale.sale_menu_root"
+              sequence="35"
+              groups="group_era_commission_agent"/>
+
+    <!-- The only section an agent can open. Everything under it is filtered to
+         the person reading, by record rule and by domain. -->
+    <menuitem id="menu_era_commission_my"
+              name="My Commissions"
+              parent="menu_era_commission_root"
+              sequence="5"
+              groups="group_era_commission_agent"/>
+
+    <menuitem id="menu_era_commission_my_lines"
+              name="My Commission Lines"
+              parent="menu_era_commission_my"
+              action="era_commission_my_lines_action"
+              sequence="10"/>
+
+    <menuitem id="menu_era_commission_my_settlements"
+              name="My Statements"
+              parent="menu_era_commission_my"
+              action="era_commission_my_settlements_action"
+              sequence="20"/>
+
+    <menuitem id="menu_era_commission_my_targets"
+              name="My Targets"
+              parent="menu_era_commission_my"
+              action="era_commission_my_targets_action"
+              sequence="30"/>
+
+    <!-- Operations -->
+    <menuitem id="menu_era_commission_operations"
+              name="Operations"
+              parent="menu_era_commission_root"
+              sequence="10"
+              groups="group_era_commission_officer"/>
+
+    <menuitem id="menu_era_commission_settlements"
+              name="Settlements"
+              parent="menu_era_commission_operations"
+              action="era_commission_settlement_action"
+              sequence="10"/>
+
+    <menuitem id="menu_era_commission_generate"
+              name="Generate Settlements"
+              parent="menu_era_commission_operations"
+              action="era_commission_generate_action"
+              sequence="20"/>
+
+    <menuitem id="menu_era_commission_lines"
+              name="Commission Lines"
+              parent="menu_era_commission_operations"
+              action="era_commission_line_action"
+              sequence="30"/>
+
+    <menuitem id="menu_era_commission_simulate"
+              name="Simulate"
+              parent="menu_era_commission_operations"
+              action="era_commission_simulate_action"
+              sequence="40"/>
+
+    <!-- Targets, close to the top: they are entered every period, not once. -->
+    <menuitem id="menu_era_commission_targets_manage"
+              name="Targets"
+              parent="menu_era_commission_root"
+              action="era_commission_target_action"
+              sequence="30"
+              groups="group_era_commission_officer"/>
+
+    <!-- Reporting -->
+    <menuitem id="menu_era_commission_reporting"
+              name="Reporting"
+              parent="menu_era_commission_root"
+              sequence="40"
+              groups="group_era_commission_officer"/>
+
+    <menuitem id="menu_era_commission_analysis"
+              name="Commission Analysis"
+              parent="menu_era_commission_reporting"
+              action="era_commission_analysis_action"
+              sequence="10"/>
+
+    <menuitem id="menu_era_commission_targets"
+              name="Target Achievement"
+              parent="menu_era_commission_reporting"
+              action="era_commission_target_action"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_era_commission_config"
+              name="Configuration"
+              parent="menu_era_commission_root"
+              sequence="90"
+              groups="group_era_commission_manager"/>
+
+    <menuitem id="menu_era_commission_agents"
+              name="Agents"
+              parent="menu_era_commission_config"
+              action="era_commission_agent_action"
+              sequence="10"/>
+
+    <menuitem id="menu_era_commission_agent_rates"
+              name="Agent Rates"
+              parent="menu_era_commission_config"
+              action="era_commission_agent_rate_action"
+              sequence="15"/>
+
+    <menuitem id="menu_era_commission_unit_price_tiers"
+              name="Unit Price Tiers"
+              parent="menu_era_commission_config"
+              action="era_commission_unit_price_tier_action"
+              sequence="18"/>
+
+    <menuitem id="menu_era_commission_plans"
+              name="Commission Plans"
+              parent="menu_era_commission_config"
+              action="era_commission_plan_action"
+              sequence="20"/>
+
+    <menuitem id="menu_era_commission_settings"
+              name="Settings"
+              parent="menu_era_commission_config"
+              action="base_setup.action_general_configuration"
+              sequence="90"
+              groups="base.group_system"/>
+
+</odoo>

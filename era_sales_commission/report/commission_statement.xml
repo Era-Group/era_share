@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The statement reuses era_report_designs.era_document_layout instead of
+        drawing a new arabic document: the shared skeleton already solves the
+        page direction problem of Odoo reports (the layout derives it from the
+        user's language, which is en_US here) and the three Era documents in
+        production already look like this.
+    -->
+    <template id="report_commission_statement_document">
+        <t t-set="doc" t-value="doc.with_context(lang='en_US')"/>
+        <t t-set="H" t-value="env['era.report.helper']"/>
+        <t t-set="cur" t-value="doc.currency_id"/>
+        <t t-set="agent" t-value="doc.agent_id"/>
+        <t t-set="cmp" t-value="doc.company_id.sudo().with_context(lang='en_US')"/>
+        <t t-set="groups" t-value="doc._report_groups()"/>
+
+        <t t-set="era_title_ar" t-value="'كشف عمولة مندوب'"/>
+        <t t-set="era_title_en" t-value="'COMMISSION STATEMENT'"/>
+
+        <t t-set="era_meta" t-value="[
+            {'ar': 'رقم الكشف', 'en': 'Statement No.', 'val': doc.name},
+            {'ar': 'من تاريخ', 'en': 'From', 'val': H.doc_date(doc.date_from)},
+            {'ar': 'إلى تاريخ', 'en': 'To', 'val': H.doc_date(doc.date_to)},
+            {'ar': 'العملة', 'en': 'Currency', 'val': cur.name},
+            {'ar': 'الحالة', 'en': 'Status', 'val': dict(doc._fields['state'].selection)[doc.state]},
+        ]"/>
+
+        <t t-set="era_parties" t-value="[
+            {
+                'variant': 'indigo',
+                'title_ar': 'المندوب',
+                'title_en': 'Agent',
+                'name': agent.name,
+                'rows': [
+                    ('الرقم', agent.code or '-'),
+                    ('فريق المبيعات', agent.team_id.name or '-'),
+                    ('المشرف', agent.parent_id.name or '-'),
+                    ('طريقة الصرف', dict(agent._fields['payout_mode'].selection)[agent.payout_mode]),
+                ],
+            },
+            {
+                'variant': 'teal',
+                'title_ar': 'الشركة',
+                'title_en': 'Company',
+                'name': cmp.name,
+                'rows': [
+                    ('العنوان', H.address_line(cmp.partner_id)),
+                    ('السجل التجاري', cmp.company_registry or '-'),
+                    ('الرقم الضريبي', cmp.partner_id.vat or '-'),
+                    ('الهاتف', cmp.phone or '-'),
+                ],
+            },
+        ]"/>
+
+        <t t-set="era_signatures" t-value="[
+            ('المندوب', 'Agent'),
+            ('اعتماد / مدير المبيعات', 'Approved by — Sales Manager'),
+            ('اعتماد / الإدارة المالية', 'Approved by — Finance'),
+        ]"/>
+
+        <t t-call="era_report_designs.era_document_layout">
+
+            <table class="o_era_table" t-if="doc.commission_type_summary">
+                <thead>
+                    <tr>
+                        <th><span class="o_era_table__hd-ar">ملخّص حسب نوع العمولة</span><span class="o_era_table__hd-en">By Commission Type</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="doc.commission_type_summary.split('\n')"
+                        t-as="summary_line">
+                        <td t-out="summary_line"/>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="o_era_table">
+                <colgroup>
+                    <col style="width: 8%"/>
+                    <col style="width: 11%"/>
+                    <col style="width: 18%"/>
+                    <col style="width: 11%"/>
+                    <col style="width: 7%"/>
+                    <col style="width: 13%"/>
+                    <col style="width: 10%"/>
+                    <col style="width: 10%"/>
+                    <col style="width: 12%"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><span class="o_era_table__hd-ar">التاريخ</span><span class="o_era_table__hd-en">Date</span></th>
+                        <th><span class="o_era_table__hd-ar">المستند</span><span class="o_era_table__hd-en">Document</span></th>
+                        <th><span class="o_era_table__hd-ar">العميل / الصنف</span><span class="o_era_table__hd-en">Customer / Product</span></th>
+                        <th><span class="o_era_table__hd-ar">نوع العمولة</span><span class="o_era_table__hd-en">Type</span></th>
+                        <th><span class="o_era_table__hd-ar">الكمية</span><span class="o_era_table__hd-en">Qty</span></th>
+                        <th><span class="o_era_table__hd-ar">قاعدة الاحتساب</span><span class="o_era_table__hd-en">Base</span></th>
+                        <th><span class="o_era_table__hd-ar">الخصومات</span><span class="o_era_table__hd-en">Deductions</span></th>
+                        <th><span class="o_era_table__hd-ar">النسبة / سعر الوحدة</span><span class="o_era_table__hd-en">Rate / Unit</span></th>
+                        <th><span class="o_era_table__hd-ar">العمولة</span><span class="o_era_table__hd-en">Commission</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="groups" t-as="group">
+                        <tr class="o_era_table__section">
+                            <td colspan="8">
+                                <t t-out="group['label']"/> — <t t-out="group['partner']"/>
+                            </td>
+                            <td t-out="H.money(group['amount'], cur)"/>
+                        </tr>
+                        <tr t-foreach="group['lines']" t-as="line">
+                            <td t-out="H.doc_date(line.date)"/>
+                            <td t-out="group['label']"/>
+                            <td class="o_era_table__desc">
+                                <div class="o_era_table__desc-main"
+                                     t-out="line.product_id.display_name or line.name"/>
+                                <div class="o_era_table__desc-sub"
+                                     t-out="dict(line._fields['line_type'].selection)[line.line_type]"/>
+                            </td>
+                            <td t-out="dict(line._fields['commission_type'].selection)[line.commission_type]"/>
+                            <td t-out="H.qty(line.quantity)"/>
+                            <td t-out="H.money(line.base_amount, cur)"/>
+                            <td>
+                                <t t-if="line.tax_deducted">ض: <t t-out="H.money(line.tax_deducted, cur)"/><br/></t>
+                                <t t-if="line.target_amount">ت: <t t-out="H.money(line.target_amount, cur)"/><br/></t>
+                                <t t-if="line.era_refund_amount">م: <t t-out="H.money(line.era_refund_amount, cur)"/></t>
+                            </td>
+                            <td>
+                                <t t-if="line.commission_type in ('qty_sold', 'qty_collected')"
+                                   t-out="H.money(line.unit_price, cur)"/>
+                                <t t-else="" t-out="H.qty(line.rate) + '%'"/>
+                            </td>
+                            <td t-out="H.money(line.commission_amount, cur)"/>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+            <table class="o_era_foot-block">
+                <tr>
+                    <td style="width: 58%">
+                        <t t-if="doc.adjustment_ids">
+                            <table class="o_era_table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2"><span class="o_era_table__hd-ar">الحوافز والخصومات</span><span class="o_era_table__hd-en">Bonuses and Deductions</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.adjustment_ids" t-as="adjustment">
+                                        <td t-out="adjustment.name"/>
+                                        <td t-out="H.money(adjustment.amount if adjustment.type == 'bonus' else -adjustment.amount, cur)"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-if="doc.note" t-call="era_report_designs.era_notes_box">
+                            <span t-field="doc.note"/>
+                        </t>
+                    </td>
+                    <td style="width: 42%">
+                        <table class="o_era_sum">
+                            <tr t-if="sum(doc.line_ids.mapped('era_refund_amount'))">
+                                <td class="o_era_sum__lbl">المرتجعات المخصومة / Refunds Deducted</td>
+                                <td class="o_era_sum__val"
+                                    t-out="H.money(sum(doc.line_ids.mapped('era_refund_amount')), cur)"/>
+                            </tr>
+                            <tr t-if="sum(doc.line_ids.mapped('tax_deducted'))">
+                                <td class="o_era_sum__lbl">الضريبة المخصومة / Tax Deducted</td>
+                                <td class="o_era_sum__val"
+                                    t-out="H.money(sum(doc.line_ids.mapped('tax_deducted')), cur)"/>
+                            </tr>
+                            <tr t-if="sum(doc.line_ids.mapped('target_amount'))">
+                                <td class="o_era_sum__lbl">المستهدف المخصوم / Target Deducted</td>
+                                <td class="o_era_sum__val"
+                                    t-out="H.money(sum(doc.line_ids.mapped('target_amount')), cur)"/>
+                            </tr>
+                            <tr>
+                                <td class="o_era_sum__lbl">إجمالي العمولة / Gross Commission</td>
+                                <td class="o_era_sum__val" t-out="H.money(doc.amount_gross, cur)"/>
+                            </tr>
+                            <tr t-if="doc.amount_target_factor != 100">
+                                <td class="o_era_sum__lbl">
+                                    معامل تحقيق المستهدف / Target Factor
+                                    (<t t-out="H.qty(doc.amount_target_factor)"/>%)
+                                </td>
+                                <td class="o_era_sum__val" t-out="H.money(doc.amount_target_adjust, cur)"/>
+                            </tr>
+                            <tr t-if="doc.adjustment_ids">
+                                <td class="o_era_sum__lbl">الحوافز والخصومات / Adjustments</td>
+                                <td class="o_era_sum__val" t-out="H.money(doc.amount_adjustment, cur)"/>
+                            </tr>
+                        </table>
+                        <div class="o_era_grand">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="o_era_grand__ar">إجمالي عمولة المندوب</div>
+                                        <div class="o_era_grand__en">Total Commission of the Rep (<t t-out="cur.name"/>)</div>
+                                    </td>
+                                    <td class="o_era_grand__val"
+                                        t-out="H.money(doc.era_rep_total_commission, cur)"/>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+        </t>
+    </template>
+
+    <template id="report_commission_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="era_sales_commission.report_commission_statement_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

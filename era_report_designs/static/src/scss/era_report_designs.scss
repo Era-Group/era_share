@@ -1,0 +1,528 @@
+// ---------------------------------------------------------------------------
+// Era bilingual document design system
+//
+// Everything is scoped under .o_era_doc so that the other reports sharing the
+// web.report_assets_common bundle (Odoo's own, and era_garment_manufacturing's)
+// are left untouched.
+//
+// The renderer is wkhtmltopdf 0.12.6 (QtWebKit): no flexbox, no CSS grid and no
+// Bootstrap columns are used here -- the whole layout is tables with explicit
+// widths, which is the only thing that lays out reliably under dir="rtl".
+// ---------------------------------------------------------------------------
+
+$era-ink:           #22303A;
+$era-muted:         #6B7280;
+$era-line:          #E2E8EC;
+$era-indigo:        #43437E;
+$era-indigo-dark:   #33335F;
+$era-teal:          #1F7E80;
+$era-tint:          #F3F8F9;
+$era-ok:            #1D8A5F;
+$era-ok-bg:         #E3F4EE;
+$era-short:         #B45309;
+$era-short-bg:      #FDF2E3;
+
+// Odoo already ships Tajawal, but web/static/fonts/fonts.scss only declares its
+// Regular weight. Redeclaring the family under another name gives us real bold
+// faces (instead of QtWebKit's synthetic emboldening, which smears Arabic) with
+// no font file added to this repository.
+// The path has to be written out literally: StylesheetAsset.rx_url rewrites any
+// url() whose argument starts with an interpolation to be relative to this
+// file, which would turn a `#{$path}` prefix into a 404 on the font.
+@each $era-face, $era-weight in ('Regular': 400, 'Medium': 500, 'Bold': 700, 'ExtraBold': 800) {
+    @font-face {
+        font-family: 'EraTajawal';
+        src: url('/web/static/fonts/google/Tajawal/Tajawal-#{$era-face}.ttf') format('truetype');
+        font-weight: $era-weight;
+        font-style: normal;
+    }
+}
+
+.o_era_doc {
+    width: 100%;
+    // web/report.scss hard-sets `direction: ltr` on body, and the printing user
+    // is en_US here, so the direction has to be restated rather than inherited.
+    direction: rtl;
+    text-align: right;
+    font-family: 'EraTajawal', 'DejaVu Sans', sans-serif;
+    font-size: 11px;
+    line-height: 1.45;
+    color: $era-ink;
+    // wkhtmltopdf drops background colours on print unless this is forced,
+    // which would flatten every coloured bar in these designs.
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 0 none;
+    }
+
+    // wkhtmltopdf paints a hairline around rows for bootstrap's reboot rule
+    // `border-style: solid; border-width: 0`, so the style has to be reset too.
+    thead, tbody, tfoot, tr, td, th {
+        border: 0 none;
+    }
+
+    td, th {
+        vertical-align: top;
+        padding: 0;
+    }
+}
+
+// A run of pure latin text inside an rtl block. Without it the bidi algorithm
+// moves trailing neutrals to the wrong side -- "VAT %" prints as "% VAT" and
+// "Grand Total (SAR)" as ")Grand Total (SAR".
+.o_era_ltr {
+    display: inline-block;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+// --- header ----------------------------------------------------------------
+
+.o_era_head {
+    table-layout: fixed;
+
+    td {
+        vertical-align: middle;
+    }
+
+    &__logo {
+        text-align: right;
+
+        img {
+            max-height: 56px;
+            max-width: 100%;
+        }
+    }
+
+    &__title-ar {
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    &__title-en {
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 4px;
+        color: $era-muted;
+        direction: ltr;
+    }
+
+    &__id {
+        text-align: left;
+    }
+
+    &__id-name {
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    &__id-sub {
+        font-size: 8px;
+        color: $era-muted;
+        direction: ltr;
+    }
+}
+
+// --- meta bar --------------------------------------------------------------
+
+.o_era_meta {
+    border-collapse: separate;
+    border-spacing: 4px 0;
+    margin: 10px -4px 12px;
+
+    td {
+        background: $era-tint;
+        border-radius: 3px;
+        padding: 6px 9px;
+        text-align: right;
+    }
+
+    &__lbl {
+        font-size: 8px;
+        color: $era-muted;
+        margin-bottom: 1px;
+    }
+
+    &__val {
+        font-size: 11px;
+        font-weight: 700;
+    }
+}
+
+// --- party cards -----------------------------------------------------------
+
+.o_era_cards {
+    border-collapse: separate;
+    border-spacing: 8px 0;
+    margin: 0 -8px 12px;
+
+    > tbody > tr > td {
+        width: 50%;
+    }
+}
+
+.o_era_card {
+    border: 1px solid $era-line;
+    border-radius: 3px;
+    overflow: hidden;
+
+    &__bar {
+        padding: 5px 9px;
+        color: #FFFFFF;
+        background: $era-indigo;
+    }
+
+    &__bar-ar {
+        font-size: 10px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    &__bar-en {
+        font-size: 9px;
+        text-align: left;
+        direction: ltr;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    &__body {
+        padding: 8px 9px 10px;
+    }
+
+    &__name {
+        font-size: 13px;
+        font-weight: 700;
+        text-align: right;
+        margin-bottom: 5px;
+    }
+
+    &__lbl {
+        width: 88px;
+        padding: 1px 0;
+        font-size: 9px;
+        color: $era-muted;
+        text-align: right;
+    }
+
+    &__val {
+        padding: 1px 0 1px 8px;
+        font-size: 9px;
+        font-weight: 700;
+        text-align: left;
+    }
+}
+
+.o_era_card--teal .o_era_card__bar {
+    background: $era-teal;
+}
+
+// --- line table ------------------------------------------------------------
+
+.o_era_table {
+    table-layout: fixed;
+    margin-bottom: 12px;
+
+    thead {
+        // repeat the coloured head on every page of a long document
+        display: table-header-group;
+    }
+
+    thead th {
+        background: $era-indigo;
+        color: #FFFFFF;
+        font-weight: 400;
+        padding: 6px 5px;
+        border-left: 1px solid rgba(255, 255, 255, 0.14);
+        text-align: center;
+    }
+
+    thead th:first-child {
+        background: $era-indigo-dark;
+        border-left: 0;
+    }
+
+    &__hd-ar {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    &__hd-en {
+        display: block;
+        font-size: 8px;
+        direction: ltr;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    tbody tr {
+        page-break-inside: avoid;
+    }
+
+    tbody td {
+        padding: 7px 5px;
+        font-size: 10px;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid $era-line;
+    }
+
+    &__desc {
+        text-align: right;
+    }
+
+    &__desc-main {
+        font-weight: 700;
+    }
+
+    &__desc-sub {
+        color: $era-muted;
+        font-size: 9px;
+    }
+
+    &__section td {
+        background: $era-tint;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    &__note td {
+        color: $era-muted;
+        text-align: right;
+    }
+}
+
+// --- totals ----------------------------------------------------------------
+
+.o_era_foot-block {
+    border-collapse: separate;
+    border-spacing: 8px 0;
+    margin: 0 -8px;
+}
+
+.o_era_sum {
+    td {
+        padding: 4px 8px;
+        font-size: 10px;
+        border-bottom: 1px solid $era-line;
+    }
+
+    &__lbl {
+        text-align: right;
+    }
+
+    &__val {
+        text-align: left;
+        font-weight: 700;
+    }
+}
+
+.o_era_grand {
+    background: $era-teal;
+    color: #FFFFFF;
+    border-radius: 3px;
+    padding: 8px 10px;
+    margin-top: 6px;
+
+    &__ar {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    &__en {
+        font-size: 8px;
+        direction: ltr;
+        color: rgba(255, 255, 255, 0.78);
+    }
+
+    &__val {
+        text-align: left;
+        font-size: 19px;
+        font-weight: 800;
+        vertical-align: middle;
+    }
+}
+
+.o_era_tile {
+    border-radius: 3px;
+    padding: 10px 12px;
+    background: $era-tint;
+
+    &__lbl {
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    &__val {
+        text-align: left;
+        font-size: 19px;
+        font-weight: 800;
+        vertical-align: middle;
+    }
+
+    &--teal {
+        background: $era-teal;
+        color: #FFFFFF;
+
+        .o_era_tile__lbl {
+            color: rgba(255, 255, 255, 0.85);
+        }
+    }
+}
+
+// --- notes, badges, amount panel -------------------------------------------
+
+.o_era_notes {
+    background: $era-tint;
+    // no border-radius here: wkhtmltopdf draws a stray wedge where a
+    // single-side border meets a rounded corner
+    border-right: 3px solid $era-teal;
+    padding: 8px 10px;
+
+    &__title {
+        font-size: 10px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    &__body {
+        font-size: 9px;
+
+        p {
+            margin: 0 0 3px;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0 15px 0 0;
+            list-style: disc;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+    }
+}
+
+.o_era_badge {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 9px;
+    font-size: 9px;
+    font-weight: 700;
+
+    &--ok {
+        background: $era-ok-bg;
+        color: $era-ok;
+    }
+
+    &--short {
+        background: $era-short-bg;
+        color: $era-short;
+    }
+}
+
+.o_era_amount {
+    background: $era-teal;
+    color: #FFFFFF;
+    border-radius: 3px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+
+    &__lbl {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    &__sub {
+        font-size: 8px;
+        direction: ltr;
+        color: rgba(255, 255, 255, 0.78);
+    }
+
+    &__val {
+        text-align: left;
+        font-size: 26px;
+        font-weight: 800;
+        vertical-align: middle;
+    }
+}
+
+.o_era_words {
+    background: $era-tint;
+    border: 1px solid $era-line;
+    border-radius: 3px;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+
+    &__lbl {
+        font-size: 8px;
+        color: $era-muted;
+    }
+
+    &__ar {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    &__en {
+        font-size: 9px;
+        color: $era-muted;
+    }
+}
+
+// --- signatures and page footer --------------------------------------------
+
+.o_era_sign {
+    margin-top: 26px;
+
+    td {
+        text-align: center;
+        padding: 0 14px;
+        width: 33.33%;
+    }
+
+    &__line {
+        border-top: 1px solid $era-ink;
+        margin-bottom: 5px;
+    }
+
+    &__ar {
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    &__en {
+        font-size: 9px;
+        direction: ltr;
+        color: $era-muted;
+    }
+}
+
+.o_era_footline {
+    border-top: 1px solid $era-line;
+    font-size: 8px;
+    color: $era-muted;
+
+    td {
+        padding-top: 4px;
+    }
+
+    &__start {
+        text-align: right;
+    }
+
+    &__mid {
+        text-align: center;
+        direction: ltr;
+    }
+
+    &__end {
+        text-align: left;
+        direction: ltr;
+    }
+}

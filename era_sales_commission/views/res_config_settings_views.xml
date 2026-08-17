@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_commission" model="ir.ui.view">
+        <field name="name">res.config.settings.form.commission</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Sales Commissions" string="Sales Commissions"
+                     name="era_sales_commission"
+                     groups="era_sales_commission.group_era_commission_manager">
+                    <block title="Payout" name="era_commission_payout_setting">
+                        <setting id="era_commission_payout_mode_setting"
+                                 string="Default Payout"
+                                 help="Journal Entry suits an employee paid through the company. Vendor Bill suits an outside agent who invoices for their commission.">
+                            <field name="era_commission_payout_mode"/>
+                        </setting>
+                        <setting id="era_commission_journal_setting"
+                                 string="Commission Journal"
+                                 help="Journal the settlement entry is posted in. A vendor bill uses the purchase journal instead.">
+                            <field name="era_commission_journal_id"/>
+                        </setting>
+                        <setting id="era_commission_expense_account_setting"
+                                 string="Commission Expense Account"
+                                 help="Debited when a settlement is posted: the cost of the commission.">
+                            <field name="era_commission_expense_account_id"/>
+                        </setting>
+                        <setting id="era_commission_payable_account_setting"
+                                 string="Commission Payable Account"
+                                 help="Credited when a settlement is posted: what the company owes the agent until it is paid.">
+                            <field name="era_commission_payable_account_id"/>
+                        </setting>
+                    </block>
+                    <block title="Computation" name="era_commission_engine_setting">
+                        <setting id="era_commission_default_plan_setting"
+                                 string="Default Plan"
+                                 help="Proposed when a new agent is created. Nothing is computed until the agent is actually assigned to a plan.">
+                            <field name="era_commission_default_plan_id"/>
+                        </setting>
+                        <setting id="era_commission_tax_rate_setting"
+                                 string="Commission Tax Rate (%)"
+                                 help="Used when a plan takes the tax off the base by dividing: the net is the base divided by one plus this rate. It is not read at all when the plan uses the actual tax of the document.">
+                            <field name="era_commission_tax_rate"/>
+                        </setting>
+                        <setting id="era_commission_auto_generate_setting"
+                                 string="Daily Recomputation"
+                                 help="Let the scheduled action recompute the current and previous month every night. Only draft lines are ever touched: anything approved stays frozen.">
+                            <field name="era_commission_auto_generate"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

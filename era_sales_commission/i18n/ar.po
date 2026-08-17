@@ -1,0 +1,3563 @@
+# Arabic translation of era_sales_commission.
+# Era Group <info@era.net.sa>
+# This file contains the translation of the following modules:
+# 	* era_sales_commission
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 15:30+0000\n"
+"PO-Revision-Date: 2026-08-12 15:30+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__agent_count
+msgid "# Agents"
+msgstr "عدد المندوبين"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_bank_statement_line__era_commission_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__era_commission_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__era_commission_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_commission_count
+msgid "# Commission Lines"
+msgstr "عدد سطور العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__line_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__line_count
+msgid "# Lines"
+msgstr "عدد السطور"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__settlement_count
+msgid "# Settlements"
+msgstr "عدد الكشوف"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent_rate.py:0
+msgid ""
+"%(agent)s already has a rate for this commission type. Edit it instead of "
+"adding a second one."
+msgstr "لدى %(agent)s نسبة مسجّلة لهذا النوع من العمولة. عدّلها بدل إضافة سجل ثانٍ."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_target.py:0
+msgid ""
+"%(agent)s already has a target of this kind over an overlapping period. One "
+"period has to name one target."
+msgstr "لدى %(agent)s مستهدف من هذا النوع على فترة متداخلة. الفترة الواحدة لا تحتمل أكثر من مستهدف واحد."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"%(agent)s has no payment partner, so no vendor bill can be issued to them."
+msgstr "لا توجد جهة صرف على %(agent)s، فلا يمكن إصدار فاتورة مورّد باسمه."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+msgid ""
+"%(agent)s is already on %(plan)s over an overlapping period. Close the first"
+" assignment before opening a second one, otherwise the same sale would be "
+"paid twice."
+msgstr ""
+"%(agent)s مُسند بالفعل إلى %(plan)s في فترة متداخلة. أغلق الإسناد الأول قبل فتح ثانٍ، وإلا صُرفت العمولة على البيع نفسه مرتين."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"%(agent)s is not linked to an employee, so there is no payslip to push "
+"%(name)s onto. Set the employee on the agent first."
+msgstr "المندوب %(agent)s غير مرتبط بموظف، فلا توجد قسيمة راتب يُرحَّل إليها %(name)s. اربط المندوب بموظف أولاً."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_line.py:0
+msgid ""
+"%(count)s commission line(s) are already on a settlement. Cancel the "
+"settlement before deleting them."
+msgstr "%(count)s من سطور العمولة مرتبطة بكشف. ألغِ الكشف قبل حذفها."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"%(employee)s has no draft payslip covering %(from)s to %(to)s. Create the "
+"payslip first, then push."
+msgstr "لا توجد قسيمة راتب بحالة مسودّة للموظف %(employee)s تغطّي الفترة من %(from)s إلى %(to)s. أنشئ القسيمة أولاً ثم رحّل."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_plan.py:0
+msgid ""
+"%(name)s already produced commission lines that were confirmed or settled. "
+"Close it and open a new plan instead of rewriting how it computes: a paid "
+"statement has to stay reproducible."
+msgstr ""
+"%(name)s أنتجت بالفعل سطور عمولة مؤكدة أو مصروفة. أغلقها وافتح خطة جديدة بدل تعديل طريقة احتسابها: الكشف المدفوع يجب أن يبقى قابلًا لإعادة الإنتاج."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_line.py:0
+msgid ""
+"%(name)s belongs to settlement %(settlement)s and cannot be changed. Cancel "
+"the settlement first."
+msgstr ""
+"%(name)s يتبع الكشف %(settlement)s ولا يمكن تعديله. ألغِ الكشف أولًا."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s cannot go back to draft from %(state)s."
+msgstr "لا يمكن إعادة %(name)s إلى مسودة من حالة %(state)s."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_rule.py:0
+msgid "%(name)s computes on tiers but has none."
+msgstr "%(name)s يحتسب بالشرائح لكنه لا يحتوي أي شريحة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+#: code:addons/era_sales_commission/models/commission_plan.py:0
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s ends before it starts."
+msgstr "%(name)s ينتهي قبل أن يبدأ."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has been paid and cannot be cancelled."
+msgstr "%(name)s صُرف بالفعل ولا يمكن إلغاؤه."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"%(name)s has been pushed to payslip %(slip)s. Remove the commission input "
+"from the payslip before cancelling it, otherwise the agent is paid for a "
+"statement that no longer exists."
+msgstr "تم ترحيل %(name)s إلى قسيمة الراتب %(slip)s. احذف إدخال العمولة من القسيمة قبل الإلغاء، وإلا صُرف للمندوب كشف لم يعد قائماً."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_plan.py:0
+msgid ""
+"%(name)s has neither a rule nor an agent carrying a rate for %(type)s, so it"
+" would compute nothing. Either write a rule on the plan, or set the rate on "
+"the agents assigned to it."
+msgstr "لا تحمل %(name)s أي قاعدة، ولا يحمل أي من مناديبها نسبة لنوع %(type)s، فلن تحتسب شيئاً. إمّا أن تكتب قاعدة على الخطة، وإمّا أن تضبط النسبة على المناديب المسنَدين إليها."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has not been posted yet."
+msgstr "%(name)s لم يُرحَّل بعد."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has nothing to approve."
+msgstr "%(name)s لا يحتوي ما يُعتمد."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has nothing to pay. Compute it first."
+msgstr "%(name)s لا يحتوي أي مبلغ للصرف. احتسبه أولًا."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_plan.py:0
+msgid "%(name)s has settled commission lines and cannot go back to draft."
+msgstr "%(name)s له سطور عمولة مصروفة ولا يمكن إعادته إلى مسودة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has to be approved before it goes to payroll."
+msgstr "يجب اعتماد %(name)s قبل ترحيلها إلى الرواتب."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has to be approved before it is posted."
+msgstr "يجب اعتماد %(name)s قبل ترحيله."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s has to be posted before it is marked as paid."
+msgstr "يجب ترحيل %(name)s قبل تعليمه كمدفوع."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s is %(state)s and can no longer be recomputed."
+msgstr "%(name)s في حالة %(state)s ولا يمكن إعادة احتسابه."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"%(name)s is %(state)s. Cancel it first: deleting it would leave its "
+"commission lines settled and unpayable."
+msgstr ""
+"%(name)s في حالة %(state)s. ألغِه أولًا: حذفه يترك سطور عمولته مصروفة وغير قابلة للصرف."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s is already approved."
+msgstr "%(name)s معتمد بالفعل."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s is already posted as %(move)s."
+msgstr "%(name)s مُرحَّل بالفعل بالقيد %(move)s."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s totals zero, so there is nothing to post."
+msgstr "إجمالي %(name)s صفر، فلا يوجد ما يُرحَّل."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "%(name)s was already pushed to payslip %(slip)s."
+msgstr "سبق ترحيل %(name)s إلى قسيمة الراتب %(slip)s."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_engine.py:0
+msgid "%(product)s - %(start)s to %(end)s"
+msgstr "%(product)s - من %(start)s إلى %(end)s"
+
+#. module: era_sales_commission
+#: model:ir.actions.report,print_report_name:era_sales_commission.action_report_commission_statement
+msgid "'Commission - %s' % (object.name)"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">التاريخ</span><span "
+"class=\"o_era_table__hd-en\">Date</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">الحوافز والخصومات</span><span "
+"class=\"o_era_table__hd-en\">Bonuses and Deductions</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">الخصومات</span><span "
+"class=\"o_era_table__hd-en\">Deductions</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">العمولة</span><span "
+"class=\"o_era_table__hd-en\">Commission</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">العميل / الصنف</span><span "
+"class=\"o_era_table__hd-en\">Customer / Product</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">الكمية</span><span "
+"class=\"o_era_table__hd-en\">Qty</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">المستند</span><span "
+"class=\"o_era_table__hd-en\">Document</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">النسبة / سعر الوحدة</span><span "
+"class=\"o_era_table__hd-en\">Rate / Unit</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">قاعدة الاحتساب</span><span "
+"class=\"o_era_table__hd-en\">Base</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">ملخّص حسب نوع العمولة</span><span "
+"class=\"o_era_table__hd-en\">By Commission Type</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"<span class=\"o_era_table__hd-ar\">نوع العمولة</span><span "
+"class=\"o_era_table__hd-en\">Type</span>"
+msgstr ""
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_line_origin_uniq
+msgid ""
+"A commission line already exists for this source document, rule and agent."
+msgstr ""
+"يوجد سطر عمولة بالفعل لهذا المستند المصدر وهذه القاعدة وهذا المندوب."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent_rate.py:0
+msgid "A commission rate and a unit price cannot be negative."
+msgstr "لا يمكن أن تكون نسبة العمولة أو سعر الوحدة بالسالب."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_share.py:0
+msgid "A commission share belongs to a sales order or an invoice."
+msgstr "حصة العمولة تتبع أمر بيع أو فاتورة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__deduct_refunds
+msgid ""
+"A credit note produces a negative commission line, so a returned sale is "
+"taken back off the agent."
+msgstr ""
+"الإشعار الدائن يولّد سطر عمولة سالبًا، فالبيع المرتجع يُسترد من المندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__exclude_downpayment
+msgid ""
+"A down payment line is an advance on the same order, not a second sale. "
+"Leaving it in pays the commission twice."
+msgstr ""
+"بند الدفعة المقدمة سلفة على الأمر نفسه لا بيع ثانٍ. إبقاؤه يصرف العمولة مرتين."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_plan_action
+msgid ""
+"A plan says when a commission is earned -- on a confirmed order,\n"
+"                on a posted invoice, on the money actually collected, on the units\n"
+"                sold or collected, or on the margin -- and how the tax and the\n"
+"                target are taken off before the rate."
+msgstr "تقول الخطة متى تُستحقّ العمولة — على طلب مؤكّد، أو فاتورة مرحّلة، أو المبلغ المحصّل فعلاً، أو الوحدات المباعة أو المحصّلة، أو هامش الربح — وكيف تُخصم الضريبة والمستهدف قبل النسبة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_unit_price_tier.py:0
+msgid "A quantity threshold and a unit price cannot be negative."
+msgstr "لا يمكن أن يكون حدّ الكمية أو سعر الوحدة بالسالب."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_rule.py:0
+msgid "A rate, a fixed amount and a cap cannot be negative."
+msgstr "لا يمكن أن تكون النسبة أو المبلغ الثابت أو الحد الأقصى سالبة."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_settlement_action
+msgid ""
+"A settlement is the document an agent is paid on. Approving it\n"
+"                freezes the commission lines it covers and releases the money."
+msgstr ""
+"الكشف هو المستند الذي يُصرف بموجبه للمندوب. اعتماده يجمّد سطور العمولة التي يغطيها ويفرج عن المبلغ."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_share.py:0
+msgid "A share has to be a positive percentage."
+msgstr "الحصة يجب أن تكون نسبة مئوية موجبة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+msgid "A share is a percentage between 0 and 100."
+msgstr "الحصة نسبة مئوية بين ٠ و ١٠٠."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_target_action
+msgid ""
+"A target belongs to an agent and a commission type. Depending on\n"
+"                the plan it is either taken off the base before the rate, spread\n"
+"                over the lines of the period, or turned into a factor that\n"
+"                multiplies the whole commission -- never both."
+msgstr "المستهدف يخصّ مندوباً ونوع عمولة. وبحسب الخطة إمّا يُخصم من القاعدة قبل النسبة موزّعاً على سطور الفترة، وإمّا يتحوّل إلى معامل يضرب العمولة كاملةً — ولا يجتمعان."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_target.py:0
+msgid "A target cannot be negative."
+msgstr "لا يمكن أن يكون المستهدف بالسالب."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_rule.py:0
+msgid "A tier threshold and a tier rate cannot be negative."
+msgstr "لا يمكن أن تكون عتبة الشريحة أو نسبتها سالبة."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid ""
+"A unit price is not an amount, so no tax is ever\n"
+"                                taken off a quantity commission."
+msgstr "سعر الوحدة ليس مبلغاً، فلا تُخصم ضريبة أبداً من عمولة الكمية."
+
+#. module: era_sales_commission
+#: model:ir.module.category,description:era_sales_commission.module_category_commission
+msgid "Access rights for sales representative commissions."
+msgstr "صلاحيات الوصول لعمولات مندوبي المبيعات."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__achieved_amount
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+msgid "Achieved"
+msgstr "المحقق"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+msgid "Achievement"
+msgstr "التحقيق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__achievement_rate
+msgid "Achievement (%)"
+msgstr "نسبة التحقيق (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__achievement_from
+msgid "Achievement From (%)"
+msgstr "التحقيق من (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__target_tier_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Achievement Tiers"
+msgstr "شرائح التحقيق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_needaction
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_needaction
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_needaction
+msgid "Action Needed"
+msgstr "يتطلب إجراءً"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__active
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__active
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__active
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تنسيق استثناء النشاط"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__tax_method__actual
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__tax_method__actual
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__tax_method__actual
+msgid "Actual Tax of the Document"
+msgstr "الضريبة الفعلية للمستند"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__tax_method
+msgid ""
+"Actual: the tax the invoice really carries, line by line.\n"
+"Divide: the base less the base divided by one plus the commission tax rate set on the company."
+msgstr ""
+"الفعلية: الضريبة التي تحملها الفاتورة فعلاً، بنداً بنداً.\n"
+"القسمة: القاعدة ناقص القاعدة مقسومة على واحد زائد نسبة ضريبة العمولة المضبوطة على الشركة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__tax_method
+msgid ""
+"Actual: the tax the invoice really carries. Divide: the base divided by one "
+"plus the company's commission tax rate."
+msgstr "الفعلية: الضريبة التي تحملها الفاتورة فعلاً. القسمة: القاعدة مقسومة على واحد زائد نسبة ضريبة العمولة للشركة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__reuse_draft
+msgid ""
+"Add the lines to a draft settlement of the same agent and period when one "
+"exists, instead of opening a second one."
+msgstr ""
+"أضف السطور إلى كشف مسودة لنفس المندوب ونفس الفترة إن وُجد، بدل فتح كشف ثانٍ."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__line_type__adjustment
+msgid "Adjustment"
+msgstr "تسوية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__adjustment_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Adjustments"
+msgstr "التسويات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__agent_id
+#: model:res.groups,name:era_sales_commission.group_era_commission_agent
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Agent"
+msgstr "المندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_form
+msgid "Agent Rate"
+msgstr "نسبة المندوب"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_agent_rate_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_agent_rates
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_search
+msgid "Agent Rates"
+msgstr "نسب المناديب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Agent name"
+msgstr "اسم المندوب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__agent_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__assignment_ids
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_agents
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_list
+msgid "Agents"
+msgstr "المندوبون"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__amount_base
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule_tier__base_from
+msgid ""
+"Amount from which this tier's rate applies. The first tier usually starts at"
+" zero."
+msgstr ""
+"المبلغ الذي تبدأ عنده نسبة هذه الشريحة. الشريحة الأولى تبدأ عادةً من صفر."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Amounts"
+msgstr "المبالغ"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_plan.py:0
+msgid "An achievement threshold and a factor cannot be negative."
+msgstr "لا يمكن أن تكون عتبة التحقيق أو المعامل سالبة."
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_share_agent_uniq_move
+msgid "An agent appears once per invoice."
+msgstr "لا يظهر المندوب أكثر من مرة على الفاتورة الواحدة."
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_share_agent_uniq_order
+msgid "An agent appears once per sales order."
+msgstr "لا يظهر المندوب أكثر من مرة على أمر البيع الواحد."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+msgid "An agent cannot be their own manager, directly or through their team."
+msgstr "لا يمكن أن يكون المندوب مشرفًا على نفسه، مباشرةً أو عبر فريقه."
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_agent_rate_type_uniq
+msgid "An agent has a single rate per commission type and product."
+msgstr "للمندوب نسبة واحدة لكل نوع عمولة ومنتج."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_agent_action
+msgid ""
+"An agent is whoever earns a commission: an employee, an outside\n"
+"                representative, or a manager paid on what their team sells."
+msgstr ""
+"المندوب هو كل من يستحق عمولة: موظف، أو ممثل خارجي، أو مشرف يُصرف له على ما يبيعه فريقه."
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_agent_code_uniq
+msgid "An agent reference must be unique."
+msgstr "مرجع المندوب يجب أن يكون فريدًا."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Anything worth remembering about this agent."
+msgstr "أي ملاحظة تستحق التسجيل عن هذا المندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__rate
+msgid "Applied to the computation base when the computation is a percentage."
+msgstr "تُطبَّق على قاعدة الاحتساب عندما تكون طريقة الاحتساب نسبة مئوية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent_rate__rate
+msgid ""
+"Applied to the net base of a commission on sales or on collection. Any "
+"value: the business decides the percentage."
+msgstr "تُطبَّق على صافي قاعدة العمولة على المبيعات أو على التحصيل. أي قيمة: النسبة قرار العمل."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Applies To"
+msgstr "ينطبق على"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Approval"
+msgstr "الاعتماد"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Approve"
+msgstr "اعتماد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__state__approved
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__approved
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__approved_by_id
+msgid "Approved by"
+msgstr "اعتمده"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__approved_date
+msgid "Approved on"
+msgstr "تاريخ الاعتماد"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_attachment_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_attachment_count
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__base_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__base_total
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__base_amount
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Base"
+msgstr "قاعدة الاحتساب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__margin_amount
+msgid "Base less the cost of the goods, for a rule computed on margin."
+msgstr "القاعدة ناقص تكلفة البضاعة، للقاعدة المحتسبة على هامش الربح."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_adjustment__type__bonus
+msgid "Bonus"
+msgstr "حافز"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__amount_adjustment
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Bonuses and Deductions"
+msgstr "الحوافز والخصومات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__commission_type_summary
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "By Commission Type"
+msgstr "حسب نوع العمولة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__state__cancel
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__cancel
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__amount_max
+msgid "Cap"
+msgstr "الحد الأقصى للعمولة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__state__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__era_collection_ratio
+msgid "Collected (%)"
+msgstr "نسبة التحصيل (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__collection
+msgid "Collection"
+msgstr "التحصيل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_bank_statement_line__era_commission_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__era_commission_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__era_commission_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__commission_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__commission_amount
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_commission_amount
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_account_move_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_sale_order_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.product_template_form_view_era_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.view_account_payment_form_era_commission
+msgid "Commission"
+msgstr "العمولة"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Commission %(name)s"
+msgstr "عمولة %(name)s"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Commission %(name)s - %(agent)s"
+msgstr "عمولة %(name)s - %(agent)s"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_adjustment
+msgid "Commission Adjustment"
+msgstr "تسوية عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_agent
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_bank_statement_line__era_agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__era_agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__era_agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_partner__era_agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_users__era_agent_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_agent_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Commission Agent"
+msgstr "مندوب عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_agent_plan
+msgid "Commission Agent Plan Assignment"
+msgstr "إسناد خطة عمولة لمندوب"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_agent_rate
+msgid "Commission Agent Rate"
+msgstr "نسبة عمولة المندوب"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_agent_action
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+msgid "Commission Agents"
+msgstr "المندوبون"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_analysis_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_analysis
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_graph
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_pivot
+msgid "Commission Analysis"
+msgstr "تحليل العمولات"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_engine
+msgid "Commission Computation Engine"
+msgstr "محرك احتساب العمولات"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_expense_account_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_expense_account_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Commission Expense Account"
+msgstr "حساب مصروف العمولات"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_journal_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_journal_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Commission Journal"
+msgstr "يومية العمولات"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_line
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Commission Line"
+msgstr "سطر عمولة"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/account_move.py:0
+#: code:addons/era_sales_commission/models/account_payment.py:0
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+#: code:addons/era_sales_commission/models/commission_target.py:0
+#: code:addons/era_sales_commission/models/sale_order.py:0
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_line_action
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_bank_statement_line__era_commission_line_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__era_commission_line_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__era_commission_line_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__line_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_commission_line_ids
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_lines
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+msgid "Commission Lines"
+msgstr "سطور العمولات"
+
+#. module: era_sales_commission
+#: model:res.groups,name:era_sales_commission.group_era_commission_manager
+msgid "Commission Manager"
+msgstr "مدير العمولات"
+
+#. module: era_sales_commission
+#: model:res.groups,name:era_sales_commission.group_era_commission_officer
+msgid "Commission Officer"
+msgstr "مسؤول العمولات"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_payable_account_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_payable_account_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Commission Payable Account"
+msgstr "حساب العمولات المستحقة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_plan
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Commission Plan"
+msgstr "خطة عمولة"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_plan_action
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__assignment_ids
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_plans
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+msgid "Commission Plans"
+msgstr "خطط العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_rule
+msgid "Commission Rule"
+msgstr "قاعدة عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_rule_tier
+msgid "Commission Rule Tier"
+msgstr "شريحة قاعدة العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_settlement
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Commission Settlement"
+msgstr "كشف عمولة"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+#: code:addons/era_sales_commission/wizard/commission_generate.py:0
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_settlement_action
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Commission Settlements"
+msgstr "كشوف العمولات"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_share
+msgid "Commission Share"
+msgstr "حصة عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_bank_statement_line__era_agent_share_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__era_agent_share_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_agent_share_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_sale_order_view_form
+msgid "Commission Split"
+msgstr "تقسيم العمولة"
+
+#. module: era_sales_commission
+#: model:ir.actions.report,name:era_sales_commission.action_report_commission_statement
+msgid "Commission Statement"
+msgstr "كشف عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_target
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+msgid "Commission Target"
+msgstr "مستهدف عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_plan_target_tier
+msgid "Commission Target Achievement Tier"
+msgstr "شريحة تحقيق المستهدف"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_target_action
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Commission Targets"
+msgstr "المستهدفات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_tax_rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_tax_rate
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Commission Tax Rate (%)"
+msgstr "نسبة ضريبة العمولة (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__commission_type
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__commission_type
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__commission_type
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__commission_type
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__commission_type
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Commission Type"
+msgstr "نوع العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_unit_price_tier
+msgid "Commission Unit Price Tier"
+msgstr "شريحة سعر وحدة العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent_rate__commission_type__collection
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__commission_type__collection
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__commission_type__collection
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_simulate_line__commission_type__collection
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_target__commission_type__collection
+msgid "Commission on Collection"
+msgstr "عمولة على التحصيل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent_rate__commission_type__qty_collected
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__commission_type__qty_collected
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__commission_type__qty_collected
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_simulate_line__commission_type__qty_collected
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_target__commission_type__qty_collected
+msgid "Commission on Quantity Collected"
+msgstr "عمولة على الكمية المحصّلة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent_rate__commission_type__qty_sold
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__commission_type__qty_sold
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__commission_type__qty_sold
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_simulate_line__commission_type__qty_sold
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_target__commission_type__qty_sold
+msgid "Commission on Quantity Sold"
+msgstr "عمولة على الكمية المباعة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent_rate__commission_type__sales
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__commission_type__sales
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__commission_type__sales
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_simulate_line__commission_type__sales
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_target__commission_type__sales
+msgid "Commission on Sales"
+msgstr "عمولة على المبيعات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_product_product__commission_rate_per_unit
+#: model:ir.model.fields,field_description:era_sales_commission.field_product_template__commission_rate_per_unit
+msgid "Commission per Unit"
+msgstr "عمولة الوحدة"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_root
+msgid "Commissions"
+msgstr "العمولات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_sale_order__era_commission_currency_id
+msgid ""
+"Commissions are always kept in the company currency; a sales order is not."
+msgstr "تُحفظ العمولات دائمًا بعملة الشركة، بخلاف أمر البيع."
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__company_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__era_commission_currency_id
+msgid "Company Currency"
+msgstr "عملة الشركة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__calc_type
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Computation"
+msgstr "الاحتساب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Compute"
+msgstr "احتساب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__base_field
+msgid "Computed On"
+msgstr "يُحتسب على"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Computed: %(count)s commission line(s)."
+msgstr "تم الاحتساب: %(count)s سطر عمولة."
+
+#. module: era_sales_commission
+#: model:res.groups,comment:era_sales_commission.group_era_commission_officer
+msgid ""
+"Computes commissions, prepares settlements and records bonuses and "
+"deductions for every agent."
+msgstr ""
+"يحتسب العمولات ويجهّز الكشوف ويسجّل الحوافز والخصومات لكل المندوبين."
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__order
+msgid "Confirmed Sales Orders"
+msgstr "أوامر البيع المؤكدة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__basis
+msgid ""
+"Confirmed Sales Orders: as soon as the order is confirmed.\n"
+"Sales: when the invoice is posted.\n"
+"Collection: only on what the customer actually paid, in proportion to each payment.\n"
+"Quantity Sold: on the net units invoiced over the period, one line per product.\n"
+"Quantity Collected: the same units, in proportion to what the customer has paid.\n"
+"Invoiced Margin: on the invoiced amount less the cost of the goods."
+msgstr ""
+"طلبات البيع المؤكّدة: بمجرّد تأكيد الطلب.\n"
+"المبيعات: عند ترحيل الفاتورة.\n"
+"التحصيل: على ما سدّده العميل فعلاً فقط، بنسبة كل دفعة.\n"
+"الكمية المباعة: على الوحدات الصافية المفوترة خلال الفترة، سطر لكل منتج.\n"
+"الكمية المحصّلة: نفس الوحدات، بنسبة ما سدّده العميل.\n"
+"هامش الفوترة: على المبلغ المفوتر ناقص تكلفة البضاعة."
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid ""
+"Correct the rate, the unit price or the deductions below\n"
+"                        and the commission follows immediately -- there is no need\n"
+"                        to re-run the engine."
+msgstr "صحّح النسبة أو سعر الوحدة أو الخصومات أدناه وتتبعها العمولة فوراً — لا حاجة لإعادة تشغيل محرك الاحتساب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__country_id
+msgid "Country"
+msgstr "الدولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__create_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__create_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_payable_account_id
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_payable_account_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Credited when a settlement is posted: what the company owes the agent until "
+"it is paid."
+msgstr "يُجعل دائنًا عند ترحيل الكشف: ما تدين به الشركة للمندوب حتى السداد."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__currency_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__partner_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__partner_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__partner_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Customer"
+msgstr "العميل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__partner_category_id
+msgid "Customer Tag"
+msgstr "وسم العميل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_auto_generate
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_auto_generate
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Daily Recomputation"
+msgstr "إعادة احتساب يومية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__date
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_expense_account_id
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_expense_account_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Debited when a settlement is posted: the cost of the commission."
+msgstr "يُجعل مدينًا عند ترحيل الكشف: تكلفة العمولة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__user_id
+msgid "Decided by"
+msgstr "قرّرها"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__deduct_refunds
+msgid "Deduct Credit Notes"
+msgstr "خصم الإشعارات الدائنة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__use_target
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__use_target
+msgid "Deduct Target"
+msgstr "خصم المستهدف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__deduct_tax
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__deduct_tax
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__deduct_tax
+msgid "Deduct Tax"
+msgstr "خصم الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__target_mode__deduct
+msgid "Deduct the Target from the Base"
+msgstr "خصم المستهدف من القاعدة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__target_mode
+msgid ""
+"Deduct: the target is taken off the base before the rate, spread over the lines of the period in proportion to their base.\n"
+"Multiply: the whole commission of the period is multiplied by the factor of the tier the agent reached.\n"
+"Never both: that would charge the shortfall twice."
+msgstr ""
+"الخصم: يُخصم المستهدف من القاعدة قبل النسبة، موزّعاً على سطور الفترة بنسبة قواعدها.\n"
+"الضرب: تُضرب عمولة الفترة كاملةً في معامل الشريحة التي بلغها المندوب.\n"
+"ولا يجتمعان أبداً: ذلك يحاسب على النقص مرّتين."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_adjustment__type__deduction
+msgid "Deduction"
+msgstr "خصم"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_payout_mode
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_payout_mode
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Default Payout"
+msgstr "طريقة الصرف الافتراضية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__era_commission_default_plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__era_commission_default_plan_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Default Plan"
+msgstr "الخطة الافتراضية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__name
+msgid "Description"
+msgstr "الوصف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_engine__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_product_template__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_partner__display_name
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_generate__tax_method__divide
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__tax_method__divide
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__tax_method__divide
+msgid "Divide by the Tax Rate"
+msgstr "القسمة على نسبة الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__amount_draft
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__state__draft
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__state__draft
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__draft
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__basis
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+msgid "Earned On"
+msgstr "أساس الاستحقاق"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Earnings"
+msgstr "المستحقات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__employee_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__date_end
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Enter a positive amount and pick Deduction to take it off."
+msgstr "أدخل مبلغًا موجبًا واختر «خصم» لطرحه."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid "Every agent"
+msgstr "كل المندوبين"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid "Every approved plan"
+msgstr "كل الخطط المعتمدة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid "Every kind of commission"
+msgstr "كل أنواع العمولات"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+msgid "Every plan"
+msgstr "كل الخطط"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Every plan of the agent"
+msgstr "كل خطط المندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Every plan the agent is on"
+msgstr "كل خطط المندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_rate_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Every product"
+msgstr "كل المنتجات"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+msgid "Everything"
+msgstr "كل شيء"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+msgid "Everything the agent sells"
+msgstr "كل ما يبيعه المندوب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__exclude_downpayment
+msgid "Exclude Down Payments"
+msgstr "استبعاد الدفعات المقدمة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__excluded_product_ids
+msgid "Excluded Products"
+msgstr "منتجات مستثناة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Exclusions"
+msgstr "الاستثناءات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__amount_total
+msgid "Expected Commission"
+msgstr "العمولة المتوقعة"
+
+#. module: era_sales_commission
+#: model:hr.payslip.input.type,name:era_sales_commission.era_commission_input_type
+#: model:hr.salary.rule,name:era_sales_commission.era_rule_external_commission
+msgid "External Commission"
+msgstr "عمولة خارجية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__factor
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__factor
+msgid "Factor (%)"
+msgstr "المعامل (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__amount_fixed
+msgid "Fixed Amount"
+msgstr "مبلغ ثابت"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__calc_type__fixed_doc
+msgid "Fixed per Document"
+msgstr "مبلغ ثابت لكل مستند"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__calc_type__fixed_qty
+msgid "Fixed per Unit"
+msgstr "مبلغ ثابت لكل وحدة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_follower_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_follower_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_partner_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_partner_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome، مثل fa-tasks"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Free to Settle"
+msgstr "متاحة للصرف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__date_from
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__date_from
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__base_from
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__date_from
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__date_from
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__date_from
+msgid "From"
+msgstr "من تاريخ"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__qty_from
+msgid "From Quantity"
+msgstr "من كمية"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid "Generate"
+msgstr "توليد"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_generate
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid "Generate Commission Settlements"
+msgstr "توليد كشوف العمولات"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_generate_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_generate
+msgid "Generate Settlements"
+msgstr "توليد الكشوف"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_list
+msgid "Gross"
+msgstr "الإجمالي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__amount_gross
+msgid "Gross Commission"
+msgstr "إجمالي العمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__has_message
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__has_message
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__has_message
+msgid "Has Message"
+msgstr "يحتوي رسائل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__amount_max
+msgid ""
+"Highest commission this rule pays on one line. Leave at zero for no cap."
+msgstr ""
+"أعلى عمولة تدفعها هذه القاعدة على السطر الواحد. اتركه صفرًا لإلغاء الحد."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__era_collection_ratio
+msgid ""
+"How much of the invoices behind this line the customer has paid. An estimate"
+" read off the invoice residual, not a follow-up of one product inside a "
+"payment."
+msgstr "كم سدّد العميل من الفواتير خلف هذا السطر. نسبة تقديرية تُقرأ من رصيد الفاتورة المتبقّي، لا تتبّعاً لمنتج بعينه داخل الدفعة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_move__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_account_payment__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_engine__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_product_template__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_company__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_res_partner__id
+#: model:ir.model.fields,field_description:era_sales_commission.field_sale_order__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط استثنائي."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Identity"
+msgstr "البيانات الأساسية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__message_needaction
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__message_needaction
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، هناك رسائل جديدة تتطلب انتباهك."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__message_has_error
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__message_has_sms_error
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__message_has_error
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__message_has_sms_error
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__message_has_error
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، هناك رسائل واجهت خطأ في التسليم."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__move_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__move_id
+msgid "Invoice"
+msgstr "الفاتورة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__move_line_id
+msgid "Invoice Line"
+msgstr "بند الفاتورة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__margin
+msgid "Invoiced Margin"
+msgstr "هامش الربح المفوتر"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_is_follower
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_is_follower
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_is_follower
+msgid "Is Follower"
+msgstr "متابِع"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_account_move
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__move_id
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent__payout_mode__entry
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__payout_mode__entry
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__res_company__era_commission_payout_mode__entry
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Journal Entry"
+msgstr "قيد يومية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_payout_mode
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_payout_mode
+msgid ""
+"Journal Entry suits an employee paid through the company. Vendor Bill suits "
+"an outside agent who invoices for the commission."
+msgstr ""
+"قيد اليومية يناسب الموظف الذي يُصرف عبر الشركة، وفاتورة المورّد تناسب المندوب الخارجي الذي يصدر فاتورة بعمولته."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Journal Entry suits an employee paid through the company. Vendor Bill suits "
+"an outside agent who invoices for their commission."
+msgstr ""
+"قيد اليومية يناسب الموظف الذي يُصرف عبر الشركة، وفاتورة المورّد تناسب المندوب الخارجي الذي يصدر فاتورة بعمولته."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_journal_id
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_journal_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Journal the settlement entry is posted in. A vendor bill uses the purchase "
+"journal instead."
+msgstr ""
+"اليومية التي يُرحَّل فيها قيد الكشف. أما فاتورة المورّد فتستخدم يومية المشتريات."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Last Month"
+msgstr "الشهر الماضي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__write_uid
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__write_date
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_unit_price_tier__qty_to
+msgid "Leave at zero for an open-ended top tier."
+msgstr "اتركه صفراً لشريحة عليا مفتوحة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__product_id
+msgid "Leave empty for a target on everything the agent sells."
+msgstr "اتركه فارغاً لمستهدف على كل ما يبيعه المندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__plan_id
+msgid ""
+"Leave empty for a target that covers every plan of that commission type."
+msgstr "اتركه فارغاً لمستهدف يغطّي كل خطط هذا النوع من العمولة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent_rate__product_id
+msgid ""
+"Leave empty for the rate this agent earns on everything. Set it to give this"
+" agent a different figure on one product."
+msgstr "اتركه فارغاً للنسبة التي يستحقّها المندوب على كل شيء. اضبطه لمنح المندوب رقماً مختلفاً على منتج واحد."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_sale_order__era_agent_share_ids
+msgid "Leave empty to credit the whole order to its commission agent."
+msgstr "اتركه فارغًا لينسب الأمر بالكامل إلى مندوبه."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__plan_ids
+msgid "Leave empty to run every approved plan."
+msgstr "اتركه فارغًا لتشغيل كل الخطط المعتمدة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__commission_type
+msgid ""
+"Leave empty to run every kind of commission at once. Set it to settle one "
+"kind on its own -- the sales commission of the month and the collection "
+"commission of the month are two different conversations with a rep."
+msgstr "اتركه فارغاً لتشغيل كل أنواع العمولات دفعةً واحدة. اضبطه لتصفية نوع واحد على حدة — عمولة المبيعات وعمولة التحصيل حديثان مختلفان مع المندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_simulate__plan_ids
+msgid "Leave empty to run every plan the agent is assigned to."
+msgstr "اتركه فارغًا لتشغيل كل الخطط المسندة للمندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__agent_ids
+msgid "Leave empty to settle every agent with something to be paid."
+msgstr "اتركه فارغًا لتسوية كل مندوب له مستحقات."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__plan_ids
+msgid "Leave empty to settle every plan the agent is on."
+msgstr "اتركه فارغًا لتسوية كل الخطط المسندة للمندوب."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_sale_order_view_form
+msgid ""
+"Leave this empty to credit the whole order to its commission\n"
+"                        agent. Fill it in only when two people share the deal."
+msgstr ""
+"اترك هذا فارغًا لينسب الأمر بالكامل إلى مندوبه. املأه فقط عندما يتقاسم شخصان الصفقة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_auto_generate
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_auto_generate
+msgid ""
+"Let the scheduled action recompute the current and previous month every "
+"night. Only draft lines are ever touched."
+msgstr ""
+"دع المهمة المجدولة تعيد احتساب الشهر الجاري والسابق كل ليلة. لا تُمَس إلا السطور المسودة."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Let the scheduled action recompute the current and previous month every "
+"night. Only draft lines are ever touched: anything approved stays frozen."
+msgstr ""
+"دع المهمة المجدولة تعيد احتساب الشهر الجاري والسابق كل ليلة. لا تُمَس إلا السطور المسودة، وكل ما اعتُمد يبقى مجمّدًا."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_line_action
+msgid ""
+"Lines are produced by the computation engine: run\n"
+"                <b>Generate Settlements</b>, press <b>Compute</b> on a settlement,\n"
+"                or wait for the nightly scheduled action."
+msgstr ""
+"السطور ينتجها محرك الاحتساب: شغّل <b>توليد الكشوف</b>، أو اضغط <b>احتساب</b> على كشف، أو انتظر المهمة المجدولة الليلية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__parent_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+msgid "Manager"
+msgstr "المشرف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__commission_type__adjustment
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_simulate_line__commission_type__adjustment
+msgid "Manual Adjustment"
+msgstr "تسوية يدوية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__manual_amount
+msgid "Manual Amount"
+msgstr "المبلغ اليدوي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__margin_amount
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__base_field__margin
+msgid "Margin"
+msgstr "هامش الربح"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Mark as Paid"
+msgstr "تعليم كمدفوع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__product_categ_id
+msgid "Matches the category and everything under it."
+msgstr "تطابق الفئة وكل ما يندرج تحتها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__product_tag_ids
+msgid "Matches when the product carries at least one of these tags."
+msgstr "تطابق عندما يحمل المنتج واحدًا من هذه الوسوم على الأقل."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_has_error
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_has_error
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__min_base
+msgid "Minimum Amount"
+msgstr "الحد الأدنى للمبلغ"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Missed"
+msgstr "غير محقق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__periodicity__month
+msgid "Monthly"
+msgstr "شهري"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__target_mode__factor
+msgid "Multiply by an Achievement Factor"
+msgstr "الضرب في معامل التحقيق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_my_lines
+msgid "My Commission Lines"
+msgstr "سطور عمولاتي"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_my_lines_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_my
+msgid "My Commissions"
+msgstr "عمولاتي"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_my_settlements_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_my_settlements
+msgid "My Statements"
+msgstr "كشوفي"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_my_targets_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_my_targets
+msgid "My Targets"
+msgstr "مستهدفاتي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__name
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__employee_id
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__employee_id
+msgid ""
+"Needed to push a settlement to a payslip. Nothing is ever pushed on its own:"
+" it is a button a human presses."
+msgstr "لازم لترحيل كشف إلى قسيمة راتب. لا شيء يُرحَّل من تلقاء نفسه: هو زرّ يضغطه إنسان."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__amount_total
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_list
+msgid "Net Payable"
+msgstr "صافي المستحق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_unit_price_tier__qty_from
+msgid "Net quantity of the period from which this unit price applies."
+msgstr "الكمية الصافية للفترة التي يبدأ منها سريان سعر الوحدة هذا."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_line_action
+msgid "No commission line yet"
+msgstr "لا توجد سطور عمولة بعد"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"No purchase journal is configured for %(company)s, so a vendor bill cannot "
+"be created."
+msgstr ""
+"لا توجد يومية مشتريات مهيّأة في %(company)s، فلا يمكن إنشاء فاتورة مورّد."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_settlement_action
+msgid "No settlement yet"
+msgstr "لا توجد كشوف بعد"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Not Cancelled"
+msgstr "غير ملغاة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Not Settled"
+msgstr "غير مصروفة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Not in Payroll"
+msgstr "لم تُرحَّل للرواتب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__note
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__note
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__note
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/wizard/commission_generate.py:0
+msgid ""
+"Nothing to settle over this period. Check that the plans are approved and "
+"that the agents are assigned to them."
+msgstr ""
+"لا يوجد ما يُسوّى في هذه الفترة. تأكد من اعتماد الخطط ومن إسناد المندوبين إليها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_needaction_counter
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_needaction_counter
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_has_error_counter
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_has_error_counter
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__message_needaction_counter
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__message_needaction_counter
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__message_has_error_counter
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__message_has_error_counter
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي واجهت خطأ في التسليم"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+msgid "On Collection"
+msgstr "على التحصيل"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+msgid "On Quantity"
+msgstr "على الكمية"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "On Sales"
+msgstr "على المبيعات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__commission_type_summary
+msgid ""
+"One line per commission type with its total, so a statement says where the "
+"money came from without reading every line."
+msgstr "سطر لكل نوع عمولة بمجموعه، فيقول الكشف من أين جاء المبلغ دون قراءة كل سطر."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_agent_rate_action
+msgid ""
+"One row per agent and per commission type: a percentage for a\n"
+"                commission on sales or on collection, a unit price for a\n"
+"                commission on quantity. The percentage set here wins over the\n"
+"                percentage of a plan rule."
+msgstr "صفّ لكل مندوب ولكل نوع عمولة: نسبة لعمولة المبيعات أو التحصيل، وسعر وحدة لعمولة الكمية. النسبة المضبوطة هنا لها الأسبقية على نسبة قاعدة الخطة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"Only a Commission Manager may approve a settlement: approving it freezes the"
+" commission lines it covers and releases the money."
+msgstr ""
+"لا يعتمد الكشف إلا مدير العمولات: الاعتماد يجمّد سطور العمولة التي يغطيها ويفرج عن المبلغ."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid ""
+"Only an approved plan is computed. A plan needs either rules\n"
+"                        or agents carrying a rate of their own. The rules are read from\n"
+"                        top to bottom and <strong>the first one that matches a line is\n"
+"                        the one applied</strong>; they are never added up, and the rate\n"
+"                        set on the agent wins over the rate of a rule."
+msgstr "لا تُحتسب إلا خطة معتمدة. وتحتاج الخطة إمّا إلى قواعد وإمّا إلى مناديب يحملون نسبهم الخاصة. تُقرأ القواعد من أعلى إلى أسفل و<strong>أول قاعدة تطابق السطر هي المطبَّقة</strong>؛ ولا تُجمع أبداً، والنسبة المضبوطة على المندوب لها الأسبقية على نسبة القاعدة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__state
+msgid ""
+"Only an approved plan is computed. Draft is a plan being written, closed is "
+"one that no longer earns anything."
+msgstr ""
+"لا تُحتسب إلا الخطة المعتمدة. المسودة خطة قيد الكتابة، والمغلقة خطة لم تعد تستحق شيئًا."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_unit_price_tier_view_form
+msgid "Open ended"
+msgstr "مفتوحة"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_operations
+msgid "Operations"
+msgstr "العمليات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__origin_key
+msgid "Origin Key"
+msgstr "مفتاح المصدر"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__line_type__override
+msgid "Override"
+msgstr "إشراف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__override_basis
+msgid "Override Basis"
+msgstr "أساس عمولة الإشراف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__override_rate
+msgid "Override Rate (%)"
+msgstr "نسبة عمولة الإشراف (%)"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_engine.py:0
+msgid "Override on %(agent)s - %(name)s"
+msgstr "عمولة إشراف على %(agent)s - %(name)s"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Overrides"
+msgstr "عمولات الإشراف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__deduct_tax
+msgid "Overrides what the plans say for this run."
+msgstr "تتجاوز ما تقوله الخطط في هذا التشغيل."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__paid
+msgid "Paid"
+msgstr "مدفوع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__parent_path
+msgid "Parent Path"
+msgstr "المسار الأصل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__payment_id
+msgid "Payment"
+msgstr "الدفعة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__partial_id
+msgid "Payment Matching"
+msgstr "مطابقة السداد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__partner_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__partner_id
+msgid "Payment Partner"
+msgstr "جهة الصرف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__payment_state
+msgid "Payment Status"
+msgstr "حالة السداد"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_account_payment
+msgid "Payments"
+msgstr ""
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__payout_mode
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__payout_mode
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Payout"
+msgstr "طريقة الصرف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__era_payslip_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Payslip"
+msgstr "قسيمة الراتب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__era_payslip_input_id
+msgid "Payslip Input"
+msgstr "إدخال قسيمة الراتب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__calc_type__percent
+msgid "Percentage"
+msgstr "نسبة مئوية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent__override_basis__base
+msgid "Percentage of their base"
+msgstr "نسبة من قاعدة احتسابه"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Period"
+msgstr "الفترة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__date_from
+msgid "Period From"
+msgstr "الفترة من"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__date_to
+msgid "Period To"
+msgstr "الفترة إلى"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__periodicity
+msgid "Periodicity"
+msgstr "الدورية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan_target_tier__plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__plan_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__plan_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Plan"
+msgstr "الخطة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__plan_domain
+msgid "Plan Domain"
+msgstr "نطاق الخطط"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__plan_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__plan_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__plan_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Plans"
+msgstr "الخطط"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Post"
+msgstr "ترحيل"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__posted
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Posted"
+msgstr "مرحّل"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Posted as %(move)s."
+msgstr "تم الترحيل بالقيد %(move)s."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_unit_price_tier_action
+msgid "Price a unit by how many sold"
+msgstr "سعّر الوحدة بحسب الكمية المباعة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Print Statement"
+msgstr "طباعة الكشف"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_product_template
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__product_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__product_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__product_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__product_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__product_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__product_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_unit_price_tier_view_search
+msgid "Product"
+msgstr "المنتج"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__product_categ_id
+msgid "Product Category"
+msgstr "فئة المنتج"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__product_tag_ids
+msgid "Product Tags"
+msgstr "وسوم المنتج"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__tier_mode__progressive
+msgid "Progressive"
+msgstr "تصاعدي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__tier_mode
+msgid ""
+"Progressive: each slice is paid at its own rate, like an income tax scale.\n"
+"Whole Amount: the rate of the reached tier applies to the whole amount."
+msgstr ""
+"تصاعدي: كل شريحة تُدفع بنسبتها، كسلّم ضريبة الدخل.\n"
+"على كامل المبلغ: نسبة الشريحة المحققة تُطبَّق على المبلغ كله."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_default_plan_id
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_default_plan_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Proposed when a new agent is created. Nothing is computed until the agent is"
+" actually assigned to a plan."
+msgstr ""
+"تُقترح عند إنشاء مندوب جديد. ولا يُحتسب شيء حتى يُسند المندوب فعليًا إلى خطة."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Push to Payroll"
+msgstr "ترحيل للرواتب"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Pushed %(amount)s to payslip %(slip)s."
+msgstr "تم ترحيل %(amount)s إلى قسيمة الراتب %(slip)s."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__era_payslip_pushed
+msgid "Pushed to Payroll"
+msgstr "مُرحَّلة للرواتب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__quantity
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__qty_collected
+msgid "Quantity Collected"
+msgstr "الكمية المحصّلة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__qty_sold
+msgid "Quantity Sold"
+msgstr "الكمية المباعة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__periodicity__quarter
+msgid "Quarterly"
+msgstr "ربع سنوي"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__rate
+msgid "Rate (%)"
+msgstr "النسبة (%)"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Rates"
+msgstr "النسب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__rate_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Rates and Unit Prices"
+msgstr "النسب وأسعار الوحدة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_search
+msgid "Reached"
+msgstr "محقق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan_target_tier__achievement_from
+msgid "Reached share of the target from which this factor applies."
+msgstr "النسبة المحققة من المستهدف التي يبدأ عندها تطبيق هذا المعامل."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__amount_target_factor
+msgid ""
+"Read from the achievement tiers of the plan when the settlement is computed."
+msgstr "يُقرأ من شرائح التحقيق في الخطة عند احتساب الكشف."
+
+#. module: era_sales_commission
+#: model:res.groups,comment:era_sales_commission.group_era_commission_agent
+msgid ""
+"Reads their own commission lines, settlements and targets. Nothing else, and"
+" nothing of anyone else."
+msgstr "يقرأ سطور عمولته وكشوفه ومستهدفاته فقط، ولا شيء يخص غيره."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__name
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_form
+msgid "Recompute"
+msgstr "إعادة الاحتساب"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__code
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__name
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Refunds"
+msgstr "المرتجعات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__era_refund_amount
+msgid "Refunds Deducted"
+msgstr "المرتجعات المخصومة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Refuse"
+msgstr "رفض"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Refused. The commission lines are free again."
+msgstr "تم الرفض. عادت سطور العمولة متاحة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__state_id
+msgid "Region"
+msgstr "المنطقة"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Register Payment"
+msgstr "تسجيل دفعة"
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_agent_action
+msgid "Register your first commission agent"
+msgstr "سجّل أول مندوب عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__user_id
+msgid "Related User"
+msgstr "المستخدم المرتبط"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_reporting
+msgid "Reporting"
+msgstr "التقارير"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__agent_id
+msgid "Restrict this rule to a single agent of the plan."
+msgstr "قصر هذه القاعدة على مندوب واحد من مندوبي الخطة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__result_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__reuse_draft
+msgid "Reuse Draft Settlements"
+msgstr "استخدام الكشوف المسودة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__line_type__reversal
+msgid "Reversal"
+msgstr "استرداد"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_engine.py:0
+msgid "Reversal of %(name)s"
+msgstr "استرداد %(name)s"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Reversals"
+msgstr "الاستردادات"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid "Reverse or reset journal entry %(move)s before cancelling %(name)s."
+msgstr "اعكس القيد %(move)s أو أعده إلى مسودة قبل إلغاء %(name)s."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__reversed_line_id
+msgid "Reversed Line"
+msgstr "السطر المسترد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__rule_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule_tier__rule_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__rule_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Rule"
+msgstr "القاعدة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__rule_ids
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Rules"
+msgstr "القواعد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__sequence
+msgid ""
+"Rules are tried from top to bottom and the first match is applied. Put the "
+"most specific rule first."
+msgstr ""
+"تُجرَّب القواعد من الأعلى إلى الأسفل وتُطبَّق أول قاعدة مطابقة. ضع القاعدة الأخص أولًا."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid ""
+"Runs the real computation engine without writing anything. Manager\n"
+"                    overrides, target factors, bonuses and deductions are not included:\n"
+"                    this is what the rules alone would pay."
+msgstr ""
+"تشغّل محرك الاحتساب الحقيقي دون كتابة أي شيء. لا تشمل عمولات الإشراف ولا معاملات المستهدف ولا الحوافز والخصومات: هذا ما تدفعه القواعد وحدها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__message_has_sms_error
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__message_has_sms_error
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__line_type__sale
+msgid "Sale"
+msgstr "بيع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__base_field__amount
+msgid "Sale Amount"
+msgstr "قيمة البيع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__base_field
+msgid ""
+"Sale Amount uses the base of the plan. Margin uses the sale amount less the "
+"cost of the goods, whatever the plan is earned on."
+msgstr ""
+"«قيمة البيع» تستخدم قاعدة الخطة، و«هامش الربح» يستخدم قيمة البيع مطروحًا منها تكلفة البضاعة أيًا كان أساس الخطة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__basis__sales
+msgid "Sales (Posted Invoices)"
+msgstr "المبيعات (الفواتير المرحّلة)"
+
+#. module: era_sales_commission
+#: model:ir.module.category,name:era_sales_commission.module_category_commission
+#: model:res.groups.privilege,name:era_sales_commission.res_groups_privilege_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid "Sales Commissions"
+msgstr "عمولات المندوبين"
+
+#. module: era_sales_commission
+#: model:ir.actions.server,name:era_sales_commission.era_commission_cron_generate_ir_actions_server
+msgid "Sales Commissions: recompute the open periods"
+msgstr "عمولات المندوبين: إعادة احتساب الفترات المفتوحة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_sale_order
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__sale_order_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__order_id
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__sale_line_id
+msgid "Sales Order Line"
+msgstr "بند أمر البيع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__team_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__team_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__team_id
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Sales Team"
+msgstr "فريق المبيعات"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Send for Approval"
+msgstr "إرسال للاعتماد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__sequence
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_target.py:0
+msgid ""
+"Set either an amount or a quantity: a target of nothing deducts nothing and "
+"measures nothing."
+msgstr "اضبط مبلغاً أو كميةً: مستهدف بلا قيمة لا يخصم شيئاً ولا يقيس شيئاً."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__date_from
+msgid ""
+"Set on a quantity commission, which is one line per product and per period "
+"rather than one line per invoice line."
+msgstr "يُضبط على عمولة الكمية، وهي سطر لكل منتج ولكل فترة لا سطر لكل بند فاتورة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_settlement.py:0
+msgid ""
+"Set the following in Settings > Sales Commissions before posting %(name)s: "
+"%(missing)s."
+msgstr ""
+"اضبط ما يلي في الإعدادات > عمولات المندوبين قبل ترحيل %(name)s: %(missing)s."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_agent_rate_action
+msgid "Set what each agent earns"
+msgstr "اضبط ما يستحقّه كل مندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_target_action
+msgid "Set your first target"
+msgstr "حدّد أول مستهدف"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_settings
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__amount_settled
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__state__settled
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "Settled"
+msgstr "مصروف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__settlement_id
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__settlement_id
+msgid "Settlement"
+msgstr "الكشف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__date_settlement
+msgid "Settlement Date"
+msgstr "تاريخ الكشف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__settlement_state
+msgid "Settlement Status"
+msgstr "حالة الكشف"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_settlements
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Settlements"
+msgstr "الكشوف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__share
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__share_rate
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_share__share
+msgid "Share (%)"
+msgstr "الحصة (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent__override_basis__commission
+msgid "Share of their commission"
+msgstr "نسبة من عمولة المرؤوس"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__override_basis
+msgid ""
+"Share of their commission: the rate applies to what the team member earned. "
+"Percentage of their base: it applies to the amount the team member's "
+"commission was computed on."
+msgstr ""
+"نسبة من عمولة المرؤوس: تُطبَّق النسبة على ما استحقه عضو الفريق. نسبة من قاعدة احتسابه: تُطبَّق على المبلغ الذي حُسبت عليه عمولته."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__excluded_product_ids
+msgid ""
+"Shipping, handling and other pass-through products the agent did not sell."
+msgstr "الشحن والمناولة وغيرها من المنتجات العابرة التي لم يبعها المندوب."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Shipping, handling, ..."
+msgstr "الشحن والمناولة ..."
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_simulate
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Simulate"
+msgstr "محاكاة"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_simulate_action
+#: model:ir.model,name:era_sales_commission.model_era_commission_simulate
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_simulate_view_form
+msgid "Simulate Commission"
+msgstr "محاكاة عمولة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__simulated
+msgid "Simulated"
+msgstr "تمت المحاكاة"
+
+#. module: era_sales_commission
+#: model:ir.model,name:era_sales_commission.model_era_commission_simulate_line
+msgid "Simulated Commission Line"
+msgstr "سطر عمولة محاكى"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__wizard_id
+msgid "Simulation"
+msgstr "المحاكاة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Source"
+msgstr "المصدر"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Source Document"
+msgstr "المستند المصدر"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__date_start
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__state
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__state
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__state
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_search
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بحسب الأنشطة\n"
+"متأخر: تجاوز تاريخ الاستحقاق\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__use_target
+msgid "Take the agent's target of the period into account."
+msgstr "أخذ مستهدف المندوب للفترة في الحسبان."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_generate__use_target
+msgid ""
+"Take the agent's target of the period off the base, when the plan is set to "
+"deduct it. Untick to run a period without it."
+msgstr "خصم مستهدف المندوب للفترة من القاعدة، حين تكون الخطة مضبوطة على الخصم. أزل العلامة لتشغيل فترة بدونه."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__deduct_tax
+msgid "Take the tax off the base before applying the rate."
+msgstr "خصم الضريبة من القاعدة قبل تطبيق النسبة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__deduct_tax
+msgid ""
+"Take the tax off the base before applying the rate. The base is then "
+"collected with the tax in it and the tax is kept beside it, so base less tax"
+" is the net the rate is applied to."
+msgstr "خصم الضريبة من القاعدة قبل تطبيق النسبة. عندئذٍ تُجمع القاعدة شاملةً للضريبة وتُحفظ الضريبة بجانبها، فتكون القاعدة ناقص الضريبة هي الصافي الذي تُطبَّق عليه النسبة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__use_target
+msgid "Take this line's share of the period target off the base."
+msgstr "خصم حصّة هذا السطر من مستهدف الفترة من القاعدة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__target_amount
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+msgid "Target"
+msgstr "المستهدف"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_targets
+msgid "Target Achievement"
+msgstr "تحقيق المستهدف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__amount_target_adjust
+msgid "Target Adjustment"
+msgstr "تعديل المستهدف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__target_amount
+msgid "Target Deducted"
+msgstr "المستهدف المخصوم"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__amount_target_factor
+msgid "Target Factor (%)"
+msgstr "معامل المستهدف (%)"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__target_mode
+msgid "Target Mode"
+msgstr "طريقة المستهدف"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_list
+msgid "Target Qty"
+msgstr "الكمية المستهدفة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__target_qty
+msgid "Target Quantity"
+msgstr "الكمية المستهدفة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__target_qty
+msgid "Target Quantity Deducted"
+msgstr "الكمية المستهدفة المخصومة"
+
+#. module: era_sales_commission
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_targets_manage
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_target_view_graph
+msgid "Targets"
+msgstr "المستهدفات"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_form
+msgid "Tax"
+msgstr "الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__tax_deducted
+msgid "Tax Deducted"
+msgstr "الضريبة المخصومة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__tax_method
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__tax_method
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__tax_method
+msgid "Tax Method"
+msgstr "طريقة الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__amount_base
+msgid ""
+"Tax is money collected for the government, so the untaxed amount is the "
+"usual base."
+msgstr ""
+"الضريبة مبلغ يُحصَّل لصالح الدولة، لذا فالمبلغ قبل الضريبة هو القاعدة المعتادة."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Team"
+msgstr "الفريق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__parent_line_id
+msgid "Team Member Line"
+msgstr "سطر عضو الفريق"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__child_ids
+msgid "Team Members"
+msgstr "أعضاء الفريق"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid "Terms"
+msgstr "شروط التعاقد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__parent_id
+msgid "The agent who earns an override on what this one sells."
+msgstr "المندوب الذي يستحق عمولة إشراف على مبيعات هذا المندوب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_partner__era_agent_id
+#: model:ir.model.fields,help:era_sales_commission.field_res_users__era_agent_id
+msgid ""
+"The agent who earns the commission on this customer's orders, whoever "
+"encoded them."
+msgstr "المندوب الذي يستحق العمولة على أوامر هذا العميل أيًا كان من أدخلها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__target_amount
+msgid ""
+"The amount expected over the period, on the same base the plan computes on."
+msgstr "المبلغ المتوقّع خلال الفترة، على نفس القاعدة التي تحتسب عليها الخطة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__base_amount
+msgid ""
+"The amount the commission was computed on, already reduced to this agent's "
+"share of the sale. It includes the tax when the tax is deducted, so that "
+"base less tax is the net, literally."
+msgstr "المبلغ الذي احتُسبت عليه العمولة، مخفّضاً أصلاً إلى حصّة هذا المندوب من البيع. يشمل الضريبة حين تُخصم الضريبة، فتكون القاعدة ناقص الضريبة هي الصافي حرفياً."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+msgid "The assignment of %(plan)s ends before it starts."
+msgstr "إسناد %(plan)s ينتهي قبل أن يبدأ."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__manual_amount
+msgid ""
+"The commission of a line nothing computes: an override, a claw-back, a "
+"correction decided by a human."
+msgstr "عمولة سطر لا يحتسبه شيء: عمولة إشراف، أو استرداد، أو تصحيح قرّره إنسان."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_share.py:0
+msgid ""
+"The commission shares of %(name)s add up to %(total)s%%. They cannot exceed "
+"100."
+msgstr ""
+"مجموع حصص العمولة في %(name)s يبلغ %(total)s%%، ولا يمكن أن يتجاوز ١٠٠."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/wizard/commission_generate.py:0
+#: code:addons/era_sales_commission/wizard/commission_simulate.py:0
+msgid "The end date is before the start date."
+msgstr "تاريخ النهاية قبل تاريخ البداية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__parent_line_id
+msgid "The line of the team member this override was computed from."
+msgstr "سطر عضو الفريق الذي حُسبت منه عمولة الإشراف."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__target_qty
+msgid ""
+"The number of units expected over the period, for a quantity commission."
+msgstr "عدد الوحدات المتوقّع خلال الفترة، لعمولة الكمية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__tax_deducted
+msgid "The part of the base that is tax and belongs to the government."
+msgstr "الجزء من القاعدة الذي هو ضريبة ويعود للدولة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent_plan__share
+msgid ""
+"The part of the sale credited to this agent under this plan. Two agents on "
+"the same deal usually add up to 100."
+msgstr ""
+"الجزء من البيع المنسوب إلى هذا المندوب ضمن هذه الخطة. مندوبان على الصفقة نفسها يبلغ مجموعهما ١٠٠ عادةً."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__share_rate
+msgid "The part of the sale credited to this agent."
+msgstr "الجزء من البيع المنسوب إلى هذا المندوب."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_form
+msgid ""
+"The percentage set here wins over the percentage of\n"
+"                                a plan rule. Any value: the business decides it."
+msgstr "النسبة المضبوطة هنا لها الأسبقية على نسبة قاعدة الخطة. أي قيمة: العمل يقرّرها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__periodicity
+msgid ""
+"The period a settlement covers by default, and the period a target is "
+"measured over."
+msgstr ""
+"الفترة التي يغطيها الكشف افتراضيًا، والفترة التي يُقاس عليها المستهدف."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_generate_view_form
+msgid ""
+"The period is recomputed first, then one settlement is opened per\n"
+"                    agent with something to be paid. Lines already settled are never\n"
+"                    touched."
+msgstr ""
+"تُعاد احتساب الفترة أولًا، ثم يُفتح كشف لكل مندوب له مستحقات. أما السطور المصروفة فلا تُمَس."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_rule__min_base
+msgid ""
+"The rule is skipped below this amount, so the next rule gets its chance."
+msgstr "تُتجاوز القاعدة تحت هذا المبلغ لتأخذ القاعدة التالية فرصتها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__user_id
+msgid ""
+"The salesperson this agent is on a sales order or an invoice. Used to attach"
+" a document to an agent when nothing else says who sold it."
+msgstr ""
+"مندوب المبيعات الذي يمثله هذا المندوب على أمر البيع أو الفاتورة. يُستخدم لربط المستند بمندوب عندما لا يوجد ما يدل على البائع."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_target.py:0
+msgid "The target period ends before it starts."
+msgstr "فترة المستهدف تنتهي قبل أن تبدأ."
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_unit_price_tier_action
+msgid ""
+"The tier is chosen on the <b>net</b> quantity of the product over\n"
+"                the period -- what was sold less what came back -- so it is read\n"
+"                once the period is added up, not invoice by invoice."
+msgstr "تُختار الشريحة على الكمية <b>الصافية</b> للمنتج خلال الفترة — ما بيع ناقص ما ارتُجع — فتُقرأ بعد جمع الفترة، لا فاتورةً فاتورة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_unit_price_tier.py:0
+msgid "The tier of %(product)s ends before it starts."
+msgstr "شريحة %(product)s تنتهي قبل أن تبدأ."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid ""
+"The whole commission of a period is multiplied by the\n"
+"                                factor of the highest tier the agent reached. Without a\n"
+"                                target on file the factor stays at 100%."
+msgstr ""
+"تُضرب عمولة الفترة كاملة في معامل أعلى شريحة بلغها المندوب. وبلا مستهدف مسجَّل يبقى المعامل ١٠٠٪."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_search
+msgid "This Month"
+msgstr "هذا الشهر"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_line.py:0
+msgid "This line has no source document left to open."
+msgstr "لم يعد لهذا السطر مستند مصدر يمكن فتحه."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__target_qty
+msgid "This line's share of a quantity target for the period."
+msgstr "حصّة هذا السطر من مستهدف الكمية للفترة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__target_amount
+msgid ""
+"This line's share of the agent's target for the period, spread over the "
+"lines in proportion to their base."
+msgstr "حصّة هذا السطر من مستهدف المندوب للفترة، موزّعاً على السطور بنسبة قواعدها."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__tier_mode
+msgid "Tier Mode"
+msgstr "أسلوب الشرائح"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_rule__tier_ids
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__calc_type__tier
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "Tiers"
+msgstr "الشرائح"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_plan__date_to
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_generate__date_to
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__date_to
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate__date_to
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_target__date_to
+msgid "To"
+msgstr "إلى تاريخ"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__state__to_approve
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_settlement_view_search
+msgid "To Approve"
+msgstr "بانتظار الاعتماد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__qty_to
+msgid "To Quantity"
+msgstr "إلى كمية"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__amount_confirmed
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_line__state__confirmed
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_agent_view_list
+msgid "To Settle"
+msgstr "قابل للصرف"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__era_rep_total_commission
+msgid "Total Commission of the Rep"
+msgstr "إجمالي عمولة المندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "Total Commission of the Rep ("
+msgstr ""
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__amount_base__total
+msgid "Total With Taxes"
+msgstr "الإجمالي شامل الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.constraint,message:era_sales_commission.constraint_era_commission_agent_user_uniq
+msgid ""
+"Two agents cannot share the same user: a document would not know which of "
+"them earned the commission."
+msgstr ""
+"لا يمكن أن يتشارك مندوبان المستخدم نفسه: لن يعرف المستند أيهما استحق العمولة."
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_unit_price_tier.py:0
+msgid ""
+"Two unit price tiers of %(product)s overlap. One quantity has to name one "
+"price."
+msgstr "شريحتا سعر وحدة للمنتج %(product)s متداخلتان. الكمية الواحدة لا تحتمل أكثر من سعر واحد."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_adjustment__type
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__line_type
+msgid "Type"
+msgstr "النوع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي على السجل."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent_rate__unit_price
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_line__unit_price
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_simulate_line__unit_price
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_unit_price_tier__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_unit_price_tier_view_form
+msgid "Unit Price Tier"
+msgstr "شريحة سعر الوحدة"
+
+#. module: era_sales_commission
+#: model:ir.actions.act_window,name:era_sales_commission.era_commission_unit_price_tier_action
+#: model:ir.ui.menu,name:era_sales_commission.menu_era_commission_unit_price_tiers
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_unit_price_tier_view_list
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_unit_price_tier_view_search
+msgid "Unit Price Tiers"
+msgstr "شرائح سعر الوحدة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__amount_base__untaxed
+msgid "Untaxed Amount"
+msgstr "المبلغ قبل الضريبة"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__use_target
+msgid "Use Targets"
+msgstr "تفعيل المستهدفات"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.res_config_settings_view_form_commission
+msgid ""
+"Used when a plan takes the tax off the base by dividing: the net is the base"
+" divided by one plus this rate. It is not read at all when the plan uses the"
+" actual tax of the document."
+msgstr "تُستعمل حين تخصم الخطة الضريبة من القاعدة بالقسمة: الصافي هو القاعدة مقسومة على واحد زائد هذه النسبة. ولا تُقرأ إطلاقاً حين تستعمل الخطة الضريبة الفعلية للمستند."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_res_company__era_commission_tax_rate
+#: model:ir.model.fields,help:era_sales_commission.field_res_config_settings__era_commission_tax_rate
+msgid ""
+"Used when a plan takes the tax off the base by dividing: the net is the base"
+" divided by one plus this rate. Kept here rather than written into the code "
+"so a change of VAT does not need a patch."
+msgstr "تُستعمل حين تخصم الخطة الضريبة من القاعدة بالقسمة: الصافي هو القاعدة مقسومة على واحد زائد هذه النسبة. وُضعت هنا لا في الكود حتى لا يحتاج تغيير ضريبة القيمة المضافة إلى تعديل برمجي."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__date_from
+msgid "Valid From"
+msgstr "ساري من"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__date_to
+msgid "Valid To"
+msgstr "ساري إلى"
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_agent__payout_mode__bill
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_settlement__payout_mode__bill
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__res_company__era_commission_payout_mode__bill
+msgid "Vendor Bill"
+msgstr "فاتورة مورّد"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_agent__website_message_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_plan__website_message_ids
+#: model:ir.model.fields,field_description:era_sales_commission.field_era_commission_settlement__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__website_message_ids
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan__website_message_ids
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__website_message_ids
+msgid "Website communication history"
+msgstr "سجل التواصل عبر الموقع"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__era_refund_amount
+msgid "What credit notes took back off this line, for the record."
+msgstr "ما استرجعته إشعارات الدائن من هذا السطر، للتوثيق."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__origin_key
+msgid ""
+"What makes a recomputation idempotent: the same source document always "
+"produces the same key, so a line is never created twice."
+msgstr ""
+"ما يجعل إعادة الاحتساب آمنة: المستند المصدر نفسه ينتج المفتاح نفسه دائمًا، فلا يُنشأ السطر مرتين."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent_rate__unit_price
+msgid ""
+"What one unit earns on a quantity commission, when no unit price tier covers"
+" the quantity."
+msgstr "ما تستحقّه الوحدة الواحدة في عمولة الكمية، حين لا تغطّي أي شريحة سعر وحدة تلك الكمية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__unit_price
+msgid "What one unit earns on a quantity commission."
+msgstr "ما تستحقّه الوحدة الواحدة في عمولة الكمية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_product_product__commission_rate_per_unit
+#: model:ir.model.fields,help:era_sales_commission.field_product_template__commission_rate_per_unit
+msgid ""
+"What one unit of this product earns on a quantity commission. It is the "
+"third source consulted: a unit price tier of the product wins over it, and a"
+" unit price set on the agent wins over that."
+msgstr "ما تستحقّه وحدة واحدة من هذا المنتج في عمولة الكمية. وهو المصدر الثالث المُراجَع: شريحة سعر وحدة المنتج تسبقه، وسعر الوحدة المضبوط على المندوب يسبق الشريحة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__era_rep_total_commission
+msgid ""
+"What the agent is actually owed, all commission types together, after the "
+"achievement factor and the bonuses and deductions. This is the figure pushed"
+" to a payslip."
+msgstr "ما يستحقّه المندوب فعلاً، من كل أنواع العمولات مجتمعةً، بعد معامل التحقيق والحوافز والخصومات. وهو الرقم الذي يُرحَّل إلى قسيمة الراتب."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__factor
+msgid ""
+"What the commission of the period is multiplied by, read from the plan's "
+"achievement tiers. Only used when the plan deals with its target as a "
+"factor."
+msgstr "ما تُضرب فيه عمولة الفترة، مقروءاً من شرائح تحقيق الخطة. لا يُستعمل إلا حين تتعامل الخطة مع مستهدفها كمعامل."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_plan_target_tier__factor
+msgid ""
+"What the period's commission is multiplied by. 100 pays it in full, 50 "
+"halves it, 110 adds a bonus."
+msgstr ""
+"ما تُضرب فيه عمولة الفترة. ١٠٠ تصرفها كاملة، و٥٠ تنصّفها، و١١٠ تضيف حافزًا."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__override_rate
+msgid "What this agent earns on the sales of the agents under them."
+msgstr "ما يستحقه هذا المندوب على مبيعات المندوبين التابعين له."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__rate_ids
+msgid ""
+"What this agent earns per commission type. The percentage set here wins over"
+" the percentage of a plan rule."
+msgstr "ما يستحقّه هذا المندوب لكل نوع عمولة. النسبة المضبوطة هنا لها الأسبقية على نسبة قاعدة الخطة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_line__commission_type
+msgid ""
+"What this line was earned on: an amount sold, an amount collected, a "
+"quantity sold, a quantity collected, or a manual adjustment."
+msgstr "على أي شيء استُحقّ هذا السطر: مبلغ مُباع، أو مبلغ محصّل، أو كمية مباعة، أو كمية محصّلة، أو تسوية يدوية."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_target__commission_type
+msgid "Which of the agent's commissions this target applies to."
+msgstr "على أي عمولات المندوب ينطبق هذا المستهدف."
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_line_view_form
+msgid "Who and What"
+msgstr "الطرف والمستند"
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_account_payment__era_agent_id
+msgid ""
+"Who earns the commission on the money this payment brought in. Leave it as "
+"it is to credit the agent of the invoice."
+msgstr "من يستحقّ العمولة على المبلغ الذي جلبه هذا السند. اتركه كما هو لتُنسب إلى مندوب الفاتورة."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_account_bank_statement_line__era_agent_id
+#: model:ir.model.fields,help:era_sales_commission.field_account_move__era_agent_id
+msgid ""
+"Who earns the commission on this invoice. Copied from the sales order, or "
+"read from the customer or the salesperson."
+msgstr ""
+"من يستحق العمولة على هذه الفاتورة. تُنقل من أمر البيع أو تُقرأ من العميل أو من مندوب المبيعات."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_sale_order__era_agent_id
+msgid ""
+"Who earns the commission on this order. Filled from the customer, or from "
+"the salesperson, and can be overridden by hand."
+msgstr ""
+"من يستحق العمولة على هذا الأمر. يُملأ من العميل أو من مندوب المبيعات، ويمكن تغييره يدويًا."
+
+#. module: era_sales_commission
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_agent__partner_id
+#: model:ir.model.fields,help:era_sales_commission.field_era_commission_settlement__partner_id
+msgid ""
+"Who the money is owed to. Required when the settlement is paid out as a "
+"vendor bill."
+msgstr "الجهة المستحقة للمبلغ. مطلوبة عندما يُصرف الكشف كفاتورة مورّد."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_rule__tier_mode__flat
+msgid "Whole Amount"
+msgstr "على كامل المبلغ"
+
+#. module: era_sales_commission
+#: model_terms:ir.actions.act_window,help:era_sales_commission.era_commission_plan_action
+msgid "Write your first commission plan"
+msgstr "اكتب أول خطة عمولة"
+
+#. module: era_sales_commission
+#: model:res.groups,comment:era_sales_commission.group_era_commission_manager
+msgid ""
+"Writes the plans and the rules, sets the targets, and is the only signature "
+"that releases a settlement and posts it."
+msgstr ""
+"يكتب الخطط والقواعد ويحدد المستهدفات، وهو التوقيع الوحيد الذي يفرج عن الكشف ويرحّله."
+
+#. module: era_sales_commission
+#: model:ir.model.fields.selection,name:era_sales_commission.selection__era_commission_plan__periodicity__year
+msgid "Yearly"
+msgstr "سنوي"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/commission_agent.py:0
+msgid "agent_id"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "e.g. 5% on fabrics"
+msgstr "مثال: ٥٪ على الأقمشة"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.era_commission_plan_view_form
+msgid "e.g. Standard 3% on collection"
+msgstr "مثال: ٣٪ قياسية على التحصيل"
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/wizard/commission_generate.py:0
+msgid "id"
+msgstr ""
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/account_move.py:0
+msgid "move_id"
+msgstr ""
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/account_payment.py:0
+msgid "payment_id"
+msgstr ""
+
+#. module: era_sales_commission
+#. odoo-python
+#: code:addons/era_sales_commission/models/sale_order.py:0
+msgid "sale_order_id"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "إجمالي العمولة / Gross Commission"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "إجمالي عمولة المندوب"
+msgstr "إجمالي عمولة المندوب"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "الحوافز والخصومات / Adjustments"
+msgstr ""
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "الضريبة المخصومة / Tax Deducted"
+msgstr "الضريبة المخصومة / Tax Deducted"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "المرتجعات المخصومة / Refunds Deducted"
+msgstr "المرتجعات المخصومة / Refunds Deducted"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "المستهدف المخصوم / Target Deducted"
+msgstr "المستهدف المخصوم / Target Deducted"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "ت:"
+msgstr "ت:"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "ض:"
+msgstr "ض:"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid "م:"
+msgstr "م:"
+
+#. module: era_sales_commission
+#: model_terms:ir.ui.view,arch_db:era_sales_commission.report_commission_statement_document
+msgid ""
+"معامل تحقيق المستهدف / Target Factor\n"
+"                                    ("
+
+msgstr ""
+

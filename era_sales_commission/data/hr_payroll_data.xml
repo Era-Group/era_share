@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The payroll side is one input and one rule, nothing more. A settlement
+        is pushed onto a draft payslip as an "other input"; the rule reads that
+        input and pays it as an allowance. Everything else about the payslip is
+        left to whoever runs payroll.
+
+        The rule hangs off the country-less "Regular Pay" structure on purpose:
+        the Saudi structures come from a localization module that is not
+        installed here. Install one later and this rule has to be copied onto
+        the structure it ships; that is documented in README.md.
+    -->
+
+    <record id="era_commission_input_type" model="hr.payslip.input.type">
+        <field name="name">External Commission</field>
+        <field name="code">EXT_COMM</field>
+        <field name="country_id" eval="False"/>
+        <field name="available_in_attachments" eval="False"/>
+        <field name="is_quantity" eval="False"/>
+    </record>
+
+    <!-- Make it offerable on the general structure without touching anything
+         else that structure carries. -->
+    <record id="hr_payroll.structure_002" model="hr.payroll.structure">
+        <field name="input_line_type_ids" eval="[(4, ref('era_commission_input_type'))]"/>
+    </record>
+
+    <record id="era_rule_external_commission" model="hr.salary.rule">
+        <field name="name">External Commission</field>
+        <field name="code">EXT_COMM</field>
+        <field name="sequence">160</field>
+        <field name="struct_id" ref="hr_payroll.structure_002"/>
+        <field name="category_id" ref="hr_payroll.ALW"/>
+        <field name="condition_select">input</field>
+        <field name="condition_other_input_id" ref="era_commission_input_type"/>
+        <field name="amount_select">input</field>
+        <field name="amount_other_input_id" ref="era_commission_input_type"/>
+    </record>
+
+</odoo>

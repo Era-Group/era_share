@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_view_era_commission" model="ir.ui.view">
+        <field name="name">product.template.form.era.commission</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales']/group[@name='sale']" position="inside">
+                <group string="Commission" name="era_commission"
+                       groups="era_sales_commission.group_era_commission_manager">
+                    <field name="currency_id" invisible="1"/>
+                    <field name="commission_rate_per_unit"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

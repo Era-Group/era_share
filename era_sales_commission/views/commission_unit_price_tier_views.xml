@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_unit_price_tier_view_list" model="ir.ui.view">
+        <field name="name">era.commission.unit.price.tier.list</field>
+        <field name="model">era.commission.unit.price.tier</field>
+        <field name="arch" type="xml">
+            <list string="Unit Price Tiers" editable="bottom">
+                <field name="product_id"/>
+                <field name="qty_from"/>
+                <field name="qty_to"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="unit_price"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_unit_price_tier_view_form" model="ir.ui.view">
+        <field name="name">era.commission.unit.price.tier.form</field>
+        <field name="model">era.commission.unit.price.tier</field>
+        <field name="arch" type="xml">
+            <form string="Unit Price Tier">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="unit_price"/>
+                        </group>
+                        <group>
+                            <field name="qty_from"/>
+                            <field name="qty_to" placeholder="Open ended"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_unit_price_tier_view_search" model="ir.ui.view">
+        <field name="name">era.commission.unit.price.tier.search</field>
+        <field name="model">era.commission.unit.price.tier</field>
+        <field name="arch" type="xml">
+            <search string="Unit Price Tiers">
+                <field name="product_id"/>
+                <group>
+                    <filter name="group_by_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_unit_price_tier_action" model="ir.actions.act_window">
+        <field name="name">Unit Price Tiers</field>
+        <field name="res_model">era.commission.unit.price.tier</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_commission_unit_price_tier_view_search"/>
+        <field name="context">{'search_default_group_by_product': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Price a unit by how many sold</p>
+            <p>
+                The tier is chosen on the <b>net</b> quantity of the product over
+                the period -- what was sold less what came back -- so it is read
+                once the period is added up, not invoice by invoice.
+            </p>
+        </field>
+    </record>
+
+</odoo>

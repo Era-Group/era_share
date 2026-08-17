@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        A4's default top margin is 52mm, which drops the body far below the
+        ~30mm Era header. Side margins are left to css (css_margins), the same
+        way Odoo's own A4 format does it, so the header, body and footer keep a
+        single shared alignment.
+    -->
+    <record id="paperformat_era_document" model="report.paperformat">
+        <field name="name">Era Bilingual Document (A4)</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">34</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">34</field>
+        <field name="dpi">90</field>
+        <field name="css_margins" eval="True"/>
+    </record>
+
+    <!--
+        Only the paperformat of the standard reports is touched; report_name,
+        report_file and the action ids stay untouched so every existing Print
+        button, mail template and portal attachment keeps working.
+    -->
+    <record id="sale.action_report_saleorder" model="ir.actions.report">
+        <field name="paperformat_id" ref="paperformat_era_document"/>
+    </record>
+
+    <record id="sale.action_report_pro_forma_invoice" model="ir.actions.report">
+        <field name="paperformat_id" ref="paperformat_era_document"/>
+    </record>
+
+    <record id="stock.action_report_delivery" model="ir.actions.report">
+        <field name="paperformat_id" ref="paperformat_era_document"/>
+    </record>
+
+    <record id="account.action_report_payment_receipt" model="ir.actions.report">
+        <field name="paperformat_id" ref="paperformat_era_document"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_sale_order_view_form" model="ir.ui.view">
+        <field name="name">sale.order.form.era.commission</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_era_commission" type="object"
+                        class="oe_stat_button" icon="fa-percent"
+                        invisible="era_commission_count == 0"
+                        groups="era_sales_commission.group_era_commission_officer">
+                    <field name="era_commission_count" widget="statinfo" string="Commission"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="era_agent_id"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Commission Split" name="era_commission_split"
+                      groups="era_sales_commission.group_era_commission_officer">
+                    <div class="alert alert-info" role="alert">
+                        Leave this empty to credit the whole order to its commission
+                        agent. Fill it in only when two people share the deal.
+                    </div>
+                    <field name="era_agent_share_ids">
+                        <list string="Commission Split" editable="bottom">
+                            <field name="agent_id"/>
+                            <field name="share"/>
+                            <field name="company_id" column_invisible="True"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="era_commission_sale_order_view_list" model="ir.ui.view">
+        <field name="name">sale.order.list.era.commission</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="era_agent_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

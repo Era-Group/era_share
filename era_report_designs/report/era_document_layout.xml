@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Shared skeleton of the three Era bilingual documents.
+
+        Callers must t-set the following before t-call'ing it; the body of the
+        t-call becomes the document-specific block (line table, totals, ...)
+        and is rendered between the party cards and the signature row.
+
+          doc                 record being printed (already lang-forced)
+          era_title_ar/_en    document title, arabic line + spaced latin line
+          era_identity_name   optional company identity block, left of the title
+          era_identity_sub    optional second line under it
+          era_meta            [{'ar': .., 'en': .., 'val': ..}, ..] meta bar
+          era_parties         [{'variant': 'indigo'|'teal', 'title_ar': ..,
+                                'title_en': .., 'name': ..,
+                                'rows': [(label_ar, value), ..]}, ..]
+          era_signatures      [(label_ar, label_en), ..]
+
+        dir="rtl" is forced on the three roots on purpose: web.report_layout
+        derives the page direction from the *user's* language, which is en_US
+        here, so the document would otherwise come out left-to-right.
+    -->
+    <template id="era_document_layout">
+        <t t-set="era_company" t-value="doc.company_id.sudo().with_context(lang='en_US')"/>
+
+        <div class="header o_era_doc" dir="rtl">
+            <table class="o_era_head">
+                <tr>
+                    <td class="o_era_head__logo" t-attf-style="width: {{'34%' if era_identity_name else '50%'}}">
+                        <img t-if="era_company.logo" t-att-src="image_data_uri(era_company.logo)" alt="Logo"/>
+                    </td>
+                    <td t-attf-style="text-align: {{'center' if era_identity_name else 'left'}}">
+                        <div class="o_era_head__title-ar" t-out="era_title_ar"/>
+                        <div class="o_era_head__title-en" t-out="era_title_en"/>
+                    </td>
+                    <td t-if="era_identity_name" class="o_era_head__id" style="width: 30%">
+                        <div class="o_era_head__id-name" t-out="era_identity_name"/>
+                        <div class="o_era_head__id-sub" t-out="era_identity_sub"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="article o_era_doc" dir="rtl"
+             t-att-data-oe-model="doc._name"
+             t-att-data-oe-id="doc.id"
+             data-oe-lang="en_US">
+
+            <table class="o_era_meta">
+                <tr>
+                    <td t-foreach="era_meta" t-as="cell" t-attf-style="width: {{100 / len(era_meta)}}%">
+                        <div class="o_era_meta__lbl"><t t-out="cell['ar']"/> / <span class="o_era_ltr" t-out="cell['en']"/></div>
+                        <div class="o_era_meta__val" t-out="cell['val']"/>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="o_era_cards">
+                <tr>
+                    <td t-foreach="era_parties" t-as="party">
+                        <div t-attf-class="o_era_card o_era_card--{{party['variant']}}">
+                            <div class="o_era_card__bar">
+                                <table>
+                                    <tr>
+                                        <td class="o_era_card__bar-ar" t-out="party['title_ar']"/>
+                                        <td class="o_era_card__bar-en" t-out="party['title_en']"/>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="o_era_card__body">
+                                <div class="o_era_card__name" t-out="party['name']"/>
+                                <table>
+                                    <tr t-foreach="party['rows']" t-as="row">
+                                        <td class="o_era_card__lbl" t-out="row[0]"/>
+                                        <td class="o_era_card__val" t-out="row[1]"/>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <t t-out="0"/>
+
+            <t t-call="era_report_designs.era_signature_row"/>
+        </div>
+
+        <div class="footer o_era_doc" dir="rtl">
+            <!-- o_footer_content is what web/report.scss uses to keep the bottom
+                 margin in css, since the paperformat leaves margins to css -->
+            <div class="o_footer_content">
+                <table class="o_era_footline">
+                    <tr>
+                        <td class="o_era_footline__start" t-out="era_company.name"/>
+                        <td class="o_era_footline__mid">Page <span class="page"/> / <span class="topage"/></td>
+                        <td class="o_era_footline__end">
+                            <t t-out="era_company.email"/>
+                            <t t-if="era_company.email and era_company.phone"> | </t>
+                            <t t-out="era_company.phone"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="era_signature_row">
+        <table class="o_era_sign">
+            <tr>
+                <td t-foreach="era_signatures" t-as="sig">
+                    <div class="o_era_sign__line"/>
+                    <div class="o_era_sign__ar" t-out="sig[0]"/>
+                    <div class="o_era_sign__en" t-out="sig[1]"/>
+                </td>
+            </tr>
+        </table>
+    </template>
+
+    <template id="era_notes_box">
+        <div class="o_era_notes">
+            <div class="o_era_notes__title">ملاحظات / Notes</div>
+            <div class="o_era_notes__body"><t t-out="0"/></div>
+        </div>
+    </template>
+
+</odoo>

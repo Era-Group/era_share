@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_commission_statement" model="ir.actions.report">
+        <field name="name">Commission Statement</field>
+        <field name="model">era.commission.settlement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_sales_commission.report_commission_statement</field>
+        <field name="report_file">era_sales_commission.report_commission_statement</field>
+        <field name="paperformat_id" ref="era_report_designs.paperformat_era_document"/>
+        <field name="print_report_name">'Commission - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_era_commission_settlement"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_agent_rate_view_list" model="ir.ui.view">
+        <field name="name">era.commission.agent.rate.list</field>
+        <field name="model">era.commission.agent.rate</field>
+        <field name="arch" type="xml">
+            <list string="Agent Rates" editable="bottom">
+                <field name="agent_id"/>
+                <field name="commission_type"/>
+                <field name="product_id" optional="show"
+                       placeholder="Every product"/>
+                <field name="rate"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="unit_price"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_rate_view_form" model="ir.ui.view">
+        <field name="name">era.commission.agent.rate.form</field>
+        <field name="model">era.commission.agent.rate</field>
+        <field name="arch" type="xml">
+            <form string="Agent Rate">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="commission_type"/>
+                            <field name="product_id" placeholder="Every product"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="rate"
+                                   invisible="commission_type not in ('sales', 'collection')"/>
+                            <field name="unit_price"
+                                   invisible="commission_type not in ('qty_sold', 'qty_collected')"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_rate_view_search" model="ir.ui.view">
+        <field name="name">era.commission.agent.rate.search</field>
+        <field name="model">era.commission.agent.rate</field>
+        <field name="arch" type="xml">
+            <search string="Agent Rates">
+                <field name="agent_id"/>
+                <field name="product_id"/>
+                <group>
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_type" string="Commission Type"
+                            context="{'group_by': 'commission_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_agent_rate_action" model="ir.actions.act_window">
+        <field name="name">Agent Rates</field>
+        <field name="res_model">era.commission.agent.rate</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_commission_agent_rate_view_search"/>
+        <field name="context">{'search_default_group_by_agent': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set what each agent earns</p>
+            <p>
+                One row per agent and per commission type: a percentage for a
+                commission on sales or on collection, a unit price for a
+                commission on quantity. The percentage set here wins over the
+                percentage of a plan rule.
+            </p>
+        </field>
+    </record>
+
+</odoo>

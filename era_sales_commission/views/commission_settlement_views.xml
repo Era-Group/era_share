@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_settlement_view_form" model="ir.ui.view">
+        <field name="name">era.commission.settlement.form</field>
+        <field name="model">era.commission.settlement</field>
+        <field name="arch" type="xml">
+            <form string="Commission Settlement">
+                <header>
+                    <button name="action_compute" type="object" string="Compute"
+                            class="btn-primary" invisible="state not in ('draft', 'to_approve')"
+                            groups="era_sales_commission.group_era_commission_officer"/>
+                    <button name="action_submit" type="object" string="Send for Approval"
+                            invisible="state != 'draft'"
+                            groups="era_sales_commission.group_era_commission_officer"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state not in ('draft', 'to_approve')"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_refuse" type="object" string="Refuse"
+                            invisible="state != 'to_approve'"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_post" type="object" string="Post"
+                            class="btn-primary" invisible="state != 'approved'"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_register_payment" type="object"
+                            string="Register Payment" class="btn-primary"
+                            invisible="state != 'posted'"
+                            groups="account.group_account_invoice"/>
+                    <button name="action_mark_paid" type="object" string="Mark as Paid"
+                            invisible="state != 'posted'"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_push_to_payslip" type="object"
+                            string="Push to Payroll"
+                            invisible="state not in ('approved', 'posted', 'paid') or era_payslip_pushed"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_print" type="object" string="Print Statement"
+                            invisible="not line_ids"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('paid', 'cancel')"
+                            groups="era_sales_commission.group_era_commission_manager"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state not in ('cancel', 'to_approve')"
+                            groups="era_sales_commission.group_era_commission_officer"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,to_approve,approved,posted,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_move" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                string="Journal Entry" invisible="not move_id"/>
+                        <button name="action_view_payslip" type="object"
+                                class="oe_stat_button" icon="fa-money"
+                                string="Payslip" invisible="not era_payslip_id"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="agent_id" readonly="state != 'draft'"/>
+                            <field name="partner_id" invisible="not partner_id"/>
+                            <field name="date_from" readonly="state != 'draft'"/>
+                            <field name="date_to" readonly="state != 'draft'"/>
+                            <field name="plan_ids" widget="many2many_tags"
+                                   readonly="state != 'draft'"
+                                   placeholder="Every plan the agent is on"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="date_settlement" readonly="state not in ('draft', 'to_approve', 'approved')"/>
+                            <field name="payout_mode" readonly="state != 'draft'"/>
+                            <field name="line_count"/>
+                            <field name="employee_id" invisible="not employee_id"/>
+                            <field name="era_payslip_pushed" invisible="not era_payslip_pushed"/>
+                            <field name="payment_state" invisible="not move_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Commission Lines" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list string="Commission Lines"
+                                      decoration-danger="commission_amount &lt; 0">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="commission_type" optional="show"/>
+                                    <field name="partner_id" optional="show"/>
+                                    <field name="product_id" optional="hide"/>
+                                    <field name="plan_id" optional="hide"/>
+                                    <field name="line_type" optional="hide"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="quantity" optional="hide"/>
+                                    <field name="base_amount" sum="Base"/>
+                                    <field name="era_refund_amount" sum="Refunds" optional="hide"/>
+                                    <field name="tax_deducted" sum="Tax" optional="hide"/>
+                                    <field name="target_amount" sum="Target" optional="hide"/>
+                                    <field name="rate"/>
+                                    <field name="unit_price" optional="hide"/>
+                                    <field name="commission_amount" sum="Commission"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Bonuses and Deductions" name="adjustments">
+                            <field name="adjustment_ids"
+                                   readonly="state not in ('draft', 'to_approve')">
+                                <list string="Adjustments" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="type"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="amount"/>
+                                    <field name="user_id" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                    <group string="By Commission Type" invisible="not commission_type_summary">
+                        <field name="commission_type_summary" nolabel="1" colspan="2"
+                               readonly="1"/>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_gross"/>
+                        <field name="amount_target_factor"
+                               invisible="amount_target_factor == 100"/>
+                        <field name="amount_target_adjust"
+                               invisible="amount_target_factor == 100"/>
+                        <field name="amount_adjustment"
+                               invisible="not adjustment_ids"/>
+                        <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                        <field name="era_rep_total_commission" invisible="1"/>
+                    </group>
+                    <div class="oe_clear"/>
+                    <group string="Approval" invisible="not approved_by_id">
+                        <group>
+                            <field name="approved_by_id"/>
+                        </group>
+                        <group>
+                            <field name="approved_date"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="era_commission_settlement_view_list" model="ir.ui.view">
+        <field name="name">era.commission.settlement.list</field>
+        <field name="model">era.commission.settlement</field>
+        <field name="arch" type="xml">
+            <list string="Commission Settlements"
+                  decoration-muted="state == 'cancel'"
+                  decoration-success="state == 'paid'">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="line_count" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="amount_gross" sum="Gross" optional="show"/>
+                <field name="amount_total" sum="Net Payable"/>
+                <field name="era_payslip_pushed" optional="hide"/>
+                <field name="move_id" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'to_approve'"
+                       decoration-success="state in ('approved', 'posted', 'paid')"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="era_commission_settlement_view_search" model="ir.ui.view">
+        <field name="name">era.commission.settlement.search</field>
+        <field name="model">era.commission.settlement</field>
+        <field name="arch" type="xml">
+            <search string="Commission Settlements">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <filter name="filter_to_approve" string="To Approve"
+                        domain="[('state', '=', 'to_approve')]"/>
+                <filter name="filter_approved" string="Approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <filter name="filter_posted" string="Posted"
+                        domain="[('state', 'in', ('posted', 'paid'))]"/>
+                <separator/>
+                <filter name="filter_open" string="Not Cancelled"
+                        domain="[('state', '!=', 'cancel')]"/>
+                <separator/>
+                <filter name="filter_payroll_pending" string="Not in Payroll"
+                        domain="[('era_payslip_pushed', '=', False)]"/>
+                <group>
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_period" string="Period" context="{'group_by': 'date_from:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="era_commission_settlement_action" model="ir.actions.act_window">
+        <field name="name">Commission Settlements</field>
+        <field name="res_model">era.commission.settlement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_commission_settlement_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No settlement yet</p>
+            <p>
+                A settlement is the document an agent is paid on. Approving it
+                freezes the commission lines it covers and releases the money.
+            </p>
+        </field>
+    </record>
+
+    <record id="era_commission_my_settlements_action" model="ir.actions.act_window">
+        <field name="name">My Statements</field>
+        <field name="res_model">era.commission.settlement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="era_commission_settlement_view_search"/>
+        <field name="domain">[('agent_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

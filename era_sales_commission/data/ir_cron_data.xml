@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Nightly recomputation of the current and previous month. It only
+            ever touches draft lines: anything confirmed or settled has been
+            approved by a manager and is frozen. Switch it off per company with
+            "Daily Recomputation" in the settings.
+        -->
+        <record id="era_commission_cron_generate" model="ir.cron">
+            <field name="name">Sales Commissions: recompute the open periods</field>
+            <field name="model_id" ref="model_era_commission_engine"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_generate()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=1, minute=30) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

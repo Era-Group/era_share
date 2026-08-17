@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="era_commission_account_move_view_form" model="ir.ui.view">
+        <field name="name">account.move.form.era.commission</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_era_commission" type="object"
+                        class="oe_stat_button" icon="fa-percent"
+                        invisible="era_commission_count == 0"
+                        groups="era_sales_commission.group_era_commission_officer">
+                    <field name="era_commission_count" widget="statinfo" string="Commission"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='invoice_user_id']" position="after">
+                <field name="era_agent_id"
+                       invisible="move_type not in ('out_invoice', 'out_refund')"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

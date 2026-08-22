@@ -447,9 +447,9 @@ class VoipCall(models.Model):
         if re.search(r"Speaker\s*\d+:", text):
             text = re.sub(r"\s*(Speaker\s*\d+:)", r"\n\1", text).strip()
 
-        text1 = call._format_transcript_with_agent(text) or ""
+        formatted_text = call._format_transcript_with_agent(text) or ""
         self._commit_if_needed()
-        transcript = text1 + "\n ------------ \n" + text
+        transcript = call._select_transcript_output(text, formatted_text)
 
         # Generate one-liner summary
         summary = None
@@ -476,10 +476,7 @@ class VoipCall(models.Model):
         if not self._safe_write(call, vals):
             return
         self._cleanup_ai_recording_copy(call)
-        # Agent formatting returns a "..." placeholder on failure (e.g. the
-        # OpenAI formatting agent blocked by compliance); fall back to the raw
-        # transcript so analysis — a separate, non-OpenAI agent — still runs.
-        self._analyze_call(call, text1 if len(text1.strip(" .")) > 10 else text)
+        self._analyze_call(call, transcript)
 
     def _openai_api_key_account(self):
         """OpenAI era.ai.account (api_key mode) holding the OpenAI key.
@@ -502,7 +499,7 @@ class VoipCall(models.Model):
             limit=1,
         )
 
-    def _config_ai_account(self, param):
+    def _config_ai_account(self, param, transcription=False):
         """Resolve a configured era.ai.account from an ir.config_parameter id."""
         Account = self.env.get("era.ai.account")
         if Account is None:
@@ -514,10 +511,17 @@ class VoipCall(models.Model):
             account = Account.sudo().browse(int(acc_id)).exists()
         except (TypeError, ValueError):
             return None
-        # Only api_key accounts expose a usable HTTP key; a cli_proxy account
-        # falls through to the (empty) native key and fails. Reject it so the
-        # caller falls back to a real OpenAI API-key account.
-        if account and account.active and account.auth_mode == "api_key":
+        if not account or not account.active:
+            return None
+        if transcription:
+            # Speech is HTTP-only. Chat CLI accounts have no audio endpoint.
+            return account if (
+                account.auth_mode == "api_key"
+                and account.provider in ("openai", "assemblyai")
+            ) else None
+        # Text generation supports both API-key and local CLI accounts, but not
+        # a transcription-only provider.
+        if account.provider != "assemblyai":
             return account
         return None
 
@@ -525,7 +529,8 @@ class VoipCall(models.Model):
         """AI account for speech-to-text: the configured transcription account,
         else the first OpenAI API-key account, else None (native key/env)."""
         return (
-            self._config_ai_account("era_voip_ext.transcription_account_id")
+            self._config_ai_account(
+                "era_voip_ext.transcription_account_id", transcription=True)
             or self._openai_api_key_account()
         )
 
@@ -578,8 +583,11 @@ class VoipCall(models.Model):
         if not text:
             return text
         prompt = (
-            "Output should be in Arabic and formatted as a call conversation between an employee and a customer based on the following text. "
-            "example: [employee name] : [the script]. then new line [customer name] : [the script]. if you can't recognize the names, use 'الموظف' for employee and 'العميل' for customer. "
+            "Format the complete transcript as an Arabic call conversation between "
+            "an employee and a customer. Preserve every utterance in its original "
+            "order: do not summarize, omit, merge, or invent content. Every output "
+            "line must start exactly with 'الموظف:' or 'العميل:'. Return only the "
+            "formatted conversation."
         )
         try:
             ai_agent = self.env.ref("era_voip_ext.voip_call_formatting_agent", raise_if_not_found=False)
@@ -597,6 +605,23 @@ class VoipCall(models.Model):
         except (RequestException, JSONDecodeError, UserError, ValueError):
             _logger.exception("Call %s: transcript formatting failed", self.id)
         return "..."
+
+    @staticmethod
+    def _select_transcript_output(raw_text, formatted_text):
+        """Keep one transcript: role-labelled AI output, else provider fallback."""
+        raw = (raw_text or "").strip()
+        formatted = (formatted_text or "").strip().replace("**", "")
+        if len(formatted.strip(" .")) <= 10:
+            return raw
+        has_employee = bool(re.search(r"(?m)^\s*الموظف\s*:", formatted))
+        has_customer = bool(re.search(r"(?m)^\s*العميل\s*:", formatted))
+        if not (has_employee and has_customer):
+            return raw
+        # A role-labelled summary is not a transcript. Allow formatting and
+        # punctuation changes, but reject outputs that dropped most of the call.
+        if raw and len(formatted) < len(raw) * 0.5:
+            return raw
+        return formatted
 
     # Keys the analysis agent is contracted to return (see ai_agent.xml).
     _ANALYSIS_KEYS = (

@@ -8,8 +8,8 @@ class ResConfigSettings(models.TransientModel):
         "era.ai.account",
         string="VoIP Transcription Account",
         config_parameter="era_voip_ext.transcription_account_id",
-        domain="[('active', '=', True), ('provider', '=', 'openai'), ('auth_mode', '=', 'api_key')]",
-        help="AI account used for call speech-to-text (Whisper). Use an OpenAI "
+        domain="[('active', '=', True), ('provider', 'in', ('openai', 'assemblyai')), ('auth_mode', '=', 'api_key')]",
+        help="AI account used for call speech-to-text. Use an OpenAI or AssemblyAI "
              "account with an API key so the key is not stored in the native AI "
              "settings field (which the PDPL compliance guard, Rule 03, forbids). "
              "Leave empty to fall back to the first OpenAI API-key account, then "
@@ -19,8 +19,9 @@ class ResConfigSettings(models.TransientModel):
         "era.ai.account",
         string="VoIP Summary/Formatting Account",
         config_parameter="era_voip_ext.text_account_id",
-        domain="[('active', '=', True), ('provider', '=', 'openai'), ('auth_mode', '=', 'api_key')]",
+        domain="[('active', '=', True), ('provider', '!=', 'assemblyai')]",
         help="AI account used to format the call transcript and to generate the "
-             "one-line summary. Leave empty to fall back to the first OpenAI "
-             "API-key account, then to each agent's own account.",
+             "one-line summary. API-key and local CLI chat accounts are supported. "
+             "Leave empty to fall back to the first OpenAI API-key account, then "
+             "to each agent's own account.",
     )

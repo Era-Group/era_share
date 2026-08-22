@@ -1118,16 +1118,21 @@ class VoipCall(models.Model):
         }
 
     def action_retranscript_bulk(self):
-        processed = 0
-        skipped = 0
-        for call in self:
-            if call.transcription_status == "queued":
-                skipped += 1
-                continue
-            self._transcribe_call(call)
-            processed += 1
+        if not self.env.user.has_group("voip.group_voip_admin"):
+            raise UserError(_("Only VoIP managers can retranscript calls."))
 
-        message = _("Processed %(processed)s call(s).", processed=processed)
+        to_queue = self.filtered(lambda call: call.transcription_status != "queued")
+        skipped = len(self) - len(to_queue)
+        if to_queue:
+            to_queue.write({"transcription_status": "pending"})
+            cron = self.env.ref(
+                "voip_ai.ir_cron_transcribe_recent_voip_call",
+                raise_if_not_found=False,
+            )
+            if cron:
+                cron.sudo()._trigger()
+
+        message = _("Queued %(queued)s call(s) for transcription.", queued=len(to_queue))
         if skipped:
             message += _(" Skipped %(skipped)s queued call(s).", skipped=skipped)
 

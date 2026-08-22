@@ -65,3 +65,31 @@ class TestTranscriptOutput(TransactionCase):
         formatted = "الموظف: مرحبا\nالعميل: شكرا"
         self.assertEqual(
             self.env["voip.call"]._select_transcript_output(raw, formatted), raw)
+
+    def test_bulk_retranscript_queues_calls_instead_of_processing_inline(self):
+        calls = self.env["voip.call"].create([
+            {"phone_number": "+966500000001", "transcription_status": "done"},
+            {"phone_number": "+966500000002", "transcription_status": "error"},
+        ])
+
+        action = calls.action_retranscript_bulk()
+
+        self.assertEqual(set(calls.mapped("transcription_status")), {"pending"})
+        self.assertEqual(action["tag"], "display_notification")
+        self.assertIn("Queued 2 call(s)", action["params"]["message"])
+
+    def test_bulk_retranscript_does_not_reset_queued_calls(self):
+        pending_call = self.env["voip.call"].create({
+            "phone_number": "+966500000003",
+            "transcription_status": "done",
+        })
+        queued_call = self.env["voip.call"].create({
+            "phone_number": "+966500000004",
+            "transcription_status": "queued",
+        })
+
+        action = (pending_call | queued_call).action_retranscript_bulk()
+
+        self.assertEqual(pending_call.transcription_status, "pending")
+        self.assertEqual(queued_call.transcription_status, "queued")
+        self.assertIn("Skipped 1 queued call(s)", action["params"]["message"])

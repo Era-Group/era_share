@@ -42,6 +42,12 @@ _logger = logging.getLogger(__name__)
 # Default search globs for the Claude Code native CLI shipped with the VS Code /
 # code-server extension. Newest version directory wins.
 _CLAUDE_GLOBS = [
+    # Current layout: the IDE keeps its extensions on the only volume that
+    # survives a container rebuild (/var/lib/odoo), NOT under the odoo user's
+    # HOME (/opt/odoo) — so this one cannot be written with ~ expansion.
+    "/var/lib/odoo/.ide/extensions/anthropic.claude-code-*/resources/native-binary/claude",
+    os.path.expanduser("~/.ide/extensions/anthropic.claude-code-*/resources/native-binary/claude"),
+    # Legacy code-server / vscode-server layouts.
     "/opt/odoo/.local/share/code-server/extensions/anthropic.claude-code-*/resources/native-binary/claude",
     os.path.expanduser("~/.local/share/code-server/extensions/anthropic.claude-code-*/resources/native-binary/claude"),
     os.path.expanduser("~/.vscode-server/extensions/anthropic.claude-code-*/resources/native-binary/claude"),

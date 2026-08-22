@@ -2,7 +2,7 @@
 {
     "name": "ERA AI Accounts",
     "summary": "Link AI provider accounts (Claude/ChatGPT/GLM/Kimi via local CLI proxy — no API key — "
-               "or OpenAI/Gemini/Cloudflare/Z.AI-GLM/Kimi/custom via key), share them with users, "
+               "or OpenAI/Gemini/Cloudflare/Z.AI-GLM/Kimi/AssemblyAI/custom via key), share them with users, "
                "generate text or images, and pick models dynamically per account.",
     "description": """
 ERA AI Accounts
@@ -22,7 +22,8 @@ stack with first-class **AI accounts**:
   the Codex CLI's ``auth.json``), or a Kimi Code subscription (device code),
   stored once on the server and used by every user in the system.
 * **API-key transport** — OpenAI, Google Gemini, Anthropic (Messages API),
-  Cloudflare Workers AI, **Z.AI (GLM / Zhipu)**, **Kimi (Moonshot AI)** and any
+  Cloudflare Workers AI, **Z.AI (GLM / Zhipu)**, **Kimi (Moonshot AI)**,
+  **AssemblyAI** and any
   OpenAI-compatible custom provider, with credentials stored per account
   (encrypted at rest, restricted to AI Account Managers).
 * **Z.AI (GLM) two ways** — either the OpenAI-compatible **API key** route, or
@@ -35,8 +36,8 @@ stack with first-class **AI accounts**:
   binary fenced down to pure text generation (no tools, one step, empty working
   directory, built-in agent persona replaced).
 * **Speech-to-text** — transcribe audio through an OpenAI API-key account
-  (Whisper / ``gpt-4o-transcribe``) via ``account.transcribe()``; the CLI proxies
-  are text-only.
+  (Whisper / ``gpt-4o-transcribe``) or AssemblyAI (``universal-2``) via
+  ``account.transcribe()``; the CLI proxies are text-only.
 * **Shared vs personal accounts** — one account for everyone or per-user accounts,
   with admin-controlled sharing (``owner`` + ``allowed users`` + record rules).
 * **Dynamic model catalog** — models are synced per account (curated set for the
@@ -45,7 +46,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.15.4",
+    "version": "19.0.1.16.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

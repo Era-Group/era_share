@@ -17,7 +17,12 @@ class EraAiModel(models.Model):
     model_id = fields.Char(required=True, help="Provider model id, e.g. claude-opus-4-8 or gpt-4o.")
     label = fields.Char()
     kind = fields.Selection(
-        selection=[("chat", "Chat"), ("embedding", "Embedding"), ("image", "Image")],
+        selection=[
+            ("chat", "Chat"),
+            ("embedding", "Embedding"),
+            ("image", "Image"),
+            ("transcription", "Transcription"),
+        ],
         default="chat", required=True,
     )
     cost_info = fields.Char(

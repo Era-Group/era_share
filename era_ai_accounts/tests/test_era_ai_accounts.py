@@ -405,6 +405,119 @@ class TestEraAiAccounts(TransactionCase):
         with self.assertRaises(UserError):
             acc.transcribe(b"audio")
 
+    def test_assemblyai_sync_and_region(self):
+        acc = self.Account.create({
+            "name": "Assembly EU", "provider": "assemblyai",
+            "auth_mode": "api_key", "secret": "assembly-key",
+            "assemblyai_region": "eu",
+        })
+        acc.action_sync_models()
+        self.assertEqual(acc._assemblyai_base_url(), "https://api.eu.assemblyai.com")
+        self.assertEqual(acc.model_ids.mapped("model_id"), ["universal-2"])
+        self.assertEqual(acc.model_ids.kind, "transcription")
+
+    def test_assemblyai_validate_uses_raw_key(self):
+        acc = self.Account.create({
+            "name": "Assembly", "provider": "assemblyai",
+            "auth_mode": "api_key", "secret": "assembly-key",
+        })
+        with patch.object(type(acc), "_http_get_json", return_value={}) as mocked:
+            acc._validate_connection()
+        self.assertEqual(mocked.call_args.args[1]["Authorization"], "assembly-key")
+        self.assertIn("api.assemblyai.com/v2/transcript?limit=1",
+                      mocked.call_args.args[0])
+
+    def test_assemblyai_transcribe_and_delete_remote(self):
+        acc = self.Account.create({
+            "name": "Assembly audio", "provider": "assemblyai",
+            "auth_mode": "api_key", "secret": "assembly-key",
+        })
+        calls = []
+
+        class _Resp:
+            status_code = 200
+            text = ""
+
+            def __init__(self, payload):
+                self.payload = payload
+
+            def json(self):
+                return self.payload
+
+        def fake_post(url, **kwargs):
+            calls.append(("post", url, kwargs))
+            if url.endswith("/upload"):
+                return _Resp({"upload_url": "https://cdn.example/audio"})
+            return _Resp({"id": "tx-123", "status": "queued"})
+
+        def fake_get(url, **kwargs):
+            calls.append(("get", url, kwargs))
+            return _Resp({"id": "tx-123", "status": "completed", "text": "hello"})
+
+        def fake_delete(url, **kwargs):
+            calls.append(("delete", url, kwargs))
+            return _Resp({})
+
+        with patch.object(era_ai_account.requests, "post", side_effect=fake_post), \
+             patch.object(era_ai_account.requests, "get", side_effect=fake_get), \
+             patch.object(era_ai_account.requests, "delete", side_effect=fake_delete):
+            text = acc.transcribe(b"raw-audio", language="ar")
+        self.assertEqual(text, "hello")
+        upload = calls[0]
+        self.assertEqual(upload[2]["headers"]["Authorization"], "assembly-key")
+        self.assertNotIn("Bearer", upload[2]["headers"]["Authorization"])
+        submit = calls[1]
+        self.assertEqual(submit[2]["json"]["speech_models"], ["universal-2"])
+        self.assertEqual(submit[2]["json"]["language_code"], "ar")
+        self.assertTrue(submit[2]["json"]["speaker_labels"])
+        self.assertEqual(calls[-1][0], "delete")
+        self.assertTrue(calls[-1][1].endswith("/v2/transcript/tx-123"))
+
+    def test_assemblyai_formats_diarized_utterances(self):
+        payload = {
+            "text": "flat fallback",
+            "utterances": [
+                {"speaker": "B", "text": "السلام عليكم"},
+                {"speaker": "A", "text": "وعليكم السلام"},
+                {"speaker": "B", "text": "أرغب في نظام ERP"},
+            ],
+        }
+        self.assertEqual(
+            self.Account._assemblyai_transcript_text(payload),
+            "Speaker 1: السلام عليكم\n"
+            "Speaker 2: وعليكم السلام\n"
+            "Speaker 1: أرغب في نظام ERP",
+        )
+        self.assertEqual(
+            self.Account._assemblyai_transcript_text({"text": "plain transcript"}),
+            "plain transcript",
+        )
+
+    def test_llm_service_routes_transcription_to_assemblyai(self):
+        acc = self.Account.create({
+            "name": "Assembly route", "provider": "assemblyai",
+            "auth_mode": "api_key", "secret": "assembly-key",
+        })
+        service = LLMApiService(self.env(context={
+            **self.env.context, "era_ai_account_id": acc.id,
+        }))
+        with patch.object(type(acc), "transcribe", return_value="routed") as mocked:
+            text = service.get_transcription(b"audio", language="ar")
+        self.assertEqual(text, "routed")
+        self.assertIsNone(mocked.call_args.kwargs["model"])
+        self.assertEqual(mocked.call_args.kwargs["language"], "ar")
+
+    def test_assemblyai_cannot_be_assigned_to_chat_agent(self):
+        acc = self.Account.create({
+            "name": "Assembly transcription only", "provider": "assemblyai",
+            "auth_mode": "api_key", "secret": "assembly-key",
+        })
+        with self.assertRaises(ValidationError):
+            self.env["ai.agent"].create({
+                "name": "Invalid Assembly chat", "llm_model": "gpt-4o",
+                "era_account_id": acc.id,
+            })
+
     def test_cloudflare_coerces_non_string_content(self):
         # Live crash: Cloudflare returned message.content as a dict and
         # _request_llm_cloudflare did content.strip() -> 'dict' has no 'strip'.
@@ -1012,6 +1125,26 @@ class TestEraAiAccounts(TransactionCase):
         self.assertEqual(out, ["codex answer"])
         self.assertTrue(mocked.called)
         self.assertEqual(mocked.call_args.args[0]["provider"], "openai")
+        self.assertEqual(mocked.call_args.args[1], era_ai_account.CODEX_CLI_MODELS[0][0])
+
+    def test_context_account_overrides_agent_account(self):
+        claude = self.Account.create({
+            "name": "Stored route", "provider": "anthropic", "auth_mode": "cli_proxy",
+        })
+        claude.action_sync_models()
+        codex = self.Account.create({
+            "name": "Context route", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        codex.action_sync_models()
+        agent = self.env["ai.agent"].create({
+            "name": "Context override", "llm_model": "gpt-4o",
+            "era_account_id": claude.id,
+            "era_model_id": claude._default_chat_model_record().id,
+        })
+        with patch.object(codex_cli_transport, "cli_complete",
+                          return_value="context answer") as mocked:
+            out = agent.with_context(era_ai_account_id=codex.id)._generate_response("hello")
+        self.assertEqual(out, ["context answer"])
         self.assertEqual(mocked.call_args.args[1], era_ai_account.CODEX_CLI_MODELS[0][0])
 
     def test_codex_cli_proxy_refuses_images(self):

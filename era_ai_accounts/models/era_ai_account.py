@@ -220,6 +220,13 @@ KIMI_CLI_MODELS = [
     ("kimi-k2.5", "Kimi K2.5"),
 ]
 
+# AssemblyAI does not expose a model-list endpoint. Universal-2 is the stable
+# multilingual model already used by ERA's Arabic meeting-transcription flow.
+ASSEMBLYAI_MODELS = [
+    ("universal-2", "Universal-2 (multilingual)", "transcription",
+     "Paid per audio hour - see assemblyai.com/pricing"),
+]
+
 # --- Kimi Code plan (flat-rate monthly subscription) -------------------------
 # A second, separate Kimi surface: the "Kimi Code" plan billed monthly instead
 # of per token (see https://www.kimi.com/code). It is NOT the same account as
@@ -281,6 +288,7 @@ class EraAiAccount(models.Model):
             ("kimi", "Kimi (Moonshot AI)"),
             ("google", "Google Gemini"),
             ("cloudflare", "Cloudflare Workers AI"),
+            ("assemblyai", "AssemblyAI"),
             ("custom", "Custom (OpenAI-compatible)"),
         ],
         required=True,
@@ -390,6 +398,15 @@ class EraAiAccount(models.Model):
         help="Your Cloudflare account ID — it goes in the Workers AI URL path "
              "(api.cloudflare.com/.../accounts/<ID>/ai/...). Find it in the Cloudflare "
              "dashboard. The API token goes in the 'API Key' field (Bearer auth).",
+    )
+
+    # --- AssemblyAI ----------------------------------------------------------
+    assemblyai_region = fields.Selection(
+        selection=[("us", "United States"), ("eu", "European Union")],
+        string="AssemblyAI region",
+        default="us",
+        help="Select the AssemblyAI API region that will process and store the "
+             "uploaded audio.",
     )
 
     # --- CLI-proxy transport config -----------------------------------------
@@ -749,7 +766,7 @@ class EraAiAccount(models.Model):
     def transcribe(self, audio, model=None, language=None, filename="audio.mp3", prompt=None):
         """Transcribe speech audio to text and return the transcript string, or raise.
 
-        OpenAI (Whisper / gpt-4o-transcribe) only — the Claude/Codex CLI proxies
+        OpenAI (Whisper / gpt-4o-transcribe) or AssemblyAI — the CLI proxies
         are text-in/text-out and have no speech endpoint. ``audio`` is the raw
         file bytes; ``language`` is an optional ISO-639-1 hint and ``prompt`` an
         optional context string to steer spelling/vocabulary.
@@ -766,8 +783,10 @@ class EraAiAccount(models.Model):
                     "(account '%s') — use an OpenAI API-key account for audio.",
                     self.name))
             return self._transcribe_openai(audio, model, language, filename, prompt)
+        if self.provider == "assemblyai":
+            return self._transcribe_assemblyai(audio, model, language)
         raise UserError(_(
-            "Audio transcription is supported for OpenAI accounts "
+            "Audio transcription is supported for OpenAI and AssemblyAI accounts "
             "(account '%s' is '%s').", self.name, self.provider))
 
     def _generate_image_cloudflare(self, prompt, model, steps, width, height):
@@ -908,6 +927,129 @@ class EraAiAccount(models.Model):
         if not text:
             raise UserError(_("OpenAI returned an empty transcript."))
         return text
+
+    def _assemblyai_base_url(self):
+        self.ensure_one()
+        return ("https://api.eu.assemblyai.com" if self.assemblyai_region == "eu"
+                else "https://api.assemblyai.com")
+
+    @staticmethod
+    def _assemblyai_error(response):
+        try:
+            data = response.json()
+        except ValueError:
+            data = {}
+        return str(data.get("error") or data.get("message")
+                   or response.text or "Unknown API error")[:400]
+
+    def _transcribe_assemblyai(self, audio, model, language):
+        """Upload audio, wait for AssemblyAI, return text, then delete remote data."""
+        key = self._get_secret()
+        if not key:
+            raise UserError(_("Set the AssemblyAI API key on account '%s'.", self.name))
+        base = self._assemblyai_base_url()
+        headers = {"Authorization": key}
+        transcript_id = None
+        try:
+            upload = requests.post(
+                base + "/v2/upload", headers=dict(headers, **{
+                    "Content-Type": "application/octet-stream"}),
+                data=audio, timeout=(10, 900))
+            if upload.status_code >= 400:
+                raise UserError(_("AssemblyAI upload error (%(code)s): %(detail)s",
+                                  code=upload.status_code,
+                                  detail=self._assemblyai_error(upload)))
+            try:
+                upload_url = upload.json()["upload_url"]
+            except (ValueError, KeyError, TypeError) as exc:
+                raise UserError(_("AssemblyAI returned an invalid upload response: %s", exc))
+
+            body = {
+                "audio_url": upload_url,
+                "speech_models": [model or "universal-2"],
+                "speaker_labels": True,
+            }
+            if language:
+                body["language_code"] = language
+            submitted = requests.post(
+                base + "/v2/transcript", headers=dict(headers, **{
+                    "Content-Type": "application/json"}),
+                json=body, timeout=(10, 60))
+            if submitted.status_code >= 400:
+                raise UserError(_("AssemblyAI transcription error (%(code)s): %(detail)s",
+                                  code=submitted.status_code,
+                                  detail=self._assemblyai_error(submitted)))
+            try:
+                transcript_id = submitted.json()["id"]
+            except (ValueError, KeyError, TypeError) as exc:
+                raise UserError(_("AssemblyAI returned an invalid submission response: %s", exc))
+
+            try:
+                timeout = max(30, int(self.env["ir.config_parameter"].sudo().get_param(
+                    "ai.assemblyai_transcribe_timeout", "900")))
+            except (TypeError, ValueError):
+                timeout = 900
+            deadline = time.monotonic() + timeout
+            while True:
+                result = requests.get(
+                    "%s/v2/transcript/%s" % (base, transcript_id),
+                    headers=headers, timeout=(10, 60))
+                if result.status_code >= 400:
+                    raise UserError(_("AssemblyAI status error (%(code)s): %(detail)s",
+                                      code=result.status_code,
+                                      detail=self._assemblyai_error(result)))
+                try:
+                    payload = result.json()
+                except ValueError as exc:
+                    raise UserError(_("AssemblyAI returned an invalid status response: %s", exc))
+                status = payload.get("status")
+                if status == "completed":
+                    text = self._assemblyai_transcript_text(payload)
+                    if not text:
+                        raise UserError(_("AssemblyAI returned an empty transcript."))
+                    return text
+                if status == "error":
+                    raise UserError(_("AssemblyAI transcription failed: %s",
+                                      payload.get("error") or "unknown error"))
+                if status not in ("queued", "processing"):
+                    raise UserError(_("AssemblyAI returned unknown status '%s'.", status))
+                if time.monotonic() >= deadline:
+                    raise UserError(_("AssemblyAI transcription timed out after %s seconds.", timeout))
+                time.sleep(3)
+        except requests.exceptions.RequestException as exc:
+            raise UserError(_("AssemblyAI request failed: %s", exc))
+        finally:
+            if transcript_id:
+                try:
+                    deleted = requests.delete(
+                        "%s/v2/transcript/%s" % (base, transcript_id),
+                        headers=headers, timeout=(10, 60))
+                    if deleted.status_code >= 400:
+                        _logger.warning(
+                            "era_ai_accounts: AssemblyAI transcript %s cleanup failed (%s): %s",
+                            transcript_id, deleted.status_code,
+                            self._assemblyai_error(deleted))
+                except requests.exceptions.RequestException:
+                    _logger.warning(
+                        "era_ai_accounts: could not delete AssemblyAI transcript %s",
+                        transcript_id, exc_info=True)
+
+    @staticmethod
+    def _assemblyai_transcript_text(payload):
+        """Prefer diarized utterances, numbering speakers by first appearance."""
+        speaker_numbers = {}
+        lines = []
+        for utterance in payload.get("utterances") or []:
+            if not isinstance(utterance, dict) or utterance.get("speaker") is None:
+                continue
+            text = str(utterance.get("text") or "").strip()
+            if not text:
+                continue
+            speaker = str(utterance["speaker"])
+            if speaker not in speaker_numbers:
+                speaker_numbers[speaker] = len(speaker_numbers) + 1
+            lines.append("Speaker %s: %s" % (speaker_numbers[speaker], text))
+        return "\n".join(lines) or str(payload.get("text") or "").strip()
 
     # --------------------------------------------------------------- public API
     def generate_text(self, prompt, system="", model=None, temperature=0.2):
@@ -1784,6 +1926,14 @@ class EraAiAccount(models.Model):
                    % self._cloudflare_account())
             self._http_get_json(url, {"Authorization": "Bearer %s" % token}, 30)
             return True
+        if self.provider == "assemblyai":
+            token = self._get_secret()
+            if not token:
+                raise UserError(_("Set the AssemblyAI API key before validating."))
+            self._http_get_json(
+                self._assemblyai_base_url() + "/v2/transcript?limit=1",
+                {"Authorization": token}, 30)
+            return True
         if self.provider in ("zai", "kimi"):
             # OpenAI-compatible /models listing — token-free key check.
             token = self._get_secret()
@@ -1836,6 +1986,8 @@ class EraAiAccount(models.Model):
             # Same for Kimi: /models lists ids without prices, so ship the
             # curated catalog with indicative USD rates (editable per account).
             rows = list(KIMI_MODELS)
+        elif self.provider == "assemblyai":
+            rows = list(ASSEMBLYAI_MODELS)
         elif self.provider == "openai":
             # /models lists chat models only — add the image models so they can be
             # picked for cover generation (gpt-image-1 / DALL·E).

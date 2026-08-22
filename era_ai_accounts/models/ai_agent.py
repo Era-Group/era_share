@@ -25,10 +25,12 @@ class AIAgent(models.Model):
     era_account_id = fields.Many2one(
         "era.ai.account",
         string="AI Account",
+        domain="[('provider', '!=', 'assemblyai')]",
         help="When set, this agent's responses are generated through the selected "
              "account (e.g. Claude or ChatGPT via the local CLI proxy) instead of "
              "the global provider keys. Knowledge-source embeddings still use the "
-             "standard provider from 'LLM Model'.",
+             "standard provider from 'LLM Model'. Transcription-only providers such "
+             "as AssemblyAI cannot be assigned to a chat agent.",
     )
     era_model_id = fields.Many2one(
         "era.ai.model",
@@ -49,17 +51,25 @@ class AIAgent(models.Model):
     @api.constrains("era_account_id", "era_model_id")
     def _check_era_model(self):
         for agent in self:
+            if agent.era_account_id.provider == "assemblyai":
+                raise ValidationError(_(
+                    "AssemblyAI is a transcription-only provider and cannot be "
+                    "assigned to a chat agent. Select it only in a transcription "
+                    "account setting."))
             if agent.era_model_id and agent.era_model_id.account_id != agent.era_account_id:
                 raise ValidationError(_("The selected Account Model does not belong to the AI Account."))
 
     # ------------------------------------------------------------------ routing
     def _generate_response(self, prompt, chat_history=None, extra_system_context=""):
-        if not self.era_account_id:
+        context_account_id = self.env.context.get("era_ai_account_id")
+        acc = (self.env["era.ai.account"].browse(context_account_id).exists()
+               if context_account_id else self.era_account_id)
+        if not acc:
             return super()._generate_response(prompt, chat_history, extra_system_context)
         self.ensure_one()
-        acc = self.era_account_id
         acc._assert_usable()
-        model = self.era_model_id.model_id if self.era_model_id else acc._default_chat_model()
+        selected = self.era_model_id if self.era_model_id.account_id == acc else False
+        model = selected.model_id if selected else acc._default_chat_model()
 
         system_messages = self._build_system_context(extra_system_context=extra_system_context)
         rag_context = self._build_rag_context(prompt)  # standard embeddings path

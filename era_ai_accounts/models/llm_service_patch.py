@@ -353,6 +353,7 @@ def _patch():
     original_get_api_token = LLMApiService._get_api_token
     original_get_base_headers = LLMApiService._get_base_headers
     original_request_llm = LLMApiService._request_llm
+    original_get_transcription = LLMApiService.get_transcription
     original_build_tool_call_response = LLMApiService._build_tool_call_response
 
     def __init__(self, env, provider="openai"):
@@ -440,6 +441,20 @@ def _patch():
         if self.provider in _OPENAI_COMPAT_PROVIDERS:
             return _request_llm_openai_compat(self, *args, **kwargs)
         return original_request_llm(self, *args, **kwargs)
+
+    def get_transcription(self, data, mimetype="audio/ogg", model="whisper-1",
+                          language=None, prompt=None, response_format="verbose_json",
+                          temperature=None):
+        acc = getattr(self, "_era_account", None)
+        if acc and acc.provider == "assemblyai":
+            # whisper-1 is upstream's default, not an AssemblyAI model id.
+            assembly_model = None if model == "whisper-1" else model
+            return acc.transcribe(
+                data, model=assembly_model, language=language, prompt=prompt)
+        return original_get_transcription(
+            self, data, mimetype=mimetype, model=model, language=language,
+            prompt=prompt, response_format=response_format,
+            temperature=temperature)
 
     def _build_tool_call_response(self, tool_call_id, return_value):
         # Upstream raises NotImplementedError for unknown providers; the CLI
@@ -644,6 +659,7 @@ def _patch():
     LLMApiService._get_api_token = _get_api_token
     LLMApiService._get_base_headers = _get_base_headers
     LLMApiService._request_llm = _request_llm
+    LLMApiService.get_transcription = get_transcription
     LLMApiService._build_tool_call_response = _build_tool_call_response
     LLMApiService._request_llm_cli = _request_llm_cli
     LLMApiService._request_llm_anthropic = _request_llm_anthropic

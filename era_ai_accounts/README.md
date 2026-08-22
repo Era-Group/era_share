@@ -21,7 +21,8 @@ OpenAI/Google, and exposes a fixed model list. This module adds:
   first-party `kimi` binary in print mode, fenced down to pure text generation.
   See "Kimi (Moonshot AI)" below.
 - **API-key accounts** — OpenAI, Google Gemini, Anthropic (Messages API),
-  **Cloudflare Workers AI**, **Z.AI (GLM)**, **Kimi (Moonshot AI)**, and any
+  **Cloudflare Workers AI**, **Z.AI (GLM)**, **Kimi (Moonshot AI)**,
+  **AssemblyAI**, and any
   OpenAI-compatible custom endpoint, with secrets stored **encrypted** and
   restricted to *AI Account Managers*.
 - **Shared vs personal accounts** — one account for everyone or per-user accounts,
@@ -40,9 +41,12 @@ Any module can drive a configured account directly — no `ai.agent` needed:
   (`gpt-image-1`, `dall-e-3`). Sync models to pick a specific image model.
 - `account.transcribe(audio, model=None, language=None)` → transcript **str** —
   speech-to-text for **OpenAI** API-key accounts (`gpt-4o-transcribe`,
-  `gpt-4o-mini-transcribe`, `whisper-1`). `audio` is the raw file bytes;
-  `language` is an optional ISO-639-1 hint. The Claude/Codex CLI proxies are
-  text-only and have no speech endpoint, so transcription is OpenAI-only.
+  `gpt-4o-mini-transcribe`, `whisper-1`) or **AssemblyAI** (`universal-2`).
+  `audio` is the raw file bytes; `language` is an optional ISO-639-1 hint.
+  AssemblyAI supports US/EU processing regions and completed remote transcripts
+  are deleted after their text is returned. Speaker diarization is enabled and
+  emitted as `Speaker 1/2/...` turns, with plain text as a fallback when no
+  utterances are returned. The CLI proxies are text-only.
 
 This is how other ERA modules (e.g. `era_seo_suite`) let an admin pick *one
 account for content* and *one account for images* instead of re-entering

@@ -1,0 +1,528 @@
+<odoo>
+
+    <!-- ==================== REQUEST ==================== -->
+
+    <record id="view_ai_request_list" model="ir.ui.view">
+        <field name="name">legal.ai.request.list</field>
+        <field name="model">legal.ai.request</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'" decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="purpose"/>
+                <field name="agent_id"/>
+                <field name="case_id"/>
+                <field name="document_id" optional="show"/>
+                <field name="consent_user_id"/>
+                <field name="consent_date" optional="hide"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ai_request_search" model="ir.ui.view">
+        <field name="name">legal.ai.request.search</field>
+        <field name="model">legal.ai.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="purpose"/>
+                <field name="case_id"/>
+                <field name="agent_id"/>
+                <field name="consent_user_id"/>
+                <filter name="pending" string="Pending" domain="[('state','in',('draft','approved','sent'))]"/>
+                <filter name="done" string="Completed" domain="[('state','=','done')]"/>
+                <group name="group_by">
+                    <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_ai_request_form" model="ir.ui.view">
+        <field name="name">legal.ai.request.form</field>
+        <field name="model">legal.ai.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Give Consent"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_send" type="object" string="Redact &amp; Send"
+                            class="btn-primary" invisible="state != 'approved'"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state not in ('draft','approved')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done','cancelled')"/>
+                    <button name="action_resend" type="object" string="Ask Again"
+                            class="btn-secondary" invisible="state not in ('sent','done','rejected','cancelled')"
+                            help="Return this request to input so the instructions can be changed and the question asked again. What was already sent is kept in the dispatch history."/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="has_approved_agent" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_attempts" type="object" class="oe_stat_button"
+                                icon="fa-history" invisible="not attempt_count">
+                            <field name="attempt_count" widget="statinfo" string="Earlier Sends"/>
+                        </button>
+                    </div>
+                    <field name="ai_enabled" invisible="1"/>
+                    <div class="alert alert-danger" role="alert" invisible="ai_enabled">
+                        <p><strong>Governed AI is switched off for this company</strong>, so no
+                        request can be sent however it is filled in. This is the master switch,
+                        deliberately off until someone turns it on.</p>
+                        <p>A manager enables it under Settings &gt; Law Firm &gt; Artificial Intelligence.</p>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="has_approved_agent">
+                        <p><strong>No AI agent has been approved for legal work yet</strong>, so the
+                        agent list is empty. This is the safeguard doing its job, not a fault.</p>
+                        <p>A legal manager approves one under Configuration &gt; AI Agents, after
+                        recording where the agent's model processes data and how long it keeps it.
+                        Until then no legal request can be sent to any agent.</p>
+                        <button name="action_open_agents" type="object" string="Open AI Agents"
+                                class="btn-primary" groups="era_law_firm.group_legal_manager"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not classification_blocked">
+                        <strong>This document is too sensitive for the chosen agent</strong>, so the
+                        request would be refused on dispatch. Either pick an agent that accepts this
+                        level, raise what this one accepts under Configuration &gt; AI Agents, or
+                        reclassify the document -- reclassifying is a decision about the material,
+                        not a way around the check.
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="purpose" placeholder="Why this request is being made"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="agent_id" options="{'no_create': True}"/>
+                            <field name="case_id"/>
+                            <field name="document_id"
+                                   domain="[('case_id', '=', case_id)]"
+                                   options="{'no_create': True}"/>
+                            <field name="document_classification" invisible="not document_id"/>
+                            <field name="agent_max_classification" invisible="not agent_id"/>
+                            <field name="classification_blocked" invisible="1"/>
+                        </group>
+                        <group string="Consent">
+                            <field name="consent_user_id" readonly="1"/>
+                            <field name="consent_date" readonly="1"/>
+                            <field name="payload_hash" readonly="1" invisible="not payload_hash"/>
+                        </group>
+                    </group>
+                    <field name="fields_sent" invisible="1"/>
+                    <!-- Ticks on one side, the resulting payload on the other: the effect of a
+                         tick is visible the moment it is made, rather than a tab away. -->
+                    <div class="row mt-3" name="data_to_share">
+                        <div class="col-lg-6">
+                            <separator string="Data to Share"/>
+                            <field name="field_ids" nolabel="1" widget="many2many_checkboxes"
+                                   readonly="state not in ('draft', 'approved')"/>
+                            <p class="text-muted small mt-2" invisible="state not in ('draft', 'approved')">
+                                Tick only what the agent needs. Entries carrying narrative text
+                                rather than a reference are worth a second look.
+                            </p>
+                            <separator string="Extra Instructions"/>
+                            <field name="input_payload" nolabel="1"
+                                   readonly="state not in ('draft', 'approved')"
+                                   placeholder="Optional: focus on the termination clause, or draft the reply in a conciliatory tone. Redacted like everything else."/>
+                        </div>
+                        <div class="col-lg-6">
+                            <separator string="Exactly What Will Be Sent"/>
+                            <div class="alert alert-secondary py-2 small" role="alert">
+                                The real payload after redaction, not a description of it. Read it
+                                before giving consent -- consent means agreeing to this text leaving
+                                the firm.
+                            </div>
+                            <field name="payload_preview" nolabel="1" readonly="1"
+                                   class="font-monospace small"/>
+                        </div>
+                    </div>
+                    <!-- The dispatched payload is not shown again here: once sent, the preview
+                         above displays the stored redacted payload, so a tab for it repeated the
+                         same text. The field itself remains as the audit record. -->
+                    <div class="mt-4" invisible="not sanitized_response">
+                        <separator string="Response"/>
+                        <field name="redacted_payload" invisible="1"/>
+                        <field name="sanitized_response" nolabel="1" readonly="1"/>
+                    </div>
+                    <div class="mt-4" invisible="not attempt_count">
+                        <separator string="Dispatch History"/>
+                        <div class="alert alert-secondary py-2 small" role="alert">
+                            What earlier sends of this request carried and what came back. These
+                            cannot be edited or deleted.
+                        </div>
+                        <field name="attempt_ids" nolabel="1" readonly="1">
+                            <list create="false" edit="false" delete="false">
+                                <field name="sequence_number"/>
+                                <field name="sent_at"/>
+                                <field name="agent_id"/>
+                                <field name="consent_user_id"/>
+                                <field name="fields_sent" optional="hide"/>
+                                <field name="payload_hash" optional="hide"/>
+                            </list>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="sequence_number"/>
+                                            <field name="agent_id"/>
+                                            <field name="charter_id"/>
+                                        </group>
+                                        <group>
+                                            <field name="sent_at"/>
+                                            <field name="consent_user_id"/>
+                                            <field name="consent_date"/>
+                                            <field name="payload_hash"/>
+                                        </group>
+                                    </group>
+                                    <separator string="Data Shared"/>
+                                    <field name="fields_sent" nolabel="1"/>
+                                    <separator string="Payload Sent"/>
+                                    <field name="redacted_payload" nolabel="1"/>
+                                    <separator string="Answer"/>
+                                    <field name="sanitized_response" nolabel="1"/>
+                                </sheet>
+                            </form>
+                        </field>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        The original input is discarded on dispatch; only the redacted payload and its hash are kept.
+                        Output is a draft for a lawyer to review, never advice on its own.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ai_request" model="ir.actions.act_window">
+        <field name="name">AI Requests</field>
+        <field name="res_model">legal.ai.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ai_request_search"/>
+    </record>
+
+    <!-- ==================== AGENT GOVERNANCE ==================== -->
+
+    <record id="view_ai_agent_form_legal" model="ir.ui.view">
+        <field name="name">ai.agent.form.legal</field>
+        <field name="model">ai.agent</field>
+        <field name="inherit_id" ref="ai_app.ai_agent_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Legal Governance (PDPL)" name="legal_governance">
+                    <group>
+                        <field name="legal_approved" widget="boolean_toggle"/>
+                        <field name="legal_max_classification"/>
+                        <field name="legal_sources_pending"/>
+                    </group>
+                    <group>
+                        <field name="legal_processing_location"
+                               required="legal_approved"
+                               placeholder="Country or region the model processes data in"/>
+                    </group>
+                    <field name="legal_retention_policy" required="legal_approved"
+                           placeholder="How long prompts and outputs are kept, and how deletion is requested..."/>
+                    <separator string="Legislation This Agent Works From"/>
+                    <div class="alert alert-warning py-2 small" role="alert"
+                         invisible="not legal_sources_pending">
+                        <field name="legal_sources_pending" class="oe_inline" readonly="1"/>
+                        of the statutes listed below have no text attached under Sources, so this
+                        agent can only recall them, not read them.
+                    </div>
+                    <field name="legal_legislation_ids" nolabel="1" widget="many2many_tags"/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="legal_approved">
+                    This agent cannot receive a single legal request until it is approved, whatever
+                    permissions the user holds. Approving it is the firm stating it accepts this
+                    agent for privileged client material.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_ai_agent_list_legal" model="ir.ui.view">
+        <field name="name">ai.agent.list.legal</field>
+        <field name="model">ai.agent</field>
+        <field name="inherit_id" ref="ai_app.ai_agent_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="legal_approved" widget="boolean_toggle" optional="show"/>
+                <field name="legal_max_classification" optional="show"/>
+                <field name="legal_processing_location" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== TEMPLATE ==================== -->
+
+    <record id="view_legal_document_template_list" model="ir.ui.view">
+        <field name="name">legal.document.template.list</field>
+        <field name="model">legal.document.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="allowed_fields"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_document_template_form" model="ir.ui.view">
+        <field name="name">legal.document.template.form</field>
+        <field name="model">legal.document.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Template name"/></h1>
+                    </div>
+                    <group>
+                        <field name="active" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="allowed_fields" placeholder="Comma-separated case fields this template may read"/>
+                    </group>
+                    <field name="body"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_document_template" model="ir.actions.act_window">
+        <field name="name">Document Templates</field>
+        <field name="res_model">legal.document.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== GENERATION ==================== -->
+
+    <record id="view_legal_document_generation_list" model="ir.ui.view">
+        <field name="name">legal.document.generation.list</field>
+        <field name="model">legal.document.generation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="request_id"/>
+                <field name="template_id"/>
+                <field name="document_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_document_generation_form" model="ir.ui.view">
+        <field name="name">legal.document.generation.form</field>
+        <field name="model">legal.document.generation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_document" type="object" string="Create Legal Document"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Generated document name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="request_id" domain="[('state','=','done')]"/>
+                            <field name="template_id"/>
+                        </group>
+                        <group>
+                            <field name="document_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert">
+                        The created document starts in draft with a confidential classification and still has to
+                        go through the normal review and approval cycle.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_document_generation" model="ir.actions.act_window">
+        <field name="name">AI Document Generation</field>
+        <field name="res_model">legal.document.generation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== DOCUMENT CLASSIFICATION ==================== -->
+
+    <record id="view_legal_document_form_ai" model="ir.ui.view">
+        <field name="name">legal.document.form.ai</field>
+        <field name="model">legal.document</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='restricted']" position="before">
+                <field name="ai_classification"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_legal_document_list_ai" model="ir.ui.view">
+        <field name="name">legal.document.list.ai</field>
+        <field name="model">legal.document</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_document_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='restricted']" position="after">
+                <field name="ai_classification" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== CHARTER ==================== -->
+
+    <record id="view_legal_ai_charter_form" model="ir.ui.view">
+        <field name="name">legal.ai.charter.form</field>
+        <field name="model">legal.ai.charter</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        These instructions go in front of every request, whichever agent handles it.
+                        The agent's own prompt then covers its particular task. An agent cannot open
+                        a link or browse, so anything it must read has to be attached to it as a
+                        source -- listing a statute is not the same as giving it the text.
+                    </div>
+                    <separator string="Standing Instructions"/>
+                    <field name="body" nolabel="1"/>
+                    <separator string="Mandatory Notice"/>
+                    <div class="alert alert-warning py-2 small" role="alert">
+                        Appended to every answer by the system, not by the model.
+                    </div>
+                    <field name="disclaimer" nolabel="1"/>
+                    <separator string="Legislation Relied On"/>
+                    <field name="legislation_ids" nolabel="1" widget="many2many_tags"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_legal_ai_charter_list" model="ir.ui.view">
+        <field name="name">legal.ai.charter.list</field>
+        <field name="model">legal.ai.charter</field>
+        <field name="arch" type="xml">
+            <list><field name="sequence" widget="handle"/><field name="name"/>
+                  <field name="company_id" groups="base.group_multi_company"/></list>
+        </field>
+    </record>
+
+    <record id="action_legal_ai_charter" model="ir.actions.act_window">
+        <field name="name">Legal Charter</field>
+        <field name="res_model">legal.ai.charter</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== LEGISLATION ==================== -->
+
+    <record id="view_legal_legislation_list" model="ir.ui.view">
+        <field name="name">legal.legislation.list</field>
+        <field name="model">legal.legislation</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" decoration-muted="not source_attached">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="moj_id"/>
+                <field name="category"/>
+                <field name="url" widget="url"/>
+                <field name="source_attached" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_legislation_search" model="ir.ui.view">
+        <field name="name">legal.legislation.search</field>
+        <field name="model">legal.legislation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="moj_id"/>
+                <filter name="no_source" string="Text Not Attached Yet"
+                        domain="[('source_attached','=',False)]"/>
+                <filter name="has_source" string="Text Attached"
+                        domain="[('source_attached','=',True)]"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Category" context="{'group_by':'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_legal_legislation" model="ir.actions.act_window">
+        <field name="name">Legislation Register</field>
+        <field name="res_model">legal.legislation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_legislation_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register the legislation this office works from</p>
+            <p>Recording a statute here does not put its text in front of an agent. Attach the text
+               to the agent as a source, then tick it here -- that is what turns recall into citation.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_ai_charter" name="Legal Charter" parent="era_law_firm.menu_legal_config"
+              action="action_legal_ai_charter" sequence="36" groups="era_law_firm.group_legal_manager"/>
+    <menuitem id="menu_ai_legislation" name="Legislation Register" parent="era_law_firm.menu_legal_config"
+              action="action_legal_legislation" sequence="37" groups="era_law_firm.group_legal_staff"/>
+
+    <!-- ==================== CASE BUTTON ==================== -->
+
+    <record id="view_legal_case_form_ai" model="ir.ui.view">
+        <field name="name">legal.case.form.ai</field>
+        <field name="model">legal.case</field>
+        <field name="inherit_id" ref="era_law_firm.view_legal_case_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_ai_requests" type="object" class="oe_stat_button"
+                        icon="fa-magic"
+                        groups="era_law_firm_ai.group_legal_ai_user,era_law_firm.group_legal_manager"
+                        help="Governed AI requests raised on this file, and how many of them actually left the firm.">
+                    <field name="ai_request_count" widget="statinfo" string="AI Requests"/>
+                    <span class="o_stat_text text-muted" invisible="not ai_request_count">
+                        <field name="ai_dispatched_count"/> sent
+                    </span>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== SETTINGS ==================== -->
+
+    <record id="res_config_settings_view_form_legal_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.form.legal.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="era_law_firm.res_config_settings_view_form_legal"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='era_law_firm']" position="inside">
+                <block title="Artificial Intelligence">
+                    <setting string="Enable governed AI"
+                             help="Off by default. When off, no AI request can be sent for this company.">
+                        <field name="legal_ai_enabled"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <menuitem id="menu_legal_ai_root" name="AI" parent="era_law_firm.menu_legal_root" sequence="70"
+              groups="group_legal_ai_user"/>
+    <menuitem id="menu_ai_requests" name="AI Requests" parent="menu_legal_ai_root"
+              action="action_ai_request" sequence="10"/>
+    <menuitem id="menu_ai_generation" name="Document Generation" parent="menu_legal_ai_root"
+              action="action_legal_document_generation" sequence="20"/>
+    <menuitem id="menu_ai_agents" name="AI Agents" parent="era_law_firm.menu_legal_config"
+              action="ai_app.ai_agent_action" sequence="35" groups="era_law_firm.group_legal_manager"/>
+    <menuitem id="menu_ai_templates" name="Document Templates" parent="era_law_firm.menu_legal_config"
+              action="action_legal_document_template" sequence="40" groups="group_legal_ai_user"/>
+
+</odoo>

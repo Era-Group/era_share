@@ -1,0 +1,54 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="text-align:center;padding:32px">
+        <img src="banner.png" style="max-width:100%;height:auto;margin-bottom:24px"/>
+        <h1 style="color:#1f2d3d;margin-bottom:8px">Era Law Firm Electronic Signature</h1>
+        <h2 style="font-weight:300;color:#714B67;margin-top:0">Sign the engagement letter without trusting the callback</h2>
+        <h3 dir="rtl" style="color:#714B67;font-weight:400">التوقيع الإلكتروني لعقود مكاتب المحاماة</h3>
+        <p style="color:#5b6b7c;max-width:760px;margin:16px auto 0">A signature workflow is only as sound as the message that reports it. This extension freezes the document before dispatch and verifies every callback cryptographically, so a forged, replayed or stale confirmation cannot mark a document signed.</p>
+        <p dir="rtl" style="color:#5b6b7c;max-width:760px;margin:8px auto 0">لا يصحّ مسار التوقيع أكثر من صحة الرسالة التي تُبلّغ به. تجمّد هذه الإضافة المستند قبل الإرسال وتتحقق من كل استجابة تشفيريًا، فلا تستطيع رسالة مزوّرة أو معادة أو منتهية أن تجعل مستندًا موقّعًا.</p>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="display:flex;flex-wrap:wrap;gap:16px">
+        <div style="flex:1;min-width:220px;background:#f8f9fb;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">🔒 Frozen document hash</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">تجميد بصمة المستند</h4>
+            <p style="color:#6b7785">The document is hashed when the request is prepared. If the file changes afterwards, sending is refused rather than silently signing a different text.</p>
+            <p dir="rtl" style="color:#6b7785">تُحسب بصمة المستند عند تجهيز الطلب، وإذا تغيّر الملف بعدها يُرفض الإرسال بدل التوقيع الصامت على نص مختلف.</p>
+        </div>
+        <div style="flex:1;min-width:220px;background:#f8f9fb;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">🛡️ Verified callbacks</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">استجابات موثّقة</h4>
+            <p style="color:#6b7785">Callbacks are authenticated by HMAC over a timestamped payload inside a tolerance window, and matched against a per-request nonce.</p>
+            <p dir="rtl" style="color:#6b7785">تُوثَّق الاستجابات بـ HMAC على حمولة مختومة زمنيًا ضمن نافذة سماح، وتُطابق مع رمز عشوائي خاص بكل طلب.</p>
+        </div>
+        <div style="flex:1;min-width:220px;background:#f8f9fb;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">🔁 Replay-proof events</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">أحداث محصّنة ضد الإعادة</h4>
+            <p style="color:#6b7785">Each callback carries an event key recorded once and only once. Re-delivering the same event changes nothing and raises no error.</p>
+            <p dir="rtl" style="color:#6b7785">تحمل كل استجابة مفتاح حدث يُسجَّل مرة واحدة فقط، وإعادة إرسال الحدث نفسه لا تغيّر شيئًا ولا تُنتج خطأ.</p>
+        </div>
+        <div style="flex:1;min-width:220px;background:#f8f9fb;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">🔧 Pluggable providers</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">مزوّدون قابلون للتبديل</h4>
+            <p style="color:#6b7785">A mock provider for testing and an HTTP provider for real integrations, with per-provider timeout, retry limit and callback tolerance.</p>
+            <p dir="rtl" style="color:#6b7785">مزوّد وهمي للاختبار وآخر عبر HTTP للتكامل الفعلي، مع مهلة وحد إعادة محاولة ونافذة سماح لكل مزوّد.</p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="background:#714B67;color:#ffffff;padding:24px;text-align:center;border-radius:6px">
+        <h3 style="color:#ffffff;font-weight:400">1. Prepare &amp; hash &rarr; 2. Dispatch &rarr; 3. Verify callback &rarr; 4. Record event</h3>
+        <h3 dir="rtl" style="color:#ffffff;font-weight:400">١. تجهيز وبصمة ← ٢. إرسال ← ٣. تحقق من الاستجابة ← ٤. تسجيل الحدث</h3>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced" style="text-align:center;color:#6b7785;padding:20px">
+        <p>An optional extension of Era Saudi Law Firm Management. Provider-neutral by design — no signature vendor is assumed or bundled, and every dispatch, failure and callback is kept as a record that cannot be edited.</p>
+        <p dir="rtl">إضافة اختيارية لنظام إدارة مكاتب المحاماة السعودية، محايدة تجاه المزوّد بحكم التصميم — دون افتراض أو تضمين أي مزوّد، وكل إرسال وفشل واستجابة يُحفظ سجلاً لا يقبل التعديل.</p>
+        <p style="margin-top:12px">Era Group &middot; https://era.net.sa &middot; License: LGPL-3</p>
+    </div>
+</section>

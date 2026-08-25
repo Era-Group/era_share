@@ -1,0 +1,10 @@
+<odoo noupdate="1">
+ <record id="stage_intake" model="legal.case.stage"><field name="name">Intake</field><field name="sequence">10</field></record>
+ <record id="stage_conflict" model="legal.case.stage"><field name="name">Conflict Check</field><field name="sequence">20</field></record>
+ <record id="stage_active" model="legal.case.stage"><field name="name">Active</field><field name="sequence">30</field></record>
+ <record id="stage_hearing" model="legal.case.stage"><field name="name">Awaiting Hearing</field><field name="sequence">40</field></record>
+ <record id="stage_judgment" model="legal.case.stage"><field name="name">Awaiting Judgment</field><field name="sequence">50</field></record>
+ <record id="stage_execution" model="legal.case.stage"><field name="name">Execution</field><field name="sequence">60</field></record>
+ <record id="stage_closed" model="legal.case.stage"><field name="name">Closed</field><field name="sequence">90</field><field name="fold">1</field><field name="is_closed">1</field></record>
+ <record id="sequence_trust" model="ir.sequence"><field name="name">Legal Trust Transaction</field><field name="code">legal.trust.transaction</field><field name="prefix">TRUST/%(year)s/</field><field name="padding">5</field></record>
+</odoo>

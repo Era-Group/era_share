@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+ai_request_manager,ai request manager,model_legal_ai_request,era_law_firm.group_legal_manager,1,1,1,1
+ai_request_user,ai request user,model_legal_ai_request,group_legal_ai_user,1,1,1,0
+ai_template_user,ai template user,model_legal_document_template,group_legal_ai_user,1,1,1,0
+ai_generation_user,ai generation user,model_legal_document_generation,group_legal_ai_user,1,1,1,0
+ai_agent_legal_manager,ai agent legal manager,ai.model_ai_agent,era_law_firm.group_legal_manager,1,1,1,0
+ai_agent_legal_user,ai agent legal user,ai.model_ai_agent,group_legal_ai_user,1,0,0,0
+ai_field_user,ai field user,model_legal_ai_field,group_legal_ai_user,1,0,0,0
+ai_field_manager,ai field manager,model_legal_ai_field,era_law_firm.group_legal_manager,1,1,1,1
+charter_user,charter user,model_legal_ai_charter,group_legal_ai_user,1,0,0,0
+charter_manager,charter manager,model_legal_ai_charter,era_law_firm.group_legal_manager,1,1,1,1
+legislation_user,legislation user,model_legal_legislation,group_legal_ai_user,1,0,0,0
+legislation_staff,legislation staff,model_legal_legislation,era_law_firm.group_legal_staff,1,0,0,0
+legislation_manager,legislation manager,model_legal_legislation,era_law_firm.group_legal_manager,1,1,1,1
+attempt_user,attempt user,model_legal_ai_attempt,group_legal_ai_user,1,0,0,0
+attempt_manager,attempt manager,model_legal_ai_attempt,era_law_firm.group_legal_manager,1,0,0,0

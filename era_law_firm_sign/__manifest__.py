@@ -1,0 +1,21 @@
+{
+    'name': 'Era Law Firm Electronic Signature',
+    'summary': 'Provider-neutral electronic signature workflow with verified callbacks',
+    'version': '19.0.5.1.0',
+    'category': 'Services',
+    'author': 'Era Group',
+    'email': 'info@era.net.sa',
+    'website': 'https://era.net.sa',
+    'license': 'LGPL-3',
+    'depends': ['era_law_firm'],
+    'data': [
+        'security/legal_signature_security.xml',
+        'security/ir.model.access.csv',
+        'data/legal_signature_cron_data.xml',
+        'views/legal_signature_views.xml',
+    ],
+    'images': ['static/description/banner.png'],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+}

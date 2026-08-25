@@ -1,0 +1,5 @@
+<odoo>
+    <!-- Not noupdate: this must run again on every module update so that companies
+         which gained a chart of accounts later get their trust settings filled in. -->
+    <function model="res.company" name="_setup_legal_trust_accounting_all"/>
+</odoo>

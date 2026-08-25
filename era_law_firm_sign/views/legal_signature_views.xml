@@ -1,0 +1,198 @@
+<odoo>
+
+    <!-- ==================== PROVIDER ==================== -->
+
+    <record id="view_signature_provider_list" model="ir.ui.view">
+        <field name="name">legal.signature.provider.list</field>
+        <field name="model">legal.signature.provider</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="endpoint_url" optional="show"/>
+                <field name="timeout_seconds"/>
+                <field name="max_retries"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_signature_provider_form" model="ir.ui.view">
+        <field name="name">legal.signature.provider.form</field>
+        <field name="model">legal.signature.provider</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Provider name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="provider_type"/>
+                            <field name="endpoint_url" widget="url"
+                                   invisible="provider_type != 'http'" required="provider_type == 'http'"/>
+                        </group>
+                        <group string="Limits">
+                            <field name="timeout_seconds"/>
+                            <field name="max_retries"/>
+                            <field name="callback_tolerance_seconds"/>
+                        </group>
+                    </group>
+                    <group string="Callback Authentication" groups="base.group_system">
+                        <field name="callback_secret" password="True"
+                               placeholder="Shared secret used to HMAC-sign callbacks"/>
+                    </group>
+                    <div class="alert alert-warning" role="alert">
+                        Without a callback secret every callback is rejected. The secret is visible to system
+                        administrators only.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_signature_provider" model="ir.actions.act_window">
+        <field name="name">Signature Providers</field>
+        <field name="res_model">legal.signature.provider</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== REQUEST ==================== -->
+
+    <record id="view_signature_request_list" model="ir.ui.view">
+        <field name="name">legal.signature.request.list</field>
+        <field name="model">legal.signature.request</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'signed'" decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="engagement_id"/>
+                <field name="provider_id"/>
+                <field name="external_reference"/>
+                <field name="sent_at" optional="show"/>
+                <field name="signed_at" optional="show"/>
+                <field name="retry_count" optional="hide"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_signature_request_search" model="ir.ui.view">
+        <field name="name">legal.signature.request.search</field>
+        <field name="model">legal.signature.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="external_reference"/>
+                <field name="engagement_id"/>
+                <field name="provider_id"/>
+                <filter name="pending" string="Awaiting Signature" domain="[('state','=','sent')]"/>
+                <filter name="failed" string="Failed" domain="[('state','=','failed')]"/>
+                <filter name="signed" string="Signed" domain="[('state','=','signed')]"/>
+                <group name="group_by">
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_signature_request_form" model="ir.ui.view">
+        <field name="name">legal.signature.request.form</field>
+        <field name="model">legal.signature.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_send" type="object" string="Send for Signature"
+                            class="btn-primary" invisible="state not in ('draft','failed')"/>
+                    <button name="action_retry" type="object" string="Retry" invisible="state != 'failed'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('signed','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h2><field name="external_reference" readonly="1" placeholder="Assigned on dispatch"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="engagement_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="provider_id"/>
+                            <field name="attachment_id"/>
+                        </group>
+                        <group string="Integrity">
+                            <field name="document_hash" readonly="1"/>
+                            <field name="nonce" readonly="1" groups="base.group_no_one"/>
+                            <field name="sent_at" readonly="1"/>
+                            <field name="signed_at" readonly="1"/>
+                            <field name="retry_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="not last_error">
+                        <field name="last_error" readonly="1" nolabel="1"/>
+                    </div>
+                    <notebook>
+                        <page string="Events" name="events">
+                            <field name="event_ids" readonly="1">
+                                <list create="false" edit="false" delete="false">
+                                    <field name="received_at"/>
+                                    <field name="event_type"/>
+                                    <field name="event_key"/>
+                                    <field name="metadata"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <div class="alert alert-info" role="alert">
+                        The document hash is frozen when the request is prepared. If the file changes afterwards,
+                        sending is refused rather than signing a different text.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_signature_request" model="ir.actions.act_window">
+        <field name="name">Signature Requests</field>
+        <field name="res_model">legal.signature.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_signature_request_search"/>
+    </record>
+
+    <!-- ==================== EVENT ==================== -->
+
+    <record id="view_signature_event_list" model="ir.ui.view">
+        <field name="name">legal.signature.event.list</field>
+        <field name="model">legal.signature.event</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="received_at"/>
+                <field name="request_id"/>
+                <field name="event_type"/>
+                <field name="event_key"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_signature_event" model="ir.actions.act_window">
+        <field name="name">Signature Events</field>
+        <field name="res_model">legal.signature.event</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <menuitem id="menu_signature_root" name="Signatures" parent="era_law_firm.menu_legal_root" sequence="80"
+              groups="era_law_firm.group_legal_manager"/>
+    <menuitem id="menu_signature_requests" name="Signature Requests" parent="menu_signature_root"
+              action="action_signature_request" sequence="10"/>
+    <menuitem id="menu_signature_events" name="Signature Events" parent="menu_signature_root"
+              action="action_signature_event" sequence="20"/>
+    <menuitem id="menu_signature_providers" name="Signature Providers" parent="era_law_firm.menu_legal_config"
+              action="action_signature_provider" sequence="50" groups="era_law_firm.group_legal_manager"/>
+
+</odoo>

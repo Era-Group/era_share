@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+signature_provider_manager,provider manager,model_legal_signature_provider,era_law_firm.group_legal_manager,1,1,1,1
+signature_request_manager,request manager,model_legal_signature_request,era_law_firm.group_legal_manager,1,1,1,1
+signature_event_manager,event manager,model_legal_signature_event,era_law_firm.group_legal_manager,1,0,0,0

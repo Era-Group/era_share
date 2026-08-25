@@ -1,0 +1,7 @@
+<odoo>
+    <!-- Fires only on a database created with demo data. Everywhere else the same
+         generator is reached through Configuration > Load Test Data. -->
+    <function model="legal.demo.data" name="_generate">
+        <value eval="50"/>
+    </function>
+</odoo>

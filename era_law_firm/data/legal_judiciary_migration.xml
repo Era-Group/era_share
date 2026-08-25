@@ -1,0 +1,3 @@
+<odoo>
+    <function model="legal.judiciary.migration" name="_run"/>
+</odoo>

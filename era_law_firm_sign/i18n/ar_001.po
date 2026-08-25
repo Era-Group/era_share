@@ -1,0 +1,676 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_law_firm_sign
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: era_law_firm_sign 19.0\n"
+"Report-Msgid-Bugs-To: info@era.net.sa\n"
+"Last-Translator: Era Group <info@era.net.sa>\n"
+"Language-Team: Arabic <info@era.net.sa>\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "A callback event identifier is required."
+msgstr "معرّف حدث الاستجابة إلزامي."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__state
+msgid ""
+"A signed request can no longer be cancelled. Failed requests are retried by "
+"the scheduled job up to the provider's limit."
+msgstr ""
+"الطلب الموقّع لا يمكن إلغاؤه. والطلبات الفاشلة تعيد المهمة المجدولة محاولتها"
+" حتى حد المزوّد."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "A signed request cannot be cancelled."
+msgstr "لا يمكن إلغاء طلب موقّع."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_needaction
+msgid "Action Needed"
+msgstr "يتطلب إجراءً"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Assigned on dispatch"
+msgstr "يُسنَد عند الإرسال"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__attachment_id
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_search
+msgid "Awaiting Signature"
+msgstr "بانتظار التوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_event__event_type__callback
+msgid "Callback"
+msgstr "استجابة المزوّد"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid "Callback Authentication"
+msgstr "توثيق الاستجابة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__callback_secret
+msgid "Callback Secret"
+msgstr "سر الاستجابة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__callback_tolerance_seconds
+msgid "Callback Tolerance Seconds"
+msgstr "نافذة السماح بالثواني"
+
+#. module: era_law_firm_sign
+#: model:ir.model.constraint,message:era_law_firm_sign.constraint_legal_signature_event_event_unique
+msgid "Callback event was already processed."
+msgstr "تمت معالجة حدث الاستجابة مسبقاً."
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_request__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__company_id
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__company_id
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__create_date
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__create_date
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__display_name
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__display_name
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__document_hash
+msgid "Document Hash"
+msgstr "بصمة المستند"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_request__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__endpoint_url
+msgid "Endpoint Url"
+msgstr "رابط الخدمة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__engagement_id
+msgid "Engagement"
+msgstr "عقد أتعاب"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__event_ids
+msgid "Event"
+msgstr "حدث"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__event_key
+msgid "Event Key"
+msgstr "مفتاح الحدث"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__event_type
+msgid "Event Type"
+msgstr "نوع الحدث"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Events"
+msgstr "الأحداث"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__event_ids
+msgid ""
+"Every dispatch, failure and callback recorded for this request. Events "
+"cannot be edited or deleted."
+msgstr ""
+"كل إرسال وفشل واستجابة مسجلة لهذا الطلب. والأحداث لا تقبل التعديل ولا الحذف."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__external_reference
+msgid "External Reference"
+msgstr "المرجع الخارجي"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_event__event_type__failed
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_request__state__failed
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_provider__provider_type__http
+msgid "HTTP"
+msgstr "HTTP"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__has_message
+msgid "Has Message"
+msgstr "يحتوي رسائل"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__callback_tolerance_seconds
+msgid ""
+"How far a callback's timestamp may be from now and still be accepted. This "
+"is what stops an old captured callback from being replayed later."
+msgstr ""
+"كم يجوز أن يبعد ختم وقت الاستجابة عن الآن مع بقائها مقبولة. وهذا ما يمنع "
+"إعادة إرسال استجابة قديمة ملتقطة."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__timeout_seconds
+msgid ""
+"How long to wait for the provider to accept a request before treating it as "
+"failed."
+msgstr "مدة انتظار قبول المزوّد للطلب قبل اعتباره فاشلاً."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__retry_count
+msgid "How many dispatch attempts have failed so far."
+msgstr "عدد محاولات الإرسال التي فشلت حتى الآن."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__max_retries
+msgid ""
+"How many times the scheduled job retries a failed request before leaving it "
+"alone."
+msgstr "كم مرة تعيد المهمة المجدولة محاولة الطلب الفاشل قبل التوقف عنه."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__id
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__id
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__message_has_error
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد رسائل فشل تسليمها."
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Integrity"
+msgstr "سلامة المستند"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_is_follower
+msgid "Is Follower"
+msgstr "متابِع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__write_date
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__write_date
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_law_firm_sign
+#: model:ir.model,name:era_law_firm_sign.model_legal_signature_event
+msgid "Legal Signature Event"
+msgstr "حدث توقيع قانوني"
+
+#. module: era_law_firm_sign
+#: model:ir.model,name:era_law_firm_sign.model_legal_signature_request
+msgid "Legal Signature Request"
+msgstr "طلب توقيع قانوني"
+
+#. module: era_law_firm_sign
+#: model:ir.actions.server,name:era_law_firm_sign.ir_cron_signature_retry_failed_ir_actions_server
+msgid "Legal Signature: Retry Failed Requests"
+msgstr "التوقيع القانوني: إعادة محاولة الطلبات الفاشلة"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid "Limits"
+msgstr "الحدود"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__max_retries
+msgid "Max Retries"
+msgstr "حد إعادة المحاولة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__metadata
+msgid "Metadata"
+msgstr "بيانات وصفية"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_provider__provider_type__mock
+msgid "Mock"
+msgstr "وهمي"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__provider_type
+msgid ""
+"Mock accepts everything locally and sends nothing anywhere. HTTP posts the "
+"request to the endpoint below."
+msgstr ""
+"الوهمي يقبل كل شيء محلياً ولا يرسل لأي جهة. وHTTP يرسل الطلب إلى الرابط "
+"أدناه."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__nonce
+msgid "Nonce"
+msgstr "رمز عشوائي لمرة واحدة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي فشل تسليمها"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__nonce
+msgid ""
+"One-time value tied to this request. A callback that does not carry it is "
+"rejected, so a valid callback for one request cannot be reused for another."
+msgstr ""
+"قيمة لمرة واحدة مرتبطة بهذا الطلب. وتُرفض أي استجابة لا تحملها، فلا تُعاد "
+"استجابة صحيحة لطلب على طلب آخر."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Only draft or failed requests can be sent."
+msgstr "لا يُرسل إلا الطلب في حالة مسودة أو فاشل."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__provider_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_search
+msgid "Provider"
+msgstr "المزوّد"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__provider_type
+msgid "Provider Type"
+msgstr "نوع المزوّد"
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Provider limits are invalid."
+msgstr "حدود المزوّد غير صحيحة."
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid "Provider name"
+msgstr "اسم المزوّد"
+
+#. module: era_law_firm_sign
+#: model:ir.model.constraint,message:era_law_firm_sign.constraint_legal_signature_request_external_unique
+msgid "Provider reference must be unique."
+msgstr "يجب أن يكون مرجع المزوّد فريداً."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Provider rejected the signature request."
+msgstr "رفض المزوّد طلب التوقيع."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__received_at
+msgid "Received At"
+msgstr "تاريخ الاستلام"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_event__request_id
+msgid "Request"
+msgstr "الطلب"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Retry"
+msgstr "إعادة محاولة"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__retry_count
+msgid "Retry Count"
+msgstr "عدد المحاولات"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__document_hash
+msgid ""
+"SHA-256 of the file at the moment the request was prepared. If the file "
+"changes afterwards, sending is refused rather than signing a different text."
+msgstr ""
+"بصمة SHA-256 للملف لحظة تجهيز الطلب. فإن تغير الملف بعدها يُرفض الإرسال بدل "
+"التوقيع على نص مختلف."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid "Send for Signature"
+msgstr "إرسال للتوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_event__event_type__sent
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_request__state__sent
+msgid "Sent"
+msgstr "مُرسل"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__sent_at
+msgid "Sent At"
+msgstr "تاريخ الإرسال"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid "Shared secret used to HMAC-sign callbacks"
+msgstr "السر المشترك المستخدم لتوقيع الاستجابات بـ HMAC"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__callback_secret
+msgid ""
+"Shared secret used to HMAC-sign callbacks. Without it every callback is "
+"rejected, so no request could ever complete. Visible to system "
+"administrators only."
+msgstr ""
+"السر المشترك لتوقيع الاستجابات بـ HMAC. وبدونه تُرفض كل استجابة فلا يكتمل أي"
+" طلب. ظاهر لمسؤولي النظام فقط."
+
+#. module: era_law_firm_sign
+#: model:ir.actions.act_window,name:era_law_firm_sign.action_signature_event
+#: model:ir.ui.menu,name:era_law_firm_sign.menu_signature_events
+msgid "Signature Events"
+msgstr "أحداث التوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.model,name:era_law_firm_sign.model_legal_signature_provider
+msgid "Signature Provider"
+msgstr "مزوّد التوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.actions.act_window,name:era_law_firm_sign.action_signature_provider
+#: model:ir.ui.menu,name:era_law_firm_sign.menu_signature_providers
+msgid "Signature Providers"
+msgstr "مزوّدو التوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.actions.act_window,name:era_law_firm_sign.action_signature_request
+#: model:ir.ui.menu,name:era_law_firm_sign.menu_signature_requests
+msgid "Signature Requests"
+msgstr "طلبات التوقيع"
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Signature callback does not match the request."
+msgstr "استجابة التوقيع لا تطابق الطلب."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Signature events cannot be deleted."
+msgstr "لا يمكن حذف أحداث التوقيع."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "Signature events cannot be modified."
+msgstr "لا يمكن تعديل أحداث التوقيع."
+
+#. module: era_law_firm_sign
+#: model:ir.ui.menu,name:era_law_firm_sign.menu_signature_root
+msgid "Signatures"
+msgstr "التواقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields.selection,name:era_law_firm_sign.selection__legal_signature_request__state__signed
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_search
+msgid "Signed"
+msgstr "موقّع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__signed_at
+msgid "Signed At"
+msgstr "تاريخ التوقيع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "The document changed after the signature request was prepared."
+msgstr "تغيّر المستند بعد تجهيز طلب التوقيع."
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_request_form
+msgid ""
+"The document hash is frozen when the request is prepared. If the file changes afterwards,\n"
+"                        sending is refused rather than signing a different text."
+msgstr ""
+"تُجمَّد بصمة المستند عند تجهيز الطلب. وإذا تغيّر الملف بعد ذلك يُرفض الإرسال"
+" بدل التوقيع على نص مختلف."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__engagement_id
+msgid "The engagement letter being signed."
+msgstr "عقد الأتعاب الجاري توقيعه."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__attachment_id
+msgid "The exact file sent for signature. Its hash is frozen on dispatch."
+msgstr "الملف المرسل للتوقيع بعينه. وتُجمَّد بصمته عند الإرسال."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_event__event_key
+msgid ""
+"The provider's event identifier, recorded once and only once. Re-delivering "
+"the same event changes nothing, which is what makes callbacks safe to retry."
+msgstr ""
+"معرّف الحدث لدى المزوّد، يُسجَّل مرة واحدة فقط. وإعادة إرسال الحدث نفسه لا "
+"تغيّر شيئاً، وهذا ما يجعل إعادة المحاولة آمنة."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__external_reference
+msgid ""
+"The provider's reference for this request, assigned on dispatch and used to "
+"match the callback back to it."
+msgstr ""
+"مرجع المزوّد لهذا الطلب، يُسنَد عند الإرسال ويُستخدم لمطابقة الاستجابة به."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "The signature provider could not accept the request."
+msgstr "تعذّر على مزوّد التوقيع قبول الطلب."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "The signature provider endpoint is not configured."
+msgstr "رابط خدمة مزوّد التوقيع غير مهيّأ."
+
+#. module: era_law_firm_sign
+#. odoo-python
+#: code:addons/era_law_firm_sign/models/signature.py:0
+msgid "The signature provider must belong to the request company."
+msgstr "يجب أن يعود مزوّد التوقيع لشركة الطلب نفسها."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_provider__timeout_seconds
+msgid "Timeout Seconds"
+msgstr "المهلة بالثواني"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,field_description:era_law_firm_sign.field_legal_signature_request__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__website_message_ids
+msgid "Website communication history"
+msgstr "سجل مراسلات الموقع"
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_event__metadata
+msgid "What the provider reported with the event."
+msgstr "ما أبلغ به المزوّد مع الحدث."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__signed_at
+msgid "When a verified callback reported the document signed."
+msgstr "وقت إبلاغ استجابة موثّقة بأن المستند وُقّع."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_event__received_at
+msgid "When the event was recorded."
+msgstr "وقت تسجيل الحدث."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__sent_at
+msgid "When the request was accepted by the provider."
+msgstr "وقت قبول المزوّد للطلب."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_provider__endpoint_url
+msgid "Where signature requests are posted for an HTTP provider."
+msgstr "الوجهة التي تُرسل إليها طلبات التوقيع لمزوّد HTTP."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_event__event_type
+msgid "Whether this records a dispatch, a failure or an incoming callback."
+msgstr "هل يسجّل هذا إرسالاً أم فشلاً أم استجابة واردة."
+
+#. module: era_law_firm_sign
+#: model:ir.model.fields,help:era_law_firm_sign.field_legal_signature_request__last_error
+msgid "Why the last attempt failed."
+msgstr "سبب فشل آخر محاولة."
+
+#. module: era_law_firm_sign
+#: model_terms:ir.ui.view,arch_db:era_law_firm_sign.view_signature_provider_form
+msgid ""
+"Without a callback secret every callback is rejected. The secret is visible to system\n"
+"                        administrators only."
+msgstr ""
+"بدون سرّ للاستجابة تُرفض كل الاستجابات. والسرّ ظاهر لمسؤولي النظام فقط."

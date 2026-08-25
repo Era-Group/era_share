@@ -1,0 +1,54 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+stage_staff,stage staff,model_legal_case_stage,group_legal_staff,1,0,0,0
+stage_manager,stage manager,model_legal_case_stage,group_legal_manager,1,1,1,1
+case_staff,case staff,model_legal_case,group_legal_staff,1,1,1,0
+case_manager,case manager,model_legal_case,group_legal_manager,1,1,1,1
+party_staff,party staff,model_legal_case_party,group_legal_staff,1,1,1,0
+conflict_lawyer,conflict lawyer,model_legal_conflict_check,group_legal_lawyer,1,1,1,0
+conflict_line_lawyer,conflict line lawyer,model_legal_conflict_check_line,group_legal_lawyer,1,0,0,0
+hearing_staff,hearing staff,model_legal_hearing,group_legal_staff,1,1,1,0
+deadline_staff,deadline staff,model_legal_deadline,group_legal_staff,1,1,1,0
+document_staff,document staff,model_legal_document,group_legal_staff,1,1,1,0
+engagement_accountant,engagement accountant,model_legal_engagement,group_legal_accountant,1,1,1,0
+time_lawyer,time lawyer,model_legal_time_entry,group_legal_lawyer,1,1,1,0
+expense_accountant,expense accountant,model_legal_expense,group_legal_accountant,1,1,1,0
+trust_accountant,trust accountant,model_legal_trust_account,group_legal_accountant,1,1,1,0
+trust_tx_accountant,trust tx accountant,model_legal_trust_transaction,group_legal_accountant,1,1,1,0
+invoice_wizard,invoice wizard,model_legal_invoice_create_wizard,group_legal_accountant,1,1,1,1
+trust_wizard,trust wizard,model_legal_trust_operation_wizard,group_legal_accountant,1,1,1,1
+deadline_rule_staff,deadline rule staff,model_legal_deadline_rule,group_legal_staff,1,0,0,0
+deadline_rule_manager,deadline rule manager,model_legal_deadline_rule,group_legal_manager,1,1,1,1
+milestone_accountant,milestone accountant,model_legal_engagement_milestone,group_legal_accountant,1,1,1,0
+success_fee_accountant,success fee accountant,model_legal_success_fee,group_legal_accountant,1,1,1,0
+consultation_lawyer,consultation lawyer,model_legal_consultation,group_legal_lawyer,1,1,1,0
+audit_manager,audit manager,model_legal_audit_log,group_legal_manager,1,0,0,0
+case_supervisor,case supervisor,model_legal_case,group_legal_supervisor,1,1,1,0
+document_supervisor,document supervisor,model_legal_document,group_legal_supervisor,1,1,1,0
+time_supervisor,time supervisor,model_legal_time_entry,group_legal_supervisor,1,1,1,0
+consultation_supervisor,consultation supervisor,model_legal_consultation,group_legal_supervisor,1,1,1,0
+success_fee_supervisor,success fee supervisor,model_legal_success_fee,group_legal_supervisor,1,1,1,0
+deadline_rule_supervisor,deadline rule supervisor,model_legal_deadline_rule,group_legal_supervisor,1,0,0,0
+jurisdiction_staff,jurisdiction staff,model_legal_jurisdiction,group_legal_staff,1,0,1,0
+jurisdiction_supervisor,jurisdiction supervisor,model_legal_jurisdiction,group_legal_supervisor,1,1,1,0
+jurisdiction_manager,jurisdiction manager,model_legal_jurisdiction,group_legal_manager,1,1,1,1
+court_staff,court staff,model_legal_court,group_legal_staff,1,0,1,0
+court_supervisor,court supervisor,model_legal_court,group_legal_supervisor,1,1,1,0
+court_manager,court manager,model_legal_court,group_legal_manager,1,1,1,1
+circuit_staff,circuit staff,model_legal_circuit,group_legal_staff,1,0,1,0
+circuit_supervisor,circuit supervisor,model_legal_circuit,group_legal_supervisor,1,1,1,0
+circuit_manager,circuit manager,model_legal_circuit,group_legal_manager,1,1,1,1
+party_manager,party manager,model_legal_case_party,group_legal_manager,1,1,1,1
+conflict_manager,conflict manager,model_legal_conflict_check,group_legal_manager,1,1,1,1
+conflict_line_manager,conflict line manager,model_legal_conflict_check_line,group_legal_manager,1,1,1,1
+hearing_manager,hearing manager,model_legal_hearing,group_legal_manager,1,1,1,1
+deadline_manager,deadline manager,model_legal_deadline,group_legal_manager,1,1,1,1
+document_manager,document manager,model_legal_document,group_legal_manager,1,1,1,1
+engagement_manager,engagement manager,model_legal_engagement,group_legal_manager,1,1,1,1
+time_manager,time manager,model_legal_time_entry,group_legal_manager,1,1,1,1
+expense_manager,expense manager,model_legal_expense,group_legal_manager,1,1,1,1
+trust_manager,trust manager,model_legal_trust_account,group_legal_manager,1,1,1,1
+trust_tx_manager,trust tx manager,model_legal_trust_transaction,group_legal_manager,1,1,1,1
+milestone_manager,milestone manager,model_legal_engagement_milestone,group_legal_manager,1,1,1,1
+success_fee_manager,success fee manager,model_legal_success_fee,group_legal_manager,1,1,1,1
+consultation_manager,consultation manager,model_legal_consultation,group_legal_manager,1,1,1,1
+demo_wizard_manager,demo wizard manager,model_legal_demo_data_wizard,group_legal_manager,1,1,1,1

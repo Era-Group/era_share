@@ -1,0 +1,43 @@
+<odoo>
+
+    <record id="view_legal_demo_data_wizard_form" model="ir.ui.view">
+        <field name="name">legal.demo.data.wizard.form</field>
+        <field name="model">legal.demo.data.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Load Test Data">
+                <div class="alert alert-info" role="alert">
+                    Creates a working firm: clients, opposing parties, cases across every type and
+                    stage, hearings past and future, statutory deadlines, documents at each review
+                    step, engagements with recorded time and expenses, and client trust deposits.
+                    Generation is seeded, so the same database always produces the same firm.
+                </div>
+                <group>
+                    <field name="existing_count" readonly="1"/>
+                    <field name="case_count"/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="existing_count == 0">
+                    Test data is already loaded. Loading again adds a further batch on top;
+                    use Remove to clear what is there first.
+                </div>
+                <footer>
+                    <button name="action_load" type="object" string="Load Test Data" class="btn-primary"/>
+                    <button name="action_purge" type="object" string="Remove Test Data"
+                            class="btn-secondary" invisible="existing_count == 0"
+                            confirm="This permanently deletes every record created by the test-data loader. Continue?"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_demo_data" model="ir.actions.act_window">
+        <field name="name">Load Test Data</field>
+        <field name="res_model">legal.demo.data.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_legal_demo_data" name="Load Test Data" parent="menu_legal_config"
+              action="action_legal_demo_data" sequence="95" groups="group_legal_manager"/>
+
+</odoo>

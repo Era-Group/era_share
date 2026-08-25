@@ -1,0 +1,517 @@
+<odoo>
+
+    <!-- ==================== ENGAGEMENT ==================== -->
+
+    <record id="view_legal_engagement_list" model="ir.ui.view">
+        <field name="name">legal.engagement.list</field>
+        <field name="model">legal.engagement</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="billing_type"/>
+                <field name="hourly_rate" optional="show"/>
+                <field name="amount" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_engagement_search" model="ir.ui.view">
+        <field name="name">legal.engagement.search</field>
+        <field name="model">legal.engagement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <filter name="active_engagements" string="Active" domain="[('state','=','active')]"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_type" string="Billing Type" context="{'group_by': 'billing_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_engagement_form" model="ir.ui.view">
+        <field name="name">legal.engagement.form</field>
+        <field name="model">legal.engagement</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close" type="object" string="Close" invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Engagement letter reference"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="case_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="product_id"/>
+                        </group>
+                        <group>
+                            <field name="billing_type"/>
+                            <field name="hourly_rate" invisible="billing_type != 'hourly'"
+                                   required="billing_type == 'hourly'"/>
+                            <field name="amount" invisible="billing_type != 'fixed'"
+                                   required="billing_type == 'fixed'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Milestones" name="milestones" invisible="billing_type != 'milestone'">
+                            <field name="milestone_ids" context="{'default_engagement_id': id}">
+                                <list editable="bottom" decoration-success="state == 'invoiced'">
+                                    <field name="name"/>
+                                    <field name="due_date"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state" widget="badge"/>
+                                    <button name="action_set_ready" type="object" string="Ready to Invoice"
+                                            icon="fa-check" invisible="state != 'draft'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Success Fees" name="success_fees" invisible="billing_type != 'success'">
+                            <field name="success_fee_ids" context="{'default_engagement_id': id}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_engagement" model="ir.actions.act_window">
+        <field name="name">Engagements</field>
+        <field name="res_model">legal.engagement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_engagement_search"/>
+    </record>
+
+    <!-- ==================== SUCCESS FEE ==================== -->
+
+    <record id="view_legal_success_fee_list" model="ir.ui.view">
+        <field name="name">legal.success.fee.list</field>
+        <field name="model">legal.success.fee</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="engagement_id"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_success_fee_form" model="ir.ui.view">
+        <field name="name">legal.success.fee.form</field>
+        <field name="model">legal.success.fee</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Submit for Review"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'review'" groups="era_law_firm.group_legal_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Success fee description"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="engagement_id"/>
+                            <field name="case_id" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="invoice_line_id" readonly="1" invisible="state != 'invoiced'"/>
+                        </group>
+                    </group>
+                    <group string="Evidence">
+                        <field name="evidence" nolabel="1"
+                               placeholder="The judgment, settlement or recovery this fee is earned on..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_success_fee" model="ir.actions.act_window">
+        <field name="name">Success Fees</field>
+        <field name="res_model">legal.success.fee</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== TIME ENTRY ==================== -->
+
+    <record id="view_legal_time_entry_list" model="ir.ui.view">
+        <field name="name">legal.time.entry.list</field>
+        <field name="model">legal.time.entry</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" decoration-success="state == 'invoiced'" decoration-bf="state == 'billable'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="engagement_id"/>
+                <field name="user_id"/>
+                <field name="hours" sum="Hours"/>
+                <field name="rate"/>
+                <field name="amount" sum="Amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+                <button name="action_mark_billable" type="object" string="Mark Billable"
+                        icon="fa-check" invisible="state != 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_time_entry_search" model="ir.ui.view">
+        <field name="name">legal.time.entry.search</field>
+        <field name="model">legal.time.entry</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="user_id"/>
+                <filter name="mine" string="My Time" domain="[('user_id','=',uid)]"/>
+                <filter name="billable" string="Billable" domain="[('state','=','billable')]"/>
+                <filter name="uninvoiced" string="Not Invoiced" domain="[('invoice_line_id','=',False)]"/>
+                <separator/>
+                <filter name="this_month" string="This Month" date="date" default_period="month"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_user" string="Lawyer" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_date" string="Month" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_time_entry_form" model="ir.ui.view">
+        <field name="name">legal.time.entry.form</field>
+        <field name="model">legal.time.entry</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_mark_billable" type="object" string="Mark Billable"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="What was done"/>
+                            <field name="case_id"/>
+                            <field name="engagement_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="date"/>
+                            <field name="hours"/>
+                            <field name="rate"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="invoice_line_id" readonly="1" invisible="state != 'invoiced'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_time_entry" model="ir.actions.act_window">
+        <field name="name">Time Entries</field>
+        <field name="res_model">legal.time.entry</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_time_entry_search"/>
+        <field name="context">{'search_default_mine': 1}</field>
+    </record>
+
+    <!-- ==================== EXPENSE ==================== -->
+
+    <record id="view_legal_expense_list" model="ir.ui.view">
+        <field name="name">legal.expense.list</field>
+        <field name="model">legal.expense</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" decoration-success="state == 'invoiced'">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="engagement_id"/>
+                <field name="product_id"/>
+                <field name="amount" sum="Amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+                <button name="action_approve" type="object" string="Approve"
+                        icon="fa-check" invisible="state != 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_expense_search" model="ir.ui.view">
+        <field name="name">legal.expense.search</field>
+        <field name="model">legal.expense</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+                <filter name="uninvoiced" string="Not Invoiced" domain="[('invoice_line_id','=',False)]"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_expense_form" model="ir.ui.view">
+        <field name="name">legal.expense.form</field>
+        <field name="model">legal.expense</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Court fee, expert report, travel..."/>
+                            <field name="case_id"/>
+                            <field name="engagement_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="invoice_line_id" readonly="1" invisible="state != 'invoiced'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_expense" model="ir.actions.act_window">
+        <field name="name">Expenses</field>
+        <field name="res_model">legal.expense</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_expense_search"/>
+    </record>
+
+    <!-- ==================== TRUST ACCOUNT ==================== -->
+
+    <record id="view_trust_account_list" model="ir.ui.view">
+        <field name="name">legal.trust.account.list</field>
+        <field name="model">legal.trust.account</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state == 'frozen'" decoration-muted="state == 'closed'">
+                <field name="partner_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="available_balance" sum="Balance"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_trust_account_form" model="ir.ui.view">
+        <field name="name">legal.trust.account.form</field>
+        <field name="model">legal.trust.account</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_operation_wizard" type="object" string="Deposit"
+                            class="btn-primary" context="{'trust_operation': 'deposit'}"
+                            invisible="state != 'open'"/>
+                    <button name="action_open_operation_wizard" type="object" string="Apply to Invoice"
+                            context="{'trust_operation': 'apply'}" invisible="state != 'open'"/>
+                    <button name="action_open_operation_wizard" type="object" string="Refund"
+                            context="{'trust_operation': 'refund'}" invisible="state != 'open'"/>
+                    <button name="action_freeze" type="object" string="Freeze"
+                            invisible="state != 'open'" groups="era_law_firm.group_legal_manager"/>
+                    <button name="action_unfreeze" type="object" string="Unfreeze"
+                            invisible="state != 'frozen'" groups="era_law_firm.group_legal_manager"/>
+                    <button name="action_close" type="object" string="Close Account"
+                            invisible="state == 'closed'" groups="era_law_firm.group_legal_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_transactions" type="object" class="oe_stat_button" icon="fa-list">
+                            <span class="o_stat_text">Transactions</span>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="available_balance"/>
+                            <field name="posted_balance"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Client money is a liability, not firm revenue. It becomes revenue only when a posted fee
+                        invoice is deliberately settled against this balance.
+                    </div>
+                    <notebook>
+                        <page string="Transactions" name="transactions">
+                            <field name="transaction_ids" readonly="1">
+                                <list decoration-muted="state == 'cancelled'" decoration-success="state == 'posted'">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="transaction_type"/>
+                                    <field name="case_id" optional="show"/>
+                                    <field name="reference" optional="hide"/>
+                                    <field name="signed_amount" sum="Net"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_trust_account" model="ir.actions.act_window">
+        <field name="name">Client Trust</field>
+        <field name="res_model">legal.trust.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== TRUST TRANSACTION ==================== -->
+
+    <record id="view_trust_transaction_list" model="ir.ui.view">
+        <field name="name">legal.trust.transaction.list</field>
+        <field name="model">legal.trust.transaction</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-success="state == 'posted'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="transaction_type"/>
+                <field name="case_id" optional="show"/>
+                <field name="amount"/>
+                <field name="signed_amount" sum="Net"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_trust_transaction_search" model="ir.ui.view">
+        <field name="name">legal.trust.transaction.search</field>
+        <field name="model">legal.trust.transaction</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="case_id"/>
+                <filter name="posted" string="Posted" domain="[('state','=','posted')]"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <group name="group_by">
+                    <filter name="group_partner" string="Client" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'transaction_type'}"/>
+                    <filter name="group_date" string="Month" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_trust_transaction_form" model="ir.ui.view">
+        <field name="name">legal.trust.transaction.form</field>
+        <field name="model">legal.trust.transaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_post" type="object" string="Post" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="trust_account_id"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="case_id"/>
+                        </group>
+                        <group>
+                            <field name="transaction_type"/>
+                            <field name="amount"/>
+                            <field name="signed_amount" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="date"/>
+                            <field name="reference"/>
+                            <field name="invoice_id" invisible="transaction_type != 'apply'"
+                                   required="transaction_type == 'apply'"/>
+                        </group>
+                    </group>
+                    <group string="Reason">
+                        <field name="reason" nolabel="1" placeholder="Why this movement was made..."/>
+                    </group>
+                    <group string="Accounting" groups="account.group_account_readonly">
+                        <field name="move_id" readonly="1"/>
+                        <field name="reversal_move_id" readonly="1" invisible="not reversal_move_id"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_trust_transaction" model="ir.actions.act_window">
+        <field name="name">Trust Transactions</field>
+        <field name="res_model">legal.trust.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_trust_transaction_search"/>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <menuitem id="menu_legal_billing" name="Billing" parent="menu_legal_root" sequence="50"
+              groups="group_legal_lawyer,group_legal_accountant"/>
+    <menuitem id="menu_legal_engagements" name="Engagements" parent="menu_legal_billing"
+              action="action_legal_engagement" sequence="10" groups="group_legal_accountant"/>
+    <menuitem id="menu_legal_time" name="Time Entries" parent="menu_legal_billing"
+              action="action_legal_time_entry" sequence="20" groups="group_legal_lawyer"/>
+    <menuitem id="menu_legal_expenses" name="Expenses" parent="menu_legal_billing"
+              action="action_legal_expense" sequence="30" groups="group_legal_accountant"/>
+    <menuitem id="menu_legal_success_fees" name="Success Fees" parent="menu_legal_billing"
+              action="action_legal_success_fee" sequence="40" groups="group_legal_accountant"/>
+
+    <menuitem id="menu_legal_trust_root" name="Client Trust" parent="menu_legal_root" sequence="60"
+              groups="group_legal_accountant"/>
+    <menuitem id="menu_legal_trust" name="Trust Accounts" parent="menu_legal_trust_root"
+              action="action_trust_account" sequence="10"/>
+    <menuitem id="menu_legal_trust_tx" name="Transactions" parent="menu_legal_trust_root"
+              action="action_trust_transaction" sequence="20"/>
+
+</odoo>

@@ -1,0 +1,94 @@
+<odoo noupdate="1">
+
+    <!-- The whitelist, written the way a lawyer reads it. Anything not here cannot
+         be sent to an agent at all, whatever anyone types. -->
+
+    <record id="field_case_name" model="legal.ai.field">
+        <field name="name">رقم القضية الداخلي</field>
+        <field name="technical_name">name</field>
+        <field name="source">case</field>
+        <field name="sequence">10</field>
+        <field name="description">المرجع الداخلي للمكتب، مثل LAW/2026/00042. لا يكشف هوية أحد.</field>
+    </record>
+    <record id="field_case_najiz" model="legal.ai.field">
+        <field name="name">رقم القضية في ناجز</field>
+        <field name="technical_name">najiz_number</field>
+        <field name="source">case</field>
+        <field name="sequence">20</field>
+        <field name="description">رقم القضية لدى وزارة العدل. رقم مرجعي لا يحمل بيانات شخصية.</field>
+    </record>
+    <record id="field_case_type" model="legal.ai.field">
+        <field name="name">نوع القضية</field>
+        <field name="technical_name">case_type</field>
+        <field name="source">case</field>
+        <field name="sequence">30</field>
+        <field name="description">دعوى قضائية أو تنفيذ أو استشارة. يساعد الوكيل على اختيار الأسلوب المناسب.</field>
+    </record>
+    <record id="field_case_jurisdiction" model="legal.ai.field">
+        <field name="name">الاختصاص القضائي</field>
+        <field name="technical_name">jurisdiction_id</field>
+        <field name="source">case</field>
+        <field name="sequence">40</field>
+        <field name="description">فرع القضاء: عام، تجاري، عمالي، جزائي وغيرها.</field>
+    </record>
+    <record id="field_case_court" model="legal.ai.field">
+        <field name="name">المحكمة</field>
+        <field name="technical_name">court_id</field>
+        <field name="source">case</field>
+        <field name="sequence">50</field>
+        <field name="description">المحكمة الناظرة للقضية. تفيد في ضبط الصياغة وفق ما تعتاده المحكمة.</field>
+    </record>
+    <record id="field_case_circuit" model="legal.ai.field">
+        <field name="name">الدائرة</field>
+        <field name="technical_name">circuit_id</field>
+        <field name="source">case</field>
+        <field name="sequence">60</field>
+        <field name="description">الدائرة داخل المحكمة.</field>
+    </record>
+    <record id="field_case_city" model="legal.ai.field">
+        <field name="name">المدينة</field>
+        <field name="technical_name">city</field>
+        <field name="source">case</field>
+        <field name="sequence">70</field>
+        <field name="description">مدينة انعقاد المحكمة.</field>
+    </record>
+    <record id="field_case_claim" model="legal.ai.field">
+        <field name="name">قيمة المطالبة</field>
+        <field name="technical_name">claim_amount</field>
+        <field name="source">case</field>
+        <field name="sequence">80</field>
+        <field name="description">المبلغ محل المطالبة. مالي، فلا تشاركه إلا عند الحاجة.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+    <record id="field_case_outcome" model="legal.ai.field">
+        <field name="name">نتيجة القضية</field>
+        <field name="technical_name">outcome</field>
+        <field name="source">case</field>
+        <field name="sequence">90</field>
+        <field name="description">الحكم أو التسوية وشروطها. نص سردي قد يحوي تفاصيل الموكل.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+    <record id="field_document_text" model="legal.ai.field">
+        <field name="name">نص المستند كاملاً</field>
+        <field name="technical_name">document_text</field>
+        <field name="source">document</field>
+        <field name="sequence">100</field>
+        <field name="description">محتوى المستند المرفق بالكامل. أوسع ما يمكن مشاركته — راجع المعاينة قبل الموافقة.</field>
+        <field name="sensitive" eval="True"/>
+    </record>
+
+    <!-- What each shipped agent normally needs, so a new request starts sensibly ticked. -->
+    <record id="agent_contract_review" model="ai.agent">
+        <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_document_text')])]"/>
+    </record>
+    <record id="agent_drafting" model="ai.agent">
+        <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_najiz'), ref('field_case_type'), ref('field_case_jurisdiction'), ref('field_case_court'), ref('field_case_circuit'), ref('field_case_city')])]"/>
+    </record>
+    <record id="agent_summary" model="ai.agent">
+        <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_name'), ref('field_case_type'), ref('field_document_text')])]"/>
+    </record>
+    <record id="agent_research" model="ai.agent">
+        <field name="legal_field_ids" eval="[(6, 0, [ref('field_case_type'), ref('field_case_jurisdiction')])]"/>
+    </record>
+
+</odoo>

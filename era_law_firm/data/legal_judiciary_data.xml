@@ -1,0 +1,201 @@
+<odoo noupdate="1">
+
+    <!-- ============ JURISDICTIONS ============
+         Branches of the judiciary. Courts per article 9 of the Law of the
+         Judiciary (M/78, 19/9/1428H); the administrative branch sits under
+         نظام ديوان المظالم and the quasi-judicial committees under their own laws. -->
+
+    <record id="jurisdiction_general" model="legal.jurisdiction">
+        <field name="name">General Judiciary</field>
+        <field name="code">GEN</field>
+        <field name="sequence">10</field>
+        <field name="note">Law of the Judiciary, article 9(3)(a). Everything not reserved to a specialised court.</field>
+    </record>
+    <record id="jurisdiction_criminal" model="legal.jurisdiction">
+        <field name="name">Criminal Judiciary</field>
+        <field name="code">CRM</field>
+        <field name="sequence">20</field>
+        <field name="note">Law of the Judiciary, article 9(3)(b).</field>
+    </record>
+    <record id="jurisdiction_personal_status" model="legal.jurisdiction">
+        <field name="name">Personal Status</field>
+        <field name="code">PST</field>
+        <field name="sequence">30</field>
+        <field name="note">Law of the Judiciary, article 9(3)(c).</field>
+    </record>
+    <record id="jurisdiction_commercial" model="legal.jurisdiction">
+        <field name="name">Commercial Judiciary</field>
+        <field name="code">COM</field>
+        <field name="sequence">40</field>
+        <field name="note">Law of the Judiciary, article 9(3)(d), and the Commercial Courts Law.</field>
+    </record>
+    <record id="jurisdiction_labour" model="legal.jurisdiction">
+        <field name="name">Labour Judiciary</field>
+        <field name="code">LAB</field>
+        <field name="sequence">50</field>
+        <field name="note">Law of the Judiciary, article 9(3)(e).</field>
+    </record>
+    <record id="jurisdiction_execution" model="legal.jurisdiction">
+        <field name="name">Execution</field>
+        <field name="code">EXE</field>
+        <field name="sequence">60</field>
+        <field name="note">Execution circuits within the general courts, article 19, and the Execution Law.</field>
+    </record>
+    <record id="jurisdiction_administrative" model="legal.jurisdiction">
+        <field name="name">Administrative Judiciary (Board of Grievances)</field>
+        <field name="code">ADM</field>
+        <field name="sequence">70</field>
+        <field name="note">Separate from the Law of the Judiciary; governed by نظام ديوان المظالم.</field>
+    </record>
+    <record id="jurisdiction_committees" model="legal.jurisdiction">
+        <field name="name">Quasi-Judicial Committees</field>
+        <field name="code">CMT</field>
+        <field name="sequence">80</field>
+        <field name="note">Committees with adjudicative powers under their own statutes, such as banking disputes, securities and insurance.</field>
+    </record>
+
+    <!-- ============ COURTS ============
+         Court types as named in article 9. Add your local court — for example
+         "Commercial Court in Riyadh" — straight from the dropdown on a case. -->
+
+    <record id="court_supreme" model="legal.court">
+        <field name="name">Supreme Court</field>
+        <field name="degree">supreme</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="court_appeal" model="legal.court">
+        <field name="name">Court of Appeal</field>
+        <field name="degree">appeal</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="court_general" model="legal.court">
+        <field name="name">General Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_general"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="court_criminal" model="legal.court">
+        <field name="name">Criminal Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_criminal"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="court_personal_status" model="legal.court">
+        <field name="name">Personal Status Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_personal_status"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="court_commercial" model="legal.court">
+        <field name="name">Commercial Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_commercial"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="court_labour" model="legal.court">
+        <field name="name">Labour Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_labour"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="court_execution" model="legal.court">
+        <field name="name">Execution Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_execution"/>
+        <field name="sequence">80</field>
+    </record>
+    <record id="court_administrative" model="legal.court">
+        <field name="name">Administrative Court</field>
+        <field name="degree">first</field>
+        <field name="jurisdiction_id" ref="jurisdiction_administrative"/>
+        <field name="sequence">90</field>
+    </record>
+    <record id="court_administrative_appeal" model="legal.court">
+        <field name="name">Administrative Court of Appeal</field>
+        <field name="degree">appeal</field>
+        <field name="jurisdiction_id" ref="jurisdiction_administrative"/>
+        <field name="sequence">100</field>
+    </record>
+    <record id="court_administrative_supreme" model="legal.court">
+        <field name="name">High Administrative Court</field>
+        <field name="degree">supreme</field>
+        <field name="jurisdiction_id" ref="jurisdiction_administrative"/>
+        <field name="sequence">110</field>
+    </record>
+
+    <!-- ============ CIRCUITS ============
+         Appeal circuits are listed in article 16; criminal circuits in article 20;
+         general-court circuits in article 19. Articles 21-23 leave further
+         specialised circuits to the Supreme Judicial Council, which is why this
+         list is open. -->
+
+    <record id="circuit_appeal_civil" model="legal.circuit">
+        <field name="name">Civil Circuit</field>
+        <field name="court_id" ref="court_appeal"/>
+        <field name="sequence">10</field>
+        <field name="note">Law of the Judiciary, article 16(1).</field>
+    </record>
+    <record id="circuit_appeal_criminal" model="legal.circuit">
+        <field name="name">Criminal Circuit</field>
+        <field name="court_id" ref="court_appeal"/>
+        <field name="sequence">20</field>
+        <field name="note">Law of the Judiciary, article 16(2).</field>
+    </record>
+    <record id="circuit_appeal_personal_status" model="legal.circuit">
+        <field name="name">Personal Status Circuit</field>
+        <field name="court_id" ref="court_appeal"/>
+        <field name="sequence">30</field>
+        <field name="note">Law of the Judiciary, article 16(3).</field>
+    </record>
+    <record id="circuit_appeal_commercial" model="legal.circuit">
+        <field name="name">Commercial Circuit</field>
+        <field name="court_id" ref="court_appeal"/>
+        <field name="sequence">40</field>
+        <field name="note">Law of the Judiciary, article 16(4).</field>
+    </record>
+    <record id="circuit_appeal_labour" model="legal.circuit">
+        <field name="name">Labour Circuit</field>
+        <field name="court_id" ref="court_appeal"/>
+        <field name="sequence">50</field>
+        <field name="note">Law of the Judiciary, article 16(5).</field>
+    </record>
+
+    <record id="circuit_criminal_qisas" model="legal.circuit">
+        <field name="name">Retribution and Hudud Circuit</field>
+        <field name="court_id" ref="court_criminal"/>
+        <field name="sequence">60</field>
+        <field name="note">Law of the Judiciary, article 20(a).</field>
+    </record>
+    <record id="circuit_criminal_tazir" model="legal.circuit">
+        <field name="name">Discretionary Punishment Circuit</field>
+        <field name="court_id" ref="court_criminal"/>
+        <field name="sequence">70</field>
+        <field name="note">Law of the Judiciary, article 20(b).</field>
+    </record>
+    <record id="circuit_criminal_juvenile" model="legal.circuit">
+        <field name="name">Juvenile Circuit</field>
+        <field name="court_id" ref="court_criminal"/>
+        <field name="sequence">80</field>
+        <field name="note">Law of the Judiciary, article 20(c).</field>
+    </record>
+
+    <record id="circuit_general_execution" model="legal.circuit">
+        <field name="name">Execution Circuit</field>
+        <field name="court_id" ref="court_general"/>
+        <field name="sequence">90</field>
+        <field name="note">Law of the Judiciary, article 19.</field>
+    </record>
+    <record id="circuit_general_notarial" model="legal.circuit">
+        <field name="name">Non-Contentious Proof Circuit</field>
+        <field name="court_id" ref="court_general"/>
+        <field name="sequence">100</field>
+        <field name="note">Law of the Judiciary, article 19 -- إثباتات إنهائية outside the remit of other courts and the notaries public.</field>
+    </record>
+    <record id="circuit_general_traffic" model="legal.circuit">
+        <field name="name">Traffic Circuit</field>
+        <field name="court_id" ref="court_general"/>
+        <field name="sequence">110</field>
+        <field name="note">Law of the Judiciary, article 19 -- claims arising from traffic accidents and violations under the Traffic Law.</field>
+    </record>
+
+</odoo>

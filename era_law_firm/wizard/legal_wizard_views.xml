@@ -1,0 +1,108 @@
+<odoo>
+
+    <record id="view_legal_invoice_create_wizard_form" model="ir.ui.view">
+        <field name="name">legal.invoice.create.wizard.form</field>
+        <field name="model">legal.invoice.create.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Legal Invoice">
+                <group>
+                    <group>
+                        <field name="case_id" readonly="1"/>
+                        <field name="engagement_id"
+                               domain="[('case_id','=',case_id),('state','=','active')]"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Time" name="time">
+                        <field name="time_entry_ids" nolabel="1"
+                               domain="[('engagement_id','=',engagement_id),('state','=','billable'),('invoice_line_id','=',False)]">
+                            <list>
+                                <field name="date"/>
+                                <field name="name"/>
+                                <field name="hours" sum="Hours"/>
+                                <field name="rate"/>
+                                <field name="amount" sum="Amount"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Expenses" name="expenses">
+                        <field name="expense_ids" nolabel="1"
+                               domain="[('engagement_id','=',engagement_id),('state','=','approved'),('invoice_line_id','=',False)]">
+                            <list>
+                                <field name="name"/>
+                                <field name="product_id"/>
+                                <field name="amount" sum="Amount"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Milestones" name="milestones">
+                        <field name="milestone_ids" nolabel="1"
+                               domain="[('engagement_id','=',engagement_id),('state','=','ready'),('invoice_line_id','=',False)]">
+                            <list>
+                                <field name="name"/>
+                                <field name="due_date"/>
+                                <field name="amount" sum="Amount"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Success Fees" name="success_fees">
+                        <field name="success_fee_ids" nolabel="1"
+                               domain="[('engagement_id','=',engagement_id),('state','=','approved'),('invoice_line_id','=',False)]">
+                            <list>
+                                <field name="name"/>
+                                <field name="amount" sum="Amount"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_create_invoice" type="object" string="Create Invoice" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_legal_trust_operation_wizard_form" model="ir.ui.view">
+        <field name="name">legal.trust.operation.wizard.form</field>
+        <field name="model">legal.trust.operation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Trust Operation">
+                <group>
+                    <group>
+                        <field name="trust_account_id" readonly="1"/>
+                        <field name="partner_id" invisible="1"/>
+                        <field name="transaction_type"/>
+                        <field name="case_id" domain="[('client_id','=',partner_id)]"/>
+                    </group>
+                    <group>
+                        <field name="amount"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="invoice_id"
+                               invisible="transaction_type != 'apply'"
+                               required="transaction_type == 'apply'"
+                               domain="[('partner_id','=',partner_id),('move_type','=','out_invoice'),('state','=','posted'),('payment_state','!=','paid')]"/>
+                        <field name="reference" required="transaction_type == 'refund'"/>
+                    </group>
+                </group>
+                <group string="Reason">
+                    <field name="reason" nolabel="1" required="transaction_type == 'refund'"
+                           placeholder="Required when refunding client money..."/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="transaction_type != 'apply'">
+                    Applying trust funds settles a posted invoice against the client's balance. This is the
+                    point where client money becomes firm revenue -- it is never automatic.
+                </div>
+                <footer>
+                    <button name="action_apply" type="object" string="Post Operation" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

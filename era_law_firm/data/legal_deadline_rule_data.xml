@@ -1,0 +1,6 @@
+<odoo noupdate="1">
+ <record id="deadline_rule_appeal_30" model="legal.deadline.rule"><field name="name">Appeal review period (30 days)</field><field name="days">30</field><field name="start_point">notification</field><field name="legal_reference">Saudi procedural rules - verify applicability</field><field name="warning">Suggested date only; a lawyer must review and adopt it.</field></record>
+ <record id="deadline_rule_urgent_10" model="legal.deadline.rule"><field name="name">Urgent appeal period (10 days)</field><field name="days">10</field><field name="start_point">notification</field><field name="legal_reference">Saudi procedural rules - verify applicability</field><field name="warning">Suggested date only; a lawyer must review and adopt it.</field></record>
+ <record id="deadline_rule_cassation_30" model="legal.deadline.rule"><field name="name">Cassation period (30 days)</field><field name="days">30</field><field name="start_point">judgment</field><field name="legal_reference">Saudi procedural rules - verify applicability</field></record>
+ <record id="deadline_rule_reconsideration_30" model="legal.deadline.rule"><field name="name">Reconsideration period (30 days)</field><field name="days">30</field><field name="start_point">manual</field><field name="legal_reference">Saudi procedural rules - verify applicability</field></record>
+</odoo>

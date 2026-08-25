@@ -1,0 +1,5 @@
+<odoo>
+ <record id="rule_signature_provider_company" model="ir.rule"><field name="name">Signature providers: company</field><field name="model_id" ref="model_legal_signature_provider"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+ <record id="rule_signature_request_company" model="ir.rule"><field name="name">Signature requests: company</field><field name="model_id" ref="model_legal_signature_request"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+ <record id="rule_signature_event_company" model="ir.rule"><field name="name">Signature events: company</field><field name="model_id" ref="model_legal_signature_event"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+</odoo>

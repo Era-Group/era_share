@@ -1,0 +1,191 @@
+<odoo>
+
+    <!-- ==================== CONSULTATION ==================== -->
+
+    <record id="view_legal_consultation_list" model="ir.ui.view">
+        <field name="name">legal.consultation.list</field>
+        <field name="model">legal.consultation</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'converted'" decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="lawyer_id"/>
+                <field name="consultation_date"/>
+                <field name="case_id" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_consultation_search" model="ir.ui.view">
+        <field name="name">legal.consultation.search</field>
+        <field name="model">legal.consultation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="lawyer_id"/>
+                <filter name="mine" string="Mine" domain="[('lawyer_id','=',uid)]"/>
+                <filter name="not_converted" string="Not Converted" domain="[('case_id','=',False)]"/>
+                <group name="group_by">
+                    <filter name="group_lawyer" string="Lawyer" context="{'group_by': 'lawyer_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_consultation_form" model="ir.ui.view">
+        <field name="name">legal.consultation.form</field>
+        <field name="model">legal.consultation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_convert_case" type="object" string="Convert to Case"
+                            class="btn-primary" invisible="case_id"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Consultation subject"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="lawyer_id"/>
+                        </group>
+                        <group>
+                            <field name="consultation_date"/>
+                            <field name="case_id" readonly="1" invisible="not case_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_consultation" model="ir.actions.act_window">
+        <field name="name">Consultations</field>
+        <field name="res_model">legal.consultation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_consultation_search"/>
+    </record>
+
+    <!-- ==================== DEADLINE RULE ==================== -->
+
+    <record id="view_legal_deadline_rule_list" model="ir.ui.view">
+        <field name="name">legal.deadline.rule.list</field>
+        <field name="model">legal.deadline.rule</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="days"/>
+                <field name="start_point"/>
+                <field name="legal_reference"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_deadline_rule_form" model="ir.ui.view">
+        <field name="name">legal.deadline.rule.form</field>
+        <field name="model">legal.deadline.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Appeal review period (30 days)"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="days"/>
+                            <field name="start_point"/>
+                        </group>
+                        <group>
+                            <field name="legal_reference" placeholder="Statutory article this period comes from"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Warning shown on deadlines using this rule">
+                        <field name="warning" nolabel="1"
+                               placeholder="Suggested date only; a lawyer must review and adopt it."/>
+                    </group>
+                    <div class="alert alert-warning" role="alert">
+                        Rules produce a suggested date only. Suspended periods, holidays and protected
+                        categories are not calculated -- the lawyer remains responsible for the binding date.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_deadline_rule" model="ir.actions.act_window">
+        <field name="name">Deadline Rules</field>
+        <field name="res_model">legal.deadline.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== AUDIT LOG ==================== -->
+
+    <record id="view_legal_audit_log_list" model="ir.ui.view">
+        <field name="name">legal.audit.log.list</field>
+        <field name="model">legal.audit.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="event_date"/>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="res_id"/>
+                <field name="operation"/>
+                <field name="changed_fields"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="fingerprint" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_audit_log_search" model="ir.ui.view">
+        <field name="name">legal.audit.log.search</field>
+        <field name="model">legal.audit.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="operation"/>
+                <filter name="event_period" string="Event Date" date="event_date"/>
+                <group name="group_by">
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_name'}"/>
+                    <filter name="group_operation" string="Operation" context="{'group_by': 'operation'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_legal_audit_log" model="ir.actions.act_window">
+        <field name="name">Audit Log</field>
+        <field name="res_model">legal.audit.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_legal_audit_log_search"/>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <menuitem id="menu_legal_consultations" name="Consultations" parent="menu_legal_root"
+              action="action_legal_consultation" sequence="15" groups="group_legal_lawyer"/>
+    <menuitem id="menu_legal_config_deadline_rules" name="Deadline Rules" parent="menu_legal_config"
+              action="action_legal_deadline_rule" sequence="20"/>
+    <menuitem id="menu_legal_audit_log" name="Audit Log" parent="menu_legal_config"
+              action="action_legal_audit_log" sequence="90" groups="group_legal_manager"/>
+
+</odoo>

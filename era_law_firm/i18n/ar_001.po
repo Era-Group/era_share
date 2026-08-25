@@ -1,0 +1,4245 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_law_firm
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: era_law_firm 19.0\n"
+"Report-Msgid-Bugs-To: info@era.net.sa\n"
+"Last-Translator: Era Group <info@era.net.sa>\n"
+"Language-Team: Arabic <info@era.net.sa>\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "<span class=\"o_stat_text\">Conflict</span>"
+msgstr "<span class=\"o_stat_text\">التعارض</span>"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "<span class=\"o_stat_text\">Deadlines</span>"
+msgstr "<span class=\"o_stat_text\">المواعيد</span>"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "<span class=\"o_stat_text\">Transactions</span>"
+msgstr "<span class=\"o_stat_text\">الحركات</span>"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.report_case_summary
+msgid "<strong>Client:</strong>"
+msgstr "<strong>الموكِّل:</strong>"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.report_case_summary
+msgid "<strong>Court:</strong>"
+msgstr "<strong>المحكمة:</strong>"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid ""
+"A conflict check with matches cannot be cleared without a manager override."
+msgstr "لا يمكن اعتماد فحص تعارض له نتائج مطابقة دون تجاوز من مدير."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "A fixed engagement requires a positive amount."
+msgstr "عقد الأتعاب الثابت يتطلب مبلغاً أكبر من صفر."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "A manager and a mandatory reason are required."
+msgstr "يلزم مدير وسبب إلزامي."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "A non-zero trust account cannot be closed."
+msgstr "لا يُغلق حساب أمانة برصيد غير صفري."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "A posted invoice for the same client is required."
+msgstr "يلزم وجود فاتورة مرحَّلة للموكل نفسه."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/wizard/legal_wizards.py:0
+msgid "A selected source has already been invoiced."
+msgstr "أحد العناصر المختارة مفوتر مسبقاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__state
+msgid ""
+"A success fee has to be approved by a legal manager before it can be "
+"invoiced."
+msgstr "يجب اعتماد أتعاب النجاح من مدير قانوني قبل فوترتها."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "Access Restriction"
+msgstr "تقييد الاطلاع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__access_warning
+msgid "Access warning"
+msgstr "تنبيه وصول"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
+msgid "Accounting"
+msgstr "المحاسبة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_needaction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_needaction
+msgid "Action Needed"
+msgstr "يتطلب إجراءً"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+msgid "Activate"
+msgstr "تفعيل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__active
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__active
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__active
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__active
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__state__active
+#: model:legal.case.stage,name:era_law_firm.stage_active
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_mail_activity
+msgid "Activity"
+msgstr "نشاط"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_exception_decoration
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_exception_decoration
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_exception_decoration
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_exception_decoration
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_type_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_type_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_type_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_type_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_administrative
+msgid "Administrative Court"
+msgstr "المحكمة الإدارية"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_administrative_appeal
+msgid "Administrative Court of Appeal"
+msgstr "محكمة الاستئناف الإدارية"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_administrative
+msgid "Administrative Judiciary (Board of Grievances)"
+msgstr "القضاء الإداري (ديوان المظالم)"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+msgid "Adopt Suggested Date"
+msgstr "اعتماد التاريخ المقترح"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__amount
+msgid "Agreed fee for a fixed-price engagement."
+msgstr "الأتعاب المتفق عليها في العقد ذي المبلغ الثابت."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__allowed_user_ids
+msgid "Allowed User"
+msgstr "مستخدم مصرّح"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__existing_count
+msgid "Already loaded"
+msgstr "المحمَّل مسبقاً"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__amount
+msgid ""
+"Always entered as a positive figure. The direction comes from the movement "
+"type."
+msgstr "يُدخل دائماً بقيمة موجبة. والاتجاه يأتي من نوع الحركة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__amount
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__amount
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_list
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_list
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_expense__amount
+msgid ""
+"Amount disbursed on the client's behalf, such as a court fee or an expert's "
+"report."
+msgstr "المبلغ المصروف نيابة عن الموكل، كرسم قضائي أو تقرير خبير."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Amount must be positive."
+msgstr "يجب أن يكون المبلغ أكبر من صفر."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "An hourly engagement requires a positive hourly rate."
+msgstr "عقد الأتعاب بالساعة يتطلب سعر ساعة أكبر من صفر."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "An invoiced expense cannot be reset to draft."
+msgstr "لا يمكن إعادة مصروف مفوتر إلى مسودة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "An invoiced milestone cannot be reset to draft."
+msgstr "لا يمكن إعادة دفعة مفوترة إلى مسودة."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
+msgid "Appeal"
+msgstr "الاستئناف"
+
+#. module: era_law_firm
+#: model:legal.deadline.rule,name:era_law_firm.deadline_rule_appeal_30
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+msgid "Appeal review period (30 days)"
+msgstr "مدة الاعتراض بالاستئناف (30 يوماً)"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_operation_wizard__transaction_type__apply
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__transaction_type__apply
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Apply to Invoice"
+msgstr "تسوية مقابل فاتورة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+msgid ""
+"Applying trust funds settles a posted invoice against the client's balance. This is the\n"
+"                    point where client money becomes firm revenue -- it is never automatic."
+msgstr ""
+"تسوية أموال الأمانة تُسدِّد فاتورة مرحَّلة من رصيد الموكل، وهي اللحظة التي "
+"يتحول فيها مال الموكل إلى إيراد للمكتب — ولا تتم تلقائياً أبداً."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_list
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_success_fee_form
+msgid "Approve"
+msgstr "اعتماد"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__approved
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_expense__state__approved
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_success_fee__state__approved
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_search
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__approved_at
+msgid "Approved At"
+msgstr "تاريخ الاعتماد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__approved_by
+msgid "Approved By"
+msgstr "اعتمده"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__expense_amount
+msgid ""
+"Approved and invoiced disbursements on this file, such as court fees and "
+"expert reports."
+msgstr ""
+"المصروفات المعتمدة والمفوترة على هذا الملف، كالرسوم القضائية وتقارير "
+"الخبراء."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Approved documents must be archived."
+msgstr "المستندات المعتمدة تُؤرشف ولا تُحذف."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__archived
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_jurisdiction_form
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+msgid "Assigned to Me"
+msgstr "المسندة إليّ"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Assignment"
+msgstr "الإسناد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__attachment_id
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_attachment_count
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_audit_log
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_audit_log
+msgid "Audit Log"
+msgstr "سجل التدقيق"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "Audit logs cannot be deleted."
+msgstr "لا يمكن حذف سجلات التدقيق."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "Audit logs cannot be modified."
+msgstr "لا يمكن تعديل سجلات التدقيق."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__available_balance
+msgid "Available Balance"
+msgstr "الرصيد المتاح"
+
+#. module: era_law_firm
+#: model:legal.case.stage,name:era_law_firm.stage_hearing
+msgid "Awaiting Hearing"
+msgstr "بانتظار جلسة"
+
+#. module: era_law_firm
+#: model:legal.case.stage,name:era_law_firm.stage_judgment
+msgid "Awaiting Judgment"
+msgstr "بانتظار حكم"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_list
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Bank account"
+msgstr "الحساب البنكي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reference
+msgid ""
+"Bank or payment reference for the movement. Mandatory when refunding client "
+"money."
+msgstr "المرجع البنكي أو مرجع السداد للحركة. إلزامي عند رد أموال الموكل."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_time_entry__state__billable
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "Billable"
+msgstr "قابل للفوترة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__billable_hours
+msgid "Billable Hours"
+msgstr "الساعات القابلة للفوترة"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_billing
+msgid "Billing"
+msgstr "الفوترة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__billing_type
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_search
+msgid "Billing Type"
+msgstr "نوع الأتعاب"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__blocked
+msgid "Blocked"
+msgstr "موقوف لتعارض"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_circuit__jurisdiction_id
+msgid ""
+"Branch of the judiciary, used to filter the list when no court is chosen "
+"yet."
+msgstr "فرع القضاء، يُستخدم لفلترة القائمة قبل اختيار محكمة."
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_calendar_event
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__calendar_event_id
+msgid "Calendar Event"
+msgstr "حدث التقويم"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__state__cancelled
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__cancelled
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__state__cancelled
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_hearing__state__cancelled
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__case_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "Case"
+msgstr "قضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__transaction_type__transfer
+msgid "Case Allocation Transfer"
+msgstr "تحويل بين قضايا الموكل"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_case_stage
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_stages
+msgid "Case Stages"
+msgstr "مراحل القضية"
+
+#. module: era_law_firm
+#: model:ir.actions.report,name:era_law_firm.action_report_case_summary
+msgid "Case Summary"
+msgstr "ملخص القضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__team_user_ids
+msgid "Case Team"
+msgstr "فريق القضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__case_type
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Case Type"
+msgstr "نوع القضية"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Case closed by %s"
+msgstr "أُغلقت القضية بواسطة %s"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Case confirmed by %s on %s"
+msgstr "أُكدت القضية بواسطة %s بتاريخ %s"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__najiz_number
+msgid ""
+"Case number as issued by Najiz. Entered by hand -- this module does not "
+"connect to Najiz. It must be unique within the company."
+msgstr ""
+"رقم القضية كما يصدر من ناجز. يُدخل يدوياً — لا يتصل هذا النظام بناجز — ويجب "
+"ألا يتكرر داخل الشركة."
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_case
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_cases
+msgid "Cases"
+msgstr "القضايا"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__case_count
+msgid "Cases to create"
+msgstr "عدد القضايا المطلوب إنشاؤها"
+
+#. module: era_law_firm
+#: model:legal.deadline.rule,name:era_law_firm.deadline_rule_cassation_30
+msgid "Cassation period (30 days)"
+msgstr "مدة الطعن بالنقض (30 يوماً)"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__warning
+msgid ""
+"Caution shown to whoever uses this rule, for example that the period does "
+"not run during suspension of proceedings."
+msgstr ""
+"تنبيه يظهر لمن يستخدم هذه القاعدة، مثل أن المدة لا تسري أثناء وقف الخصومة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__changed_fields
+msgid "Changed Fields"
+msgstr "الحقول المعدَّلة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__check_id
+msgid "Check"
+msgstr "فحص"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__circuit
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__circuit_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__circuit_ids
+msgid "Circuit"
+msgstr "الدائرة"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_circuit
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_circuits
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_form
+msgid "Circuits"
+msgstr "الدوائر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__city
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__city
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
+msgid "City"
+msgstr "المدينة"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_appeal_civil
+msgid "Civil Circuit"
+msgstr "الدائرة الحقوقية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__claim_amount
+msgid "Claim Amount"
+msgstr "قيمة المطالبة"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__clear
+msgid "Clear"
+msgstr "لا تعارض"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__state
+msgid ""
+"Clear means no party of this case appears in another file. Blocked means at "
+"least one does and the case cannot be confirmed. Overridden means a legal "
+"manager accepted the risk on the record."
+msgstr ""
+"«لا تعارض» يعني ألا يظهر أي طرف من أطراف هذه القضية في ملف آخر. و«موقوف "
+"لتعارض» يعني ظهور طرف واحد على الأقل فلا يمكن تأكيد القضية. و«متجاوَز» يعني "
+"أن مديراً قانونياً قبِل المخاطرة وسُجّل ذلك."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__client_id
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case_party__role__client
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_search
+msgid "Client"
+msgstr "الموكِّل"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_trust_setup.py:0
+#: model:account.journal,name:era_law_firm.trust_journal_company_1
+#: model:ir.actions.act_window,name:era_law_firm.action_trust_account
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_trust_root
+msgid "Client Trust"
+msgstr "أمانات الموكلين"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_trust_account
+msgid "Client Trust Account"
+msgstr "حساب أمانة الموكل"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Client Trust Accounting"
+msgstr "محاسبة أمانات الموكلين"
+
+#. module: era_law_firm
+#: model:account.account,name:era_law_firm.trust_bank_account_company_1
+msgid "Client Trust Bank"
+msgstr "بنك أمانات الموكلين"
+
+#. module: era_law_firm
+#: model:account.account,name:era_law_firm.trust_liability_account_company_1
+msgid "Client Trust Liability"
+msgstr "التزام أمانات الموكلين"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid ""
+"Client money is a liability, not firm revenue. It becomes revenue only when a posted fee\n"
+"                        invoice is deliberately settled against this balance."
+msgstr ""
+"مال الموكل التزام لا إيراد للمكتب، ولا يصبح إيراداً إلا عند تسوية فاتورة "
+"أتعاب مرحَّلة مقابل هذا الرصيد بقرار صريح."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Client, lawyer, case type and stage are required."
+msgstr "الموكِّل والمحامي ونوع القضية والمرحلة حقول إلزامية."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Close Account"
+msgstr "إغلاق الحساب"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__close_date
+msgid "Close Date"
+msgstr "تاريخ الإغلاق"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__state__closed
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__state__closed
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_account__state__closed
+#: model:legal.case.stage,name:era_law_firm.stage_closed
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Closed"
+msgstr "مغلقة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_stage__fold
+msgid ""
+"Collapse this stage's column on the kanban board. Useful for stages that "
+"hold finished files."
+msgstr ""
+"طيّ عمود هذه المرحلة في لوحة كانبان. مفيد للمراحل التي تحوي ملفات منتهية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__team_user_ids
+msgid ""
+"Colleagues who may open this file in addition to the responsible lawyer. "
+"Anyone not listed here and not a legal manager cannot see it at all."
+msgstr ""
+"الزملاء الذين يجوز لهم فتح هذا الملف إضافة إلى المحامي المسؤول. ومن ليس "
+"مدرجاً هنا وليس مديراً قانونياً لا يراه إطلاقاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__color
+msgid "Color"
+msgstr "اللون"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_appeal_commercial
+msgid "Commercial Circuit"
+msgstr "الدائرة التجارية"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_commercial
+msgid "Commercial Court"
+msgstr "المحكمة التجارية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_form
+msgid "Commercial Court in Riyadh"
+msgstr "المحكمة التجارية بالرياض"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_commercial
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_jurisdiction_form
+msgid "Commercial Judiciary"
+msgstr "القضاء التجاري"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_partner__legal_registration_number
+#: model:ir.model.fields,help:era_law_firm.field_res_users__legal_registration_number
+msgid ""
+"Commercial registration number for a corporate party. Visible to legal "
+"managers only."
+msgstr "رقم السجل التجاري للطرف الاعتباري. ظاهر للمديرين القانونيين فقط."
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__company_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__confidential
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Confidential"
+msgstr "سرية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Configure the trust journal and accounts first."
+msgstr "يجب تهيئة يومية الأمانات وحساباتها أولاً."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__state__confirmed
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__state__confirmed
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_hearing__state__confirmed
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+msgid "Confirmed"
+msgstr "مؤكدة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__state
+msgid ""
+"Confirming a hearing places it on the calendar. Cancelling removes it again."
+msgstr "تأكيد الجلسة يضعها في التقويم، وإلغاؤها يزيلها منه."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.model,name:era_law_firm.model_legal_conflict_check
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__conflict_check_id
+#: model:legal.case.stage,name:era_law_firm.stage_conflict
+msgid "Conflict Check"
+msgstr "فحص تعارض المصالح"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_conflict_check_line
+msgid "Conflict Check Result"
+msgstr "نتيجة فحص التعارض"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__conflict_state
+msgid "Conflict Status"
+msgstr "حالة التعارض"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid ""
+"Conflict of interest screening. Shows which other files of this firm already"
+" involve a party to this case, and on which side. A blocked result stops the"
+" case from being confirmed until a legal manager overrides it with a "
+"recorded reason."
+msgstr ""
+"فحص تعارض المصالح. يبيّن ملفات المكتب الأخرى التي يظهر فيها أحد أطراف هذه "
+"القضية، وبأي صفة. والنتيجة الموقوفة تمنع تأكيد القضية حتى يتجاوزها مدير "
+"قانوني بسبب مسجَّل."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+#: code:addons/era_law_firm/models/legal_demo.py:0
+msgid "Conflict overridden by %s. Reason: %s"
+msgstr "تم تجاوز التعارض بواسطة %s. السبب: %s"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__consultation_ids
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__case_type__consultation
+msgid "Consultation"
+msgstr "استشارة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__consultation_date
+msgid "Consultation Date"
+msgstr "تاريخ الاستشارة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_form
+msgid "Consultation subject"
+msgstr "موضوع الاستشارة"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_consultation
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_consultations
+msgid "Consultations"
+msgstr "الاستشارات"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__contract
+msgid "Contract"
+msgstr "عقد"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_form
+msgid "Convert to Case"
+msgstr "تحويل إلى قضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__converted
+msgid "Converted"
+msgstr "محوّلة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__state
+msgid ""
+"Converting a consultation opens a case at the intake stage and links the "
+"two."
+msgstr "تحويل الاستشارة يفتح قضية في مرحلة الاستقبال ويربط بينهما."
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_court
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__court
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__court_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__court_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__court_ids
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Court"
+msgstr "المحكمة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_form
+msgid "Court fee, expert report, travel..."
+msgstr "رسوم قضائية، تقرير خبير، انتقال..."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_court__degree__appeal
+#: model:legal.court,name:era_law_firm.court_appeal
+msgid "Court of Appeal"
+msgstr "محكمة الاستئناف"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_court
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_courts
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_jurisdiction_form
+msgid "Courts"
+msgstr "المحاكم"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Create Invoice"
+msgstr "إنشاء فاتورة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.model,name:era_law_firm.model_legal_invoice_create_wizard
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Create Legal Invoice"
+msgstr "إنشاء فاتورة قانونية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid ""
+"Creates a working firm: clients, opposing parties, cases across every type and\n"
+"                    stage, hearings past and future, statutory deadlines, documents at each review\n"
+"                    step, engagements with recorded time and expenses, and client trust deposits.\n"
+"                    Generation is seeded, so the same database always produces the same firm."
+msgstr ""
+"ينشئ مكتباً عاملاً: موكِّلين وخصوماً، وقضايا في كل نوع ومرحلة، وجلسات ماضية "
+"وقادمة، ومواعيد نظامية، ومستندات في كل خطوة مراجعة، وعقود أتعاب بوقت "
+"ومصروفات مسجّلة، وإيداعات أمانات. والتوليد ببذرة ثابتة، فتنتج القاعدة نفسها "
+"المكتبَ نفسه دائماً."
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_appeal_criminal
+msgid "Criminal Circuit"
+msgstr "الدائرة الجزائية"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_criminal
+msgid "Criminal Court"
+msgstr "المحكمة الجزائية"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_criminal
+msgid "Criminal Judiciary"
+msgstr "القضاء الجزائي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__currency_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__access_url
+msgid "Customer Portal URL"
+msgstr "رابط بوابة العميل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__date
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__date_filed
+msgid "Date Filed"
+msgstr "تاريخ القيد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__date_filed
+msgid "Date the case was filed with the court."
+msgstr "تاريخ قيد الدعوى لدى المحكمة."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+msgid "Dates"
+msgstr "التواريخ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__days
+msgid "Days"
+msgstr "عدد الأيام"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__deadline_ids
+msgid "Deadline"
+msgstr "موعد نظامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__deadline_date
+msgid "Deadline Date"
+msgstr "تاريخ الموعد"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_deadline_rule
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_deadline_rules
+msgid "Deadline Rules"
+msgstr "قواعد المدد النظامية"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "Deadline rule days must be positive."
+msgstr "يجب أن تكون مدة القاعدة أكبر من صفر."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_deadline
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_deadlines
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Deadlines"
+msgstr "المواعيد النظامية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__deed
+msgid "Deed"
+msgstr "صك"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Default city"
+msgstr "المدينة الافتراضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__degree
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
+msgid "Degree"
+msgstr "الدرجة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_court__degree
+msgid "Degree of litigation, per article 9 of the Law of the Judiciary."
+msgstr "درجة التقاضي، وفق المادة التاسعة من نظام القضاء."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_operation_wizard__transaction_type__deposit
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__transaction_type__deposit
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Deposit"
+msgstr "إيداع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__transaction_type
+msgid ""
+"Deposit takes client money in as a liability. Apply settles a posted invoice"
+" from the balance -- this is the moment client money becomes firm revenue. "
+"Refund returns the surplus. Transfer reallocates between the client's own "
+"cases."
+msgstr ""
+"الإيداع يستلم مال الموكل كالتزام. والتسوية تُسدِّد فاتورة مرحَّلة من الرصيد "
+"— وهي اللحظة التي يصير فيها مال الموكل إيراداً للمكتب. والرد يعيد الفائض. "
+"والتحويل يعيد التوزيع بين قضايا الموكل نفسه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__case_type
+msgid ""
+"Determines how the file is handled: a full litigation file, an execution "
+"request, a one-off consultation, or something else."
+msgstr ""
+"يحدد طريقة التعامل مع الملف: دعوى قضائية كاملة، أو طلب تنفيذ، أو استشارة "
+"منفردة، أو غير ذلك."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__najiz_url
+msgid "Direct link to the case in Najiz, kept for quick reference only."
+msgstr "رابط مباشر للقضية في ناجز، يُحفظ للرجوع السريع فقط."
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_criminal_tazir
+msgid "Discretionary Punishment Circuit"
+msgstr "دائرة القضايا التعزيرية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_calendar_event__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deletion_guard__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_judiciary_migration__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_mail_activity__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_mail_message__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_res_partner__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_res_users__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__document_ids
+msgid "Document"
+msgstr "مستند"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__document_count
+msgid "Document Count"
+msgstr "عدد المستندات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__document_type
+msgid "Document Type"
+msgstr "نوع المستند"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "Document title"
+msgstr "عنوان المستند"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_document
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_documents
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Documents"
+msgstr "المستندات"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__done
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__overdue_state__done
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__state__done
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_hearing__state__done
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement_milestone__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_expense__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_hearing__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_success_fee__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_time_entry__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__state__draft
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__state
+msgid ""
+"Draft files are still being prepared. Confirming requires a valid conflict "
+"check, and closing requires the client's trust balance to be settled."
+msgstr ""
+"الملفات المسودة ما زالت قيد الإعداد. التأكيد يتطلب فحص تعارض صالحاً، "
+"والإغلاق يتطلب تسوية رصيد أمانة الموكل."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__due_date
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__overdue_state__due
+msgid "Due Today"
+msgstr "مستحق اليوم"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__line_ids
+msgid ""
+"Each other file where a party of this case already appears, and the capacity"
+" they held there."
+msgstr "كل ملف آخر يظهر فيه أحد أطراف هذه القضية، والصفة التي كان عليها فيه."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "End must be after start."
+msgstr "يجب أن تكون النهاية بعد البداية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__engagement_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__engagement_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__engagement_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__engagement_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__engagement_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__engagement_id
+msgid "Engagement"
+msgstr "عقد أتعاب"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+msgid "Engagement letter reference"
+msgstr "مرجع عقد الأتعاب"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_engagement
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_engagements
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Engagements"
+msgstr "عقود الأتعاب"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_demo.py:0
+msgid "Enter how many cases to create."
+msgstr "أدخل عدد القضايا المطلوب إنشاؤها."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__event_date
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_audit_log_search
+msgid "Event Date"
+msgstr "تاريخ الحدث"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__evidence
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_success_fee_form
+msgid "Evidence"
+msgstr "المستند المثبِت"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__case_type__execution
+#: model:legal.case.stage,name:era_law_firm.stage_execution
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_execution
+msgid "Execution"
+msgstr "التنفيذ"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_general_execution
+msgid "Execution Circuit"
+msgstr "دائرة التنفيذ"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_execution
+msgid "Execution Court"
+msgstr "محكمة التنفيذ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__expense_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__expense_ids
+msgid "Expense"
+msgstr "مصروف"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__expense_amount
+msgid "Expense Amount"
+msgstr "قيمة المصروفات"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_expense
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_expenses
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Expenses"
+msgstr "المصروفات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__expiry_date
+msgid "Expiry Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__file_data
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "File"
+msgstr "الملف"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__file_name
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Filed This Year"
+msgstr "المقيدة هذا العام"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__fingerprint
+msgid "Fingerprint"
+msgstr "البصمة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__party_signature
+msgid ""
+"Fingerprint of the parties at the moment of screening: normalised names, "
+"identity and registration numbers, phone and e-mail. If it stops matching "
+"the case, the screening is stale and must be repeated."
+msgstr ""
+"بصمة الأطراف لحظة الفحص: الأسماء بعد التطبيع، وأرقام الهوية والسجل، والهاتف "
+"والبريد. فإن لم تعد مطابقة للقضية صار الفحص قديماً ووجبت إعادته."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_court__degree__first
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
+msgid "First Instance"
+msgstr "الدرجة الأولى"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__billing_type__fixed
+msgid "Fixed"
+msgstr "مبلغ ثابت"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__fold
+msgid "Fold"
+msgstr "مطوي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_follower_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_partner_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_type_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_type_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__activity_type_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__activity_type_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Freeze"
+msgstr "تجميد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_account__state
+msgid ""
+"Freezing stops all movement. An account can only be closed once its balance "
+"is nil, which is why a surplus has to be refunded first."
+msgstr ""
+"التجميد يوقف كل الحركات. ولا يُغلق الحساب إلا برصيد صفري، ولهذا يجب رد "
+"الفائض أولاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_account__state__frozen
+msgid "Frozen"
+msgstr "مجمّد"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__overdue_state__future
+msgid "Future"
+msgstr "قادم"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_general
+msgid "General Court"
+msgstr "المحكمة العامة"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_general
+msgid "General Judiciary"
+msgstr "القضاء العام"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__has_message
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__has_message
+msgid "Has Message"
+msgstr "يحتوي رسائل"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Has Outstanding"
+msgstr "عليه متبقٍ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_audit_log__fingerprint
+msgid ""
+"Hash over the record, operation and timestamp, so a tampered entry can be "
+"detected. Entries cannot be edited or deleted at all."
+msgstr ""
+"بصمة على السجل والعملية والوقت، ليمكن كشف أي عبث. والمدخلات لا تقبل التعديل "
+"ولا الحذف إطلاقاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__hearing_ids
+msgid "Hearing"
+msgstr "جلسة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__hearing_count
+msgid "Hearing Count"
+msgstr "عدد الجلسات"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Hearing reminder days"
+msgstr "أيام التذكير بالجلسة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid "Hearing subject"
+msgstr "موضوع الجلسة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_hearing
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_hearings
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Hearings"
+msgstr "الجلسات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__restricted
+msgid ""
+"Hide this document from everyone except its owner, its reviewer, the users "
+"listed below and legal managers."
+msgstr ""
+"إخفاء هذا المستند عن الجميع عدا مالكه ومراجعه والمستخدمين المدرجين أدناه "
+"والمديرين القانونيين."
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_administrative_supreme
+msgid "High Administrative Court"
+msgstr "المحكمة الإدارية العليا"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__hijri_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__hijri_date
+msgid "Hijri Date"
+msgstr "التاريخ الهجري"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__hijri_date
+msgid ""
+"Hijri date as printed by Najiz, kept as free text for cross-checking. "
+"Scheduling itself runs on the Gregorian date so that no automatic conversion"
+" can shift a court date."
+msgstr ""
+"التاريخ الهجري كما يطبعه ناجز، يُحفظ نصاً حراً للمقابلة. أما الجدولة فتعمل "
+"على التاريخ الميلادي حتى لا يزحزح تحويلٌ آلي موعداً قضائياً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__hijri_date
+msgid ""
+"Hijri date as printed on the document, kept as free text for cross-checking."
+msgstr "التاريخ الهجري كما هو مطبوع على المستند، يُحفظ نصاً حراً للمقابلة."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid "Hijri reference as printed by Najiz"
+msgstr "المرجع الهجري كما يظهر في ناجز"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__billing_type__hourly
+msgid "Hourly"
+msgstr "بالساعة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__hourly_rate
+msgid "Hourly Rate"
+msgstr "سعر الساعة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__hours
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_list
+msgid "Hours"
+msgstr "الساعات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__amount
+msgid "Hours multiplied by rate."
+msgstr "الساعات مضروبة في السعر."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Hours must be positive and rate cannot be negative."
+msgstr "يجب أن تكون الساعات أكبر من صفر وألا يكون السعر سالباً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__billable_hours
+msgid ""
+"Hours recorded on this file that have been marked billable or already "
+"invoiced."
+msgstr ""
+"الساعات المسجلة على هذا الملف التي عُلّمت كقابلة للفوترة أو فُوترت فعلاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_demo_data_wizard__case_count
+msgid ""
+"How many cases to generate, together with their clients, opponents, "
+"hearings, deadlines, documents and billing."
+msgstr ""
+"كم قضية تُولَّد، ومعها موكِّلوها وخصومها وجلساتها ومواعيدها ومستنداتها "
+"وفوترتها."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_hearing_reminder_days
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_hearing_reminder_days
+msgid "How many days before a hearing the reminder activity is raised."
+msgstr "كم يوماً قبل الجلسة يُنشأ نشاط التذكير."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__billing_type
+msgid ""
+"How the client is charged: a fixed sum, an hourly rate, staged payments, or "
+"a share of what is recovered."
+msgstr ""
+"كيف يُحاسَب الموكل: مبلغ ثابت، أو سعر بالساعة، أو دفعات مرحلية، أو نسبة مما "
+"يُحصَّل."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__overdue_state
+msgid ""
+"How the deadline stands against today's date. Overdue rows are highlighted "
+"in the list."
+msgstr "موقف الموعد بالنسبة لتاريخ اليوم. الصفوف المتأخرة مميّزة في القائمة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__outcome
+msgid ""
+"How the matter ended: the judgment, the settlement terms, or the withdrawal."
+msgstr "كيف انتهت المسألة: الحكم، أو شروط التسوية، أو ترك الخصومة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move__id
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__id
+#: model:ir.model.fields,field_description:era_law_firm.field_calendar_event__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deletion_guard__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_judiciary_migration__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__id
+#: model:ir.model.fields,field_description:era_law_firm.field_mail_activity__id
+#: model:ir.model.fields,field_description:era_law_firm.field_mail_message__id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_partner__id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_users__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_exception_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_exception_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_exception_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_exception_icon
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_exception_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_exception_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__activity_exception_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__activity_exception_icon
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للدلالة على نشاط استثنائي."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__message_needaction
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__message_has_sms_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__message_has_error
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد رسائل فشل تسليمها."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__review
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_success_fee__state__review
+msgid "In Review"
+msgstr "قيد المراجعة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_demo.py:0
+msgid "Install a chart of accounts before loading test data."
+msgstr "ركّب شجرة حسابات قبل تحميل بيانات الاختبار."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Insufficient trust balance."
+msgstr "رصيد الأمانة غير كافٍ."
+
+#. module: era_law_firm
+#: model:legal.case.stage,name:era_law_firm.stage_intake
+msgid "Intake"
+msgstr "استقبال"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__internal_notes
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Internal Notes"
+msgstr "ملاحظات داخلية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__name
+msgid ""
+"Internal reference, issued automatically as LAW/<year>/<number>. Each "
+"company has its own counter."
+msgstr ""
+"المرجع الداخلي، يُولَّد تلقائياً بصيغة LAW/<السنة>/<الرقم>، ولكل شركة "
+"تسلسلها المستقل."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__invoice_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__invoice_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__invoice_id
+msgid "Invoice"
+msgstr "فاتورة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__invoice_line_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__invoice_line_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__invoice_line_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__invoice_line_id
+msgid "Invoice Line"
+msgstr "بند الفاتورة"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement_milestone__state__invoiced
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_expense__state__invoiced
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_success_fee__state__invoiced
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_time_entry__state__invoiced
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Invoiced"
+msgstr "مفوتر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__invoiced_amount
+msgid "Invoiced Amount"
+msgstr "المبلغ المفوتر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__outstanding_amount
+msgid "Invoiced but still unpaid. This is the figure to chase."
+msgstr "مفوتر ولم يُسدَّد بعد. هذا هو المبلغ الواجب متابعة تحصيله."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Invoicing"
+msgstr "الفوترة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__is_closed
+msgid "Is Closed"
+msgstr "حالة إغلاق"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_is_follower
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_is_follower
+msgid "Is Follower"
+msgstr "متابِع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__is_rejected
+msgid "Is Rejected"
+msgstr "حالة رفض"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_account_move
+msgid "Journal Entry"
+msgstr "قيد يومية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_account_move_line
+msgid "Journal Item"
+msgstr "بند قيد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_trust_journal_id
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_trust_journal_id
+msgid ""
+"Journal every client trust movement is posted to, kept separate from the "
+"firm's own entries. Filled automatically on install if left empty."
+msgstr ""
+"اليومية التي تُرحَّل إليها كل حركات أمانات الموكلين، منفصلة عن قيود المكتب. "
+"تُملأ تلقائياً عند التركيب إن تُركت فارغة."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__judgment
+msgid "Judgment"
+msgstr "حكم"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline_rule__start_point__judgment
+msgid "Judgment Date"
+msgstr "تاريخ الحكم"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Judgment, settlement or withdrawal and its terms..."
+msgstr "الحكم أو التسوية أو ترك الخصومة وشروطها..."
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_circuit
+msgid "Judicial Circuit"
+msgstr "دائرة قضائية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_jurisdiction
+msgid "Judicial Jurisdiction"
+msgstr "اختصاص قضائي"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_judiciary_migration
+msgid "Judiciary Text to Record Migration"
+msgstr "ترحيل بيانات القضاء من نص إلى سجلات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__jurisdiction
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__jurisdiction_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__jurisdiction_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__jurisdiction_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
+msgid "Jurisdiction"
+msgstr "الاختصاص"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_jurisdiction
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_jurisdictions
+msgid "Jurisdictions"
+msgstr "الاختصاصات"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_criminal_juvenile
+msgid "Juvenile Circuit"
+msgstr "دائرة قضايا الأحداث"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_appeal_labour
+msgid "Labour Circuit"
+msgstr "الدائرة العمالية"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_labour
+msgid "Labour Court"
+msgstr "المحكمة العمالية"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_labour
+msgid "Labour Judiciary"
+msgstr "القضاء العمالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_root
+#: model:res.groups.privilege,name:era_law_firm.privilege_legal_role
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Law Firm"
+msgstr "مكتب المحاماة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__lawyer_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__lawyer_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__lawyer_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__lawyer_id
+#: model:res.groups,name:era_law_firm.group_legal_lawyer
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "Lawyer"
+msgstr "المحامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_circuit__company_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_court__company_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__company_id
+msgid "Leave empty to share across every company."
+msgstr "اتركه فارغاً للمشاركة بين كل الشركات."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_stage__company_id
+msgid "Leave empty to share the stage across every company."
+msgstr "اتركه فارغاً لمشاركة المرحلة بين كل الشركات."
+
+#. module: era_law_firm
+#: model:ir.module.category,name:era_law_firm.module_category_legal
+msgid "Legal"
+msgstr "قانوني"
+
+#. module: era_law_firm
+#: model:res.groups,name:era_law_firm.group_legal_accountant
+msgid "Legal Accountant"
+msgstr "محاسب قانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_audit_log
+msgid "Legal Audit Log"
+msgstr "سجل التدقيق القانوني"
+
+#. module: era_law_firm
+#: model:res.groups.privilege,name:era_law_firm.privilege_legal_billing
+msgid "Legal Billing"
+msgstr "الفوترة القانونية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_case
+#: model:ir.model.fields,field_description:era_law_firm.field_account_bank_statement_line__legal_case_id
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move__legal_case_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.report_case_summary
+msgid "Legal Case"
+msgstr "قضية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_case_party
+msgid "Legal Case Party"
+msgstr "طرف في القضية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_case_stage
+msgid "Legal Case Stage"
+msgstr "مرحلة القضية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_consultation
+msgid "Legal Consultation"
+msgstr "استشارة قانونية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_deadline
+msgid "Legal Deadline"
+msgstr "موعد نظامي"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_deadline_rule
+msgid "Legal Deadline Rule"
+msgstr "قاعدة مدة نظامية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_default_city
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_default_city
+msgid "Legal Default City"
+msgstr "المدينة الافتراضية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_deletion_guard
+msgid "Legal Deletion Guard"
+msgstr "حارس الحذف القانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_document
+msgid "Legal Document"
+msgstr "مستند قانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_engagement
+#: model:ir.model.fields,field_description:era_law_firm.field_account_bank_statement_line__legal_engagement_id
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move__legal_engagement_id
+msgid "Legal Engagement"
+msgstr "عقد أتعاب"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_engagement_milestone
+msgid "Legal Engagement Milestone"
+msgstr "دفعة مرحلية في عقد الأتعاب"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_expense
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__legal_expense_id
+msgid "Legal Expense"
+msgstr "مصروف قانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_hearing
+#: model:ir.model.fields,field_description:era_law_firm.field_calendar_event__legal_hearing_id
+msgid "Legal Hearing"
+msgstr "جلسة قضائية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_hearing_reminder_days
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_hearing_reminder_days
+msgid "Legal Hearing Reminder Days"
+msgstr "أيام التذكير بالجلسة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_partner__legal_identity_number
+#: model:ir.model.fields,field_description:era_law_firm.field_res_users__legal_identity_number
+msgid "Legal Identity Number"
+msgstr "رقم الهوية"
+
+#. module: era_law_firm
+#: model:res.groups,name:era_law_firm.group_legal_manager
+msgid "Legal Manager"
+msgstr "مدير قانوني"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__legal_milestone_id
+msgid "Legal Milestone"
+msgstr "دفعة مرحلية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Legal Operations"
+msgstr "العمليات القانونية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__legal_reference
+msgid "Legal Reference"
+msgstr "السند النظامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_partner__legal_registration_number
+#: model:ir.model.fields,field_description:era_law_firm.field_res_users__legal_registration_number
+msgid "Legal Registration Number"
+msgstr "رقم السجل التجاري"
+
+#. module: era_law_firm
+#: model:res.groups,name:era_law_firm.group_legal_staff
+msgid "Legal Staff"
+msgstr "موظف قانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_success_fee
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__legal_success_fee_id
+msgid "Legal Success Fee"
+msgstr "أتعاب نجاح"
+
+#. module: era_law_firm
+#: model:res.groups,name:era_law_firm.group_legal_supervisor
+msgid "Legal Supervisor"
+msgstr "مشرف قانوني"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_demo_data
+msgid "Legal Test Data Generator"
+msgstr "مولّد بيانات الاختبار القانونية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_time_entry
+#: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__legal_time_entry_id
+msgid "Legal Time Entry"
+msgstr "قيد وقت"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_trust_bank_account_id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_trust_bank_account_id
+msgid "Legal Trust Bank Account"
+msgstr "حساب بنك الأمانات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_trust_journal_id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_trust_journal_id
+msgid "Legal Trust Journal"
+msgstr "يومية الأمانات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_trust_liability_account_id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_trust_liability_account_id
+msgid "Legal Trust Liability Account"
+msgstr "حساب التزام الأمانات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_trust_receivable_account_id
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_trust_receivable_account_id
+msgid "Legal Trust Receivable Account"
+msgstr "حساب ذمم الأمانات"
+
+#. module: era_law_firm
+#: model:ir.actions.server,name:era_law_firm.cron_legal_reminders_ir_actions_server
+msgid "Legal hearing and deadline reminders"
+msgstr "تذكيرات الجلسات والمواعيد النظامية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__days
+msgid "Length of the statutory period in days, counted from the start point."
+msgstr "طول المدة النظامية بالأيام، محسوبة من نقطة البداية."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Liability account"
+msgstr "حساب الالتزام"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__line_ids
+msgid "Line"
+msgstr "بند"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__case_type__litigation
+msgid "Litigation"
+msgstr "دعوى قضائية"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_demo_data_wizard
+msgid "Load Legal Test Data"
+msgstr "تحميل بيانات الاختبار القانونية"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_demo_data
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_demo_data
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid "Load Test Data"
+msgstr "تحميل بيانات الاختبار"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Manager Override"
+msgstr "تجاوز بصلاحية مدير"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline_rule__start_point__manual
+msgid "Manual"
+msgstr "يدوي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_list
+msgid "Mark Billable"
+msgstr "تعليم كقابل للفوترة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Mark Clear"
+msgstr "اعتماد عدم التعارض"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_form
+msgid "Mark Done"
+msgstr "تعليم كمكتمل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__confidential
+msgid ""
+"Marks the file as sensitive so staff handle it accordingly. Actual access is"
+" enforced by the case team and by the Restricted flag on individual "
+"documents, not by this box."
+msgstr ""
+"يميّز الملف كحساس ليتعامل معه الفريق وفق ذلك. أما الوصول الفعلي فيحكمه فريق "
+"القضية وخانة التقييد على كل مستند، لا هذا الخيار."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_stage__is_rejected
+msgid ""
+"Marks this stage as a refusal or dismissal, so it is not counted as a "
+"successful close."
+msgstr "يميّز هذه المرحلة كرفض أو صرف نظر، فلا تُحتسب إغلاقاً ناجحاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_stage__is_closed
+msgid "Marks this stage as an end state for reporting purposes."
+msgstr "يميّز هذه المرحلة كحالة نهائية لأغراض التقارير."
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_mail_message
+msgid "Message"
+msgstr "رسالة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_has_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__milestone_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__milestone_ids
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__billing_type__milestone
+msgid "Milestone"
+msgstr "دفعة مرحلية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Milestones"
+msgstr "الدفعات المرحلية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
+msgid "Mine"
+msgstr "لي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_audit_log_search
+msgid "Model"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__model_name
+msgid "Model Name"
+msgstr "اسم النموذج"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_search
+msgid "Month"
+msgstr "الشهر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__move_id
+msgid "Move"
+msgstr "قيد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_trust_receivable_account_id
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_trust_receivable_account_id
+msgid ""
+"Must be the same receivable the firm's invoices use: applying trust funds "
+"reconciles against the invoice's receivable line, and reconciliation only "
+"works within one account."
+msgstr ""
+"يجب أن يكون حساب الذمم نفسه الذي تستخدمه فواتير المكتب: فتسوية الأمانة "
+"تُطابَق مع بند ذمم الفاتورة، والمطابقة لا تعمل إلا داخل الحساب الواحد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__my_activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__my_activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__my_activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__my_activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "My Cases"
+msgstr "قضاياي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+msgid "My Documents"
+msgstr "مستنداتي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+msgid "My Hearings"
+msgstr "جلساتي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_home_legal
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
+msgid "My Legal Cases"
+msgstr "قضاياي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "My Time"
+msgstr "أوقاتي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__najiz_number
+msgid "Najiz Number"
+msgstr "رقم ناجز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__najiz_reference
+msgid "Najiz Reference"
+msgstr "المرجع في ناجز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__najiz_url
+msgid "Najiz Url"
+msgstr "رابط ناجز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_partner__legal_identity_number
+#: model:ir.model.fields,help:era_law_firm.field_res_users__legal_identity_number
+msgid ""
+"National ID or Iqama number. Visible to legal managers only, and never sent "
+"to an AI provider."
+msgstr ""
+"رقم الهوية الوطنية أو الإقامة. ظاهر للمديرين القانونيين فقط، ولا يُرسل "
+"لمزوّد ذكاء أبداً."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_list
+msgid "Net"
+msgstr "الصافي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_calendar_event_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_calendar_event_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_calendar_event_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_calendar_event_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "حدث تقويم النشاط التالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_date_deadline
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "موعد النشاط التالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_summary
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_summary
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_summary
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_summary
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_type_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_type_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_type_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_type_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__next_hearing_id
+msgid "Next Hearing"
+msgstr "الجلسة القادمة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "No suggested date is available."
+msgstr "لا يوجد تاريخ مقترح."
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_general_notarial
+msgid "Non-Contentious Proof Circuit"
+msgstr "دائرة الإثباتات الإنهائية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
+msgid "Not Converted"
+msgstr "غير محوّلة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "Not Invoiced"
+msgstr "غير مفوتر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__note
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__note
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__notes
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__state
+msgid "Nothing can be invoiced against an engagement until it is active."
+msgstr "لا يمكن فوترة أي شيء على عقد أتعاب قبل تفعيله."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline_rule__start_point__notification
+msgid "Notification Date"
+msgstr "تاريخ التبليغ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_needaction_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_has_error_counter
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__message_needaction_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__message_has_error_counter
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي فشل تسليمها"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "Only a confirmed case can be invoiced."
+msgstr "لا تُفوتر إلا القضية المؤكدة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "Only a legal manager may approve a success fee."
+msgstr "لا يعتمد أتعاب النجاح إلا مدير قانوني."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_deletion.py:0
+msgid ""
+"Only a legal manager may delete %s. Everything attached to a legal file is "
+"part of its record: cancel it, mark it done or archive it instead."
+msgstr ""
+"لا يحذف %s إلا مدير قانوني. فكل ما يرتبط بملف قانوني جزء من سجله: ألغِه أو "
+"علّمه منتهياً أو أرشفه بدل ذلك."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__state
+msgid ""
+"Only an approved document can be published to the client portal, and an "
+"approved document is archived rather than deleted."
+msgstr ""
+"لا يُنشر في بوابة الموكل إلا المستند المعتمد، والمستند المعتمد يُؤرشف ولا "
+"يُحذف."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Only approved documents can be published."
+msgstr "لا يُنشر إلا المستند المعتمد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_expense__state
+msgid "Only approved expenses are offered by the invoice wizard."
+msgstr "لا يعرض معالج الفوترة إلا المصروفات المعتمدة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Only draft cases can be deleted."
+msgstr "لا يمكن حذف إلا القضايا في حالة مسودة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Only draft engagements can be deleted."
+msgstr "لا يمكن حذف إلا عقود الأتعاب في حالة مسودة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Only draft hearings can be deleted."
+msgstr "لا يمكن حذف إلا الجلسات في حالة مسودة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__state
+msgid ""
+"Only entries marked billable are offered by the invoice wizard. Draft time "
+"is recorded but not charged."
+msgstr ""
+"لا يعرض معالج الفوترة إلا القيود المعلَّمة كقابلة للفوترة. والوقت المسودة "
+"يُسجَّل ولا يُحاسَب عليه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement_milestone__state
+msgid "Only milestones marked ready are offered by the invoice wizard."
+msgstr "لا يعرض معالج الفوترة إلا الدفعات المعلَّمة كجاهزة."
+
+#. module: era_law_firm
+#: model:ir.model.constraint,message:era_law_firm.constraint_legal_trust_account_unique
+msgid "Only one trust account is allowed per client and company."
+msgstr "يُسمح بحساب أمانة واحد لكل موكل في كل شركة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__state
+msgid "Only posted movements affect the balance."
+msgstr "لا تؤثر في الرصيد إلا الحركات المرحَّلة."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_account__state__open
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__operation
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_audit_log_search
+msgid "Operation"
+msgstr "العملية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case_party__role__opponent
+msgid "Opponent"
+msgstr "الخصم"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_party__lawyer_id
+msgid "Opposing or accompanying counsel for this party, for the record."
+msgstr "محامي الخصم أو المحامي المرافق لهذا الطرف، للتوثيق."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__rule_id
+msgid "Optional statutory rule used to propose a date. Assistive only."
+msgstr "قاعدة نظامية اختيارية تُقترح بها التواريخ. مساعِدة فقط."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__case_id
+msgid ""
+"Optional: the case this movement relates to, where the client has more than "
+"one file."
+msgstr "اختياري: القضية المتعلقة بهذه الحركة، إن كان للموكل أكثر من ملف."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_stage__sequence
+msgid "Order the stage appears in on the kanban board."
+msgstr "ترتيب ظهور المرحلة في لوحة كانبان."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case__case_type__other
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case_party__role__other
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__outcome
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Outcome"
+msgstr "النتيجة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_list
+msgid "Outstanding"
+msgstr "المتبقي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__outstanding_amount
+msgid "Outstanding Amount"
+msgstr "المبلغ المتبقي"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline__overdue_state__overdue
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+msgid "Overdue"
+msgstr "متأخر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__overdue_state
+msgid "Overdue State"
+msgstr "حالة التأخر"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__overridden
+msgid "Overridden"
+msgstr "متجاوَز بقرار مدير"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Override"
+msgstr "تجاوز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__override_reason
+msgid "Override Reason"
+msgstr "سبب التجاوز"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__owner_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+msgid "Owner"
+msgstr "المالك"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__paid_amount
+msgid "Paid Amount"
+msgstr "المبلغ المدفوع"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Parties"
+msgstr "الأطراف"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__partner_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__partner_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__partner_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__partner_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__partner_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__partner_id
+msgid "Partner"
+msgstr "جهة الاتصال"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__party_ids
+msgid "Party"
+msgstr "طرف"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__party_signature
+msgid "Party Signature"
+msgstr "بصمة الأطراف"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_personal_status
+msgid "Personal Status"
+msgstr "الأحوال الشخصية"
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_appeal_personal_status
+msgid "Personal Status Circuit"
+msgstr "دائرة الأحوال الشخصية"
+
+#. module: era_law_firm
+#: model:legal.court,name:era_law_firm.court_personal_status
+msgid "Personal Status Court"
+msgstr "محكمة الأحوال الشخصية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Pick one or type a new one"
+msgstr "اختر من القائمة أو اكتب قيمة جديدة"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__pleading
+msgid "Pleading"
+msgstr "صحيفة دعوى"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__access_url
+msgid "Portal Access URL"
+msgstr "رابط الوصول للبوابة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__portal_published
+msgid "Portal Published"
+msgstr "منشور في البوابة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__portal_visible
+msgid "Portal Visible"
+msgstr "ظاهر في البوابة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__paid_amount
+msgid "Portion of the invoiced amount that has been settled."
+msgstr "الجزء المسدَّد من المبلغ المفوتر."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
+msgid "Post"
+msgstr "ترحيل"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+msgid "Post Operation"
+msgstr "ترحيل العملية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__state__posted
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_search
+msgid "Posted"
+msgstr "مرحَّل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__posted_balance
+msgid "Posted Balance"
+msgstr "الرصيد المرحَّل"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Posted trust transactions cannot be deleted."
+msgstr "لا يمكن حذف حركات الأمانة المرحَّلة."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__poa
+msgid "Power of Attorney"
+msgstr "وكالة شرعية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_default_city
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_default_city
+msgid "Pre-filled as the city on new cases."
+msgstr "تُملأ مسبقاً كمدينة في القضايا الجديدة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__product_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "Publish to Portal"
+msgstr "نشر في البوابة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
+msgid "Published documents"
+msgstr "المستندات المنشورة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+msgid "Published to Portal"
+msgstr "منشور في البوابة"
+
+#. module: era_law_firm
+#: model:legal.jurisdiction,name:era_law_firm.jurisdiction_committees
+msgid "Quasi-Judicial Committees"
+msgstr "اللجان شبه القضائية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__rate
+msgid "Rate"
+msgstr "السعر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__rate
+msgid ""
+"Rate applied to this entry. Defaults from the engagement but can be adjusted"
+" per entry."
+msgstr ""
+"السعر المطبق على هذا القيد. يأتي افتراضياً من العقد ويمكن تعديله لكل قيد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__hourly_rate
+msgid "Rate applied to time recorded against this engagement."
+msgstr "السعر المطبق على الوقت المسجل على هذا العقد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__rating_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement_milestone__state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+msgid "Ready to Invoice"
+msgstr "جاهزة للفوترة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__reason
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__reason
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
+msgid "Reason"
+msgstr "السبب"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Receivable account"
+msgstr "حساب الذمم"
+
+#. module: era_law_firm
+#: model:legal.deadline.rule,name:era_law_firm.deadline_rule_reconsideration_30
+msgid "Reconsideration period (30 days)"
+msgstr "مدة التماس إعادة النظر (30 يوماً)"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__reference
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__reference
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_operation_wizard__transaction_type__refund
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__transaction_type__refund
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Refund"
+msgstr "رد"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/wizard/legal_wizards.py:0
+msgid "Refund reason and payment reference are required."
+msgstr "سبب الرد ومرجع السداد إلزاميان."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__reminder_scheduled
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__reminder_scheduled
+msgid "Reminder Scheduled"
+msgstr "التذكير مجدول"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid "Remove Test Data"
+msgstr "إزالة بيانات الاختبار"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Reopen"
+msgstr "إعادة فتح"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__representative_id
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case_party__role__representative
+msgid "Representative"
+msgstr "ممثل نظامي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+msgid "Required when refunding client money..."
+msgstr "إلزامي عند رد أموال الموكل..."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__res_id
+msgid "Res"
+msgstr "السجل"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Reset"
+msgstr "إعادة تعيين"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__activity_user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__activity_user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__restricted
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+msgid "Restricted"
+msgstr "مقيّد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__conflict_state
+msgid ""
+"Result of the latest conflict screening. A blocked result prevents the case "
+"from being confirmed."
+msgstr "نتيجة آخر فحص تعارض. النتيجة الموقوفة تمنع تأكيد القضية."
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_criminal_qisas
+msgid "Retribution and Hudud Circuit"
+msgstr "دائرة قضايا القصاص والحدود"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_transaction__transaction_type__reversal
+msgid "Reversal"
+msgstr "عكس قيد"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__reversal_move_id
+msgid "Reversal Move"
+msgstr "قيد العكس"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "Reversal of %s"
+msgstr "عكس %s"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__reversed_transaction_id
+msgid "Reversed Transaction"
+msgstr "الحركة المعكوسة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__reviewer_id
+msgid "Reviewer"
+msgstr "المراجع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__role
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__role
+msgid "Role"
+msgstr "الصفة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__rule_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
+msgid "Rule"
+msgstr "القاعدة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+msgid ""
+"Rules produce a suggested date only. Suspended periods, holidays and protected\n"
+"                        categories are not calculated -- the lawyer remains responsible for the binding date."
+msgstr ""
+"القواعد تنتج تاريخاً مقترحاً فقط. المدد الموقوفة والعطل والفئات المحمية لا "
+"تُحتسب — وتبقى مسؤولية التاريخ الملزم على المحامي."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Run Check"
+msgstr "تشغيل الفحص"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Run Conflict Check"
+msgstr "تشغيل فحص التعارض"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Run a valid conflict check after the latest party change."
+msgstr "يجب تنفيذ فحص تعارض صالح بعد آخر تعديل للأطراف."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__message_has_sms_error
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__scheduled
+msgid "Scheduled"
+msgstr "مجدول"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__access_token
+msgid "Security Token"
+msgstr "رمز الأمان"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__sequence
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__sequence
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_court__sequence
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__close_date
+msgid "Set automatically when the case is closed."
+msgstr "يُضبط تلقائياً عند إغلاق القضية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__reminder_scheduled
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__reminder_scheduled
+msgid ""
+"Set once the reminder activity has been raised, so the daily job does not "
+"raise it twice."
+msgstr "يُضبط بعد إنشاء نشاط التذكير حتى لا تكرره المهمة اليومية."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Settle the client trust balance before closing the case."
+msgstr "يجب تسوية رصيد أمانة الموكل قبل إغلاق القضية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__code
+msgid "Short code used in reports and reference lists."
+msgstr "رمز مختصر يُستخدم في التقارير والقوائم المرجعية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_party__portal_visible
+msgid ""
+"Show this party to the client in the portal. Leave off to keep a party out "
+"of the client's view."
+msgstr ""
+"إظهار هذا الطرف للموكل في البوابة. اتركه مطفأً لإبقاء الطرف خارج نطاق اطلاع "
+"الموكل."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__signed_amount
+msgid "Signed Amount"
+msgstr "المبلغ الموقَّع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__source_case_id
+msgid "Source Case"
+msgstr "القضية المصدر"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__stage_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__start_date
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__start_datetime
+msgid "Start Datetime"
+msgstr "تاريخ ووقت البداية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__start_point
+msgid "Start Point"
+msgstr "نقطة البداية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__suggested_date
+msgid ""
+"Start date plus the rule's period. A suggestion for the lawyer to review -- "
+"suspended periods, holidays and protected categories are not calculated."
+msgstr ""
+"تاريخ البداية مضافاً إليه مدة القاعدة. اقتراح يراجعه المحامي — فالمدد "
+"الموقوفة والعطل والفئات المحمية لا تُحتسب."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement_milestone__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_expense__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__state
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_state
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_state
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__activity_state
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__activity_state
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بحسب الأنشطة\n"
+"متأخر: تجاوز تاريخ الاستحقاق\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+msgid "Statutory article this period comes from"
+msgstr "المادة النظامية التي تستند إليها هذه المدة"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_jurisdiction_form
+msgid "Statutory basis"
+msgstr "السند النظامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_circuit__note
+msgid "Statutory basis for this circuit."
+msgstr "السند النظامي لهذه الدائرة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__note
+msgid "Statutory basis or a note on what this jurisdiction covers."
+msgstr "السند النظامي أو ملاحظة على ما يشمله هذا الاختصاص."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__stop_datetime
+msgid "Stop Datetime"
+msgstr "تاريخ ووقت النهاية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_success_fee_form
+msgid "Submit for Review"
+msgstr "تقديم للمراجعة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__success_fee_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__success_fee_ids
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_engagement__billing_type__success
+msgid "Success Fee"
+msgstr "أتعاب نجاح"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_success_fee
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_success_fees
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_form
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Success Fees"
+msgstr "أتعاب النجاح"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_success_fee_form
+msgid "Success fee description"
+msgstr "وصف أتعاب النجاح"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__suggested_date
+msgid "Suggested Date"
+msgstr "التاريخ المقترح"
+
+#. module: era_law_firm
+#: model:legal.deadline.rule,warning:era_law_firm.deadline_rule_appeal_30
+#: model:legal.deadline.rule,warning:era_law_firm.deadline_rule_urgent_10
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+msgid "Suggested date only; a lawyer must review and adopt it."
+msgstr "تاريخ مقترح فقط؛ يجب أن يراجعه المحامي ويعتمده."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_account__posted_balance
+msgid "Sum of every posted movement on this account."
+msgstr "مجموع كل الحركات المرحَّلة على هذا الحساب."
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_court__degree__supreme
+#: model:legal.court,name:era_law_firm.court_supreme
+msgid "Supreme Court"
+msgstr "المحكمة العليا"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_demo.py:0
+msgid "Test Cases"
+msgstr "قضايا الاختبار"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_demo_data_wizard__existing_count
+msgid "Test cases already present in this database."
+msgstr "قضايا الاختبار الموجودة في قاعدة البيانات هذه."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid ""
+"Test data is already loaded. Loading again adds a further batch on top;\n"
+"                    use Remove to clear what is there first."
+msgstr ""
+"بيانات الاختبار محمَّلة مسبقاً. والتحميل مجدداً يضيف دفعة فوقها؛ استخدم "
+"«إزالة» لمسح الموجود أولاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__signed_amount
+msgid ""
+"The amount as it affects the balance: positive for a deposit, negative for a"
+" withdrawal."
+msgstr "المبلغ بأثره على الرصيد: موجب للإيداع، وسالب للسحب."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "The author cannot approve their own document."
+msgstr "لا يجوز لمُعِدّ المستند اعتماده بنفسه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__deadline_date
+msgid ""
+"The binding date the firm works to. The lawyer sets this and remains "
+"responsible for it -- nothing here sets it automatically."
+msgstr ""
+"التاريخ الملزم الذي يعمل عليه المكتب. يحدده المحامي وتبقى مسؤوليته عليه — "
+"ولا شيء هنا يضبطه تلقائياً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__jurisdiction_id
+msgid ""
+"The branch of the judiciary the case falls under. Pick from the list or type"
+" a new one -- the Supreme Judicial Council may create further specialised "
+"courts."
+msgstr ""
+"فرع القضاء الذي تندرج تحته القضية. اختر من القائمة أو اكتب قيمة جديدة — "
+"فللمجلس الأعلى للقضاء إحداث محاكم متخصصة أخرى."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_jurisdiction__name
+msgid "The branch of the judiciary the matter falls under."
+msgstr "فرع القضاء الذي تندرج تحته المسألة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_court__jurisdiction_id
+msgid ""
+"The branch of the judiciary this court belongs to. Setting it filters the "
+"court list on a case."
+msgstr ""
+"فرع القضاء الذي تتبعه هذه المحكمة. وضبطه يفلتر قائمة المحاكم في القضية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__calendar_event_id
+msgid ""
+"The calendar entry kept in step with this hearing. Created on confirmation "
+"and removed if the hearing is cancelled."
+msgstr ""
+"موعد التقويم المتزامن مع هذه الجلسة. يُنشأ عند التأكيد ويُحذف عند الإلغاء."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check_line__role
+msgid ""
+"The capacity the party held in that other file. Acting against a former or "
+"current client is the conflict this screening exists to catch."
+msgstr ""
+"الصفة التي كان عليها الطرف في ذلك الملف. والترافع ضد موكِّل سابق أو حالي هو "
+"التعارض الذي وُجد هذا الفحص لضبطه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_party__role
+msgid ""
+"The capacity this party holds in the case. Opponents are what the conflict "
+"check screens most closely -- the same person appearing as your client "
+"elsewhere is the situation to catch."
+msgstr ""
+"الصفة التي يحملها هذا الطرف في القضية. والخصوم هم ما يدقق فيه فحص التعارض "
+"أكثر — فظهور الشخص نفسه موكِّلاً لديك في ملف آخر هو الحالة المقصود ضبطها."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__case_id
+msgid ""
+"The case this consultation became, if it was converted. A consultation can "
+"only be converted once."
+msgstr ""
+"القضية التي تحولت إليها هذه الاستشارة إن حُوّلت. ولا تُحوَّل الاستشارة إلا "
+"مرة واحدة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_circuit__name
+msgid "The circuit or bench inside the court that hears the case."
+msgstr "الدائرة أو الهيئة داخل المحكمة الناظرة للقضية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__circuit_id
+msgid ""
+"The circuit or bench inside the court. The list narrows to the chosen court;"
+" type a new name to add one."
+msgstr ""
+"الدائرة أو الهيئة داخل المحكمة. تضيق القائمة حسب المحكمة المختارة، واكتب "
+"اسماً جديداً لإضافة دائرة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "The client cannot also be an opponent."
+msgstr "لا يجوز أن يكون الموكِّل خصماً في القضية ذاتها."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_account__partner_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_operation_wizard__partner_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__partner_id
+msgid ""
+"The client whose money this account holds. One account per client per "
+"company."
+msgstr "الموكل الذي يحتفظ هذا الحساب بأمواله. حساب واحد لكل موكل في كل شركة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "The company cannot be changed after related legal records exist."
+msgstr "لا يمكن تغيير الشركة بعد وجود سجلات قانونية مرتبطة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__conflict_check_id
+msgid ""
+"The conflict of interest screening that authorised this file. It is cleared "
+"automatically whenever the client or the parties change, and the case then "
+"has to be screened again."
+msgstr ""
+"فحص تعارض المصالح الذي أجاز هذا الملف. يُلغى تلقائياً عند أي تغيير في الموكل"
+" أو الأطراف، وعندها يجب إعادة الفحص."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_court__name
+msgid ""
+"The court as it is named in the Najiz record, for example the Commercial "
+"Court in Riyadh."
+msgstr "المحكمة كما وردت تسميتها في سجل ناجز، مثل المحكمة التجارية بالرياض."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__court
+msgid "The court hearing the case, as named in the Najiz record."
+msgstr "المحكمة الناظرة للقضية كما وردت تسميتها في سجل ناجز."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__court_id
+msgid ""
+"The court hearing the case. The list narrows to the chosen jurisdiction; "
+"type a new name to add a court that is not listed yet."
+msgstr ""
+"المحكمة الناظرة للقضية. تضيق القائمة حسب الاختصاص المختار، واكتب اسماً "
+"جديداً لإضافة محكمة غير مدرجة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_circuit__court_id
+msgid ""
+"The court this circuit sits in. Leave empty for a generic circuit type "
+"usable in any court."
+msgstr ""
+"المحكمة التي تنعقد فيها هذه الدائرة. اتركه فارغاً لنوع دائرة عام يصلح لأي "
+"محكمة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__start_date
+msgid ""
+"The date the statutory period runs from, such as service of the judgment."
+msgstr "التاريخ الذي تبدأ منه المدة النظامية، كتاريخ تسليم صك الحكم."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__najiz_reference
+msgid "The document's reference in Najiz, where it has one."
+msgstr "مرجع المستند في ناجز إن وُجد له مرجع."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/wizard/legal_wizards.py:0
+msgid "The engagement must be active."
+msgstr "يجب أن يكون عقد الأتعاب مفعّلاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_expense__product_id
+msgid ""
+"The expense line used on the invoice, which also determines the account and "
+"the tax applied."
+msgstr ""
+"بند المصروف المستخدم في الفاتورة، وهو الذي يحدد أيضاً الحساب والضريبة "
+"المطبقة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__amount
+msgid "The fee claimed on the successful outcome."
+msgstr "الأتعاب المطالب بها على النتيجة الناجحة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__invoice_line_id
+msgid ""
+"The invoice line this entry was billed on. Its presence is what prevents it "
+"being billed twice."
+msgstr ""
+"بند الفاتورة الذي فُوتر عليه هذا القيد. ووجوده هو ما يمنع فوترته مرتين."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_expense__invoice_line_id
+msgid ""
+"The invoice line this expense was billed on. Its presence is what prevents "
+"it being billed twice."
+msgstr ""
+"بند الفاتورة الذي فُوتر عليه هذا المصروف. ووجوده هو ما يمنع فوترته مرتين."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__invoice_line_id
+msgid ""
+"The invoice line this fee was billed on. Its presence is what prevents it "
+"being billed twice."
+msgstr ""
+"بند الفاتورة الذي فُوترت عليه هذه الأتعاب. ووجوده هو ما يمنع فوترتها مرتين."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement_milestone__invoice_line_id
+msgid ""
+"The invoice line this milestone was billed on. Its presence is what prevents"
+" it being billed twice."
+msgstr ""
+"بند الفاتورة الذي فُوترت عليه هذه الدفعة. ووجوده هو ما يمنع فوترتها مرتين."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__move_id
+msgid ""
+"The journal entry this movement posted. Client money is booked to a "
+"segregated liability account, never to revenue."
+msgstr ""
+"القيد المحاسبي الذي رحّلته هذه الحركة. مال الموكل يُقيَّد في حساب التزام "
+"مفصول، ولا يُقيَّد إيراداً أبداً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__evidence
+msgid ""
+"The judgment, settlement or recovery the fee is earned on. Required, because"
+" a success fee has to be justifiable after the fact."
+msgstr ""
+"الحكم أو التسوية أو المبلغ المحصَّل الذي استُحقت عليه الأتعاب. إلزامي، لأن "
+"أتعاب النجاح يجب أن تكون قابلة للتبرير لاحقاً."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_success_fee_form
+msgid "The judgment, settlement or recovery this fee is earned on..."
+msgstr "الحكم أو التسوية أو المبلغ المحصَّل الذي استُحقت عليه هذه الأتعاب..."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__jurisdiction
+msgid ""
+"The judicial authority the case falls under, for example general courts, "
+"commercial courts or the labour circuit."
+msgstr ""
+"الجهة القضائية التي تندرج تحتها القضية، مثل المحاكم العامة أو التجارية أو "
+"الدائرة العمالية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__lawyer_id
+msgid ""
+"The lawyer answerable for the file. They can always open it, and hearing and"
+" deadline reminders are raised against them."
+msgstr ""
+"المحامي المسؤول عن الملف. يستطيع فتحه دائماً، وتُنشأ تذكيرات الجلسات "
+"والمواعيد باسمه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__lawyer_id
+msgid "The lawyer attending. The reminder activity is raised against them."
+msgstr "المحامي الحاضر. يُنشأ نشاط التذكير باسمه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__approved_by
+msgid "The legal manager who overrode the blocked result."
+msgstr "المدير القانوني الذي تجاوز النتيجة الموقوفة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reversed_transaction_id
+msgid "The movement this one reverses."
+msgstr "الحركة التي تعكسها هذه الحركة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__allowed_user_ids
+msgid "The only colleagues who may open this document while it is restricted."
+msgstr "الزملاء الوحيدون الذين يجوز لهم فتح هذا المستند ما دام مقيّداً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check_line__source_case_id
+msgid "The other file this party already appears in."
+msgstr "الملف الآخر الذي يظهر فيه هذا الطرف."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__client_id
+msgid ""
+"The party the firm acts for. Changing it voids the conflict check and the "
+"case must be screened again."
+msgstr "الطرف الذي يمثله المكتب. تغييره يُبطل فحص التعارض ويوجب إعادة الفحص."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case_party__representative_id
+msgid ""
+"The person or firm acting for this party, where they are not representing "
+"themselves."
+msgstr "الشخص أو الجهة التي تنوب عن هذا الطرف إن لم يكن يمثل نفسه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__partner_id
+msgid "The person seeking advice. They do not have to be an existing client."
+msgstr "طالب الاستشارة. لا يشترط أن يكون موكِّلاً قائماً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__invoice_id
+msgid ""
+"The posted invoice this movement settles. It must belong to the same client,"
+" and it is reconciled against the trust entry."
+msgstr ""
+"الفاتورة المرحَّلة التي تسددها هذه الحركة. يجب أن تعود للموكل نفسه، وتُطابَق"
+" مع قيد الأمانة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reversal_move_id
+msgid ""
+"The reversing entry raised when a posted movement is cancelled. Posted "
+"movements are reversed, never deleted, so the audit trail survives."
+msgstr ""
+"القيد العكسي الذي يُنشأ عند إلغاء حركة مرحَّلة. الحركات المرحَّلة تُعكس ولا "
+"تُحذف، حفظاً لأثر التدقيق."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_trust_bank_account_id
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_trust_bank_account_id
+msgid ""
+"The segregated bank account client money is deposited into and refunded "
+"from."
+msgstr "الحساب البنكي المفصول الذي يُودَع فيه مال الموكل ويُرد منه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__product_id
+msgid ""
+"The service line used on the invoice, which also determines the income "
+"account and the tax applied."
+msgstr ""
+"بند الخدمة المستخدم في الفاتورة، وهو الذي يحدد أيضاً حساب الإيراد والضريبة "
+"المطبقة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__circuit
+msgid "The specific circuit or bench within the court."
+msgstr "الدائرة أو الهيئة المحددة داخل المحكمة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__legal_reference
+msgid ""
+"The statutory article this period comes from, so the suggestion can be "
+"checked against the source."
+msgstr "المادة النظامية التي تستند إليها المدة، ليمكن مقابلة الاقتراح بمصدره."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__attachment_id
+msgid ""
+"The stored file itself. Created automatically when you upload through the "
+"File field."
+msgstr "الملف المخزَّن نفسه. يُنشأ تلقائياً عند الرفع من خانة «الملف»."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+msgid ""
+"The suggested date is assistive only. The lawyer remains responsible for the"
+" binding date and must record its source."
+msgstr ""
+"التاريخ المقترح مساعِد فقط. تبقى مسؤولية التاريخ الملزم على المحامي، وعليه "
+"توثيق مصدره."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_finance.py:0
+msgid "The trust account is not open."
+msgstr "حساب الأمانة غير مفتوح."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__claim_amount
+msgid ""
+"The value claimed in the case. Used for reporting; it does not drive "
+"billing."
+msgstr "قيمة المطالبة في القضية. تُستخدم للتقارير ولا تحكم الفوترة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/wizard/legal_wizards.py:0
+msgid "There is nothing to invoice."
+msgstr "لا يوجد ما يُفوتر."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
+msgid "This Month"
+msgstr "هذا الشهر"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "This case has no active engagement to invoice."
+msgstr "لا يوجد عقد أتعاب مفعّل لهذه القضية لإصدار فاتورة."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid ""
+"This case shares parties with the files below. A manager must record a "
+"reason to proceed."
+msgstr ""
+"تشترك هذه القضية في أطراف مع الملفات أدناه. يلزم أن يسجّل مدير سبباً "
+"للمتابعة."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/advanced.py:0
+msgid "This consultation has already been converted."
+msgstr "سبق تحويل هذه الاستشارة إلى قضية."
+
+#. module: era_law_firm
+#: model:ir.model.constraint,message:era_law_firm.constraint_legal_court_name_unique
+msgid "This court already exists for that city."
+msgstr "هذه المحكمة موجودة مسبقاً لهذه المدينة."
+
+#. module: era_law_firm
+#: model:ir.model.constraint,message:era_law_firm.constraint_legal_jurisdiction_name_unique
+msgid "This jurisdiction already exists."
+msgstr "هذا الاختصاص موجود مسبقاً."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid ""
+"This permanently deletes every record created by the test-data loader. "
+"Continue?"
+msgstr "سيحذف هذا نهائياً كل سجل أنشأه محمّل بيانات الاختبار. أتريد المتابعة؟"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_invoice_create_wizard_form
+msgid "Time"
+msgstr "الوقت"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Time & Expenses"
+msgstr "الوقت والمصروفات"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_time_entry
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_time
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid "Time Entries"
+msgstr "قيود الوقت"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__time_entry_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_invoice_create_wizard__time_entry_ids
+msgid "Time Entry"
+msgstr "قيد وقت"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_time_entry__hours
+msgid "Time spent, in hours. Must be greater than zero."
+msgstr "الوقت المبذول بالساعات. يجب أن يكون أكبر من صفر."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+msgid "To Review"
+msgstr "بانتظار المراجعة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__invoiced_amount
+msgid "Total of posted customer invoices linked to this case."
+msgstr "إجمالي فواتير العملاء المرحَّلة المرتبطة بهذه القضية."
+
+#. module: era_law_firm
+#: model:legal.circuit,name:era_law_firm.circuit_general_traffic
+msgid "Traffic Circuit"
+msgstr "دائرة قضايا حوادث السير"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_account__transaction_ids
+msgid "Transaction"
+msgstr "حركة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__transaction_type
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__transaction_type
+msgid "Transaction Type"
+msgstr "نوع الحركة"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_trust_tx
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Transactions"
+msgstr "الحركات"
+
+#. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_trust_operation_wizard__transaction_type__transfer
+msgid "Transfer"
+msgstr "تحويل"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_operation_wizard__trust_account_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__trust_account_id
+msgid "Trust Account"
+msgstr "حساب أمانة"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_trust
+msgid "Trust Accounts"
+msgstr "حسابات الأمانات"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.model,name:era_law_firm.model_legal_trust_operation_wizard
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_trust_operation_wizard_form
+msgid "Trust Operation"
+msgstr "عملية على الأمانة"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_trust_transaction
+msgid "Trust Transaction"
+msgstr "حركة أمانة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+#: model:ir.actions.act_window,name:era_law_firm.action_trust_transaction
+msgid "Trust Transactions"
+msgstr "حركات الأمانات"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Trust journal"
+msgstr "يومية الأمانات"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_search
+msgid "Type"
+msgstr "النوع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__activity_exception_decoration
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__activity_exception_decoration
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__activity_exception_decoration
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__activity_exception_decoration
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي على السجل."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
+msgid "Unfreeze"
+msgstr "إلغاء التجميد"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
+msgid "Unpublish"
+msgstr "إلغاء النشر"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
+msgid "Upcoming"
+msgstr "القادمة"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Upcoming legal deadline"
+msgstr "موعد نظامي قادم"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_core.py:0
+msgid "Upcoming legal hearing"
+msgstr "جلسة قضائية قادمة"
+
+#. module: era_law_firm
+#: model:legal.deadline.rule,name:era_law_firm.deadline_rule_urgent_10
+msgid "Urgent appeal period (10 days)"
+msgstr "مدة الاعتراض في المسائل المستعجلة (10 أيام)"
+
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_res_users
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__user_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__user_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_audit_log_search
+msgid "User"
+msgstr "المستخدم"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement_milestone__amount
+msgid "Value of this stage of the engagement."
+msgstr "قيمة هذه المرحلة من العقد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__version
+msgid "Version"
+msgstr "الإصدار"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__version
+msgid "Version marker for successive drafts of the same document."
+msgstr "علامة إصدار للمسودات المتعاقبة للمستند نفسه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__warning
+msgid "Warning"
+msgstr "تنبيه"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_rule_form
+msgid "Warning shown on deadlines using this rule"
+msgstr "التنبيه الظاهر على المواعيد التي تستخدم هذه القاعدة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_document__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_success_fee__website_message_ids
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_hearing__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_success_fee__website_message_ids
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__website_message_ids
+msgid "Website communication history"
+msgstr "سجل مراسلات الموقع"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_account__available_balance
+msgid ""
+"What can still be drawn on. A withdrawal that would take this below zero is "
+"refused."
+msgstr "ما يمكن السحب منه. وأي سحب يجعله سالباً يُرفض."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__document_type
+msgid ""
+"What kind of document this is. Deeds and powers of attorney are the ones "
+"worth tracking an expiry date for."
+msgstr "نوع هذا المستند. والصكوك والوكالات هي ما يستحق تتبع تاريخ انتهائه."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+msgid "What must be filed"
+msgstr "المطلوب تقديمه"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__start_point
+msgid ""
+"What the period runs from: the date of the judgment, the date of service, or"
+" a date the lawyer enters."
+msgstr ""
+"مما تبدأ المدة: من تاريخ الحكم، أو تاريخ التبليغ، أو تاريخ يدخله المحامي."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_consultation__notes
+msgid "What was discussed. Visible to lawyers and legal managers only."
+msgstr "ما جرى بحثه. ظاهر للمحامين والمديرين القانونيين فقط."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_form
+msgid "What was done"
+msgstr "العمل المنفَّذ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_audit_log__operation
+msgid ""
+"What was done, for example posting a trust movement or dispatching an AI "
+"request."
+msgstr "ما الذي تم، مثل ترحيل حركة أمانة أو إرسال طلب ذكاء."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__expiry_date
+msgid ""
+"When the document stops being valid. Worth setting on powers of attorney so "
+"renewal is not missed."
+msgstr ""
+"متى يسقط سريان المستند. يُستحسن ضبطه على الوكالات حتى لا يفوت التجديد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__approved_at
+msgid "When the override was given."
+msgstr "وقت منح التجاوز."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_engagement_milestone__due_date
+msgid "When this staged payment is expected to fall due."
+msgstr "متى يُتوقع استحقاق هذه الدفعة المرحلية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_trust_liability_account_id
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_trust_liability_account_id
+msgid ""
+"Where client money sits while the firm holds it. It is a liability, not firm"
+" revenue -- that is the whole point of segregating it."
+msgstr ""
+"حيث يستقر مال الموكل ما دام المكتب محتفظاً به. وهو التزام لا إيراد للمكتب — "
+"وهذا هو مقصد الفصل كله."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__source
+msgid ""
+"Where the binding date comes from, for example the date the judgment was "
+"served. Recorded so the calculation can be audited later."
+msgstr ""
+"مصدر التاريخ الملزم، مثل تاريخ تسليم صك الحكم. يُوثَّق ليمكن تدقيق الاحتساب "
+"لاحقاً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_court__city
+msgid "Where the court sits."
+msgstr "مقر انعقاد المحكمة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__stage_id
+msgid ""
+"Where the file stands in the litigation cycle. Stages are configurable and "
+"drive the kanban board."
+msgstr "موضع الملف في دورة التقاضي. المراحل قابلة للتهيئة وتحكم لوحة كانبان."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
+msgid "Where this date comes from"
+msgstr "مصدر هذا التاريخ"
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__portal_published
+msgid ""
+"Whether the client can see and download this document from the portal. Only "
+"approved documents can be published."
+msgstr ""
+"هل يستطيع الموكل رؤية هذا المستند وتنزيله من البوابة. ولا يُنشر إلا المعتمد."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_audit_log__changed_fields
+msgid ""
+"Which fields were involved. Identity numbers and secrets are deliberately "
+"never recorded here."
+msgstr "الحقول المعنية. وأرقام الهوية والأسرار لا تُسجَّل هنا عمداً أبداً."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__reviewer_id
+msgid "Who approved or rejected the document. Filled automatically on review."
+msgstr "من اعتمد المستند أو رفضه. يُملأ تلقائياً عند المراجعة."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_deadline__user_id
+msgid ""
+"Who must act on this deadline. The reminder activity is raised against them."
+msgstr "من يجب عليه التصرف في هذا الموعد. يُنشأ نشاط التذكير باسمه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_document__owner_id
+msgid ""
+"Who produced the document. They cannot approve it themselves -- review has "
+"to come from someone else."
+msgstr ""
+"من أعدّ المستند. ولا يجوز له اعتماده بنفسه — فالمراجعة يجب أن تأتي من غيره."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
+msgid ""
+"Why it exists: acting for a party whose interests conflict with those of a current or former client breaches the Saudi Code of Law Practice and the duty of client confidentiality. It is a disciplinary matter for the lawyer, not an administrative slip.\n"
+"\n"
+"What it does: searches every confirmed or closed file in this company for any party to this case -- the client, an opponent or a representative -- and lists each match with the file it came from and the role held there.\n"
+"\n"
+"What it changes: the case cannot be confirmed while the result is blocked. Changing the client or the parties voids the result and the check must be run again. Only a legal manager can override a blocked result, and only with a reason that is recorded on the case."
+msgstr ""
+"لماذا يوجد: تمثيل طرف تتعارض مصلحته مع مصلحة موكِّل حالي أو سابق مخالفةٌ لنظام المحاماة السعودي ولواجب الحفاظ على سرّ الموكل. وهي مسؤولية تأديبية على المحامي لا مجرد خطأ إداري.\n"
+"\n"
+"ما الذي يفعله: يبحث في كل ملف مؤكَّد أو مغلق لدى هذه الشركة عن أي طرف من أطراف هذه القضية — الموكِّل أو الخصم أو الممثل النظامي — ويعرض كل تطابق مع الملف الذي ورد فيه والصفة التي كان عليها.\n"
+"\n"
+"ما الذي يغيّره: لا يمكن تأكيد القضية ما دامت النتيجة موقوفة لتعارض. وأي تعديل على الموكِّل أو الأطراف يُبطل النتيجة ويوجب إعادة الفحص. ولا يتجاوز النتيجة الموقوفة إلا مدير قانوني، وبسبب يُسجَّل على القضية."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__override_reason
+msgid ""
+"Why the firm may still accept this engagement despite the match. Mandatory, "
+"recorded on the case, and attributed to the manager who gave it."
+msgstr ""
+"لماذا يجوز للمكتب قبول التكليف رغم التطابق. إلزامي، ويُسجَّل على القضية، "
+"ويُنسب إلى المدير الذي أجازه."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_trust_transaction__reason
+msgid "Why the movement was made. Mandatory for refunds."
+msgstr "سبب إجراء الحركة. إلزامي في حالات الرد."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_form
+msgid "Why this conflict does not prevent accepting the engagement..."
+msgstr "لماذا لا يمنع هذا التعارض قبول التكليف..."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
+msgid "Why this movement was made..."
+msgstr "سبب إجراء هذه الحركة..."
+
+#. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_legal_case__internal_notes
+msgid ""
+"Working notes for lawyers and legal managers. Never shown to the client and "
+"never visible in the portal."
+msgstr ""
+"ملاحظات عمل للمحامين والمديرين القانونيين. لا تُعرض للموكل ولا تظهر في "
+"البوابة إطلاقاً."
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_deletion.py:0
+msgid "a message or note on a legal record"
+msgstr "رسالة أو ملاحظة على سجل قانوني"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_deletion.py:0
+msgid "an activity on a legal record"
+msgstr "نشاطاً على سجل قانوني"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "case_id"
+msgstr ""
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_demo.py:0
+msgid "id"
+msgstr ""
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "legal_case_id"
+msgstr ""
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_actions.py:0
+msgid "trust_account_id"
+msgstr ""

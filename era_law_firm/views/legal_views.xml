@@ -1,0 +1,617 @@
+<odoo>
+
+    <!-- ==================== CASE ==================== -->
+
+    <record id="view_legal_case_list" model="ir.ui.view">
+        <field name="name">legal.case.list</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-success="state == 'closed'">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="case_type"/>
+                <field name="court_id" optional="show"/>
+                <field name="lawyer_id"/>
+                <field name="date_filed" optional="hide"/>
+                <field name="stage_id"/>
+                <field name="outstanding_amount" optional="hide" sum="Outstanding"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_case_kanban" model="ir.ui.view">
+        <field name="name">legal.case.kanban</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id">
+                <field name="name"/>
+                <field name="client_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="p-2">
+                            <strong><field name="name"/></strong>
+                            <div><field name="client_id"/></div>
+                            <div class="text-muted"><field name="lawyer_id"/></div>
+                            <div class="mt-1"><field name="state" widget="badge"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_legal_case_search" model="ir.ui.view">
+        <field name="name">legal.case.search</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Case" filter_domain="['|','|',('name','ilike',self),('najiz_number','ilike',self),('client_id','ilike',self)]"/>
+                <field name="client_id"/>
+                <field name="lawyer_id"/>
+                <field name="court_id"/>
+                <field name="stage_id"/>
+                <filter name="my_cases" string="My Cases" domain="['|',('lawyer_id','=',uid),('team_user_ids','in',uid)]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                <filter name="closed" string="Closed" domain="[('state','=','closed')]"/>
+                <separator/>
+                <filter name="outstanding" string="Has Outstanding" domain="[('outstanding_amount','&gt;',0)]"/>
+                <filter name="confidential" string="Confidential" domain="[('confidential','=',True)]"/>
+                <separator/>
+                <filter name="filed_this_year" string="Filed This Year" date="date_filed" default_period="year"/>
+                <group name="group_by">
+                    <filter name="group_stage" string="Stage" context="{'group_by': 'stage_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Case Type" context="{'group_by': 'case_type'}"/>
+                    <filter name="group_lawyer" string="Lawyer" context="{'group_by': 'lawyer_id'}"/>
+                    <filter name="group_client" string="Client" context="{'group_by': 'client_id'}"/>
+                    <filter name="group_court" string="Court" context="{'group_by': 'court_id'}"/>
+                    <filter name="group_jurisdiction" string="Jurisdiction" context="{'group_by': 'jurisdiction_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_case_pivot" model="ir.ui.view">
+        <field name="name">legal.case.pivot</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="lawyer_id" type="row"/>
+                <field name="stage_id" type="col"/>
+                <field name="invoiced_amount" type="measure"/>
+                <field name="outstanding_amount" type="measure"/>
+                <field name="billable_hours" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_legal_case_graph" model="ir.ui.view">
+        <field name="name">legal.case.graph</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="case_type"/>
+                <field name="invoiced_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_legal_case_form" model="ir.ui.view">
+        <field name="name">legal.case.form</field>
+        <field name="model">legal.case</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_run_conflict_check" type="object" string="Run Conflict Check"
+                            class="btn-secondary" invisible="state != 'draft'"
+                            help="Why it exists: acting for a party whose interests conflict with those of a current or former client breaches the Saudi Code of Law Practice and the duty of client confidentiality. It is a disciplinary matter for the lawyer, not an administrative slip.&#10;&#10;What it does: searches every confirmed or closed file in this company for any party to this case -- the client, an opponent or a representative -- and lists each match with the file it came from and the role held there.&#10;&#10;What it changes: the case cannot be confirmed while the result is blocked. Changing the client or the parties voids the result and the check must be run again. Only a legal manager can override a blocked result, and only with a reason that is recorded on the case."/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_open_invoice_wizard" type="object" string="Create Invoice"
+                            class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_close" type="object" string="Close" invisible="state != 'confirmed'"/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state != 'closed'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('closed','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_hearings" type="object" class="oe_stat_button" icon="fa-gavel">
+                            <field name="hearing_count" widget="statinfo" string="Hearings"/>
+                        </button>
+                        <button name="action_view_deadlines" type="object" class="oe_stat_button" icon="fa-clock-o">
+                            <span class="o_stat_text">Deadlines</span>
+                        </button>
+                        <button name="action_view_documents" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="document_count" widget="statinfo" string="Documents"/>
+                        </button>
+                        <button name="action_view_time_entries" type="object" class="oe_stat_button" icon="fa-hourglass-half">
+                            <field name="billable_hours" widget="statinfo" string="Hours"/>
+                        </button>
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-money">
+                            <field name="invoiced_amount" widget="statinfo" string="Invoiced"/>
+                        </button>
+                        <button name="action_open_conflict_check" type="object" class="oe_stat_button" icon="fa-shield"
+                                help="Conflict of interest screening. Shows which other files of this firm already involve a party to this case, and on which side. A blocked result stops the case from being confirmed until a legal manager overrides it with a recorded reason.">
+                            <span class="o_stat_text">Conflict</span>
+                            <span class="o_stat_value"><field name="conflict_state"/></span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Assignment">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="client_id"/>
+                            <field name="case_type"/>
+                            <field name="lawyer_id"/>
+                            <field name="team_user_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="File">
+                            <field name="najiz_number"/>
+                            <field name="stage_id"/>
+                            <field name="date_filed"/>
+                            <field name="close_date" invisible="not close_date"/>
+                            <field name="claim_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="confidential"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Court" name="court">
+                            <group>
+                                <group>
+                                    <field name="jurisdiction_id"
+                                           options="{'no_open': True}"
+                                           placeholder="Pick one or type a new one"/>
+                                    <field name="court_id"
+                                           domain="['|', ('company_id', '=', False), ('company_id', '=', company_id),
+                                                    '|', ('jurisdiction_id', '=', jurisdiction_id), ('jurisdiction_id', '=', False)]"
+                                           options="{'no_open': True}"
+                                           placeholder="Pick one or type a new one"/>
+                                    <field name="circuit_id"
+                                           domain="['|', ('company_id', '=', False), ('company_id', '=', company_id),
+                                                    '|', ('court_id', '=', court_id), ('court_id', '=', False)]"
+                                           options="{'no_open': True}"
+                                           placeholder="Pick one or type a new one"/>
+                                </group>
+                                <group>
+                                    <field name="city"/>
+                                    <field name="najiz_url" widget="url"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Parties" name="parties">
+                            <field name="party_ids">
+                                <list editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="role"/>
+                                    <field name="representative_id" optional="hide"/>
+                                    <field name="lawyer_id"/>
+                                    <field name="portal_visible"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Hearings" name="hearings">
+                            <field name="hearing_ids" context="{'default_case_id': id}"/>
+                        </page>
+                        <page string="Deadlines" name="deadlines">
+                            <field name="deadline_ids" context="{'default_case_id': id}"/>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids" context="{'default_case_id': id}"/>
+                        </page>
+                        <page string="Engagements" name="engagements" groups="era_law_firm.group_legal_accountant">
+                            <field name="engagement_ids" context="{'default_case_id': id}"/>
+                        </page>
+                        <page string="Time &amp; Expenses" name="time_expenses" groups="era_law_firm.group_legal_lawyer">
+                            <separator string="Time Entries"/>
+                            <field name="time_entry_ids" context="{'default_case_id': id}"/>
+                            <separator string="Expenses"/>
+                            <field name="expense_ids" context="{'default_case_id': id}"/>
+                        </page>
+                        <page string="Invoicing" name="invoicing" groups="era_law_firm.group_legal_accountant">
+                            <group>
+                                <group>
+                                    <field name="invoiced_amount"/>
+                                    <field name="paid_amount"/>
+                                </group>
+                                <group>
+                                    <field name="outstanding_amount"/>
+                                    <field name="expense_amount"/>
+                                </group>
+                            </group>
+                            <field name="invoice_ids" readonly="1"/>
+                        </page>
+                        <page string="Outcome" name="outcome">
+                            <field name="outcome" placeholder="Judgment, settlement or withdrawal and its terms..."/>
+                        </page>
+                        <page string="Internal Notes" name="notes">
+                            <field name="internal_notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_case" model="ir.actions.act_window">
+        <field name="name">Cases</field>
+        <field name="res_model">legal.case</field>
+        <field name="view_mode">list,kanban,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_legal_case_search"/>
+        <field name="context">{'search_default_my_cases': 1}</field>
+    </record>
+
+    <!-- ==================== CONFLICT CHECK ==================== -->
+
+    <record id="view_legal_conflict_check_form" model="ir.ui.view">
+        <field name="name">legal.conflict.check.form</field>
+        <field name="model">legal.conflict.check</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_run_check" type="object" string="Run Check" class="btn-primary"/>
+                    <button name="action_approve" type="object" string="Mark Clear"
+                            invisible="state != 'draft'"/>
+                    <button name="action_manager_override" type="object" string="Manager Override"
+                            class="btn-warning" invisible="state != 'blocked'"
+                            groups="era_law_firm.group_legal_manager"/>
+                    <button name="action_clear" type="object" string="Reset"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="case_id" readonly="1"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="approved_by" readonly="1" invisible="state != 'overridden'"/>
+                        <field name="approved_at" readonly="1" invisible="state != 'overridden'"/>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="state != 'blocked'">
+                        This case shares parties with the files below. A manager must record a reason to proceed.
+                    </div>
+                    <field name="line_ids" readonly="1">
+                        <list>
+                            <field name="partner_id"/>
+                            <field name="source_case_id"/>
+                            <field name="role"/>
+                        </list>
+                    </field>
+                    <group string="Override">
+                        <field name="override_reason" placeholder="Why this conflict does not prevent accepting the engagement..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== HEARING ==================== -->
+
+    <record id="view_legal_hearing_list" model="ir.ui.view">
+        <field name="name">legal.hearing.list</field>
+        <field name="model">legal.hearing</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-bf="state == 'confirmed'">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="start_datetime"/>
+                <field name="hijri_date" optional="hide"/>
+                <field name="lawyer_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_hearing_search" model="ir.ui.view">
+        <field name="name">legal.hearing.search</field>
+        <field name="model">legal.hearing</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="lawyer_id"/>
+                <filter name="mine" string="My Hearings" domain="[('lawyer_id','=',uid)]"/>
+                <filter name="upcoming" string="Upcoming" domain="[('start_datetime','&gt;=',context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                <filter name="done" string="Done" domain="[('state','=','done')]"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_lawyer" string="Lawyer" context="{'group_by': 'lawyer_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'start_datetime:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_hearing_calendar" model="ir.ui.view">
+        <field name="name">legal.hearing.calendar</field>
+        <field name="model">legal.hearing</field>
+        <field name="arch" type="xml">
+            <calendar date_start="start_datetime" date_stop="stop_datetime" color="lawyer_id" mode="month">
+                <field name="case_id"/>
+                <field name="lawyer_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_legal_hearing_form" model="ir.ui.view">
+        <field name="name">legal.hearing.form</field>
+        <field name="model">legal.hearing</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_done" type="object" string="Mark Done" invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Hearing subject"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="case_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="lawyer_id"/>
+                        </group>
+                        <group>
+                            <field name="start_datetime"/>
+                            <field name="stop_datetime"/>
+                            <field name="hijri_date" placeholder="Hijri reference as printed by Najiz"/>
+                            <field name="calendar_event_id" readonly="1"/>
+                            <field name="reminder_scheduled" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_hearing" model="ir.actions.act_window">
+        <field name="name">Hearings</field>
+        <field name="res_model">legal.hearing</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="search_view_id" ref="view_legal_hearing_search"/>
+        <field name="context">{'search_default_mine': 1, 'search_default_upcoming': 1}</field>
+    </record>
+
+    <!-- ==================== DEADLINE ==================== -->
+
+    <record id="view_legal_deadline_list" model="ir.ui.view">
+        <field name="name">legal.deadline.list</field>
+        <field name="model">legal.deadline</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="overdue_state == 'overdue'" decoration-warning="overdue_state == 'due'"
+                  decoration-muted="state in ('done','cancelled')">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="deadline_date"/>
+                <field name="rule_id" optional="show"/>
+                <field name="source"/>
+                <field name="user_id"/>
+                <field name="overdue_state" widget="badge"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_deadline_search" model="ir.ui.view">
+        <field name="name">legal.deadline.search</field>
+        <field name="model">legal.deadline</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="user_id"/>
+                <filter name="mine" string="Assigned to Me" domain="[('user_id','=',uid)]"/>
+                <filter name="open" string="Open" domain="[('state','in',('draft','confirmed'))]"/>
+                <separator/>
+                <filter name="overdue" string="Overdue" domain="[('deadline_date','&lt;',context_today().strftime('%Y-%m-%d')),('state','in',('draft','confirmed'))]"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_user" string="Owner" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_rule" string="Rule" context="{'group_by': 'rule_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_deadline_form" model="ir.ui.view">
+        <field name="name">legal.deadline.form</field>
+        <field name="model">legal.deadline</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_done" type="object" string="Mark Done" invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done','cancelled')"/>
+                    <button name="action_adopt_suggested_date" type="object" string="Adopt Suggested Date"
+                            class="btn-secondary" invisible="not suggested_date"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="What must be filed"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="case_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="user_id"/>
+                            <field name="overdue_state"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="rule_id"/>
+                            <field name="start_date"/>
+                            <field name="suggested_date" readonly="1"/>
+                            <field name="deadline_date"/>
+                            <field name="source" placeholder="Where this date comes from"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert" invisible="not suggested_date">
+                        The suggested date is assistive only. The lawyer remains responsible for the binding date and must record its source.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_deadline" model="ir.actions.act_window">
+        <field name="name">Deadlines</field>
+        <field name="res_model">legal.deadline</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_deadline_search"/>
+        <field name="context">{'search_default_mine': 1, 'search_default_open': 1}</field>
+    </record>
+
+    <!-- ==================== DOCUMENT ==================== -->
+
+    <record id="view_legal_document_list" model="ir.ui.view">
+        <field name="name">legal.document.list</field>
+        <field name="model">legal.document</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'archived'" decoration-danger="state == 'rejected'"
+                  decoration-success="state == 'approved'">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="document_type"/>
+                <field name="version" optional="hide"/>
+                <field name="owner_id"/>
+                <field name="reviewer_id" optional="hide"/>
+                <field name="restricted" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="portal_published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_document_search" model="ir.ui.view">
+        <field name="name">legal.document.search</field>
+        <field name="model">legal.document</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="owner_id"/>
+                <field name="najiz_reference"/>
+                <filter name="mine" string="My Documents" domain="[('owner_id','=',uid)]"/>
+                <filter name="to_review" string="To Review" domain="[('state','=','review')]"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+                <separator/>
+                <filter name="published" string="Published to Portal" domain="[('portal_published','=',True)]"/>
+                <filter name="restricted" string="Restricted" domain="[('restricted','=',True)]"/>
+                <group name="group_by">
+                    <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'document_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_legal_document_form" model="ir.ui.view">
+        <field name="name">legal.document.form</field>
+        <field name="model">legal.document</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit_review" type="object" string="Submit for Review"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state != 'review'"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state != 'review'"/>
+                    <button name="action_publish_portal" type="object" string="Publish to Portal"
+                            invisible="state != 'approved' or portal_published"/>
+                    <button name="action_unpublish_portal" type="object" string="Unpublish"
+                            invisible="not portal_published"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Document title"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="case_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="document_type"/>
+                            <field name="version"/>
+                            <field name="file_data" filename="file_name" string="File"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="attachment_id" readonly="1" groups="base.group_no_one"/>
+                        </group>
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="reviewer_id" readonly="1"/>
+                            <field name="najiz_reference"/>
+                            <field name="hijri_date"/>
+                            <field name="expiry_date"/>
+                            <field name="portal_published" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Access Restriction">
+                        <field name="restricted"/>
+                        <field name="allowed_user_ids" widget="many2many_tags" invisible="not restricted"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">legal.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_document_search"/>
+    </record>
+
+    <!-- ==================== STAGE ==================== -->
+
+    <record id="view_legal_case_stage_list" model="ir.ui.view">
+        <field name="name">legal.case.stage.list</field>
+        <field name="model">legal.case.stage</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="fold"/>
+                <field name="is_closed"/>
+                <field name="is_rejected"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_legal_case_stage" model="ir.actions.act_window">
+        <field name="name">Case Stages</field>
+        <field name="res_model">legal.case.stage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <menuitem id="menu_legal_root" name="Law Firm" sequence="30" groups="group_legal_staff"
+              web_icon="era_law_firm,static/description/icon.png"/>
+    <menuitem id="menu_legal_cases" name="Cases" parent="menu_legal_root" action="action_legal_case" sequence="10"/>
+    <menuitem id="menu_legal_hearings" name="Hearings" parent="menu_legal_root" action="action_legal_hearing" sequence="20"/>
+    <menuitem id="menu_legal_deadlines" name="Deadlines" parent="menu_legal_root" action="action_legal_deadline" sequence="30"/>
+    <menuitem id="menu_legal_documents" name="Documents" parent="menu_legal_root" action="action_legal_document" sequence="40"/>
+
+    <menuitem id="menu_legal_config" name="Configuration" parent="menu_legal_root" sequence="90"
+              groups="group_legal_manager"/>
+    <menuitem id="menu_legal_config_stages" name="Case Stages" parent="menu_legal_config"
+              action="action_legal_case_stage" sequence="10"/>
+
+</odoo>

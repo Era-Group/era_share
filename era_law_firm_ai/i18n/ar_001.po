@@ -1,0 +1,2144 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_law_firm_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: era_law_firm_ai 19.0\n"
+"Report-Msgid-Bugs-To: info@era.net.sa\n"
+"Last-Translator: Era Group <info@era.net.sa>\n"
+"Language-Team: Arabic <info@era.net.sa>\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"<strong>Governed AI is switched off for this company</strong>, so no\n"
+"                        request can be sent however it is filled in. This is the master switch,\n"
+"                        deliberately off until someone turns it on."
+msgstr ""
+"<strong>الذكاء المحكوم مطفأ لهذه الشركة</strong>، فلا يمكن إرسال أي طلب مهما"
+" اكتملت تعبئته. هذا هو المفتاح الرئيسي، مطفأ عمداً حتى يفعّله أحد."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"<strong>No AI agent has been approved for legal work yet</strong>, so the\n"
+"                        agent list is empty. This is the safeguard doing its job, not a fault."
+msgstr ""
+"<strong>لم يُعتمد أي وكيل ذكاء للعمل القانوني بعد</strong>، ولهذا تظهر قائمة"
+" الوكلاء فارغة. هذا هو الضابط يؤدي عمله، وليس خللاً."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"<strong>This document is too sensitive for the chosen agent</strong>, so the\n"
+"                        request would be refused on dispatch. Either pick an agent that accepts this\n"
+"                        level, raise what this one accepts under Configuration &gt; AI Agents, or\n"
+"                        reclassify the document -- reclassifying is a decision about the material,\n"
+"                        not a way around the check."
+msgstr ""
+"<strong>هذا المستند أعلى حساسيةً من الوكيل المختار</strong>، فسيُرفض الطلب "
+"عند الإرسال. إما أن تختار وكيلاً يقبل هذا المستوى، أو ترفع ما يقبله هذا "
+"الوكيل من الإعدادات ← وكلاء الذكاء، أو تعيد تصنيف المستند — وإعادة التصنيف "
+"قرار في شأن المادة، لا وسيلة للالتفاف على الفحص."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_charter.py:0
+msgid "A charter needs both standing instructions and a notice."
+msgstr "الميثاق يحتاج تعليمات دائمة وتنبيهاً معاً."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai.py:0
+msgid "A completed AI request linked to a case is required."
+msgstr "يلزم طلب ذكاء مكتمل ومرتبط بقضية."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_attempt.py:0
+msgid ""
+"A dispatch record cannot be changed. It is the evidence of what left the "
+"firm."
+msgstr "لا يمكن تعديل سجل الإرسال. فهو دليل ما خرج من المكتب."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_attempt.py:0
+msgid "A dispatch record cannot be deleted."
+msgstr "لا يمكن حذف سجل الإرسال."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"A legal manager approves one under Configuration &gt; AI Agents, after\n"
+"                        recording where the agent's model processes data and how long it keeps it.\n"
+"                        Until then no legal request can be sent to any agent."
+msgstr ""
+"يعتمده مدير قانوني من الإعدادات ← وكلاء الذكاء، بعد تسجيل أين يعالج نموذج "
+"الوكيل البيانات ومدة احتفاظه بها. وحتى ذلك الحين لا يمكن إرسال أي طلب قانوني"
+" لأي وكيل."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"A manager enables it under Settings &gt; Law Firm &gt; Artificial "
+"Intelligence."
+msgstr "يفعّله مدير من الإعدادات ← مكتب المحاماة ← الذكاء."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__state
+msgid ""
+"A request has to be consented to before it can be sent, and the agent's "
+"approval and ceiling are checked again at the moment of dispatch."
+msgstr ""
+"يجب الموافقة على الطلب قبل إرساله، ويُفحص اعتماد الوكيل وسقفه مجدداً لحظة "
+"الإرسال."
+
+#. module: era_law_firm_ai
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_legal_ai_root
+msgid "AI"
+msgstr "الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_ai_agent
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__agent_id
+msgid "AI Agent"
+msgstr "وكيل ذكاء"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_agents
+msgid "AI Agents"
+msgstr "وكلاء الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_legal_document_generation
+msgid "AI Document Generation"
+msgstr "توليد المستندات بالذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__ai_enabled
+msgid "AI Enabled for Company"
+msgstr "الذكاء مفعّل للشركة"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_document_generation
+msgid "AI Legal Document Generation"
+msgstr "توليد مستند قانوني بالذكاء"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_ai_request
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_request_count
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_request_ids
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_requests
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_case_form_ai
+msgid "AI Requests"
+msgstr "طلبات الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction
+msgid "Action Needed"
+msgstr "يتطلب إجراءً"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__active
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__active
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__agent_id
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Agent"
+msgstr "الوكيل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__agent_max_classification
+msgid "Agent Accepts Up To"
+msgstr "الوكيل يقبل حتى"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__agent_ids
+msgid "Agents Relying On It"
+msgstr "الوكلاء المعتمدون عليه"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__ai_classification
+msgid "Ai Classification"
+msgstr "التصنيف المعلوماتي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__allowed_fields
+msgid "Allowed Fields"
+msgstr "الحقول المسموحة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__sanitized_response
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Answer"
+msgstr "الإجابة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid "Appended to every answer by the system, not by the model."
+msgstr "يُلحقه النظام بكل إجابة، لا النموذج."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__disclaimer
+msgid ""
+"Appended to every answer by the system, not by the model. A notice that "
+"appears only when the model remembers to write it is not a notice."
+msgstr ""
+"يُلحقه النظام بكل إجابة لا النموذج. والتنبيه الذي لا يظهر إلا حين يتذكره "
+"النموذج ليس تنبيهاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__approved
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_approved
+msgid "Approved for Legal Work"
+msgstr "معتمد للعمل القانوني"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_template_form
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.res_config_settings_view_form_legal_ai
+msgid "Artificial Intelligence"
+msgstr "الذكاء"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Ask Again"
+msgstr "إعادة السؤال"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__sequence_number
+msgid "Attempt"
+msgstr "المحاولة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__attempt_count
+msgid "Attempt Count"
+msgstr "عدد المحاولات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__blocked
+msgid "Blocked"
+msgstr "موقوف لتعارض"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__body
+msgid "Body"
+msgstr "المحتوى"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__sensitive
+msgid ""
+"Carries more than a label -- narrative text rather than a reference. Shown "
+"with a warning and never ticked by default."
+msgstr ""
+"يحمل أكثر من مجرد تسمية — نص سردي لا مرجع. يُعرض مع تنبيه ولا يُؤشَّر "
+"افتراضياً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__case_id
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_field__source__case
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Case"
+msgstr "قضية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__category
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
+msgid "Category"
+msgstr "التصنيف"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__charter_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__charter_id
+msgid "Charter Applied"
+msgstr "الميثاق المطبَّق"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "Choose the AI agent that should answer this request."
+msgstr "اختر وكيل الذكاء الذي يجيب عن هذا الطلب."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__civil
+msgid "Civil and Commercial"
+msgstr "مدني وتجاري"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__classification_blocked
+msgid "Classification Blocked"
+msgstr "التصنيف محجوب"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_template__allowed_fields
+msgid "Comma-separated case fields this template is permitted to read."
+msgstr "حقول القضية التي يُسمح لهذا القالب بقراءتها، مفصولة بفواصل."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_template_form
+msgid "Comma-separated case fields this template may read"
+msgstr "حقول القضية التي يقرأها هذا القالب، مفصولة بفواصل"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__company_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__company_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__company_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_agent__legal_max_classification__confidential
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__confidential
+msgid "Confidential"
+msgstr "سرية"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Consent"
+msgstr "الموافقة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__consent_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__consent_date
+msgid "Consent Date"
+msgstr "تاريخ الموافقة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__consent_user_id
+msgid "Consent User"
+msgstr "المستخدم الموافِق"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__consent_user_id
+msgid "Consented By"
+msgstr "وافق عليه"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid "Country or region the model processes data in"
+msgstr "الدولة أو الإقليم الذي يعالج فيه النموذج البيانات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_processing_location
+msgid ""
+"Country or region where the model behind this agent processes the data. "
+"Required under the Personal Data Protection Law. It follows the LLM Model "
+"above, so revisit it whenever that changes."
+msgstr ""
+"الدولة أو الإقليم الذي يعالج فيه النموذج القائم خلف هذا الوكيل البيانات. "
+"مطلوب بموجب نظام حماية البيانات الشخصية. وهو تابع لنموذج اللغة أعلاه، فراجعه"
+" كلما تغيّر."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_generation_form
+msgid "Create Legal Document"
+msgstr "إنشاء مستند قانوني"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__criminal
+msgid "Criminal"
+msgstr "جزائي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__fields_sent
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Data Shared"
+msgstr "البيانات المشارَكة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_field_ids
+msgid "Data This Agent Needs"
+msgstr "البيانات التي يحتاجها هذا الوكيل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__field_ids
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Data to Share"
+msgstr "البيانات المراد مشاركتها"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__attempt_ids
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Dispatch History"
+msgstr "سجل الإرسالات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_dispatched_count
+msgid "Dispatched to an Agent"
+msgstr "المُرسل إلى وكيل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__document_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__document_id
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_field__source__document
+msgid "Document"
+msgstr "مستند"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__document_classification
+msgid "Document Classification"
+msgstr "تصنيف المستند"
+
+#. module: era_law_firm_ai
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_generation
+msgid "Document Generation"
+msgstr "توليد المستندات"
+
+#. module: era_law_firm_ai
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_legal_document_template
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_templates
+msgid "Document Templates"
+msgstr "قوالب المستندات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__done
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__draft
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document_generation__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Earlier Sends"
+msgstr "إرسالات سابقة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.res_config_settings_view_form_legal_ai
+msgid "Enable governed AI"
+msgstr "تفعيل الذكاء المحكوم"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__payload_preview
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Exactly What Will Be Sent"
+msgstr "ما سيُرسل بالضبط"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__redacted_payload
+msgid ""
+"Exactly what was sent, after identity numbers, phone numbers and e-mail "
+"addresses were stripped. Kept as the record of what left the firm."
+msgstr ""
+"ما أُرسل بالضبط بعد إزالة أرقام الهوية والهواتف والبُرد الإلكترونية. يُحفظ "
+"كسجل لما خرج من المكتب."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Extra Instructions"
+msgstr "تعليمات إضافية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__fields_sent
+msgid "Fields Sent"
+msgstr "الحقول المُرسلة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__fields_sent
+msgid ""
+"Filled from what you ticked above. Kept as the record of exactly which data "
+"left the firm."
+msgstr ""
+"يُملأ مما أشّرته أعلاه. ويُحفظ كسجل للبيانات التي خرجت من المكتب بالضبط."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document_generation__state__generated
+msgid "Generated"
+msgstr "مولَّد"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_generation_form
+msgid "Generated document name"
+msgstr "اسم المستند المولَّد"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Give Consent"
+msgstr "منح الموافقة"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"Governed AI is switched off for %(company)s, so no request can be sent. A "
+"manager turns it on under Settings > Law Firm > Artificial Intelligence."
+msgstr ""
+"الذكاء المحكوم مطفأ لدى %(company)s، فلا يمكن إرسال أي طلب. يفعّله مدير من "
+"الإعدادات ← مكتب المحاماة ← الذكاء."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_case_form_ai
+msgid ""
+"Governed AI requests raised on this file, and how many of them actually left"
+" the firm."
+msgstr "طلبات الذكاء المحكومة على هذا الملف، وكم منها خرج فعلاً من المكتب."
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_ai_request
+msgid "Governed Legal AI Request"
+msgstr "طلب ذكاء قانوني محكوم"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__has_approved_agent
+msgid "Has Approved Agent"
+msgstr "يوجد وكيل معتمد"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__has_message
+msgid "Has Message"
+msgstr "يحتوي رسائل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__payload_hash
+msgid "Hash of the redacted payload, so what was sent can be proven later."
+msgstr "بصمة الحمولة المنقّحة، ليمكن إثبات ما أُرسل لاحقاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_max_classification
+msgid "Highest Classification Accepted"
+msgstr "أعلى تصنيف مقبول"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid ""
+"How long prompts and outputs are kept, and how deletion is requested..."
+msgstr "مدة الاحتفاظ بالمدخلات والمخرجات وكيفية طلب الحذف..."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_retention_policy
+msgid ""
+"How long the model provider keeps prompts and outputs, and how deletion is "
+"requested. Recorded so the firm can answer for what happens to client "
+"material."
+msgstr ""
+"مدة احتفاظ مزوّد النموذج بالمدخلات والمخرجات وكيفية طلب الحذف. يُوثَّق ليكون"
+" المكتب قادراً على بيان مصير مواد موكليه."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__document_classification
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document__ai_classification
+msgid ""
+"How sensitive this document is. It is checked against the agent's allowed "
+"classifications, and a document marked blocked is never sent to any agent at"
+" all. New documents start as confidential."
+msgstr ""
+"مدى حساسية هذا المستند. يُقابَل بالتصنيفات المسموحة للوكيل، والمستند "
+"المعلَّم محظوراً لا يُرسل لأي وكيل إطلاقاً. والمستندات الجديدة تبدأ سرّية."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__message_has_error
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد رسائل فشل تسليمها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__input_payload
+msgid "Input Payload"
+msgstr "الحمولة المدخلة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__instructions_sent
+msgid "Instructions"
+msgstr "التعليمات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__instructions_sent
+msgid "Instructions as Sent"
+msgstr "التعليمات كما أُرسلت"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_agent__legal_max_classification__internal
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__internal
+msgid "Internal"
+msgstr "داخلي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_is_follower
+msgid "Is Follower"
+msgstr "متابِع"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__labour
+msgid "Labour"
+msgstr "عمالي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__company_id
+msgid "Leave empty to apply to every company."
+msgstr "اتركه فارغاً ليطبَّق على كل الشركات."
+
+#. module: era_law_firm_ai
+#: model:res.groups.privilege,name:era_law_firm_ai.privilege_legal_ai
+msgid "Legal AI"
+msgstr "الذكاء القانوني"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_ai_charter
+msgid "Legal AI Charter"
+msgstr "الميثاق القانوني للذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_ai_attempt
+msgid "Legal AI Dispatch Record"
+msgstr "سجل إرسال إلى الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_ai_field
+msgid "Legal AI Shareable Field"
+msgstr "حقل قابل للمشاركة مع الذكاء"
+
+#. module: era_law_firm_ai
+#: model:res.groups,name:era_law_firm_ai.group_legal_ai_user
+msgid "Legal AI User"
+msgstr "مستخدم الذكاء القانوني"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__legal_ai_enabled
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__legal_ai_enabled
+msgid "Legal Ai Enabled"
+msgstr "تفعيل الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_case
+msgid "Legal Case"
+msgstr "قضية"
+
+#. module: era_law_firm_ai
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_legal_ai_charter
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_charter
+msgid "Legal Charter"
+msgstr "الميثاق القانوني"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_document
+msgid "Legal Document"
+msgstr "مستند قانوني"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_document_template
+msgid "Legal Document Template"
+msgstr "قالب مستند قانوني"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid "Legal Governance (PDPL)"
+msgstr "الحوكمة القانونية (نظام حماية البيانات الشخصية)"
+
+#. module: era_law_firm_ai
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_legal_legislation
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_legislation
+msgid "Legislation Register"
+msgstr "سجل الأنظمة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_legislation_ids
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__legislation_ids
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid "Legislation Relied On"
+msgstr "الأنظمة المعتمَدة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid "Legislation This Agent Works From"
+msgstr "الأنظمة التي يعمل منها هذا الوكيل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_sources_pending
+msgid "Listed statutes whose text has not been attached as a source yet."
+msgstr "الأنظمة المدرجة التي لم يُرفع نصها كمصدر بعد."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__disclaimer
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid "Mandatory Notice"
+msgstr "التنبيه الإلزامي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_res_company__legal_ai_enabled
+#: model:ir.model.fields,help:era_law_firm_ai.field_res_config_settings__legal_ai_enabled
+msgid ""
+"Master switch for this company. Off by default -- while it is off, no AI "
+"request can be sent no matter how it is configured."
+msgstr ""
+"المفتاح الرئيسي لهذه الشركة. مطفأ افتراضياً — وما دام مطفأً لا يمكن إرسال أي"
+" طلب مهما كانت التهيئة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__moj_id
+msgid "MoJ Reference"
+msgstr "مرجع وزارة العدل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي فشل تسليمها"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_case__ai_dispatched_count
+msgid ""
+"Of those, how many actually left the firm. A draft that was never sent "
+"shared nothing."
+msgstr "كم منها خرج فعلاً من المكتب. والمسودة التي لم تُرسل لم تشارك شيئاً."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.res_config_settings_view_form_legal_ai
+msgid "Off by default. When off, no AI request can be sent for this company."
+msgstr "معطّل افتراضياً. عند الإطفاء لا يمكن إرسال أي طلب لهذه الشركة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__url
+msgid "Official Text"
+msgstr "النص الرسمي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
+msgid "Only one charter can be active per company."
+msgstr "لا يُفعَّل إلا ميثاق واحد لكل شركة."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Open AI Agents"
+msgstr "فتح وكلاء الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_generation__template_id
+msgid "Optional firm template the output is shaped against."
+msgstr "قالب المكتب الاختياري الذي يُصاغ المخرَج على أساسه."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"Optional: focus on the termination clause, or draft the reply in a "
+"conciliatory tone. Redacted like everything else."
+msgstr ""
+"اختياري: ركّز على بند الإنهاء، أو اكتب الرد بأسلوب تصالحي. يُنقَّح كغيره."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__payload_hash
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__payload_hash
+msgid "Payload Hash"
+msgstr "بصمة الحمولة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__redacted_payload
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Payload Sent"
+msgstr "الحمولة المُرسلة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__personal_status
+msgid "Personal Status"
+msgstr "الأحوال الشخصية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__body
+msgid ""
+"Prepended to every request, whichever agent handles it. This is where the "
+"office states how legal work is to be done -- the framework, the sources of "
+"truth, the drafting conventions. Each agent's own prompt then covers its "
+"particular task."
+msgstr ""
+"يُوضع في صدر كل طلب أياً كان الوكيل الذي يتولاه. وهنا يقرر المكتب كيف "
+"يُؤدَّى العمل القانوني: الإطار، ومصادر الاستناد، وأصول الصياغة. ثم يغطي "
+"توجيه كل وكيل مهمته الخاصة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__procedure
+msgid "Procedure and Litigation"
+msgstr "المرافعات والتقاضي"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_processing_location
+msgid "Processing Location"
+msgstr "موقع المعالجة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__ai_agent__legal_max_classification__public
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__public
+msgid "Public"
+msgstr "عام"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__purpose
+msgid "Purpose"
+msgstr "الغرض"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"Record where \"%s\" processes data and how long it is kept before approving "
+"it for legal work."
+msgstr ""
+"سجّل أين يعالج «%s» البيانات ومدة الاحتفاظ بها قبل اعتماده للعمل القانوني."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_legal_legislation
+msgid ""
+"Recording a statute here does not put its text in front of an agent. Attach the text\n"
+"               to the agent as a source, then tick it here -- that is what turns recall into citation."
+msgstr ""
+"تسجيل النظام هنا لا يضع نصه أمام الوكيل. ارفع النص إلى الوكيل كمصدر ثم أشّره"
+" هنا — فهذا ما يحوّل الاستذكار إلى استشهاد."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Redact & Send"
+msgstr "تنقيح وإرسال"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__redacted_payload
+msgid "Redacted Payload"
+msgstr "الحمولة المنقّحة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_legal_legislation
+msgid "Register the legislation this office works from"
+msgstr "سجّل الأنظمة التي يعمل منها هذا المكتب"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"Reopened to ask again. Dispatch %(number)s is kept in the history with its "
+"payload, hash and answer."
+msgstr ""
+"أُعيد فتحه لإعادة السؤال. والإرسال %(number)s محفوظ في السجل بحمولته وبصمته "
+"وإجابته."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__request_id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__request_id
+msgid "Request"
+msgstr "الطلب"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Response"
+msgstr "الاستجابة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_retention_policy
+msgid "Retention Policy"
+msgstr "سياسة الاحتفاظ"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"Return this request to input so the instructions can be changed and the "
+"question asked again. What was already sent is kept in the dispatch history."
+msgstr ""
+"يُرجع هذا الطلب إلى وضع الإدخال ليمكن تعديل التعليمات وإعادة السؤال. وما "
+"أُرسل سابقاً يُحفظ في سجل الإرسالات."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document_generation__state__reviewed
+msgid "Reviewed"
+msgstr "مُراجَع"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__sanitized_response
+msgid "Sanitized Response"
+msgstr "الاستجابة المنقّحة"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_legal_legislation
+msgid "Saudi Legislation Reference"
+msgstr "مرجع الأنظمة السعودية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__sensitive
+msgid "Sensitive"
+msgstr "حسّاس"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_request__state__sent
+msgid "Sent"
+msgstr "مُرسل"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__sent_at
+msgid "Sent At"
+msgstr "تاريخ الإرسال"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__sequence
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__sequence
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "Set the highest classification \"%s\" may receive."
+msgstr "حدّد أعلى تصنيف يجوز أن يستقبله «%s»."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__description
+msgid "Shown to the lawyer so they know what they are about to share."
+msgstr "يظهر للمحامي ليعرف ما هو مقبل على مشاركته."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__body
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid "Standing Instructions"
+msgstr "التعليمات الدائمة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__state
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_sources_pending
+msgid "Statutes Without a Source"
+msgstr "أنظمة بلا مصدر مرفوع"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__technical_name
+msgid "Technical Name"
+msgstr "الاسم التقني"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__template_id
+msgid "Template"
+msgstr "قالب"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_template_form
+msgid "Template name"
+msgstr "اسم القالب"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
+msgid "Text Attached"
+msgstr "النص مرفوع"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__source_attached
+msgid "Text Attached as a Source"
+msgstr "النص مرفوع كمصدر"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
+msgid "Text Not Attached Yet"
+msgstr "النص لم يُرفع بعد"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "The AI agent could not answer this request: %s"
+msgstr "تعذّر على الوكيل الإجابة عن هذا الطلب: %s"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai.py:0
+msgid "The AI request contains fields that are not allowed by policy."
+msgstr "الطلب يحتوي حقولاً لا تسمح بها السياسة."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"The agent \"%(agent)s\" is not approved for legal work. A legal manager "
+"approves it under Configuration > AI Agents, after recording where it "
+"processes data and how long it keeps it."
+msgstr ""
+"الوكيل «%(agent)s» غير معتمد للعمل القانوني. يعتمده مدير قانوني من الإعدادات"
+" ← وكلاء الذكاء، بعد تسجيل أين يعالج البيانات ومدة احتفاظه بها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__agent_id
+msgid ""
+"The agent that answers this request. Its system prompt, model and sources "
+"decide how the answer is produced, and its approval is what allows the "
+"request at all."
+msgstr ""
+"الوكيل الذي يجيب عن هذا الطلب. توجيهه ونموذجه ومصادره تحدد كيف تُنتَج "
+"الإجابة، واعتماده هو ما يسمح بالطلب أصلاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__sanitized_response
+msgid ""
+"The agent's answer, redacted again on the way in and rendered from the "
+"markdown the model wrote. A draft for a lawyer to review, never advice on "
+"its own."
+msgstr ""
+"إجابة الوكيل، منقّحة مرة أخرى عند الدخول ومُصيَّرة من الـmarkdown الذي كتبه "
+"النموذج. مسودة يراجعها المحامي، وليست استشارة بذاتها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__payload_preview
+msgid ""
+"The assembled payload after redaction -- the real thing, not a description "
+"of it. Read it before giving consent."
+msgstr ""
+"الحمولة المجمَّعة بعد التنقيح — النص الحقيقي لا وصفاً له. اقرأه قبل منح "
+"الموافقة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__ai_enabled
+msgid ""
+"The company-level switch. While it is off no request can be sent, whatever "
+"else is configured."
+msgstr ""
+"المفتاح على مستوى الشركة. وما دام مطفأً لا يمكن إرسال أي طلب مهما كانت بقية "
+"التهيئة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_generation__request_id
+msgid ""
+"The completed AI request whose output becomes the document. It has to be "
+"linked to a case."
+msgstr ""
+"طلب الذكاء المكتمل الذي يصير مخرَجه مستنداً. ويجب أن يكون مرتبطاً بقضية."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_generation_form
+msgid ""
+"The created document starts in draft with a confidential classification and still has to\n"
+"                        go through the normal review and approval cycle."
+msgstr ""
+"يبدأ المستند المُنشأ كمسودة بتصنيف سرّي، ويظل خاضعاً لدورة المراجعة "
+"والاعتماد المعتادة."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"The document \"%(document)s\" belongs to case %(other)s, not %(case)s. A "
+"request must stay within one client file."
+msgstr ""
+"المستند «%(document)s» يتبع القضية %(other)s لا %(case)s. ويجب أن يبقى الطلب"
+" داخل ملف موكِّل واحد."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"The document \"%(document)s\" is classified %(level)s, and the agent "
+"\"%(agent)s\" accepts nothing above %(ceiling)s. Either raise what the agent"
+" accepts under Configuration > AI Agents, or reclassify the document -- "
+"reclassifying is a decision about the material itself, not a way around the "
+"check."
+msgstr ""
+"المستند «%(document)s» مصنَّف %(level)s، والوكيل «%(agent)s» لا يقبل ما هو "
+"أعلى من %(ceiling)s. إما أن ترفع ما يقبله الوكيل من الإعدادات ← وكلاء "
+"الذكاء، أو تعيد تصنيف المستند — وإعادة التصنيف قرار في شأن المادة نفسها، لا "
+"وسيلة للالتفاف على الفحص."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "The document \"%s\" is marked Blocked, so it is never sent to any agent."
+msgstr "المستند «%s» معلَّم «محظور»، فلا يُرسل لأي وكيل إطلاقاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__document_id
+msgid ""
+"The document being processed. Its classification is checked against the "
+"agent's ceiling, and a document classified as blocked never leaves."
+msgstr ""
+"المستند قيد المعالجة. يُقابَل تصنيفه بسقف الوكيل، والمستند المصنَّف محظوراً "
+"لا يخرج أبداً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__instructions_sent
+msgid ""
+"The extra instructions after redaction, kept so the request can be asked "
+"again with them adjusted. The unredacted original is still discarded on "
+"dispatch."
+msgstr ""
+"التعليمات الإضافية بعد التنقيح، تُحفظ ليمكن إعادة السؤال بعد تعديلها. والأصل"
+" غير المنقّح يُتلَف عند الإرسال كما هو."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__technical_name
+msgid ""
+"The field actually read. Anything not listed here cannot be sent at all."
+msgstr "الحقل المقروء فعلاً. وما ليس مدرجاً هنا لا يمكن إرساله إطلاقاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__case_id
+msgid ""
+"The file this request relates to. You cannot send a case you would not be "
+"allowed to open."
+msgstr "الملف المتعلق بهذا الطلب. ولا يمكنك إرسال قضية لا يُسمح لك بفتحها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_approved
+msgid ""
+"The firm accepts this agent for privileged client material. Until it is "
+"ticked the agent cannot receive a single legal request, whatever permissions"
+" the user holds. Record the processing location and retention policy before "
+"ticking it."
+msgstr ""
+"إقرار المكتب بقبول هذا الوكيل للمواد المشمولة بسرية الموكل. وما لم يُفعَّل "
+"فلن يستقبل الوكيل أي طلب قانوني مهما كانت صلاحيات المستخدم. سجّل موقع "
+"المعالجة وسياسة الاحتفاظ قبل تفعيله."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_template__body
+msgid ""
+"The firm's own drafting skeleton, used as the basis for generated documents."
+msgstr "هيكل الصياغة الخاص بالمكتب، يُستخدم أساساً للمستندات المولَّدة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__moj_id
+msgid "The identifier the Ministry of Justice uses in its legislation portal."
+msgstr "المعرّف الذي تستخدمه وزارة العدل في بوابة الأنظمة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_generation__document_id
+msgid ""
+"The legal document created from the output. It starts in draft with a "
+"confidential classification and still goes through the normal review cycle."
+msgstr ""
+"المستند القانوني المُنشأ من المخرَج. يبدأ مسودة بتصنيف سرّي ويظل خاضعاً "
+"لدورة المراجعة المعتادة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_max_classification
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__agent_max_classification
+msgid ""
+"The most sensitive document this agent may receive; anything above it is "
+"refused. The levels are ordered, so Confidential also covers Internal and "
+"Public. A document marked Blocked is never sent to any agent whatever this "
+"says."
+msgstr ""
+"أعلى تصنيف مستند يجوز أن يستقبله هذا الوكيل، وما فوقه يُرفض. والمستويات "
+"مرتَّبة، فـ«سرّي» يشمل «داخلي» و«عام». والمستند المعلَّم «محظور» لا يُرسل "
+"لأي وكيل مهما كان هذا الإعداد."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__consent_user_id
+msgid ""
+"The named person who consented to this material being sent. Consent is per "
+"request and cannot be given in advance."
+msgstr ""
+"الشخص المحدد بالاسم الذي وافق على إرسال هذه المادة. والموافقة لكل طلب على "
+"حدة ولا تُمنح مسبقاً."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"The original input is discarded on dispatch; only the redacted payload and its hash are kept.\n"
+"                        Output is a draft for a lawyer to review, never advice on its own."
+msgstr ""
+"يُتلَف المدخل الأصلي عند الإرسال، ولا يُحفظ إلا الحمولة المنقّحة وبصمتها. "
+"والمخرَج مسودة يراجعها المحامي، وليس استشارة بذاته."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"The real payload after redaction, not a description of it. Read it\n"
+"                                before giving consent -- consent means agreeing to this text leaving\n"
+"                                the firm."
+msgstr ""
+"الحمولة الحقيقية بعد التنقيح، لا وصف لها. اقرأها قبل منح الموافقة — "
+"فالموافقة تعني قبولك بخروج هذا النص من المكتب."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__charter_id
+msgid ""
+"The standing instructions in force when this request was sent, kept so an "
+"old answer can be read against the rules it was produced under."
+msgstr ""
+"التعليمات الدائمة النافذة وقت إرسال هذا الطلب، تُحفظ ليمكن قراءة إجابة قديمة"
+" على ضوء القواعد التي أُنتجت تحتها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__name
+msgid ""
+"The statute as it is cited. Rename the seeded entries to the official title "
+"once you have it from the Ministry of Justice."
+msgstr ""
+"النظام كما يُستشهد به. أعد تسمية المدخلات المشحونة بالعنوان الرسمي متى حصلت "
+"عليه من وزارة العدل."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__legislation_ids
+msgid ""
+"The statutes this office works from. Listing one here does not put its text "
+"in front of the agent -- for that the text must be attached to the agent as "
+"a source."
+msgstr ""
+"الأنظمة التي يعمل منها المكتب. وإدراج النظام هنا لا يضع نصه أمام الوكيل — "
+"فلذلك يجب رفع النص إلى الوكيل كمصدر."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid ""
+"These instructions go in front of every request, whichever agent handles it.\n"
+"                        The agent's own prompt then covers its particular task. An agent cannot open\n"
+"                        a link or browse, so anything it must read has to be attached to it as a\n"
+"                        source -- listing a statute is not the same as giving it the text."
+msgstr ""
+"هذه التعليمات تتصدر كل طلب أياً كان الوكيل الذي يتولاه، ثم يغطي توجيه الوكيل"
+" مهمته الخاصة. والوكيل لا يستطيع فتح رابط ولا تصفح الإنترنت، فكل ما يلزمه "
+"قراءته يجب رفعه إليه كمصدر — وإدراج النظام ليس كإعطائه نصه."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid ""
+"This agent cannot receive a single legal request until it is approved, whatever\n"
+"                    permissions the user holds. Approving it is the firm stating it accepts this\n"
+"                    agent for privileged client material."
+msgstr ""
+"لا يستقبل هذا الوكيل أي طلب قانوني حتى يُعتمد، مهما كانت صلاحيات المستخدم. "
+"واعتماده هو إقرار المكتب بقبوله للمواد المشمولة بسرية الموكل."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai.py:0
+msgid "This document is blocked from AI processing."
+msgstr "هذا المستند محظور من معالجة الذكاء."
+
+#. module: era_law_firm_ai
+#: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_field_technical_unique
+msgid "This field is already in the catalogue."
+msgstr "هذا الحقل موجود في الكتالوج مسبقاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_legislation_moj_unique
+msgid "This legislation is already registered."
+msgstr "هذا النظام مسجَّل مسبقاً."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"This request has no recorded consent. Use \"Give Consent\" first -- consent "
+"names the person who agreed to this material leaving the firm."
+msgstr ""
+"لا توجد موافقة مسجّلة على هذا الطلب. استخدم «منح الموافقة» أولاً — فالموافقة"
+" تُسمّي من قبِل بخروج هذه المادة من المكتب."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "This request is still open -- edit it and send it."
+msgstr "هذا الطلب ما زال مفتوحاً — عدّله وأرسله."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__source_attached
+msgid ""
+"Tick once the statute's text has been uploaded to an agent as a source. "
+"Until then the agent can only recall the law, not read it -- and recalled "
+"article numbers are the failure this register exists to prevent."
+msgstr ""
+"أشّره بعد رفع نص النظام إلى وكيل كمصدر. وقبل ذلك لا يستطيع الوكيل إلا "
+"استذكار النظام لا قراءته — وأرقام المواد المستذكَرة هي الخلل الذي وُجد هذا "
+"السجل لمنعه."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"Tick only what the agent needs. Entries carrying narrative text\n"
+"                                rather than a reference are worth a second look."
+msgstr ""
+"أشِّر ما يحتاجه الوكيل فقط. والبنود التي تحمل نصاً سردياً لا مرجعاً تستحق "
+"نظرة ثانية."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__field_ids
+msgid ""
+"Tick what the agent may see. The payload is built from exactly these, so "
+"nothing else about the case can leave even by accident."
+msgstr ""
+"أشِّر ما يجوز للوكيل الاطلاع عليه. الحمولة تُبنى من هذه وحدها، فلا يخرج شيء "
+"آخر عن القضية ولو سهواً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_field_ids
+msgid ""
+"Ticked automatically on a new request for this agent, so the lawyer starts "
+"from what the work actually needs instead of an empty list."
+msgstr ""
+"تُؤشَّر تلقائياً في الطلب الجديد لهذا الوكيل، فيبدأ المحامي مما يحتاجه العمل"
+" فعلاً لا من قائمة فارغة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__website_message_ids
+msgid "Website communication history"
+msgstr "سجل مراسلات الموقع"
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"What earlier sends of this request carried and what came back. These\n"
+"                            cannot be edited or deleted."
+msgstr ""
+"ما حملته الإرسالات السابقة لهذا الطلب وما عاد منها. وهذه لا تقبل التعديل ولا"
+" الحذف."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_legislation_ids
+msgid ""
+"What this agent is expected to work from. Listing a statute here does not "
+"put its text in front of the agent; for that, attach the text under Sources."
+msgstr ""
+"ما يُنتظر من هذا الوكيل أن يعمل منه. وإدراج النظام هنا لا يضع نصه أمام "
+"الوكيل؛ فلذلك ارفع النص في «المصادر»."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__name
+msgid ""
+"What this is called in the request form. Lawyers pick from these, never from"
+" technical field names."
+msgstr ""
+"تسميته في نموذج الطلب. المحامون يختارون من هذه، لا من أسماء الحقول التقنية."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__consent_date
+msgid "When consent was given."
+msgstr "وقت منح الموافقة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__url
+msgid ""
+"Where the authoritative text is published. Reference only -- an agent cannot"
+" open it."
+msgstr "حيث يُنشر النص الرسمي. للمرجع فقط — لا يستطيع الوكيل فتحه."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__source
+msgid "Where the value is read from."
+msgstr "من أين تُقرأ القيمة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__has_approved_agent
+msgid ""
+"Whether any agent has been approved for legal work yet. An empty agent list "
+"means none has, not that something is broken."
+msgstr ""
+"هل اعتُمد أي وكيل للعمل القانوني بعد. وخلوّ قائمة الوكلاء يعني أنه لم يُعتمد"
+" أحد، لا أن هناك خللاً."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__classification_blocked
+msgid ""
+"Whether the document is too sensitive for the chosen agent, so the request "
+"would be refused on dispatch."
+msgstr "هل المستند أعلى حساسيةً من الوكيل المختار، فيُرفض الطلب عند الإرسال."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid "Why this request is being made"
+msgstr "سبب تقديم هذا الطلب"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__purpose
+msgid ""
+"Why this request is being made. Recorded so the use of AI on client material"
+" can be justified later."
+msgstr ""
+"سبب تقديم هذا الطلب. يُوثَّق ليمكن تبرير استخدام الذكاء على مواد الموكلين "
+"لاحقاً."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai.py:0
+msgid "You are not authorized to approve AI requests."
+msgstr "لست مخوَّلاً باعتماد طلبات الذكاء."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai.py:0
+msgid "You cannot send a case you cannot access."
+msgstr "لا يمكنك إرسال قضية لا تملك صلاحية الاطلاع عليها."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "You cannot send a document from a case you cannot access."
+msgstr "لا يمكنك إرسال مستند من قضية لا تملك صلاحية الاطلاع عليها."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__input_payload
+msgid ""
+"Your own instructions to the agent, sent alongside the ticked data. Redacted"
+" like everything else, and discarded once dispatched."
+msgstr ""
+"تعليماتك أنت للوكيل، تُرسل مع البيانات المؤشَّرة. تُنقَّح كغيرها وتُتلَف بعد"
+" الإرسال."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "another case"
+msgstr "قضية أخرى"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "case_id"
+msgstr ""
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
+msgid ""
+"of the statutes listed below have no text attached under Sources, so this\n"
+"                        agent can only recall them, not read them."
+msgstr ""
+"من الأنظمة المدرجة أدناه بلا نص مرفوع في «المصادر»، فلا يستطيع هذا الوكيل "
+"إلا استذكارها لا قراءتها."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid "request_id"
+msgstr ""
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_case_form_ai
+msgid "sent"
+msgstr "مُرسل"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.charter,body:era_law_firm_ai.charter_default
+msgid ""
+"أنت محامٍ ومستشار قانوني في المملكة العربية السعودية، تعمل ضمن مكتب محاماة مرخص، ومخرجاتك تمر على محامٍ مختص قبل أي استخدام.\n"
+"\n"
+"الإطار النظامي:\n"
+"تعمل ضمن الأنظمة السعودية النافذة وما تقوم عليه من مبادئ الشريعة الإسلامية، ويشمل ذلك: نظام المرافعات الشرعية، ونظام الإجراءات الجزائية، ونظام المعاملات المدنية، ونظام الشركات، ونظام العمل، ونظام التنفيذ، ونظام المحاكم التجارية، وأنظمة الأحوال الشخصية، وما يتصل بها من لوائح تنفيذية.\n"
+"\n"
+"نطاق العمل:\n"
+"الاستشارات القانونية، وصياغة العقود، ولوائح الدعاوى والمذكرات الجوابية، ومذكرات الاعتراض على الأحكام أمام محكمة الاستئناف والمحكمة العليا، والتحكيم. والفئة المخاطَبة قد تكون فرداً أو شركة أو جهة حكومية، فاضبط الأسلوب على المخاطَب.\n"
+"\n"
+"مصادر الاستناد — قاعدة ملزمة:\n"
+"لا تعتمد إلا على ما بين يديك: المعطيات الواردة في الطلب، والمصادر المرفوعة إلى هذا الوكيل. لا تستطيع فتح روابط ولا تصفح الإنترنت، فلا تتصرف كأنك اطلعت على نص لم يُعرض عليك.\n"
+"ولا تذكر رقم مادة أو تاريخ مرسوم أو رقم حكم ما لم يرد نصاً في المعطيات أو المصادر. وإذا لزم الاستناد ولم يتوفر النص، فقل: «يلزم الرجوع إلى نص النظام للتحقق من المادة» وسمِّ النظام دون رقم المادة. الاستشهاد الخاطئ أشد ضرراً من الامتناع عن الاستشهاد.\n"
+"\n"
+"طريقة الكتابة:\n"
+"اكتب بالعربية الفصحى وبأسلوب المرافعات المعتمد أمام المحاكم السعودية. ورتّب المذكرات على البناء المعتاد: بيانات الأطراف، ثم سرد الوقائع مرتباً زمنياً بلا تكييف، ثم الأساس النظامي، ثم الطلبات محددةً وقابلة للتنفيذ. وما لم يرد في المعطيات اتركه ظاهراً بين قوسين معقوفين هكذا [يُستكمل] ليملأه المحامي، ولا تخترعه.\n"
+"\n"
+"حدود المخرَج:\n"
+"مخرجك مسودة اجتهادية يراجعها محامٍ مرخص ويتحمل مسؤوليتها، وليس رأياً قانونياً ولا وثيقة جاهزة للتقديم. ولا تقرر صحة عقد أو بطلانه ولا نتيجة دعوى؛ اعرض الاحتمالات وما يسندها. وإن كانت المعطيات لا تكفي لبيان حكم مسألة، فقل ذلك صراحةً بدل الافتراض."
+msgstr ""
+"أنت محامٍ ومستشار قانوني في المملكة العربية السعودية، تعمل ضمن مكتب محاماة مرخص، ومخرجاتك تمر على محامٍ مختص قبل أي استخدام.\n"
+"\n"
+"الإطار النظامي:\n"
+"تعمل ضمن الأنظمة السعودية النافذة وما تقوم عليه من مبادئ الشريعة الإسلامية، ويشمل ذلك: نظام المرافعات الشرعية، ونظام الإجراءات الجزائية، ونظام المعاملات المدنية، ونظام الشركات، ونظام العمل، ونظام التنفيذ، ونظام المحاكم التجارية، وأنظمة الأحوال الشخصية، وما يتصل بها من لوائح تنفيذية.\n"
+"\n"
+"نطاق العمل:\n"
+"الاستشارات القانونية، وصياغة العقود، ولوائح الدعاوى والمذكرات الجوابية، ومذكرات الاعتراض على الأحكام أمام محكمة الاستئناف والمحكمة العليا، والتحكيم. والفئة المخاطَبة قد تكون فرداً أو شركة أو جهة حكومية، فاضبط الأسلوب على المخاطَب.\n"
+"\n"
+"مصادر الاستناد — قاعدة ملزمة:\n"
+"لا تعتمد إلا على ما بين يديك: المعطيات الواردة في الطلب، والمصادر المرفوعة إلى هذا الوكيل. لا تستطيع فتح روابط ولا تصفح الإنترنت، فلا تتصرف كأنك اطلعت على نص لم يُعرض عليك.\n"
+"ولا تذكر رقم مادة أو تاريخ مرسوم أو رقم حكم ما لم يرد نصاً في المعطيات أو المصادر. وإذا لزم الاستناد ولم يتوفر النص، فقل: «يلزم الرجوع إلى نص النظام للتحقق من المادة» وسمِّ النظام دون رقم المادة. الاستشهاد الخاطئ أشد ضرراً من الامتناع عن الاستشهاد.\n"
+"\n"
+"طريقة الكتابة:\n"
+"اكتب بالعربية الفصحى وبأسلوب المرافعات المعتمد أمام المحاكم السعودية. ورتّب المذكرات على البناء المعتاد: بيانات الأطراف، ثم سرد الوقائع مرتباً زمنياً بلا تكييف، ثم الأساس النظامي، ثم الطلبات محددةً وقابلة للتنفيذ. وما لم يرد في المعطيات اتركه ظاهراً بين قوسين معقوفين هكذا [يُستكمل] ليملأه المحامي، ولا تخترعه.\n"
+"\n"
+"حدود المخرَج:\n"
+"مخرجك مسودة اجتهادية يراجعها محامٍ مرخص ويتحمل مسؤوليتها، وليس رأياً قانونياً ولا وثيقة جاهزة للتقديم. ولا تقرر صحة عقد أو بطلانه ولا نتيجة دعوى؛ اعرض الاحتمالات وما يسندها. وإن كانت المعطيات لا تكفي لبيان حكم مسألة، فقل ذلك صراحةً بدل الافتراض."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_jurisdiction
+msgid "الاختصاص القضائي"
+msgstr "الاختصاص القضائي"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_outcome
+msgid "الحكم أو التسوية وشروطها. نص سردي قد يحوي تفاصيل الموكل."
+msgstr "الحكم أو التسوية وشروطها. نص سردي قد يحوي تفاصيل الموكل."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_circuit
+msgid "الدائرة"
+msgstr "الدائرة"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_circuit
+msgid "الدائرة داخل المحكمة."
+msgstr "الدائرة داخل المحكمة."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_claim
+msgid "المبلغ محل المطالبة. مالي، فلا تشاركه إلا عند الحاجة."
+msgstr "المبلغ محل المطالبة. مالي، فلا تشاركه إلا عند الحاجة."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_court
+msgid "المحكمة"
+msgstr "المحكمة"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_court
+msgid "المحكمة الناظرة للقضية. تفيد في ضبط الصياغة وفق ما تعتاده المحكمة."
+msgstr "المحكمة الناظرة للقضية. تفيد في ضبط الصياغة وفق ما تعتاده المحكمة."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_city
+msgid "المدينة"
+msgstr "المدينة"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_name
+msgid "المرجع الداخلي للمكتب، مثل LAW/2026/00042. لا يكشف هوية أحد."
+msgstr "المرجع الداخلي للمكتب، مثل LAW/2026/00042. لا يكشف هوية أحد."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.charter,name:era_law_firm_ai.charter_default
+msgid "الميثاق القانوني للمكتب"
+msgstr "الميثاق القانوني للمكتب"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.charter,disclaimer:era_law_firm_ai.charter_default
+msgid ""
+"تنبيه: الإفادة أعلاه جرى تقديمها عبر الذكاء الاصطناعي حسب المعطيات والوقائع "
+"المدخلة من قبلكم وهي اجتهادية تحتمل الخطأ، ولا يمكن الاستناد إليها دون "
+"الرجوع إلى المحامين لدينا، ويخلي المكتب مسؤوليته من أي إجراء يتم اتخاذه بناء"
+" عليها مجردة دون الرجوع إلى المختصين."
+msgstr ""
+"تنبيه: الإفادة أعلاه جرى تقديمها عبر الذكاء الاصطناعي حسب المعطيات والوقائع "
+"المدخلة من قبلكم وهي اجتهادية تحتمل الخطأ، ولا يمكن الاستناد إليها دون "
+"الرجوع إلى المحامين لدينا، ويخلي المكتب مسؤوليته من أي إجراء يتم اتخاذه بناء"
+" عليها مجردة دون الرجوع إلى المختصين."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_type
+msgid ""
+"دعوى قضائية أو تنفيذ أو استشارة. يساعد الوكيل على اختيار الأسلوب المناسب."
+msgstr ""
+"دعوى قضائية أو تنفيذ أو استشارة. يساعد الوكيل على اختيار الأسلوب المناسب."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_name
+msgid "رقم القضية الداخلي"
+msgstr "رقم القضية الداخلي"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_najiz
+msgid "رقم القضية في ناجز"
+msgstr "رقم القضية في ناجز"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_najiz
+msgid "رقم القضية لدى وزارة العدل. رقم مرجعي لا يحمل بيانات شخصية."
+msgstr "رقم القضية لدى وزارة العدل. رقم مرجعي لا يحمل بيانات شخصية."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_jurisdiction
+msgid "فرع القضاء: عام، تجاري، عمالي، جزائي وغيرها."
+msgstr "فرع القضاء: عام، تجاري، عمالي، جزائي وغيرها."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_claim
+msgid "قيمة المطالبة"
+msgstr "قيمة المطالبة"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_document_text
+msgid ""
+"محتوى المستند المرفق بالكامل. أوسع ما يمكن مشاركته — راجع المعاينة قبل "
+"الموافقة."
+msgstr ""
+"محتوى المستند المرفق بالكامل. أوسع ما يمكن مشاركته — راجع المعاينة قبل "
+"الموافقة."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,description:era_law_firm_ai.field_case_city
+msgid "مدينة انعقاد المحكمة."
+msgstr "مدينة انعقاد المحكمة."
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_outcome
+msgid "نتيجة القضية"
+msgstr "نتيجة القضية"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_document_text
+msgid "نص المستند كاملاً"
+msgstr "نص المستند كاملاً"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100001
+msgid "نظام (43020100001)"
+msgstr "نظام (43020100001)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100002
+msgid "نظام (43020100002)"
+msgstr "نظام (43020100002)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100003
+msgid "نظام (43020100003)"
+msgstr "نظام (43020100003)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100004
+msgid "نظام (43020100004)"
+msgstr "نظام (43020100004)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100005
+msgid "نظام (43020100005)"
+msgstr "نظام (43020100005)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100006
+msgid "نظام (43020100006)"
+msgstr "نظام (43020100006)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100007
+msgid "نظام (43020100007)"
+msgstr "نظام (43020100007)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100008
+msgid "نظام (43020100008)"
+msgstr "نظام (43020100008)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100009
+msgid "نظام (43020100009)"
+msgstr "نظام (43020100009)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100011
+msgid "نظام (43020100011)"
+msgstr "نظام (43020100011)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100012
+msgid "نظام (43020100012)"
+msgstr "نظام (43020100012)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100013
+msgid "نظام (43020100013)"
+msgstr "نظام (43020100013)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100014
+msgid "نظام (43020100014)"
+msgstr "نظام (43020100014)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100015
+msgid "نظام (43020100015)"
+msgstr "نظام (43020100015)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100016
+msgid "نظام (43020100016)"
+msgstr "نظام (43020100016)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100017
+msgid "نظام (43020100017)"
+msgstr "نظام (43020100017)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100018
+msgid "نظام (43020100018)"
+msgstr "نظام (43020100018)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100019
+msgid "نظام (43020100019)"
+msgstr "نظام (43020100019)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100020
+msgid "نظام (43020100020)"
+msgstr "نظام (43020100020)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100021
+msgid "نظام (43020100021)"
+msgstr "نظام (43020100021)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100022
+msgid "نظام (43020100022)"
+msgstr "نظام (43020100022)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100023
+msgid "نظام (43020100023)"
+msgstr "نظام (43020100023)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100024
+msgid "نظام (43020100024)"
+msgstr "نظام (43020100024)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100025
+msgid "نظام (43020100025)"
+msgstr "نظام (43020100025)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100026
+msgid "نظام (43020100026)"
+msgstr "نظام (43020100026)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100027
+msgid "نظام (43020100027)"
+msgstr "نظام (43020100027)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100028
+msgid "نظام (43020100028)"
+msgstr "نظام (43020100028)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100029
+msgid "نظام (43020100029)"
+msgstr "نظام (43020100029)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100030
+msgid "نظام (43020100030)"
+msgstr "نظام (43020100030)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100032
+msgid "نظام (43020100032)"
+msgstr "نظام (43020100032)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100033
+msgid "نظام (43020100033)"
+msgstr "نظام (43020100033)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100034
+msgid "نظام (43020100034)"
+msgstr "نظام (43020100034)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100035
+msgid "نظام (43020100035)"
+msgstr "نظام (43020100035)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100036
+msgid "نظام (43020100036)"
+msgstr "نظام (43020100036)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100037
+msgid "نظام (43020100037)"
+msgstr "نظام (43020100037)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100038
+msgid "نظام (43020100038)"
+msgstr "نظام (43020100038)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100039
+msgid "نظام (43020100039)"
+msgstr "نظام (43020100039)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100040
+msgid "نظام (43020100040)"
+msgstr "نظام (43020100040)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100041
+msgid "نظام (43020100041)"
+msgstr "نظام (43020100041)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100043
+msgid "نظام (43020100043)"
+msgstr "نظام (43020100043)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100044
+msgid "نظام (43020100044)"
+msgstr "نظام (43020100044)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100045
+msgid "نظام (43020100045)"
+msgstr "نظام (43020100045)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100048
+msgid "نظام (43020100048)"
+msgstr "نظام (43020100048)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100050
+msgid "نظام (43020100050)"
+msgstr "نظام (43020100050)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100051
+msgid "نظام (43020100051)"
+msgstr "نظام (43020100051)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100052
+msgid "نظام (43020100052)"
+msgstr "نظام (43020100052)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100053
+msgid "نظام (43020100053)"
+msgstr "نظام (43020100053)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100054
+msgid "نظام (43020100054)"
+msgstr "نظام (43020100054)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100055
+msgid "نظام (43020100055)"
+msgstr "نظام (43020100055)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100056
+msgid "نظام (43020100056)"
+msgstr "نظام (43020100056)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100057
+msgid "نظام (43020100057)"
+msgstr "نظام (43020100057)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100058
+msgid "نظام (43020100058)"
+msgstr "نظام (43020100058)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100059
+msgid "نظام (43020100059)"
+msgstr "نظام (43020100059)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100060
+msgid "نظام (43020100060)"
+msgstr "نظام (43020100060)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100001
+msgid "نظام (44020100001)"
+msgstr "نظام (44020100001)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100002
+msgid "نظام (44020100002)"
+msgstr "نظام (44020100002)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100003
+msgid "نظام (44020100003)"
+msgstr "نظام (44020100003)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100006
+msgid "نظام (44020100006)"
+msgstr "نظام (44020100006)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100007
+msgid "نظام (44020100007)"
+msgstr "نظام (44020100007)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100008
+msgid "نظام (44020100008)"
+msgstr "نظام (44020100008)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100009
+msgid "نظام (44020100009)"
+msgstr "نظام (44020100009)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100010
+msgid "نظام (44020100010)"
+msgstr "نظام (44020100010)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100012
+msgid "نظام (44020100012)"
+msgstr "نظام (44020100012)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100013
+msgid "نظام (44020100013)"
+msgstr "نظام (44020100013)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100014
+msgid "نظام (44020100014)"
+msgstr "نظام (44020100014)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100001
+msgid "نظام (45020100001)"
+msgstr "نظام (45020100001)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100002
+msgid "نظام (45020100002)"
+msgstr "نظام (45020100002)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100004
+msgid "نظام (45020100004)"
+msgstr "نظام (45020100004)"
+
+#. module: era_law_firm_ai
+#: model:legal.legislation,name:era_law_firm_ai.legislation_46020100001
+msgid "نظام (46020100001)"
+msgstr "نظام (46020100001)"
+
+#. module: era_law_firm_ai
+#: model:legal.ai.field,name:era_law_firm_ai.field_case_type
+msgid "نوع القضية"
+msgstr "نوع القضية"

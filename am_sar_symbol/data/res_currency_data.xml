@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Runs on install AND on every upgrade of this module (noupdate is not set
+        on this file, so <function> is executed on each update).
+
+        A <record id="base.SAR"> would NOT work on upgrade: base declares that
+        record under noupdate="1", and the ORM skips writes to noupdate records
+        while updating a module.
+
+        يُضبط رمز الريال السعودي تلقائياً عند التركيب وعند كل تحديث.
+    -->
+    <function model="res.currency" name="_am_apply_sar_symbol"/>
+</odoo>

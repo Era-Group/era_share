@@ -15,8 +15,12 @@ This module adds the new Saudi Riyal () symbol to your Odoo system interfaces
 * Invoices
 * All system views
 
-After installing this module, copy the symbol () and paste it in the currency symbol field 
+On install **and on every module upgrade**, this module automatically sets the symbol of the
+Saudi Riyal (SAR) currency to the new symbol () - no manual step required.
+
+If you ever need it manually, copy the symbol () and paste it in the currency symbol field
 for the Saudi Riyal (SAR) currency in: Accounting > Configuration > Accounting > Currencies.
+The symbol is also shown in a copy-ready box on the module's description page (Apps > SAR Symbol Font).
 
 Note: Please ensure there are no other font-family customizations in your system views and invoices 
 that might conflict with this module.
@@ -28,7 +32,9 @@ that might conflict with this module.
     'price': 0.0,
     'currency': 'USD',
     'depends': ['base','web'],
-    'data': [],
+    'data': [
+        'data/res_currency_data.xml',
+    ],
     'assets': {
         'web.assets_backend': [
             'am_sar_symbol/static/src/css/style.css',

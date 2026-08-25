@@ -4,6 +4,8 @@ from odoo import http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
+from odoo.addons.voip.controllers.voip_controller import VoipController
+
 
 class VoipCallRecordingController(http.Controller):
     @http.route(
@@ -74,3 +76,11 @@ class VoipCallRecordingController(http.Controller):
             ("Content-Security-Policy", "default-src 'self'; media-src 'self'"),
         ]
         return request.make_response(content, headers=headers)
+
+
+class VoipControllerExt(VoipController):
+    @http.route()
+    def upload_recording(self, call_id, ufile):
+        response = super().upload_recording(call_id, ufile)
+        request.env["voip.call"].sudo().browse(call_id)._finalize_if_ongoing()
+        return response

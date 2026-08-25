@@ -13,6 +13,8 @@ from requests.exceptions import RequestException
 from odoo import _, api, fields, models, modules
 from odoo.exceptions import UserError
 
+from odoo.addons.mail.tools.discuss import Store
+
 from odoo.addons.era_voip_ext.utils.llm_api_service import LLMApiService
 
 _logger = getLogger(__name__)
@@ -211,6 +213,46 @@ class VoipCall(models.Model):
                 and "analysis_status" not in vals):
             vals = dict(vals, analysis_status="skipped")
         return super().write(vals)
+
+    def _finalize_if_ongoing(self, ended_at=None, activity_name=None):
+        """Atomically terminate an ongoing call without moving its end time.
+
+        SIP.js can report both BYE and SessionState.Terminated, while a failed
+        connection can report only the latter. Locking the rows makes the first
+        signal authoritative and turns all later signals into no-ops.
+        """
+        calls = self.exists()
+        if not calls:
+            return False
+        self.env.cr.execute(
+            "SELECT id FROM voip_call WHERE id = ANY(%s) FOR UPDATE",
+            [calls.ids],
+        )
+        calls.invalidate_recordset(["state", "end_date", "activity_name"])
+        to_finalize = calls.filtered(
+            lambda call: call.state == "ongoing" and not call.end_date
+        )
+        if to_finalize:
+            vals = {
+                "end_date": ended_at or fields.Datetime.now(),
+                "state": "terminated",
+            }
+            if activity_name:
+                vals["activity_name"] = activity_name
+            to_finalize.write(vals)
+        if activity_name:
+            missing_activity = calls.filtered(
+                lambda call: call.state == "terminated" and not call.activity_name
+            )
+            if missing_activity:
+                missing_activity.write({"activity_name": activity_name})
+        return bool(to_finalize)
+
+    def end_call(self, activity_name=None):
+        self.check_access("read")
+        calls_sudo = self.sudo()
+        calls_sudo._finalize_if_ongoing(activity_name=activity_name)
+        return Store().add(self, self._get_voip_store_fields()).get_result()
 
     def _commit_if_needed(self):
         if not modules.module.current_test:

@@ -1,5 +1,6 @@
 import base64
 
+from odoo import http
 from odoo.tests import HttpCase, tagged
 
 
@@ -80,3 +81,19 @@ class TestVoipCallRecordingAccess(HttpCase):
         self.assertEqual(res.status_code, 404)
         self.assertNotIn(self.audio_a, res.content)
         self.assertNotIn(self.audio_b, res.content)
+
+    def test_upload_finalizes_an_ongoing_call(self):
+        self.call_a.write({"state": "ongoing", "start_date": "2026-08-25 09:38:43"})
+        self.authenticate("era_voip_user_a", self.password)
+
+        res = self.url_open(
+            f"/voip/upload_recording/{self.call_a.id}",
+            data={"csrf_token": http.Request.csrf_token(self)},
+            files={"ufile": ("recording.webm", b"FAKE-WEBM", "audio/webm")},
+            method="POST",
+        )
+
+        self.assertEqual(res.status_code, 200)
+        self.call_a.invalidate_recordset()
+        self.assertEqual(self.call_a.state, "terminated")
+        self.assertTrue(self.call_a.end_date)

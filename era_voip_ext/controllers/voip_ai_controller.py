@@ -57,5 +57,6 @@ class VoipAiControllerExt(VoipAiController):
                 "raw": recording_raw,
             }
         )
+        call_sudo._finalize_if_ongoing()
         request.env.ref("voip_ai.ir_cron_transcribe_recent_voip_call").sudo()._trigger()
         return Response(status=200)

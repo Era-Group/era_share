@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_era_ai_profile_form" model="ir.ui.view">
+        <field name="name">era.ai.profile.form</field>
+        <field name="model">era.ai.profile</field>
+        <field name="arch" type="xml">
+            <form string="Business Profile">
+                <header>
+                    <button name="action_survey" type="object" string="1. Survey the business"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_survey" type="object" string="Re-survey"
+                            invisible="state == 'new'"/>
+                    <button name="action_study_with_ai" type="object"
+                            string="2. Let the AI study it" class="btn-primary"
+                            invisible="state == 'new'"/>
+                    <button name="action_stop_study" type="object"
+                            string="Stop the study"/>
+                    <button name="action_restudy" type="object"
+                            string="Re-study from scratch"
+                            invisible="not persona_brief"
+                            confirm="This deletes the current brief and proposed watchlists and studies the business again from the current data. Continue?"/>
+                    <button name="action_apply" type="object" string="3. Apply the brief"
+                            class="btn-primary" invisible="not persona_brief"
+                            confirm="This replaces the manager's brief and creates the proposed watchlists. Continue?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,surveyed,drafted,applied"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_title" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="state != 'new'">
+                        <strong>Start here.</strong> The survey reads this database and
+                        writes down what it finds — which apps carry real data, how many
+                        customers, in which languages. No AI is involved and nothing is
+                        changed. Then let the AI study that evidence and propose a brief.
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="not persona_brief">
+                        A brief already exists, so the AI will not rewrite it — it stops
+                        rather than redo good work every month. If the brief itself is
+                        what is wrong, use <strong>Re-study from scratch</strong>.
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="state != 'drafted'">
+                        <strong>Read this before applying.</strong> The brief below is what
+                        the manager will believe about your business, and the watchlists are
+                        who it will write to. Correct anything that is wrong — it is plain
+                        text, edit it freely.
+                    </div>
+                    <group>
+                        <field name="company_id" readonly="1"/>
+                        <field name="surveyed_at" readonly="1"/>
+                        <field name="applied_at" readonly="1"/>
+                        <field name="proposed_campaign_days"/>
+                        <field name="recommended_agents" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="What we found" name="evidence">
+                            <field name="evidence_summary" readonly="1"
+                                   placeholder="Run the survey to collect the evidence."/>
+                            <separator string="Raw evidence"/>
+                            <field name="evidence_json" readonly="1" widget="text"/>
+                        </page>
+                        <page string="What this business is" name="summary">
+                            <field name="business_summary"
+                                   placeholder="The AI writes its understanding of your trade here. Correct it if it got you wrong."/>
+                        </page>
+                        <page string="Manager brief" name="brief">
+                            <div class="text-muted mb-2">
+                                This is the real specification of the system. Everything the
+                                manager does follows from it. Edit it in plain words.
+                            </div>
+                            <field name="persona_brief"
+                                   placeholder="The AI drafts the brief here, tailored to your business."/>
+                        </page>
+                        <page string="What happened when you applied" name="report"
+                              invisible="not apply_report">
+                            <field name="apply_report" readonly="1"/>
+                        </page>
+                        <page string="Proposed watchlists" name="watchlists">
+                            <div class="text-muted mb-2">
+                                Who the manager will watch, as JSON. Applying creates or
+                                updates these; anything that does not run is skipped.
+                            </div>
+                            <field name="proposed_watchlists" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_era_ai_profile_list" model="ir.ui.view">
+        <field name="name">era.ai.profile.list</field>
+        <field name="model">era.ai.profile</field>
+        <field name="arch" type="xml">
+            <list string="Business Profiles">
+                <field name="company_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'applied'"
+                       decoration-warning="state == 'drafted'"/>
+                <field name="surveyed_at"/>
+                <field name="applied_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_era_ai_profile" model="ir.actions.act_window">
+        <field name="name">Business Profile</field>
+        <field name="res_model">era.ai.profile</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_era_ai_profile_current" model="ir.actions.server">
+        <field name="name">Business Profile</field>
+        <field name="model_id" ref="model_era_ai_profile"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_current()</field>
+    </record>
+</odoo>

@@ -1,0 +1,2782 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* era_ai_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid " (custom)"
+msgstr " (مخصص)"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%(count)s %(label)s(s) older than %(hours)sh"
+msgstr "%(count)s %(label)s تجاوز %(hours)s ساعة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "%(model)s has no field '%(field)s'."
+msgstr "لا يحتوي %(model)s على حقل '%(field)s'."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "%(name)s — %(blocked)s blocked"
+msgstr "%(name)s — حُجبت %(blocked)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"%(ok)s watchlist(s) approved, %(held)s held for your approval, %(bad)s "
+"rejected. See 'What happened when you applied'."
+msgstr ""
+"اعتُمدت %(ok)s قائمة، وحُجزت %(held)s بانتظار موافقتك، ورُفضت %(bad)s. راجع "
+"'ما الذي حدث عند التطبيق'."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"%s already have a message waiting and will be skipped, so nobody is written "
+"to twice."
+msgstr "%s لديهم رسالة منتظرة أصلاً وسيُتخطّون، فلا يُراسَل أحد مرتين."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "%s customer(s)"
+msgstr "%s عميلاً"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s does not support messaging."
+msgstr "لا يدعم %s المراسلة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "%s have no email address and will be skipped."
+msgstr "%s بلا عنوان بريد وسيُتخطّون."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid ""
+"%s message(s) are waiting for you. None of them has been sent, and none will"
+" be until you approve it."
+msgstr "هناك %s رسالة تنتظرك. لم تُرسل أي منها، ولن تُرسل حتى تعتمدها."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%s outgoing email(s) failed"
+msgstr "فشل إرسال %s رسالة بريد"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%s outreach draft(s) blocked in 24h"
+msgstr "حُجبت %s مسودة مراسلة خلال ٢٤ ساعة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%s scheduled AI agent run(s) failed"
+msgstr "فشل %s تشغيل مجدول لوكيل ذكي"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s to approve or reject them together."
+msgstr "%s لاعتمادها أو رفضها دفعة واحدة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%s to see the full list and what has already been resolved."
+msgstr "%s لترى القائمة كاملة وما عولج منها."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "1. Survey the business"
+msgstr "١. امسح البزنس"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "2. Let the AI study it"
+msgstr "٢. دع الذكاء الاصطناعي يدرسه"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "3. Apply the brief"
+msgstr "٣. طبّق التوصيف"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "<span class=\"ms-2\">days before the same play may repeat</span>"
+msgstr "<span class=\"ms-2\">يوماً قبل السماح بتكرار الرسالة نفسها</span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "<span class=\"ms-2\">days between marketing messages</span>"
+msgstr "<span class=\"ms-2\">يوماً بين الرسائل التسويقية</span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "<span class=\"mx-2\">to</span>"
+msgstr "<span class=\"mx-2\">إلى</span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"<span class=\"text-muted d-block small\">\n"
+"                                    Switches to full autonomy by itself on this date.\n"
+"                                </span>"
+msgstr ""
+"<span class=\"text-muted d-block small\">\n"
+"                                    ينتقل إلى الاستقلال الكامل من تلقاء نفسه في هذا التاريخ.\n"
+"                                </span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "<span> match this rule. </span>"
+msgstr "<span> ينطبق عليهم هذا الشرط. </span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "<span> will get a draft.</span>"
+msgstr "<span> ستُكتب لهم مسودة.</span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"<strong>Read this before applying.</strong> The brief below is what\n"
+"                        the manager will believe about your business, and the watchlists are\n"
+"                        who it will write to. Correct anything that is wrong — it is plain\n"
+"                        text, edit it freely."
+msgstr ""
+"<strong>اقرأ هذا قبل التطبيق.</strong> التوصيف أدناه هو ما سيصدّقه المدير\n"
+"                        عن بزنسك، وقوائم المراقبة هي من سيراسلهم. صحّح كل ما هو خاطئ —\n"
+"                        فهو نص عادي، عدّله بحرية."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"<strong>Start here.</strong> The survey reads this database and\n"
+"                        writes down what it finds — which apps carry real data, how many\n"
+"                        customers, in which languages. No AI is involved and nothing is\n"
+"                        changed. Then let the AI study that evidence and propose a brief."
+msgstr ""
+"<strong>ابدأ من هنا.</strong> المسح يقرأ قاعدة البيانات هذه ويدوّن ما يجده —\n"
+"                        أي التطبيقات تحمل بيانات حقيقية، وكم عميلاً، وبأي لغات. لا يتدخل الذكاء\n"
+"                        الاصطناعي ولا يتغيّر شيء. ثم دعه يدرس تلك الأدلة ويقترح توصيفاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"A brief already exists, so the AI will not rewrite it — it stops\n"
+"                        rather than redo good work every month. If the brief itself is\n"
+"                        what is wrong, use <strong>Re-study from scratch</strong>."
+msgstr ""
+"يوجد توصيف بالفعل، فلن يعيد الذكاء الاصطناعي كتابته — بل يتوقف\n"
+"                        بدل أن يكرر عملاً جيداً كل شهر. وإن كان التوصيف نفسه هو\n"
+"                        الخطأ، فاستخدم <strong>أعد الدراسة من الصفر</strong>."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid ""
+"A few things need looking at. Nothing is broken for customers right now:"
+msgstr "هناك أمور تستحق النظر، ولا شيء معطّل عند العملاء الآن:"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "A reply needs a related record to answer in."
+msgstr "الرد يحتاج سجلاً مرتبطاً يُجاب داخله."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"A study has been running since %s. Wait for it to finish rather than "
+"starting another — two studies would fight over the same record."
+msgstr ""
+"هناك دراسة تعمل منذ %s. انتظر انتهاءها بدل أن تبدأ أخرى — فدراستان ستتنازعان"
+" على السجل نفسه."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"A study is marked as running since %s but its process is gone, so it will "
+"never finish. Press 'Stop the study' and start again."
+msgstr ""
+"هناك دراسة مسجّلة كأنها تعمل منذ %s لكن عمليتها انتهت، فلن تنتهي أبداً. اضغط"
+" «أوقف الدراسة» ثم ابدأ من جديد."
+
+#. module: era_ai_manager
+#: model_terms:ir.actions.act_window,help:era_ai_manager.action_era_ai_watchlist
+msgid ""
+"A watchlist is an audience worth chasing: a model, a domain that\n"
+"                selects customers who need something, and what to say to them.\n"
+"                Run the business survey and let the AI propose them, or add your\n"
+"                own here."
+msgstr ""
+"قائمة المراقبة جمهور يستحق المتابعة: موديل، ونطاق يختار العملاء المحتاجين\n"
+"                لشيء، وما يُقال لهم. شغّل مسح البزنس ودع الذكاء الاصطناعي يقترحها،\n"
+"                أو أضف قوائمك هنا."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "AI Business Manager"
+msgstr "المدير الذكي للأعمال"
+
+#. module: era_ai_manager
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_root
+msgid "AI Manager"
+msgstr "المدير الذكي"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "AI Manager — Copywriter"
+msgstr "المدير الذكي — كاتب الرسائل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "AI Manager: %s message(s) awaiting approval"
+msgstr "المدير الذكي: %s رسالة بانتظار الموافقة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "AI Manager: %s new issue(s)"
+msgstr "المدير الذكي: %s مشكلة جديدة"
+
+#. module: era_ai_manager
+#: model:ir.actions.server,name:era_ai_manager.cron_pending_digest_ir_actions_server
+msgid "AI Manager: Daily approval digest"
+msgstr "المدير الذكي: ملخص الموافقات اليومي"
+
+#. module: era_ai_manager
+#: model:ir.actions.server,name:era_ai_manager.cron_process_outreach_queue_ir_actions_server
+msgid "AI Manager: Process outreach queue"
+msgstr "المدير الذكي: معالجة طابور المراسلات"
+
+#. module: era_ai_manager
+#: model:ir.actions.server,name:era_ai_manager.cron_watchdog_ir_actions_server
+msgid "AI Manager: Watchdog"
+msgstr "المدير الذكي: المراقب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_outreach
+msgid "AI Messages Sent"
+msgstr "الرسائل المرسلة من الذكاء الاصطناعي"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/res_config_settings.py:0
+msgid "AI manager agents"
+msgstr "وكلاء المدير الذكي"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/res_config_settings.py:0
+msgid "AI manager persona"
+msgstr "شخصية المدير الذكي"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"Activity: %(m30)s messages in 30 days, %(users)s internal users, %(new)s new"
+" contacts in 90 days."
+msgstr ""
+"النشاط: %(m30)s رسالة خلال ٣٠ يوماً، و%(users)s مستخدماً داخلياً، و%(new)s "
+"جهة اتصال جديدة خلال ٩٠ يوماً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Agent"
+msgstr "الوكيل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__agent_name
+msgid "Agent Name"
+msgstr "اسم الوكيل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__ai_available
+msgid "Ai Available"
+msgstr "الذكاء متاح"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__ai_note
+msgid "Ai Note"
+msgstr "ملاحظة الذكاء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__applied_at
+msgid "Applied At"
+msgstr "طُبّق في"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Approval digests, watchdog alerts and the weekly report go here."
+msgstr ""
+"تصلك على هذا العنوان طلبات الموافقة وتنبيهات المراقبة والتقرير الأسبوعي."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_list
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
+msgid "Approve"
+msgstr "موافقة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "Approve & Send now"
+msgstr "موافقة وإرسال الآن"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "Approve anyway"
+msgstr "اعتمدها رغم ذلك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__approved
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchlist__state__approved
+msgid "Approved"
+msgstr "تمت الموافقة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Apps in use: %s"
+msgstr "التطبيقات المستخدمة: %s"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__lang__ar_001
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchlist_compose__lang__ar_001
+msgid "Arabic"
+msgstr "العربية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid ""
+"Ask what got in the way and offer help. Cite when they last ordered and what"
+" it was. Do not offer a discount and do not assume they are unhappy."
+msgstr ""
+"اسأل ما الذي حال دون ذلك واعرض المساعدة. اذكر تاريخ آخر طلب وما كان. لا تعرض"
+" خصماً ولا تفترض أنهم غير راضين."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Audiences being watched"
+msgstr "الجماهير تحت المراقبة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__proposed_watchlists
+msgid "Audiences the AI suggests watching. Reviewed, then created."
+msgstr "الجماهير التي يقترح الذكاء الاصطناعي مراقبتها. تُراجَع ثم تُنشأ."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_autonomy_mode
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Autonomy"
+msgstr "الاستقلالية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__autonomy_note
+msgid "Autonomy Note"
+msgstr "ملاحظة الاستقلالية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Autonomy level"
+msgstr "مستوى الاستقلالية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_pending
+msgid "Awaiting Your Approval"
+msgstr "بانتظار موافقتك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_pending_count
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Awaiting approval"
+msgstr "بانتظار الموافقة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Awaiting your approval"
+msgstr "بانتظار موافقتك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__block_reason
+msgid "Block Reason"
+msgstr "سبب الحجب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__blocked
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Blocked"
+msgstr "محجوب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__blocked_reason
+msgid "Blocked Reason"
+msgstr "سبب الحجب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__body_html
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__body_html
+msgid "Body Html"
+msgstr "نص الرسالة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Brief applied"
+msgstr "طُبّق التوصيف"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_profile__state__drafted
+msgid "Brief drafted"
+msgstr "صيغت مسودة التوصيف"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Business"
+msgstr "البزنس"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+#: model:ir.actions.act_window,name:era_ai_manager.action_era_ai_profile
+#: model:ir.actions.server,name:era_ai_manager.action_era_ai_profile_current
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_profile
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Business Profile"
+msgstr "ملف البزنس"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_list
+msgid "Business Profiles"
+msgstr "ملفات البزنس"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Business profile"
+msgstr "ملف البزنس"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__proposed_campaign_days
+msgid "Campaign every (days)"
+msgstr "حملة كل (أيام)"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__channel
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Channel"
+msgstr "القناة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__check_key
+msgid "Check Key"
+msgstr "مفتاح الفحص"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Check Settings > Technical > Outgoing Mail Servers."
+msgstr "راجع الإعدادات ← تقني ← خوادم البريد الصادر."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "Classification"
+msgstr "التصنيف"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Company: %s (%s)"
+msgstr "الشركة: %s (%s)"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_res_config_settings
+msgid "Config Settings"
+msgstr "تهيئة الإعدادات"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__cooldown_days
+msgid "Cooldown Days"
+msgstr "أيام التهدئة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__create_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__create_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__create_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__create_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__create_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__create_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__create_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__create_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchdog_alert__severity__critical
+msgid "Critical"
+msgstr "حرج"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_attention
+msgid "Customers Needing Attention"
+msgstr "العملاء المحتاجون للمتابعة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Data found:"
+msgstr "البيانات الموجودة:"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__detail
+msgid "Detail"
+msgstr "التفاصيل"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_digest_digest
+msgid "Digest"
+msgstr "الموجز"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"Discovery, inbox, follow-up, campaigns, watchdog and the weekly report. They"
+" ship switched off: connect the persona's AI account first, then activate "
+"them."
+msgstr ""
+"الاستكشاف، والوارد، والمتابعة، والحملات، والمراقبة، والتقرير الأسبوعي. تُشحن"
+" مُعطّلة: اربط حساب الذكاء الاصطناعي للشخصية أولاً ثم فعّلها."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__display_name
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__display_title
+msgid "Display Title"
+msgstr "العنوان"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_dedup_days
+msgid "Do not repeat the same play within (days)"
+msgstr "عدم تكرار الرسالة نفسها خلال (أيام)"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__cooldown_days
+msgid "Do not repeat this play to the same contact within this many days."
+msgstr "لا تكرّر هذه الرسالة لجهة الاتصال نفسها خلال هذا العدد من الأيام."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__domain
+msgid "Domain"
+msgstr "النطاق"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Duplicate: '%s' already sent recently."
+msgstr "مكرر: سبق إرسال '%s' قريباً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid ""
+"Either way each message still passes the queue, so the\n"
+"                        frequency cap, opt-outs and the send window all still apply."
+msgstr ""
+"وفي الحالتين تمر كل رسالة بالطابور، فتظل ضوابط\n"
+"                        التكرار وإلغاء الاشتراك ونافذة الإرسال سارية."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__channel__email
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__email_to
+msgid "Email To"
+msgstr "إلى"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Empty message body."
+msgstr "نص الرسالة فارغ."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Enforced in code — the AI cannot exceed these."
+msgstr "مطبَّقة برمجياً — لا يستطيع الذكاء الاصطناعي تجاوزها."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__lang__en_us
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchlist_compose__lang__en_us
+msgid "English"
+msgstr "الإنجليزية"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_profile
+msgid "Era AI Business Profile"
+msgstr "ملف بزنس المدير الذكي"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_outreach
+msgid "Era AI Outreach"
+msgstr "مراسلات المدير الذكي"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_watchdog_alert
+msgid "Era AI Watchdog Alert"
+msgstr "تنبيه مراقب المدير الذكي"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_watchlist
+msgid "Era AI Watchlist"
+msgstr "قائمة مراقبة المدير الذكي"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__evidence_json
+msgid "Evidence Json"
+msgstr "الأدلة (JSON)"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__apply_report
+msgid ""
+"Exactly which proposals landed, which were held and which were rejected, in "
+"plain words and with links to the records. Silently dropping a suggestion "
+"would leave you believing an audience is covered when it is not."
+msgstr ""
+"أي الاقتراحات طُبّقت وأيها حُجز وأيها رُفض، بكلمات واضحة ومع روابط للسجلات. "
+"فإسقاط اقتراح بصمت يجعلك تظن أن جمهوراً مغطّى وهو ليس كذلك."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__partner_field
+msgid ""
+"Field holding the contact to write to. Use 'id' when the records are "
+"themselves contacts. A to-many field works too — live chat, event "
+"registrations and similar link their customer that way — and the first "
+"contact with an email address is used."
+msgstr ""
+"الحقل الذي يحمل جهة الاتصال المراد مراسلتها. استخدم 'id' عندما تكون السجلات "
+"نفسها جهات اتصال. ويصلح أيضاً حقل متعدد القيم — فالدردشة الحية وتسجيلات "
+"الفعاليات وما شابهها تربط عميلها بهذه الطريقة — وتُستخدم أول جهة اتصال لديها"
+" بريد إلكتروني."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_follower_ids
+msgid "Followers"
+msgstr "المتابعين"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعين (الشركاء)"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Frequency cap"
+msgstr "حد التكرار"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Frequency cap: already contacted on %s."
+msgstr "حد التكرار: سبق التواصل معه في %s."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__res_config_settings__era_ai_autonomy_mode__full
+msgid "Full autonomy — send automatically"
+msgstr "استقلال كامل — الإرسال تلقائياً"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Guardrails"
+msgstr "الضوابط"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid ""
+"Handed to the AI verbatim. Write it the way you would brief a new\n"
+"                        employee: what to say, which evidence to cite, and what not to claim."
+msgstr ""
+"يُسلَّم للذكاء الاصطناعي حرفياً. اكتبه كما تشرح لموظف جديد:\n"
+"                        ماذا يقول، وأي دليل يذكر، وما الذي لا يجوز ادعاؤه."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__evidence_json
+msgid ""
+"Hard facts collected from this database. The AI reads this; it does not get "
+"to edit it."
+msgstr ""
+"حقائق مجمّعة من قاعدة البيانات هذه. يقرؤها الذكاء الاصطناعي ولا يملك "
+"تعديلها."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "Hold"
+msgstr "تعليق"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"How many watchlists are defined. Without at least one, the manager has "
+"nobody to look after."
+msgstr ""
+"عدد قوائم المراقبة المعرّفة. بدون واحدة على الأقل لا يوجد من يعتني به "
+"المدير."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "How much the manager may do without you."
+msgstr "ما الذي يحق للمدير فعله دونك."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__proposed_campaign_days
+msgid ""
+"How often a campaign suits this trade. A busy retailer earns a weekly note; "
+"a firm selling one project a year does not. Applying retimes the campaign "
+"agent to match."
+msgstr ""
+"كم مرة تناسب الحملة هذا النشاط. متجر تجزئة نشط يستحق رسالة أسبوعية، وشركة "
+"تبيع مشروعاً واحداً في السنة لا تستحقها. والتطبيق يعيد ضبط توقيت وكيل "
+"الحملات وفقاً لذلك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"I am NOT using “%(name)s” yet: %(why)s Nobody will be contacted from it "
+"until you %(link)s and approve it."
+msgstr ""
+"لا أستخدم «%(name)s» بعد: %(why)s ولن يُراسَل منها أحد حتى %(link)s "
+"وتعتمدها."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "I am now watching %(who)s under “%(name)s” — %(link)s."
+msgstr "أراقب الآن %(who)s ضمن «%(name)s» — %(link)s."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"I could not set up “%(name)s” because this database has no %(model)s. "
+"Nothing was created for it."
+msgstr ""
+"تعذّر عليّ إعداد «%(name)s» لأن قاعدة البيانات هذه لا تحتوي %(model)s. ولم "
+"يُنشأ لها شيء."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "I could not set up “%(name)s”: %(err)s Nothing was created for it."
+msgstr "تعذّر عليّ إعداد «%(name)s»: %(err)s ولم يُنشأ لها شيء."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"I could not write a first draft (%s). Write it yourself, or try the rewrite "
+"button."
+msgstr ""
+"تعذّر عليّ كتابة مسودة أولى (%s). اكتبها بنفسك، أو جرّب زر إعادة الكتابة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid ""
+"I keep working meanwhile, and I will stop mentioning each of these once it "
+"clears. You only hear about a problem once."
+msgstr ""
+"أواصل عملي في الأثناء، وسأتوقف عن ذكر كل واحدة منها فور زوالها. فلا تسمع "
+"بالمشكلة إلا مرة واحدة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"I will propose one campaign every %s days — you approve it before anything "
+"is sent."
+msgstr "سأقترح حملة واحدة كل %s يوماً — وتعتمدها أنت قبل أن يُرسل شيء."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"I wrote this from the audience's intent. Edit it, rewrite it, or send it as "
+"it is."
+msgstr ""
+"كتبتُ هذه من هدف الجمهور نفسه. عدّلها، أو أعد كتابتها، أو أرسلها كما هي."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__id
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Identity"
+msgstr "الهوية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا كان محددًا، فهناك رسائل جديدة عليك رؤيتها."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__message_has_error
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا كان محددًا، فقد حدث خطأ في تسليم بعض الرسائل."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_profile__state__applied
+msgid "In effect"
+msgstr "ساري"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__intent
+msgid "Intent"
+msgstr "الهدف"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_attention_value
+msgid "Kpi Era Ai Attention Value"
+msgstr "مؤشر العملاء المحتاجين للمتابعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_outreach_value
+msgid "Kpi Era Ai Outreach Value"
+msgstr "مؤشر الرسائل المرسلة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_pending_value
+msgid "Kpi Era Ai Pending Value"
+msgstr "مؤشر الرسائل المنتظرة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__lang
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__lang
+msgid "Lang"
+msgstr "اللغة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Languages: %(all)s — the owner reads %(owner)s"
+msgstr "اللغات: %(all)s — والمالك يقرأ %(owner)s"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__write_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__write_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__write_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__write_uid
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__write_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__write_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__write_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__write_date
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__priority
+msgid ""
+"Lower runs first. When one contact matches several watchlists only the "
+"lowest-priority one is acted on, so nobody receives two messages on the same"
+" morning."
+msgstr ""
+"الأقل رقماً يُنفَّذ أولاً. وعندما تنطبق عدة قوائم على جهة اتصال واحدة يُعمل "
+"بأقلها رقماً فقط، فلا يصل أحداً رسالتان في صباح واحد."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__mail_id
+msgid "Mail"
+msgstr "البريد الإلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__persona_brief
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Manager brief"
+msgstr "توصيف المدير"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"Marketing is only delivered inside these hours. Replies to customers are "
+"always allowed."
+msgstr ""
+"تُرسل الرسائل التسويقية داخل هذه الساعات فقط. أما الردود على العملاء فمسموحة"
+" دائماً."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__match_count
+msgid "Match Count"
+msgstr "عدد المطابقات"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__matched_count
+msgid "Matches the rule"
+msgstr "ينطبق عليهم الشرط"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
+msgid "Matching now"
+msgstr "المطابقون الآن"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسائل"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_watchlist_compose
+msgid "Message a Watchlist"
+msgstr "مراسلة قائمة مراقبة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
+msgid "Message everyone"
+msgstr "راسل الجميع"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "Message everyone on this list"
+msgstr "راسل كل من في هذه القائمة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Message this audience"
+msgstr "راسل هذا الجمهور"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "Message “%s”"
+msgstr "مراسلة «%s»"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Messages currently held in the outreach queue."
+msgstr "الرسائل المحتجزة حالياً في طابور المراسلات."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "Messages to %s"
+msgstr "رسائل إلى %s"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_cap_days
+msgid "Minimum days between marketing messages"
+msgstr "أقل عدد أيام بين الرسائل التسويقية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__model_id
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_search
+msgid "Model"
+msgstr "النموذج"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "Model %s is not installed."
+msgstr "الموديل %s غير مثبّت."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__model_name
+msgid "Model Name"
+msgstr "اسم النموذج"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Models that look like customer records — start here:"
+msgstr "موديلات تبدو كسجلات عملاء — ابدأ من هنا:"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__name
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "No recipient address."
+msgstr "لا يوجد عنوان مستلم."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "No study is running."
+msgstr "لا توجد دراسة تعمل."
+
+#. module: era_ai_manager
+#: model_terms:ir.actions.act_window,help:era_ai_manager.action_era_ai_watchlist
+msgid "Nobody is being watched yet"
+msgstr "لا أحد تحت المراقبة بعد"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Not available here: %s"
+msgstr "غير متاح هنا: %s"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_profile__state__new
+msgid "Not surveyed"
+msgstr "لم يُمسح"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"Nothing reaches a customer without passing the queue first. Drafts wait for "
+"you in %s while you are in Ramp mode."
+msgstr ""
+"لا شيء يصل عميلاً قبل أن يمر بالطابور. والمسودات تنتظرك في %s ما دمت في وضع "
+"التدرّج."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب اتخاذ إجراء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل الحادث بها خطأ في التسليم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__domain
+msgid ""
+"Odoo domain selecting the records that need attention. For anything time-"
+"based use a relative token instead of a literal date, e.g. "
+"[('last_order_date', '<', '{{days_ago:60}}')] — a hardcoded date stops "
+"meaning what you meant a month later. Supported: {{days_ago:N}}, "
+"{{days_ahead:N}}, {{hours_ago:N}}."
+msgstr ""
+"نطاق أودو الذي يختار السجلات المحتاجة للمتابعة. ولأي شرط زمني استخدم رمزاً "
+"نسبياً بدل تاريخ ثابت، مثل [('last_order_date', '<', '{{days_ago:60}}')] — "
+"فالتاريخ الثابت يفقد معناه بعد شهر. المدعوم: {{days_ago:N}} و "
+"{{days_ahead:N}} و {{hours_ago:N}}."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "One persona holds the brief; the agents carry it out."
+msgstr "شخصية واحدة تحمل التوصيف، والوكلاء ينفّذونه."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__state
+msgid ""
+"Only approved watchlists are ever acted on. Anything the AI creates lands "
+"here as Proposed and does nothing until a human approves it."
+msgstr ""
+"لا يُعمل إلا بقوائم المراقبة المعتمدة. وكل ما ينشئه الذكاء الاصطناعي يصل هنا"
+" كمقترح ولا يفعل شيئاً حتى يعتمده إنسان."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchdog_alert__state__open
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Open Aidoo > Scheduled Agents and review the transcripts."
+msgstr "افتح Aidoo ← الوكلاء المجدولون وراجع سجل المحادثات."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Open and edit the persona"
+msgstr "فتح الشخصية وتعديلها"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Open the business profile"
+msgstr "فتح ملف البزنس"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Open the outreach queue"
+msgstr "افتح طابور المراسلات"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Open the scheduled agents"
+msgstr "فتح الوكلاء المجدولين"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Open the watchdog"
+msgstr "افتح المراقب"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Other custom models (often logs and plumbing): %s"
+msgstr "موديلات مخصصة أخرى (غالباً سجلات وبنية تحتية): %s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+#: model:ir.actions.act_window,name:era_ai_manager.action_era_ai_outreach
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_outreach
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_list
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Outreach"
+msgstr "المراسلات"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_owner_email
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Owner email"
+msgstr "بريد المالك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__partner_id
+msgid "Partner"
+msgstr "الشريك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__partner_field
+msgid "Partner Field"
+msgstr "حقل جهة الاتصال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__pending
+msgid "Pending approval"
+msgstr "بانتظار الموافقة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__play
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__play
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_search
+msgid "Play"
+msgstr "نوع الرسالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__priority
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchlist__state__draft
+msgid "Proposed"
+msgstr "مقترحة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Proposed watchlists"
+msgstr "قوائم المراقبة المقترحة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__proposed_watchlists
+msgid "Proposed watchlists (JSON)"
+msgstr "قوائم المراقبة المقترحة (JSON)"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Queue for my approval"
+msgstr "ضعها في الطابور لموافقتي"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"Ramp holds every customer message for your approval. Full autonomy sends "
+"whatever passes the guardrails."
+msgstr ""
+"التدرّج يحتجز كل رسالة للعميل بانتظار موافقتك. أما الاستقلال الكامل فيرسل كل"
+" ما يجتاز الضوابط."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__res_config_settings__era_ai_autonomy_mode__ramp
+msgid "Ramp — I approve every message"
+msgstr "تدرّج — أوافق على كل رسالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__rationale
+msgid "Rationale"
+msgstr "المبرر"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Raw evidence"
+msgstr "الأدلة الخام"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Re-study from scratch"
+msgstr "أعد الدراسة من الصفر"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Re-survey"
+msgstr "إعادة المسح"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Recipient has opted out."
+msgstr "المستلم ألغى اشتراكه."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Recipient is on the blacklist."
+msgstr "المستلم في القائمة السوداء."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__recommended_agents
+msgid "Recommended Agents"
+msgstr "الوكلاء المقترحون"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_list
+msgid "Reject"
+msgstr "رفض"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__rejected
+msgid "Rejected"
+msgstr "تم الرفض"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__thread_ref
+msgid "Related"
+msgstr "مرتبط بـ"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__thread_model
+msgid "Related Model"
+msgstr "النموذج ذو الصلة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__thread_id
+msgid "Related Record"
+msgstr "السجل المرتبط"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Repeat protection"
+msgstr "الحماية من التكرار"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__channel__thread_reply
+msgid "Reply in the record"
+msgstr "رد داخل السجل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchdog_alert__state__resolved
+msgid "Resolved"
+msgstr "تمت المعالجة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__resolved_at
+msgid "Resolved At"
+msgstr "تاريخ المعالجة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Review the block reasons — the agents may be mis-targeting."
+msgstr "راجع أسباب الحجب — قد يكون استهداف الوكلاء خاطئاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Rewrite it with AI"
+msgstr "أعد كتابتها بالذكاء"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid ""
+"Run the business survey, or add watchlists by hand, so the manager knows "
+"which customers to look after."
+msgstr ""
+"شغّل مسح البزنس، أو أضف قوائم المراقبة يدوياً، ليعرف المدير بأي العملاء "
+"يعتني."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Run the survey to collect the evidence."
+msgstr "شغّل المسح لجمع الأدلة."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Run watchdog now"
+msgstr "تشغيل المراقب الآن"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسائل النصية القصيرة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
+msgid "See who matches"
+msgstr "شاهد من ينطبق عليه"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_mail_from
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Send customer mail from"
+msgstr "إرسال بريد العملاء من"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Send to everyone"
+msgstr "أرسل للجميع"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Send window"
+msgstr "نافذة الإرسال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_send_hour_end
+msgid "Send window ends at"
+msgstr "تنتهي نافذة الإرسال عند"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_send_hour_start
+msgid "Send window starts at"
+msgstr "تبدأ نافذة الإرسال عند"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_timezone
+msgid "Send window timezone"
+msgstr "المنطقة الزمنية لنافذة الإرسال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__sent
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__sent_at
+msgid "Sent At"
+msgstr "تاريخ الإرسال"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "Sent to %(sent)s of %(total)s"
+msgstr "أُرسلت إلى %(sent)s من أصل %(total)s"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__sequence
+msgid "Sequence"
+msgstr "تسلسل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__severity
+msgid "Severity"
+msgstr "الخطورة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__skipped_note
+msgid "Skipped Note"
+msgstr "ملاحظة المتخطَّين"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"Some audiences are not running: %(held)s need your approval and %(bad)s "
+"could not be set up. Everything else is live."
+msgstr ""
+"بعض الجماهير لا تعمل: %(held)s بانتظار موافقتك و%(bad)s تعذّر إعدادها. وما "
+"عداها يعمل الآن."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Something is broken and it is affecting customers now:"
+msgstr "هناك عطل يؤثر على العملاء الآن:"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Start here"
+msgstr "ابدأ من هنا"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__state
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__state
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__state
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "Stop the study"
+msgstr "أوقف الدراسة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Study stopped"
+msgstr "أُوقفت الدراسة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "Studying the business"
+msgstr "جارٍ دراسة البزنس"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__subject
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__subject
+msgid "Subject"
+msgstr "الموضوع"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_profile__state__surveyed
+msgid "Survey collected"
+msgstr "جُمعت نتائج المسح"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Survey the business now"
+msgstr "امسح البزنس الآن"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"Survey this database, let the AI propose a brief and watchlists fitted to "
+"your trade, then review and apply."
+msgstr ""
+"امسح قاعدة البيانات هذه، ودع الذكاء الاصطناعي يقترح توصيفاً وقوائم مراقبة "
+"تناسب نشاطك، ثم راجع وطبّق."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__surveyed_at
+msgid "Surveyed At"
+msgstr "مُسح في"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_ramp_end_date
+msgid "Switch to full autonomy on"
+msgstr "الانتقال للاستقلال الكامل في"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "Target"
+msgstr "الهدف"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"The AI could not be reached: %s\n"
+"\n"
+"Check the AI provider configuration, or write the message yourself."
+msgstr ""
+"تعذّر الوصول إلى الذكاء الاصطناعي: %s\n"
+"\n"
+"راجع إعدادات مقدم الخدمة، أو اكتب الرسالة بنفسك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"The AI did not return a usable message. Try again, or write it yourself."
+msgstr "لم يُرجع الذكاء الاصطناعي رسالة صالحة. أعد المحاولة، أو اكتبها بنفسك."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "The AI drafts the brief here, tailored to your business."
+msgstr "يكتب الذكاء الاصطناعي التوصيف هنا مفصّلاً على بزنسك."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "The AI manager"
+msgstr "المدير الذكي"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"The AI writes its understanding of your trade here. Correct it if it got you"
+" wrong."
+msgstr "يكتب الذكاء الاصطناعي فهمه لنشاطك هنا. صحّحه إن أخطأ في فهمك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "The agent handling this may be inactive or blocked."
+msgstr "قد يكون الوكيل المسؤول عن هذا متوقفاً أو محجوباً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "The agent's reasoning — never sent to the customer."
+msgstr "تعليل الوكيل — لا يُرسل للعميل إطلاقاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "The agents"
+msgstr "الوكلاء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__watchlist_id
+msgid "The audience this message came from."
+msgstr "الجمهور الذي جاءت منه هذه الرسالة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "The discovery agent is missing."
+msgstr "وكيل الاستكشاف غير موجود."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"The discovery agent is reading your database. Refresh this page in a minute "
+"to review the brief it proposes."
+msgstr ""
+"وكيل الاستكشاف يقرأ قاعدة بياناتك. حدّث هذه الصفحة بعد دقيقة لمراجعة التوصيف"
+" الذي يقترحه."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "The domain of '%(name)s' does not run: %(err)s"
+msgstr "نطاق '%(name)s' لا يعمل: %(err)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "The domain of '%(name)s' is not valid: %(err)s"
+msgstr "نطاق '%(name)s' غير صالح: %(err)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "The domain of '%s' must be a list."
+msgstr "يجب أن يكون نطاق '%s' قائمة."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__persona_brief
+msgid ""
+"The instructions the manager works from. This is the real specification of "
+"the system — edit it to change behaviour."
+msgstr ""
+"التعليمات التي يعمل بها المدير. هذه هي المواصفات الحقيقية للنظام — عدّلها "
+"لتغيّر السلوك."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__play
+msgid ""
+"The kind of message this audience gets. Free text, so a business can name "
+"its own plays; the queue deduplicates on it."
+msgstr ""
+"نوع الرسالة التي يتلقاها هذا الجمهور. نص حر، فلكل بزنس أن يسمّي رسائله؛ "
+"ويمنع الطابور تكرارها بناءً عليه."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__play
+msgid ""
+"The kind of message this is. Free text so each business can name its own "
+"plays; 'reply' is reserved for answering someone who wrote to us first and "
+"is exempt from the marketing guardrails."
+msgstr ""
+"نوع هذه الرسالة. نص حر فلكل بزنس أن يسمّي رسائله؛ و'reply' محجوزة للرد على "
+"من راسلنا أولاً وهي معفاة من ضوابط التسويق."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "The manager has no audience to watch"
+msgstr "لا يوجد جمهور يراقبه المدير"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "The manager now works from this brief. Here is what changed:"
+msgstr "يعمل المدير الآن بهذا التوصيف. وهذا ما تغيّر:"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "The manager persona is missing."
+msgstr "شخصية المدير غير موجودة."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"The manager studies your business, then writes the brief and the audiences "
+"it will work from."
+msgstr "يدرس المدير بزنسك، ثم يكتب التوصيف والجماهير التي سيعمل عليها."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "The manager's brief"
+msgstr "توصيف المدير"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__business_summary
+msgid "The manager's own understanding of the trade, in plain words."
+msgstr "فهم المدير لطبيعة النشاط، بكلمات واضحة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "The proposed watchlists are not valid JSON: %s"
+msgstr "قوائم المراقبة المقترحة ليست JSON صالحاً: %s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "The proposed watchlists must be a list."
+msgstr "يجب أن تكون قوائم المراقبة المقترحة قائمة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid ""
+"There is no brief to apply yet. Survey the business and let the discovery "
+"agent draft one first."
+msgstr ""
+"لا يوجد توصيف لتطبيقه بعد. امسح البزنس ودع وكيل الاستكشاف يكتب مسودة أولاً."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"There is no message to send. Write one, or press the rewrite button to have "
+"it written."
+msgstr ""
+"لا توجد رسالة لإرسالها. اكتب واحدة، أو اضغط زر إعادة الكتابة ليكتبها الذكاء."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"There is nobody to write to. The rule matches %(matched)s record(s), but "
+"none of them is linked to a contact — they are anonymous. This audience can "
+"be watched and reported on, but not emailed."
+msgstr ""
+"لا يوجد من تُراسله. ينطبق الشرط على %(matched)s سجل، لكن أياً منها غير مرتبط"
+" بجهة اتصال — فهم مجهولون. هذه الفئة يمكن مراقبتها ورفع تقارير عنها، لكن لا "
+"يمكن مراسلتها بالبريد."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"There is nobody to write to. The rule matches %(matched)s record(s): "
+"%(no_contact)s have no contact behind them, %(no_email)s have no email "
+"address, and %(queued)s already have a message waiting."
+msgstr ""
+"لا يوجد من تُراسله. ينطبق الشرط على %(matched)s سجل: %(no_contact)s منها بلا"
+" جهة اتصال، و%(no_email)s بلا بريد إلكتروني، و%(queued)s لديها رسالة منتظرة "
+"بالفعل."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"%s are not linked to a contact at all — an anonymous visitor, for instance —"
+" so there is nobody to write to. Watching them is still useful; reaching "
+"them by email is not possible."
+msgstr ""
+"%s منها غير مرتبط بجهة اتصال إطلاقاً — زائر مجهول مثلاً — فلا يوجد من "
+"تُراسله. مراقبتهم تظل مفيدة، أما الوصول إليهم بالبريد فغير ممكن."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid ""
+"'%(field)s' on %(model)s does not point at a contact, so there would be "
+"nobody to write to."
+msgstr ""
+"الحقل '%(field)s' في %(model)s لا يشير إلى جهة اتصال، فلن يكون هناك من "
+"تُراسله."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "There were no audiences to set up, so nothing changed."
+msgstr "لم تكن هناك جماهير لإعدادها، فلم يتغيّر شيء."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "This audience is larger than the safety limit. Approve it anyway?"
+msgstr "هذا الجمهور أكبر من حد الأمان. أتعتمده رغم ذلك؟"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"This deletes the current brief and proposed watchlists and studies the "
+"business again from the current data. Continue?"
+msgstr ""
+"سيحذف هذا التوصيف الحالي وقوائم المراقبة المقترحة، ويعيد دراسة البزنس من "
+"البيانات الحالية. أتريد المتابعة؟"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"This is the real specification of the system. Everything the\n"
+"                                manager does follows from it. Edit it in plain words."
+msgstr ""
+"هذه هي المواصفات الحقيقية للنظام. وكل ما يفعله المدير\n"
+"                                ينبع منها. عدّلها بكلمات واضحة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid ""
+"This matches %(matches)s records, over the limit of %(limit)s. Narrow the "
+"domain, or approve it anyway if you meant to reach that many."
+msgstr ""
+"ينطبق هذا على %(matches)s سجلاً، وهو يتجاوز الحد البالغ %(limit)s. ضيّق "
+"النطاق، أو اعتمده رغم ذلك إن كنت تقصد الوصول إلى هذا العدد."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid ""
+"This matches %(pct)s%% of all %(model)s records. That is a mailing list, not"
+" an audience."
+msgstr ""
+"ينطبق هذا على %(pct)s%% من كل سجلات %(model)s. هذه قائمة بريدية لا جمهور."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist.py:0
+msgid "This matches nobody right now."
+msgstr "لا ينطبق هذا على أحد الآن."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"This replaces the manager's brief and creates the proposed watchlists. "
+"Continue?"
+msgstr ""
+"سيستبدل هذا توصيف المدير وينشئ قوائم المراقبة المقترحة. أتريد المتابعة؟"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "This sends the message to everyone on the list now. Continue?"
+msgstr "سيرسل هذا الرسالة إلى كل من في القائمة الآن. أتريد المتابعة؟"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "To <b>%(who)s</b> — “%(subject)s” — %(link)s"
+msgstr "إلى <b>%(who)s</b> — «%(subject)s» — %(link)s"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_search
+msgid "Today"
+msgstr "اليوم"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Waiting for the send window."
+msgstr "بانتظار نافذة الإرسال."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchdog_alert__severity__warning
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: era_ai_manager
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_watchdog
+msgid "Watchdog"
+msgstr "المراقب"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_era_ai_watchdog
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchdog_list
+msgid "Watchdog Alerts"
+msgstr "تنبيهات المراقب"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__watchlist_id
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__watchlist_id
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "Watchlist"
+msgstr "قائمة مراقبة"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_era_ai_watchlist
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_watchlist_count
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_watchlist
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_search
+msgid "Watchlists"
+msgstr "قوائم المراقبة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع الإلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__website_message_ids
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع الإلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__apply_report
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "What happened when you applied"
+msgstr "ما الذي حدث عند التطبيق"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "What the email says at a glance"
+msgstr "ما تقوله الرسالة في لمحة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "What the manager can work with here:"
+msgstr "ما الذي يستطيع المدير العمل به هنا:"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "What the message should achieve"
+msgstr "ما الذي يجب أن تحققه الرسالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__intent
+msgid ""
+"What the message should achieve and which evidence to cite. This is handed "
+"to the AI verbatim, so write it the way you would brief a new employee."
+msgstr ""
+"ما الذي يجب أن تحققه الرسالة وأي دليل تذكره. يُسلَّم هذا للذكاء الاصطناعي "
+"حرفياً، فاكتبه كما تشرح لموظف جديد."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "What they get"
+msgstr "ما الذي يصلهم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__business_summary
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "What this business is"
+msgstr "ما هو هذا البزنس"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__evidence_summary
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid "What we found"
+msgstr "ما وجدناه"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__agent_name
+msgid "Which AI agent produced this draft."
+msgstr "أي وكيل ذكي أنتج هذه المسودة."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__recommended_agents
+msgid "Which agents have something to do here, given what is installed."
+msgstr "أي الوكلاء لديه عمل فعلي هنا، بحسب ما هو مثبّت."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__model_id
+msgid "Which records this audience is made of."
+msgstr "من أي السجلات يتكوّن هذا الجمهور."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "Who"
+msgstr "من"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "Who the customer sees, and where escalations go."
+msgstr "من يراه العميل، وإلى أين تذهب التصعيدات."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
+msgid ""
+"Who the manager will watch, as JSON. Applying creates or\n"
+"                                updates these; anything that does not run is skipped."
+msgstr ""
+"من سيراقبهم المدير، بصيغة JSON. التطبيق ينشئها أو يحدّثها،\n"
+"                                ويتخطى كل ما لا يعمل."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__rationale
+msgid ""
+"Why the agent proposed this. Recorded for the owner's audit, never sent to "
+"the customer."
+msgstr ""
+"لماذا اقترح الوكيل هذا. يُسجَّل لمراجعة المالك، ولا يُرسل للعميل إطلاقاً."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist__blocked_reason
+msgid "Why this could not be approved automatically."
+msgstr "لماذا تعذّر اعتمادها تلقائياً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_outreach_form
+msgid "Why this, why now"
+msgstr "لماذا هذا، ولماذا الآن"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__will_send_now
+msgid "Will Send Now"
+msgstr "سيرسل الآن"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__reachable_count
+msgid "Will be drafted"
+msgstr "ستُكتب لهم مسودة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_watchlist_compose__body_html
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
+msgid "Write it once. Use {name} where the contact's name should go."
+msgstr "اكتبها مرة واحدة. واستخدم {name} حيث يجب أن يظهر اسم جهة الاتصال."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "Writes one message for a whole audience."
+msgstr "يكتب رسالة واحدة لجمهور كامل."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"Writing with AI needs Odoo's AI app, which is not installed here. You can "
+"still write the message yourself."
+msgstr ""
+"الكتابة بالذكاء الاصطناعي تحتاج تطبيق الذكاء في أودو وهو غير مثبّت هنا. "
+"ويمكنك كتابة الرسالة بنفسك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid "Written by hand to everyone on “%s”."
+msgstr "كُتبت يدوياً لكل من في «%s»."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid ""
+"Written by the discovery step and editable in plain words. Change it to "
+"change how the manager behaves."
+msgstr ""
+"تكتبه خطوة الاستكشاف وهو قابل للتعديل بكلمات واضحة. غيّره لتغيّر سلوك "
+"المدير."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"You are in Full autonomy, so pressing this sends the messages — only the "
+"guardrails stand between them and the customer."
+msgstr ""
+"أنت في وضع الاستقلال الكامل، فالضغط هنا يرسل الرسائل — ولا يفصلها عن العميل "
+"سوى الضوابط."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchlist_compose.py:0
+msgid ""
+"You are in Ramp mode, so these wait in the queue for your approval. Nothing "
+"is sent yet."
+msgstr ""
+"أنت في وضع التدرّج، فستنتظر هذه في الطابور موافقتك. ولم يُرسل شيء بعد."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "You can start a new one now."
+msgstr "تستطيع بدء دراسة جديدة الآن."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "[('date_order', '<', '2026-01-01')]"
+msgstr "[('date_order', '<', '2026-01-01')]"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "an unknown contact"
+msgstr "جهة اتصال غير معروفة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "country not set"
+msgstr "الدولة غير محددة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "crm.lead"
+msgstr "crm.lead"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "e.g. Customers who stopped ordering"
+msgstr "مثال: العملاء الذين توقفوا عن الطلب"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "lead"
+msgstr "فرصة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "nobody yet"
+msgstr "لا أحد بعد"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "open it"
+msgstr "تفتحها"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/profile.py:0
+msgid "open it to see them or change the rule"
+msgstr "افتحها لترى من هم أو لتعدّل القاعدة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "read it"
+msgstr "اقرأها"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
+msgid "support@yourcompany.com"
+msgstr "support@yourcompany.com"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "ticket"
+msgstr "تذكرة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
+msgid "winback"
+msgstr "winback"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "--- Conversation ---"
+msgstr "--- نص المحادثة ---"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "AI Manager — Conversation reader"
+msgstr "مدير الذكاء — قارئ المحادثات"
+
+#. module: era_ai_manager
+#: model:ir.actions.server,name:era_ai_manager.cron_harvest_conversations_ir_actions_server
+msgid "AI Manager: Read finished conversations"
+msgstr "مدير الذكاء: قراءة المحادثات المنتهية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Anything said"
+msgstr "أي كلام ورد"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Assistant"
+msgstr "المساعد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__assistant_failed
+msgid "Assistant Failed"
+msgstr "المساعد أخفق"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_list
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Assistant broke"
+msgstr "المساعد تعطّل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Conversation"
+msgstr "محادثة"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_era_ai_conversation
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_conversation
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_list
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Conversations"
+msgstr "المحادثات"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Could not create the %(model)s: %(error)s"
+msgstr "تعذّر إنشاء %(model)s: %(error)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Created from a live chat conversation."
+msgstr "أُنشئ من محادثة دردشة حية."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_list
+msgid "Ended"
+msgstr "انتهت"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__ended_at
+msgid "Ended At"
+msgstr "وقت الانتهاء"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_conversation
+msgid "Era AI Harvested Conversation"
+msgstr "محادثة مقروءة — مدير الذكاء"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Follow this up"
+msgstr "تابع هذه الحالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__result_ref
+msgid "Follow-up"
+msgstr "المتابعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__result_model
+msgid "Follow-up Model"
+msgstr "نموذج المتابعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__result_id
+msgid "Follow-up Record"
+msgstr "سجل المتابعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__state__converted
+msgid "Followed up"
+msgstr "تمت المتابعة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_list
+msgid "Followed up as"
+msgstr "توبعت باسم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__has_contact
+msgid "Has Contact"
+msgstr "لديه بيانات تواصل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__urgency__high
+msgid "High"
+msgstr "عالية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Ignore"
+msgstr "تجاهل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__state__ignored
+msgid "Ignored"
+msgstr "متجاهَلة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__interest
+msgid "Interest"
+msgstr "ما يريده"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__kind
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Kind"
+msgstr "النوع"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__left_unanswered
+msgid "Left Unanswered"
+msgstr "بقيت بلا رد"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Left contact details"
+msgstr "ترك بيانات تواصل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Live chat"
+msgstr "دردشة حية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__urgency__low
+msgid "Low"
+msgstr "منخفضة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__message_count
+msgid "Message Count"
+msgstr "عدد الرسائل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid ""
+"Neither CRM nor Helpdesk is installed, so there is nowhere to file this. "
+"Install one of them first."
+msgstr ""
+"لا علاقات العملاء ولا مكتب المساعدة منصّب، فلا يوجد مكان لحفظ هذه المتابعة. "
+"نصّب أحدهما أولاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.actions.act_window,help:era_ai_manager.action_era_ai_conversation
+msgid "No conversations read yet"
+msgstr "لم تُقرأ أي محادثة بعد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__urgency__normal
+msgid "Normal"
+msgstr "عادية"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Nothing has been created from this yet."
+msgstr "لم يُنشأ شيء من هذه المحادثة بعد."
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__kind__noise
+msgid "Nothing to follow up"
+msgstr "لا شيء يستحق المتابعة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Nothing written yet."
+msgstr "لم يُكتب شيء بعد."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Open the chat"
+msgstr "افتح المحادثة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Open the follow-up"
+msgstr "افتح سجل المتابعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__phone
+msgid "Phone"
+msgstr "الجوال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__poor_rating
+msgid "Poor Rating"
+msgstr "تقييم ضعيف"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Reaching them"
+msgstr "كيف نصل إليه"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Reads finished chats and says who was on the other side."
+msgstr "يقرأ المحادثات المنتهية ويحدّد من كان على الطرف الآخر."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Sales"
+msgstr "مبيعات"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__kind__sales
+msgid "Sales enquiry"
+msgstr "استفسار بيع"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__thread_model
+msgid "Source Model"
+msgstr "نموذج المصدر"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__thread_id
+msgid "Source Record"
+msgstr "سجل المصدر"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__started_at
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__summary
+msgid "Summary"
+msgstr "الخلاصة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Support"
+msgstr "دعم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__kind__support
+msgid "Support issue"
+msgstr "مشكلة دعم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__assistant_failed
+msgid ""
+"The assistant replied with a technical error the customer could read. Every "
+"one of these is a visitor who saw the system break."
+msgstr ""
+"ردّ المساعد برسالة خطأ تقني قرأها العميل. كل حالة من هذه زائر رأى النظام "
+"يتعطّل أمامه."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "The chat assistant showed an error to %s visitor(s)"
+msgstr "المساعد في الموقع أظهر رسالة خطأ لـ %s زائر"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "The conversation"
+msgstr "المحادثة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__left_unanswered
+msgid "The last word was the customer's and nobody answered."
+msgstr "آخر كلام كان للعميل ولم يردّ عليه أحد."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__has_contact
+msgid "The visitor left an email address or a phone number."
+msgstr "الزائر ترك بريداً إلكترونياً أو رقم جوال."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid ""
+"They saw a technical message instead of an answer. Check the assistant's "
+"provider key and quota — every one of these is a customer who left without "
+"being helped."
+msgstr ""
+"رأوا رسالة تقنية بدل الإجابة. راجع مفتاح مزوّد الخدمة والرصيد المتاح للمساعد"
+" — كل واحد من هؤلاء عميل غادر دون أن يُساعَد."
+
+#. module: era_ai_manager
+#: model:ir.model.constraint,message:era_ai_manager.constraint_era_ai_conversation_source_unique
+msgid "This conversation has already been harvested."
+msgstr "هذه المحادثة قُرئت من قبل."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid ""
+"This conversation was marked as nothing to follow up. Change its kind first "
+"if you disagree."
+msgstr ""
+"صُنّفت هذه المحادثة على أنها لا تستحق المتابعة. غيّر نوعها أولاً إن كنت ترى "
+"غير ذلك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid ""
+"This visitor left no email address and no phone number, so there is no one "
+"to follow up with. The conversation is still worth reading, but it cannot "
+"become a lead."
+msgstr ""
+"هذا الزائر لم يترك بريداً ولا رقم جوال، فلا يوجد من تتابع معه. المحادثة "
+"تستحق القراءة، لكن لا يمكن تحويلها إلى فرصة بيع."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__title
+msgid "Title"
+msgstr "العنوان"
+
+#. module: era_ai_manager
+#: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_conversation__state__new
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "To review"
+msgstr "بحاجة لمراجعة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__transcript
+msgid "Transcript"
+msgstr "نص المحادثة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Unidentified visitor"
+msgstr "زائر غير معروف"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__urgency
+msgid "Urgency"
+msgstr "الأولوية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
+msgid "Urgent"
+msgstr "عاجل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Visitor"
+msgstr "زائر"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__visitor_name
+msgid "Visitor Name"
+msgstr "اسم الزائر"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_list
+msgid "Wanted"
+msgstr "ماذا أراد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__summary
+msgid "What happened and what to do about it."
+msgstr "ماذا حدث وما الذي ينبغي عمله."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "What they wanted"
+msgstr "ماذا كان يريد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__interest
+msgid "What this person wanted, in a few words."
+msgstr "ما أراده هذا الشخص، في كلمات قليلة."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "What to do about it"
+msgstr "ما العمل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__transcript
+msgid "What was actually said."
+msgstr "ما قيل فعلاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "What was said"
+msgstr "ما قيل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Who this was"
+msgstr "من هو"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid ""
+"The assistant answered this visitor with a technical error message.\n"
+"                        They saw it. Whatever they came for, they did not get it here."
+msgstr ""
+"ردّ المساعد على هذا الزائر برسالة خطأ تقني. لقد رآها. ومهما كان سبب زيارته، "
+"فإنه لم يحصل عليه هنا."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%s to see everything, including what has already cleared."
+msgstr "%s لرؤية كل شيء، بما فيه ما تم حلّه."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "AI Manager: %(count)s awaiting approval, %(faults)s still broken"
+msgstr "مدير الذكاء: %(count)s بانتظار الموافقة، و%(faults)s ما زال معطّلاً"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "AI Manager: %s thing(s) still need fixing"
+msgstr "مدير الذكاء: %s أمر ما زال يحتاج إصلاحاً"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid ""
+"If you do nothing they simply keep waiting — nobody is contacted. This part "
+"only arrives while you are in Ramp mode."
+msgstr ""
+"إن لم تفعل شيئاً فستبقى منتظرة ولن يُراسَل أحد. وهذا الجزء لا يصلك إلا في "
+"وضع التدرّج."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Nothing needs approving. These are still broken, though:"
+msgstr "لا شيء بانتظار موافقتك. لكن هذه الأمور ما زالت معطّلة:"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "Still not fixed"
+msgstr "لم يُصلَح بعد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_faults
+msgid "Things Still Broken"
+msgstr "أمور ما زالت معطّلة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "noticed today"
+msgstr "رُصد اليوم"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "open for %s day(s)"
+msgstr "مفتوح منذ %s يوم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_digest_digest__kpi_era_ai_faults_value
+msgid "Kpi Era Ai Faults Value"
+msgstr "عدد الأمور المعطّلة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "AI Manager — Chat follow-up"
+msgstr "مدير الذكاء — متابعة الدردشة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "About your chat with us"
+msgstr "بخصوص محادثتك معنا"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
+msgid "Answer the customer"
+msgstr "أجب العميل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Answers a customer whose chat ended badly."
+msgstr "يجيب العميل الذي انتهت محادثته دون حل."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Chat follow-up"
+msgstr "متابعة دردشة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Hello %s,"
+msgstr "مرحباً %s،"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Hello,"
+msgstr "مرحباً،"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid "Their chat ended without an answer. %s"
+msgstr "انتهت محادثته دون إجابة. %s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid ""
+"There is no email address to answer on. This conversation left only a phone "
+"number."
+msgstr "لا يوجد بريد إلكتروني للرد عليه. هذه المحادثة تركت رقم جوال فقط."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/conversation.py:0
+msgid ""
+"You wrote to us on our website and the chat ended before you had a proper "
+"answer. Reply to this email with what you needed and a person will take it "
+"from here."
+msgstr ""
+"راسلتنا عبر موقعنا وانتهت المحادثة قبل أن تحصل على إجابة وافية. ردّ على هذه "
+"الرسالة بما كنت تحتاجه وسيتولى الأمر أحد أفراد الفريق."
+
+#. module: era_ai_manager
+#: model_terms:ir.actions.act_window,help:era_ai_manager.action_era_ai_conversation
+msgid ""
+"Finished live chats are read here once an hour: what the visitor\n"
+"                wanted, the email address they typed, and whether the assistant\n"
+"                actually helped them. Each one is filed as a lead or a ticket\n"
+"                and the customer is answered by email.\n"
+"                <br>\n"
+"                Chats from anonymous visitors who left no address and no number\n"
+"                are not listed: there is nobody to answer, so there would be\n"
+"                nothing to do with the row. They still count towards the health\n"
+"                checks."
+msgstr ""
+"تُقرأ هنا المحادثات المنتهية كل ساعة: ماذا أراد الزائر، والبريد الذي كتبه، وهل ساعده المساعد فعلاً. وكل محادثة تُسجَّل كفرصة بيع أو تذكرة دعم ويُجاب صاحبها بالبريد.\n"
+"أما محادثات الزوّار المجهولين الذين لم يتركوا بريداً ولا رقماً فلا تُدرج هنا: لا يوجد من تُجيبه، فلا فائدة من الصف أصلاً. وتبقى محسوبة في فحوص السلامة."

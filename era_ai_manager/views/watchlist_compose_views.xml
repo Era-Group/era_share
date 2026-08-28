@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_era_ai_watchlist_compose_form" model="ir.ui.view">
+        <field name="name">era.ai.watchlist.compose.form</field>
+        <field name="model">era.ai.watchlist.compose</field>
+        <field name="arch" type="xml">
+            <form string="Message this audience">
+                <field name="ai_available" invisible="1"/>
+                <field name="will_send_now" invisible="1"/>
+                <field name="watchlist_id" invisible="1"/>
+                <div class="alert alert-info" role="alert">
+                    <field name="matched_count" readonly="1" class="oe_inline"/>
+                    <span> match this rule. </span>
+                    <strong><field name="reachable_count" readonly="1" class="oe_inline"/></strong>
+                    <span> will get a draft.</span>
+                    <div invisible="not skipped_note" class="mt-1">
+                        <field name="skipped_note" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="mt-1">
+                        <field name="autonomy_note" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="mt-1">
+                        Either way each message still passes the queue, so the
+                        frequency cap, opt-outs and the send window all still apply.
+                    </div>
+                </div>
+                <group>
+                    <field name="lang"/>
+                    <field name="subject" placeholder="What the email says at a glance"/>
+                </group>
+                <div class="alert alert-light py-1 px-2 mb-2" role="status"
+                     invisible="not ai_note">
+                    <field name="ai_note" readonly="1" nolabel="1"/>
+                </div>
+                <field name="body_html" widget="html"
+                       placeholder="Write it once. Use {name} where the contact's name should go."/>
+                <footer>
+                    <button name="action_create_drafts" type="object"
+                            string="Send to everyone" class="btn-primary"
+                            invisible="not will_send_now"
+                            confirm="This sends the message to everyone on the list now. Continue?"/>
+                    <button name="action_create_drafts" type="object"
+                            string="Queue for my approval" class="btn-primary"
+                            invisible="will_send_now"/>
+                    <button name="action_write_with_ai" type="object"
+                            string="Rewrite it with AI" invisible="not ai_available"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

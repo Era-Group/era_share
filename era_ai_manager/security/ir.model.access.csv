@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_era_ai_outreach_user,era.ai.outreach user,model_era_ai_outreach,base.group_user,1,0,0,0
+access_era_ai_outreach_system,era.ai.outreach system,model_era_ai_outreach,base.group_system,1,1,1,1
+access_era_ai_outreach_ai,era.ai.outreach ai,model_era_ai_outreach,aidoo.group_ai_user,1,1,1,0
+access_era_ai_watchdog_user,era.ai.watchdog.alert user,model_era_ai_watchdog_alert,base.group_user,1,0,0,0
+access_era_ai_watchdog_system,era.ai.watchdog.alert system,model_era_ai_watchdog_alert,base.group_system,1,1,1,1
+access_era_ai_watchlist_user,era.ai.watchlist user,model_era_ai_watchlist,base.group_user,1,0,0,0
+access_era_ai_watchlist_system,era.ai.watchlist system,model_era_ai_watchlist,base.group_system,1,1,1,1
+access_era_ai_watchlist_ai,era.ai.watchlist ai,model_era_ai_watchlist,aidoo.group_ai_user,1,1,1,0
+access_era_ai_profile_user,era.ai.profile user,model_era_ai_profile,base.group_user,1,0,0,0
+access_era_ai_profile_system,era.ai.profile system,model_era_ai_profile,base.group_system,1,1,1,1
+access_era_ai_profile_ai,era.ai.profile ai,model_era_ai_profile,aidoo.group_ai_user,1,1,0,0
+access_era_ai_compose_system,era.ai.watchlist.compose system,model_era_ai_watchlist_compose,base.group_system,1,1,1,1
+access_era_ai_conversation_user,era.ai.conversation user,model_era_ai_conversation,base.group_user,1,1,0,0
+access_era_ai_conversation_system,era.ai.conversation system,model_era_ai_conversation,base.group_system,1,1,1,1
+access_era_ai_conversation_ai,era.ai.conversation ai,model_era_ai_conversation,aidoo.group_ai_user,1,1,1,0

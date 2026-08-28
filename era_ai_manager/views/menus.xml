@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_era_ai_root" name="AI Manager" sequence="34"
+              web_icon="era_ai_manager,static/description/icon.png"
+              groups="base.group_user"/>
+    <menuitem id="menu_era_ai_outreach" name="Outreach" parent="menu_era_ai_root"
+              action="action_era_ai_outreach" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_era_ai_conversation" name="Conversations" parent="menu_era_ai_root"
+              action="action_era_ai_conversation" sequence="15" groups="base.group_user"/>
+    <menuitem id="menu_era_ai_watchlist" name="Watchlists" parent="menu_era_ai_root"
+              action="action_era_ai_watchlist" sequence="20" groups="base.group_user"/>
+    <menuitem id="menu_era_ai_profile" name="Business Profile" parent="menu_era_ai_root"
+              action="action_era_ai_profile_current" sequence="30" groups="base.group_system"/>
+    <menuitem id="menu_era_ai_watchdog" name="Watchdog" parent="menu_era_ai_root"
+              action="action_era_ai_watchdog" sequence="90" groups="base.group_system"/>
+</odoo>

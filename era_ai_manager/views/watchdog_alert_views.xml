@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_era_ai_watchdog_list" model="ir.ui.view">
+        <field name="name">era.ai.watchdog.alert.list</field>
+        <field name="model">era.ai.watchdog.alert</field>
+        <field name="arch" type="xml">
+            <list string="Watchdog Alerts" create="false" edit="false"
+                  decoration-danger="severity == 'critical' and state == 'open'"
+                  decoration-muted="state == 'resolved'">
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="check_key" optional="hide"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'warning'"/>
+                <field name="state" widget="badge" decoration-success="state == 'resolved'"/>
+                <field name="detail" optional="show"/>
+                <field name="resolved_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_era_ai_watchdog" model="ir.actions.act_window">
+        <field name="name">Watchdog Alerts</field>
+        <field name="res_model">era.ai.watchdog.alert</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+</odoo>

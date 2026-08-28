@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_era_ai_conversation_list" model="ir.ui.view">
+        <field name="name">era.ai.conversation.list</field>
+        <field name="model">era.ai.conversation</field>
+        <field name="arch" type="xml">
+            <list string="Conversations" decoration-danger="assistant_failed"
+                  decoration-bf="has_contact and state == 'new'">
+                <field name="ended_at" string="Ended"/>
+                <field name="visitor_name" string="Who"/>
+                <field name="interest" string="Wanted"/>
+                <field name="email"/>
+                <field name="phone" optional="hide"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="kind"/>
+                <field name="urgency" optional="hide"/>
+                <field name="assistant_failed" string="Assistant broke"/>
+                <field name="message_count" string="Messages" optional="hide"/>
+                <field name="result_ref" string="Followed up as"/>
+                <field name="state"/>
+                <field name="has_contact" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_era_ai_conversation_form" model="ir.ui.view">
+        <field name="name">era.ai.conversation.form</field>
+        <field name="model">era.ai.conversation</field>
+        <field name="arch" type="xml">
+            <form string="Conversation">
+                <header>
+                    <button name="action_reply" type="object" string="Answer the customer"
+                            class="btn-primary" invisible="not email and not partner_id"/>
+                    <button name="action_convert" type="object" string="Follow this up"
+                            invisible="state == 'converted' or kind == 'noise'"/>
+                    <button name="action_open_result" type="object" string="Open the follow-up"
+                            invisible="state != 'converted'"/>
+                    <button name="action_open_source" type="object" string="Open the chat"/>
+                    <button name="action_ignore" type="object" string="Ignore"
+                            invisible="state != 'new'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,converted"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not assistant_failed">
+                        The assistant answered this visitor with a technical error message.
+                        They saw it. Whatever they came for, they did not get it here.
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="visitor_name" placeholder="Who this was"/></h1>
+                        <h3><field name="interest" placeholder="What they wanted"/></h3>
+                    </div>
+                    <group>
+                        <group string="Reaching them">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="partner_id"/>
+                            <field name="has_contact" invisible="1"/>
+                        </group>
+                        <group string="The conversation">
+                            <field name="kind"/>
+                            <field name="urgency"/>
+                            <field name="ended_at"/>
+                            <field name="message_count"/>
+                            <field name="left_unanswered"/>
+                            <field name="poor_rating"/>
+                            <field name="assistant_failed" invisible="1"/>
+                            <field name="result_ref" invisible="state != 'converted'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="What to do about it" name="summary">
+                            <field name="summary" nolabel="1"
+                                   placeholder="Nothing written yet."/>
+                        </page>
+                        <page string="What was said" name="transcript">
+                            <field name="transcript" nolabel="1" readonly="1"
+                                   widget="text" class="font-monospace"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_era_ai_conversation_search" model="ir.ui.view">
+        <field name="name">era.ai.conversation.search</field>
+        <field name="model">era.ai.conversation</field>
+        <field name="arch" type="xml">
+            <search string="Conversations">
+                <field name="visitor_name"/>
+                <field name="email"/>
+                <field name="interest"/>
+                <field name="transcript" string="Anything said"/>
+                <filter name="to_review" string="To review"
+                        domain="[('state', '=', 'new')]"/>
+                <filter name="reachable" string="Left contact details"
+                        domain="[('has_contact', '=', True)]"/>
+                <filter name="broke" string="Assistant broke"
+                        domain="[('assistant_failed', '=', True)]"/>
+                <filter name="urgent" string="Urgent"
+                        domain="[('urgency', '=', 'high')]"/>
+                <separator/>
+                <filter name="sales" string="Sales" domain="[('kind', '=', 'sales')]"/>
+                <filter name="support" string="Support" domain="[('kind', '=', 'support')]"/>
+                <group>
+                    <filter name="by_kind" string="Kind" context="{'group_by': 'kind'}"/>
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_era_ai_conversation" model="ir.actions.act_window">
+        <field name="name">Conversations</field>
+        <field name="res_model">era.ai.conversation</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_to_review': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No conversations read yet</p>
+            <p>
+                Finished live chats are read here once an hour: what the visitor
+                wanted, the email address they typed, and whether the assistant
+                actually helped them. Each one is filed as a lead or a ticket
+                and the customer is answered by email.
+                <br/>
+                Chats from anonymous visitors who left no address and no number
+                are not listed: there is nobody to answer, so there would be
+                nothing to do with the row. They still count towards the health
+                checks.
+            </p>
+        </field>
+    </record>
+</odoo>

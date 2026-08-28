@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_era_ai_watchlist_list" model="ir.ui.view">
+        <field name="name">era.ai.watchlist.list</field>
+        <field name="model">era.ai.watchlist</field>
+        <field name="arch" type="xml">
+            <list string="Watchlists" decoration-muted="state == 'draft'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-warning="state == 'draft'"/>
+                <field name="model_id" options="{'no_create': True}"/>
+                <field name="domain" widget="char"/>
+                <field name="partner_field"/>
+                <field name="play"/>
+                <field name="priority"/>
+                <field name="cooldown_days"/>
+                <field name="match_count" string="Matching now"/>
+                <field name="blocked_reason" optional="show"/>
+                <button name="action_open_matches" type="object" icon="fa-search"
+                        string="See who matches"/>
+                <button name="action_approve" type="object" icon="fa-check"
+                        string="Approve" invisible="state == 'approved'"/>
+                <button name="action_message_everyone" type="object"
+                        icon="fa-envelope" string="Message everyone"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_era_ai_watchlist_form" model="ir.ui.view">
+        <field name="name">era.ai.watchlist.form</field>
+        <field name="model">era.ai.watchlist</field>
+        <field name="arch" type="xml">
+            <form string="Watchlist">
+                <header>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary" invisible="state == 'approved'"/>
+                    <button name="action_approve_anyway" type="object"
+                            string="Approve anyway" invisible="not blocked_reason"
+                            confirm="This audience is larger than the safety limit. Approve it anyway?"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Hold" invisible="state != 'approved'"/>
+                    <button name="action_message_everyone" type="object"
+                            string="Message everyone on this list"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not blocked_reason">
+                        <field name="blocked_reason" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_matches" type="object"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="match_count" widget="statinfo" string="Matching now"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Customers who stopped ordering"/></h1>
+                    </div>
+                    <group>
+                        <group string="Who">
+                            <field name="model_id" options="{'no_create': True}"/>
+                            <field name="domain" placeholder="[('date_order', '&lt;', '2026-01-01')]"/>
+                            <field name="partner_field"/>
+                        </group>
+                        <group string="What they get">
+                            <field name="play" placeholder="winback"/>
+                            <field name="priority"/>
+                            <field name="cooldown_days"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <separator string="What the message should achieve"/>
+                    <div class="text-muted mb-2">
+                        Handed to the AI verbatim. Write it the way you would brief a new
+                        employee: what to say, which evidence to cite, and what not to claim.
+                    </div>
+                    <field name="intent"
+                           placeholder="Ask what got in the way and offer help. Cite when they last ordered and what it was. Do not offer a discount and do not assume they are unhappy."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_era_ai_watchlist_search" model="ir.ui.view">
+        <field name="name">era.ai.watchlist.search</field>
+        <field name="model">era.ai.watchlist</field>
+        <field name="arch" type="xml">
+            <search string="Watchlists">
+                <field name="name"/>
+                <field name="play"/>
+                <field name="model_id"/>
+                <group>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
+                    <filter name="group_play" string="Play" context="{'group_by': 'play'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_era_ai_watchlist" model="ir.actions.act_window">
+        <field name="name">Watchlists</field>
+        <field name="res_model">era.ai.watchlist</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nobody is being watched yet</p>
+            <p>
+                A watchlist is an audience worth chasing: a model, a domain that
+                selects customers who need something, and what to say to them.
+                Run the business survey and let the AI propose them, or add your
+                own here.
+            </p>
+        </field>
+    </record>
+</odoo>

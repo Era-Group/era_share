@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_era_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.era.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="AI Business Manager" name="era_ai_manager"
+                     groups="base.group_system">
+                    <block title="Start here"
+                           help="The manager studies your business, then writes the brief and the audiences it will work from.">
+                        <setting string="Business profile"
+                                 help="Survey this database, let the AI propose a brief and watchlists fitted to your trade, then review and apply.">
+                            <div class="mt-2">
+                                <button name="action_era_ai_open_profile" type="object"
+                                        string="Open the business profile" class="btn-link ps-0"
+                                        icon="fa-search"/>
+                            </div>
+                            <div>
+                                <button name="action_era_ai_survey" type="object"
+                                        string="Survey the business now" class="btn-link ps-0"
+                                        icon="fa-database"/>
+                            </div>
+                        </setting>
+                        <setting string="Audiences being watched"
+                                 help="How many watchlists are defined. Without at least one, the manager has nobody to look after.">
+                            <field name="era_ai_watchlist_count" readonly="True"/>
+                        </setting>
+                    </block>
+                    <block title="Autonomy" help="How much the manager may do without you.">
+                        <setting string="Autonomy level"
+                                 help="Ramp holds every customer message for your approval. Full autonomy sends whatever passes the guardrails.">
+                            <field name="era_ai_autonomy_mode"/>
+                            <div class="mt-2">
+                                <field name="era_ai_ramp_end_date"/>
+                                <span class="text-muted d-block small">
+                                    Switches to full autonomy by itself on this date.
+                                </span>
+                            </div>
+                        </setting>
+                        <setting string="Awaiting your approval"
+                                 help="Messages currently held in the outreach queue.">
+                            <field name="era_ai_pending_count" readonly="True"/>
+                        </setting>
+                    </block>
+                    <block title="Identity" help="Who the customer sees, and where escalations go.">
+                        <setting string="Send customer mail from">
+                            <field name="era_ai_mail_from" placeholder="support@yourcompany.com"/>
+                        </setting>
+                        <setting string="Owner email"
+                                 help="Approval digests, watchdog alerts and the weekly report go here.">
+                            <field name="era_ai_owner_email"/>
+                        </setting>
+                    </block>
+                    <block title="Guardrails" help="Enforced in code — the AI cannot exceed these.">
+                        <setting string="Frequency cap">
+                            <field name="era_ai_cap_days"/>
+                            <span class="ms-2">days between marketing messages</span>
+                        </setting>
+                        <setting string="Repeat protection">
+                            <field name="era_ai_dedup_days"/>
+                            <span class="ms-2">days before the same play may repeat</span>
+                        </setting>
+                        <setting string="Send window"
+                                 help="Marketing is only delivered inside these hours. Replies to customers are always allowed.">
+                            <field name="era_ai_send_hour_start"/>
+                            <span class="mx-2">to</span>
+                            <field name="era_ai_send_hour_end"/>
+                            <div class="mt-2"><field name="era_ai_timezone"/></div>
+                        </setting>
+                    </block>
+                    <block title="The AI manager"
+                           help="One persona holds the brief; the agents carry it out.">
+                        <setting string="The manager's brief"
+                                 help="Written by the discovery step and editable in plain words. Change it to change how the manager behaves.">
+                            <div class="mt-2">
+                                <button name="action_era_ai_open_persona" type="object"
+                                        string="Open and edit the persona" class="btn-link ps-0"
+                                        icon="fa-user-circle"/>
+                            </div>
+                        </setting>
+                        <setting string="The agents"
+                                 help="Discovery, inbox, follow-up, campaigns, watchdog and the weekly report. They ship switched off: connect the persona's AI account first, then activate them.">
+                            <div class="mt-2">
+                                <button name="action_era_ai_open_agents" type="object"
+                                        string="Open the scheduled agents" class="btn-link ps-0"
+                                        icon="fa-magic"/>
+                            </div>
+                            <div>
+                                <button name="action_era_ai_run_watchdog" type="object"
+                                        string="Run watchdog now" class="btn-link ps-0"
+                                        icon="fa-heartbeat"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_process_outreach_queue" model="ir.cron">
+        <field name="name">AI Manager: Process outreach queue</field>
+        <field name="model_id" ref="model_era_ai_outreach"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_process_queue()</field>
+        <field name="interval_number">20</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="cron_pending_digest" model="ir.cron">
+        <field name="name">AI Manager: Daily approval digest</field>
+        <field name="model_id" ref="model_era_ai_outreach"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_pending_digest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="cron_watchdog" model="ir.cron">
+        <field name="name">AI Manager: Watchdog</field>
+        <field name="model_id" ref="model_era_ai_watchdog_alert"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_watchdog()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="cron_harvest_conversations" model="ir.cron">
+        <field name="name">AI Manager: Read finished conversations</field>
+        <field name="model_id" ref="model_era_ai_conversation"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_harvest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

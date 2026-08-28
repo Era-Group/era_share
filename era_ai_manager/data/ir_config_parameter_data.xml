@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Start in ramp mode: the owner approves every message for two weeks. -->
+    <record id="param_autonomy_mode" model="ir.config_parameter">
+        <field name="key">era_ai_manager.autonomy_mode</field>
+        <field name="value">ramp</field>
+    </record>
+    <record id="param_mail_from" model="ir.config_parameter">
+        <field name="key">era_ai_manager.mail_from</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_cap_days" model="ir.config_parameter">
+        <field name="key">era_ai_manager.cap_days</field>
+        <field name="value">7</field>
+    </record>
+    <record id="param_dedup_days" model="ir.config_parameter">
+        <field name="key">era_ai_manager.dedup_days</field>
+        <field name="value">30</field>
+    </record>
+    <record id="param_send_hour_start" model="ir.config_parameter">
+        <field name="key">era_ai_manager.send_hour_start</field>
+        <field name="value">9</field>
+    </record>
+    <record id="param_send_hour_end" model="ir.config_parameter">
+        <field name="key">era_ai_manager.send_hour_end</field>
+        <field name="value">18</field>
+    </record>
+    <record id="param_timezone" model="ir.config_parameter">
+        <field name="key">era_ai_manager.timezone</field>
+        <field name="value">Asia/Riyadh</field>
+    </record>
+    <record id="param_reply_sla_hours" model="ir.config_parameter">
+        <field name="key">era_ai_manager.reply_sla_hours</field>
+        <field name="value">8</field>
+    </record>
+    <!-- Blast radius. A watchlist matching more than this is not an audience,
+         it is the whole customer base, and needs an explicit human decision. -->
+    <record id="param_max_audience_absolute" model="ir.config_parameter">
+        <field name="key">era_ai_manager.max_audience_absolute</field>
+        <field name="value">200</field>
+    </record>
+    <record id="param_max_audience_percent" model="ir.config_parameter">
+        <field name="key">era_ai_manager.max_audience_percent</field>
+        <field name="value">60</field>
+    </record>
+</odoo>

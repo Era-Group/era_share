@@ -25,7 +25,7 @@ code rather than in a prompt.
 
 Business-agnostic by design: no dependency on any particular industry module.
 """,
-    "version": "19.0.1.3.0",
+    "version": "19.0.1.3.1",
     "category": "Productivity",
     "author": "Era Group",
     "email": "info@era.net.sa",

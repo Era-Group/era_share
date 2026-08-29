@@ -2925,6 +2925,53 @@ class TestEraAiExecutiveDashboard(EraAiCommon):
                              "%s does not open anything" % method)
             self.assertTrue(action.get("res_model"))
 
+    def test_the_board_is_rendered_and_not_just_a_list_of_fields(self):
+        board = self._board()
+        html = board.board_html or ""
+        self.assertTrue(html)
+        self.assertIn("Needs you", html)
+        self.assertIn("What it did", html)
+        self.assertIn("The machinery", html)
+
+    def test_the_headline_says_something_is_wrong_when_it_is(self):
+        self.env["era.ai.watchdog.alert"].sudo().create({
+            "check_key": "mail_exception", "name": "Mail is failing",
+            "severity": "critical", "detail": "Check it.",
+        })
+        self.assertIn("wrong", self._board().board_html.lower())
+
+    def test_the_headline_asks_for_the_reader_when_approvals_wait(self):
+        self.env["era.ai.watchdog.alert"].sudo().search([]).unlink()
+        self._draft(self._partner("Patient Co")).write({"state": "pending"})
+        self.assertIn("waiting on you", self._board().board_html.lower())
+
+    def test_a_healthy_board_says_it_is_running_on_its_own(self):
+        """Healthy means staff switched on too: agents that are all off is a
+        system waiting on its owner, however clean the queue looks."""
+        self.env["era.ai.watchdog.alert"].sudo().search([]).unlink()
+        self.Outreach.search([("state", "=", "pending")]).unlink()
+        scheduled = self.env.get("aidoo.scheduled")
+        if scheduled is not None:
+            agents = scheduled.with_context(active_test=False).sudo().search(
+                [], limit=1)
+            agents.write({"active": True})
+        sent = self._draft(self._partner("Busy Co"))
+        sent.write({"state": "sent", "sent_at": fields.Datetime.now()})
+        self.assertIn("running on its own", self._board().board_html.lower())
+
+    def test_problem_cards_only_appear_when_there_is_a_problem(self):
+        self.env["era.ai.watchdog.alert"].sudo().search([]).unlink()
+        self.Outreach.search([]).unlink()
+        board = self._board()
+        self.assertNotIn("broken right now", board.board_html)
+
+    def test_the_board_uses_inline_styles_so_odoo_cannot_strip_them(self):
+        """HTML fields lose <style> blocks; a board that loses its layout in
+        half the places it appears is worse than one that never had any."""
+        html = self._board().board_html
+        self.assertNotIn("<style", html.lower())
+        self.assertIn("style=", html)
+
     def test_opening_it_builds_a_fresh_reading(self):
         action = self.Dashboard.open_dashboard()
         self.assertEqual(action["res_model"], "era.ai.dashboard")

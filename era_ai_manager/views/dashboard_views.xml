@@ -13,100 +13,48 @@
                             invisible="faults_critical == 0 and faults_warning == 0"/>
                     <button name="action_open_pending" type="object"
                             string="Waiting for you" invisible="pending_now == 0"/>
+                    <button name="action_open_sent" type="object"
+                            string="What was sent"/>
+                    <button name="action_open_conversations" type="object"
+                            string="Conversations"/>
                 </header>
                 <sheet>
-                    <div class="oe_title mb-3">
-                        <h1>How the AI manager is doing</h1>
-                        <h5 class="text-muted">
-                            Everything below covers <field name="period_label"
-                            readonly="1" class="oe_inline"/> unless it says otherwise.
-                        </h5>
-                    </div>
-
-                    <field name="verdict_html" widget="html" nolabel="1"
-                           class="mb-3"/>
-
-                    <group>
-                        <group string="Is it running">
-                            <label for="agents_active" string="AI staff switched on"/>
-                            <div>
-                                <field name="agents_active" readonly="1" class="oe_inline"/>
-                                <span> of </span>
-                                <field name="agents_total" readonly="1" class="oe_inline"/>
-                            </div>
-                            <field name="last_agent_run" readonly="1"
-                                   string="Last successful run"/>
-                            <field name="agent_failures" readonly="1"
-                                   string="Runs that failed"/>
-                            <field name="faults_critical" readonly="1"
-                                   string="Broken now"/>
-                            <field name="faults_warning" readonly="1"
-                                   string="Worth a look"/>
-                            <field name="assistant_failures" readonly="1"
-                                   string="Visitors shown an error (7d)"/>
-                        </group>
-                        <group string="How it is set to behave">
-                            <field name="autonomy_label" readonly="1" string="Autonomy"/>
-                            <field name="window_label" readonly="1" string="Sends during"/>
-                            <field name="window_open" readonly="1" string="Window open now"/>
-                            <field name="period_days" string="Period (days)"/>
-                        </group>
+                    <field name="board_html" widget="html" nolabel="1"/>
+                    <group class="mt-3" col="4">
+                        <field name="period_days" string="Show the last (days)"/>
                     </group>
-
-                    <group>
-                        <group string="What it did">
-                            <field name="sent_period" readonly="1" string="Messages sent"/>
-                            <field name="marketing_period" readonly="1"
-                                   string="— reaching out"/>
-                            <field name="replies_period" readonly="1"
-                                   string="— answering a customer"/>
-                            <field name="pending_now" readonly="1"
-                                   string="Waiting for your approval"/>
-                            <field name="blocked_period" readonly="1"
-                                   string="Held back by a guardrail"/>
-                            <field name="blocked_reason" readonly="1"
-                                   string="— most often because"
-                                   invisible="not blocked_reason"/>
-                        </group>
-                        <group string="Did it arrive">
-                            <field name="delivered_period" readonly="1"
-                                   string="Accepted by the mail server"/>
-                            <field name="bounced_period" readonly="1" string="Bounced"/>
-                            <field name="failed_period" readonly="1"
-                                   string="Could not be sent"/>
-                        </group>
+                    <!-- Kept for filters, exports and automated checks; the
+                         board above is what a person reads. -->
+                    <group invisible="1">
+                        <field name="faults_critical"/>
+                        <field name="faults_warning"/>
+                        <field name="pending_now"/>
+                        <field name="sent_period"/>
+                        <field name="marketing_period"/>
+                        <field name="replies_period"/>
+                        <field name="blocked_period"/>
+                        <field name="blocked_reason"/>
+                        <field name="delivered_period"/>
+                        <field name="bounced_period"/>
+                        <field name="failed_period"/>
+                        <field name="agents_active"/>
+                        <field name="agents_total"/>
+                        <field name="agent_failures"/>
+                        <field name="assistant_failures"/>
+                        <field name="last_agent_run"/>
+                        <field name="audience_size"/>
+                        <field name="watchlists_approved"/>
+                        <field name="contacts_reachable"/>
+                        <field name="reached_ever"/>
+                        <field name="opted_out"/>
+                        <field name="conversations_period"/>
+                        <field name="converted_period"/>
+                        <field name="autonomy_label"/>
+                        <field name="window_label"/>
+                        <field name="window_open"/>
+                        <field name="period_label"/>
+                        <field name="verdict_html"/>
                     </group>
-
-                    <group>
-                        <group string="Who it reaches">
-                            <field name="watchlists_approved" readonly="1"
-                                   string="Audiences in use"/>
-                            <field name="audience_size" readonly="1"
-                                   string="Customers under watch"/>
-                            <field name="contacts_reachable" readonly="1"
-                                   string="Contacts with an email address"/>
-                            <field name="reached_ever" readonly="1"
-                                   string="Contacted at least once"/>
-                            <field name="opted_out" readonly="1" string="Opted out"/>
-                        </group>
-                        <group string="Conversations">
-                            <field name="conversations_period" readonly="1"
-                                   string="Chats read"/>
-                            <field name="converted_period" readonly="1"
-                                   string="— became a lead or ticket"/>
-                        </group>
-                    </group>
-
-                    <footer class="mt-3">
-                        <button name="action_open_sent" type="object"
-                                string="Open what was sent"/>
-                        <button name="action_open_blocked" type="object"
-                                string="Open what was held back"/>
-                        <button name="action_open_conversations" type="object"
-                                string="Open the conversations"/>
-                        <button name="action_open_watchlists" type="object"
-                                string="Open the audiences"/>
-                    </footer>
                 </sheet>
             </form>
         </field>

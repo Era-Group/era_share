@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-29 11:54+0000\n"
-"PO-Revision-Date: 2026-08-29 11:54+0000\n"
+"POT-Creation-Date: 2026-08-29 12:27+0000\n"
+"PO-Revision-Date: 2026-08-29 12:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -133,6 +133,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
 msgid "%s awaiting approval"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "%s became a lead or ticket"
 msgstr ""
 
 #. module: era_ai_manager
@@ -266,11 +272,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
 msgid "<span> match this rule. </span>"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "<span> of </span>"
 msgstr ""
 
 #. module: era_ai_manager
@@ -420,7 +421,8 @@ msgid "AI manager persona"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
 msgid "AI staff switched on"
 msgstr ""
 
@@ -428,11 +430,6 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/conversation.py:0
 msgid "About your chat with us"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Accepted by the mail server"
 msgstr ""
 
 #. module: era_ai_manager
@@ -601,11 +598,6 @@ msgid "Audiences being watched"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Audiences in use"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,help:era_ai_manager.field_era_ai_profile__proposed_watchlists
 msgid "Audiences the AI suggests watching. Reviewed, then created."
 msgstr ""
@@ -613,7 +605,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_autonomy_mode
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
 msgid "Autonomy"
 msgstr ""
 
@@ -678,14 +669,14 @@ msgid "Blocked by a guardrail"
 msgstr ""
 
 #. module: era_ai_manager
-#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__body_html
-#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__body_html
-msgid "Body Html"
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__board_html
+msgid "Board Html"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Bounced"
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__body_html
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__body_html
+msgid "Body Html"
 msgstr ""
 
 #. module: era_ai_manager
@@ -702,11 +693,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_profile__state__drafted
 msgid "Brief drafted"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Broken now"
 msgstr ""
 
 #. module: era_ai_manager
@@ -758,11 +744,6 @@ msgid "Chat follow-up"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Chats read"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__check_key
 msgid "Check Key"
 msgstr ""
@@ -795,18 +776,8 @@ msgid "Config Settings"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Contacted at least once"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__contacts_reachable
 msgid "Contacts Reachable"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Contacts with an email address"
 msgstr ""
 
 #. module: era_ai_manager
@@ -844,11 +815,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__cooldown_days
 msgid "Cooldown Days"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Could not be sent"
 msgstr ""
 
 #. module: era_ai_manager
@@ -896,11 +862,6 @@ msgid "Customers Needing Attention"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Customers under watch"
-msgstr ""
-
-#. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/profile.py:0
 msgid "Data found:"
@@ -923,11 +884,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchdog_alert__detail
 msgid "Detail"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Did it arrive"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1060,11 +1016,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model,name:era_ai_manager.model_era_ai_watchlist
 msgid "Era AI Watchlist"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Everything below covers"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1216,11 +1167,6 @@ msgid "Has Message"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Held back by a guardrail"
-msgstr ""
-
-#. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/conversation.py:0
 msgid "Hello %s,"
@@ -1240,11 +1186,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
 msgid "Hold"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "How it is set to behave"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1402,11 +1343,6 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Is it running"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__kind
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_search
 msgid "Kind"
@@ -1469,11 +1405,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist__write_date
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__write_date
 msgid "Last Updated on"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Last successful run"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1594,11 +1525,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
 msgid "Messages currently held in the outreach queue."
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Messages sent"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1812,11 +1738,6 @@ msgid "Open and edit the persona"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Open the audiences"
-msgstr ""
-
-#. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.res_config_settings_view_form_era_ai
 msgid "Open the business profile"
 msgstr ""
@@ -1824,11 +1745,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_conversation_form
 msgid "Open the chat"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Open the conversations"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1854,23 +1770,8 @@ msgid "Open the watchdog"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Open what was held back"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Open what was sent"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__opted_out
 msgid "Opted Out"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Opted out"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1924,11 +1825,6 @@ msgid "Performance"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Period (days)"
-msgstr ""
-
-#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__period_days
 msgid "Period Days"
 msgstr ""
@@ -1979,6 +1875,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_compose_form
 msgid "Queue for my approval"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Quiet — nothing to do"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2155,8 +2057,9 @@ msgid "Running as intended"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Runs that failed"
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Running on its own"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2228,11 +2131,6 @@ msgid "Send window timezone"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Sends during"
-msgstr ""
-
-#. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/dashboard.py:0
 #: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_outreach__state__sent
@@ -2273,6 +2171,11 @@ msgid "Severity"
 msgstr ""
 
 #. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Show the last (days)"
+msgstr ""
+
+#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_watchlist_compose__skipped_note
 msgid "Skipped Note"
 msgstr ""
@@ -2289,6 +2192,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "Something is broken and it is affecting customers now:"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Something is wrong now"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2550,6 +2459,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,help:era_ai_manager.field_era_ai_conversation__left_unanswered
 msgid "The last word was the customer's and nobody answered."
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "The machinery"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2835,11 +2750,6 @@ msgid "Visitor Name"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Visitors shown an error (7d)"
-msgstr ""
-
-#. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
 msgid "Waiting for the send window (%s)."
@@ -2853,8 +2763,9 @@ msgid "Waiting for you"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Waiting for your approval"
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Waiting on you"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2932,7 +2843,8 @@ msgid "What is broken"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
 msgid "What it did"
 msgstr ""
 
@@ -2996,6 +2908,11 @@ msgid "What was said"
 msgstr ""
 
 #. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "What was sent"
+msgstr ""
+
+#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_profile__evidence_summary
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_profile_form
 msgid "What we found"
@@ -3023,7 +2940,8 @@ msgid "Who"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
 msgid "Who it reaches"
 msgstr ""
 
@@ -3079,16 +2997,6 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__window_open
 msgid "Window Open"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Window open now"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "Worth a look"
 msgstr ""
 
 #. module: era_ai_manager
@@ -3162,8 +3070,50 @@ msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "accepted by the mail server"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "across %s audience(s)"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
 msgid "an unknown contact"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "answering a customer"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "broken right now"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "chats read"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "closed"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "contacted / reachable"
 msgstr ""
 
 #. module: era_ai_manager
@@ -3185,8 +3135,38 @@ msgid "crm.lead"
 msgstr ""
 
 #. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "customers watched"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "did not reach anyone"
+msgstr ""
+
+#. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
 msgid "e.g. Customers who stopped ordering"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "held back"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "last 7 days"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "last successful run"
 msgstr ""
 
 #. module: era_ai_manager
@@ -3197,14 +3177,44 @@ msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "messages sent"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "never"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
 #: code:addons/era_ai_manager/models/profile.py:0
 msgid "nobody yet"
 msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "none"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "nothing is being watched"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "noticed today"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "open"
 msgstr ""
 
 #. module: era_ai_manager
@@ -3227,8 +3237,32 @@ msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "opted out"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "reaching out"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
 msgid "read it"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "runs that failed"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "send window"
 msgstr ""
 
 #. module: era_ai_manager
@@ -3261,31 +3295,18 @@ msgid "ticket"
 msgstr ""
 
 #. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "unless it says otherwise."
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "visitors shown an error"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "waiting for your approval"
 msgstr ""
 
 #. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_form
 msgid "winback"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "— answering a customer"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "— became a lead or ticket"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "— most often because"
-msgstr ""
-
-#. module: era_ai_manager
-#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
-msgid "— reaching out"
 msgstr ""

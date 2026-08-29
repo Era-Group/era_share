@@ -1,4 +1,5 @@
 from . import conversation
+from . import dashboard
 from . import digest
 from . import outreach
 from . import profile

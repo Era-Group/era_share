@@ -64,6 +64,7 @@
                         </setting>
                         <setting string="Send window"
                                  help="Marketing is only delivered inside these hours. Replies to customers are always allowed.">
+                            <field name="era_ai_send_days"/>
                             <field name="era_ai_send_hour_start"/>
                             <span class="mx-2">to</span>
                             <field name="era_ai_send_hour_end"/>

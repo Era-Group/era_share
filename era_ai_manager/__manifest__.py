@@ -25,7 +25,7 @@ code rather than in a prompt.
 
 Business-agnostic by design: no dependency on any particular industry module.
 """,
-    "version": "19.0.1.4.0",
+    "version": "19.0.1.5.0",
     "category": "Productivity",
     "author": "Era Group",
     "email": "info@era.net.sa",
@@ -47,6 +47,7 @@ Business-agnostic by design: no dependency on any particular industry module.
         "data/ai_staff_data.xml",
         "data/ir_cron_data.xml",
         "views/profile_views.xml",
+        "views/dashboard_views.xml",
         "views/conversation_views.xml",
         "views/watchlist_views.xml",
         "views/watchlist_compose_views.xml",

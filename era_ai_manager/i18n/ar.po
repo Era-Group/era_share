@@ -2849,3 +2849,566 @@ msgstr "بانتظار نافذة الإرسال (%s)."
 #: code:addons/era_ai_manager/models/outreach.py:0
 msgid "Wednesday"
 msgstr "الأربعاء"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "%(audience)s customer(s) are under watch across %(lists)s audience(s)."
+msgstr "%(audience)s عميل تحت المراقبة عبر %(lists)s فئة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"%(count)s message(s) are waiting for your approval and will not go anywhere "
+"until you look. %(link)s"
+msgstr ""
+"%(count)s رسالة بانتظار موافقتك ولن تذهب إلى أي مكان حتى تطّلع عليها. "
+"%(link)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"%(count)s thing(s) are broken right now and affecting customers. %(link)s"
+msgstr "%(count)s أمر معطّل الآن ويؤثّر على العملاء. %(link)s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "%(done)s of %(read)s chat(s) read became a lead or a ticket."
+msgstr "%(done)s من %(read)s محادثة مقروءة صارت فرصة بيع أو تذكرة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "%(failed)s message(s) could not be delivered and %(bounced)s bounced."
+msgstr "%(failed)s رسالة تعذّر تسليمها و%(bounced)s ارتدّت."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "%(on)s of %(all)s AI staff are switched on."
+msgstr "%(on)s من %(all)s من طاقم الذكاء مُفعَّل."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"%(total)s message(s) went out in %(period)s — %(marketing)s reaching out, "
+"%(replies)s answering someone who wrote first."
+msgstr ""
+"خرجت %(total)s رسالة خلال %(period)s — %(marketing)s مبادرة بالتواصل، "
+"و%(replies)s رداً على من راسلنا أولاً."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "<span> of </span>"
+msgstr "<span> من </span>"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "AI staff switched on"
+msgstr "طاقم الذكاء المُفعَّل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Accepted by the mail server"
+msgstr "قبِلها خادم البريد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__agent_failures
+msgid "Agent Failures"
+msgstr "تشغيلات فاشلة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__agents_active
+msgid "Agents Active"
+msgstr "وكلاء نشطون"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__agents_total
+msgid "Agents Total"
+msgstr "إجمالي الوكلاء"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__assistant_failures
+msgid "Assistant Failures"
+msgstr "أعطال المساعد"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__audience_size
+msgid "Audience Size"
+msgstr "حجم الفئة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Audiences"
+msgstr "الفئات"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Audiences in use"
+msgstr "فئات قيد الاستخدام"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__autonomy_label
+msgid "Autonomy Label"
+msgstr "وضع الاستقلالية"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__blocked_period
+msgid "Blocked Period"
+msgstr "محجوب في الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Blocked by a guardrail"
+msgstr "حجبه ضابط أمان"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Bounced"
+msgstr "ارتدّت"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__bounced_period
+msgid "Bounced Period"
+msgstr "مرتدّة في الفترة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Broken now"
+msgstr "معطّل الآن"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Chats read"
+msgstr "محادثات مقروءة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Contacted at least once"
+msgstr "جرى التواصل معه مرة على الأقل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__contacts_reachable
+msgid "Contacts Reachable"
+msgstr "جهات يمكن مراسلتها"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Contacts with an email address"
+msgstr "جهات لديها بريد إلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__conversations_period
+msgid "Conversations Period"
+msgstr "محادثات الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Conversations read"
+msgstr "المحادثات المقروءة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__converted_period
+msgid "Converted Period"
+msgstr "محوّلة في الفترة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Could not be sent"
+msgstr "تعذّر إرسالها"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Customers under watch"
+msgstr "عملاء تحت المراقبة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__delivered_period
+msgid "Delivered Period"
+msgstr "مسلّمة في الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"Deliveries are counted from the mail server's own answer. Opens and clicks "
+"are not tracked, so this page will never claim to know whether a message was"
+" read."
+msgstr ""
+"التسليم محسوب من ردّ خادم البريد نفسه. الفتح والنقر غير متتبَّعين، فلن تدّعي"
+" هذه الصفحة يوماً أنها تعرف هل قُرئت الرسالة أم لا."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Did it arrive"
+msgstr "هل وصلت"
+
+#. module: era_ai_manager
+#: model:ir.model,name:era_ai_manager.model_era_ai_dashboard
+msgid "Era AI Executive Dashboard"
+msgstr "لوحة الأداء التنفيذية"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Everything below covers"
+msgstr "كل ما يلي يغطّي"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__failed_period
+msgid "Failed Period"
+msgstr "فاشلة في الفترة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__faults_critical
+msgid "Faults Critical"
+msgstr "أعطال حرجة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__faults_warning
+msgid "Faults Warning"
+msgstr "أعطال تحذيرية"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Full autonomy — messages go out without you"
+msgstr "استقلال كامل — الرسائل تخرج دون تدخّلك"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Held back by a guardrail"
+msgstr "حجبه ضابط أمان"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "How it is set to behave"
+msgstr "كيف ضُبط ليعمل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "How the AI manager is doing"
+msgstr "كيف يؤدّي المدير الذكي"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Is it running"
+msgstr "هل يعمل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__last_agent_run
+msgid "Last Agent Run"
+msgstr "آخر تشغيل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Last successful run"
+msgstr "آخر تشغيل ناجح"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__marketing_period
+msgid "Marketing Period"
+msgstr "مبادرات الفترة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Messages sent"
+msgstr "رسائل أُرسلت"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Needs you"
+msgstr "يحتاجك"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"None of the %s AI staff is switched on, so nothing is being watched or "
+"written."
+msgstr "لا أحد من طاقم الذكاء الـ %s مُفعَّل، فلا شيء يُراقَب ولا شيء يُكتَب."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"Nothing has been sent in %s. Either nobody needed contacting, or the manager"
+" is not running."
+msgstr ""
+"لم يُرسل شيء خلال %s. إمّا أن أحداً لم يكن يحتاج تواصلاً، وإمّا أن المدير "
+"متوقّف."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Open the audiences"
+msgstr "افتح الفئات"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Open the conversations"
+msgstr "افتح المحادثات"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Open what was held back"
+msgstr "افتح ما حُجب"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Open what was sent"
+msgstr "افتح ما أُرسل"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__opted_out
+msgid "Opted Out"
+msgstr "منسحبون"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Opted out"
+msgstr "منسحبون"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__pending_now
+msgid "Pending Now"
+msgstr "بانتظار الموافقة"
+
+#. module: era_ai_manager
+#: model:ir.actions.server,name:era_ai_manager.action_era_ai_dashboard
+#: model:ir.ui.menu,name:era_ai_manager.menu_era_ai_dashboard
+msgid "Performance"
+msgstr "الأداء"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Period (days)"
+msgstr "الفترة (أيام)"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__period_days
+msgid "Period Days"
+msgstr "أيام الفترة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__period_label
+msgid "Period Label"
+msgstr "وصف الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Ramp — you approve every message"
+msgstr "تدرّج — أنت توافق على كل رسالة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__reached_ever
+msgid "Reached Ever"
+msgstr "جرى التواصل معهم"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__replies_period
+msgid "Replies Period"
+msgstr "ردود الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Review them"
+msgstr "راجعها"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Running as intended"
+msgstr "يعمل كما ينبغي"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Runs that failed"
+msgstr "تشغيلات فشلت"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "See what"
+msgstr "اعرف ماذا"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Sends during"
+msgstr "يُرسل خلال"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__sent_period
+msgid "Sent Period"
+msgstr "مرسلة في الفترة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Still broken"
+msgstr "ما زال معطّلاً"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid ""
+"The website assistant showed a technical error to %s visitor(s) in the last "
+"week."
+msgstr "المساعد في الموقع أظهر خطأً تقنياً لـ %s زائر خلال الأسبوع الماضي."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__verdict_html
+msgid "Verdict Html"
+msgstr "الخلاصة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Visitors shown an error (7d)"
+msgstr "زوّار رأوا خطأً (7 أيام)"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Waiting for you"
+msgstr "بانتظارك"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Waiting for your approval"
+msgstr "بانتظار موافقتك"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__watchlists_approved
+msgid "Watchlists Approved"
+msgstr "قوائم معتمدة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "What is broken"
+msgstr "ما هو المعطّل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "What it did"
+msgstr "ماذا فعل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Who it reaches"
+msgstr "من يصل إليهم"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__window_label
+msgid "Window Label"
+msgstr "وصف النافذة"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_dashboard__window_open
+msgid "Window Open"
+msgstr "النافذة مفتوحة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Window open now"
+msgstr "النافذة مفتوحة الآن"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "Worth a look"
+msgstr "يستحق النظر"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "create_date"
+msgstr "تاريخ الإنشاء"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "sent_at"
+msgstr "وقت الإرسال"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "state"
+msgstr "الحالة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "the last %s days"
+msgstr "آخر %s يوم"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "unless it says otherwise."
+msgstr "ما لم يُذكر خلاف ذلك."
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "— answering a customer"
+msgstr "— رداً على عميل"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "— became a lead or ticket"
+msgstr "— صارت فرصة أو تذكرة"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "— most often because"
+msgstr "— والسبب الأغلب"
+
+#. module: era_ai_manager
+#: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_dashboard_form
+msgid "— reaching out"
+msgstr "— مبادرة بالتواصل"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/res_config_settings.py:0
+msgid "%(bad)s is not a day. Use: sun, mon, tue, wed, thu, fri, sat."
+msgstr "%(bad)s ليس يوماً. استخدم: sun, mon, tue, wed, thu, fri, sat."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/res_config_settings.py:0
+msgid ""
+"Name at least one day to send on, or outreach can never go out. Use: sun, "
+"mon, tue, wed, thu, fri, sat."
+msgstr ""
+"حدّد يوماً واحداً على الأقل للإرسال، وإلا فلن تخرج أي مراسلة. استخدم: sun, "
+"mon, tue, wed, thu, fri, sat."
+
+#. module: era_ai_manager
+#: model:ir.model.fields,field_description:era_ai_manager.field_res_config_settings__era_ai_send_days
+msgid "Send on these days"
+msgstr "يُرسل في هذه الأيام"
+
+#. module: era_ai_manager
+#: model:ir.model.fields,help:era_ai_manager.field_res_config_settings__era_ai_send_days
+msgid ""
+"The working week for outreach, comma separated: sun, mon, tue, wed, thu, "
+"fri, sat. Replies to customers are never held back by this — answering "
+"someone who wrote to you is not marketing."
+msgstr ""
+"أسبوع العمل للمراسلات، مفصولة بفواصل: sun, mon, tue, wed, thu, fri, sat. "
+"والردود على العملاء لا تُحجب بهذا أبداً — الردّ على من راسلك ليس تسويقاً."

@@ -2815,3 +2815,186 @@ class TestEraAiDailyRecordOfWhatWentOut(EraAiCommon):
         self.param.set_param("era_ai_manager.autonomy_mode", "ramp")
         self._sent()
         self.assertIn("Recent Co", self._report().body_html)
+
+
+@tagged("post_install", "-at_install")
+class TestEraAiExecutiveDashboard(EraAiCommon):
+    """One screen a manager reads in a minute.
+
+    The risk with a dashboard is that it reassures. Every number here has to
+    be one the reader could check, and the summary has to lead with whatever
+    is worst rather than opening on good news.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.Dashboard = self.env["era.ai.dashboard"].sudo()
+
+    def _board(self, days=30):
+        board = self.Dashboard.create({"period_days": days})
+        board._measure()
+        return board
+
+    def test_it_reads_without_any_data_at_all(self):
+        """A fresh install must not greet its owner with a traceback."""
+        self.Outreach.search([]).unlink()
+        self.Watchlist.search([]).unlink()
+        board = self._board()
+        self.assertEqual(board.sent_period, 0)
+        self.assertTrue(board.verdict_html)
+
+    def test_it_counts_what_was_sent_and_splits_it_honestly(self):
+        marketing = self._draft(self._partner("Reach Co"), play="winback")
+        marketing.write({"state": "sent", "sent_at": fields.Datetime.now()})
+        answer = self._draft(self._partner("Asked Co"), play="reply")
+        answer.write({"state": "sent", "sent_at": fields.Datetime.now()})
+        board = self._board()
+        self.assertEqual(board.sent_period, 2)
+        self.assertEqual(board.marketing_period, 1)
+        self.assertEqual(board.replies_period, 1,
+                         "answering a customer is not outreach")
+
+    def test_messages_outside_the_period_are_not_counted(self):
+        old = self._draft(self._partner("Old Co"))
+        old.write({"state": "sent",
+                   "sent_at": fields.Datetime.now() - timedelta(days=60)})
+        self.assertEqual(self._board(days=30).sent_period, 0)
+
+    def test_the_summary_leads_with_what_is_broken(self):
+        self.env["era.ai.watchdog.alert"].sudo().create({
+            "check_key": "mail_exception", "name": "Outgoing email is failing",
+            "severity": "critical", "detail": "Check the server.",
+        })
+        sent = self._draft(self._partner("Fine Co"))
+        sent.write({"state": "sent", "sent_at": fields.Datetime.now()})
+        board = self._board()
+        html = board.verdict_html
+        self.assertIn("Needs you", html)
+        self.assertLess(html.index("Needs you"), html.index("Running as intended"))
+
+    def test_it_never_claims_to_know_whether_a_message_was_read(self):
+        """No open or click tracking exists, so the page must not imply it."""
+        board = self._board()
+        self.assertIn("not tracked", board.verdict_html.lower())
+
+    def test_pending_approvals_are_surfaced_as_needing_the_reader(self):
+        self._draft(self._partner("Waiting Co")).write({"state": "pending"})
+        board = self._board()
+        self.assertEqual(board.pending_now, 1)
+        self.assertIn("waiting for your approval", board.verdict_html.lower())
+
+    def test_it_reports_the_commonest_reason_things_were_held_back(self):
+        for index in range(3):
+            record = self._draft(self._partner("Blocked %s" % index))
+            record.write({"state": "blocked", "block_reason": "Frequency cap"})
+        record = self._draft(self._partner("Odd One"))
+        record.write({"state": "blocked", "block_reason": "Opted out"})
+        board = self._board()
+        self.assertEqual(board.blocked_period, 4)
+        self.assertEqual(board.blocked_reason, "Frequency cap")
+
+    def test_it_states_the_autonomy_setting_in_plain_words(self):
+        self.param.set_param("era_ai_manager.autonomy_mode", "full")
+        self.assertIn("without you", self._board().autonomy_label.lower())
+        self.param.set_param("era_ai_manager.autonomy_mode", "ramp")
+        self.assertIn("approve", self._board().autonomy_label.lower())
+
+    def test_it_shows_the_send_window_the_owner_configured(self):
+        board = self._board()
+        self.assertTrue(board.window_label)
+        self.assertIn("00", board.window_label)
+
+    def test_silent_agents_are_reported_as_a_problem_not_a_statistic(self):
+        scheduled = self.env.get("aidoo.scheduled")
+        if scheduled is None:
+            self.skipTest("Aidoo is not installed here")
+        agents = scheduled.with_context(active_test=False).sudo()
+        if not agents.search_count([]):
+            self.skipTest("No scheduled agents on this install")
+        agents.search([("active", "=", True)]).write({"active": False})
+        board = self._board()
+        self.assertEqual(board.agents_active, 0)
+        self.assertIn("nothing is being watched", board.verdict_html.lower())
+
+    def test_every_headline_number_opens_its_records(self):
+        for method in ("action_open_sent", "action_open_pending",
+                       "action_open_blocked", "action_open_faults",
+                       "action_open_conversations", "action_open_watchlists"):
+            action = getattr(self._board(), method)()
+            self.assertEqual(action["type"], "ir.actions.act_window",
+                             "%s does not open anything" % method)
+            self.assertTrue(action.get("res_model"))
+
+    def test_opening_it_builds_a_fresh_reading(self):
+        action = self.Dashboard.open_dashboard()
+        self.assertEqual(action["res_model"], "era.ai.dashboard")
+        board = self.Dashboard.browse(action["res_id"])
+        self.assertTrue(board.verdict_html)
+
+
+@tagged("post_install", "-at_install")
+class TestEraAiSettingsDoNotUndoThemselves(EraAiCommon):
+    """Odoo writes every config_parameter field when the settings are saved.
+
+    A default left behind in the settings model therefore silently reverts the
+    real setting the moment anyone opens the page and presses save. That is
+    how a 10:00-16:00 window went back to 09:00-18:00 with nobody touching it.
+    """
+
+    def _settings(self, values=None):
+        return self.env["res.config.settings"].sudo().create(values or {})
+
+    def test_saving_untouched_settings_keeps_the_shipped_window(self):
+        self.param.set_param("era_ai_manager.send_hour_start", "10")
+        self.param.set_param("era_ai_manager.send_hour_end", "16")
+        self.param.set_param("era_ai_manager.send_days", "sun,mon,tue,wed,thu")
+        settings = self._settings()
+        settings.execute()
+        self.assertEqual(
+            self.param.get_param("era_ai_manager.send_hour_start"), "10")
+        self.assertEqual(
+            self.param.get_param("era_ai_manager.send_hour_end"), "16")
+        self.assertEqual(
+            self.param.get_param("era_ai_manager.send_days"),
+            "sun,mon,tue,wed,thu")
+
+    def test_the_working_week_can_be_changed_from_the_settings(self):
+        settings = self._settings({"era_ai_send_days": "mon,tue,wed,thu,fri"})
+        settings.execute()
+        self.assertEqual(self.param.get_param("era_ai_manager.send_days"),
+                         "mon,tue,wed,thu,fri")
+
+    def test_a_word_that_is_not_a_day_is_refused_not_ignored(self):
+        """The engine treats anything unrecognised as "use the default" —
+        safe, but silent, and a silently ignored setting is worse."""
+        with self.assertRaises(UserError):
+            self._settings({"era_ai_send_days": "sun,weekend,mon"}).execute()
+
+    def test_the_longer_spellings_of_a_day_are_accepted(self):
+        """Matching on the first three letters is deliberate: nobody should
+        have to learn that it is "thu" and not "thursday"."""
+        self._settings({"era_ai_send_days": "sunday,monday,thursday"}).execute()
+        self.assertEqual(self.param.get_param("era_ai_manager.send_days"),
+                         "sunday,monday,thursday")
+        self.assertEqual(self.Outreach._send_days(), {6, 0, 3})
+
+    def test_an_empty_week_is_refused(self):
+        with self.assertRaises(UserError):
+            self._settings({"era_ai_send_days": "   "}).execute()
+
+    def test_the_settings_defaults_match_what_the_module_ships(self):
+        """If these drift apart, opening the page is enough to break it.
+
+        Checked against the field declarations rather than default_get, which
+        reports the stored parameters — the very values a stale default would
+        be about to overwrite.
+        """
+        fields_of = self.env["res.config.settings"]._fields
+        expected = {"era_ai_send_hour_start": 10, "era_ai_send_hour_end": 16,
+                    "era_ai_send_days": "sun,mon,tue,wed,thu"}
+        for name, want in expected.items():
+            declared = fields_of[name].default
+            if callable(declared):
+                declared = declared(self.env["res.config.settings"])
+            self.assertEqual(declared, want,
+                             "%s ships a default that contradicts the module" % name)

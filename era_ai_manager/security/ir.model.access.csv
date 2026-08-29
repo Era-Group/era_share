@@ -14,3 +14,4 @@ access_era_ai_compose_system,era.ai.watchlist.compose system,model_era_ai_watchl
 access_era_ai_conversation_user,era.ai.conversation user,model_era_ai_conversation,base.group_user,1,1,0,0
 access_era_ai_conversation_system,era.ai.conversation system,model_era_ai_conversation,base.group_system,1,1,1,1
 access_era_ai_conversation_ai,era.ai.conversation ai,model_era_ai_conversation,aidoo.group_ai_user,1,1,1,0
+access_era_ai_dashboard_user,era.ai.dashboard user,model_era_ai_dashboard,base.group_user,1,1,1,1

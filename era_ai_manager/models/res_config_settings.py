@@ -1,4 +1,7 @@
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
+from .outreach import WEEKDAY_NAMES
 
 
 class ResConfigSettings(models.TransientModel):
@@ -35,15 +38,28 @@ class ResConfigSettings(models.TransientModel):
         default=30,
         config_parameter="era_ai_manager.dedup_days",
     )
+    # These defaults must match the ones the module ships and its migration
+    # sets. Odoo writes every config_parameter field on save, so a stale
+    # default here silently reverts the real setting the moment anyone opens
+    # this page and presses save — which is exactly how a 10:00-16:00 window
+    # went back to 09:00-18:00 without anyone touching it.
     era_ai_send_hour_start = fields.Integer(
         string="Send window starts at",
-        default=9,
+        default=10,
         config_parameter="era_ai_manager.send_hour_start",
     )
     era_ai_send_hour_end = fields.Integer(
         string="Send window ends at",
-        default=18,
+        default=16,
         config_parameter="era_ai_manager.send_hour_end",
+    )
+    era_ai_send_days = fields.Char(
+        string="Send on these days",
+        default="sun,mon,tue,wed,thu",
+        config_parameter="era_ai_manager.send_days",
+        help="The working week for outreach, comma separated: sun, mon, tue, "
+             "wed, thu, fri, sat. Replies to customers are never held back by "
+             "this — answering someone who wrote to you is not marketing.",
     )
     era_ai_timezone = fields.Char(
         string="Send window timezone",
@@ -65,12 +81,37 @@ class ResConfigSettings(models.TransientModel):
         return res
 
     def set_values(self):
+        self._check_send_days()
         super().set_values()
         self.env["ir.config_parameter"].sudo().set_param(
             "era_ai_manager.ramp_end_date",
             fields.Date.to_string(self.era_ai_ramp_end_date)
             if self.era_ai_ramp_end_date else "",
         )
+
+    def _check_send_days(self):
+        """Reject a typo instead of quietly falling back to the default week.
+
+        The reader of this field cannot tell "thurs" from "thu", and the
+        engine treats anything it does not recognise as "use the default" —
+        safe, but silent, and a silently ignored setting is worse than a
+        refused one.
+        """
+        for settings in self:
+            raw = (settings.era_ai_send_days or "").strip()
+            if not raw:
+                raise UserError(_(
+                    "Name at least one day to send on, or outreach can never "
+                    "go out. Use: sun, mon, tue, wed, thu, fri, sat."))
+            unknown = [token.strip() for token in raw.split(",")
+                       if token.strip()
+                       and token.strip().lower()[:3] not in WEEKDAY_NAMES
+                       and not (token.strip().isdigit()
+                                and 0 <= int(token.strip()) <= 6)]
+            if unknown:
+                raise UserError(_(
+                    "%(bad)s is not a day. Use: sun, mon, tue, wed, thu, fri, "
+                    "sat.", bad=", ".join(unknown)))
 
     @api.depends_context("uid")
     def _compute_era_ai_counts(self):

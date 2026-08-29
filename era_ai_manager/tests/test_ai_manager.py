@@ -2972,6 +2972,64 @@ class TestEraAiExecutiveDashboard(EraAiCommon):
         self.assertNotIn("<style", html.lower())
         self.assertIn("style=", html)
 
+    def test_every_card_on_the_board_is_a_link(self):
+        """A figure a manager cannot open is a figure they cannot check."""
+        import re
+        self.env["era.ai.watchdog.alert"].sudo().create({
+            "check_key": "mail_exception", "name": "Mail is failing",
+            "severity": "critical", "detail": "Check it.",
+        })
+        self._draft(self._partner("Patient Co")).write({"state": "pending"})
+        html = self._board().board_html
+        cards = re.findall(r"font-size:30px", html)
+        links = re.findall(r"<a href='[^']+/odoo/action-\d+'", html)
+        self.assertTrue(cards, "the board rendered no cards at all")
+        self.assertGreaterEqual(
+            len(links), len(cards) - 1,
+            "%s card(s) but only %s of them open anything" % (
+                len(cards), len(links)))
+
+    def test_not_one_card_refuses_to_open(self):
+        """A single dead card reads as a broken page, so the setting-shaped
+        one lands on the settings rather than nowhere."""
+        import re
+        html = self._board().board_html
+        parts = re.split(
+            r"(?=<a href='[^']*/odoo/action-|<div style='flex:1 1 150px)", html)
+        dead = [p for p in parts
+                if "font-size:30px" in p and "/odoo/action-" not in p]
+        self.assertFalse(dead, "%s card(s) open nothing" % len(dead))
+
+    def test_the_whole_card_is_clickable_not_only_the_number(self):
+        html = self._board().board_html
+        self.assertIn("display:block;text-decoration:none", html)
+
+    def test_a_card_points_at_the_records_it_counts(self):
+        self._draft(self._partner("Held Co")).write(
+            {"state": "blocked", "block_reason": "Frequency cap"})
+        board = self._board()
+        blocked = self.env.ref("era_ai_manager.action_dash_blocked")
+        self.assertIn("/odoo/action-%s" % blocked.id, board.board_html)
+        self.assertEqual(blocked.res_model, "era.ai.outreach")
+
+    def test_a_card_stays_plain_when_its_model_is_absent(self):
+        """Helpdesk and live chat are optional; a link to nowhere is worse
+        than no link."""
+        board = self._board()
+        self.assertFalse(board._card_url("action_does_not_exist"))
+
+    def test_the_landing_actions_all_resolve(self):
+        for name in ("faults", "broken_chats", "pending", "agents",
+                     "agent_failures", "last_run", "sent", "marketing",
+                     "replies", "delivered", "undelivered", "blocked",
+                     "audiences", "reachable", "conversations", "opted_out"):
+            action = self.env.ref("era_ai_manager.action_dash_%s" % name,
+                                  raise_if_not_found=False)
+            self.assertTrue(action, "action_dash_%s is missing" % name)
+            self.assertTrue(self.env.get(action.res_model) is not None
+                            or action.res_model in ("helpdesk.ticket",),
+                            "%s points at a model that is not here" % name)
+
     def test_opening_it_builds_a_fresh_reading(self):
         action = self.Dashboard.open_dashboard()
         self.assertEqual(action["res_model"], "era.ai.dashboard")

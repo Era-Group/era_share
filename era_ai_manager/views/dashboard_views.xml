@@ -66,4 +66,105 @@
         <field name="state">code</field>
         <field name="code">action = model.open_dashboard()</field>
     </record>
+
+    <!-- One landing place per card. Declared as real actions rather than
+         built in Python because a card is a link in an HTML field, and a link
+         can only carry a URL. None of them is date-limited: the card counts a
+         period, the list shows everything newest first, so the number and the
+         list can never disagree with each other. -->
+    <record id="action_dash_faults" model="ir.actions.act_window">
+        <field name="name">Still broken</field>
+        <field name="res_model">era.ai.watchdog.alert</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'open')]</field>
+    </record>
+    <record id="action_dash_broken_chats" model="ir.actions.act_window">
+        <field name="name">Chats where the assistant failed</field>
+        <field name="res_model">discuss.channel</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('channel_type', '=', 'livechat')]</field>
+    </record>
+    <record id="action_dash_pending" model="ir.actions.act_window">
+        <field name="name">Waiting for your approval</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+    </record>
+    <record id="action_dash_agents" model="ir.actions.act_window">
+        <field name="name">The AI staff</field>
+        <field name="res_model">aidoo.scheduled</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+    <record id="action_dash_agent_failures" model="ir.actions.act_window">
+        <field name="name">Runs that failed</field>
+        <field name="res_model">aidoo.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'error')]</field>
+    </record>
+    <record id="action_dash_last_run" model="ir.actions.act_window">
+        <field name="name">Agent runs</field>
+        <field name="res_model">aidoo.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('scheduled_id', '!=', False)]</field>
+    </record>
+    <record id="action_dash_sent" model="ir.actions.act_window">
+        <field name="name">Messages sent</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'sent')]</field>
+    </record>
+    <record id="action_dash_marketing" model="ir.actions.act_window">
+        <field name="name">Reaching out</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'sent'), ('play', '!=', 'reply')]</field>
+    </record>
+    <record id="action_dash_replies" model="ir.actions.act_window">
+        <field name="name">Answers to customers</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'sent'), ('play', '=', 'reply')]</field>
+    </record>
+    <record id="action_dash_delivered" model="ir.actions.act_window">
+        <field name="name">Accepted by the mail server</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'sent'), ('mail_id.state', '=', 'sent')]</field>
+    </record>
+    <record id="action_dash_undelivered" model="ir.actions.act_window">
+        <field name="name">Did not reach anyone</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('mail_id.state', 'in', ['exception', 'cancel'])]</field>
+    </record>
+    <record id="action_dash_blocked" model="ir.actions.act_window">
+        <field name="name">Held back by a guardrail</field>
+        <field name="res_model">era.ai.outreach</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'blocked')]</field>
+    </record>
+    <record id="action_dash_audiences" model="ir.actions.act_window">
+        <field name="name">Audiences</field>
+        <field name="res_model">era.ai.watchlist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'approved')]</field>
+    </record>
+    <record id="action_dash_reachable" model="ir.actions.act_window">
+        <field name="name">Contacts with an email address</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('email', '!=', False)]</field>
+    </record>
+    <record id="action_dash_conversations" model="ir.actions.act_window">
+        <field name="name">Conversations read</field>
+        <field name="res_model">era.ai.conversation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_dash_opted_out" model="ir.actions.act_window">
+        <field name="name">Opted out</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_blacklisted', '=', True)]</field>
+    </record>
 </odoo>

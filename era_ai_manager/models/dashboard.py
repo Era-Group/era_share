@@ -278,23 +278,55 @@ class EraAiDashboard(models.TransientModel):
     MUTED = "#6b7785"
     LINE = "#e3e6ea"
 
-    def _card(self, value, label, tone="plain", note="", link=""):
-        """One number, big enough to read across a desk."""
+    def _card(self, value, label, tone="plain", note="", target=""):
+        """One number, big enough to read across a desk — and a way in.
+
+        The whole card is the link, not just the number: a reader who wants
+        the records behind a figure aims at the figure, the caption or the
+        box, and only one of those working is a card that feels broken.
+        """
         colour = {"bad": self.DANGER, "good": self.GOOD}.get(tone, "#2b3a4a")
         edge = {"bad": self.DANGER, "good": self.GOOD}.get(tone, self.LINE)
-        shown = ('<a href="%s" style="color:%s;text-decoration:none">%s</a>'
-                 % (link, colour, value)) if link else value
-        return (
-            "<div style='flex:1 1 150px;min-width:140px;background:#fff;"
-            "border:1px solid %s;border-top:3px solid %s;border-radius:8px;"
-            "padding:12px 14px'>"
+        body = (
             "<div style='font-size:30px;line-height:1.1;font-weight:600;"
             "color:%s'>%s</div>"
             "<div style='font-size:13px;color:#48576a;margin-top:4px'>%s</div>"
-            "%s</div>" % (
-                self.LINE, edge, colour, shown, label,
+            "%s" % (
+                colour, value, label,
                 "<div style='font-size:11px;color:%s;margin-top:2px'>%s</div>"
                 % (self.MUTED, note) if note else ""))
+        box = (
+            "flex:1 1 150px;min-width:140px;background:#fff;"
+            "border:1px solid %s;border-top:3px solid %s;border-radius:8px;"
+            "padding:12px 14px" % (self.LINE, edge))
+        url = self._card_url(target)
+        if not url:
+            return "<div style='%s'>%s</div>" % (box, body)
+        return (
+            "<a href='%s' style='%s;display:block;text-decoration:none;"
+            "color:inherit' title='%s'>%s</a>" % (
+                url, box, self.env._("Open the records behind this"), body))
+
+    def _card_url(self, xmlid):
+        """The action a card opens, or nothing if this database has no such
+        model — aidoo is a dependency but helpdesk and live chat are not."""
+        if not xmlid:
+            return ""
+        if xmlid == "settings":
+            action = self.env.ref("base_setup.action_general_configuration",
+                                  raise_if_not_found=False)
+            base = self.env["ir.config_parameter"].sudo().get_param(
+                "web.base.url", "")
+            return "%s/odoo/action-%s" % (base, action.id) if action else ""
+        action = self.env.ref("era_ai_manager.%s" % xmlid,
+                              raise_if_not_found=False)
+        if not action:
+            return ""
+        if self.env.get(action.res_model) is None:
+            return ""
+        base = self.env["ir.config_parameter"].sudo().get_param(
+            "web.base.url", "")
+        return "%s/odoo/action-%s" % (base, action.id)
 
     def _row(self, title, cards):
         if not cards:
@@ -319,13 +351,6 @@ class EraAiDashboard(models.TransientModel):
 
     def _render_board(self):
         self.ensure_one()
-        profile = self.env["era.ai.profile"]
-        base = self.env["ir.config_parameter"].sudo().get_param("web.base.url", "")
-
-        def action_url(xmlid):
-            action = self.env.ref(xmlid, raise_if_not_found=False)
-            return "%s/odoo/action-%s" % (base, action.id) if action else ""
-
         colour, headline = self._headline()
         head = (
             "<div style='background:#fff;border:1px solid %s;border-radius:10px;"
@@ -344,70 +369,84 @@ class EraAiDashboard(models.TransientModel):
         if self.faults_critical:
             needs.append(self._card(
                 self.faults_critical, self.env._("broken right now"), "bad",
-                link=action_url("era_ai_manager.action_era_ai_watchdog")))
+                target="action_dash_faults"))
         if self.assistant_failures:
             needs.append(self._card(
                 self.assistant_failures,
                 self.env._("visitors shown an error"), "bad",
-                self.env._("last 7 days")))
+                self.env._("last 7 days"), target="action_dash_broken_chats"))
         if self.pending_now:
             needs.append(self._card(
                 self.pending_now, self.env._("waiting for your approval"), "bad",
-                link=action_url("era_ai_manager.action_era_ai_outreach")))
+                target="action_dash_pending"))
         if self.agents_total and not self.agents_active:
             needs.append(self._card(
                 self.env._("none"), self.env._("AI staff switched on"), "bad",
-                self.env._("nothing is being watched")))
+                self.env._("nothing is being watched"),
+                target="action_dash_agents"))
         if self.failed_period or self.bounced_period:
             needs.append(self._card(
                 self.failed_period + self.bounced_period,
-                self.env._("did not reach anyone"), "bad"))
+                self.env._("did not reach anyone"), "bad",
+                target="action_dash_undelivered"))
 
         did = [
             self._card(self.sent_period, self.env._("messages sent"),
                        "good" if self.sent_period else "plain",
-                       link=action_url("era_ai_manager.action_era_ai_outreach")),
-            self._card(self.marketing_period, self.env._("reaching out")),
-            self._card(self.replies_period, self.env._("answering a customer")),
+                       target="action_dash_sent"),
+            self._card(self.marketing_period, self.env._("reaching out"),
+                       target="action_dash_marketing"),
+            self._card(self.replies_period, self.env._("answering a customer"),
+                       target="action_dash_replies"),
             self._card(self.delivered_period,
                        self.env._("accepted by the mail server"),
-                       "good" if self.delivered_period else "plain"),
+                       "good" if self.delivered_period else "plain",
+                       target="action_dash_delivered"),
             self._card(self.blocked_period, self.env._("held back"),
-                       note=self.blocked_reason or ""),
+                       note=self.blocked_reason or "",
+                       target="action_dash_blocked"),
         ]
 
         reach = [
             self._card(self.audience_size, self.env._("customers watched"),
                        note=self.env._("across %s audience(s)",
                                        self.watchlists_approved),
-                       link=action_url("era_ai_manager.action_era_ai_watchlist")),
+                       target="action_dash_audiences"),
             self._card("%s / %s" % (self.reached_ever, self.contacts_reachable),
-                       self.env._("contacted / reachable")),
+                       self.env._("contacted / reachable"),
+                       target="action_dash_reachable"),
             self._card(self.conversations_period,
                        self.env._("chats read"),
                        note=self.env._("%s became a lead or ticket",
                                        self.converted_period),
-                       link=action_url("era_ai_manager.action_era_ai_conversation")),
+                       target="action_dash_conversations"),
             self._card(self.opted_out, self.env._("opted out"),
-                       "bad" if self.opted_out else "plain"),
+                       "bad" if self.opted_out else "plain",
+                       target="action_dash_opted_out"),
         ]
 
         machine = [
             self._card("%s / %s" % (self.agents_active, self.agents_total),
                        self.env._("AI staff switched on"),
-                       "good" if self.agents_active else "bad"),
+                       "good" if self.agents_active else "bad",
+                       target="action_dash_agents"),
             self._card(
                 fields.Datetime.context_timestamp(
                     self, self.last_agent_run).strftime("%Y-%m-%d %H:%M")
                 if self.last_agent_run else self.env._("never"),
                 self.env._("last successful run"),
-                "plain" if self.last_agent_run else "bad"),
+                "plain" if self.last_agent_run else "bad",
+                target="action_dash_last_run"),
             self._card(self.agent_failures, self.env._("runs that failed"),
-                       "bad" if self.agent_failures else "plain"),
+                       "bad" if self.agent_failures else "plain",
+                       target="action_dash_agent_failures"),
+            # Not records but a setting, so this one lands on the settings
+            # page. A card that alone refuses to open reads as broken.
             self._card(
                 self.env._("open") if self.window_open else self.env._("closed"),
                 self.env._("send window"), "plain",
-                note=self.window_label or ""),
+                note=self.window_label or "",
+                target="settings"),
         ]
 
         return "".join([

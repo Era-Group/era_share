@@ -3431,3 +3431,74 @@ msgstr "زوّار رأوا خطأً"
 #: code:addons/era_ai_manager/models/dashboard.py:0
 msgid "waiting for your approval"
 msgstr "بانتظار موافقتك"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_delivered
+msgid "Accepted by the mail server"
+msgstr "قبِلها خادم البريد"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_last_run
+msgid "Agent runs"
+msgstr "تشغيلات الوكلاء"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_replies
+msgid "Answers to customers"
+msgstr "ردود على العملاء"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_broken_chats
+msgid "Chats where the assistant failed"
+msgstr "محادثات أخفق فيها المساعد"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_reachable
+msgid "Contacts with an email address"
+msgstr "جهات لديها بريد إلكتروني"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_undelivered
+msgid "Did not reach anyone"
+msgstr "لم تصل إلى أحد"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_blocked
+msgid "Held back by a guardrail"
+msgstr "حجبه ضابط أمان"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_sent
+msgid "Messages sent"
+msgstr "رسائل أُرسلت"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/dashboard.py:0
+msgid "Open the records behind this"
+msgstr "افتح السجلات وراء هذا الرقم"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_opted_out
+msgid "Opted out"
+msgstr "منسحبون"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_marketing
+msgid "Reaching out"
+msgstr "مبادرات بالتواصل"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_agent_failures
+msgid "Runs that failed"
+msgstr "تشغيلات فشلت"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_agents
+msgid "The AI staff"
+msgstr "طاقم الذكاء"
+
+#. module: era_ai_manager
+#: model:ir.actions.act_window,name:era_ai_manager.action_dash_pending
+msgid "Waiting for your approval"
+msgstr "بانتظار موافقتك"

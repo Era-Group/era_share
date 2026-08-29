@@ -53,13 +53,26 @@ class EraAiWatchdogAlert(models.Model):
 
         # 2. Outgoing mail. Everything else in this module is worthless if mail
         #    silently fails.
-        failed_mail = self.env["mail.mail"].sudo().search_count(
-            [("state", "=", "exception")]
-        )
+        # Bounded to the recent past. Counting every exception ever recorded
+        # kept a critical alert standing on nine failures from a seven-week-old
+        # outage that had already been fixed — and an alert that never clears
+        # is an alert the owner learns to scroll past, which costs more than
+        # the check is worth. Old rows stay in the queue for whoever wants to
+        # look; they are simply not today's news.
+        try:
+            mail_days = int(param.get_param(
+                "era_ai_manager.mail_failure_days", "3"))
+        except (TypeError, ValueError):
+            mail_days = 3
+        failed_mail = self.env["mail.mail"].sudo().search_count([
+            ("state", "=", "exception"),
+            ("write_date", ">=", now - timedelta(days=mail_days)),
+        ])
         if failed_mail:
             findings.append((
                 "mail_exception",
-                _("%s outgoing email(s) failed", failed_mail),
+                _("%(count)s outgoing email(s) failed in the last %(days)s day(s)",
+                  count=failed_mail, days=mail_days),
                 "critical",
                 _("Check Settings > Technical > Outgoing Mail Servers."),
             ))

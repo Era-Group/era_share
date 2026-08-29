@@ -19,15 +19,28 @@
     </record>
     <record id="param_send_hour_start" model="ir.config_parameter">
         <field name="key">era_ai_manager.send_hour_start</field>
-        <field name="value">9</field>
+        <field name="value">10</field>
     </record>
     <record id="param_send_hour_end" model="ir.config_parameter">
         <field name="key">era_ai_manager.send_hour_end</field>
-        <field name="value">18</field>
+        <field name="value">16</field>
+    </record>
+    <!-- The working week, not just working hours. Hours alone still post on
+         Friday, which is the weekend here. Names or Python weekday numbers
+         (Monday=0) both parse. -->
+    <record id="param_send_days" model="ir.config_parameter">
+        <field name="key">era_ai_manager.send_days</field>
+        <field name="value">sun,mon,tue,wed,thu</field>
     </record>
     <record id="param_timezone" model="ir.config_parameter">
         <field name="key">era_ai_manager.timezone</field>
         <field name="value">Asia/Riyadh</field>
+    </record>
+    <!-- How far back a failed email still counts as news. Unbounded, this
+         check kept a critical alert standing on an outage fixed weeks ago. -->
+    <record id="param_mail_failure_days" model="ir.config_parameter">
+        <field name="key">era_ai_manager.mail_failure_days</field>
+        <field name="value">3</field>
     </record>
     <record id="param_reply_sla_hours" model="ir.config_parameter">
         <field name="key">era_ai_manager.reply_sla_hours</field>

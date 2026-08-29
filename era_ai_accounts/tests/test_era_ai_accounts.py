@@ -2429,3 +2429,133 @@ class TestEraAiAccounts(TransactionCase):
         field_meta = self.env["era.ai.account"]._fields["max_concurrency"]
         self.assertTrue(field_meta.readonly,
                         "max_concurrency must be readonly (legacy, use ai.cli_max_concurrency)")
+
+
+@tagged("post_install", "-at_install")
+class TestVisitorFacingErrors(TransactionCase):
+    """What a website visitor is told when the AI provider fails.
+
+    Live chat visitors on a real deployment were shown "The Codex CLI returned
+    an empty response." and "Incorrect API key provided: sk-..." — the
+    provider's own words, mid-conversation, in English, to Arabic-speaking
+    customers who then left. Odoo's own handler hides that from anyone who is
+    not internal; this module's override had quietly removed the distinction.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.agent = self.env["ai.agent"].sudo().create({
+            "name": "Site assistant",
+            "system_prompt": "Answer questions.",
+        })
+        self.channel = self.env["discuss.channel"].sudo().create(
+            {"name": "Visitor chat"})
+
+    def _guest(self, lang=None):
+        guest = self.env["mail.guest"].sudo().create(
+            dict({"name": "Visitor #1"}, **({"lang": lang} if lang else {})))
+        self.env["discuss.channel.member"].sudo().create({
+            "channel_id": self.channel.id, "guest_id": guest.id})
+        return guest
+
+    def test_the_visitor_never_sees_the_provider_wording(self):
+        self._guest()
+        message = self.agent._visitor_error_message(self.channel)
+        for leak in ("CLI", "API key", "sk-", "Traceback", "token"):
+            self.assertNotIn(leak.lower(), message.lower(),
+                             "the provider's wording reached the customer")
+
+    def test_the_visitor_is_asked_how_to_reach_them(self):
+        """The chat is lost; the customer is not, as long as we can write.
+
+        Pinned to an English guest so the assertion tests the wording and not
+        whichever language the test database happens to have loaded.
+        """
+        self._guest(lang="en_US")
+        message = self.agent._visitor_error_message(self.channel)
+        self.assertIn("email", message.lower())
+
+    def test_it_answers_in_the_language_the_guest_is_reading(self):
+        arabic = [code for code, __ in self.env["res.lang"].get_installed()
+                  if code.startswith("ar")]
+        if not arabic:
+            self.skipTest("No Arabic language installed here")
+        self._guest(lang=arabic[0])
+        self.assertEqual(self.agent._visitor_language(self.channel), arabic[0])
+
+    def test_an_internal_user_still_gets_the_technical_detail(self):
+        """Whoever is debugging needs the provider's own words."""
+        detailed = self.agent._friendly_ai_error_message(
+            Exception("AI request failed: Incorrect API key provided"))
+        self.assertIn("Incorrect API key", detailed)
+
+    def test_a_guest_without_a_language_still_gets_a_message(self):
+        self._guest()
+        self.assertTrue(self.agent._visitor_error_message(self.channel))
+
+    def _say(self, text, from_visitor=True, guest=None):
+        values = {
+            "model": "discuss.channel", "res_id": self.channel.id,
+            "body": "<p>%s</p>" % text, "message_type": "comment",
+            "subtype_id": self.env.ref("mail.mt_comment").id,
+        }
+        if from_visitor and guest:
+            values["author_guest_id"] = guest.id
+        elif not from_visitor:
+            values["author_id"] = self.agent.partner_id.id
+        return self.env["mail.message"].sudo().create(values)
+
+    def test_arabic_writing_beats_an_english_browser_header(self):
+        """The observed failure: the guest's browser said en_US while the
+        customer was typing Arabic, so the apology went out in English."""
+        arabic = [c for c, __ in self.env["res.lang"].get_installed()
+                  if c.startswith("ar")]
+        if not arabic:
+            self.skipTest("No Arabic language installed here")
+        guest = self._guest(lang="en_US")
+        self._say("كيف اصدر فاتورة من التطبيق؟", guest=guest)
+        self.assertEqual(self.agent._visitor_language(self.channel), arabic[0])
+
+    def test_latin_text_leaves_the_browser_header_alone(self):
+        """Latin script says nothing about which Latin language."""
+        guest = self._guest(lang="en_US")
+        self._say("how do I issue an invoice?", guest=guest)
+        self.assertEqual(self.agent._visitor_language(self.channel), "en_US")
+
+    def test_one_borrowed_word_does_not_switch_language(self):
+        guest = self._guest(lang="en_US")
+        self._say("what does فاتورة mean in your app, exactly? "
+                  "I have been reading the docs all morning", guest=guest)
+        self.assertEqual(self.agent._visitor_language(self.channel), "en_US")
+
+    def test_our_own_side_is_not_evidence_of_their_language(self):
+        """The assistant writes Arabic to everyone; that proves nothing."""
+        guest = self._guest(lang="en_US")
+        self._say("hello, can you help?", guest=guest)
+        self._say("أهلاً بك، كيف أقدر أساعدك اليوم؟", from_visitor=False)
+        self.assertEqual(self.agent._visitor_language(self.channel), "en_US")
+
+    def test_an_empty_conversation_falls_back_quietly(self):
+        self._guest(lang="en_US")
+        self.assertEqual(self.agent._visitor_language(self.channel), "en_US")
+
+    def test_a_bot_operator_without_a_user_is_still_our_side(self):
+        """Live chat operators are often bot partners with no user behind
+        them. Counting their English error messages as the customer's text
+        decided the language against the customer who wrote Arabic."""
+        arabic = [c for c, __ in self.env["res.lang"].get_installed()
+                  if c.startswith("ar")]
+        if "livechat_operator_id" not in self.channel._fields:
+            self.skipTest("Live chat is not installed here")
+        if not arabic:
+            self.skipTest("No Arabic language installed here")
+        bot = self.env["res.partner"].sudo().create({"name": "Site bot"})
+        self.channel.sudo().livechat_operator_id = bot.id
+        guest = self._guest(lang="en_US")
+        self._say("محتاج فواتير بدون ضريبة", guest=guest)
+        for __ in range(3):
+            message = self._say("Codex CLI error: access token could not be "
+                                "refreshed, please log out and sign in again",
+                                from_visitor=False)
+            message.sudo().author_id = bot.id
+        self.assertEqual(self.agent._visitor_language(self.channel), arabic[0])

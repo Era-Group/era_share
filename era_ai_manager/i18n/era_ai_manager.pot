@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-28 14:47+0000\n"
-"PO-Revision-Date: 2026-08-28 14:47+0000\n"
+"POT-Creation-Date: 2026-08-29 06:42+0000\n"
+"PO-Revision-Date: 2026-08-29 06:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "%(count)s %(label)s(s) older than %(hours)sh"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%(count)s outgoing email(s) failed in the last %(days)s day(s)"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%(days)s, %(start)02d:00-%(end)02d:00"
 msgstr ""
 
 #. module: era_ai_manager
@@ -66,6 +78,12 @@ msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s awaiting approval"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
 #: code:addons/era_ai_manager/models/profile.py:0
 msgid "%s customer(s)"
 msgstr ""
@@ -92,8 +110,10 @@ msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
-#: code:addons/era_ai_manager/models/watchdog_alert.py:0
-msgid "%s outgoing email(s) failed"
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid ""
+"%s message(s) went out. Nothing here needs you — it is so you know what was "
+"said in your name."
 msgstr ""
 
 #. module: era_ai_manager
@@ -106,6 +126,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "%s scheduled AI agent run(s) failed"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s sent"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s still broken"
 msgstr ""
 
 #. module: era_ai_manager
@@ -283,25 +315,13 @@ msgstr ""
 #. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %(count)s awaiting approval, %(faults)s still broken"
-msgstr ""
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %s message(s) awaiting approval"
+msgid "AI Manager: %s"
 msgstr ""
 
 #. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "AI Manager: %s new issue(s)"
-msgstr ""
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %s thing(s) still need fixing"
 msgstr ""
 
 #. module: era_ai_manager
@@ -919,6 +939,12 @@ msgid "Frequency cap: already contacted on %s."
 msgstr ""
 
 #. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Friday"
+msgstr ""
+
+#. module: era_ai_manager
 #: model:ir.model.fields.selection,name:era_ai_manager.selection__res_config_settings__era_ai_autonomy_mode__full
 msgid "Full autonomy — send automatically"
 msgstr ""
@@ -1325,6 +1351,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/era_ai_manager/models/profile.py:0
 msgid "Models that look like customer records — start here:"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Monday"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1737,6 +1769,12 @@ msgid "Sales enquiry"
 msgstr ""
 
 #. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Saturday"
+msgstr ""
+
+#. module: era_ai_manager
 #: model_terms:ir.ui.view,arch_db:era_ai_manager.view_era_ai_watchlist_list
 msgid "See who matches"
 msgstr ""
@@ -1781,6 +1819,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_outreach__sent_at
 msgid "Sent At"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Sent in the last 24 hours"
 msgstr ""
 
 #. module: era_ai_manager
@@ -1885,6 +1929,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__summary
 msgid "Summary"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Sunday"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2263,6 +2313,12 @@ msgid ""
 msgstr ""
 
 #. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Thursday"
+msgstr ""
+
+#. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__title
 msgid "Title"
 msgstr ""
@@ -2287,6 +2343,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,field_description:era_ai_manager.field_era_ai_conversation__transcript
 msgid "Transcript"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Tuesday"
 msgstr ""
 
 #. module: era_ai_manager
@@ -2319,7 +2381,7 @@ msgstr ""
 #. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
-msgid "Waiting for the send window."
+msgid "Waiting for the send window (%s)."
 msgstr ""
 
 #. module: era_ai_manager
@@ -2367,6 +2429,12 @@ msgstr ""
 #. module: era_ai_manager
 #: model:ir.model.fields,help:era_ai_manager.field_era_ai_outreach__website_message_ids
 msgid "Website communication history"
+msgstr ""
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Wednesday"
 msgstr ""
 
 #. module: era_ai_manager

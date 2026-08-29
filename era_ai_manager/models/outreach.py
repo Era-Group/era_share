@@ -17,6 +17,14 @@ from odoo.exceptions import UserError
 # accidentally inventing its own exemption.
 REPLY_PLAYS = ("reply",)
 
+# Python's weekday(): Monday is 0, Sunday is 6. Names are accepted in the
+# parameter because "6,0,1,2,3" is the Saudi working week written in a way
+# nobody can read back, and a send window nobody can read is a send window
+# nobody will correct.
+WEEKDAY_NAMES = {
+    "mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6,
+}
+
 
 class EraAiOutreach(models.Model):
     """Every customer-facing message the AI produces passes through here.
@@ -228,7 +236,8 @@ class EraAiOutreach(models.Model):
         if self.env.context.get("era_ai_force_send"):
             return False  # the owner pressed Send now: that is a decision
         if self._is_marketing() and not self._within_send_window():
-            return _("Waiting for the send window.")
+            return _("Waiting for the send window (%s).",
+                     self._send_window_label())
         return False
 
     def _is_marketing(self):
@@ -252,21 +261,68 @@ class EraAiOutreach(models.Model):
         domain.append(("partner_id", "=", self.partner_id.id))
         return self.sudo().search(domain, order="sent_at desc", limit=1)
 
-    def _within_send_window(self):
-        """Business hours in the customer's timezone, not the server's."""
+    def _send_hours(self):
         param = self.env["ir.config_parameter"].sudo()
         try:
-            start = int(param.get_param("era_ai_manager.send_hour_start", "9"))
-            end = int(param.get_param("era_ai_manager.send_hour_end", "18"))
+            start = int(param.get_param("era_ai_manager.send_hour_start", "10"))
+            end = int(param.get_param("era_ai_manager.send_hour_end", "16"))
         except (TypeError, ValueError):
-            start, end = 9, 18
+            return 10, 16
+        if not 0 <= start < end <= 24:
+            return 10, 16  # a window that cannot open is a bug, not a policy
+        return start, end
+
+    def _send_days(self):
+        """The weekdays marketing may go out on, as Python weekday numbers.
+
+        Hours alone were never a working week: a nine-to-six window still
+        posts on Friday, which in Saudi Arabia is the weekend, and a message
+        that lands on a closed business is a message read on Sunday at best
+        and resented at worst.
+        """
+        raw = self.env["ir.config_parameter"].sudo().get_param(
+            "era_ai_manager.send_days", "sun,mon,tue,wed,thu")
+        days = set()
+        for token in (raw or "").split(","):
+            token = token.strip().lower()
+            if not token:
+                continue
+            if token[:3] in WEEKDAY_NAMES:
+                days.add(WEEKDAY_NAMES[token[:3]])
+            elif token.isdigit() and 0 <= int(token) <= 6:
+                days.add(int(token))
+        # An unreadable or empty setting must not mean "send every day":
+        # failing open here would push a marketing blast out on a Friday.
+        return days or {6, 0, 1, 2, 3}
+
+    def _local_now(self):
+        param = self.env["ir.config_parameter"].sudo()
         tz_name = param.get_param("era_ai_manager.timezone", "Asia/Riyadh")
         try:
             tz = pytz.timezone(tz_name)
         except pytz.UnknownTimeZoneError:
             tz = pytz.timezone("Asia/Riyadh")
-        local = pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
+        return pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
+
+    def _within_send_window(self):
+        """Working hours on a working day, in the business's timezone."""
+        local = self._local_now()
+        if local.weekday() not in self._send_days():
+            return False
+        start, end = self._send_hours()
         return start <= local.hour < end
+
+    def _send_window_label(self):
+        """Human wording for the block reason, so the owner sees the rule."""
+        start, end = self._send_hours()
+        order = [6, 0, 1, 2, 3, 4, 5]  # Sunday first, as the week runs here
+        labels = {
+            6: _("Sunday"), 0: _("Monday"), 1: _("Tuesday"), 2: _("Wednesday"),
+            3: _("Thursday"), 4: _("Friday"), 5: _("Saturday"),
+        }
+        days = [labels[d] for d in order if d in self._send_days()]
+        return _("%(days)s, %(start)02d:00-%(end)02d:00",
+                 days=", ".join(days), start=start, end=end)
 
     # ------------------------------------------------------------------
     # Workflow
@@ -417,8 +473,16 @@ class EraAiOutreach(models.Model):
         pending = self.search([("state", "=", "pending")], order="create_date") \
             if ramping else self.browse()
         faults = self.env["era.ai.watchdog.alert"].open_summary_html()
-        if not pending and not faults:
-            return True
+        # What actually went out. Under full autonomy nothing stops for
+        # approval, so without this the owner has handed over the work and
+        # hears nothing back — and the point of handing it over was to stop
+        # watching, not to stop knowing.
+        sent = self.search([
+            ("state", "=", "sent"),
+            ("sent_at", ">=", fields.Datetime.now() - timedelta(days=1)),
+        ], order="sent_at")
+        if not pending and not faults and not sent:
+            return True  # a report about nothing teaches people to ignore it
         profile = self.env["era.ai.profile"]
         items = []
         for record in pending:
@@ -432,6 +496,25 @@ class EraAiOutreach(models.Model):
                     link=profile._record_link(record, self.env._("read it")),
                 ))
         sections = []
+        if sent:
+            rows = []
+            for record in sent:
+                who = (record.partner_id.display_name or record.email_to
+                       or self.env._("an unknown contact"))
+                rows.append(
+                    "<li style='margin-bottom:6px'>%s</li>" % self.env._(
+                        "To <b>%(who)s</b> — “%(subject)s” — %(link)s",
+                        who=who, subject=record.subject or "",
+                        link=profile._record_link(
+                            record, self.env._("read it"))))
+            sections += [
+                "<h3 style='margin:0 0 6px'>%s</h3>" % self.env._(
+                    "Sent in the last 24 hours"),
+                "<p>%s</p>" % self.env._(
+                    "%s message(s) went out. Nothing here needs you — it is "
+                    "so you know what was said in your name.", len(sent)),
+                "<ul style='font-size:14px'>%s</ul>" % "".join(rows),
+            ]
         if pending:
             sections += [
                 "<p>%s</p>" % self.env._(
@@ -447,7 +530,7 @@ class EraAiOutreach(models.Model):
                     "contacted. This part only arrives while you are in Ramp "
                     "mode."),
             ]
-        elif faults:
+        elif faults and not sent:
             sections.append("<p>%s</p>" % self.env._(
                 "Nothing needs approving. These are still broken, though:"))
         sections.append(faults)
@@ -457,16 +540,14 @@ class EraAiOutreach(models.Model):
         ) or self.env.ref("base.user_admin").email
         if not recipient:
             return True
-        if pending and faults:
-            subject = self.env._(
-                "AI Manager: %(count)s awaiting approval, %(faults)s still broken",
-                count=len(pending), faults=faults.count("<li"))
-        elif pending:
-            subject = self.env._(
-                "AI Manager: %s message(s) awaiting approval", len(pending))
-        else:
-            subject = self.env._(
-                "AI Manager: %s thing(s) still need fixing", faults.count("<li"))
+        parts = []
+        if sent:
+            parts.append(self.env._("%s sent", len(sent)))
+        if pending:
+            parts.append(self.env._("%s awaiting approval", len(pending)))
+        if faults:
+            parts.append(self.env._("%s still broken", faults.count("<li")))
+        subject = self.env._("AI Manager: %s", ", ".join(parts))
         self.env["mail.mail"].sudo().create({
             "subject": subject,
             "body_html": body,

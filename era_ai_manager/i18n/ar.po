@@ -85,12 +85,6 @@ msgstr "هناك %s رسالة تنتظرك. لم تُرسل أي منها، و�
 #. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/watchdog_alert.py:0
-msgid "%s outgoing email(s) failed"
-msgstr "فشل إرسال %s رسالة بريد"
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/watchdog_alert.py:0
 msgid "%s outreach draft(s) blocked in 24h"
 msgstr "حُجبت %s مسودة مراسلة خلال ٢٤ ساعة"
 
@@ -258,12 +252,6 @@ msgstr "المدير الذكي"
 #: code:addons/era_ai_manager/models/watchlist_compose.py:0
 msgid "AI Manager — Copywriter"
 msgstr "المدير الذكي — كاتب الرسائل"
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %s message(s) awaiting approval"
-msgstr "المدير الذكي: %s رسالة بانتظار الموافقة"
 
 #. module: era_ai_manager
 #. odoo-python
@@ -1905,12 +1893,6 @@ msgid "Today"
 msgstr "اليوم"
 
 #. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
-msgid "Waiting for the send window."
-msgstr "بانتظار نافذة الإرسال."
-
-#. module: era_ai_manager
 #: model:ir.model.fields.selection,name:era_ai_manager.selection__era_ai_watchdog_alert__severity__warning
 msgid "Warning"
 msgstr "تحذير"
@@ -2641,18 +2623,6 @@ msgstr "%s لرؤية كل شيء، بما فيه ما تم حلّه."
 #. module: era_ai_manager
 #. odoo-python
 #: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %(count)s awaiting approval, %(faults)s still broken"
-msgstr "مدير الذكاء: %(count)s بانتظار الموافقة، و%(faults)s ما زال معطّلاً"
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
-msgid "AI Manager: %s thing(s) still need fixing"
-msgstr "مدير الذكاء: %s أمر ما زال يحتاج إصلاحاً"
-
-#. module: era_ai_manager
-#. odoo-python
-#: code:addons/era_ai_manager/models/outreach.py:0
 msgid ""
 "If you do nothing they simply keep waiting — nobody is contacted. This part "
 "only arrives while you are in Ramp mode."
@@ -2780,3 +2750,102 @@ msgid ""
 msgstr ""
 "تُقرأ هنا المحادثات المنتهية كل ساعة: ماذا أراد الزائر، والبريد الذي كتبه، وهل ساعده المساعد فعلاً. وكل محادثة تُسجَّل كفرصة بيع أو تذكرة دعم ويُجاب صاحبها بالبريد.\n"
 "أما محادثات الزوّار المجهولين الذين لم يتركوا بريداً ولا رقماً فلا تُدرج هنا: لا يوجد من تُجيبه، فلا فائدة من الصف أصلاً. وتبقى محسوبة في فحوص السلامة."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/watchdog_alert.py:0
+msgid "%(count)s outgoing email(s) failed in the last %(days)s day(s)"
+msgstr "فشل إرسال %(count)s رسالة بريد خلال آخر %(days)s يوم"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%(days)s, %(start)02d:00-%(end)02d:00"
+msgstr "%(days)s، من %(start)02d:00 إلى %(end)02d:00"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s awaiting approval"
+msgstr "%s بانتظار الموافقة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid ""
+"%s message(s) went out. Nothing here needs you — it is so you know what was "
+"said in your name."
+msgstr ""
+"خرجت %s رسالة. لا شيء هنا يحتاج منك تدخّلاً — الغرض أن تعرف ما قيل باسمك."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s sent"
+msgstr "%s أُرسلت"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "%s still broken"
+msgstr "%s ما زال معطّلاً"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "AI Manager: %s"
+msgstr "مدير الذكاء: %s"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Friday"
+msgstr "الجمعة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Monday"
+msgstr "الاثنين"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Saturday"
+msgstr "السبت"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Sent in the last 24 hours"
+msgstr "ما أُرسل خلال 24 ساعة"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Sunday"
+msgstr "الأحد"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Thursday"
+msgstr "الخميس"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Tuesday"
+msgstr "الثلاثاء"
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Waiting for the send window (%s)."
+msgstr "بانتظار نافذة الإرسال (%s)."
+
+#. module: era_ai_manager
+#. odoo-python
+#: code:addons/era_ai_manager/models/outreach.py:0
+msgid "Wednesday"
+msgstr "الأربعاء"

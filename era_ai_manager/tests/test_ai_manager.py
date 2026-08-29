@@ -21,6 +21,10 @@ class EraAiCommon(TransactionCase):
         # depending on the wall-clock hour it runs at. The window has its own test.
         cls.param.set_param("era_ai_manager.send_hour_start", "0")
         cls.param.set_param("era_ai_manager.send_hour_end", "24")
+        # And the day, for the same reason: the working week is Sunday to
+        # Thursday, so without this the suite fails every Friday and Saturday.
+        cls.param.set_param("era_ai_manager.send_days",
+                            "sun,mon,tue,wed,thu,fri,sat")
         cls.Outreach = cls.env["era.ai.outreach"].sudo()
         cls.Watchlist = cls.env["era.ai.watchlist"].sudo()
 
@@ -2344,9 +2348,9 @@ class TestEraAiStandingFaultsAreReported(EraAiCommon):
                         summary.index("A small thing"))
 
     def test_the_subject_says_what_is_inside(self):
-        self.Outreach.search([("state", "=", "pending")]).unlink()
+        self.Outreach.search([]).unlink()
         self._fault()
-        self.assertIn("still need fixing", self._report().subject)
+        self.assertIn("still broken", self._report().subject)
 
     def test_both_pending_and_broken_are_carried_together(self):
         self.param.set_param("era_ai_manager.autonomy_mode", "ramp")
@@ -2605,3 +2609,209 @@ class TestEraAiChatsGetAnswered(EraAiCommon):
         record.action_reply()
         self.assertEqual(record.state, "converted")
         self.assertTrue(record._result_record())
+
+
+@tagged("post_install", "-at_install")
+class TestEraAiWorkingWeek(EraAiCommon):
+    """Marketing goes out during the working week, not merely daylight.
+
+    Hours alone were never a working week: a nine-to-six window still posts on
+    Friday, which is the weekend here, and a message landing on a closed
+    business is read on Sunday at best.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.param.set_param("era_ai_manager.timezone", "Asia/Riyadh")
+        self.param.set_param("era_ai_manager.send_days", "sun,mon,tue,wed,thu")
+        self.param.set_param("era_ai_manager.send_hour_start", "10")
+        self.param.set_param("era_ai_manager.send_hour_end", "16")
+
+    def _at(self, iso):
+        """Pretend it is this Riyadh local time."""
+        import pytz
+        from datetime import datetime
+        riyadh = pytz.timezone("Asia/Riyadh")
+        local = riyadh.localize(datetime.fromisoformat(iso))
+        return local.astimezone(pytz.utc).replace(tzinfo=None)
+
+    def _window_at(self, iso):
+        with patch.object(fields.Datetime, "now", return_value=self._at(iso)):
+            return self.Outreach._within_send_window()
+
+    # 2026-08-30 is a Sunday; 08-28 a Friday; 08-29 a Saturday.
+    def test_sunday_inside_hours_is_open(self):
+        self.assertTrue(self._window_at("2026-08-30T11:00:00"))
+
+    def test_thursday_inside_hours_is_open(self):
+        self.assertTrue(self._window_at("2026-09-03T15:59:00"))
+
+    def test_friday_is_closed_even_at_midday(self):
+        self.assertFalse(self._window_at("2026-08-28T12:00:00"))
+
+    def test_saturday_is_closed_even_at_midday(self):
+        self.assertFalse(self._window_at("2026-08-29T12:00:00"))
+
+    def test_too_early_on_a_working_day_is_closed(self):
+        self.assertFalse(self._window_at("2026-08-30T09:59:00"))
+
+    def test_after_hours_on_a_working_day_is_closed(self):
+        self.assertFalse(self._window_at("2026-08-30T16:00:00"))
+
+    def test_a_blocked_draft_waits_rather_than_dying(self):
+        """Outside the window is a deferral, never a rejection."""
+        partner = self._partner("Weekend Co", email="weekend@example.test")
+        draft = self._draft(partner, play="winback")
+        with patch.object(fields.Datetime, "now",
+                          return_value=self._at("2026-08-29T12:00:00")):
+            reason = draft._deferral_reason()
+        self.assertTrue(reason)
+        self.assertFalse(draft._guardrail_failure(),
+                         "a closed window must never be terminal")
+
+    def test_the_reason_states_the_rule(self):
+        partner = self._partner("Curious Co", email="curious@example.test")
+        draft = self._draft(partner, play="winback")
+        with patch.object(fields.Datetime, "now",
+                          return_value=self._at("2026-08-29T12:00:00")):
+            reason = draft._deferral_reason()
+        self.assertIn("10:00", reason)
+        self.assertIn("16:00", reason)
+
+    def test_a_reply_is_not_held_by_the_window(self):
+        """Answering someone who wrote to us is not marketing."""
+        partner = self._partner("Asker Co", email="asker@example.test")
+        draft = self._draft(partner, play="reply")
+        with patch.object(fields.Datetime, "now",
+                          return_value=self._at("2026-08-29T03:00:00")):
+            self.assertFalse(draft._deferral_reason())
+
+    def test_an_unreadable_setting_does_not_mean_every_day(self):
+        """Failing open here would push a blast out on a Friday."""
+        self.param.set_param("era_ai_manager.send_days", "  ,, ")
+        self.assertFalse(self._window_at("2026-08-28T12:00:00"))
+        self.assertTrue(self._window_at("2026-08-30T11:00:00"))
+
+    def test_weekday_numbers_are_accepted_too(self):
+        self.param.set_param("era_ai_manager.send_days", "0,1,2")
+        self.assertTrue(self._window_at("2026-08-31T11:00:00"))   # Monday
+        self.assertFalse(self._window_at("2026-08-30T11:00:00"))  # Sunday
+
+    def test_an_impossible_hour_range_falls_back(self):
+        self.param.set_param("era_ai_manager.send_hour_start", "20")
+        self.param.set_param("era_ai_manager.send_hour_end", "8")
+        self.assertTrue(self._window_at("2026-08-30T11:00:00"))
+
+
+@tagged("post_install", "-at_install")
+class TestEraAiMailFailureIsRecent(EraAiCommon):
+    """A critical alert that never clears is an alert nobody reads."""
+
+    def test_an_old_failure_is_not_todays_news(self):
+        mail = self.env["mail.mail"].sudo().create({
+            "subject": "ancient", "state": "exception",
+            "email_to": "x@example.test",
+        })
+        self.env.cr.execute(
+            "UPDATE mail_mail SET write_date = now() - interval '50 days' "
+            "WHERE id = %s", (mail.id,))
+        mail.invalidate_recordset()
+        keys = {key for key, _n, _s, _d in
+                self.env["era.ai.watchdog.alert"]._run_checks()}
+        self.assertNotIn("mail_exception", keys)
+
+    def test_a_fresh_failure_still_raises_the_alarm(self):
+        self.env["mail.mail"].sudo().create({
+            "subject": "today", "state": "exception",
+            "email_to": "x@example.test",
+        })
+        keys = {key for key, _n, _s, _d in
+                self.env["era.ai.watchdog.alert"]._run_checks()}
+        self.assertIn("mail_exception", keys)
+
+    def test_the_window_is_configurable(self):
+        mail = self.env["mail.mail"].sudo().create({
+            "subject": "week old", "state": "exception",
+            "email_to": "x@example.test",
+        })
+        self.env.cr.execute(
+            "UPDATE mail_mail SET write_date = now() - interval '7 days' "
+            "WHERE id = %s", (mail.id,))
+        mail.invalidate_recordset()
+        self.param.set_param("era_ai_manager.mail_failure_days", "30")
+        keys = {key for key, _n, _s, _d in
+                self.env["era.ai.watchdog.alert"]._run_checks()}
+        self.assertIn("mail_exception", keys)
+
+
+@tagged("post_install", "-at_install")
+class TestEraAiDailyRecordOfWhatWentOut(EraAiCommon):
+    """Under full autonomy nothing stops for approval.
+
+    The owner handed over the work in order to stop watching, not to stop
+    knowing. Without this the daily email falls silent exactly when the system
+    starts acting on its own.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.param.set_param("era_ai_manager.owner_email", "owner@example.test")
+        self.param.set_param("era_ai_manager.autonomy_mode", "full")
+        self.env["era.ai.watchdog.alert"].sudo().search([]).unlink()
+
+    def _sent(self, name="Recent Co", subject="Your points are low", ago=1):
+        partner = self._partner(name, email="%s@example.test" % name.split()[0].lower())
+        record = self._draft(partner, subject=subject)
+        record.write({"state": "sent",
+                      "sent_at": fields.Datetime.now() - timedelta(hours=ago)})
+        return record
+
+    def _report(self):
+        with patch.object(type(self.env["mail.mail"].sudo()), "send",
+                          return_value=True):
+            self.Outreach._cron_pending_digest()
+        return self.env["mail.mail"].sudo().search(
+            [("email_to", "=", "owner@example.test")], order="id desc", limit=1)
+
+    def test_it_lists_what_was_sent(self):
+        record = self._sent()
+        mail = self._report()
+        self.assertTrue(mail, "no daily report was sent")
+        self.assertIn("Recent Co", mail.body_html)
+        self.assertIn("Your points are low", mail.body_html)
+        self.assertIn("/odoo/era.ai.outreach/%s" % record.id, mail.body_html)
+
+    def test_it_says_nothing_is_needed_from_the_reader(self):
+        self._sent()
+        self.assertIn("Nothing here needs you", self._report().body_html)
+
+    def test_silence_when_nothing_went_out(self):
+        """A report about nothing teaches people to ignore the report."""
+        self.Outreach.search([]).unlink()
+        self.assertFalse(self._report())
+
+    def test_yesterdays_messages_are_not_repeated_today(self):
+        self._sent(ago=30)
+        self.assertFalse(self._report())
+
+    def test_the_subject_counts_what_is_inside(self):
+        self._sent()
+        self.assertIn("1 sent", self._report().subject)
+
+    def test_sent_and_broken_travel_together(self):
+        self._sent()
+        self.env["era.ai.watchdog.alert"].sudo().create({
+            "check_key": "assistant_failed", "name": "The assistant is failing",
+            "severity": "critical", "detail": "Check the key.",
+        })
+        mail = self._report()
+        self.assertIn("Recent Co", mail.body_html)
+        self.assertIn("The assistant is failing", mail.body_html)
+        self.assertIn("1 sent", mail.subject)
+        self.assertIn("still broken", mail.subject)
+
+    def test_it_reports_in_ramp_mode_too(self):
+        """Knowing what went out is not a full-autonomy privilege."""
+        self.param.set_param("era_ai_manager.autonomy_mode", "ramp")
+        self._sent()
+        self.assertIn("Recent Co", self._report().body_html)

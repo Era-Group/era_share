@@ -113,7 +113,16 @@ class AIAgent(models.Model):
             )
         except Exception as error:  # noqa: BLE001
             _logger.exception("AI request failed for channel %s", channel.id)
-            response = [self._friendly_ai_error_message(error)]
+            # Who is reading decides what they are told. An internal user is
+            # debugging and wants the provider's own words; a website visitor
+            # is a customer, and "The Codex CLI returned an empty response"
+            # tells them nothing, looks broken, and is the last thing several
+            # of them saw before leaving. Odoo's own handler makes this
+            # distinction; overriding it here quietly removed it.
+            if self.env.user._is_internal():
+                response = [self._friendly_ai_error_message(error)]
+            else:
+                response = [self._visitor_error_message(channel)]
         for message in response or []:
             self._post_ai_response(channel, message)
 
@@ -125,6 +134,101 @@ class AIAgent(models.Model):
         if len(message) > 500:
             message = f"{message[:500]}..."
         return message or self.env._("AI request failed due to an unexpected error. Please try again.")
+
+    # A language is only as good as the evidence for it. Browsers report
+    # en_US for a great many people who do not read English — an Arabic
+    # speaker on an English-locale phone is the common case, not the odd one —
+    # so what the visitor actually typed outranks what their browser claimed.
+    # Extend the map to teach it another script.
+    SCRIPT_RANGES = {
+        "ar": (("\u0600", "\u06ff"), ("\u0750", "\u077f")),
+        "he": (("\u0590", "\u05ff"),),
+        "ru": (("\u0400", "\u04ff"),),
+        "el": (("\u0370", "\u03ff"),),
+        "zh": (("\u4e00", "\u9fff"),),
+        "ja": (("\u3040", "\u30ff"),),
+        "ko": (("\uac00", "\ud7af"),),
+        "th": (("\u0e00", "\u0e7f"),),
+        "hi": (("\u0900", "\u097f"),),
+    }
+
+    def _language_from_script(self, channel):
+        """The installed language whose script the visitor actually wrote in.
+
+        Not language detection — a script check, which is all that is needed
+        to tell Arabic from English and is right far more often than a browser
+        header. Returns nothing when the text is plain Latin, because Latin
+        script says nothing about which Latin language.
+        """
+        members = channel.sudo().channel_member_ids
+        operators = members.mapped("partner_id").filtered(
+            lambda partner: partner.user_ids.filtered(
+                lambda user: not user.share))
+        # The live chat operator is often a bot partner with no user behind
+        # it, so the staff check alone does not catch it — and its own English
+        # error messages then outweigh the customer's Arabic and decide the
+        # language against them.
+        if "livechat_operator_id" in channel._fields:
+            operators |= channel.sudo().livechat_operator_id
+        operators |= self.partner_id
+        messages = self.env["mail.message"].sudo().search([
+            ("model", "=", "discuss.channel"), ("res_id", "=", channel.id),
+            ("message_type", "!=", "notification"),
+        ], order="id desc", limit=30)
+        text = " ".join(
+            html2plaintext(message.body or "")
+            for message in messages
+            if message.author_id not in operators
+            and message.author_id != self.partner_id
+        )
+        if not text.strip():
+            return False
+        installed = dict(self.env["res.lang"].get_installed())
+        for prefix, ranges in self.SCRIPT_RANGES.items():
+            hits = sum(1 for char in text
+                       if any(low <= char <= high for low, high in ranges))
+            # A stray character is a copied word; a fifth of the text is the
+            # language they are writing in.
+            if hits and hits > len([c for c in text if c.strip()]) / 5:
+                for code in installed:
+                    if code.split("_")[0] == prefix:
+                        return code
+        return False
+
+    def _visitor_language(self, channel):
+        """The language the person on the other side is actually reading."""
+        written = self._language_from_script(channel)
+        if written:
+            return written
+        members = channel.sudo().channel_member_ids
+        # Guests first, and the two are looked at separately: they are
+        # different models, so one recordset cannot simply be added to the
+        # other.
+        for guest in members.mapped("guest_id"):
+            if guest.lang:
+                return guest.lang
+        for partner in members.mapped("partner_id"):
+            if partner.lang and not partner.user_ids.filtered(
+                    lambda user: not user.share):
+                return partner.lang  # a customer's language, not an operator's
+        return self.env.company.partner_id.lang or self.env.lang
+
+    def _visitor_error_message(self, channel):
+        """What a customer is told when our side fails.
+
+        Says that it failed, apologises, and asks for a way to reach them —
+        because the failure itself is not recoverable in the chat, but the
+        customer is not lost as long as we can write back. Live chat visitors
+        who leave an address are picked up from the transcript afterwards.
+        """
+        lang = self._visitor_language(channel)
+        env = self.env(context=dict(self.env.context, lang=lang))
+        return env._(
+            "Sorry — something went wrong on our side and I could not answer "
+            "just now. Please leave your email address or phone number here "
+            "and someone from our team will get back to you, or try again in "
+            "a few minutes."
+        )
 
     def _retry_status_message(self, channel):
         recent_messages = self.env["mail.message"].sudo().search(

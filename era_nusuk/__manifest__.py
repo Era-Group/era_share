@@ -1,11 +1,26 @@
 {
     'name': 'Era Nusuk Management',
     'version': '1.0',
-    'category': 'Religious Services',
+    'category': 'Services',
     'summary': 'Manage Umrah visits, pilgrims, trips, visas, groups, agents, and hotels.',
-    'description': 'Umrah Management is a module for managing Umrah visits, pilgrims, trips, visas, groups, agents, and hotels.',
-    'website': 'https://era.net.sa/',
-    'author': 'Era Group - Dev:Turki Marzoqi',
+    'description': """
+Era Nusuk Management
+====================
+
+End-to-end management of Umrah operations, from Nusuk group arrival to
+departure, in one Odoo application.
+
+* Register pilgrims and track their visas, movements, and documents.
+* Plan trips and manage groups, packages, and agent contracts.
+* Book and follow up hotel accommodation in Makkah and Madinah.
+* Schedule transport companies, vehicles, drivers, and route programs.
+* Print operational reports: pilgrim cards, group manifests, hotel and
+  transport reports.
+""",
+    'website': 'https://era.net.sa',
+    'author': 'Era Group',
+    'maintainer': 'Turki Marzoqi',
+    'email': 'info@era.net.sa',
     'sequence': 1,
     'depends': ['base', 'mail', 'account', 'contacts', 'accountant'],
     'data': [

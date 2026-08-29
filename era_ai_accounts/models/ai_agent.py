@@ -89,14 +89,25 @@ class AIAgent(models.Model):
             env=self.with_context(era_ai_account_id=acc.id).env,
             provider=acc._service_provider(),
         )
-        llm_response = service.request_llm(
-            model,
-            system_messages,
-            [],
-            inputs=(chat_history or []) + [{"role": "user", "content": prompt}],
-            tools=self.sudo().topic_ids.tool_ids._get_ai_tools() if supports_tools else None,
-            temperature=TEMPERATURE_MAP[self.response_style],
-        )
+        # Usage was only ever counted by this module's own image, audio and
+        # text helpers, never by the agent path — which is what every website
+        # chat and every scheduled agent actually goes through. The accounts
+        # doing all the work therefore reported zero requests and no error,
+        # so a dead account and an unused one looked identical from the list.
+        try:
+            llm_response = service.request_llm(
+                model,
+                system_messages,
+                [],
+                inputs=(chat_history or []) + [{"role": "user", "content": prompt}],
+                tools=self.sudo().topic_ids.tool_ids._get_ai_tools() if supports_tools else None,
+                temperature=TEMPERATURE_MAP[self.response_style],
+            )
+        except Exception as error:
+            acc.sudo()._log_failure(error)
+            raise
+        acc.sudo()._log_request()
+        acc.sudo()._clear_failure()
         if rag_context:
             llm_response = self._get_llm_response_with_sources(llm_response)
         return llm_response

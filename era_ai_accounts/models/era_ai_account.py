@@ -1828,6 +1828,47 @@ class EraAiAccount(models.Model):
                 (self.id,))
         except Exception:  # noqa: BLE001 — never let a stats counter block a call
             _logger.debug("era_ai_accounts: could not update request_count", exc_info=True)
+            return
+        # The raw UPDATE went round the ORM, so the cache still holds the
+        # value from before the call. Anything reading the counter later in
+        # this transaction — a form reloading after a request, a report — got
+        # the stale number, and the count only appeared to work because most
+        # callers happened to read it in a later transaction.
+        self.invalidate_recordset(["request_count", "last_request_at"])
+
+    def _log_failure(self, error):
+        """Remember that this account just failed, so idle and dead differ.
+
+        Without it an account that has been rejecting every call for weeks
+        looks exactly like one nobody happens to be using: both show no
+        requests and no error. That is how a dead website assistant went
+        unnoticed. Written with raw SQL for the same reason as the counter,
+        and because the caller usually re-raises.
+        """
+        self.ensure_one()
+        text = (str(error) or "").strip()[:500]
+        try:
+            self.env.cr.execute(
+                "UPDATE era_ai_account SET last_error = %s WHERE id = %s",
+                (text, self.id))
+        except Exception:  # noqa: BLE001 — diagnostics must not mask the fault
+            _logger.debug("era_ai_accounts: could not record last_error",
+                          exc_info=True)
+            return
+        self.invalidate_recordset(["last_error"])
+
+    def _clear_failure(self):
+        """A successful call means the last failure is history."""
+        self.ensure_one()
+        if not self.last_error:
+            return
+        try:
+            self.env.cr.execute(
+                "UPDATE era_ai_account SET last_error = NULL WHERE id = %s",
+                (self.id,))
+        except Exception:  # noqa: BLE001
+            return
+        self.invalidate_recordset(["last_error"])
 
     # ---------------------------------------------------------------- resolution
     @api.model

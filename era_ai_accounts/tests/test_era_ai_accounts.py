@@ -2559,3 +2559,46 @@ class TestVisitorFacingErrors(TransactionCase):
                                 from_visitor=False)
             message.sudo().author_id = bot.id
         self.assertEqual(self.agent._visitor_language(self.channel), arabic[0])
+
+
+@tagged("post_install", "-at_install")
+class TestAccountUsageIsVisible(TransactionCase):
+    """An account that has been failing for weeks must not look idle.
+
+    Usage was counted only by this module's image, audio and text helpers —
+    never by the agent path, which is what website chat and every scheduled
+    agent actually use. Those accounts reported zero requests and no error,
+    so nobody could tell a dead one from an unused one.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.account = self.env["era.ai.account"].sudo().create({
+            "name": "Usage", "provider": "cloudflare", "auth_mode": "api_key",
+            "cf_account_id": "a", "secret": "t",
+        })
+
+    def test_a_successful_call_is_counted_immediately(self):
+        self.assertEqual(self.account.request_count, 0)
+        self.account._log_request()
+        self.assertEqual(self.account.request_count, 1,
+                         "the raw UPDATE left a stale value in the ORM cache")
+        self.assertTrue(self.account.last_request_at)
+
+    def test_a_failure_is_remembered(self):
+        self.account._log_failure(Exception("Incorrect API key provided"))
+        self.assertIn("Incorrect API key", self.account.last_error)
+
+    def test_a_success_clears_the_last_failure(self):
+        self.account._log_failure(Exception("transient blip"))
+        self.assertTrue(self.account.last_error)
+        self.account._clear_failure()
+        self.assertFalse(self.account.last_error)
+
+    def test_clearing_when_there_is_nothing_to_clear_is_harmless(self):
+        self.account._clear_failure()
+        self.assertFalse(self.account.last_error)
+
+    def test_a_long_error_is_truncated_rather_than_refused(self):
+        self.account._log_failure(Exception("x" * 5000))
+        self.assertLessEqual(len(self.account.last_error), 500)

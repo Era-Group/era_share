@@ -1,0 +1,148 @@
+<odoo>
+
+    <!-- LIST -->
+
+    <record id="view_umrah_vehicle_list" model="ir.ui.view">
+        <field name="name">umrah.vehicle.list</field>
+        <field name="model">umrah.transport.vehicle</field>
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="name"/>
+                <field name="vehicle_code"/>
+                <field name="vehicle_type"/>
+                <field name="status"/>
+                <field name="driver_id"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- FORM -->
+
+    <record id="view_umrah_vehicle_form" model="ir.ui.view">
+        <field name="name">umrah.vehicle.form</field>
+        <field name="model">umrah.transport.vehicle</field>
+        <field name="arch" type="xml">
+
+            <form>
+
+                <header>
+                <field name="status"
+           widget="statusbar"
+           options="{'clickable': True}"
+           statusbar_visible="available,reserved,maintenance,out_of_service"/>
+                </header>
+
+                <sheet>
+
+                    <group string="Basic Information">
+
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="vehicle_code"/>
+                        <field name="vehicle_type"/>
+                        <field name="degree"/>
+
+                    </group>
+
+
+                    <notebook>
+
+                        <!-- Specifications -->
+
+                        <page string="Specifications">
+
+                            <group>
+
+                                <field name="brand"/>
+                                <field name="model"/>
+                                <field name="year"/>
+                                <field name="plate_number"/>
+                                <field name="color"/>
+                                <field name="gps_enabled"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Capacity -->
+
+                        <page string="Capacity">
+
+                            <group>
+
+                                <field name="passenger_capacity"/>
+                                <field name="luggage_capacity"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Operation -->
+
+                        <page string="Operation">
+
+                            <group>
+
+                                <field name="has_ac"/>
+                                <field name="has_wifi"/>
+                                <field name="has_microphone"/>
+                                <field name="has_tv"/>
+                                <field name="wheelchair_accessible"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Driver -->
+
+                        <page string="Driver">
+
+                            <group>
+
+                                <field name="driver_id"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Notes -->
+
+                        <page string="Notes">
+
+                            <field name="note"/>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ACTION -->
+
+    <record id="action_umrah_vehicle" model="ir.actions.act_window">
+        <field name="name">Vehicles</field>
+        <field name="res_model">umrah.transport.vehicle</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+
+
+
+
+</odoo>

@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+<template id="report_umrah_pilgrim">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.header-table{
+width:100%;
+margin-bottom:20px;
+}
+
+.logo img{
+max-height:60px;
+}
+
+.report-title{
+font-size:26px;
+font-weight:bold;
+color:#1f2937;
+}
+
+.code-box{
+text-align:right;
+font-size:14px;
+}
+
+.profile-table{
+width:100%;
+margin-bottom:20px;
+}
+
+.profile-img{
+width:100px;
+height:100px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #e5e7eb;
+}
+
+.section{
+margin-top:10px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+font-size:15px;
+border-radius:4px;
+margin-bottom:6px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+color:#374151;
+width:40%;
+}
+
+.value{
+color:#111827;
+}
+
+.notes-box{
+border:1px solid #e5e7eb;
+padding:10px;
+border-radius:6px;
+margin-top:10px;
+}
+
+</style>
+
+
+<div class="report-box">
+
+<!-- HEADER -->
+
+<table class="header-table">
+
+<tr>
+
+<td class="logo" width="30%">
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+</td>
+
+<td width="40%" style="text-align:center">
+<div class="report-title">
+Pilgrim Information Report
+</div>
+</td>
+
+<td class="code-box" width="30%">
+<strong>Code:</strong>
+<span t-esc="o.code"/>
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- PROFILE -->
+
+<table class="profile-table">
+
+<tr>
+
+<td width="120">
+
+<img t-if="o.image_1920"
+class="profile-img"
+t-att-src="'data:image/png;base64,%s' % o.image_1920"/>
+
+</td>
+
+<td>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Full Name</td>
+<td class="value" t-esc="o.full_name"/>
+</tr>
+
+<tr>
+<td class="label">Nationality</td>
+<td class="value" t-esc="o.nationality.name"/>
+</tr>
+
+<tr>
+<td class="label">Gender</td>
+<td class="value" t-esc="dict(o._fields['gender'].selection).get(o.gender)"/>
+</tr>
+
+<tr>
+<td class="label">Birth Date</td>
+<td class="value" t-esc="o.birth_date"/>
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- TWO COLUMN LAYOUT -->
+
+<table width="100%">
+
+<tr>
+
+<!-- LEFT COLUMN -->
+
+<td width="50%" valign="top">
+
+<div class="section">
+
+<div class="section-title">
+Contact Information
+</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Mobile</td>
+<td class="value" t-esc="o.mobile"/>
+</tr>
+
+<tr>
+<td class="label">Phone</td>
+<td class="value" t-esc="o.phone"/>
+</tr>
+
+<tr>
+<td class="label">Email</td>
+<td class="value" t-esc="o.email"/>
+</tr>
+
+<tr>
+<td class="label">Address</td>
+<td class="value" t-esc="o.address"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<div class="section">
+
+<div class="section-title">
+Medical Information
+</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Medical Conditions</td>
+<td class="value" t-esc="o.medical_conditions"/>
+</tr>
+
+<tr>
+<td class="label">Emergency Contact</td>
+<td class="value" t-esc="o.emergency_contact_name"/>
+</tr>
+
+<tr>
+<td class="label">Emergency Phone</td>
+<td class="value" t-esc="o.emergency_contact_phone"/>
+</tr>
+
+</table>
+
+</div>
+
+</td>
+
+
+<!-- RIGHT COLUMN -->
+
+<td width="50%" valign="top">
+
+<div class="section">
+
+<div class="section-title">
+Passport Information
+</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Passport Number</td>
+<td class="value" t-esc="o.passport_number"/>
+</tr>
+
+<tr>
+<td class="label">Issue Date</td>
+<td class="value" t-esc="o.passport_issue_date"/>
+</tr>
+
+<tr>
+<td class="label">Expiry Date</td>
+<td class="value" t-esc="o.passport_expiry_date"/>
+</tr>
+
+<tr>
+<td class="label">Place of Issue</td>
+<td class="value" t-esc="o.passport_place_of_issue"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<div class="section">
+
+<div class="section-title">
+Umrah Information
+</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Trip</td>
+<td class="value" t-esc="o.trip_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Group</td>
+<td class="value" t-esc="o.group_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Visa</td>
+<td class="value" t-esc="o.visa_id.visa_number"/>
+</tr>
+
+<tr>
+<td class="label">Status</td>
+<td class="value" t-esc="dict(o._fields['status'].selection).get(o.status)"/>
+</tr>
+
+</table>
+
+</div>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- NOTES -->
+
+<div class="section">
+
+<div class="section-title">
+Notes
+</div>
+
+<div class="notes-box" t-esc="o.notes"/>
+
+</div>
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</odoo>

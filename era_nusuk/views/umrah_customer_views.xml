@@ -1,0 +1,285 @@
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- List View -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_customer_tree" model="ir.ui.view">
+        <field name="name">umrah.customer.tree</field>
+        <field name="model">umrah.customer</field>
+        <field name="arch" type="xml">
+
+            <list string="Umrah Customers">
+
+                <field name="company_partner_id"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="city"/>
+                <field name="salesperson_id"/>
+                <field name="state"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- Form View -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_customer_form" model="ir.ui.view">
+        <field name="name">umrah.customer.form</field>
+        <field name="model">umrah.customer</field>
+        <field name="arch" type="xml">
+
+            <form string="Umrah Customer">
+
+                <!-- ===================== -->
+                <!-- Header -->
+                <!-- ===================== -->
+
+                <header>
+
+                    <button name="action_submit"
+                            string="Submit"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_waiting"
+                            string="Send To Approval"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'submit'"/>
+
+                    <button name="action_approve"
+                            string="Approve"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'waiting'"/>
+
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state == 'canceled'"/>
+
+                    <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'canceled'"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,submit,waiting,approved,canceled"/>
+
+                </header>
+
+
+                <!-- ===================== -->
+                <!-- Body -->
+                <!-- ===================== -->
+
+                <sheet>
+
+                    <!-- ===================== -->
+                    <!-- Smart Buttons -->
+                    <!-- ===================== -->
+
+                    <div class="oe_button_box" name="button_box">
+
+                        <!-- Contracts -->
+
+                        <button type="object"
+                                name="action_view_contracts"
+                                class="oe_stat_button"
+                                icon="fa-file-text">
+
+                            <field name="contract_count"
+                                   widget="statinfo"
+                                   string="Contracts"/>
+
+                        </button>
+
+
+                        <!-- Groups -->
+
+                        <button type="object"
+                                name="action_view_groups"
+                                class="oe_stat_button"
+                                icon="fa-users">
+
+                            <field name="group_count"
+                                   widget="statinfo"
+                                   string="Groups"/>
+
+                        </button>
+
+
+                        <!-- Trips -->
+
+                        <button type="object"
+                                name="action_view_trips"
+                                class="oe_stat_button"
+                                icon="fa-plane">
+
+                            <field name="trip_count"
+                                   widget="statinfo"
+                                   string="Trips"/>
+
+                        </button>
+
+                        <button name="action_view_invoices"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-file-text-o">
+
+    <field name="invoice_count"
+           widget="statinfo"
+           string="Invoices"/>
+
+</button>
+
+                    </div>
+
+
+                    <!-- ===================== -->
+                    <!-- General Info -->
+                    <!-- ===================== -->
+
+                    <group string="General Information">
+
+                        <group>
+
+                            <field name="company_partner_id"
+                                   readonly="state == 'approved'"/>
+
+                            <field name="vat"
+                                   readonly="state == 'approved'"/>
+
+                            <field name="commercial_register"
+                                   readonly="state == 'approved'"/>
+
+                            <field name="mobile"
+                                   readonly="state == 'approved'"/>
+
+                            <field name="phone"
+                                   readonly="state == 'approved'"/>
+
+                            <field name="email"
+                                   readonly="state == 'approved'"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ===================== -->
+                    <!-- Address -->
+                    <!-- ===================== -->
+
+                    <group string="Address">
+
+                        <group>
+
+                            <field name="country_id"/>
+                            <field name="state_id"/>
+                            <field name="city"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="district"/>
+                            <field name="zip"/>
+                            <field name="street"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ===================== -->
+                    <!-- Notebook -->
+                    <!-- ===================== -->
+
+                    <notebook>
+
+                        <!-- Responsible Page -->
+
+                        <page string="Responsible">
+
+                            <group>
+
+                                <field name="responsible_id"/>
+
+                                <field name="responsible_email" readonly="1"/>
+
+                                <field name="responsible_mobile" readonly="1"/>
+
+                                <field name="salesperson_id"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Contracts Page -->
+
+                        <page string="Contracts">
+
+                            <field name="contract_ids">
+
+                                <list>
+
+                                    <field name="name"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="pilgrim_count"/>
+                                    <field name="state"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- Financial Page -->
+
+                        <page string="Financial Information">
+
+                            <group>
+
+                                <field name="analytic_plan_id"/>
+
+                                <field name="analytic_account_ids"
+                                       widget="many2many_tags"/>
+
+                            </group>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- Action -->
+    <!-- ===================================================== -->
+
+    <record id="action_umrah_customer" model="ir.actions.act_window">
+        <field name="name">Umrah Customers</field>
+        <field name="res_model">umrah.customer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+</odoo>

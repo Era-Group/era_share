@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Section 4: Agent - billing type, Pricing, Sub-Agents  -->
+    <!-- ===================================================== -->
+    <record id="view_umrah_agent_form_inherit" model="ir.ui.view">
+        <field name="name">umrah.agent.form.inherit</field>
+        <field name="model">umrah.agent</field>
+        <field name="inherit_id" ref="view_umrah_agent_form"/>
+        <field name="arch" type="xml">
+
+            <!-- 4.2 Billing type + agent number + active prices
+                 (added next to the existing agent_type field, which
+                  is left untouched) -->
+            <xpath expr="//field[@name='agent_type']" position="after">
+                <field name="agent_billing_type"/>
+                <field name="agent_number"/>
+                <field name="parent_agent_id"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="current_sale_price" readonly="1"/>
+                <field name="current_purchase_price" readonly="1"/>
+            </xpath>
+
+            <!-- 4.1 Pricing tab + 4.3 Sub-Agents tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Pricing">
+                    <field name="price_line_ids">
+                        <list editable="bottom">
+                            <field name="sale_price"/>
+                            <field name="purchase_price"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Sub-Agents">
+                    <!-- Inline-created sub-agents are auto-linked via the
+                         One2many inverse (parent_agent_id) on save. Odoo 18's
+                         view validator rejects active_id in a field context
+                         (it is not a field on umrah.agent), so no default
+                         context is set here - the inverse handles it. -->
+                    <field name="sub_agent_ids">
+                        <list editable="bottom">
+                            <field name="name"/>
+                            <field name="agent_number"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="country_id"/>
+                            <field name="agent_billing_type"/>
+                            <field name="status"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 4.2 Billing Type search filter + group-by (SEPARATE from the
+         existing agent_type filters / searchpanel, which are untouched) -->
+    <record id="view_umrah_agent_search_inherit" model="ir.ui.view">
+        <field name="name">umrah.agent.search.inherit</field>
+        <field name="model">umrah.agent</field>
+        <field name="inherit_id" ref="view_umrah_agent_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='religious_organization']" position="after">
+                <separator/>
+                <filter string="Billing: Default" name="billing_default"
+                        domain="[('agent_billing_type', '=', 'default')]"/>
+                <filter string="Billing: Actual" name="billing_actual"
+                        domain="[('agent_billing_type', '=', 'actual')]"/>
+            </xpath>
+
+            <xpath expr="//filter[@name='group_agent_type']" position="after">
+                <filter string="Billing Type" name="group_agent_billing_type"
+                        context="{'group_by': 'agent_billing_type'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

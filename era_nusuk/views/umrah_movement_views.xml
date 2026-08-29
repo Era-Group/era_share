@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Transport Movements (unified: arrival / intercity /   -->
+    <!-- departure / ziyarah), mirroring Nusuk Masar requests. -->
+    <!-- ===================================================== -->
+
+    <!-- List View -->
+    <record id="view_umrah_movement_list" model="ir.ui.view">
+        <field name="name">umrah.movement.list</field>
+        <field name="model">umrah.movement</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="movement_type"
+                       decoration-success="movement_type == 'arrival'"
+                       decoration-info="movement_type == 'intercity'"
+                       decoration-warning="movement_type == 'departure'"
+                       widget="badge"/>
+                <field name="transport_company_id"/>
+                <field name="flight_number" optional="show"/>
+                <field name="masar_request_ref" optional="show"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="max_capacity"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_umrah_movement_search" model="ir.ui.view">
+        <field name="name">umrah.movement.search</field>
+        <field name="model">umrah.movement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="transport_company_id"/>
+                <field name="masar_request_ref"/>
+                <field name="flight_number"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <filter string="Arrivals" name="filter_arrival"
+                        domain="[('movement_type', '=', 'arrival')]"/>
+                <filter string="Intercity" name="filter_intercity"
+                        domain="[('movement_type', '=', 'intercity')]"/>
+                <filter string="Departures" name="filter_departure"
+                        domain="[('movement_type', '=', 'departure')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Movement Type" name="group_type"
+                            context="{'group_by': 'movement_type'}"/>
+                    <filter string="Transport Company" name="group_company"
+                            context="{'group_by': 'transport_company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Form View (no Amount page) -->
+    <record id="view_umrah_movement_form" model="ir.ui.view">
+        <field name="name">umrah.movement.form</field>
+        <field name="model">umrah.movement</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object"
+                                name="action_view_groups"
+                                class="oe_stat_button"
+                                icon="fa-users">
+                            <field name="group_count" string="Groups" widget="statinfo"/>
+                        </button>
+                        <button type="object"
+                                name="action_view_pilgrims"
+                                class="oe_stat_button"
+                                icon="fa-user">
+                            <field name="pilgrim_count" string="Pilgrims" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="movement_type"/>
+                            <field name="transport_company_id"/>
+                            <field name="max_capacity"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="flight_number"/>
+                            <field name="masar_request_ref"/>
+                            <field name="agent_id"/>
+                        </group>
+                    </group>
+
+                    <field name="description"/>
+
+                    <notebook>
+                        <page string="Routes">
+                            <field name="route_ids">
+                                <list editable="bottom">
+                                    <field name="from_location_id"/>
+                                    <field name="from_date"/>
+                                    <field name="to_location_id"/>
+                                    <field name="to_date"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Vehicles">
+                            <field name="vehicle_line_ids">
+                                <list editable="bottom">
+                                    <field name="vehicle_id"
+                                           domain="[('company_id','=',parent.transport_company_id)]"/>
+                                    <field name="passenger_capacity"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Groups">
+                            <field name="group_ids"/>
+                        </page>
+
+                        <page string="Members">
+                            <field name="member_ids" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_umrah_movement" model="ir.actions.act_window">
+        <field name="name">Movements</field>
+        <field name="res_model">umrah.movement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_umrah_movement_search"/>
+    </record>
+
+    <!-- Menu (Nusuk Operations app, next to Groups) -->
+    <menuitem id="menu_umrah_movement"
+              name="Movements"
+              parent="menu_nusuk_operations_root"
+              action="action_umrah_movement"
+              sequence="20"/>
+
+</odoo>

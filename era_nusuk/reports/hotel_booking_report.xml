@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+<!-- ================================================== -->
+<!-- REPORT ACTION -->
+<!-- ================================================== -->
+
+<record id="action_report_umrah_hotel_booking" model="ir.actions.report">
+
+    <field name="name">Hotel Booking</field>
+
+    <field name="model">umrah.hotel.booking</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_hotel_booking</field>
+
+    <field name="report_file">era_nusuk.report_umrah_hotel_booking</field>
+
+    <field name="binding_model_id" ref="model_umrah_hotel_booking"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Booking - %s' % (object.booking_reference)</field>
+
+</record>
+
+
+<!-- ================================================== -->
+<!-- REPORT TEMPLATE -->
+<!-- ================================================== -->
+
+<template id="report_umrah_hotel_booking">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:6px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+.logo img{
+max-height:60px;
+}
+
+</style>
+
+
+<div class="report-box">
+
+
+<!-- HEADER -->
+
+<table width="100%">
+
+<tr>
+
+<td width="30%" class="logo">
+
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+
+</td>
+
+<td width="40%" class="title">
+Hotel Booking Report
+</td>
+
+<td width="30%" style="text-align:right">
+
+<strong>Status:</strong>
+<span t-esc="dict(o._fields['status'].selection).get(o.status)"/>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- BOOKING INFO -->
+
+<div class="section">
+
+<div class="section-title">Booking Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Booking Reference</td>
+<td class="value" t-esc="o.booking_reference"/>
+</tr>
+
+<tr>
+<td class="label">Hotel</td>
+<td class="value" t-esc="o.hotel_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Room Type</td>
+<td class="value" t-esc="o.room_type_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Check In</td>
+<td class="value" t-esc="o.check_in_date"/>
+</tr>
+
+<tr>
+<td class="label">Check Out</td>
+<td class="value" t-esc="o.check_out_date"/>
+</tr>
+
+<tr>
+<td class="label">Nights</td>
+<td class="value" t-esc="o.nights"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- PRICING -->
+
+<div class="section">
+
+<div class="section-title">Pricing</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Room Rate / Night</td>
+<td class="value" t-esc="o.room_rate_per_night"/>
+</tr>
+
+<tr>
+<td class="label">Room Total</td>
+<td class="value" t-esc="o.total_room_cost"/>
+</tr>
+
+<tr>
+<td class="label">Meal Plan</td>
+<td class="value" t-esc="dict(o._fields['meal_plan'].selection).get(o.meal_plan)"/>
+</tr>
+
+<tr>
+<td class="label">Meal Cost / Day</td>
+<td class="value" t-esc="o.meal_cost_per_day"/>
+</tr>
+
+<tr>
+<td class="label">Meal Total</td>
+<td class="value" t-esc="o.total_meal_cost"/>
+</tr>
+
+<tr>
+<td class="label">Total Cost</td>
+<td class="value" t-esc="o.total_cost"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="section">
+
+<div class="section-title">Statistics</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Groups</td>
+<td class="value" t-esc="o.group_count"/>
+</tr>
+
+<tr>
+<td class="label">Members</td>
+<td class="value" t-esc="o.member_count"/>
+</tr>
+
+<tr>
+<td class="label">Pilgrims</td>
+<td class="value" t-esc="o.pilgrim_count"/>
+</tr>
+
+<tr>
+<td class="label">Trips</td>
+<td class="value" t-esc="o.trip_count"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- GROUPS -->
+
+<div class="section">
+
+<div class="section-title">Groups</div>
+
+<table class="table table-sm table-bordered" width="100%">
+
+<thead>
+
+<tr>
+<th>Group Name</th>
+<th>Code</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr t-foreach="o.group_ids" t-as="g">
+
+<td t-esc="g.name"/>
+<td t-esc="g.code"/>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- NOTES -->
+
+<div class="section">
+
+<div class="section-title">Notes</div>
+
+<div t-esc="o.notes"/>
+
+</div>
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</data>
+</odoo>

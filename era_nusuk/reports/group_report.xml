@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+<record id="action_report_umrah_group" model="ir.actions.report">
+
+    <field name="name">Umrah Group Report</field>
+
+    <field name="model">umrah.group</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_group</field>
+
+    <field name="report_file">era_nusuk.report_umrah_group</field>
+
+    <field name="binding_model_id" ref="model_umrah_group"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Group - %s' % (object.name)</field>
+
+</record>
+    </odoo>

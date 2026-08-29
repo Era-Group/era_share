@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+<!-- ================================================== -->
+<!-- REPORT ACTION -->
+<!-- ================================================== -->
+
+<record id="action_report_umrah_agent" model="ir.actions.report">
+
+    <field name="name">Umrah Agent Report</field>
+
+    <field name="model">umrah.agent</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_agent</field>
+
+    <field name="report_file">era_nusuk.report_umrah_agent</field>
+
+    <field name="binding_model_id" ref="model_umrah_agent"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Agent - %s' % (object.name)</field>
+
+</record>
+
+
+<!-- ================================================== -->
+<!-- REPORT TEMPLATE -->
+<!-- ================================================== -->
+
+<template id="report_umrah_agent">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.header{
+margin-bottom:20px;
+}
+
+.logo img{
+max-height:60px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-top:10px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:5px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+</style>
+
+
+<div class="report-box">
+
+<!-- HEADER -->
+
+<table width="100%">
+
+<tr>
+
+<td width="30%" class="logo">
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+</td>
+
+<td width="40%" class="title">
+Agent Report
+</td>
+
+<td width="30%" style="text-align:right">
+<strong>Code:</strong>
+<span t-esc="o.code"/>
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- BASIC INFORMATION -->
+
+<div class="section">
+
+<div class="section-title">Basic Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Agent Name</td>
+<td class="value" t-esc="o.name"/>
+</tr>
+
+<tr>
+<td class="label">Company</td>
+<td class="value" t-esc="o.company_name"/>
+</tr>
+
+<tr>
+<td class="label">Agent Type</td>
+<td class="value" t-esc="dict(o._fields['agent_type'].selection).get(o.agent_type)"/>
+</tr>
+
+<tr>
+<td class="label">Specialization</td>
+<td class="value" t-esc="dict(o._fields['specialization'].selection).get(o.specialization)"/>
+</tr>
+
+<tr>
+<td class="label">Years of Experience</td>
+<td class="value" t-esc="o.years_of_experience"/>
+</tr>
+
+<tr>
+<td class="label">Rating</td>
+<td class="value" t-esc="o.rating"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- CONTACT -->
+
+<div class="section">
+
+<div class="section-title">Contact Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Phone</td>
+<td class="value" t-esc="o.phone"/>
+</tr>
+
+<tr>
+<td class="label">Mobile</td>
+<td class="value" t-esc="o.mobile"/>
+</tr>
+
+<tr>
+<td class="label">Email</td>
+<td class="value" t-esc="o.email"/>
+</tr>
+
+<tr>
+<td class="label">Website</td>
+<td class="value" t-esc="o.website"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- ADDRESS -->
+
+<div class="section">
+
+<div class="section-title">Address</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Street</td>
+<td class="value" t-esc="o.street"/>
+</tr>
+
+<tr>
+<td class="label">City</td>
+<td class="value" t-esc="o.city"/>
+</tr>
+
+<tr>
+<td class="label">Country</td>
+<td class="value" t-esc="o.country_id.name"/>
+</tr>
+
+<tr>
+<td class="label">ZIP</td>
+<td class="value" t-esc="o.zip"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- LICENSE -->
+
+<div class="section">
+
+<div class="section-title">Business Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">License Number</td>
+<td class="value" t-esc="o.license_number"/>
+</tr>
+
+<tr>
+<td class="label">License Expiry</td>
+<td class="value" t-esc="o.license_expiry_date"/>
+</tr>
+
+<tr>
+<td class="label">Tax Number</td>
+<td class="value" t-esc="o.tax_number"/>
+</tr>
+
+<tr>
+<td class="label">Registration Number</td>
+<td class="value" t-esc="o.registration_number"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="section">
+
+<div class="section-title">Statistics</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Trips Organized</td>
+<td class="value" t-esc="o.total_trips_organized"/>
+</tr>
+
+<tr>
+<td class="label">Pilgrims Served</td>
+<td class="value" t-esc="o.total_pilgrims_served"/>
+</tr>
+
+<tr>
+<td class="label">Success Rate</td>
+<td class="value">
+<span t-esc="o.success_rate"/> %
+</td>
+</tr>
+
+<tr>
+<td class="label">Average Group Size</td>
+<td class="value" t-esc="o.average_group_size"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- NOTES -->
+
+
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+
+</data>
+</odoo>

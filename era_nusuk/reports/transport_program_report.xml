@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+    <!-- ================================================== -->
+    <!-- REPORT ACTION -->
+    <!-- ================================================== -->
+    <record id="action_report_transport_program" model="ir.actions.report">
+        <field name="name">Transport Program Report</field>
+        <field name="model">umrah.transport.program</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_transport_program</field>
+        <field name="report_file">era_nusuk.report_transport_program</field>
+        <field name="binding_model_id" ref="model_umrah_transport_program"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Program - %s' % (object.name)</field>
+    </record>
+
+
+    <!-- ================================================== -->
+    <!-- REPORT TEMPLATE -->
+    <!-- ================================================== -->
+    <template id="report_transport_program">
+
+        <t t-call="web.external_layout">
+            <main>
+
+                <t t-foreach="docs" t-as="o">
+
+                    <!-- ================================================== -->
+                    <!-- PAGE 1 : PROGRAM INFORMATION -->
+                    <!-- ================================================== -->
+                    <div class="page">
+
+                        <style>
+                            .report-box{
+                                border:1px solid #d1d5db;
+                                border-radius:10px;
+                                padding:20px;
+                            }
+
+                            .title{
+                                font-size:24px;
+                                font-weight:bold;
+                                text-align:center;
+                                margin-bottom:10px;
+                                color:#111827;
+                            }
+
+                            .section{
+                                margin-top:15px;
+                            }
+
+                            .section-title{
+                                background:#f3f4f6;
+                                padding:8px 10px;
+                                font-weight:bold;
+                                border-radius:4px;
+                                margin-bottom:6px;
+                                color:#111827;
+                            }
+
+                            .info-table{
+                                width:100%;
+                                font-size:13px;
+                                border-collapse:collapse;
+                            }
+
+                            .info-table td{
+                                padding:6px 8px;
+                                vertical-align:top;
+                                border-bottom:1px solid #f1f5f9;
+                            }
+
+                            .label{
+                                font-weight:600;
+                                width:35%;
+                                color:#374151;
+                                background:#fafafa;
+                            }
+
+                            .value{
+                                color:#111827;
+                            }
+
+                            .logo img{
+                                max-height:60px;
+                            }
+
+                            .line-table{
+                                width:100%;
+                                border-collapse:collapse;
+                                font-size:13px;
+                            }
+
+                            .line-table th{
+                                background:#f3f4f6;
+                                border:1px solid #d1d5db;
+                                padding:8px;
+                                text-align:left;
+                                color:#111827;
+                            }
+
+                            .line-table td{
+                                border:1px solid #d1d5db;
+                                padding:8px;
+                                color:#111827;
+                            }
+
+                            .text-muted{
+                                color:#6b7280;
+                            }
+                        </style>
+
+                        <div class="report-box">
+
+                            <!-- HEADER -->
+                            <table width="100%">
+                                <tr>
+                                    <td width="30%" class="logo">
+                                        <img t-if="res_company.logo"
+                                             t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+                                    </td>
+
+                                    <td width="40%" class="title">
+                                        Transport Program Report
+                                    </td>
+
+                                    <td width="30%" style="text-align:right;">
+                                        <strong>Program:</strong>
+                                        <span t-esc="o.name"/>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- BASIC INFO -->
+                            <div class="section">
+                                <div class="section-title">Program Information</div>
+
+                                <table class="info-table">
+                                    <tr>
+                                        <td class="label">Program Name</td>
+                                        <td class="value" t-esc="o.name"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Description</td>
+                                        <td class="value" t-esc="o.description"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Transport Company</td>
+                                        <td class="value" t-esc="o.transport_company_id.name"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Date From</td>
+                                        <td class="value" t-esc="o.date_from"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Date To</td>
+                                        <td class="value" t-esc="o.date_to"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Max Capacity</td>
+                                        <td class="value" t-esc="o.max_capacity"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Groups Count</td>
+                                        <td class="value" t-esc="o.group_count"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Pilgrims Count</td>
+                                        <td class="value" t-esc="o.pilgrim_count"/>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- GROUPS -->
+                            <div class="section">
+                                <div class="section-title">Groups</div>
+
+                                <table class="line-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Group Name</th>
+                                            <th>Code</th>
+                                            <th>Status</th>
+                                            <th>Pilgrims</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-if="o.group_ids">
+                                            <tr t-foreach="o.group_ids" t-as="g">
+                                                <td t-esc="g.name"/>
+                                                <td t-esc="g.code"/>
+                                                <td t-esc="dict(g._fields['status'].selection).get(g.status)"/>
+                                                <td t-esc="g.pilgrim_count"/>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not o.group_ids">
+                                            <tr>
+                                                <td colspan="4" class="text-muted">No groups assigned.</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- VEHICLES -->
+                            <div class="section">
+                                <div class="section-title">Vehicles</div>
+
+                                <table class="line-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehicle</th>
+                                            <th>Code</th>
+                                            <th>Type</th>
+                                            <th>Passenger Capacity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-if="o.vehicle_line_ids">
+                                            <tr t-foreach="o.vehicle_line_ids" t-as="v">
+                                                <td t-esc="v.vehicle_id.name"/>
+                                                <td t-esc="v.vehicle_id.vehicle_code"/>
+                                                <td t-esc="dict(v.vehicle_id._fields['vehicle_type'].selection).get(v.vehicle_id.vehicle_type) if 'vehicle_type' in v.vehicle_id._fields else v.vehicle_id.vehicle_type"/>
+                                                <td t-esc="v.passenger_capacity"/>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not o.vehicle_line_ids">
+                                            <tr>
+                                                <td colspan="4" class="text-muted">No vehicles assigned.</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- ROUTES -->
+                            <div class="section">
+                                <div class="section-title">Routes</div>
+
+                                <table class="line-table">
+                                    <thead>
+                                        <tr>
+                                            <th>From</th>
+                                            <th>Departure Time</th>
+                                            <th>To</th>
+                                            <th>Arrival Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-if="o.route_ids">
+                                            <tr t-foreach="o.route_ids.sorted(key=lambda r: r.from_date or '')" t-as="r">
+                                                <td t-esc="r.from_location_id.name"/>
+                                                <td t-esc="r.from_date"/>
+                                                <td t-esc="r.to_location_id.name"/>
+                                                <td t-esc="r.to_date"/>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not o.route_ids">
+                                            <tr>
+                                                <td colspan="4" class="text-muted">No routes defined.</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- ================================================== -->
+                    <!-- PAGE 2 : ROUTE TIMELINE HTML -->
+                    <!-- ================================================== -->
+                    <div style="page-break-before:always;" class="page">
+                        <div class="report-box" style="border:1px solid #d1d5db; border-radius:10px; padding:20px;">
+
+                            <table width="100%" style="margin-bottom:20px;">
+                                <tr>
+                                    <td width="30%" class="logo">
+                                        <img t-if="res_company.logo"
+                                             t-att-src="'data:image/png;base64,%s' % res_company.logo"
+                                             style="max-height:60px;"/>
+                                    </td>
+
+                                    <td width="40%" style="text-align:center; font-size:24px; font-weight:bold; color:#111827;">
+                                        Program Timeline
+                                    </td>
+
+                                    <td width="30%" style="text-align:right;">
+                                        <strong>Program:</strong>
+                                        <span t-esc="o.name"/>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div t-if="o.route_timeline_html" t-out="o.route_timeline_html"/>
+                            <div t-if="not o.route_timeline_html" style="padding:20px; color:#6b7280;">
+                                No timeline available.
+                            </div>
+
+                        </div>
+                    </div>
+
+                </t>
+
+            </main>
+        </t>
+
+    </template>
+
+</data>
+</odoo>

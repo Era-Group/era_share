@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- Report Action -->
+
+    <record id="action_report_umrah_pilgrim" model="ir.actions.report">
+        <field name="name">Pilgrim Information</field>
+        <field name="model">umrah.pilgrim</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_umrah_pilgrim</field>
+        <field name="report_file">era_nusuk.report_umrah_pilgrim</field>
+        <field name="binding_model_id" ref="model_umrah_pilgrim"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Pilgrim - %s' % (object.full_name)</field>
+    </record>
+
+</odoo>

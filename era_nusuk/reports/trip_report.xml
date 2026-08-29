@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+<!-- ================================================== -->
+<!-- REPORT ACTION -->
+<!-- ================================================== -->
+
+<record id="action_report_umrah_trip" model="ir.actions.report">
+
+    <field name="name">Trip Report</field>
+
+    <field name="model">umrah.trip</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_trip</field>
+
+    <field name="report_file">era_nusuk.report_umrah_trip</field>
+
+    <field name="binding_model_id" ref="model_umrah_trip"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Trip - %s' % (object.name)</field>
+
+</record>
+
+
+<!-- ================================================== -->
+<!-- REPORT TEMPLATE -->
+<!-- ================================================== -->
+
+<template id="report_umrah_trip">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:6px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+.logo img{
+max-height:60px;
+}
+
+</style>
+
+
+<div class="report-box">
+
+<!-- HEADER -->
+
+<table width="100%">
+
+<tr>
+
+<td width="30%" class="logo">
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+</td>
+
+<td width="40%" class="title">
+Umrah Trip Report
+</td>
+
+<td width="30%" style="text-align:right">
+
+<strong>Status:</strong>
+<span t-esc="dict(o._fields['status'].selection).get(o.status)"/>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- BASIC INFO -->
+
+<div class="section">
+
+<div class="section-title">Trip Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Trip Name</td>
+<td class="value" t-esc="o.name"/>
+</tr>
+
+<tr>
+<td class="label">Trip Code</td>
+<td class="value" t-esc="o.code"/>
+</tr>
+
+<tr>
+<td class="label">Package Type</td>
+<td class="value" t-esc="dict(o._fields['package_type'].selection).get(o.package_type)"/>
+</tr>
+
+<tr>
+<td class="label">Base Price</td>
+<td class="value" t-esc="o.base_price"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- DATES -->
+
+<div class="section">
+
+<div class="section-title">Dates</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Departure Date</td>
+<td class="value" t-esc="o.departure_date"/>
+</tr>
+
+<tr>
+<td class="label">Return Date</td>
+<td class="value" t-esc="o.return_date"/>
+</tr>
+
+<tr>
+<td class="label">Duration</td>
+<td class="value" t-esc="o.duration_days"/> days
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- LOCATIONS -->
+
+<div class="section">
+
+<div class="section-title">Locations</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Departure City</td>
+<td class="value" t-esc="o.departure_city"/>
+</tr>
+
+<tr>
+<td class="label">Departure Airport</td>
+<td class="value" t-esc="o.departure_airport"/>
+</tr>
+
+<tr>
+<td class="label">Arrival City</td>
+<td class="value" t-esc="o.arrival_city"/>
+</tr>
+
+<tr>
+<td class="label">Arrival Airport</td>
+<td class="value" t-esc="o.arrival_airport"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- CAPACITY -->
+
+<div class="section">
+
+<div class="section-title">Capacity</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Maximum Capacity</td>
+<td class="value" t-esc="o.max_capacity"/>
+</tr>
+
+<tr>
+<td class="label">Current Bookings</td>
+<td class="value" t-esc="o.current_bookings"/>
+</tr>
+
+<tr>
+<td class="label">Available Seats</td>
+<td class="value" t-esc="o.available_seats"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="section">
+
+<div class="section-title">Statistics</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Groups</td>
+<td class="value" t-esc="o.group_count"/>
+</tr>
+
+<tr>
+<td class="label">Pilgrims</td>
+<td class="value" t-esc="o.pilgrim_count"/>
+</tr>
+
+<tr>
+<td class="label">Hotel Bookings</td>
+<td class="value" t-esc="o.booking_count"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- AGENT -->
+
+<div class="section">
+
+<div class="section-title">Agent</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Agent</td>
+<td class="value" t-esc="o.agent_id.name"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- HOTELS -->
+
+<div class="section">
+
+<div class="section-title">Hotels</div>
+
+<table class="table table-sm table-bordered" width="100%">
+
+<thead>
+<tr>
+<th>Hotel</th>
+<th>City</th>
+<th>Stars</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr t-foreach="o.hotel_ids" t-as="h">
+
+<td t-esc="h.name"/>
+<td t-esc="dict(h._fields['city'].selection).get(h.city)"/>
+<td t-esc="dict(h._fields['star_rating'].selection).get(h.star_rating)"/>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- GROUPS -->
+
+<div class="section">
+
+<div class="section-title">Groups</div>
+
+<table class="table table-sm table-bordered" width="100%">
+
+<thead>
+<tr>
+<th>Group</th>
+<th>Code</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr t-foreach="o.group_ids" t-as="g">
+
+<td t-esc="g.name"/>
+<td t-esc="g.code"/>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- NOTES -->
+
+<div class="section">
+
+<div class="section-title">Notes</div>
+
+<div t-esc="o.notes"/>
+
+</div>
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</data>
+</odoo>

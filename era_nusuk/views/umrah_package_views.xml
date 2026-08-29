@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Packages                                              -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_package_list" model="ir.ui.view">
+        <field name="name">umrah.package.list</field>
+        <field name="model">umrah.package</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="nights_makkah"/>
+                <field name="nights_madinah"/>
+                <field name="total_nights"/>
+                <field name="masar_program_ref" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-muted="state == 'archived'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_umrah_package_form" model="ir.ui.view">
+        <field name="name">umrah.package.form</field>
+        <field name="model">umrah.package</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object" invisible="state == 'draft'"/>
+                    <button name="action_archive_package" string="Archive"
+                            type="object" invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_groups"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="group_count" string="Groups"
+                                   widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Package Name"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Itinerary">
+                            <field name="nights_makkah"/>
+                            <field name="nights_madinah"/>
+                            <field name="total_nights"/>
+                            <field name="makkah_hotel_id"/>
+                            <field name="madinah_hotel_id"/>
+                        </group>
+                        <group string="Masar">
+                            <field name="masar_program_ref"/>
+                            <field name="currency_id"/>
+                            <field name="service_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pricing">
+                            <field name="price_line_ids">
+                                <list editable="bottom">
+                                    <field name="occupancy_type_id"/>
+                                    <field name="tier_id"/>
+                                    <field name="sale_price"/>
+                                    <field name="cost_price"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_package" model="ir.actions.act_window">
+        <field name="name">Packages</field>
+        <field name="res_model">umrah.package</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- Configuration lookups (occupancy / tiers / services)  -->
+    <!-- ===================================================== -->
+
+    <record id="action_umrah_occupancy_type" model="ir.actions.act_window">
+        <field name="name">Occupancy Types</field>
+        <field name="res_model">umrah.occupancy.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_umrah_occupancy_type_list" model="ir.ui.view">
+        <field name="name">umrah.occupancy.type.list</field>
+        <field name="model">umrah.occupancy.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="capacity"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_umrah_agent_tier" model="ir.actions.act_window">
+        <field name="name">Agent Tiers</field>
+        <field name="res_model">umrah.agent.tier</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_umrah_agent_tier_list" model="ir.ui.view">
+        <field name="name">umrah.agent.tier.list</field>
+        <field name="model">umrah.agent.tier</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_umrah_service" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">umrah.service</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_umrah_service_list" model="ir.ui.view">
+        <field name="name">umrah.service.list</field>
+        <field name="model">umrah.service</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- Menus: Packages in the Sales app + its Configuration  -->
+    <!-- ===================================================== -->
+
+    <menuitem id="menu_umrah_package"
+              name="Packages"
+              parent="menu_nusuk_sales_root"
+              action="action_umrah_package"
+              sequence="15"/>
+
+    <menuitem id="menu_nusuk_sales_config"
+              name="Configuration"
+              parent="menu_nusuk_sales_root"
+              groups="era_nusuk.group_nusuk_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_umrah_occupancy_type"
+              name="Occupancy Types"
+              parent="menu_nusuk_sales_config"
+              action="action_umrah_occupancy_type"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_agent_tier"
+              name="Agent Tiers"
+              parent="menu_nusuk_sales_config"
+              action="action_umrah_agent_tier"
+              sequence="20"/>
+
+    <menuitem id="menu_umrah_service"
+              name="Services"
+              parent="menu_nusuk_sales_config"
+              action="action_umrah_service"
+              sequence="30"/>
+
+</odoo>

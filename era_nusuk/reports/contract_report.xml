@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+<!-- ================================================== -->
+<!-- REPORT ACTION -->
+<!-- ================================================== -->
+
+<record id="action_report_umrah_contract" model="ir.actions.report">
+
+    <field name="name">Umrah Contract Report</field>
+
+    <field name="model">umrah.customer.contract</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_contract</field>
+
+    <field name="report_file">era_nusuk.report_umrah_contract</field>
+
+    <field name="binding_model_id" ref="model_umrah_customer_contract"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Contract - %s' % (object.name)</field>
+
+</record>
+
+
+<!-- ================================================== -->
+<!-- REPORT TEMPLATE -->
+<!-- ================================================== -->
+
+<template id="report_umrah_contract">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-bottom:15px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:5px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+.logo img{
+max-height:60px;
+}
+
+</style>
+
+
+<div class="report-box">
+
+<!-- HEADER -->
+
+<table width="100%">
+
+<tr>
+
+<td width="30%" class="logo">
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+</td>
+
+<td width="40%" class="title">
+Umrah Contract Report
+</td>
+
+<td width="30%" style="text-align:right">
+<strong>Status:</strong>
+<span t-esc="dict(o._fields['state'].selection).get(o.state)"/>
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- CONTRACT INFO -->
+
+<div class="section">
+
+<div class="section-title">Contract Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Contract Number</td>
+<td class="value" t-esc="o.name"/>
+</tr>
+
+<tr>
+<td class="label">Customer</td>
+<td class="value" t-esc="o.customer_id.company_partner_id.name"/>
+</tr>
+
+<tr>
+<td class="label">From Date</td>
+<td class="value" t-esc="o.date_from"/>
+</tr>
+
+<tr>
+<td class="label">To Date</td>
+<td class="value" t-esc="o.date_to"/>
+</tr>
+
+<tr>
+<td class="label">Description</td>
+<td class="value" t-esc="o.description"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- FINANCIAL -->
+
+<div class="section">
+
+<div class="section-title">Financial Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Analytic Plan</td>
+<td class="value" t-esc="o.analytic_plan_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Analytic Account</td>
+<td class="value" t-esc="o.analytic_account_id.name"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="section">
+
+<div class="section-title">Statistics</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Groups</td>
+<td class="value" t-esc="o.group_count"/>
+</tr>
+
+<tr>
+<td class="label">Trips</td>
+<td class="value" t-esc="o.trip_count"/>
+</tr>
+
+<tr>
+<td class="label">Programs</td>
+<td class="value" t-esc="o.program_count"/>
+</tr>
+
+<tr>
+<td class="label">Bookings</td>
+<td class="value" t-esc="o.booking_count"/>
+</tr>
+
+<tr>
+<td class="label">Pilgrims</td>
+<td class="value" t-esc="o.pilgrim_count"/>
+</tr>
+
+<tr>
+<td class="label">Invoices</td>
+<td class="value" t-esc="o.invoice_count"/>
+</tr>
+
+</table>
+
+</div>
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</data>
+</odoo>

@@ -1,0 +1,145 @@
+<odoo>
+
+    <!-- LIST -->
+
+    <record id="view_umrah_transport_company_list" model="ir.ui.view">
+        <field name="name">umrah.transport.company.list</field>
+        <field name="model">umrah.transport.company</field>
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="country_id"/>
+                <field name="rating"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- FORM -->
+
+    <record id="view_umrah_transport_company_form" model="ir.ui.view">
+        <field name="name">umrah.transport.company.form</field>
+        <field name="model">umrah.transport.company</field>
+        <field name="arch" type="xml">
+
+            <form>
+
+                <sheet>
+
+                    <group string="Company Contact">
+
+                        <field name="partner_id"/>
+
+                    </group>
+
+                    <group string="Company Information">
+
+                        <group>
+                            <field name="name"/>
+                            <field name="mobile"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="website"/>
+                            <field name="tax_number"/>
+                        </group>
+
+                    </group>
+
+
+                    <group string="Location Details">
+
+                        <group>
+                            <field name="country_id"/>
+                            <field name="state_id"/>
+                            <field name="district"/>
+                        </group>
+
+                        <group>
+                            <field name="street"/>
+                            <field name="zip"/>
+                        </group>
+
+                    </group>
+
+
+                    <notebook>
+
+                        <!-- License -->
+
+                        <page string="License">
+
+                            <group>
+
+                                <field name="license_number"/>
+                                <field name="license_expiry"/>
+
+                                <field name="license_attachment_ids"
+                                       widget="many2many_binary"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Performance -->
+
+                        <page string="Performance">
+
+                            <group>
+
+                                <field name="rating"/>
+                                <field name="reliability_score"/>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- Vehicles -->
+
+                      <page string="Vehicles">
+
+    <field name="vehicle_ids">
+
+        <list editable="bottom">
+
+            <field name="name"/>
+            <field name="vehicle_code"/>
+            <field name="vehicle_type"/>
+            <field name="status"/>
+
+        </list>
+
+    </field>
+
+</page>
+
+                    </notebook>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ACTION -->
+
+    <record id="action_umrah_transport_company" model="ir.actions.act_window">
+        <field name="name">Transport Companies</field>
+        <field name="res_model">umrah.transport.company</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+
+
+
+
+</odoo>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================= -->
+    <!-- LIST VIEW -->
+    <!-- ================================= -->
+
+    <record id="view_umrah_transport_program_list" model="ir.ui.view">
+        <field name="name">umrah.transport.program.list</field>
+        <field name="model">umrah.transport.program</field>
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="name"/>
+                <field name="transport_company_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="max_capacity"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ================================= -->
+    <!-- SEARCH VIEW -->
+    <!-- ================================= -->
+
+    <record id="view_umrah_transport_program_search" model="ir.ui.view">
+        <field name="name">umrah.transport.program.search</field>
+        <field name="model">umrah.transport.program</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="name"/>
+                <field name="transport_company_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- ================================= -->
+    <!-- FORM VIEW -->
+    <!-- ================================= -->
+
+    <record id="view_umrah_transport_program_form" model="ir.ui.view">
+        <field name="name">umrah.transport.program.form</field>
+        <field name="model">umrah.transport.program</field>
+        <field name="arch" type="xml">
+
+            <form>
+                  <sheet>
+                <div class="oe_button_box" name="button_box">
+
+    <!-- Groups -->
+    <button type="object"
+            name="action_view_groups"
+            class="oe_stat_button"
+            icon="fa-users">
+
+        <field name="group_count"
+               string="Groups"
+               widget="statinfo"/>
+
+    </button>
+
+
+    <!-- Pilgrims -->
+    <button type="object"
+            name="action_view_pilgrims"
+            class="oe_stat_button"
+            icon="fa-user">
+
+        <field name="pilgrim_count"
+               string="Pilgrims"
+               widget="statinfo"/>
+
+    </button>
+
+</div>
+
+
+
+                    <!-- Basic Info -->
+
+                    <group>
+
+                        <group>
+
+                            <field name="name"/>
+                            <field name="transport_company_id"/>
+                            <field name="max_capacity"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+
+
+                        </group>
+
+
+                    </group>
+
+                    <field name="description"/>
+
+                    <!-- Notebook -->
+
+                    <notebook>
+
+                        <!-- Routes -->
+
+                        <page string="Routes">
+
+                            <field name="route_ids">
+
+                                <list editable="bottom">
+
+                                    <field name="from_location_id"/>
+                                    <field name="from_date"/>
+                                    <field name="to_location_id"/>
+                                    <field name="to_date"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- Vehicles -->
+
+                        <page string="Vehicles">
+
+                            <field name="vehicle_line_ids">
+
+                                <list editable="bottom">
+
+                                    <field name="vehicle_id"
+                                           domain="[('company_id','=',parent.transport_company_id)]"/>
+
+                                    <field name="passenger_capacity"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- Groups -->
+
+                        <page string="Groups">
+
+                            <field name="group_ids"/>
+
+                        </page>
+
+
+                        <!-- Members -->
+
+                        <page string="Members">
+
+                            <field name="member_ids" readonly="1"/>
+
+                        </page>
+
+                         <page string="Timeline">
+
+                            <group>
+
+
+                            <field name="route_timeline_html" nolabel="1"/>
+
+                        </group>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ================================= -->
+    <!-- ACTION -->
+    <!-- ================================= -->
+
+    <record id="action_umrah_transport_program" model="ir.actions.act_window">
+        <field name="name">Transport Programs</field>
+        <field name="res_model">umrah.transport.program</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_umrah_transport_program_search"/>
+    </record>
+
+
+</odoo>

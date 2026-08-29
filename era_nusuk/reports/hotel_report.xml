@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+
+<!-- ================================================== -->
+<!-- REPORT ACTION -->
+<!-- ================================================== -->
+
+<record id="action_report_umrah_hotel" model="ir.actions.report">
+
+    <field name="name">Hotel Report</field>
+
+    <field name="model">umrah.hotel</field>
+
+    <field name="report_type">qweb-pdf</field>
+
+    <field name="report_name">era_nusuk.report_umrah_hotel</field>
+
+    <field name="report_file">era_nusuk.report_umrah_hotel</field>
+
+    <field name="binding_model_id" ref="model_umrah_hotel"/>
+
+    <field name="binding_type">report</field>
+
+    <field name="print_report_name">'Hotel - %s' % (object.name)</field>
+
+</record>
+
+
+<!-- ================================================== -->
+<!-- REPORT TEMPLATE -->
+<!-- ================================================== -->
+
+<template id="report_umrah_hotel">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:6px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+.logo img{
+max-height:60px;
+}
+
+</style>
+
+
+<div class="report-box">
+
+
+<!-- HEADER -->
+
+<table width="100%">
+
+<tr>
+
+<td width="30%" class="logo">
+
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+
+</td>
+
+<td width="40%" class="title">
+Hotel Report
+</td>
+
+<td width="30%" style="text-align:right">
+<strong>Status:</strong>
+<span t-if="o.is_active">Active</span>
+<span t-if="not o.is_active">Inactive</span>
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- BASIC INFO -->
+
+<div class="section">
+
+<div class="section-title">Hotel Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Hotel Name</td>
+<td class="value" t-esc="o.name"/>
+</tr>
+
+<tr>
+<td class="label">Hotel Code</td>
+<td class="value" t-esc="o.code"/>
+</tr>
+
+<tr>
+<td class="label">City</td>
+<td class="value" t-esc="dict(o._fields['city'].selection).get(o.city)"/>
+</tr>
+
+<tr>
+<td class="label">Address</td>
+<td class="value" t-esc="o.address"/>
+</tr>
+
+<tr>
+<td class="label">Distance to Haram</td>
+<td class="value" t-esc="o.distance_to_haram"/> m
+</tr>
+
+<tr>
+<td class="label">Star Rating</td>
+<td class="value" t-esc="dict(o._fields['star_rating'].selection).get(o.star_rating)"/>
+</tr>
+
+<tr>
+<td class="label">Total Rooms</td>
+<td class="value" t-esc="o.total_rooms"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- CONTACT -->
+
+<div class="section">
+
+<div class="section-title">Contact Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Phone</td>
+<td class="value" t-esc="o.phone"/>
+</tr>
+
+<tr>
+<td class="label">Email</td>
+<td class="value" t-esc="o.email"/>
+</tr>
+
+<tr>
+<td class="label">Website</td>
+<td class="value" t-esc="o.website"/>
+</tr>
+
+<tr>
+<td class="label">Contact Person</td>
+<td class="value" t-esc="o.contact_person"/>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- FACILITIES -->
+
+<div class="section">
+
+<div class="section-title">Facilities</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">WiFi</td>
+<td class="value">
+<span t-if="o.has_wifi">Yes</span>
+<span t-if="not o.has_wifi">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Parking</td>
+<td class="value">
+<span t-if="o.has_parking">Yes</span>
+<span t-if="not o.has_parking">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Restaurant</td>
+<td class="value">
+<span t-if="o.has_restaurant">Yes</span>
+<span t-if="not o.has_restaurant">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Gym</td>
+<td class="value">
+<span t-if="o.has_gym">Yes</span>
+<span t-if="not o.has_gym">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Spa</td>
+<td class="value">
+<span t-if="o.has_spa">Yes</span>
+<span t-if="not o.has_spa">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Laundry</td>
+<td class="value">
+<span t-if="o.has_laundry">Yes</span>
+<span t-if="not o.has_laundry">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Room Service</td>
+<td class="value">
+<span t-if="o.has_room_service">Yes</span>
+<span t-if="not o.has_room_service">No</span>
+</td>
+</tr>
+
+<tr>
+<td class="label">Haram Shuttle</td>
+<td class="value">
+<span t-if="o.has_shuttle">Yes</span>
+<span t-if="not o.has_shuttle">No</span>
+</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- ROOM TYPES -->
+
+<div class="section">
+
+<div class="section-title">Room Types</div>
+
+<table class="table table-sm table-bordered" width="100%">
+
+<thead>
+<tr>
+<th>Room Type</th>
+<th>Capacity</th>
+<th>Bed Type</th>
+<th>Price / Night</th>
+<th>Total Rooms</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr t-foreach="o.room_type_ids" t-as="room">
+
+<td t-esc="room.name"/>
+<td t-esc="room.capacity"/>
+<td t-esc="dict(room._fields['bed_type'].selection).get(room.bed_type)"/>
+<td t-esc="room.base_price_per_night"/>
+<td t-esc="room.total_rooms"/>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- BOOKINGS -->
+
+<div class="section">
+
+<div class="section-title">Bookings</div>
+
+<table class="table table-sm table-bordered" width="100%">
+
+<thead>
+
+<tr>
+
+<th>Reference</th>
+<th>Room Type</th>
+<th>Check In</th>
+<th>Check Out</th>
+<th>Nights</th>
+<th>Total Cost</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr t-foreach="o.booking_ids" t-as="b">
+
+<td t-esc="b.booking_reference"/>
+<td t-esc="b.room_type_id.name"/>
+<td t-esc="b.check_in_date"/>
+<td t-esc="b.check_out_date"/>
+<td t-esc="b.nights"/>
+<td t-esc="b.total_cost"/>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- NOTES -->
+
+<div class="section">
+
+<div class="section-title">Notes</div>
+
+<div t-esc="o.notes"/>
+
+</div>
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</data>
+</odoo>

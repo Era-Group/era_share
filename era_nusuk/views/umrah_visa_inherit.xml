@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Section 5: Visas - billing fields, frozen pricing,    -->
+    <!--            Nusuk verification, 3-line / actual invoice -->
+    <!-- ===================================================== -->
+    <record id="view_umrah_visa_form_inherit" model="ir.ui.view">
+        <field name="name">umrah.visa.form.inherit</field>
+        <field name="model">umrah.visa</field>
+        <field name="inherit_id" ref="view_umrah_visa_form"/>
+        <field name="arch" type="xml">
+
+            <!-- 5.1 Rewire the Create Invoice button: always visible at the
+                 top, calls the new 3-line / actual-agent logic. -->
+            <xpath expr="//button[@name='action_create_agent_invoice']" position="replace">
+                <button name="action_create_visa_invoice"
+                        string="Create Invoice"
+                        type="object"
+                        class="btn-primary"
+                        icon="fa-money"/>
+            </xpath>
+
+            <!-- 5.2 Billing fields next to the existing agent_id -->
+            <xpath expr="//field[@name='agent_id']" position="after">
+                <field name="issue_date"/>
+                <field name="agent_billing_type" readonly="1"/>
+                <field name="agent_number" readonly="1"/>
+                <field name="sub_agent_id"
+                       domain="[('parent_agent_id', '=', agent_id)]"/>
+                <field name="visa_count"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="sale_price" readonly="1"/>
+                <field name="purchase_price" readonly="1"/>
+                <field name="total" readonly="1"/>
+                <field name="invoice_number" readonly="1"/>
+            </xpath>
+
+            <!-- 5.2 Restrict Group to those of the selected agent -->
+            <xpath expr="//field[@name='group_id']" position="attributes">
+                <attribute name="domain">[('agent_id', '=', agent_id)]</attribute>
+            </xpath>
+
+            <!-- 5.2 Nusuk file verification block. Anchored on a field unique
+                 to the Application Details group (Odoo 18 forbids @string as
+                 an inheritance selector). -->
+            <xpath expr="//group[field[@name='application_reference']]" position="after">
+                <group string="Nusuk Verification">
+                    <field name="nusuk_file" filename="nusuk_filename"/>
+                    <field name="nusuk_filename" invisible="1"/>
+                    <field name="nusuk_total" readonly="1"/>
+                    <field name="nusuk_grand_total" readonly="1"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

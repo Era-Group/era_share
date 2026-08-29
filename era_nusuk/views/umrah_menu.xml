@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Era Nusuk is split into 5 root apps, one per team/role.      -->
+    <!-- Each root is gated by its security group so employees only   -->
+    <!-- see the app(s) of their role. Leaf menu xmlids are kept from -->
+    <!-- the old single-root structure so umrah_menu_hide.xml and     -->
+    <!-- existing references keep working.                            -->
+    <!-- ============================================================ -->
+
+
+    <!-- ===================================================== -->
+    <!-- APP 1: NUSUK OPERATIONS — daily ops team              -->
+    <!-- ===================================================== -->
+    <menuitem id="menu_nusuk_operations_root"
+              name="Nusuk Ops"
+              sequence="10"
+              groups="era_nusuk.group_nusuk_ops_user"
+              web_icon="era_nusuk,static/description/icon_operations.png"/>
+
+    <menuitem id="menu_umrah_group_list"
+              name="Groups"
+              parent="menu_nusuk_operations_root"
+              action="action_umrah_group"
+              sequence="10"/>
+
+    <!-- Movements menu lives in umrah_movement_views.xml,
+         re-parented to this root (sequence 20). -->
+
+    <menuitem id="menu_umrah_trip_status_update_wizard"
+              name="Update Trip Status"
+              parent="menu_nusuk_operations_root"
+              action="action_umrah_trip_status_update_wizard"
+              groups="era_nusuk.group_nusuk_ops_supervisor"
+              sequence="90"/>
+
+
+    <!-- ===================================================== -->
+    <!-- APP 2: NUSUK PILGRIMS &amp; VISAS — visa officers      -->
+    <!-- ===================================================== -->
+    <menuitem id="menu_nusuk_pilgrims_root"
+              name="Nusuk Visas"
+              sequence="20"
+              groups="era_nusuk.group_nusuk_visa_officer"
+              web_icon="era_nusuk,static/description/icon_pilgrims.png"/>
+
+    <menuitem id="menu_umrah_pilgrim_list"
+              name="Pilgrims"
+              parent="menu_nusuk_pilgrims_root"
+              action="action_umrah_pilgrim"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_visa_list"
+              name="Visas"
+              parent="menu_nusuk_pilgrims_root"
+              action="action_umrah_visa"
+              sequence="20"/>
+
+
+    <!-- ===================================================== -->
+    <!-- APP 3: NUSUK AGENTS &amp; SALES — sales/finance team   -->
+    <!-- ===================================================== -->
+    <menuitem id="menu_nusuk_sales_root"
+              name="Nusuk Sales"
+              sequence="30"
+              groups="era_nusuk.group_nusuk_ops_supervisor,era_nusuk.group_nusuk_finance"
+              web_icon="era_nusuk,static/description/icon_sales.png"/>
+
+    <menuitem id="menu_umrah_agent_list"
+              name="Agents"
+              parent="menu_nusuk_sales_root"
+              action="action_umrah_agent"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_customer_list"
+              name="Customers"
+              parent="menu_nusuk_sales_root"
+              action="action_umrah_customer"
+              sequence="20"/>
+
+    <menuitem id="menu_umrah_customer_contract"
+              name="Customer Contracts"
+              parent="menu_nusuk_sales_root"
+              action="action_umrah_customer_contract"
+              sequence="30"/>
+
+    <menuitem id="menu_umrah_trip_list"
+              name="Trips"
+              parent="menu_nusuk_sales_root"
+              action="action_umrah_trip"
+              sequence="40"/>
+
+
+    <!-- ===================================================== -->
+    <!-- APP 4: NUSUK ACCOMMODATION — housing team             -->
+    <!-- (root is deactivated in umrah_menu_hide.xml — same    -->
+    <!--  business decision that hid the old Hotels menu)      -->
+    <!-- ===================================================== -->
+    <menuitem id="menu_nusuk_accommodation_root"
+              name="Nusuk Hotels"
+              sequence="40"
+              groups="era_nusuk.group_nusuk_ops_user"
+              web_icon="era_nusuk,static/description/icon_hotels.png"/>
+
+    <menuitem id="menu_umrah_hotel_list"
+              name="Hotels"
+              parent="menu_nusuk_accommodation_root"
+              action="action_umrah_hotel"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_hotel_booking_list"
+              name="Hotel Bookings"
+              parent="menu_nusuk_accommodation_root"
+              action="action_umrah_hotel_booking"
+              sequence="20"/>
+
+    <menuitem id="menu_nusuk_accommodation_config"
+              name="Configuration"
+              parent="menu_nusuk_accommodation_root"
+              groups="era_nusuk.group_nusuk_ops_supervisor"
+              sequence="90"/>
+
+    <menuitem id="menu_umrah_hotel_room_type_list"
+              name="Room Types"
+              parent="menu_nusuk_accommodation_config"
+              action="action_umrah_hotel_room_type"
+              sequence="10"/>
+
+
+    <!-- ===================================================== -->
+    <!-- APP 5: NUSUK TRANSPORT — transport team               -->
+    <!-- ===================================================== -->
+    <menuitem id="menu_nusuk_transport_root"
+              name="Nusuk Transport"
+              sequence="50"
+              groups="era_nusuk.group_nusuk_ops_user"
+              web_icon="era_nusuk,static/description/icon_transport.png"/>
+
+    <menuitem id="menu_umrah_transport_program"
+              name="Transport Programs"
+              parent="menu_nusuk_transport_root"
+              action="action_umrah_transport_program"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_transport_company"
+              name="Transport Companies"
+              parent="menu_nusuk_transport_root"
+              action="action_umrah_transport_company"
+              sequence="20"/>
+
+    <menuitem id="menu_umrah_vehicle"
+              name="Vehicles"
+              parent="menu_nusuk_transport_root"
+              action="action_umrah_vehicle"
+              sequence="30"/>
+
+    <menuitem id="menu_umrah_driver"
+              name="Drivers"
+              parent="menu_nusuk_transport_root"
+              action="action_umrah_driver"
+              sequence="40"/>
+
+    <menuitem id="menu_nusuk_transport_config"
+              name="Configuration"
+              parent="menu_nusuk_transport_root"
+              groups="era_nusuk.group_nusuk_ops_supervisor"
+              sequence="90"/>
+
+    <menuitem id="menu_umrah_location"
+              name="Locations"
+              parent="menu_nusuk_transport_config"
+              action="action_umrah_location"
+              sequence="10"/>
+
+    <menuitem id="menu_umrah_location_type"
+              name="Location Types"
+              parent="menu_nusuk_transport_config"
+              action="action_umrah_location_type"
+              sequence="20"/>
+
+</odoo>

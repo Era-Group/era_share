@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================= -->
+    <!-- LIST VIEW -->
+    <!-- ============================= -->
+
+    <record id="view_umrah_customer_contract_list" model="ir.ui.view">
+        <field name="name">umrah.customer.contract.list</field>
+        <field name="model">umrah.customer.contract</field>
+
+        <field name="arch" type="xml">
+            <list string="Customer Contracts">
+
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="pilgrim_count"/>
+                <field name="state"/>
+
+            </list>
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- FORM VIEW -->
+    <!-- ============================= -->
+
+    <record id="view_umrah_customer_contract_form" model="ir.ui.view">
+        <field name="name">umrah.customer.contract.form</field>
+        <field name="model">umrah.customer.contract</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Customer Contract">
+
+                <!-- Status -->
+                <header>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,submit,waiting,approved,canceled"/>
+
+                    <header>
+
+    <button name="action_submit"
+            string="Submit"
+            type="object"
+            class="btn-primary"
+            invisible="state != 'draft'"/>
+
+    <button name="action_waiting"
+            string="Send For Approval"
+            type="object"
+            class="btn-primary"
+            invisible="state != 'submit'"/>
+
+    <button name="action_approve"
+            string="Approve"
+            type="object"
+            class="btn-success"
+            invisible="state != 'waiting'"/>
+
+    <button name="action_cancel"
+            string="Cancel"
+            type="object"
+            class="btn-danger"
+            invisible="state == 'canceled'"/>
+
+    <button name="action_reset_to_draft"
+            string="Reset to Draft"
+            type="object"
+            invisible="state == 'draft'"/>
+
+     <button name="action_create_invoice"
+        string="Create Invoice"
+        type="object"
+        class="btn-primary"
+        icon="fa-money"/>
+
+
+
+</header>
+
+                </header>
+
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_groups"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-users">
+
+    <field name="group_count"
+           widget="statinfo"
+           string="Groups"/>
+
+</button>
+
+                        <button name="action_view_pilgrims"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-user">
+
+    <field name="pilgrim_count"
+           widget="statinfo"
+           string="Pilgrims"/>
+
+</button>
+                        <button name="action_view_programs"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-road">
+
+    <field name="program_count"
+           widget="statinfo"
+           string="Programs"/>
+
+</button>
+                        <button name="action_view_bookings"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-bed">
+
+    <field name="booking_count"
+           widget="statinfo"
+           string="Bookings"/>
+
+</button>
+
+                         <button name="action_view_invoices"
+            type="object"
+            class="oe_stat_button"
+            icon="fa-file-text-o">
+
+        <field name="invoice_count"
+               widget="statinfo"
+               string="Invoices"/>
+
+    </button>
+                    </div>
+
+                    <!-- BASIC INFORMATION -->
+                    <group>
+
+                        <group string="Contract Information">
+
+                            <field name="name"/>
+                            <field name="customer_id"/>
+                            <field name="description"/>
+
+                        </group>
+
+
+                        <group string="Dates">
+
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="pilgrim_count" readonly="1"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- NOTEBOOK -->
+                    <notebook>
+
+
+                        <!-- GROUPS -->
+                        <page string="Groups">
+                            <field name="group_ids" widget="many2many_tags"/>
+
+                            <field name="group_ids" context="{'default_contract_id': id}" readonly="1">
+
+                                <list editable="bottom">
+
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="current_members"/>
+                                    <field name="max_capacity"/>
+                                    <field name="status"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- TRIPS -->
+                        <page string="Trips">
+
+                            <field name="trip_ids" readonly="1">
+
+                                <list>
+
+                                    <field name="name"/>
+                                    <field name="departure_date"/>
+                                    <field name="return_date"/>
+                                    <field name="duration_days"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+                      <page string="Finance">
+
+    <group>
+
+        <group string="Analytic Settings">
+
+            <field name="analytic_plan_id"/>
+
+            <field name="analytic_account_id"
+                   domain="[('plan_id','=',analytic_plan_id)]"/>
+
+        </group>
+
+    </group>
+
+</page>
+
+
+                    </notebook>
+
+                </sheet>
+
+                <chatter/>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ============================= -->
+    <!-- SEARCH VIEW -->
+    <!-- ============================= -->
+
+
+    <!-- ============================= -->
+    <!-- ACTION -->
+    <!-- ============================= -->
+
+    <record id="action_umrah_customer_contract" model="ir.actions.act_window">
+
+        <field name="name">Customer Contracts</field>
+        <field name="res_model">umrah.customer.contract</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                Create your first customer contract!
+            </p>
+
+            <p>
+                Manage Umrah contracts and track pilgrims, groups, and trips.
+            </p>
+
+        </field>
+
+    </record>
+
+
+</odoo>

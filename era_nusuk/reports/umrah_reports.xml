@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pilgrim Report -->
+    <record id="action_report_umrah_pilgrim" model="ir.actions.report">
+        <field name="name">Pilgrim Report</field>
+        <field name="model">umrah.pilgrim</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_pilgrim_template</field>
+        <field name="report_file">era_nusuk.report_pilgrim_template</field>
+        <field name="binding_model_id" ref="model_umrah_pilgrim"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_pilgrim_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="pilgrim">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Pilgrim Information</h2>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Full Name:</strong> <span t-field="pilgrim.full_name"/><br/>
+                                <strong>Passport Number:</strong> <span t-field="pilgrim.passport_number"/><br/>
+                                <strong>Nationality:</strong> <span t-field="pilgrim.nationality"/><br/>
+                                <strong>Gender:</strong> <span t-field="pilgrim.gender"/><br/>
+                                <strong>Birth Date:</strong> <span t-field="pilgrim.birth_date"/><br/>
+                                <strong>Mobile:</strong> <span t-field="pilgrim.mobile"/><br/>
+                                <strong>Email:</strong> <span t-field="pilgrim.email"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Trip:</strong> <span t-field="pilgrim.trip_id.name"/><br/>
+                                <strong>Group:</strong> <span t-field="pilgrim.group_id.name"/><br/>
+                                <strong>Status:</strong> <span t-field="pilgrim.status"/><br/>
+                                <strong>Registration Date:</strong> <span t-field="pilgrim.registration_date"/><br/>
+                                <strong>Passport Issue Date:</strong> <span t-field="pilgrim.passport_issue_date"/><br/>
+                                <strong>Passport Expiry Date:</strong> <span t-field="pilgrim.passport_expiry_date"/><br/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <strong>Address:</strong><br/>
+                                <span t-field="pilgrim.address"/>
+                            </div>
+                        </div>
+                        <div class="row mt-3" t-if="pilgrim.medical_conditions">
+                            <div class="col-12">
+                                <strong>Medical Conditions:</strong><br/>
+                                <span t-field="pilgrim.medical_conditions"/>
+                            </div>
+                        </div>
+                        <div class="row mt-3" t-if="pilgrim.notes">
+                            <div class="col-12">
+                                <strong>Notes:</strong><br/>
+                                <span t-field="pilgrim.notes"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Trip Report -->
+    <record id="action_report_umrah_trip" model="ir.actions.report">
+        <field name="name">Trip Report</field>
+        <field name="model">umrah.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_trip_template</field>
+        <field name="report_file">era_nusuk.report_trip_template</field>
+        <field name="binding_model_id" ref="model_umrah_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_trip_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="trip">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Trip Information</h2>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Trip Name:</strong> <span t-field="trip.name"/><br/>
+                                <strong>Trip Code:</strong> <span t-field="trip.code"/><br/>
+                                <strong>Package Type:</strong> <span t-field="trip.package_type"/><br/>
+                                <strong>Departure Date:</strong> <span t-field="trip.departure_date"/><br/>
+                                <strong>Return Date:</strong> <span t-field="trip.return_date"/><br/>
+                                <strong>Duration:</strong> <span t-field="trip.duration_days"/> days<br/>
+                                <strong>Status:</strong> <span t-field="trip.status"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Departure City:</strong> <span t-field="trip.departure_city"/><br/>
+                                <strong>Departure Airport:</strong> <span t-field="trip.departure_airport"/><br/>
+                                <strong>Arrival City:</strong> <span t-field="trip.arrival_city"/><br/>
+                                <strong>Arrival Airport:</strong> <span t-field="trip.arrival_airport"/><br/>
+                                <strong>Max Capacity:</strong> <span t-field="trip.max_capacity"/><br/>
+                                <strong>Current Bookings:</strong> <span t-field="trip.current_bookings"/><br/>
+                                <strong>Available Seats:</strong> <span t-field="trip.available_seats"/><br/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <strong>Description:</strong><br/>
+                                <span t-field="trip.description"/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Pilgrims List</h4>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Passport</th>
+                                            <th>Nationality</th>
+                                            <th>Mobile</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="trip.pilgrim_ids" t-as="pilgrim">
+                                            <td><span t-field="pilgrim.full_name"/></td>
+                                            <td><span t-field="pilgrim.passport_number"/></td>
+                                            <td><span t-field="pilgrim.nationality"/></td>
+                                            <td><span t-field="pilgrim.mobile"/></td>
+                                            <td><span t-field="pilgrim.status"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Group Report -->
+    <record id="action_report_umrah_group" model="ir.actions.report">
+        <field name="name">Group Report</field>
+        <field name="model">umrah.group</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_group_template</field>
+        <field name="report_file">era_nusuk.report_group_template</field>
+        <field name="binding_model_id" ref="model_umrah_group"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_group_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="group">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Group Information</h2>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Group Name:</strong> <span t-field="group.name"/><br/>
+                                <strong>Group Code:</strong> <span t-field="group.code"/><br/>
+                                <strong>Trip:</strong> <span t-field="group.trip_id.name"/><br/>
+                                <strong>Group Leader:</strong> <span t-field="group.leader_id.full_name"/><br/>
+                                <strong>Guide:</strong> <span t-field="group.guide_id.name"/><br/>
+                                <strong>Group Type:</strong> <span t-field="group.group_type"/><br/>
+                                <strong>Status:</strong> <span t-field="group.status"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Max Capacity:</strong> <span t-field="group.max_capacity"/><br/>
+                                <strong>Current Members:</strong> <span t-field="group.current_members"/><br/>
+                                <strong>Available Spots:</strong> <span t-field="group.available_spots"/><br/>
+                                <strong>Formation Date:</strong> <span t-field="group.formation_date"/><br/>
+                                <strong>Departure Date:</strong> <span t-field="group.departure_date"/><br/>
+                                <strong>Return Date:</strong> <span t-field="group.return_date"/><br/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Group Members</h4>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Passport</th>
+                                            <th>Nationality</th>
+                                            <th>Mobile</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="group.pilgrim_ids" t-as="pilgrim">
+                                            <td><span t-field="pilgrim.full_name"/></td>
+                                            <td><span t-field="pilgrim.passport_number"/></td>
+                                            <td><span t-field="pilgrim.nationality"/></td>
+                                            <td><span t-field="pilgrim.mobile"/></td>
+                                            <td><span t-field="pilgrim.status"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Visa Report -->
+    <record id="action_report_umrah_visa" model="ir.actions.report">
+        <field name="name">Visa Report</field>
+        <field name="model">umrah.visa</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_visa_template</field>
+        <field name="report_file">era_nusuk.report_visa_template</field>
+        <field name="binding_model_id" ref="model_umrah_visa"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_visa_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="visa">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Visa Information</h2>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Visa Number:</strong> <span t-field="visa.visa_number"/><br/>
+                                <strong>Visa Type:</strong> <span t-field="visa.visa_type"/><br/>
+                                <strong>Pilgrim:</strong> <span t-field="visa.pilgrim_id.full_name"/><br/>
+                                <strong>Application Date:</strong> <span t-field="visa.application_date"/><br/>
+                                <strong>Issue Date:</strong> <span t-field="visa.issue_date"/><br/>
+                                <strong>Expiry Date:</strong> <span t-field="visa.expiry_date"/><br/>
+                                <strong>Status:</strong> <span t-field="visa.status"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Entry Type:</strong> <span t-field="visa.entry_type"/><br/>
+                                <strong>Duration of Stay:</strong> <span t-field="visa.duration_of_stay"/> days<br/>
+                                <strong>Validity Period:</strong> <span t-field="visa.validity_period"/> days<br/>
+                                <strong>Visa Fee:</strong> <span t-field="visa.visa_fee"/><br/>
+                                <strong>Service Fee:</strong> <span t-field="visa.service_fee"/><br/>
+                                <strong>Total Fee:</strong> <span t-field="visa.total_fee"/><br/>
+                                <strong>Payment Status:</strong> <span t-field="visa.payment_status"/><br/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Documents Status</h4>
+                                <ul>
+                                    <li>Passport Copy: <span t-if="visa.passport_copy_submitted">✓ Submitted</span><span t-else="">✗ Not Submitted</span></li>
+                                    <li>Photo: <span t-if="visa.photo_submitted">✓ Submitted</span><span t-else="">✗ Not Submitted</span></li>
+                                    <li>Application Form: <span t-if="visa.application_form_submitted">✓ Submitted</span><span t-else="">✗ Not Submitted</span></li>
+                                    <li>Invitation Letter: <span t-if="visa.invitation_letter_submitted">✓ Submitted</span><span t-else="">✗ Not Submitted</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-3" t-if="visa.notes">
+                            <div class="col-12">
+                                <strong>Notes:</strong><br/>
+                                <span t-field="visa.notes"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Hotel Booking Report -->
+    <record id="action_report_umrah_hotel_booking" model="ir.actions.report">
+        <field name="name">Hotel Booking Report</field>
+        <field name="model">umrah.hotel.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.report_hotel_booking_template</field>
+        <field name="report_file">era_nusuk.report_hotel_booking_template</field>
+        <field name="binding_model_id" ref="model_umrah_hotel_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_hotel_booking_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="booking">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Hotel Booking Confirmation</h2>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Booking Reference:</strong> <span t-field="booking.booking_reference"/><br/>
+                                <strong>Hotel:</strong> <span t-field="booking.hotel_id.name"/><br/>
+                                <strong>Room Type:</strong> <span t-field="booking.room_type_id.name"/><br/>
+                                <strong>Pilgrim:</strong> <span t-field="booking.pilgrim_id.full_name"/><br/>
+                                <strong>Group:</strong> <span t-field="booking.group_id.name"/><br/>
+                                <strong>Trip:</strong> <span t-field="booking.trip_id.name"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Check-in Date:</strong> <span t-field="booking.check_in_date"/><br/>
+                                <strong>Check-out Date:</strong> <span t-field="booking.check_out_date"/><br/>
+                                <strong>Number of Nights:</strong> <span t-field="booking.nights"/><br/>
+                                <strong>Room Rate per Night:</strong> <span t-field="booking.room_rate_per_night"/><br/>
+                                <strong>Meal Plan:</strong> <span t-field="booking.meal_plan"/><br/>
+                                <strong>Status:</strong> <span t-field="booking.status"/><br/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4>Cost Breakdown</h4>
+                                <table class="table">
+                                    <tr>
+                                        <td>Room Cost (<span t-field="booking.nights"/> nights × <span t-field="booking.room_rate_per_night"/>)</td>
+                                        <td class="text-right"><span t-field="booking.total_room_cost"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Meal Cost (<span t-field="booking.nights"/> days × <span t-field="booking.meal_cost_per_day"/>)</td>
+                                        <td class="text-right"><span t-field="booking.total_meal_cost"/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold">
+                                        <td>Total Cost</td>
+                                        <td class="text-right"><span t-field="booking.total_cost"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-3" t-if="booking.special_requests">
+                            <div class="col-12">
+                                <strong>Special Requests:</strong><br/>
+                                <span t-field="booking.special_requests"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
+

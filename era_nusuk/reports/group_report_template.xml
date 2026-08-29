@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+<template id="report_umrah_group">
+
+<t t-call="web.external_layout">
+
+<main>
+
+<t t-foreach="docs" t-as="o">
+
+<div class="page">
+
+<style>
+
+.report-box{
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:20px;
+}
+
+.header-table{
+width:100%;
+margin-bottom:20px;
+}
+
+.logo img{
+max-height:60px;
+}
+
+.report-title{
+font-size:24px;
+font-weight:bold;
+color:#111827;
+text-align:center;
+}
+
+.code-box{
+text-align:right;
+font-size:14px;
+}
+
+.section{
+margin-top:15px;
+}
+
+.section-title{
+background:#f3f4f6;
+padding:6px 10px;
+font-weight:bold;
+border-radius:4px;
+margin-bottom:5px;
+}
+
+.info-table{
+width:100%;
+font-size:13px;
+}
+
+.info-table td{
+padding:4px 6px;
+}
+
+.label{
+font-weight:600;
+width:40%;
+color:#374151;
+}
+
+.value{
+color:#111827;
+}
+
+</style>
+
+<div class="report-box">
+
+<!-- HEADER -->
+
+<table class="header-table">
+
+<tr>
+
+<td width="30%">
+<img t-if="res_company.logo"
+t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+</td>
+
+<td width="40%" class="report-title">
+Umrah Group Report
+</td>
+
+<td width="30%" class="code-box">
+<strong>Group Code:</strong>
+<span t-esc="o.code"/>
+</td>
+
+</tr>
+
+</table>
+
+<!-- BASIC INFO -->
+
+<div class="section">
+
+<div class="section-title">Basic Information</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Group Name</td>
+<td class="value" t-esc="o.name"/>
+</tr>
+
+<tr>
+<td class="label">Description</td>
+<td class="value" t-esc="o.description"/>
+</tr>
+
+<tr>
+<td class="label">Formation Date</td>
+<td class="value" t-esc="o.formation_date"/>
+</tr>
+
+<tr>
+<td class="label">Status</td>
+<td class="value" t-esc="dict(o._fields['status'].selection).get(o.status)"/>
+</tr>
+
+<tr>
+<td class="label">Group Type</td>
+<td class="value" t-esc="dict(o._fields['group_type'].selection).get(o.group_type)"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- STAFF -->
+
+<div class="section">
+
+<div class="section-title">Group Staff</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Leader</td>
+<td class="value" t-esc="o.leader_id.full_name"/>
+</tr>
+
+<tr>
+<td class="label">Guide</td>
+<td class="value" t-esc="o.guide_id.name"/>
+</tr>
+
+<tr>
+<td class="label">Responsible Agent</td>
+<td class="value" t-esc="o.agent_id.name"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- CAPACITY -->
+
+<div class="section">
+
+<div class="section-title">Capacity</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Maximum Capacity</td>
+<td class="value" t-esc="o.max_capacity"/>
+</tr>
+
+<tr>
+<td class="label">Current Pilgrims</td>
+<td class="value" t-esc="o.pilgrim_count"/>
+</tr>
+
+<tr>
+<td class="label">Available Spots</td>
+<td class="value" t-esc="o.available_spots"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- RELATIONS -->
+
+<div class="section">
+
+<div class="section-title">Relations</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Trips</td>
+<td class="value" t-esc="', '.join(o.trip_ids.mapped('name'))"/>
+</tr>
+
+<tr>
+<td class="label">Programs</td>
+<td class="value" t-esc="o.program_count"/>
+</tr>
+
+<tr>
+<td class="label">Hotel Bookings</td>
+<td class="value" t-esc="o.hotel_booking_count"/>
+</tr>
+
+<tr>
+<td class="label">Contract</td>
+<td class="value" t-esc="o.contract_id.name"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- RESTRICTIONS -->
+
+<div class="section">
+
+<div class="section-title">Restrictions</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Gender Restriction</td>
+<td class="value" t-esc="dict(o._fields['gender_restriction'].selection).get(o.gender_restriction)"/>
+</tr>
+
+<tr>
+<td class="label">Age Restriction</td>
+<td class="value" t-esc="dict(o._fields['age_restriction'].selection).get(o.age_restriction)"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- REQUIREMENTS -->
+
+<div class="section">
+
+<div class="section-title">Special Requirements</div>
+
+<table class="info-table">
+
+<tr>
+<td class="label">Special</td>
+<td class="value" t-esc="o.special_requirements"/>
+</tr>
+
+<tr>
+<td class="label">Dietary</td>
+<td class="value" t-esc="o.dietary_requirements"/>
+</tr>
+
+<tr>
+<td class="label">Medical</td>
+<td class="value" t-esc="o.medical_requirements"/>
+</tr>
+
+</table>
+
+</div>
+
+<!-- COMMUNICATION -->
+
+
+
+<!-- NOTES -->
+
+
+
+</div>
+
+</div>
+
+</t>
+
+</main>
+
+</t>
+
+</template>
+
+</odoo>

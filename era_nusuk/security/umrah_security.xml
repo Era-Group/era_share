@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Module Category                                       -->
+    <!-- ===================================================== -->
+    <record id="module_category_era_nusuk" model="ir.module.category">
+        <field name="name">Era Nusuk</field>
+        <field name="description">Hajj &amp; Umrah management roles</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- Security Groups                                       -->
+    <!--                                                       -->
+    <!-- Internal hierarchy:                                   -->
+    <!--   user  (base, read-most)                             -->
+    <!--   ├── ops user  → ops supervisor ─┐                   -->
+    <!--   ├── visa officer ───────────────┼── manager         -->
+    <!--   └── finance ────────────────────┘                   -->
+    <!-- External:                                             -->
+    <!--   agent portal (base.group_portal, record-rule fenced)-->
+    <!-- ===================================================== -->
+
+    <record id="group_nusuk_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Read access to Nusuk operational data. Building block for the other roles.</field>
+    </record>
+
+    <record id="group_nusuk_visa_officer" model="res.groups">
+        <field name="name">Visa Officer</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('group_nusuk_user'))]"/>
+        <field name="comment">Manages pilgrims, visas and Nusuk files. Cannot modify a visa after it is issued.</field>
+    </record>
+
+    <record id="group_nusuk_ops_user" model="res.groups">
+        <field name="name">Operations User</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('group_nusuk_user'))]"/>
+        <field name="comment">Daily operations: groups, movements, accommodation and transport. No delete, no configuration.</field>
+    </record>
+
+    <record id="group_nusuk_ops_supervisor" model="res.groups">
+        <field name="name">Operations Supervisor</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('group_nusuk_ops_user'))]"/>
+        <field name="comment">Supervises operations, manages agents and master data (locations, hotels).</field>
+    </record>
+
+    <record id="group_nusuk_finance" model="res.groups">
+        <field name="name">Finance</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('group_nusuk_user'))]"/>
+        <field name="comment">Agent pricing, customers, contracts and bulk invoicing.</field>
+    </record>
+
+    <record id="group_nusuk_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('group_nusuk_ops_supervisor')), (4, ref('group_nusuk_visa_officer')), (4, ref('group_nusuk_finance'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Full access including delete and configuration.</field>
+    </record>
+
+    <record id="group_nusuk_agent_portal" model="res.groups">
+        <field name="name">Agent (Portal)</field>
+        <field name="category_id" ref="module_category_era_nusuk"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="comment">External agent: portal user restricted by record rules to his own groups, pilgrims, visas and invoices.</field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- Record Rules — external agent isolation               -->
+    <!-- An agent portal user sees only records whose agent's  -->
+    <!-- partner is his own login partner.                     -->
+    <!-- ===================================================== -->
+
+    <record id="rule_agent_portal_own_agent" model="ir.rule">
+        <field name="name">Agent Portal: own agent card</field>
+        <field name="model_id" ref="model_umrah_agent"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_agent_portal_own_groups" model="ir.rule">
+        <field name="name">Agent Portal: own groups</field>
+        <field name="model_id" ref="model_umrah_group"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_members" model="ir.rule">
+        <field name="name">Agent Portal: own group members</field>
+        <field name="model_id" ref="model_umrah_group_member"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_pilgrims" model="ir.rule">
+        <field name="name">Agent Portal: own pilgrims</field>
+        <field name="model_id" ref="model_umrah_pilgrim"/>
+        <field name="domain_force">[('member_ids.agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_visas" model="ir.rule">
+        <field name="name">Agent Portal: own visas</field>
+        <field name="model_id" ref="model_umrah_visa"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_trips" model="ir.rule">
+        <field name="name">Agent Portal: own trips</field>
+        <field name="model_id" ref="model_umrah_trip"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_programs" model="ir.rule">
+        <field name="name">Agent Portal: own transport programs</field>
+        <field name="model_id" ref="model_umrah_transport_program"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <record id="rule_agent_portal_own_movements" model="ir.rule">
+        <field name="name">Agent Portal: own movements</field>
+        <field name="model_id" ref="model_umrah_movement"/>
+        <field name="domain_force">[('agent_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_agent_portal'))]"/>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- Record Rules — internal restrictions                  -->
+    <!-- ===================================================== -->
+
+    <!-- A visa officer may edit a visa only before it is issued.
+         Managers get an unrestricted companion rule (group rules
+         are OR-ed, so the manager rule wins for managers). -->
+    <record id="rule_visa_officer_no_edit_after_issue" model="ir.rule">
+        <field name="name">Visa Officer: no edit after issue</field>
+        <field name="model_id" ref="model_umrah_visa"/>
+        <field name="domain_force">[('status', 'not in', ('issued', 'invoiced', 'expired'))]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_visa_officer'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_manager_visa_full" model="ir.rule">
+        <field name="name">Manager: full visa access</field>
+        <field name="model_id" ref="model_umrah_visa"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_nusuk_manager'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_nusuk" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.nusuk</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Era Nusuk" name="era_nusuk"
+                     logo="/era_nusuk/static/description/icon.png"
+                     groups="era_nusuk.group_nusuk_manager">
+
+                    <block title="Masar Regulatory Checks">
+                        <setting string="Hotel Coverage before Visa"
+                                 help="Block visa submission unless the group has hotel bookings covering the full stay.">
+                            <field name="nusuk_enforce_hotel_coverage"/>
+                        </setting>
+                        <setting string="Transport before Visa"
+                                 help="Block visa submission unless the group has arrival and departure movements.">
+                            <field name="nusuk_enforce_transport"/>
+                        </setting>
+                        <setting string="Agent Seasonal Quota"
+                                 help="Block visa submission when the agent exhausted his Masar quota.">
+                            <field name="nusuk_enforce_agent_quota"/>
+                        </setting>
+                    </block>
+
+                    <block title="Nusuk Voucher File">
+                        <setting string="Visa Fees Column"
+                                 help="1-based column index of رسوم التأشيرة in the Nusuk export.">
+                            <field name="nusuk_col_visa_fees"/>
+                        </setting>
+                        <setting string="Grand Total Column"
+                                 help="1-based column index of المبلغ الاجمالي in the Nusuk export.">
+                            <field name="nusuk_col_grand_total"/>
+                        </setting>
+                    </block>
+
+                    <block title="Invoicing">
+                        <setting string="Service Fee VAT (%)"
+                                 help="VAT percentage applied to the service-fee line of agent visa invoices.">
+                            <field name="nusuk_service_vat_percent"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

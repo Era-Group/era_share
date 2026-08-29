@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Hotel list View -->
+    <record id="view_umrah_hotel_list" model="ir.ui.view">
+        <field name="name">umrah.hotel.list</field>
+        <field name="model">umrah.hotel</field>
+        <field name="arch" type="xml">
+            <list string="Hotels">
+                <field name="name"/>
+                <field name="city"/>
+                <field name="star_rating"/>
+                <field name="distance_to_haram"/>
+                <field name="total_rooms"/>
+                <field name="phone"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Hotel Form View -->
+    <record id="view_umrah_hotel_form" model="ir.ui.view">
+        <field name="name">umrah.hotel.form</field>
+        <field name="model">umrah.hotel</field>
+        <field name="arch" type="xml">
+            <form string="Hotel">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="city"/>
+                            <field name="star_rating"/>
+                            <field name="total_rooms"/>
+                            <field name="distance_to_haram"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Contact Information">
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="website"/>
+                            <field name="contact_person"/>
+                        </group>
+                    </group>
+                    <group string="Address">
+                        <field name="address"/>
+                    </group>
+                    <group string="Facilities">
+                        <group>
+                            <field name="has_wifi"/>
+                            <field name="has_parking"/>
+                            <field name="has_restaurant"/>
+                            <field name="has_gym"/>
+                        </group>
+                        <group>
+                            <field name="has_spa"/>
+                            <field name="has_laundry"/>
+                            <field name="has_room_service"/>
+                            <field name="has_shuttle"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+                    <notebook>
+                        <page string="Room Types">
+                            <field name="room_type_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="capacity"/>
+                                    <field name="bed_type"/>
+                                    <field name="base_price_per_night"/>
+                                    <field name="total_rooms"/>
+                                    <field name="has_view"/>
+                                    <field name="is_active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Bookings">
+                            <field name="booking_ids">
+                                <list>
+                                    <field name="booking_reference"/>
+                                    <!-- CHANGED: booking is on groups level -->
+                                    <field name="group_ids"/>
+                                    <field name="room_type_id"/>
+                                    <field name="check_in_date"/>
+                                    <field name="check_out_date"/>
+                                    <field name="nights"/>
+                                    <field name="total_cost"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Trips">
+                            <field name="trip_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="departure_date"/>
+                                    <field name="return_date"/>
+                                    <field name="current_bookings"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Hotel Room Type list View -->
+    <record id="view_umrah_hotel_room_type_list" model="ir.ui.view">
+        <field name="name">umrah.hotel.room.type.list</field>
+        <field name="model">umrah.hotel.room.type</field>
+        <field name="arch" type="xml">
+            <list string="Room Types">
+                <field name="name"/>
+                <field name="hotel_id"/>
+                <field name="capacity"/>
+                <field name="bed_type"/>
+                <field name="base_price_per_night"/>
+                <field name="total_rooms"/>
+                <field name="has_view"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Hotel Room Type Form View -->
+    <record id="view_umrah_hotel_room_type_form" model="ir.ui.view">
+        <field name="name">umrah.hotel.room.type.form</field>
+        <field name="model">umrah.hotel.room.type</field>
+        <field name="arch" type="xml">
+            <form string="Room Type">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="hotel_id"/>
+                            <field name="capacity"/>
+                            <field name="bed_type"/>
+                            <field name="room_size"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Pricing and Availability">
+                            <field name="base_price_per_night"/>
+                            <field name="total_rooms"/>
+                            <field name="has_balcony"/>
+                            <field name="has_view"/>
+                        </group>
+                    </group>
+                    <group string="Amenities">
+                        <group>
+                            <field name="has_ac"/>
+                            <field name="has_tv"/>
+                            <field name="has_minibar"/>
+                        </group>
+                        <group>
+                            <field name="has_safe"/>
+                            <field name="has_bathroom"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Hotel Booking list View -->
+    <record id="view_umrah_hotel_booking_list" model="ir.ui.view">
+        <field name="name">umrah.hotel.booking.list</field>
+        <field name="model">umrah.hotel.booking</field>
+        <field name="arch" type="xml">
+            <list string="Hotel Bookings">
+                <field name="booking_reference"/>
+                <field name="hotel_id"/>
+                <field name="room_type_id"/>
+                <!-- CHANGED: booking is on groups level -->
+                <field name="group_ids"/>
+                <field name="check_in_date"/>
+                <field name="check_out_date"/>
+                <field name="nights"/>
+                <field name="total_cost"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Hotel Booking Form View -->
+    <record id="view_umrah_hotel_booking_form" model="ir.ui.view">
+        <field name="name">umrah.hotel.booking.form</field>
+        <field name="model">umrah.hotel.booking</field>
+        <field name="arch" type="xml">
+            <form string="Hotel Booking">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,confirmed,checked_in,checked_out"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_groups"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-users">
+
+    <field name="group_count"
+           widget="statinfo"
+           string="Groups"/>
+
+</button>
+                        <button name="action_view_members"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-id-card">
+
+    <field name="member_count"
+           widget="statinfo"
+           string="Members"/>
+
+</button>
+                        <button name="action_view_pilgrims"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-user">
+
+    <field name="pilgrim_count"
+           widget="statinfo"
+           string="Pilgrims"/>
+
+</button>
+                        <button name="action_view_trips"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-plane">
+
+    <field name="trip_count"
+           widget="statinfo"
+           string="Trips"/>
+
+</button>
+                    </div>
+                    <group>
+                        <group string="Booking Information">
+                            <field name="booking_reference"/>
+                            <field name="hotel_id"/>
+                            <field name="room_type_id"/>
+                            <!-- CHANGED: booking is on groups level -->
+                            <field name="group_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="check_in_date"/>
+                            <field name="check_out_date"/>
+                            <field name="nights"/>
+                            <field name="created_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Room Pricing">
+                            <field name="room_rate_per_night"/>
+                            <field name="total_room_cost"/>
+                        </group>
+                        <group string="Meal Plan">
+                            <field name="meal_plan"/>
+                            <field name="meal_cost_per_day"/>
+                            <field name="total_meal_cost"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Total Cost">
+                            <field name="total_cost"/>
+                        </group>
+                    </group>
+                    <group string="Special Requests">
+                        <field name="special_requests"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Hotel Actions -->
+    <record id="action_umrah_hotel" model="ir.actions.act_window">
+        <field name="name">Hotels</field>
+        <field name="res_model">umrah.hotel</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first hotel!
+            </p>
+            <p>
+                Manage hotels and their room types for Umrah trips.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_umrah_hotel_room_type" model="ir.actions.act_window">
+        <field name="name">Room Types</field>
+        <field name="res_model">umrah.hotel.room.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_umrah_hotel_booking" model="ir.actions.act_window">
+        <field name="name">Hotel Bookings</field>
+        <field name="res_model">umrah.hotel.booking</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

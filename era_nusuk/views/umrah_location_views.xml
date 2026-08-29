@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- LIST VIEW -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_location_list" model="ir.ui.view">
+        <field name="name">umrah.location.list</field>
+        <field name="model">umrah.location</field>
+        <field name="arch" type="xml">
+
+            <list string="Locations">
+
+                <field name="name"/>
+                <field name="code"/>
+                <field name="location_type_id"/>
+                <field name="state_id"/>
+                <field name="district"/>
+                <field name="capacity"/>
+                <field name="contact_partner_id"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- FORM VIEW -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_location_form" model="ir.ui.view">
+        <field name="name">umrah.location.form</field>
+        <field name="model">umrah.location</field>
+        <field name="arch" type="xml">
+
+            <form string="Location">
+
+                <sheet>
+
+                    <!-- ============================= -->
+                    <!-- General Info -->
+                    <!-- ============================= -->
+
+                    <group string="General Information">
+
+                        <group>
+
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="location_type_id"/>
+                            <field name="location_environment"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="capacity"/>
+                            <field name="average_visit_duration"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <group>
+
+                        <field name="description"/>
+
+                    </group>
+
+
+                    <!-- ============================= -->
+                    <!-- Address Info -->
+                    <!-- ============================= -->
+
+                    <group string="Address Information">
+
+                        <group>
+
+                            <field name="country_id"/>
+                            <field name="state_id"/>
+                            <field name="district"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                            <field name="google_map_link"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ============================= -->
+                    <!-- Other Info -->
+                    <!-- ============================= -->
+
+                    <group string="Other Information">
+
+                        <field name="parking_available"/>
+                        <field name="wheelchair_access"/>
+
+                    </group>
+
+
+                    <!-- ============================= -->
+                    <!-- Contact -->
+                    <!-- ============================= -->
+
+                    <group string="Contact">
+
+                        <group>
+
+                            <field name="contact_partner_id"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="contact_phone" readonly="1"/>
+                            <field name="contact_email" readonly="1"/>
+
+                        </group>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- SEARCH VIEW -->
+    <!-- ===================================================== -->
+
+    <record id="view_umrah_location_search" model="ir.ui.view">
+        <field name="name">umrah.location.search</field>
+        <field name="model">umrah.location</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="name"/>
+                <field name="code"/>
+                <field name="location_type_id"/>
+                <field name="state_id"/>
+                <field name="district"/>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- ACTION -->
+    <!-- ===================================================== -->
+
+    <record id="action_umrah_location" model="ir.actions.act_window">
+        <field name="name">Locations</field>
+        <field name="res_model">umrah.location</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_umrah_location_search"/>
+    </record>
+
+
+
+
+
+
+</odoo>

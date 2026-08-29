@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Pilgrim list View -->
+    <record id="view_umrah_pilgrim_list" model="ir.ui.view">
+        <field name="name">umrah.pilgrim.list</field>
+        <field name="model">umrah.pilgrim</field>
+        <field name="arch" type="xml">
+
+            <list string="Pilgrims">
+
+                <field name="full_name"/>
+                <field name="passport_number"/>
+                <field name="nationality"/>
+                <field name="mobile"/>
+                <field name="trip_id"/>
+                <field name="group_id"/>
+                <field name="status"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- Pilgrim Form View -->
+    <record id="view_umrah_pilgrim_form" model="ir.ui.view">
+
+        <field name="name">umrah.pilgrim.form</field>
+
+        <field name="model">umrah.pilgrim</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Pilgrim">
+
+                <header>
+
+                    <field name="status"
+                           widget="statusbar"
+                           statusbar_visible="draft,confirmed,visa_applied,visa_approved,departed,returned"/>
+
+                </header>
+
+
+                <sheet>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_groups"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-users">
+
+    <field name="group_count"
+           widget="statinfo"
+           string="Groups"/>
+
+</button>
+                        <button name="action_view_trips"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-plane">
+
+    <field name="trip_count"
+           widget="statinfo"
+           string="Trips"/>
+
+</button>
+
+                        <button name="action_view_programs"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-road">
+
+    <field name="program_count"
+           widget="statinfo"
+           string="Programs"/>
+
+</button>
+                        <button name="action_view_bookings"
+        type="object"
+        class="oe_stat_button"
+        icon="fa-bed">
+
+    <field name="booking_count"
+           widget="statinfo"
+           string="Bookings"/>
+
+</button>
+                    </div>
+
+
+  <field name="image_1920" widget="image" class="oe_avatar"/>
+
+
+
+                      <div class="oe_title">
+        <h1>
+             <field name="code"/>
+
+
+        </h1>
+                    <label for="full_name"/>
+                           <h2>
+           <field name="full_name" placeholder="Turki Marzoqi"/>
+
+        </h2>
+    </div>
+
+
+
+
+                    <notebook>
+
+                        <!-- ======================= -->
+                        <!-- Personal & Contact -->
+                        <!-- ======================= -->
+
+                        <page string="Personal &amp; Contact Information">
+
+                            <group>
+
+                                <group string="Personal Information">
+
+
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="gender"/>
+                                    <field name="birth_date"/>
+                                    <field name="nationality"/>
+
+                                </group>
+
+
+                                <group string="Contact Information">
+
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                    <field name="email"/>
+                                    <field name="address"/>
+
+                                </group>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- ======================= -->
+                        <!-- Passport & Umrah -->
+                        <!-- ======================= -->
+
+                        <page string="Passport &amp; Umrah Information">
+
+                            <group>
+
+                                <group string="Passport Information">
+
+                                    <field name="passport_number"/>
+                                    <field name="passport_issue_date"/>
+                                    <field name="passport_expiry_date"/>
+                                    <field name="passport_place_of_issue"/>
+
+                                </group>
+
+
+                                <group string="Umrah Information">
+
+                                    <field name="trip_id"/>
+                                    <field name="group_id"/>
+                                    <field name="visa_id"/>
+                                    <field name="registration_date"/>
+
+                                </group>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- ======================= -->
+                        <!-- Medical -->
+                        <!-- ======================= -->
+
+                        <page string="Medical Information">
+
+                            <group>
+
+                                <group string="Medical Information">
+
+                                    <field name="medical_conditions"/>
+                                    <field name="emergency_contact_name"/>
+                                    <field name="emergency_contact_phone"/>
+
+                                </group>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- ======================= -->
+                        <!-- Notes -->
+                        <!-- ======================= -->
+
+                        <page string="Additional Information">
+
+                            <group string="Additional Information">
+
+                                <field name="notes"/>
+
+                            </group>
+
+                        </page>
+
+                        <page string="Pilgrim Card">
+    <field name="id_card_html" widget="html" nolabel="1"/>
+</page>
+
+
+                    </notebook>
+
+                </sheet>
+
+
+                <chatter/>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- Pilgrim Search View -->
+    <record id="view_umrah_pilgrim_search" model="ir.ui.view">
+
+        <field name="name">umrah.pilgrim.search</field>
+
+        <field name="model">umrah.pilgrim</field>
+
+        <field name="arch" type="xml">
+
+            <search string="Search Pilgrims">
+
+                <field name="full_name"/>
+                <field name="passport_number"/>
+                <field name="nationality"/>
+                <field name="trip_id"/>
+                <field name="group_id"/>
+
+                <filter string="Male"
+                        name="male"
+                        domain="[('gender', '=', 'male')]"/>
+
+                <filter string="Female"
+                        name="female"
+                        domain="[('gender', '=', 'female')]"/>
+
+                <separator/>
+
+                <filter string="Draft"
+                        name="draft"
+                        domain="[('status', '=', 'draft')]"/>
+
+                <filter string="Confirmed"
+                        name="confirmed"
+                        domain="[('status', '=', 'confirmed')]"/>
+
+                <filter string="Visa Applied"
+                        name="visa_applied"
+                        domain="[('status', '=', 'visa_applied')]"/>
+
+                <filter string="Visa Approved"
+                        name="visa_approved"
+                        domain="[('status', '=', 'visa_approved')]"/>
+
+                <filter string="Departed"
+                        name="departed"
+                        domain="[('status', '=', 'departed')]"/>
+
+                <filter string="Returned"
+                        name="returned"
+                        domain="[('status', '=', 'returned')]"/>
+
+                <group expand="0" string="Group By">
+
+                    <filter string="Trip"
+                            name="group_trip"
+                            context="{'group_by': 'trip_id'}"/>
+
+                    <filter string="Group"
+                            name="group_group"
+                            context="{'group_by': 'group_id'}"/>
+
+                    <filter string="Status"
+                            name="group_status"
+                            context="{'group_by': 'status'}"/>
+
+                    <filter string="Nationality"
+                            name="group_nationality"
+                            context="{'group_by': 'nationality'}"/>
+
+                </group>
+
+
+                <searchpanel>
+
+                    <field name="status"
+                           select="multi"
+                           string="Status"
+                           color="#875A7B"
+                           enable_counters="1"/>
+
+                    <field name="gender"
+                           select="multi"
+                           string="Gender"
+                           enable_counters="1"/>
+
+                    <field name="group_id"
+                           select="multi"
+                           string="Group"
+                           enable_counters="1"/>
+
+                    <field name="trip_id"
+                           select="multi"
+                           string="Trip"
+                           enable_counters="1"/>
+
+                </searchpanel>
+
+            </search>
+
+        </field>
+
+    </record>
+
+
+    <!-- Pilgrim Action -->
+    <record id="action_umrah_pilgrim" model="ir.actions.act_window">
+
+        <field name="name">Pilgrims</field>
+
+        <field name="res_model">umrah.pilgrim</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                Create your first pilgrim!
+            </p>
+
+            <p>
+                Register pilgrims for Umrah trips and manage their information.
+            </p>
+
+        </field>
+
+    </record>
+
+</odoo>

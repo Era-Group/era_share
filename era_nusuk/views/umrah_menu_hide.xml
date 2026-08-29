@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Section 6: Hide the Trips / Hotels / Pilgrims screens. -->
+    <!-- Menus are deactivated (active=False) only; the models  -->
+    <!-- and their actions are kept intact because umrah.pilgrim-->
+    <!-- and umrah.trip are heavily referenced elsewhere.       -->
+    <!-- Updated for the 5-root-app menu structure: the hotel   -->
+    <!-- submenu is now the Nusuk Accommodation root app.       -->
+    <!-- ===================================================== -->
+
+    <!-- Pilgrims (شاشة الحجاج) -->
+    <record id="menu_umrah_pilgrim_list" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Trips (شاشة الرحلات) -->
+    <record id="menu_umrah_trip_list" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Accommodation root app (شاشة الفنادق) - hides Hotels,
+         Room Types and Hotel Bookings with it. -->
+    <record id="menu_nusuk_accommodation_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>

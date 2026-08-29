@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bulk Visa Wizard -->
+    <record id="view_umrah_bulk_visa_wizard_form" model="ir.ui.view">
+        <field name="name">umrah.bulk.visa.wizard.form</field>
+        <field name="model">umrah.bulk.visa.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Visa Application">
+                <group>
+                    <group>
+                        <field name="trip_id"/>
+                        <field name="group_id"/>
+                        <field name="visa_type"/>
+                    </group>
+                    <group>
+                        <field name="consulate_location"/>
+                        <field name="visa_fee"/>
+                        <field name="service_fee"/>
+                        <field name="agent_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_create_visas" string="Create Visas" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_bulk_visa_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Visa Application</field>
+        <field name="res_model">umrah.bulk.visa.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Bulk Hotel Booking Wizard -->
+    <record id="view_umrah_bulk_hotel_booking_wizard_form" model="ir.ui.view">
+        <field name="name">umrah.bulk.hotel.booking.wizard.form</field>
+        <field name="model">umrah.bulk.hotel.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Hotel Booking">
+                <group>
+                    <group>
+                        <field name="trip_id"/>
+                        <field name="group_id"/>
+                        <field name="hotel_id"/>
+                        <field name="room_type_id"/>
+                    </group>
+                    <group>
+                        <field name="check_in_date"/>
+                        <field name="check_out_date"/>
+                        <field name="meal_plan"/>
+                        <field name="meal_cost_per_day"/>
+                        <field name="room_rate_per_night"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_create_bookings" string="Create Bookings" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_bulk_hotel_booking_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Hotel Booking</field>
+        <field name="res_model">umrah.bulk.hotel.booking.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Trip Status Update Wizard -->
+    <record id="view_umrah_trip_status_update_wizard_form" model="ir.ui.view">
+        <field name="name">umrah.trip.status.update.wizard.form</field>
+        <field name="model">umrah.trip.status.update.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Update Trip Status">
+                <group>
+                    <group>
+                        <field name="trip_id"/>
+                        <field name="new_status"/>
+                    </group>
+                    <group>
+                        <field name="update_pilgrims"/>
+                        <field name="pilgrim_status"
+                               invisible="not update_pilgrims"/>
+                        <field name="update_groups"/>
+
+                        <field name="group_status"
+                               invisible="not update_groups"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_update_status" string="Update Status" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_trip_status_update_wizard" model="ir.actions.act_window">
+        <field name="name">Update Trip Status</field>
+        <field name="res_model">umrah.trip.status.update.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Statistics Wizard -->
+    <record id="view_umrah_statistics_wizard_form" model="ir.ui.view">
+        <field name="name">umrah.statistics.wizard.form</field>
+        <field name="model">umrah.statistics.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Statistics">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="trip_id"/>
+                        <field name="agent_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate_statistics" string="Generate Statistics" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_statistics_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Statistics</field>
+        <field name="res_model">umrah.statistics.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <!-- Bulk Visa Wizard -->
+    <record id="view_umrah_bulk_invoice_visa_wizard_form" model="ir.ui.view">
+        <field name="name">umrah.bulk.invoice.visa.wizard.form</field>
+        <field name="model">umrah.bulk.invoice.visa.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Create Invoice">
+                <group>
+                    <group>
+                         <field name="agent_id"/>
+                        <field name="trip_id"/>
+                        <field name="group_id"/>
+
+                    </group>
+                    <group>
+                        <field name="visa_type"/>
+                        <field name="status"/>
+
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_create_bulk_agent_invoices" string="Create Invoices Visas" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_umrah_bulk_invoice_visa_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Invoice Visa Application</field>
+        <field name="res_model">umrah.bulk.invoice.visa.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+</odoo>
+

@@ -1,0 +1,62 @@
+<odoo>
+
+    <!-- Report Action -->
+    <record id="action_report_pilgrim_card" model="ir.actions.report">
+        <field name="name">Pilgrim Card</field>
+        <field name="model">umrah.pilgrim</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">era_nusuk.pilgrim_card_template</field>
+        <field name="report_file">era_nusuk.pilgrim_card_template</field>
+        <field name="binding_model_id" ref="model_umrah_pilgrim"/>
+        <field name="binding_type">report</field>
+    </record>
+
+
+    <!-- Report Template -->
+  <template id="pilgrim_card_template">
+
+<t t-call="web.basic_layout">
+
+<t t-set="cards_per_page" t-value="6"/>
+
+<t t-foreach="range(0, len(docs), cards_per_page)" t-as="i">
+
+<div class="page">
+
+<table style="width:100%;border-collapse:collapse;">
+
+<t t-foreach="range(0, cards_per_page, 2)" t-as="row">
+
+<tr>
+
+<t t-foreach="docs[i+row:i+row+2]" t-as="o">
+
+<td style="
+width:50%;
+padding:8mm;
+vertical-align:top;
+text-align:center;
+">
+
+<div style="display:inline-block;">
+<t t-raw="o.id_card_html"/>
+</div>
+
+</td>
+
+</t>
+
+</tr>
+
+</t>
+
+</table>
+
+</div>
+
+</t>
+
+</t>
+
+</template>
+</odoo>

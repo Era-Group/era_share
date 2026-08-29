@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Nusuk Masar fields injected into existing forms       -->
+    <!-- ===================================================== -->
+
+    <!-- Agent: Masar contract & quota + pricing tier -->
+    <record id="view_umrah_agent_form_masar" model="ir.ui.view">
+        <field name="name">umrah.agent.form.masar</field>
+        <field name="model">umrah.agent</field>
+        <field name="inherit_id" ref="view_umrah_agent_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='license_number']" position="before">
+                <field name="tier_id"/>
+                <field name="masar_contract_number"/>
+                <field name="masar_contract_date_from"/>
+                <field name="masar_contract_date_to"/>
+                <field name="seasonal_quota"/>
+                <field name="quota_used"/>
+                <field name="quota_remaining"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Hotel booking: Masar approval + rooming list tab -->
+    <record id="view_umrah_hotel_booking_form_masar" model="ir.ui.view">
+        <field name="name">umrah.hotel.booking.form.masar</field>
+        <field name="model">umrah.hotel.booking</field>
+        <field name="inherit_id" ref="view_umrah_hotel_booking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='check_in_date']" position="before">
+                <field name="masar_approval_ref"/>
+                <field name="masar_state"/>
+            </xpath>
+            <xpath expr="//group[field[@name='special_requests']]" position="before">
+                <group string="Rooming List">
+                    <field name="room_count"/>
+                    <field name="unassigned_member_count"/>
+                </group>
+                <field name="room_ids">
+                    <list editable="bottom">
+                        <field name="room_number"/>
+                        <field name="room_type_id"/>
+                        <field name="occupancy_type_id"/>
+                        <field name="capacity"/>
+                        <field name="occupants"/>
+                        <field name="member_ids" widget="many2many_tags"/>
+                        <field name="group_ids" column_invisible="1"/>
+                        <field name="hotel_id" column_invisible="1"/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Visa: MOFA number next to the visa number -->
+    <record id="view_umrah_visa_form_masar" model="ir.ui.view">
+        <field name="name">umrah.visa.form.masar</field>
+        <field name="model">umrah.visa</field>
+        <field name="inherit_id" ref="view_umrah_visa_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//field[@name='visa_number']" position="after">
+                <field name="mofa_number"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

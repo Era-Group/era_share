@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Section 2: Transport Programs - Amount tab + invoice  -->
+    <!-- ===================================================== -->
+    <record id="view_umrah_transport_program_form_inherit" model="ir.ui.view">
+        <field name="name">umrah.transport.program.form.inherit</field>
+        <field name="model">umrah.transport.program</field>
+        <field name="inherit_id" ref="view_umrah_transport_program_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Billing partner source -->
+            <xpath expr="//field[@name='transport_company_id']" position="after">
+                <field name="agent_id"/>
+                <field name="partner_id" readonly="1"/>
+            </xpath>
+
+            <!-- 2.1 Amount tab + Create Invoice button -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Amount">
+                    <group>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="amount"/>
+                        <field name="invoice_id" readonly="1"/>
+                    </group>
+                    <button name="action_create_transport_invoice"
+                            type="object"
+                            string="Create Invoice"
+                            class="btn-primary"
+                            icon="fa-money"/>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

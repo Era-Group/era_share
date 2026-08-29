@@ -1,0 +1,78 @@
+<odoo>
+    <data>
+
+        <record id="hotel_booking_sequence" model="ir.sequence">
+            <field name="name">Room Booking</field>
+            <field name="code">umrah.hotel.booking</field>
+            <field name="prefix">BOK</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="umrah_agent_sequence" model="ir.sequence">
+            <field name="name">Umrah Agent</field>
+            <field name="code">umrah.agent</field>
+            <field name="prefix">AGENT</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="umrah_movement_sequence" model="ir.sequence">
+            <field name="name">Umrah Movement</field>
+            <field name="code">umrah.movement</field>
+            <field name="prefix">MOV</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+       <record id="umrah_pilgrim_code_sequence" model="ir.sequence">
+    <field name="name">Umrah Pilgrim Code</field>
+    <field name="code">umrah.pilgrim.code</field>
+    <field name="prefix">P-%(year)s-</field>
+    <field name="padding">5</field>
+    <field name="number_next">1</field>
+    <field name="number_increment">1</field>
+    <field name="use_date_range">True</field>
+    <field name="company_id" eval="False"/>
+</record>
+
+        <record id="umrah_trip_code_sequence" model="ir.sequence">
+            <field name="name">Umrah Trip Code</field>
+            <field name="code">umrah.trip</field>
+            <field name="prefix">TRIP-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="umrah_package_sequence" model="ir.sequence">
+            <field name="name">Umrah Package</field>
+            <field name="code">umrah.package</field>
+            <field name="prefix">PKG-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="umrah_visa_number_sequence" model="ir.sequence">
+            <field name="name">Umrah Visa Number</field>
+            <field name="code">umrah.visa</field>
+            <field name="prefix">VISA-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="use_date_range">True</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

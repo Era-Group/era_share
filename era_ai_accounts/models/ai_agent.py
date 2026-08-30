@@ -18,6 +18,9 @@ from odoo.addons.ai.utils.llm_api_service import LLMApiService
 
 _logger = logging.getLogger(__name__)
 
+# Used when the configured transport cannot embed (CLI proxies are text-only).
+DEFAULT_EMBEDDING_FALLBACK = "text-embedding-3-small"
+
 
 class AIAgent(models.Model):
     _inherit = "ai.agent"
@@ -58,6 +61,32 @@ class AIAgent(models.Model):
                     "account setting."))
             if agent.era_model_id and agent.era_model_id.account_id != agent.era_account_id:
                 raise ValidationError(_("The selected Account Model does not belong to the AI Account."))
+
+    # --------------------------------------------------------------- embeddings
+    def _get_embedding_model(self):
+        """Pick an embedding model that can actually answer.
+
+        Embeddings never travel through the account transport: both the indexing
+        crons and ``_build_rag_context`` build their LLMApiService from the
+        *provider* of the embedding model, with no ``era_ai_account_id`` in the
+        context. So knowledge sources are always embedded with the global
+        provider keys, whatever account drives the chat.
+
+        Two cases need help. A CLI-proxy account is text-only — see
+        ``era.ai.model._check_kind_for_cli_proxy`` — so it can never serve an
+        embeddings call. And an operator may simply want RAG on a different
+        provider than chat. Both are handled here rather than failing deep
+        inside the cron, where the only symptom is sources stuck in
+        ``processing``.
+        """
+        self.ensure_one()
+        params = self.env["ir.config_parameter"].sudo()
+        if override := params.get_param("ai.embedding_model_override"):
+            return override
+        if self.era_account_id.auth_mode == "cli_proxy":
+            return params.get_param(
+                "ai.embedding_fallback_model", DEFAULT_EMBEDDING_FALLBACK)
+        return super()._get_embedding_model()
 
     # ------------------------------------------------------------------ routing
     def _generate_response(self, prompt, chat_history=None, extra_system_context=""):

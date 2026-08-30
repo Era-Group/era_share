@@ -86,7 +86,9 @@ class TestEraAiAccounts(TransactionCase):
         self.assertNotIn(acc, self.Account.with_user(user_b).search([]))
         # Resolution mirrors the rule.
         self.assertEqual(self.Account._resolve_for_user(user_a, provider="anthropic"), acc)
-        self.assertFalse(self.Account._resolve_for_user(user_b, provider="anthropic"))
+        # Not "resolves to nothing" — a shared account may legitimately exist in
+        # the database. What must hold is that A's personal account is never it.
+        self.assertNotEqual(self.Account._resolve_for_user(user_b, provider="anthropic"), acc)
 
     def test_shared_account_visible_to_all(self):
         user_b = new_test_user(self.env, login="era_c", groups="base.group_user")
@@ -2602,3 +2604,90 @@ class TestAccountUsageIsVisible(TransactionCase):
     def test_a_long_error_is_truncated_rather_than_refused(self):
         self.account._log_failure(Exception("x" * 5000))
         self.assertLessEqual(len(self.account.last_error), 500)
+
+
+@tagged("post_install", "-at_install", "era_ai_accounts")
+class TestEmbeddingRouting(TransactionCase):
+    """Knowledge-source embeddings must reach a provider that can serve them."""
+
+    def test_custom_llm_embedding_model_is_writable(self):
+        """The option we advertise must survive Selection validation.
+
+        ``fields.Selection`` freezes its list into ``_selection`` when the class
+        body of ``ai`` runs, i.e. before we append our provider — so without the
+        ``ai.embedding._register_hook`` re-sync the value renders in the UI but
+        every write raises "Wrong value for ai.embedding.embedding_model", and
+        knowledge sources sit in ``processing`` forever with zero embeddings.
+        """
+        from odoo.addons.era_ai_accounts.models.llm_providers_patch import (
+            CUSTOM_LLM_EMBEDDING_KEY,
+        )
+        field = self.env["ai.embedding"]._fields["embedding_model"]
+        self.assertIn(CUSTOM_LLM_EMBEDDING_KEY, dict(field.selection),
+                      "provider patch must expose the option")
+        self.assertIn(CUSTOM_LLM_EMBEDDING_KEY, field._selection,
+                      "the frozen validation copy must expose it too")
+        # The real check: an actual assignment goes through convert_to_cache.
+        record = self.env["ai.embedding"].new({
+            "embedding_model": CUSTOM_LLM_EMBEDDING_KEY,
+        })
+        self.assertEqual(record.embedding_model, CUSTOM_LLM_EMBEDDING_KEY)
+
+    def test_cli_proxy_agent_falls_back_to_an_embeddable_model(self):
+        """A CLI-proxy account is text-only, so RAG must not be routed to it."""
+        agent = self.env["ai.agent"].create({
+            "name": "RAG agent", "llm_model": "custom_llm/custom",
+        })
+        self.assertEqual(agent._get_embedding_model(),
+                         "custom_llm/text-embedding-3-small",
+                         "with no account the standard derivation applies")
+
+        agent.era_account_id = self.env['era.ai.account'].create({
+            "name": "Codex", "provider": "openai", "auth_mode": "cli_proxy",
+        })
+        self.assertEqual(agent._get_embedding_model(), "text-embedding-3-small",
+                         "CLI proxies cannot embed — fall back to a provider that can")
+
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.embedding_fallback_model", "gemini-embedding-2")
+        self.assertEqual(agent._get_embedding_model(), "gemini-embedding-2",
+                         "the fallback provider must be configurable")
+
+        params.set_param("ai.embedding_model_override", "text-embedding-3-small")
+        agent.era_account_id = False
+        self.assertEqual(agent._get_embedding_model(), "text-embedding-3-small",
+                         "an explicit override wins even without an account")
+
+    def test_arabic_text_document_yields_content(self):
+        """Core's ASCII-only indexer must not silence a non-Latin document."""
+        arabic = (
+            "نظام المحاماة الصادر بالمرسوم الملكي رقم م/38 وتاريخ 28/7/1422هـ\n"
+            "المادة الأولى: يقصد بمهنة المحاماة الترافع عن الغير أمام المحاكم.\n"
+        )
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام المحاماة.txt",
+            "raw": arabic.encode("utf-8"),
+            "mimetype": "text/plain",
+        })
+        self.assertNotIn("المحاماة", attachment.index_content or "",
+                         "core keeps only ASCII — that is the bug we work around")
+        content = attachment._get_attachment_content() or ""
+        self.assertIn("المحاماة", content)
+        self.assertIn("الترافع عن الغير أمام المحاكم", content,
+                      "the whole document must survive, not fragments of it")
+
+    def test_latin_text_still_uses_the_core_index(self):
+        attachment = self.env["ir.attachment"].create({
+            "name": "policy.txt",
+            "raw": b"Retainer agreements are reviewed by the managing partner.",
+            "mimetype": "text/plain",
+        })
+        self.assertIn("Retainer", attachment._get_attachment_content() or "")
+
+    def test_binary_attachment_is_left_alone(self):
+        """A non-text mimetype must keep returning whatever core decided."""
+        attachment = self.env["ir.attachment"].create({
+            "name": "scan.png", "raw": b"\x89PNG\r\n\x1a\n" + b"\x00" * 64,
+            "mimetype": "image/png",
+        })
+        self.assertFalse(attachment._get_attachment_content())

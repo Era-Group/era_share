@@ -34,6 +34,11 @@ HOST = os.environ.get("ERA_EMBED_HOST", "127.0.0.1")
 PORT = int(os.environ.get("ERA_EMBED_PORT", "8091"))
 MODEL = os.environ.get("ERA_EMBED_MODEL", "intfloat/multilingual-e5-large")
 CACHE = os.environ.get("ERA_EMBED_CACHE", "/var/lib/odoo/era_embed/models")
+# ONNX Runtime otherwise opens a thread — and a memory arena — per core, which
+# on a 20-core host cost ~6.9GB resident for a 2.2GB model. Indexing is a
+# one-off; what runs continuously is a single short query per chat turn, and
+# that does not need twenty threads.
+THREADS = int(os.environ.get("ERA_EMBED_THREADS", "4"))
 MAX_BODY = 64 * 1024 * 1024
 
 logging.basicConfig(
@@ -51,8 +56,8 @@ def model():
     if _model is None:
         with _lock:
             if _model is None:
-                _log.info("loading %s", MODEL)
-                _model = TextEmbedding(MODEL, cache_dir=CACHE)
+                _log.info("loading %s (threads=%s)", MODEL, THREADS)
+                _model = TextEmbedding(MODEL, cache_dir=CACHE, threads=THREADS)
                 _log.info("model ready")
     return _model
 

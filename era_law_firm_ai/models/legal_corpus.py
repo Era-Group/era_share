@@ -105,11 +105,22 @@ class MojLaw(models.Model):
         carries what it takes to cite it, even after the newlines are gone.
         """
         name = meta.get('law_name') or ''
+        status = meta.get('law_status') or _('غير محدد')
         header = _('%(name)s — النوع: %(type)s — الحالة: %(status)s',
                    name=name,
                    type=meta.get('law_type') or _('غير محدد'),
-                   status=meta.get('law_status') or _('غير محدد'))
+                   status=status)
         blocks = [header]
+        # Ten of the 75 statutes are repealed, and retrieval returns *chunks*:
+        # a header saying so never reaches the middle of the document. So the
+        # status rides on every article line, the same way the statute name
+        # already does. A memo citing a repealed regulation as current is the
+        # most expensive mistake this corpus can cause.
+        if status != _('ساري'):
+            blocks.insert(0, _(
+                '⛔ هذا النظام حالته «%(status)s» — لا يُستشهد به كنص ساري.',
+                status=status))
+        marker = '' if status == _('ساري') else f' [{status}]'
         current_chapter = None
         for article in articles:
             chapter = article.get('chapter')
@@ -119,7 +130,7 @@ class MojLaw(models.Model):
             label = article.get('article_label') or ''
             repealed = _(' (مادة ملغاة)') if article.get('is_cancelled') else ''
             text = (article.get('text') or '').strip()
-            blocks.append(f'«{name}» — {label}{repealed}: {text}')
+            blocks.append(f'«{name}»{marker} — {label}{repealed}: {text}')
         return '\n\n'.join(blocks)
 
     # ------------------------------------------------------------------
@@ -220,9 +231,15 @@ class MojLaw(models.Model):
                 continue
             if existing:
                 existing.unlink()
+            # Core prefixes every chunk with "Attachment Name: ...", so the
+            # marker here reaches retrieval as well — and it makes the source
+            # list readable at a glance.
+            source_name = vals['name']
+            if (meta.get('law_status') or '') not in ('ساري', ''):
+                source_name = f"{source_name} [{meta['law_status']}]"
             new_source = self.env['ai.agent.source'].sudo().create_from_binary_files(
                 [{
-                    'name': vals['name'],
+                    'name': source_name,
                     'raw': raw,
                     'mimetype': 'text/plain',
                 }],

@@ -62,14 +62,26 @@
         <div style="flex:1;min-width:230px;background:#f2ecf1;padding:20px;border-radius:6px">
             <h4 style="color:#1f2d3d">🤖 Four agents, prompted for Saudi practice</h4>
             <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">أربعة وكلاء بتوجيه سعودي</h4>
-            <p style="color:#6b7785">Contract review, drafting, summarising judgments, and statutory research. Drafting marks what it was not given as [يُستكمل] instead of inventing a fact; research answers only from the firm's own uploaded sources.</p>
-            <p dir="rtl" style="color:#6b7785">مراجعة العقود، والصياغة، وتلخيص الأحكام، والبحث النظامي. الصياغة تضع [يُستكمل] لما لم تُعطَه بدل اختراعه، والبحث لا يجيب إلا من مصادر المكتب المرفوعة.</p>
+            <p style="color:#6b7785">Contract review, drafting, summarising judgments, and statutory research. Drafting marks what it was not given as [يُستكمل] instead of inventing a fact; research answers only from the indexed statutes, citing the article it relied on.</p>
+            <p dir="rtl" style="color:#6b7785">مراجعة العقود، والصياغة، وتلخيص الأحكام، والبحث النظامي. الصياغة تضع [يُستكمل] لما لم تُعطَه بدل اختراعه، والبحث لا يجيب إلا من الأنظمة المفهرسة، مستشهداً بالمادة التي استند إليها.</p>
         </div>
         <div style="flex:1;min-width:230px;background:#f2ecf1;padding:20px;border-radius:6px">
-            <h4 style="color:#1f2d3d">📚 A register, not a wish</h4>
-            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">سجل لا أمنية</h4>
-            <p style="color:#6b7785">An agent cannot open a link, so a list of statute URLs in a prompt produces citations from memory. The legislation the office relies on is a register instead, tracking which texts have actually been attached as sources.</p>
-            <p dir="rtl" style="color:#6b7785">الوكيل لا يفتح روابط، فقائمة روابط في التوجيه تنتج استشهادات من الذاكرة. والأنظمة التي يعتمدها المكتب سجلٌ بدل ذلك، يتتبع أي النصوص رُفعت مصادر فعلاً.</p>
+            <h4 style="color:#1f2d3d">📚 The statutes themselves, not a list of links</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">النصوص نفسها لا قائمة روابط</h4>
+            <p style="color:#6b7785">An agent cannot open a link, so statute URLs in a prompt produce citations from memory. 75 statutes from the Ministry of Justice — 6,087 articles — are synced, chunked and indexed instead, so an answer is drawn from the text and carries a citation back to the article it came from.</p>
+            <p dir="rtl" style="color:#6b7785">الوكيل لا يفتح روابط، فروابط الأنظمة في التوجيه تنتج استشهادات من الذاكرة. تُزامَن ٧٥ نظاماً من وزارة العدل — ٦٠٨٧ مادة — وتُقطَّع وتُفهرَس، فتُبنى الإجابة من النص وتحمل استشهاداً يعود إلى مادته.</p>
+        </div>
+        <div style="flex:1;min-width:230px;background:#f2ecf1;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">⛔ A repealed statute says so</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">النظام الملغي يقول ذلك عن نفسه</h4>
+            <p style="color:#6b7785">Ten of those statutes are repealed, and retrieval returns fragments rather than whole documents — a warning at the top of a text never reaches the middle of it. The status is carried on every article, so a chunk pulled from anywhere still announces that it no longer applies.</p>
+            <p dir="rtl" style="color:#6b7785">عشرة من تلك الأنظمة ملغاة، والاسترجاع يأتي بمقاطع لا بمستندات كاملة — وتحذير في رأس النص لا يبلغ وسطه. لذلك تُحمل الحالة على كل مادة، فأي مقطع يُنتزع من أي موضع يعلن أنه لم يعد سارياً.</p>
+        </div>
+        <div style="flex:1;min-width:230px;background:#f2ecf1;padding:20px;border-radius:6px">
+            <h4 style="color:#1f2d3d">🏠 Indexing stays on the firm's own machines</h4>
+            <h4 dir="rtl" style="color:#1f2d3d;font-weight:500">الفهرسة تبقى على أجهزة المكتب</h4>
+            <p style="color:#6b7785">Indexing a document means sending its full text somewhere to be turned into vectors. That somewhere is a service the firm runs itself, with no third-party key involved — so case files are not handed to an outside provider merely to be made searchable.</p>
+            <p dir="rtl" style="color:#6b7785">فهرسة مستند تعني إرسال نصه كاملاً إلى جهة تحوّله إلى متجهات. وتلك الجهة خدمة يشغّلها المكتب بنفسه بلا مفتاح طرف ثالث — فلا تُسلَّم ملفات القضايا لمزوّد خارجي لمجرد جعلها قابلة للبحث.</p>
         </div>
         <div style="flex:1;min-width:230px;background:#f2ecf1;padding:20px;border-radius:6px">
             <h4 style="color:#1f2d3d">🔒 Classification is a ceiling</h4>

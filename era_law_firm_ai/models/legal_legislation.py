@@ -25,9 +25,20 @@ class LegalLegislation(models.Model):
                             "title once you have it from the Ministry of Justice.")
     moj_id = fields.Char(string='MoJ Reference', index=True,
                          help="The identifier the Ministry of Justice uses in its legislation portal.")
-    url = fields.Char(string='Official Text',
-                      help="Where the authoritative text is published. Reference only -- an agent "
-                           "cannot open it.")
+    # No per-statute link. They were deep links into the Ministry's portal that no
+    # longer resolve, and they were never of any use to an agent, which cannot open
+    # a URL at all. One portal is named once, on the charter, as the place a human
+    # verifies against.
+    portal_url = fields.Char(
+        string='Official Portal', compute='_compute_portal_url',
+        help="The single authority for Saudi legislation. Open it to find and verify a statute's "
+             "text, then attach that text to the agent as a source.")
+
+    @api.depends_context('company')
+    def _compute_portal_url(self):
+        portal = self.env['legal.ai.charter']._reference_portal(self.env.company)
+        for record in self:
+            record.portal_url = portal
     category = fields.Selection([
         ('procedure', 'Procedure and Litigation'),
         ('civil', 'Civil and Commercial'),
@@ -44,9 +55,9 @@ class LegalLegislation(models.Model):
         string='Agents Relying On It')
     source_attached = fields.Boolean(
         string='Text Attached as a Source',
-        help="Tick once the statute's text has been uploaded to an agent as a source. Until then "
-             "the agent can only recall the law, not read it -- and recalled article numbers are "
-             "the failure this register exists to prevent.")
+        help="The one thing on this row that changes what an agent can do. Until the statute's "
+             "text is uploaded to an agent as a source, the agent can only recall the law, and a "
+             "recalled article number is the failure this register exists to prevent.")
 
     _moj_unique = models.Constraint('UNIQUE(moj_id)', 'This legislation is already registered.')
 

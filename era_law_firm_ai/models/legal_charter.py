@@ -37,6 +37,13 @@ class LegalAICharter(models.Model):
         string='Mandatory Notice', required=True, translate=True,
         help="Appended to every answer by the system, not by the model. A notice that appears only "
              "when the model remembers to write it is not a notice.")
+    reference_portal = fields.Char(
+        string='Sole Legislative Authority', required=True,
+        default='https://laws.moj.gov.sa/',
+        help="The one portal this office treats as authoritative for Saudi legislation. It is "
+             "named in the standing instructions so an answer is anchored to it, and it is where "
+             "a lawyer verifies a citation. An agent cannot open it -- only text attached as a "
+             "source is text the agent has actually read.")
     legislation_ids = fields.Many2many(
         'legal.legislation', string='Legislation Relied On',
         help="The statutes this office works from. Listing one here does not put its text in front "
@@ -47,17 +54,31 @@ class LegalAICharter(models.Model):
         'Only one charter can be active per company.')
 
     @api.model
-    def _for_company(self, company):
-        """The charter that governs this company, if any."""
-        return self.sudo().search([
-            '|', ('company_id', '=', company.id), ('company_id', '=', False),
-        ], order='company_id desc, sequence', limit=1)
+    def _reference_portal(self, company=None):
+        charter = self._for_company(company or self.env.company)
+        return charter.reference_portal or 'https://laws.moj.gov.sa/'
 
-    @api.constrains('body', 'disclaimer')
+    @api.model
+    def _for_company(self, company):
+        """The charter that governs this company: its own if it has one, else the shared one.
+
+        Ordering by a many2one delegates to the comodel's own order through a LEFT
+        JOIN, so the shared charter's NULL company sorted first under `desc` and won
+        every time. Two explicit searches say what is meant and cannot be undone by
+        a change to res.company._order.
+        """
+        own = self.sudo().search([('company_id', '=', company.id)], order='sequence', limit=1)
+        return own or self.sudo().search([('company_id', '=', False)], order='sequence', limit=1)
+
+    @api.constrains('body', 'disclaimer', 'reference_portal')
     def _check_not_empty(self):
         for charter in self:
             if not (charter.body or '').strip() or not (charter.disclaimer or '').strip():
                 raise ValidationError(_('A charter needs both standing instructions and a notice.'))
+            # required only stops NULL, and the url widget does not trim, so a charter
+            # could name a blank authority in every prompt it governs
+            if not (charter.reference_portal or '').strip():
+                raise ValidationError(_('Name the portal this office treats as authoritative for legislation.'))
 
 
 class LegalAIRequestCharter(models.Model):
@@ -72,7 +93,17 @@ class LegalAIRequestCharter(models.Model):
         """The office's standing instructions, ahead of the agent's own prompt."""
         self.ensure_one()
         charter = self.charter_id or self.env['legal.ai.charter']._for_company(self.company_id)
-        return charter.body or ''
+        if not charter:
+            return ''
+        body = charter.body or ''
+        if charter.reference_portal:
+            body = _(
+                '%(body)s\n\nالمرجع الوحيد للأنظمة السعودية هو %(portal)s. لا تستند إلى نظام '
+                'أو مادة من خارجه، ولا تنقل حكماً من ولاية قضائية أخرى. وأنت لا تستطيع فتح هذا '
+                'الرابط، فهو للتحقق البشري؛ ولا تستشهد بمادة إلا إذا ورد نصها في المعطيات أو في '
+                'المصادر المرفوعة إليك.',
+                body=body, portal=charter.reference_portal)
+        return body
 
     def _dispatch_to_provider(self, payload):
         self.ensure_one()

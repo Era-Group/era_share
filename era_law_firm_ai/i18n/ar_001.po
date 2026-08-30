@@ -15,6 +15,18 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_charter.py:0
+msgid ""
+"%(body)s\n"
+"\n"
+"المرجع الوحيد للأنظمة السعودية هو %(portal)s. لا تستند إلى نظام أو مادة من خارجه، ولا تنقل حكماً من ولاية قضائية أخرى. وأنت لا تستطيع فتح هذا الرابط، فهو للتحقق البشري؛ ولا تستشهد بمادة إلا إذا ورد نصها في المعطيات أو في المصادر المرفوعة إليك."
+msgstr ""
+"%(body)s\n"
+"\n"
+"المرجع الوحيد للأنظمة السعودية هو %(portal)s. لا تستند إلى نظام أو مادة من خارجه، ولا تنقل حكماً من ولاية قضائية أخرى. وأنت لا تستطيع فتح هذا الرابط، فهو للتحقق البشري؛ ولا تستشهد بمادة إلا إذا ورد نصها في المعطيات أو في المصادر المرفوعة إليك."
+
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid ""
 "<strong>Governed AI is switched off for this company</strong>, so no\n"
@@ -842,6 +854,12 @@ msgid "Name"
 msgstr "الاسم"
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_charter.py:0
+msgid "Name the portal this office treats as authoritative for legislation."
+msgstr "سمِّ البوابة التي يعتمدها هذا المكتب مرجعاً للأنظمة."
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__notes
 msgid "Notes"
 msgstr "ملاحظات"
@@ -879,9 +897,9 @@ msgid "Off by default. When off, no AI request can be sent for this company."
 msgstr "معطّل افتراضياً. عند الإطفاء لا يمكن إرسال أي طلب لهذه الشركة."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__url
-msgid "Official Text"
-msgstr "النص الرسمي"
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__portal_url
+msgid "Official Portal"
+msgstr "البوابة الرسمية"
 
 #. module: era_law_firm_ai
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
@@ -1101,6 +1119,11 @@ msgstr "حدّد أعلى تصنيف يجوز أن يستقبله «%s»."
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__description
 msgid "Shown to the lawyer so they know what they are about to share."
 msgstr "يظهر للمحامي ليعرف ما هو مقبل على مشاركته."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__reference_portal
+msgid "Sole Legislative Authority"
+msgstr "المرجع النظامي الوحيد"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__source
@@ -1355,6 +1378,31 @@ msgstr ""
 "حدة ولا تُمنح مسبقاً."
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__reference_portal
+msgid ""
+"The one portal this office treats as authoritative for Saudi legislation. It"
+" is named in the standing instructions so an answer is anchored to it, and "
+"it is where a lawyer verifies a citation. An agent cannot open it -- only "
+"text attached as a source is text the agent has actually read."
+msgstr ""
+"البوابة الوحيدة التي يعتمدها هذا المكتب مرجعاً للأنظمة السعودية. تُذكر في "
+"التعليمات الدائمة ليكون الجواب مربوطاً بها، وإليها يرجع المحامي للتحقق من "
+"الاستشهاد. ولا يستطيع الوكيل فتحها — فما قرأه الوكيل فعلاً هو النص المرفوع "
+"مصدراً لا غير."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__source_attached
+msgid ""
+"The one thing on this row that changes what an agent can do. Until the "
+"statute's text is uploaded to an agent as a source, the agent can only "
+"recall the law, and a recalled article number is the failure this register "
+"exists to prevent."
+msgstr ""
+"الشيء الوحيد في هذا الصف الذي يغيّر ما يستطيعه الوكيل. فحتى يُرفع نص النظام "
+"إلى وكيل مصدراً، لا يملك الوكيل إلا استذكار النظام — ورقم المادة المستذكَر "
+"هو الخلل الذي وُجد هذا السجل لمنعه."
+
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid ""
 "The original input is discarded on dispatch; only the redacted payload and its hash are kept.\n"
@@ -1372,6 +1420,15 @@ msgid ""
 msgstr ""
 "الحمولة الحقيقية بعد التنقيح، لا وصف لها. اقرأها قبل منح الموافقة — "
 "فالموافقة تعني قبولك بخروج هذا النص من المكتب."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__portal_url
+msgid ""
+"The single authority for Saudi legislation. Open it to find and verify a "
+"statute's text, then attach that text to the agent as a source."
+msgstr ""
+"المرجع الوحيد للأنظمة السعودية. افتحها لإيجاد نص النظام والتحقق منه، ثم ارفع"
+" ذلك النص إلى الوكيل مصدراً."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__charter_id
@@ -1440,6 +1497,18 @@ msgid "This legislation is already registered."
 msgstr "هذا النظام مسجَّل مسبقاً."
 
 #. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid ""
+"This portal is named in the standing instructions as the only authority for\n"
+"                        Saudi legislation, so an answer is anchored to it and not to another\n"
+"                        jurisdiction. The agent still cannot open it — it is where a lawyer verifies\n"
+"                        a citation before attaching the text as a source."
+msgstr ""
+"تُذكر هذه البوابة في التعليمات الدائمة بوصفها المرجع الوحيد للأنظمة "
+"السعودية، فيكون الجواب مربوطاً بها لا بولاية قضائية أخرى. ومع ذلك لا يستطيع "
+"الوكيل فتحها — فإليها يرجع المحامي للتحقق من الاستشهاد قبل رفع النص مصدراً."
+
+#. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 msgid ""
@@ -1454,17 +1523,6 @@ msgstr ""
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 msgid "This request is still open -- edit it and send it."
 msgstr "هذا الطلب ما زال مفتوحاً — عدّله وأرسله."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__source_attached
-msgid ""
-"Tick once the statute's text has been uploaded to an agent as a source. "
-"Until then the agent can only recall the law, not read it -- and recalled "
-"article numbers are the failure this register exists to prevent."
-msgstr ""
-"أشّره بعد رفع نص النظام إلى وكيل كمصدر. وقبل ذلك لا يستطيع الوكيل إلا "
-"استذكار النظام لا قراءته — وأرقام المواد المستذكَرة هي الخلل الذي وُجد هذا "
-"السجل لمنعه."
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
@@ -1533,13 +1591,6 @@ msgstr ""
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__consent_date
 msgid "When consent was given."
 msgstr "وقت منح الموافقة."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__url
-msgid ""
-"Where the authoritative text is published. Reference only -- an agent cannot"
-" open it."
-msgstr "حيث يُنشر النص الرسمي. للمرجع فقط — لا يستطيع الوكيل فتحه."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__source
@@ -1614,6 +1665,11 @@ msgstr "قضية أخرى"
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 msgid "case_id"
 msgstr ""
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
+msgid "https://laws.moj.gov.sa/"
+msgstr "https://laws.moj.gov.sa/"
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal

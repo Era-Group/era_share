@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
 
@@ -149,3 +149,77 @@ class TestResend(TestCharter):
             'field_ids': [(6, 0, self.env.ref('era_law_firm_ai.field_case_name').ids)]})
         with self.assertRaises(UserError):
             request.action_resend()
+
+
+@tagged('post_install', '-at_install')
+class TestReferencePortal(TestCharter):
+    """One portal, named once, anchoring every answer."""
+
+    def test_the_dead_per_statute_links_are_gone(self):
+        self.assertNotIn('url', self.env['legal.legislation']._fields,
+                         'the per-statute link field should not exist any more')
+
+    def test_every_row_shows_the_one_portal(self):
+        """Moved off the default first: comparing two reads of the same literal would
+        pass even if the compute returned a hard-coded string."""
+        self.charter.reference_portal = 'https://example.gov.sa/'
+        rows = self.env['legal.legislation'].search([], limit=5)
+        self.assertTrue(rows)
+        for row in rows:
+            row.invalidate_recordset(['portal_url'])
+            self.assertEqual(row.portal_url, 'https://example.gov.sa/')
+
+    def test_the_portal_cannot_be_blank_or_whitespace(self):
+        """required only stops NULL, and the url widget does not trim."""
+        for blank in (False, '', '   '):
+            with self.assertRaises(ValidationError):
+                with self.env.cr.savepoint():
+                    self.charter.reference_portal = blank
+
+    def test_a_company_charter_beats_the_shared_one(self):
+        """Ordering by a many2one delegated to res.company._order, so the shared
+        charter's NULL company sorted first and won every time."""
+        Charter = self.env['legal.ai.charter']
+        shared = Charter._for_company(self.env.company)
+        self.assertFalse(shared.company_id, 'the seeded charter is the shared one')
+        own = Charter.create({
+            'name': 'ميثاق الشركة', 'company_id': self.env.company.id,
+            'body': 'تعليمات خاصة بالشركة', 'disclaimer': 'تنبيه خاص',
+            'reference_portal': 'https://own.example.sa/'})
+        self.assertEqual(Charter._for_company(self.env.company), own)
+        self.assertEqual(Charter._reference_portal(self.env.company), 'https://own.example.sa/')
+
+    def test_a_company_without_its_own_charter_falls_back(self):
+        other = self.env['res.company'].create({'name': 'فرع آخر'})
+        picked = self.env['legal.ai.charter']._for_company(other)
+        self.assertTrue(picked)
+        self.assertFalse(picked.company_id)
+
+    def test_the_portal_reaches_the_agent(self):
+        captured = {}
+        self._sent_request(captured)
+        context = captured['context']
+        self.assertIn('laws.moj.gov.sa', context)
+        self.assertIn('المرجع الوحيد', context)
+
+    def test_it_forbids_reasoning_from_another_jurisdiction(self):
+        captured = {}
+        self._sent_request(captured)
+        self.assertIn('ولاية قضائية أخرى', captured['context'])
+
+    def test_it_still_says_the_agent_cannot_open_it(self):
+        """Naming a portal must not read as giving the agent access to it.
+
+        Asserted on wording unique to the appended sentence: the seeded body already
+        says 'لا تستطيع فتح روابط', so the looser phrase passed with the sentence gone.
+        """
+        captured = {}
+        self._sent_request(captured)
+        self.assertIn('لا تستطيع فتح هذا الرابط', captured['context'])
+        self.assertIn('للتحقق البشري', captured['context'])
+
+    def test_changing_the_portal_changes_what_is_sent(self):
+        self.charter.reference_portal = 'https://example.gov.sa/'
+        captured = {}
+        self._sent_request(captured)
+        self.assertIn('example.gov.sa', captured['context'])

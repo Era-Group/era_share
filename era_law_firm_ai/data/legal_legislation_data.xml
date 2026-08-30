@@ -10,415 +10,346 @@
     <record id="legislation_43020100019" model="legal.legislation">
         <field name="name">نظام (43020100019)</field>
         <field name="moj_id">43020100019</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100019/</field>
         <field name="sequence">10</field>
     </record>
     <record id="legislation_43020100020" model="legal.legislation">
         <field name="name">نظام (43020100020)</field>
         <field name="moj_id">43020100020</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100020/</field>
         <field name="sequence">20</field>
     </record>
     <record id="legislation_43020100017" model="legal.legislation">
         <field name="name">نظام (43020100017)</field>
         <field name="moj_id">43020100017</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100017/</field>
         <field name="sequence">30</field>
     </record>
     <record id="legislation_43020100003" model="legal.legislation">
         <field name="name">نظام (43020100003)</field>
         <field name="moj_id">43020100003</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100003/</field>
         <field name="sequence">40</field>
     </record>
     <record id="legislation_43020100007" model="legal.legislation">
         <field name="name">نظام (43020100007)</field>
         <field name="moj_id">43020100007</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100007/</field>
         <field name="sequence">50</field>
     </record>
     <record id="legislation_43020100015" model="legal.legislation">
         <field name="name">نظام (43020100015)</field>
         <field name="moj_id">43020100015</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100015/</field>
         <field name="sequence">60</field>
     </record>
     <record id="legislation_43020100009" model="legal.legislation">
         <field name="name">نظام (43020100009)</field>
         <field name="moj_id">43020100009</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100009/</field>
         <field name="sequence">70</field>
     </record>
     <record id="legislation_43020100008" model="legal.legislation">
         <field name="name">نظام (43020100008)</field>
         <field name="moj_id">43020100008</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100008/</field>
         <field name="sequence">80</field>
     </record>
     <record id="legislation_43020100002" model="legal.legislation">
         <field name="name">نظام (43020100002)</field>
         <field name="moj_id">43020100002</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100002/</field>
         <field name="sequence">90</field>
     </record>
     <record id="legislation_43020100024" model="legal.legislation">
         <field name="name">نظام (43020100024)</field>
         <field name="moj_id">43020100024</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100024/</field>
         <field name="sequence">100</field>
     </record>
     <record id="legislation_43020100029" model="legal.legislation">
         <field name="name">نظام (43020100029)</field>
         <field name="moj_id">43020100029</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100029/</field>
         <field name="sequence">110</field>
     </record>
     <record id="legislation_43020100041" model="legal.legislation">
         <field name="name">نظام (43020100041)</field>
         <field name="moj_id">43020100041</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100041/</field>
         <field name="sequence">120</field>
     </record>
     <record id="legislation_43020100025" model="legal.legislation">
         <field name="name">نظام (43020100025)</field>
         <field name="moj_id">43020100025</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100025/</field>
         <field name="sequence">130</field>
     </record>
     <record id="legislation_43020100030" model="legal.legislation">
         <field name="name">نظام (43020100030)</field>
         <field name="moj_id">43020100030</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100030/</field>
         <field name="sequence">140</field>
     </record>
     <record id="legislation_43020100034" model="legal.legislation">
         <field name="name">نظام (43020100034)</field>
         <field name="moj_id">43020100034</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100034/</field>
         <field name="sequence">150</field>
     </record>
     <record id="legislation_43020100039" model="legal.legislation">
         <field name="name">نظام (43020100039)</field>
         <field name="moj_id">43020100039</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100039/</field>
         <field name="sequence">160</field>
     </record>
     <record id="legislation_43020100038" model="legal.legislation">
         <field name="name">نظام (43020100038)</field>
         <field name="moj_id">43020100038</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100038/</field>
         <field name="sequence">170</field>
     </record>
     <record id="legislation_43020100026" model="legal.legislation">
         <field name="name">نظام (43020100026)</field>
         <field name="moj_id">43020100026</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100026/</field>
         <field name="sequence">180</field>
     </record>
     <record id="legislation_43020100053" model="legal.legislation">
         <field name="name">نظام (43020100053)</field>
         <field name="moj_id">43020100053</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100053/</field>
         <field name="sequence">190</field>
     </record>
     <record id="legislation_43020100054" model="legal.legislation">
         <field name="name">نظام (43020100054)</field>
         <field name="moj_id">43020100054</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100054/</field>
         <field name="sequence">200</field>
     </record>
     <record id="legislation_43020100006" model="legal.legislation">
         <field name="name">نظام (43020100006)</field>
         <field name="moj_id">43020100006</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100006/</field>
         <field name="sequence">210</field>
     </record>
     <record id="legislation_43020100050" model="legal.legislation">
         <field name="name">نظام (43020100050)</field>
         <field name="moj_id">43020100050</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100050/</field>
         <field name="sequence">220</field>
     </record>
     <record id="legislation_43020100044" model="legal.legislation">
         <field name="name">نظام (43020100044)</field>
         <field name="moj_id">43020100044</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100044/</field>
         <field name="sequence">230</field>
     </record>
     <record id="legislation_43020100052" model="legal.legislation">
         <field name="name">نظام (43020100052)</field>
         <field name="moj_id">43020100052</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100052/</field>
         <field name="sequence">240</field>
     </record>
     <record id="legislation_43020100048" model="legal.legislation">
         <field name="name">نظام (43020100048)</field>
         <field name="moj_id">43020100048</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100048/</field>
         <field name="sequence">250</field>
     </record>
     <record id="legislation_43020100037" model="legal.legislation">
         <field name="name">نظام (43020100037)</field>
         <field name="moj_id">43020100037</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100037/</field>
         <field name="sequence">260</field>
     </record>
     <record id="legislation_43020100045" model="legal.legislation">
         <field name="name">نظام (43020100045)</field>
         <field name="moj_id">43020100045</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100045/</field>
         <field name="sequence">270</field>
     </record>
     <record id="legislation_44020100001" model="legal.legislation">
         <field name="name">نظام (44020100001)</field>
         <field name="moj_id">44020100001</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100001/</field>
         <field name="sequence">280</field>
     </record>
     <record id="legislation_44020100002" model="legal.legislation">
         <field name="name">نظام (44020100002)</field>
         <field name="moj_id">44020100002</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100002/</field>
         <field name="sequence">290</field>
     </record>
     <record id="legislation_43020100060" model="legal.legislation">
         <field name="name">نظام (43020100060)</field>
         <field name="moj_id">43020100060</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100060/</field>
         <field name="sequence">300</field>
     </record>
     <record id="legislation_43020100059" model="legal.legislation">
         <field name="name">نظام (43020100059)</field>
         <field name="moj_id">43020100059</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100059/</field>
         <field name="sequence">310</field>
     </record>
     <record id="legislation_43020100058" model="legal.legislation">
         <field name="name">نظام (43020100058)</field>
         <field name="moj_id">43020100058</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100058/</field>
         <field name="sequence">320</field>
     </record>
     <record id="legislation_43020100033" model="legal.legislation">
         <field name="name">نظام (43020100033)</field>
         <field name="moj_id">43020100033</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100033/</field>
         <field name="sequence">330</field>
     </record>
     <record id="legislation_43020100056" model="legal.legislation">
         <field name="name">نظام (43020100056)</field>
         <field name="moj_id">43020100056</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100056/</field>
         <field name="sequence">340</field>
     </record>
     <record id="legislation_43020100055" model="legal.legislation">
         <field name="name">نظام (43020100055)</field>
         <field name="moj_id">43020100055</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100055/</field>
         <field name="sequence">350</field>
     </record>
     <record id="legislation_43020100057" model="legal.legislation">
         <field name="name">نظام (43020100057)</field>
         <field name="moj_id">43020100057</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100057/</field>
         <field name="sequence">360</field>
     </record>
     <record id="legislation_44020100010" model="legal.legislation">
         <field name="name">نظام (44020100010)</field>
         <field name="moj_id">44020100010</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100010/</field>
         <field name="sequence">370</field>
     </record>
     <record id="legislation_43020100013" model="legal.legislation">
         <field name="name">نظام (43020100013)</field>
         <field name="moj_id">43020100013</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100013/</field>
         <field name="sequence">380</field>
     </record>
     <record id="legislation_43020100051" model="legal.legislation">
         <field name="name">نظام (43020100051)</field>
         <field name="moj_id">43020100051</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100051/</field>
         <field name="sequence">390</field>
     </record>
     <record id="legislation_44020100007" model="legal.legislation">
         <field name="name">نظام (44020100007)</field>
         <field name="moj_id">44020100007</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100007/</field>
         <field name="sequence">400</field>
     </record>
     <record id="legislation_44020100009" model="legal.legislation">
         <field name="name">نظام (44020100009)</field>
         <field name="moj_id">44020100009</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100009/</field>
         <field name="sequence">410</field>
     </record>
     <record id="legislation_44020100006" model="legal.legislation">
         <field name="name">نظام (44020100006)</field>
         <field name="moj_id">44020100006</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100006/</field>
         <field name="sequence">420</field>
     </record>
     <record id="legislation_43020100016" model="legal.legislation">
         <field name="name">نظام (43020100016)</field>
         <field name="moj_id">43020100016</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100016/</field>
         <field name="sequence">430</field>
     </record>
     <record id="legislation_44020100003" model="legal.legislation">
         <field name="name">نظام (44020100003)</field>
         <field name="moj_id">44020100003</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100003/</field>
         <field name="sequence">440</field>
     </record>
     <record id="legislation_44020100008" model="legal.legislation">
         <field name="name">نظام (44020100008)</field>
         <field name="moj_id">44020100008</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100008/</field>
         <field name="sequence">450</field>
     </record>
     <record id="legislation_45020100001" model="legal.legislation">
         <field name="name">نظام (45020100001)</field>
         <field name="moj_id">45020100001</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/45020100001/</field>
         <field name="sequence">460</field>
     </record>
     <record id="legislation_44020100013" model="legal.legislation">
         <field name="name">نظام (44020100013)</field>
         <field name="moj_id">44020100013</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100013/</field>
         <field name="sequence">470</field>
     </record>
     <record id="legislation_44020100014" model="legal.legislation">
         <field name="name">نظام (44020100014)</field>
         <field name="moj_id">44020100014</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100014/</field>
         <field name="sequence">480</field>
     </record>
     <record id="legislation_44020100012" model="legal.legislation">
         <field name="name">نظام (44020100012)</field>
         <field name="moj_id">44020100012</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/44020100012/</field>
         <field name="sequence">490</field>
     </record>
     <record id="legislation_43020100027" model="legal.legislation">
         <field name="name">نظام (43020100027)</field>
         <field name="moj_id">43020100027</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100027/</field>
         <field name="sequence">500</field>
     </record>
     <record id="legislation_43020100018" model="legal.legislation">
         <field name="name">نظام (43020100018)</field>
         <field name="moj_id">43020100018</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100018/</field>
         <field name="sequence">510</field>
     </record>
     <record id="legislation_43020100040" model="legal.legislation">
         <field name="name">نظام (43020100040)</field>
         <field name="moj_id">43020100040</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100040/</field>
         <field name="sequence">520</field>
     </record>
     <record id="legislation_43020100021" model="legal.legislation">
         <field name="name">نظام (43020100021)</field>
         <field name="moj_id">43020100021</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100021/</field>
         <field name="sequence">530</field>
     </record>
     <record id="legislation_45020100002" model="legal.legislation">
         <field name="name">نظام (45020100002)</field>
         <field name="moj_id">45020100002</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/45020100002/</field>
         <field name="sequence">540</field>
     </record>
     <record id="legislation_43020100001" model="legal.legislation">
         <field name="name">نظام (43020100001)</field>
         <field name="moj_id">43020100001</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100001/</field>
         <field name="sequence">550</field>
     </record>
     <record id="legislation_43020100004" model="legal.legislation">
         <field name="name">نظام (43020100004)</field>
         <field name="moj_id">43020100004</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100004/</field>
         <field name="sequence">560</field>
     </record>
     <record id="legislation_43020100005" model="legal.legislation">
         <field name="name">نظام (43020100005)</field>
         <field name="moj_id">43020100005</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100005/</field>
         <field name="sequence">570</field>
     </record>
     <record id="legislation_43020100036" model="legal.legislation">
         <field name="name">نظام (43020100036)</field>
         <field name="moj_id">43020100036</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100036/</field>
         <field name="sequence">580</field>
     </record>
     <record id="legislation_43020100028" model="legal.legislation">
         <field name="name">نظام (43020100028)</field>
         <field name="moj_id">43020100028</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100028/</field>
         <field name="sequence">590</field>
     </record>
     <record id="legislation_43020100012" model="legal.legislation">
         <field name="name">نظام (43020100012)</field>
         <field name="moj_id">43020100012</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100012/</field>
         <field name="sequence">600</field>
     </record>
     <record id="legislation_43020100035" model="legal.legislation">
         <field name="name">نظام (43020100035)</field>
         <field name="moj_id">43020100035</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100035/</field>
         <field name="sequence">610</field>
     </record>
     <record id="legislation_43020100043" model="legal.legislation">
         <field name="name">نظام (43020100043)</field>
         <field name="moj_id">43020100043</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100043/</field>
         <field name="sequence">620</field>
     </record>
     <record id="legislation_43020100032" model="legal.legislation">
         <field name="name">نظام (43020100032)</field>
         <field name="moj_id">43020100032</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100032/</field>
         <field name="sequence">630</field>
     </record>
     <record id="legislation_46020100001" model="legal.legislation">
         <field name="name">نظام (46020100001)</field>
         <field name="moj_id">46020100001</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/46020100001/</field>
         <field name="sequence">640</field>
     </record>
     <record id="legislation_43020100011" model="legal.legislation">
         <field name="name">نظام (43020100011)</field>
         <field name="moj_id">43020100011</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100011/</field>
         <field name="sequence">650</field>
     </record>
     <record id="legislation_43020100022" model="legal.legislation">
         <field name="name">نظام (43020100022)</field>
         <field name="moj_id">43020100022</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100022/</field>
         <field name="sequence">660</field>
     </record>
     <record id="legislation_45020100004" model="legal.legislation">
         <field name="name">نظام (45020100004)</field>
         <field name="moj_id">45020100004</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/45020100004/</field>
         <field name="sequence">670</field>
     </record>
     <record id="legislation_43020100014" model="legal.legislation">
         <field name="name">نظام (43020100014)</field>
         <field name="moj_id">43020100014</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100014/</field>
         <field name="sequence">680</field>
     </record>
     <record id="legislation_43020100023" model="legal.legislation">
         <field name="name">نظام (43020100023)</field>
         <field name="moj_id">43020100023</field>
-        <field name="url">https://laws.moj.gov.sa/ar/legislation/43020100023/</field>
         <field name="sequence">690</field>
     </record>
 

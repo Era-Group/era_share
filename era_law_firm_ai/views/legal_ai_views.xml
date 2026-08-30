@@ -383,9 +383,16 @@
                 <sheet>
                     <div class="oe_title"><h1><field name="name"/></h1></div>
                     <group>
+                        <field name="reference_portal" widget="url" placeholder="https://laws.moj.gov.sa/"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="active" invisible="1"/>
                     </group>
+                    <div class="alert alert-info py-2 small" role="alert">
+                        This portal is named in the standing instructions as the only authority for
+                        Saudi legislation, so an answer is anchored to it and not to another
+                        jurisdiction. The agent still cannot open it — it is where a lawyer verifies
+                        a citation before attaching the text as a source.
+                    </div>
                     <div class="alert alert-info" role="alert">
                         These instructions go in front of every request, whichever agent handles it.
                         The agent's own prompt then covers its particular task. An agent cannot open
@@ -432,7 +439,7 @@
                 <field name="name"/>
                 <field name="moj_id"/>
                 <field name="category"/>
-                <field name="url" widget="url"/>
+                <field name="portal_url" widget="url" optional="show" readonly="1"/>
                 <field name="source_attached" widget="boolean_toggle"/>
             </list>
         </field>

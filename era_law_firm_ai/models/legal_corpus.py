@@ -230,6 +230,12 @@ class MojLaw(models.Model):
             )
             law.source_ids = [(4, sid) for sid in new_source.ids]
             changed = True
+        # Citations in an answer must lead to the ministry's page, not to our
+        # indexed copy of it. Core builds the link as `source.url or
+        # /web/content/<attachment>`, so carrying the official URL across is
+        # all it takes. Applied on every pass, not only when sources are
+        # recreated, so an existing corpus picks it up too.
+        law._apply_official_url_to_sources()
         return changed
 
     def _retire_missing_laws(self, current_ids):

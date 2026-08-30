@@ -231,10 +231,18 @@ class TestSourceRestriction(TestCharter):
 
     def setUp(self):
         super().setUp()
-        self.research = self.env.ref('era_law_firm_ai.agent_research')
-        self.research.write({'legal_processing_location': 'KSA',
-                             'legal_retention_policy': 'None.',
-                             'legal_max_classification': 'confidential'})
+        # Build the subject rather than borrowing the live research agent: it
+        # legitimately carries the MoJ corpus now, so "restricted with no
+        # sources" — the state under test — cannot be observed on it, and
+        # mutating a real agent to reach that state is not a test's business.
+        self.research = self.env['ai.agent'].create({
+            'name': 'بحث مقيّد بالمصادر',
+            'llm_model': self.env.ref('era_law_firm_ai.agent_research').llm_model,
+            'restrict_to_sources': True,
+            'legal_processing_location': 'KSA',
+            'legal_retention_policy': 'None.',
+            'legal_max_classification': 'confidential',
+        })
 
     def _request_for(self, agent):
         request = self.env['legal.ai.request'].create({

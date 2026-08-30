@@ -164,7 +164,6 @@ msgstr "يتطلب إجراءً"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__active
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__active
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__active
 msgid "Active"
 msgstr "نشط"
 
@@ -178,11 +177,6 @@ msgstr "الوكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__agent_max_classification
 msgid "Agent Accepts Up To"
 msgstr "الوكيل يقبل حتى"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__agent_ids
-msgid "Agents Relying On It"
-msgstr "الوكلاء المعتمدون عليه"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__ai_classification
@@ -255,11 +249,6 @@ msgid "Attempt Count"
 msgstr "عدد المحاولات"
 
 #. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
-msgid "Awaiting Official Title"
-msgstr "بانتظار العنوان الرسمي"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__blocked
 msgid "Blocked"
 msgstr "موقوف لتعارض"
@@ -296,12 +285,6 @@ msgid "Case"
 msgstr "قضية"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__category
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
-msgid "Category"
-msgstr "التصنيف"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__charter_id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__charter_id
 msgid "Charter Applied"
@@ -312,11 +295,6 @@ msgstr "الميثاق المطبَّق"
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 msgid "Choose the AI agent that should answer this request."
 msgstr "اختر وكيل الذكاء الذي يجيب عن هذا الطلب."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__civil
-msgid "Civil and Commercial"
-msgstr "مدني وتجاري"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__classification_blocked
@@ -411,7 +389,6 @@ msgstr "إنشاء مستند قانوني"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_uid
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__create_uid
 msgid "Created by"
 msgstr "أنشأه"
 
@@ -422,14 +399,8 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_date
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__create_date
 msgid "Created on"
 msgstr "أُنشئ في"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__criminal
-msgid "Criminal"
-msgstr "جزائي"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__fields_sent
@@ -476,7 +447,6 @@ msgstr "المُرسل إلى وكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__display_name
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__display_name
 msgid "Display Name"
@@ -663,7 +633,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__id
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__id
 msgid "ID"
@@ -707,18 +676,12 @@ msgid "Is Follower"
 msgstr "متابِع"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__labour
-msgid "Labour"
-msgstr "عمالي"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_uid
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -729,7 +692,6 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_date
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -796,29 +758,6 @@ msgid "Legal Governance (PDPL)"
 msgstr "الحوكمة القانونية (نظام حماية البيانات الشخصية)"
 
 #. module: era_law_firm_ai
-#: model:ir.actions.act_window,name:era_law_firm_ai.action_legal_legislation
-#: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_legislation
-msgid "Legislation Register"
-msgstr "سجل الأنظمة"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_legislation_ids
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__legislation_ids
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
-msgid "Legislation Relied On"
-msgstr "الأنظمة المعتمَدة"
-
-#. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
-msgid "Legislation This Agent Works From"
-msgstr "الأنظمة التي يعمل منها هذا الوكيل"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_sources_pending
-msgid "Listed statutes whose text has not been attached as a source yet."
-msgstr "الأنظمة المدرجة التي لم يُرفع نصها كمصدر بعد."
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__disclaimer
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "Mandatory Notice"
@@ -845,16 +784,10 @@ msgid "Messages"
 msgstr "الرسائل"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__moj_id
-msgid "MoJ Reference"
-msgstr "مرجع وزارة العدل"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__name
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -863,11 +796,6 @@ msgstr "الاسم"
 #: code:addons/era_law_firm_ai/models/legal_charter.py:0
 msgid "Name the portal this office treats as authoritative for legislation."
 msgstr "سمِّ البوابة التي يعتمدها هذا المكتب مرجعاً للأنظمة."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__notes
-msgid "Notes"
-msgstr "ملاحظات"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction_counter
@@ -902,16 +830,6 @@ msgid "Off by default. When off, no AI request can be sent for this company."
 msgstr "معطّل افتراضياً. عند الإطفاء لا يمكن إرسال أي طلب لهذه الشركة."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__portal_url
-msgid "Official Portal"
-msgstr "البوابة الرسمية"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__title_confirmed
-msgid "Official Title Confirmed"
-msgstr "العنوان الرسمي مؤكَّد"
-
-#. module: era_law_firm_ai
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
 msgid "Only one charter can be active per company."
 msgstr "لا يُفعَّل إلا ميثاق واحد لكل شركة."
@@ -935,11 +853,6 @@ msgstr ""
 "اختياري: ركّز على بند الإنهاء، أو اكتب الرد بأسلوب تصالحي. يُنقَّح كغيره."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__other
-msgid "Other"
-msgstr "أخرى"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__payload_hash
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__payload_hash
 msgid "Payload Hash"
@@ -957,11 +870,6 @@ msgid "Pending"
 msgstr "قيد الانتظار"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__personal_status
-msgid "Personal Status"
-msgstr "الأحوال الشخصية"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__body
 msgid ""
 "Prepended to every request, whichever agent handles it. This is where the "
@@ -972,11 +880,6 @@ msgstr ""
 "يُوضع في صدر كل طلب أياً كان الوكيل الذي يتولاه. وهنا يقرر المكتب كيف "
 "يُؤدَّى العمل القانوني: الإطار، ومصادر الاستناد، وأصول الصياغة. ثم يغطي "
 "توجيه كل وكيل مهمته الخاصة."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_legislation__category__procedure
-msgid "Procedure and Litigation"
-msgstr "المرافعات والتقاضي"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_processing_location
@@ -1009,15 +912,6 @@ msgstr ""
 "سجّل أين يعالج «%s» البيانات ومدة الاحتفاظ بها قبل اعتماده للعمل القانوني."
 
 #. module: era_law_firm_ai
-#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_legal_legislation
-msgid ""
-"Recording a statute here does not put its text in front of an agent. Attach the text\n"
-"               to the agent as a source, then tick it here -- that is what turns recall into citation."
-msgstr ""
-"تسجيل النظام هنا لا يضع نصه أمام الوكيل. ارفع النص إلى الوكيل كمصدر ثم أشّره"
-" هنا — فهذا ما يحوّل الاستذكار إلى استشهاد."
-
-#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Redact & Send"
 msgstr "تنقيح وإرسال"
@@ -1026,11 +920,6 @@ msgstr "تنقيح وإرسال"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__redacted_payload
 msgid "Redacted Payload"
 msgstr "الحمولة المنقّحة"
-
-#. module: era_law_firm_ai
-#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_legal_legislation
-msgid "Register the legislation this office works from"
-msgstr "سجّل الأنظمة التي يعمل منها هذا المكتب"
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
@@ -1093,11 +982,6 @@ msgid "Sanitized Response"
 msgstr "الاستجابة المنقّحة"
 
 #. module: era_law_firm_ai
-#: model:ir.model,name:era_law_firm_ai.model_legal_legislation
-msgid "Saudi Legislation Reference"
-msgstr "مرجع الأنظمة السعودية"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__sensitive
 msgid "Sensitive"
 msgstr "حسّاس"
@@ -1115,7 +999,6 @@ msgstr "تاريخ الإرسال"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__sequence
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__sequence
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__sequence
 msgid "Sequence"
 msgstr "التسلسل"
 
@@ -1158,11 +1041,6 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_sources_pending
-msgid "Statutes Without a Source"
-msgstr "أنظمة بلا مصدر مرفوع"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__technical_name
 msgid "Technical Name"
 msgstr "الاسم التقني"
@@ -1176,16 +1054,6 @@ msgstr "قالب"
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_document_template_form
 msgid "Template name"
 msgstr "اسم القالب"
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__source_attached
-msgid "Text Attached as a Source"
-msgstr "النص مرفوع كمصدر"
-
-#. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
-msgid "Text Not Attached Yet"
-msgstr "النص لم يُرفع بعد"
 
 #. module: era_law_firm_ai
 #. odoo-python
@@ -1347,11 +1215,6 @@ msgid ""
 msgstr "هيكل الصياغة الخاص بالمكتب، يُستخدم أساساً للمستندات المولَّدة."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__moj_id
-msgid "The identifier the Ministry of Justice uses in its legislation portal."
-msgstr "المعرّف الذي تستخدمه وزارة العدل في بوابة الأنظمة."
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_generation__document_id
 msgid ""
 "The legal document created from the output. It starts in draft with a "
@@ -1396,18 +1259,6 @@ msgstr ""
 "مصدراً لا غير."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__source_attached
-msgid ""
-"The one thing on this row that changes what an agent can do. Until the "
-"statute's text is uploaded to an agent as a source, the agent can only "
-"recall the law, and a recalled article number is the failure this register "
-"exists to prevent."
-msgstr ""
-"الشيء الوحيد في هذا الصف الذي يغيّر ما يستطيعه الوكيل. فحتى يُرفع نص النظام "
-"إلى وكيل مصدراً، لا يملك الوكيل إلا استذكار النظام — ورقم المادة المستذكَر "
-"هو الخلل الذي وُجد هذا السجل لمنعه."
-
-#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid ""
 "The original input is discarded on dispatch; only the redacted payload and its hash are kept.\n"
@@ -1427,26 +1278,6 @@ msgstr ""
 "فالموافقة تعني قبولك بخروج هذا النص من المكتب."
 
 #. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__title_confirmed
-msgid ""
-"The seeded rows carry the Ministry reference as a stand-in name, because "
-"inventing a statute's title in a legal product is the same failure as "
-"inventing its article number. Tick this once the row carries the real title."
-msgstr ""
-"الصفوف المشحونة تحمل مرجع الوزارة اسماً نائباً، لأن اختراع عنوان نظام في "
-"منتج قانوني هو الخلل نفسه الذي يمثّله اختراع رقم مادته. أشّر هذا بعد أن يحمل"
-" الصف العنوان الحقيقي."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__portal_url
-msgid ""
-"The single authority for Saudi legislation. Open it to find and verify a "
-"statute's text, then attach that text to the agent as a source."
-msgstr ""
-"المرجع الوحيد للأنظمة السعودية. افتحها لإيجاد نص النظام والتحقق منه، ثم ارفع"
-" ذلك النص إلى الوكيل مصدراً."
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__charter_id
 msgid ""
 "The standing instructions in force when this request was sent, kept so an "
@@ -1454,25 +1285,6 @@ msgid ""
 msgstr ""
 "التعليمات الدائمة النافذة وقت إرسال هذا الطلب، تُحفظ ليمكن قراءة إجابة قديمة"
 " على ضوء القواعد التي أُنتجت تحتها."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__name
-msgid ""
-"The statute as it is cited. Rename the seeded entries to the official title "
-"once you have it from the Ministry of Justice."
-msgstr ""
-"النظام كما يُستشهد به. أعد تسمية المدخلات المشحونة بالعنوان الرسمي متى حصلت "
-"عليه من وزارة العدل."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_charter__legislation_ids
-msgid ""
-"The statutes this office works from. Listing one here does not put its text "
-"in front of the agent -- for that the text must be attached to the agent as "
-"a source."
-msgstr ""
-"الأنظمة التي يعمل منها المكتب. وإدراج النظام هنا لا يضع نصه أمام الوكيل — "
-"فلذلك يجب رفع النص إلى الوكيل كمصدر."
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
@@ -1506,11 +1318,6 @@ msgstr "هذا المستند محظور من معالجة الذكاء."
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_field_technical_unique
 msgid "This field is already in the catalogue."
 msgstr "هذا الحقل موجود في الكتالوج مسبقاً."
-
-#. module: era_law_firm_ai
-#: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_legislation_moj_unique
-msgid "This legislation is already registered."
-msgstr "هذا النظام مسجَّل مسبقاً."
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
@@ -1568,11 +1375,6 @@ msgstr ""
 " فعلاً لا من قائمة فارغة."
 
 #. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
-msgid "Titled and Attached"
-msgstr "مُعنوَن ونصّه مرفوع"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__website_message_ids
 msgid "Website Messages"
 msgstr "رسائل الموقع"
@@ -1590,15 +1392,6 @@ msgid ""
 msgstr ""
 "ما حملته الإرسالات السابقة لهذا الطلب وما عاد منها. وهذه لا تقبل التعديل ولا"
 " الحذف."
-
-#. module: era_law_firm_ai
-#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_legislation_ids
-msgid ""
-"What this agent is expected to work from. Listing a statute here does not "
-"put its text in front of the agent; for that, attach the text under Sources."
-msgstr ""
-"ما يُنتظر من هذا الوكيل أن يعمل منه. وإدراج النظام هنا لا يضع نصه أمام "
-"الوكيل؛ فلذلك ارفع النص في «المصادر»."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_field__name
@@ -1691,15 +1484,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "https://laws.moj.gov.sa/"
 msgstr "https://laws.moj.gov.sa/"
-
-#. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
-msgid ""
-"of the statutes listed below have no text attached under Sources, so this\n"
-"                        agent can only recall them, not read them."
-msgstr ""
-"من الأنظمة المدرجة أدناه بلا نص مرفوع في «المصادر»، فلا يستطيع هذا الوكيل "
-"إلا استذكارها لا قراءتها."
 
 #. module: era_law_firm_ai
 #. odoo-python
@@ -1869,351 +1653,6 @@ msgstr "نتيجة القضية"
 #: model:legal.ai.field,name:era_law_firm_ai.field_document_text
 msgid "نص المستند كاملاً"
 msgstr "نص المستند كاملاً"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100001
-msgid "نظام (43020100001)"
-msgstr "نظام (43020100001)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100002
-msgid "نظام (43020100002)"
-msgstr "نظام (43020100002)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100003
-msgid "نظام (43020100003)"
-msgstr "نظام (43020100003)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100004
-msgid "نظام (43020100004)"
-msgstr "نظام (43020100004)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100005
-msgid "نظام (43020100005)"
-msgstr "نظام (43020100005)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100006
-msgid "نظام (43020100006)"
-msgstr "نظام (43020100006)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100007
-msgid "نظام (43020100007)"
-msgstr "نظام (43020100007)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100008
-msgid "نظام (43020100008)"
-msgstr "نظام (43020100008)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100009
-msgid "نظام (43020100009)"
-msgstr "نظام (43020100009)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100011
-msgid "نظام (43020100011)"
-msgstr "نظام (43020100011)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100012
-msgid "نظام (43020100012)"
-msgstr "نظام (43020100012)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100013
-msgid "نظام (43020100013)"
-msgstr "نظام (43020100013)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100014
-msgid "نظام (43020100014)"
-msgstr "نظام (43020100014)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100015
-msgid "نظام (43020100015)"
-msgstr "نظام (43020100015)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100016
-msgid "نظام (43020100016)"
-msgstr "نظام (43020100016)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100017
-msgid "نظام (43020100017)"
-msgstr "نظام (43020100017)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100018
-msgid "نظام (43020100018)"
-msgstr "نظام (43020100018)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100019
-msgid "نظام (43020100019)"
-msgstr "نظام (43020100019)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100020
-msgid "نظام (43020100020)"
-msgstr "نظام (43020100020)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100021
-msgid "نظام (43020100021)"
-msgstr "نظام (43020100021)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100022
-msgid "نظام (43020100022)"
-msgstr "نظام (43020100022)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100023
-msgid "نظام (43020100023)"
-msgstr "نظام (43020100023)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100024
-msgid "نظام (43020100024)"
-msgstr "نظام (43020100024)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100025
-msgid "نظام (43020100025)"
-msgstr "نظام (43020100025)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100026
-msgid "نظام (43020100026)"
-msgstr "نظام (43020100026)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100027
-msgid "نظام (43020100027)"
-msgstr "نظام (43020100027)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100028
-msgid "نظام (43020100028)"
-msgstr "نظام (43020100028)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100029
-msgid "نظام (43020100029)"
-msgstr "نظام (43020100029)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100030
-msgid "نظام (43020100030)"
-msgstr "نظام (43020100030)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100032
-msgid "نظام (43020100032)"
-msgstr "نظام (43020100032)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100033
-msgid "نظام (43020100033)"
-msgstr "نظام (43020100033)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100034
-msgid "نظام (43020100034)"
-msgstr "نظام (43020100034)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100035
-msgid "نظام (43020100035)"
-msgstr "نظام (43020100035)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100036
-msgid "نظام (43020100036)"
-msgstr "نظام (43020100036)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100037
-msgid "نظام (43020100037)"
-msgstr "نظام (43020100037)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100038
-msgid "نظام (43020100038)"
-msgstr "نظام (43020100038)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100039
-msgid "نظام (43020100039)"
-msgstr "نظام (43020100039)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100040
-msgid "نظام (43020100040)"
-msgstr "نظام (43020100040)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100041
-msgid "نظام (43020100041)"
-msgstr "نظام (43020100041)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100043
-msgid "نظام (43020100043)"
-msgstr "نظام (43020100043)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100044
-msgid "نظام (43020100044)"
-msgstr "نظام (43020100044)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100045
-msgid "نظام (43020100045)"
-msgstr "نظام (43020100045)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100048
-msgid "نظام (43020100048)"
-msgstr "نظام (43020100048)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100050
-msgid "نظام (43020100050)"
-msgstr "نظام (43020100050)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100051
-msgid "نظام (43020100051)"
-msgstr "نظام (43020100051)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100052
-msgid "نظام (43020100052)"
-msgstr "نظام (43020100052)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100053
-msgid "نظام (43020100053)"
-msgstr "نظام (43020100053)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100054
-msgid "نظام (43020100054)"
-msgstr "نظام (43020100054)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100055
-msgid "نظام (43020100055)"
-msgstr "نظام (43020100055)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100056
-msgid "نظام (43020100056)"
-msgstr "نظام (43020100056)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100057
-msgid "نظام (43020100057)"
-msgstr "نظام (43020100057)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100058
-msgid "نظام (43020100058)"
-msgstr "نظام (43020100058)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100059
-msgid "نظام (43020100059)"
-msgstr "نظام (43020100059)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_43020100060
-msgid "نظام (43020100060)"
-msgstr "نظام (43020100060)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100001
-msgid "نظام (44020100001)"
-msgstr "نظام (44020100001)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100002
-msgid "نظام (44020100002)"
-msgstr "نظام (44020100002)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100003
-msgid "نظام (44020100003)"
-msgstr "نظام (44020100003)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100006
-msgid "نظام (44020100006)"
-msgstr "نظام (44020100006)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100007
-msgid "نظام (44020100007)"
-msgstr "نظام (44020100007)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100008
-msgid "نظام (44020100008)"
-msgstr "نظام (44020100008)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100009
-msgid "نظام (44020100009)"
-msgstr "نظام (44020100009)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100010
-msgid "نظام (44020100010)"
-msgstr "نظام (44020100010)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100012
-msgid "نظام (44020100012)"
-msgstr "نظام (44020100012)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100013
-msgid "نظام (44020100013)"
-msgstr "نظام (44020100013)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_44020100014
-msgid "نظام (44020100014)"
-msgstr "نظام (44020100014)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100001
-msgid "نظام (45020100001)"
-msgstr "نظام (45020100001)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100002
-msgid "نظام (45020100002)"
-msgstr "نظام (45020100002)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_45020100004
-msgid "نظام (45020100004)"
-msgstr "نظام (45020100004)"
-
-#. module: era_law_firm_ai
-#: model:legal.legislation,name:era_law_firm_ai.legislation_46020100001
-msgid "نظام (46020100001)"
-msgstr "نظام (46020100001)"
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_type

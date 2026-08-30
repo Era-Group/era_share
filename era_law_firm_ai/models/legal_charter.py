@@ -44,10 +44,6 @@ class LegalAICharter(models.Model):
              "named in the standing instructions so an answer is anchored to it, and it is where "
              "a lawyer verifies a citation. An agent cannot open it -- only text attached as a "
              "source is text the agent has actually read.")
-    legislation_ids = fields.Many2many(
-        'legal.legislation', string='Legislation Relied On',
-        help="The statutes this office works from. Listing one here does not put its text in front "
-             "of the agent -- for that the text must be attached to the agent as a source.")
 
     _one_active_per_company = models.Constraint(
         'UNIQUE(company_id, active)',

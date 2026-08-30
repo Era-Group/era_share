@@ -2769,3 +2769,43 @@ class TestEmbeddingRouting(TransactionCase):
         with patch.object(type(svc), "_request", fake_request):
             svc.get_embedding(input=["x"], dimensions=1536)
         self.assertEqual(seen, ["https://openrouter.ai/api/v1"])
+
+    def _hundred_chunks(self):
+        """Real records: core sizes its batches from the chunk contents."""
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام.txt", "raw": b"x" * 64, "mimetype": "text/plain",
+        })
+        return self.env["ai.embedding"].create([{
+            "attachment_id": attachment.id,
+            "content": f"passage: مادة رقم {i} من النظام",
+            "embedding_model": "custom_llm/text-embedding-3-small",
+        } for i in range(100)])
+
+    def test_custom_llm_batches_are_capped_for_slow_endpoints(self):
+        """A CPU embedder cannot finish 2048 chunks before the socket times out."""
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ai.custom_llm_embedding_batch_size", "32")
+        chunks = self._hundred_chunks()
+        batches = self.env["ai.embedding"]._create_batches(chunks, "custom_llm")
+        self.assertTrue(batches, "there must be batches to send")
+        self.assertTrue(all(len(b) <= 32 for b in batches),
+                        f"no batch may exceed the cap, got {[len(b) for b in batches]}")
+        self.assertEqual(sum(len(b) for b in batches), 100, "nothing may be dropped")
+
+    def test_an_unset_cap_leaves_batching_alone(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ai.custom_llm_embedding_batch_size", "")
+        chunks = self._hundred_chunks()
+        batches = self.env["ai.embedding"]._create_batches(chunks, "custom_llm")
+        self.assertEqual(sum(len(b) for b in batches), 100)
+        self.assertTrue(any(len(b) > 32 for b in batches),
+                        "without a cap the provider's own batching applies")
+
+    def test_other_providers_are_not_capped(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ai.custom_llm_embedding_batch_size", "32")
+        chunks = self._hundred_chunks()
+        batches = self.env["ai.embedding"]._create_batches(chunks, "openai")
+        self.assertEqual(sum(len(b) for b in batches), 100)
+        self.assertTrue(any(len(b) > 32 for b in batches),
+                        "the cap is for the slow custom endpoint only")

@@ -12,7 +12,9 @@
 # See era_share/era_ai_accounts/docs/LOCAL_EMBEDDINGS.md
 set -u
 
-DIR=/var/lib/odoo/era_embed
+# Derive the install root from this script's own location, so the same file
+# works on an Odoo host and on a standalone embeddings server.
+DIR="${ERA_EMBED_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 PYTHON="$DIR/venv/bin/python"
 SERVER="$DIR/server.py"
 LOG="$DIR/server.log"

@@ -1,5 +1,11 @@
 # Installed into a virtualenv of its own, deliberately separate from Odoo's:
 # this pulls onnxruntime and must never constrain Odoo's dependency set.
-#   python3 -m venv /var/lib/odoo/era_embed/venv
-#   /var/lib/odoo/era_embed/venv/bin/pip install -r requirements.txt
+#   python3 -m venv <dir>/venv
+#   <dir>/venv/bin/pip install -r requirements.txt
+#
+# The version is PINNED, and unpinning it will silently corrupt retrieval.
+# fastembed changed multilingual-e5-large from CLS to mean pooling after 0.5.1,
+# and a stored vector is only comparable to a query vector produced the same
+# way. Every machine embedding for the same database must run the same version;
+# change it only together with a full re-index (see docs/LOCAL_EMBEDDINGS.md).
 fastembed==0.8.0

@@ -44,7 +44,19 @@ chmod +x "$DIR/start.sh"
 
 if [ ! -x "$DIR/venv/bin/python" ]; then
     say "creating the virtualenv (kept separate from Odoo's on purpose)"
-    python3 -m venv "$DIR/venv"
+    if ! python3 -m venv "$DIR/venv" 2>/dev/null; then
+        # Debian/Ubuntu ship the venv module but split ensurepip into
+        # python3-venv. Installing that package drags in a system Python
+        # upgrade, which is not something to do unasked on a host running
+        # other people's production services. Build without pip and bootstrap
+        # it inside the environment instead — no system package changes.
+        say "ensurepip missing; bootstrapping pip inside the venv instead"
+        rm -rf "$DIR/venv"
+        python3 -m venv --without-pip "$DIR/venv"
+        curl -sSL --max-time 180 -o "$DIR/get-pip.py" https://bootstrap.pypa.io/get-pip.py
+        "$DIR/venv/bin/python" "$DIR/get-pip.py" -q
+        rm -f "$DIR/get-pip.py"
+    fi
 fi
 say "installing python dependencies"
 "$DIR/venv/bin/pip" install -q --disable-pip-version-check -r "$SRC/requirements.txt"
@@ -63,7 +75,7 @@ PY
 
 say "starting the service"
 # start.sh reads these from its own environment, so pass them through.
-ERA_EMBED_HOST="$HOST" ERA_EMBED_PORT="$PORT" ERA_EMBED_TOKEN="$TOKEN" \
+ERA_EMBED_DIR="$DIR" ERA_EMBED_HOST="$HOST" ERA_EMBED_PORT="$PORT" ERA_EMBED_TOKEN="$TOKEN" \
     setsid "$DIR/start.sh" >> "$DIR/server.log" 2>&1 &
 for _ in $(seq 1 30); do
     curl -sf --max-time 2 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break

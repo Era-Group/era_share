@@ -60,6 +60,13 @@ class ResConfigSettings(models.TransientModel):
         string="Embedding Model", config_parameter="ai.custom_llm_embedding_model",
         default="openrouter/free", readonly=False, groups="base.group_system",
     )
+    custom_llm_embedding_base_url = fields.Char(
+        string="Embedding Endpoint", config_parameter="ai.custom_llm_embedding_base_url",
+        readonly=False, groups="base.group_system",
+        help="Only set this when embeddings live somewhere other than the chat "
+             "endpoint above — a local embeddings service, for instance. Leave "
+             "empty to use the same endpoint for both.",
+    )
     custom_llm_referer = fields.Char(
         string="Referer", config_parameter="ai.custom_llm_referer",
         default=_default_custom_llm_referer, readonly=False, groups="base.group_system",
@@ -168,10 +175,11 @@ class ResConfigSettings(models.TransientModel):
         except (urllib.error.URLError, OSError, ValueError) as err:
             return False, str(err)
 
-    @api.depends("custom_llm_base_url")
+    @api.depends("custom_llm_embedding_base_url", "custom_llm_base_url")
     def _compute_local_embedding_status(self):
         for setting in self:
-            reachable, detail = setting._probe_local_embeddings(setting.custom_llm_base_url)
+            reachable, detail = setting._probe_local_embeddings(
+                setting.custom_llm_embedding_base_url or setting.custom_llm_base_url)
             setting.local_embedding_status = (
                 _("Running — %s", detail) if reachable
                 else _("Not reachable — %s", detail)
@@ -181,7 +189,9 @@ class ResConfigSettings(models.TransientModel):
         """Point every agent's indexing at the local service."""
         self.ensure_one()
         params = self.env["ir.config_parameter"].sudo()
-        params.set_param("ai.custom_llm_base_url", self.LOCAL_EMBED_URL)
+        # Deliberately NOT ai.custom_llm_base_url: that one carries chat, and
+        # the local service answers embeddings only — it 404s on chat.
+        params.set_param("ai.custom_llm_embedding_base_url", self.LOCAL_EMBED_URL)
         # The service ignores the token, but the provider refuses to build a
         # request without one.
         if not params.get_param("ai.custom_llm_key"):
@@ -210,7 +220,8 @@ class ResConfigSettings(models.TransientModel):
 
     def action_test_local_embeddings(self):
         self.ensure_one()
-        reachable, detail = self._probe_local_embeddings(self.custom_llm_base_url)
+        reachable, detail = self._probe_local_embeddings(
+            self.custom_llm_embedding_base_url or self.custom_llm_base_url)
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",

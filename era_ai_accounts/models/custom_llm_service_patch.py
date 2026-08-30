@@ -347,14 +347,30 @@ def _patch_llm_api_service():
         user=None,
     ):
         model = _resolve_custom_model(self, model, is_embedding=True)
-        return original_get_embedding(
-            self,
-            input=input,
-            dimensions=dimensions,
-            model=model,
-            encoding_format=encoding_format,
-            user=user,
+        # Chat and embeddings are not necessarily the same service. Chat may sit
+        # on OpenRouter while embeddings are served by a local model, and
+        # pointing the single ``ai.custom_llm_base_url`` at the embeddings host
+        # would silently 404 every chat request. Swap only for this call, and
+        # only when an embedding-specific endpoint was configured.
+        embedding_url = (
+            _custom_llm_param(self.env, "ai.custom_llm_embedding_base_url")
+            if self.provider == "custom_llm" else None
         )
+        previous_base_url = getattr(self, "base_url", None)
+        if embedding_url:
+            self.base_url = embedding_url
+        try:
+            return original_get_embedding(
+                self,
+                input=input,
+                dimensions=dimensions,
+                model=model,
+                encoding_format=encoding_format,
+                user=user,
+            )
+        finally:
+            if embedding_url:
+                self.base_url = previous_base_url
 
     def _format_for_embedding(self, content, mode, title=None):
         """Give E5 models the query/passage prefix they are trained on.

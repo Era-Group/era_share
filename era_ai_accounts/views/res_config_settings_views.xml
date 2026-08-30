@@ -58,6 +58,8 @@
                             <field name="custom_llm_model_4" placeholder="meta-llama/llama-3.3-70b-instruct:free" class="w-100"/>
                             <label for="custom_llm_embedding_model"/>
                             <field name="custom_llm_embedding_model" placeholder="openai/text-embedding-3-small" class="w-100"/>
+                            <label for="custom_llm_embedding_base_url"/>
+                            <field name="custom_llm_embedding_base_url" placeholder="same as the chat endpoint" class="w-100"/>
                             <label for="custom_llm_referer"/>
                             <field name="custom_llm_referer" placeholder="https://your-domain.example" class="w-100"/>
                             <label for="custom_llm_title"/>

@@ -2725,3 +2725,47 @@ class TestEmbeddingRouting(TransactionCase):
         self.assertEqual(
             svc._format_for_embedding(content="contract review", mode="document", title="t"),
             "contract review", "the E5 prefix must not leak onto OpenAI")
+
+    def test_embeddings_can_live_on_a_different_endpoint_than_chat(self):
+        """A local embeddings service must not swallow the chat endpoint.
+
+        The local service answers /v1/embeddings only and 404s on chat, so
+        pointing the shared ai.custom_llm_base_url at it would break every
+        agent that has no account to fall back on.
+        """
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_base_url", "https://openrouter.ai/api/v1")
+        params.set_param("ai.custom_llm_embedding_base_url", "http://127.0.0.1:8091/v1")
+        params.set_param("ai.custom_llm_key", "k")
+        svc = LLMApiService(self.env, provider="custom_llm")
+        self.assertEqual(svc.base_url, "https://openrouter.ai/api/v1",
+                         "chat keeps the configured chat endpoint")
+
+        seen = []
+
+        def fake_request(self_, method, endpoint, headers, body, **kw):
+            seen.append((endpoint, self_.base_url))
+            return {"data": [{"embedding": [0.0]}]}
+
+        with patch.object(type(svc), "_request", fake_request):
+            svc.get_embedding(input=["x"], dimensions=1536)
+        self.assertEqual(seen, [("/embeddings", "http://127.0.0.1:8091/v1")],
+                         "the embedding call goes to the embedding endpoint")
+        self.assertEqual(svc.base_url, "https://openrouter.ai/api/v1",
+                         "and the chat endpoint is restored afterwards")
+
+    def test_one_endpoint_serves_both_when_nothing_special_is_set(self):
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_base_url", "https://openrouter.ai/api/v1")
+        params.set_param("ai.custom_llm_embedding_base_url", "")
+        params.set_param("ai.custom_llm_key", "k")
+        svc = LLMApiService(self.env, provider="custom_llm")
+        seen = []
+
+        def fake_request(self_, method, endpoint, headers, body, **kw):
+            seen.append(self_.base_url)
+            return {"data": [{"embedding": [0.0]}]}
+
+        with patch.object(type(svc), "_request", fake_request):
+            svc.get_embedding(input=["x"], dimensions=1536)
+        self.assertEqual(seen, ["https://openrouter.ai/api/v1"])

@@ -87,7 +87,7 @@ class LegalCase(models.Model):
         sensitive = {'client_id', 'party_ids'} & set(vals)
         result = super().write(vals)
         if sensitive:
-            self.with_context(skip_conflict_invalidation=True).write({'conflict_check_id': False})
+            self.write({'conflict_check_id': False})
         return result
 
 
@@ -97,14 +97,14 @@ class LegalCaseParty(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
-        records.mapped('case_id').with_context(skip_conflict_invalidation=True).write({'conflict_check_id': False})
+        records.mapped('case_id').write({'conflict_check_id': False})
         return records
 
     def write(self, vals):
         cases = self.mapped('case_id')
         result = super().write(vals)
         if {'partner_id', 'role'} & set(vals):
-            cases.with_context(skip_conflict_invalidation=True).write({'conflict_check_id': False})
+            cases.write({'conflict_check_id': False})
         return result
 
 

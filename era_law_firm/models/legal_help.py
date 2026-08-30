@@ -220,8 +220,9 @@ class LegalConsultation(models.Model):
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    legal_default_city = fields.Char(help="Pre-filled as the city on new cases.")
+    legal_default_city = fields.Char(help="Pre-filled as the city on a new case, so the common answer is already there.")
     legal_hearing_reminder_days = fields.Integer(help="How many days before a hearing the reminder activity is raised.")
+    legal_deadline_reminder_days = fields.Integer(help="How many days before a statutory deadline the reminder activity is raised. Longer than the hearing window by default, because a missed filing date is not a missed meeting.")
     legal_trust_journal_id = fields.Many2one(help="Journal every client trust movement is posted to, kept separate from the firm's own entries. Filled automatically on install if left empty.")
     legal_trust_liability_account_id = fields.Many2one(help="Where client money sits while the firm holds it. It is a liability, not firm revenue -- that is the whole point of segregating it.")
     legal_trust_bank_account_id = fields.Many2one(help="The segregated bank account client money is deposited into and refunded from.")

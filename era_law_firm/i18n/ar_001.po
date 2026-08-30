@@ -575,11 +575,15 @@ msgid "Check"
 msgstr "فحص"
 
 #. module: era_law_firm
-#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__circuit
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__circuit_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__circuit_ids
 msgid "Circuit"
 msgstr "الدائرة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__circuit
+msgid "Circuit (legacy text)"
+msgstr "الدائرة (نص قديم)"
 
 #. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_circuit
@@ -916,7 +920,6 @@ msgstr "تحويل الاستشارة يفتح قضية في مرحلة الاس
 
 #. module: era_law_firm
 #: model:ir.model,name:era_law_firm.model_legal_court
-#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__court
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__court_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__court_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_jurisdiction__court_ids
@@ -924,6 +927,11 @@ msgstr "تحويل الاستشارة يفتح قضية في مرحلة الاس
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
 msgid "Court"
 msgstr "المحكمة"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__court
+msgid "Court (legacy text)"
+msgstr "المحكمة (نص قديم)"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_expense_form
@@ -1100,6 +1108,11 @@ msgstr "تاريخ الموعد"
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_config_deadline_rules
 msgid "Deadline Rules"
 msgstr "قواعد المدد النظامية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.res_config_settings_view_form_legal
+msgid "Deadline reminder days"
+msgstr "أيام التذكير بالموعد النظامي"
 
 #. module: era_law_firm
 #. odoo-python
@@ -1648,6 +1661,17 @@ msgid "How many days before a hearing the reminder activity is raised."
 msgstr "كم يوماً قبل الجلسة يُنشأ نشاط التذكير."
 
 #. module: era_law_firm
+#: model:ir.model.fields,help:era_law_firm.field_res_company__legal_deadline_reminder_days
+#: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_deadline_reminder_days
+msgid ""
+"How many days before a statutory deadline the reminder activity is raised. "
+"Longer than the hearing window by default, because a missed filing date is "
+"not a missed meeting."
+msgstr ""
+"كم يوماً قبل الموعد النظامي يُنشأ نشاط التذكير. وهي أطول من نافذة الجلسة "
+"افتراضياً، لأن فوات موعد تقديم ليس كفوات اجتماع."
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_engagement__billing_type
 msgid ""
 "How the client is charged: a fixed sum, an hourly rate, staged payments, or "
@@ -1915,7 +1939,6 @@ msgid "Judiciary Text to Record Migration"
 msgstr "ترحيل بيانات القضاء من نص إلى سجلات"
 
 #. module: era_law_firm
-#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__jurisdiction
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__jurisdiction_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_circuit__jurisdiction_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__jurisdiction_id
@@ -1923,6 +1946,11 @@ msgstr "ترحيل بيانات القضاء من نص إلى سجلات"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_search
 msgid "Jurisdiction"
 msgstr "الاختصاص"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_case__jurisdiction
+msgid "Jurisdiction (legacy text)"
+msgstr "الاختصاص (نص قديم)"
 
 #. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_jurisdiction
@@ -2085,6 +2113,12 @@ msgstr "استشارة قانونية"
 #: model:ir.model,name:era_law_firm.model_legal_deadline
 msgid "Legal Deadline"
 msgstr "موعد نظامي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_res_company__legal_deadline_reminder_days
+#: model:ir.model.fields,field_description:era_law_firm.field_res_config_settings__legal_deadline_reminder_days
+msgid "Legal Deadline Reminder Days"
+msgstr "أيام التذكير بالموعد النظامي"
 
 #. module: era_law_firm
 #: model:ir.model,name:era_law_firm.model_legal_deadline_rule
@@ -2894,8 +2928,9 @@ msgstr "وكالة شرعية"
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_res_company__legal_default_city
 #: model:ir.model.fields,help:era_law_firm.field_res_config_settings__legal_default_city
-msgid "Pre-filled as the city on new cases."
-msgstr "تُملأ مسبقاً كمدينة في القضايا الجديدة."
+msgid ""
+"Pre-filled as the city on a new case, so the common answer is already there."
+msgstr "تُملأ مسبقاً كمدينة في القضية الجديدة، فيكون الجواب المعتاد حاضراً."
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_engagement__product_id

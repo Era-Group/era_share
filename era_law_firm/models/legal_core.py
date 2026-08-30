@@ -27,10 +27,10 @@ class LegalCase(models.Model):
     company_id = fields.Many2one('res.company', required=True, default=lambda s: s.env.company, index=True)
     najiz_number = fields.Char(index=True, tracking=True)
     case_type = fields.Selection([('litigation','Litigation'),('execution','Execution'),('consultation','Consultation'),('other','Other')], tracking=True)
-    jurisdiction = fields.Char()
-    court = fields.Char()
-    circuit = fields.Char()
-    city = fields.Char()
+    jurisdiction = fields.Char(string='Jurisdiction (legacy text)')
+    court = fields.Char(string='Court (legacy text)')
+    circuit = fields.Char(string='Circuit (legacy text)')
+    city = fields.Char(default=lambda self: self.env.company.legal_default_city)
     najiz_url = fields.Char()
     client_id = fields.Many2one('res.partner', required=True, check_company=True, tracking=True)
     lawyer_id = fields.Many2one('res.users', tracking=True)
@@ -200,9 +200,14 @@ class LegalHearing(models.Model):
         self.mapped('calendar_event_id').unlink(); return super().unlink()
     @api.model
     def _cron_reminders(self):
-        limit = fields.Datetime.add(fields.Datetime.now(), days=1)
-        for r in self.search([('state','=','confirmed'),('reminder_scheduled','=',False),('start_datetime','<=',limit)]):
-            r.activity_schedule('mail.mail_activity_data_todo', user_id=r.lawyer_id.id, summary=_('Upcoming legal hearing')); r.reminder_scheduled=True
+        # The window is per company: the setting exists so a firm can choose it, and
+        # the job runs across every firm on the database.
+        now = fields.Datetime.now()
+        for company in self.env['res.company'].sudo().search([]):
+            limit = fields.Datetime.add(now, days=company.legal_hearing_reminder_days or 1)
+            for r in self.search([('state','=','confirmed'),('reminder_scheduled','=',False),
+                                  ('company_id','=',company.id),('start_datetime','<=',limit)]):
+                r.activity_schedule('mail.mail_activity_data_todo', user_id=r.lawyer_id.id, summary=_('Upcoming legal hearing')); r.reminder_scheduled=True
 
 
 class CalendarEvent(models.Model):
@@ -214,8 +219,9 @@ class LegalDeadline(models.Model):
     _name = 'legal.deadline'
     _description = 'Legal Deadline'
     _inherit = ['mail.thread','mail.activity.mixin']
+    _check_company_auto = True
     name=fields.Char(required=True)
-    case_id=fields.Many2one('legal.case',required=True,ondelete='cascade')
+    case_id=fields.Many2one('legal.case',required=True,ondelete='cascade',check_company=True)
     company_id=fields.Many2one(related='case_id.company_id',store=True,index=True)
     deadline_date=fields.Date(required=True)
     source=fields.Char(required=True)
@@ -227,9 +233,14 @@ class LegalDeadline(models.Model):
     def action_cancel(self): self.write({'state':'cancelled'})
     @api.model
     def _cron_reminders(self):
-        limit=fields.Date.add(fields.Date.today(),days=1)
-        for r in self.search([('state','=','confirmed'),('reminder_scheduled','=',False),('deadline_date','<=',limit)]):
-            r.activity_schedule('mail.mail_activity_data_todo',user_id=r.user_id.id,summary=_('Upcoming legal deadline')); r.reminder_scheduled=True
+        # Same defect as hearings had, and worse here: a missed statutory deadline is
+        # not a missed meeting, so it gets its own longer window.
+        today = fields.Date.today()
+        for company in self.env['res.company'].sudo().search([]):
+            limit = fields.Date.add(today, days=company.legal_deadline_reminder_days or 1)
+            for r in self.search([('state','=','confirmed'),('reminder_scheduled','=',False),
+                                  ('company_id','=',company.id),('deadline_date','<=',limit)]):
+                r.activity_schedule('mail.mail_activity_data_todo',user_id=r.user_id.id,summary=_('Upcoming legal deadline')); r.reminder_scheduled=True
 
 
 class LegalDocument(models.Model):

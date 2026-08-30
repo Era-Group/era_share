@@ -152,8 +152,17 @@ class ResConfigSettings(models.TransientModel):
     # indexed through them. era_ai_accounts/tools/era_embed ships a small
     # OpenAI-compatible embeddings service to run on the same host; these two
     # buttons are the Odoo half of that setup.
-    LOCAL_EMBED_URL = "http://127.0.0.1:8091/v1"
-    LOCAL_EMBED_MODEL = "intfloat/multilingual-e5-large"
+    # Single source of truth with the install hook, so the button and a fresh
+    # install cannot drift apart.
+    @property
+    def LOCAL_EMBED_URL(self):
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_base_url"]
+
+    @property
+    def LOCAL_EMBED_MODEL(self):
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_model"]
 
     local_embedding_status = fields.Char(
         string="Local Embeddings", compute="_compute_local_embedding_status",
@@ -192,10 +201,8 @@ class ResConfigSettings(models.TransientModel):
         # Deliberately NOT ai.custom_llm_base_url: that one carries chat, and
         # the local service answers embeddings only — it 404s on chat.
         params.set_param("ai.custom_llm_embedding_base_url", self.LOCAL_EMBED_URL)
-        # The service ignores the token, but the provider refuses to build a
-        # request without one.
-        if not params.get_param("ai.custom_llm_key"):
-            params.set_param("ai.custom_llm_key", "local")
+        # No placeholder token: the shared endpoint authenticates for real, and
+        # a fake value would turn a missing secret into a puzzling 401 later.
         params.set_param("ai.custom_llm_embedding_model", self.LOCAL_EMBED_MODEL)
         # Overrides every agent regardless of its chat model: Odoo dedupes
         # embeddings by (checksum, embedding_model), so letting agents drift
@@ -212,8 +219,9 @@ class ResConfigSettings(models.TransientModel):
                 "title": _("Local embeddings configured"),
                 "message": (
                     _("The service answered: %s", detail) if reachable else
-                    _("Settings saved, but the service is not answering yet (%s). "
-                      "Run tools/era_embed/install.sh on this host.", detail)
+                    _("Settings saved, but the service did not answer (%s). "
+                      "Check that the bearer token is set in 'Provider API key'.",
+                      detail)
                 ),
             },
         }

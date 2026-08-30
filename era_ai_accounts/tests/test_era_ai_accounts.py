@@ -2809,3 +2809,33 @@ class TestEmbeddingRouting(TransactionCase):
         self.assertEqual(sum(len(b) for b in batches), 100)
         self.assertTrue(any(len(b) > 32 for b in batches),
                         "the cap is for the slow custom endpoint only")
+
+    def test_install_fills_in_the_embedding_defaults(self):
+        """A fresh instance should be able to index without a treasure hunt."""
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS, _set_embedding_defaults
+        params = self.env["ir.config_parameter"].sudo()
+        for key in EMBEDDING_DEFAULTS:
+            params.set_param(key, "")
+        _set_embedding_defaults(self.env)
+        for key, expected in EMBEDDING_DEFAULTS.items():
+            self.assertEqual(params.get_param(key), expected, key)
+
+    def test_install_never_overwrites_an_existing_choice(self):
+        """An instance already on OpenAI must not be redirected by an upgrade."""
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS, _set_embedding_defaults
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.embedding_model_override", "text-embedding-3-small")
+        params.set_param("ai.custom_llm_embedding_base_url", "https://elsewhere.example/v1")
+        _set_embedding_defaults(self.env)
+        self.assertEqual(params.get_param("ai.embedding_model_override"),
+                         "text-embedding-3-small")
+        self.assertEqual(params.get_param("ai.custom_llm_embedding_base_url"),
+                         "https://elsewhere.example/v1")
+        # untouched keys still get their default
+        self.assertEqual(params.get_param("ai.custom_llm_embedding_model"),
+                         EMBEDDING_DEFAULTS["ai.custom_llm_embedding_model"])
+
+    def test_the_bearer_token_is_not_shipped_in_the_repository(self):
+        """A secret in a git repo is a secret no longer."""
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        self.assertNotIn("ai.custom_llm_key", EMBEDDING_DEFAULTS)

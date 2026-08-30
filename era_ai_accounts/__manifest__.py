@@ -46,12 +46,13 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.24.0",
+    "version": "19.0.1.25.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",
     "images": ["static/description/icon.png"],
     "depends": ["ai", "ai_app"],
+    "post_init_hook": "_set_embedding_defaults",
     "data": [
         "security/era_ai_accounts_groups.xml",
         "security/era_ai_accounts_security.xml",

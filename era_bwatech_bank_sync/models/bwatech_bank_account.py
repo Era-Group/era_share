@@ -48,6 +48,23 @@ class BwatechBankAccount(models.Model):
         help="Last BWATECH transaction sequence imported for this account.",
     )
     transaction_ids = fields.One2many("bwatech.transaction", "bank_account_id")
+    company_id = fields.Many2one(
+        "res.company",
+        related="journal_id.company_id",
+        store=True,
+        readonly=True,
+        help="Taken from the journal, which is what Odoo stamps on the statement "
+             "line and what the auto-reconciliation cron filters on.",
+    )
+    auto_post = fields.Boolean(
+        string="Post Automatically",
+        default=False,
+        help="Post new transactions to the bank journal right after each "
+             "synchronization. Off by default: a statement line lands in the "
+             "ledger as a posted entry, so this is switched on only once the "
+             "amount signs have been verified against real data.",
+    )
+    unposted_count = fields.Integer(compute="_compute_unposted_count")
 
     _uniq_connection_iban = models.Constraint(
         "unique(connection_id, iban)",
@@ -65,6 +82,35 @@ class BwatechBankAccount(models.Model):
         Currency = self.env["res.currency"]
         for rec in self:
             rec.currency_id = Currency.search([("name", "=", rec.currency_code)], limit=1)
+
+    def _compute_unposted_count(self):
+        counts = dict(self.env["bwatech.transaction"]._read_group(
+            [("bank_account_id", "in", self.ids), ("posted_to_odoo", "=", False)],
+            ["bank_account_id"], ["__count"],
+        ))
+        for account in self:
+            account.unposted_count = counts.get(account, 0)
+
+    def action_post_transactions(self):
+        """Post every transaction of these accounts that is still unposted."""
+        pending = self.env["bwatech.transaction"].search([
+            ("bank_account_id", "in", self.ids),
+            ("posted_to_odoo", "=", False),
+        ], order="sequence_number")
+        if not pending:
+            raise UserError(_("لا توجد حركات غير مُرحَّلة على هذا الحساب."))
+        return pending.action_post_to_odoo()
+
+    def action_open_transactions(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("BWATECH Transactions"),
+            "res_model": "bwatech.transaction",
+            "view_mode": "list,form",
+            "domain": [("bank_account_id", "=", self.id)],
+            "context": {"create": False},
+        }
 
     def action_sync_balance(self):
         for account in self:

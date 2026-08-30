@@ -26,6 +26,10 @@
                 <header>
                     <button name="action_sync_balance" type="object" string="Refresh Balance" class="btn-primary"/>
                     <button name="action_sync_transactions" type="object" string="Sync Transactions"/>
+                    <button name="action_post_transactions" type="object"
+                            string="Post to Journal"
+                            invisible="unposted_count == 0"
+                            confirm="سيُنشئ أودو قيدًا مُرحَّلًا لكل حركة. تأكّدي أن اليومية صحيحة وأن إشارة المبالغ مُتحقَّق منها."/>
                 </header>
                 <sheet>
                     <group>
@@ -43,7 +47,10 @@
                             <field name="balance"/>
                             <field name="balance_synced_at"/>
                             <field name="journal_id"/>
+                            <field name="company_id" invisible="1"/>
                             <field name="sync_transactions"/>
+                            <field name="auto_post"/>
+                            <field name="unposted_count"/>
                             <field name="last_sequence_number"/>
                         </group>
                     </group>

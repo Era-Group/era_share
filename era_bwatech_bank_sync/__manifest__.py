@@ -1,6 +1,6 @@
 {
     "name": "ERA BWATECH Bank Sync",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "Accounting/Accounting",
     "summary": "BWATECH bank accounts, balances and transaction synchronization",
     "author": "ERA",

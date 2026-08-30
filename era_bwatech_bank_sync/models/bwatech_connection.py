@@ -624,6 +624,13 @@ class BwatechConnection(models.Model):
                     ok &= connection._run_isolated(
                         account.action_sync_transactions, "TransactionsInquiry", account
                     )
+                # Posting is opt-in per account and isolated on its own: a
+                # journal that is misconfigured must not make a successful
+                # synchronization look like a failure.
+                if account.auto_post and account.unposted_count:
+                    connection._run_isolated(
+                        account.action_post_transactions, "PostToJournal", account
+                    )
                 if ok:
                     synced += 1
                 else:

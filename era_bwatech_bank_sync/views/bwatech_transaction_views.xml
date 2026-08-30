@@ -14,7 +14,8 @@
                 <field name="transaction_type_description"/>
                 <field name="bank_reference"/>
                 <field name="third_party_name"/>
-                <field name="posted_to_odoo"/>
+                <field name="posted_to_odoo" widget="boolean_toggle" readonly="1"/>
+                <field name="statement_line_id" optional="hide"/>
             </list>
         </field>
     </record>
@@ -24,6 +25,15 @@
         <field name="model">bwatech.transaction</field>
         <field name="arch" type="xml">
             <form create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_post_to_odoo" type="object"
+                            string="Post to Journal" class="btn-primary"
+                            invisible="posted_to_odoo"
+                            confirm="سيُنشئ أودو قيدًا مُرحَّلًا لهذه الحركة."/>
+                    <button name="action_open_statement_line" type="object"
+                            string="Open Statement Line"
+                            invisible="not posted_to_odoo"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="connection_id"/>

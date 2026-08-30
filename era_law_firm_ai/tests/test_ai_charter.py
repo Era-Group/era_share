@@ -217,3 +217,73 @@ class TestReferencePortal(TestCharter):
         captured = {}
         self._sent_request(captured)
         self.assertIn('example.gov.sa', captured['context'])
+
+
+@tagged('post_install', '-at_install')
+class TestSourceRestriction(TestCharter):
+    """An agent pinned to sources it does not have is worse than an unpinned one.
+
+    Odoo's restrict_to_sources appends a paragraph to the prompt telling the model
+    to use only the provided context. It is not a gate. With no sources there is no
+    context, so the model answers from memory while the setting reads to a lawyer as
+    a guarantee that it did not.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.research = self.env.ref('era_law_firm_ai.agent_research')
+        self.research.write({'legal_processing_location': 'KSA',
+                             'legal_retention_policy': 'None.',
+                             'legal_max_classification': 'confidential'})
+
+    def _request_for(self, agent):
+        request = self.env['legal.ai.request'].create({
+            'agent_id': agent.id, 'case_id': self.case.id, 'purpose': 'بحث',
+            'field_ids': [(6, 0, self.env.ref('era_law_firm_ai.field_case_type').ids)]})
+        request.action_approve()
+        return request
+
+    def test_a_restricted_agent_with_no_sources_cannot_be_approved(self):
+        self.research.legal_approved = False
+        self.assertTrue(self.research.restrict_to_sources)
+        self.assertFalse(self.research.sources_ids)
+        with self.assertRaises(ValidationError):
+            self.research.legal_approved = True
+
+    def test_nothing_reaches_the_model_when_there_is_nothing_to_restrict_to(self):
+        """The gate must stop the request, not merely warn about it."""
+        # The constraint refuses to create this state through the ORM, which is the
+        # point of it. It reached the database before the constraint existed, so it is
+        # built the same way here — and the dispatch gate is what has to catch it.
+        self.env.cr.execute("UPDATE ai_agent SET legal_approved = true WHERE id = %s",
+                            (self.research.id,))
+        self.research.invalidate_recordset(['legal_approved'])
+        request = self._request_for(self.research)
+        reached = []
+
+        def fake(agent_self, prompt, chat_history=None, extra_system_context=""):
+            reached.append(prompt)
+            return ['المادة 47 من نظام ما']
+
+        with patch.object(type(self.research), '_generate_response', fake):
+            with self.assertRaises(UserError):
+                request.action_send()
+        self.assertFalse(reached, 'the model was asked despite having no sources to answer from')
+
+    def test_the_readiness_flag_tracks_the_real_state(self):
+        self.assertFalse(self.research.legal_sources_ready)
+        self.assertTrue(self.agent.legal_sources_ready,
+                        'an agent that is not source-restricted is always ready')
+
+    def test_an_unrestricted_agent_is_unaffected(self):
+        """Only the pinned agents are gated; the rest must keep working."""
+        request = self._request_for(self.agent)
+        reached = []
+
+        def fake(agent_self, prompt, chat_history=None, extra_system_context=""):
+            reached.append(prompt)
+            return ['مسودة']
+
+        with patch.object(type(self.agent), '_generate_response', fake):
+            request.action_send()
+        self.assertTrue(reached)

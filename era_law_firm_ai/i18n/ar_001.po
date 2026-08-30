@@ -16,6 +16,19 @@ msgstr ""
 
 #. module: era_law_firm_ai
 #. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"\"%s\" is set to answer only from its sources, and has none. Attach the "
+"texts it should work from under Sources, or turn that setting off — "
+"approving it as it stands would let it answer from memory while appearing "
+"not to."
+msgstr ""
+"«%s» مضبوط ليجيب من مصادره وحدها، ولا مصادر له. ارفع النصوص التي يعمل منها "
+"في «المصادر»، أو أطفئ هذا الإعداد — فاعتماده على حاله يجعله يجيب من ذاكرته "
+"وهو يبدو غير ذلك."
+
+#. module: era_law_firm_ai
+#. odoo-python
 #: code:addons/era_law_firm_ai/models/legal_charter.py:0
 msgid ""
 "%(body)s\n"
@@ -515,6 +528,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Extra Instructions"
 msgstr "تعليمات إضافية"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__legal_sources_ready
+msgid ""
+"False when this agent is pinned to its sources but has none, or its sources "
+"are still being processed. In that state it has nothing to be restricted to."
+msgstr ""
+"يكون خطأً حين يكون الوكيل مقيَّداً بمصادره ولا مصادر له، أو كانت مصادره قيد "
+"المعالجة. وفي هذه الحالة لا يوجد ما يتقيّد به."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__fields_sent
@@ -1024,6 +1046,11 @@ msgid "Source"
 msgstr "المصدر"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_sources_ready
+msgid "Sources Usable"
+msgstr "المصادر صالحة للاستخدام"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__body
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "Standing Instructions"
@@ -1077,6 +1104,17 @@ msgid ""
 msgstr ""
 "الوكيل «%(agent)s» غير معتمد للعمل القانوني. يعتمده مدير قانوني من الإعدادات"
 " ← وكلاء الذكاء، بعد تسجيل أين يعالج البيانات ومدة احتفاظه بها."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"The agent \"%s\" answers only from its sources and has none, so it would "
+"answer from memory instead. Attach the texts it should work from under "
+"Sources."
+msgstr ""
+"الوكيل «%s» يجيب من مصادره وحدها ولا مصادر له، فسيجيب من ذاكرته بدل ذلك. "
+"ارفع النصوص التي يعمل منها في «المصادر»."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__agent_id
@@ -1276,6 +1314,16 @@ msgid ""
 msgstr ""
 "الحمولة الحقيقية بعد التنقيح، لا وصف لها. اقرأها قبل منح الموافقة — "
 "فالموافقة تعني قبولك بخروج هذا النص من المكتب."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
+msgid ""
+"The sources for \"%s\" are still being processed. Until they are, the agent "
+"cannot read them and would answer from memory."
+msgstr ""
+"مصادر «%s» ما زالت قيد المعالجة. وحتى تنتهي لا يستطيع الوكيل قراءتها وسيجيب "
+"من ذاكرته."
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__charter_id

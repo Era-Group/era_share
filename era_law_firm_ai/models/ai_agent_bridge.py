@@ -57,6 +57,36 @@ class AIAgent(models.Model):
              "The levels are ordered, so Confidential also covers Internal and Public. A document "
              "marked Blocked is never sent to any agent whatever this says.")
 
+    legal_sources_ready = fields.Boolean(
+        compute='_compute_legal_sources_ready', string='Sources Usable',
+        help="False when this agent is pinned to its sources but has none, or its sources are "
+             "still being processed. In that state it has nothing to be restricted to.")
+
+    @api.depends('restrict_to_sources', 'sources_ids', 'sources_fully_processed')
+    def _compute_legal_sources_ready(self):
+        for agent in self:
+            agent.legal_sources_ready = bool(
+                not agent.restrict_to_sources
+                or (agent.sources_ids and agent.sources_fully_processed))
+
+    @api.constrains('legal_approved', 'restrict_to_sources', 'sources_ids')
+    def _check_sources_present(self):
+        """An agent pinned to sources it does not have is the worst of both states.
+
+        restrict_to_sources is a prompt instruction, not a gate: Odoo appends a
+        paragraph telling the model to use only the provided context. With no sources
+        there is no context to provide, so the instruction restricts the model to
+        nothing and it answers from memory -- while the flag reads to a lawyer as a
+        guarantee that it did not.
+        """
+        for agent in self:
+            if agent.legal_approved and agent.restrict_to_sources and not agent.sources_ids:
+                raise ValidationError(_(
+                    '"%s" is set to answer only from its sources, and has none. Attach the texts '
+                    'it should work from under Sources, or turn that setting off — approving it '
+                    'as it stands would let it answer from memory while appearing not to.',
+                    agent.name))
+
     @api.constrains('legal_max_classification')
     def _check_max_classification(self):
         for agent in self:
@@ -279,6 +309,15 @@ class LegalAIRequestGate(models.Model):
                 'The agent "%(agent)s" is not approved for legal work. A legal manager approves it '
                 'under Configuration > AI Agents, after recording where it processes data and how '
                 'long it keeps it.', agent=self.agent_id.name))
+        if self.agent_id.restrict_to_sources and not self.agent_id.sources_ids:
+            raise UserError(_(
+                'The agent "%s" answers only from its sources and has none, so it would answer '
+                'from memory instead. Attach the texts it should work from under Sources.',
+                self.agent_id.name))
+        if self.agent_id.restrict_to_sources and not self.agent_id.sources_fully_processed:
+            raise UserError(_(
+                'The sources for "%s" are still being processed. Until they are, the agent cannot '
+                'read them and would answer from memory.', self.agent_id.name))
         if not (self.consent_user_id and self.consent_date):
             raise UserError(_(
                 'This request has no recorded consent. Use "Give Consent" first -- consent names '

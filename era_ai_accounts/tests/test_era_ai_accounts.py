@@ -2839,3 +2839,36 @@ class TestEmbeddingRouting(TransactionCase):
         """A secret in a git repo is a secret no longer."""
         from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
         self.assertNotIn("ai.custom_llm_key", EMBEDDING_DEFAULTS)
+
+    def test_the_embedding_token_never_reaches_the_chat_provider(self):
+        """Two endpoints, two secrets — neither may be handed to the other."""
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_base_url", "https://openrouter.ai/api/v1")
+        params.set_param("ai.custom_llm_key", "chat-key")
+        params.set_param("ai.custom_llm_embedding_base_url", "https://embed.example/v1")
+        params.set_param("ai.custom_llm_embedding_key", "embed-token")
+        svc = LLMApiService(self.env, provider="custom_llm")
+
+        self.assertEqual(svc._get_api_token(), "chat-key",
+                         "a chat request uses the chat key")
+
+        seen = []
+
+        def fake_request(self_, method, endpoint, headers, body, **kw):
+            seen.append((self_.base_url, self_._get_api_token()))
+            return {"data": [{"embedding": [0.0]}]}
+
+        with patch.object(type(svc), "_request", fake_request):
+            svc.get_embedding(input=["x"], dimensions=1536)
+        self.assertEqual(seen, [("https://embed.example/v1", "embed-token")])
+        self.assertEqual(svc._get_api_token(), "chat-key",
+                         "and the chat key is what remains afterwards")
+
+    def test_one_key_still_serves_both_when_no_embedding_key_is_set(self):
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_key", "only-key")
+        params.set_param("ai.custom_llm_embedding_key", "")
+        svc = LLMApiService(self.env, provider="custom_llm")
+        svc._era_embedding_call = True
+        self.assertEqual(svc._get_api_token(), "only-key",
+                         "a single-endpoint deployment keeps working unchanged")

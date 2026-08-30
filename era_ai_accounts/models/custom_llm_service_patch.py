@@ -310,6 +310,13 @@ def _patch_llm_api_service():
         if self.provider != "custom_llm":
             return original_get_api_token(self)
 
+        if getattr(self, "_era_embedding_call", False):
+            embedding_key = _custom_llm_param(self.env, "ai.custom_llm_embedding_key")
+            if embedding_key:
+                return embedding_key
+            # Falls through to the chat key, which is what a single-endpoint
+            # deployment has always used.
+
         api_key = (
             _custom_llm_param(self.env, "ai.custom_llm_key")
             or os.getenv("ODOO_AI_CUSTOM_LLM_TOKEN")
@@ -359,6 +366,11 @@ def _patch_llm_api_service():
         previous_base_url = getattr(self, "base_url", None)
         if embedding_url:
             self.base_url = embedding_url
+        # The two endpoints authenticate separately. Without this flag the
+        # chat provider's key — an OpenRouter key, say — would be sent to our
+        # own embeddings host, and worse, our embeddings token would be handed
+        # to OpenRouter on every chat request.
+        self._era_embedding_call = True
         try:
             return original_get_embedding(
                 self,
@@ -369,6 +381,7 @@ def _patch_llm_api_service():
                 user=user,
             )
         finally:
+            self._era_embedding_call = False
             if embedding_url:
                 self.base_url = previous_base_url
 

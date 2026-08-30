@@ -60,12 +60,26 @@ class ResConfigSettings(models.TransientModel):
         string="Embedding Model", config_parameter="ai.custom_llm_embedding_model",
         default="openrouter/free", readonly=False, groups="base.group_system",
     )
+    custom_llm_embedding_key = fields.Char(
+        string="Embedding API key", config_parameter="ai.custom_llm_embedding_key",
+        readonly=False, groups="base.group_system",
+        help="Bearer token for the embeddings endpoint. Separate from the chat "
+             "key on purpose: the two are different services and must not be "
+             "sent each other's secret. Left empty, the chat key is used.",
+    )
+    custom_llm_embedding_batch_size = fields.Char(
+        string="Embedding Batch Size", config_parameter="ai.custom_llm_embedding_batch_size",
+        readonly=False, groups="base.group_system",
+        help="Chunks per request. A CPU-backed endpoint manages well under one "
+             "per second, so a large batch runs past the HTTP timeout and the "
+             "source is left stuck in 'processing'. Empty means no cap.",
+    )
     custom_llm_embedding_base_url = fields.Char(
         string="Embedding Endpoint", config_parameter="ai.custom_llm_embedding_base_url",
         readonly=False, groups="base.group_system",
-        help="Only set this when embeddings live somewhere other than the chat "
-             "endpoint above — a local embeddings service, for instance. Leave "
-             "empty to use the same endpoint for both.",
+        help="Where embeddings are served. Normally a different service from "
+             "the chat endpoint above, with its own key. Leave empty to use "
+             "the chat endpoint for both.",
     )
     custom_llm_referer = fields.Char(
         string="Referer", config_parameter="ai.custom_llm_referer",
@@ -147,33 +161,33 @@ class ResConfigSettings(models.TransientModel):
         for record in self:
             icp.set_param("ai.cli_gap_enabled", "True" if record.cli_gap_enabled else "False")
 
-    # ------------------------------------------------- local embeddings
+    # ----------------------------------------------------- embeddings
     # The CLI-proxy accounts are text-only, so knowledge sources cannot be
     # indexed through them. era_ai_accounts/tools/era_embed ships a small
-    # OpenAI-compatible embeddings service to run on the same host; these two
-    # buttons are the Odoo half of that setup.
+    # OpenAI-compatible embeddings service; one instance serves every Odoo
+    # host, and these fields are the Odoo half of that setup.
     # Single source of truth with the install hook, so the button and a fresh
     # install cannot drift apart.
     @property
-    def LOCAL_EMBED_URL(self):
+    def DEFAULT_EMBED_URL(self):
         from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
         return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_base_url"]
 
     @property
-    def LOCAL_EMBED_MODEL(self):
+    def DEFAULT_EMBED_MODEL(self):
         from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
         return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_model"]
 
-    local_embedding_status = fields.Char(
-        string="Local Embeddings", compute="_compute_local_embedding_status",
+    embedding_service_status = fields.Char(
+        string="Service status", compute="_compute_embedding_service_status",
         groups="base.group_system",
-        help="Whether the local embeddings service is answering. Without it, "
+        help="Whether the embeddings endpoint is answering. Without it, "
              "knowledge sources stay in 'processing' forever with no error.",
     )
 
-    def _probe_local_embeddings(self, base_url=None):
-        """Return (reachable, detail) for the local embeddings service."""
-        url = (base_url or self.LOCAL_EMBED_URL).rstrip("/")
+    def _probe_embedding_endpoint(self, base_url=None):
+        """Return (reachable, detail) for the configured embeddings endpoint."""
+        url = (base_url or self.DEFAULT_EMBED_URL).rstrip("/")
         url = url[:-3] if url.endswith("/v1") else url
         try:
             with urllib.request.urlopen(f"{url}/health", timeout=3) as response:
@@ -185,38 +199,38 @@ class ResConfigSettings(models.TransientModel):
             return False, str(err)
 
     @api.depends("custom_llm_embedding_base_url", "custom_llm_base_url")
-    def _compute_local_embedding_status(self):
+    def _compute_embedding_service_status(self):
         for setting in self:
-            reachable, detail = setting._probe_local_embeddings(
+            reachable, detail = setting._probe_embedding_endpoint(
                 setting.custom_llm_embedding_base_url or setting.custom_llm_base_url)
-            setting.local_embedding_status = (
+            setting.embedding_service_status = (
                 _("Running — %s", detail) if reachable
                 else _("Not reachable — %s", detail)
             )
 
-    def action_use_local_embeddings(self):
-        """Point every agent's indexing at the local service."""
+    def action_restore_default_embedding_endpoint(self):
+        """Point every agent's indexing back at the shared endpoint."""
         self.ensure_one()
         params = self.env["ir.config_parameter"].sudo()
         # Deliberately NOT ai.custom_llm_base_url: that one carries chat, and
-        # the local service answers embeddings only — it 404s on chat.
-        params.set_param("ai.custom_llm_embedding_base_url", self.LOCAL_EMBED_URL)
+        # the embeddings service answers embeddings only — it 404s on chat.
+        params.set_param("ai.custom_llm_embedding_base_url", self.DEFAULT_EMBED_URL)
         # No placeholder token: the shared endpoint authenticates for real, and
         # a fake value would turn a missing secret into a puzzling 401 later.
-        params.set_param("ai.custom_llm_embedding_model", self.LOCAL_EMBED_MODEL)
+        params.set_param("ai.custom_llm_embedding_model", self.DEFAULT_EMBED_MODEL)
         # Overrides every agent regardless of its chat model: Odoo dedupes
         # embeddings by (checksum, embedding_model), so letting agents drift
         # onto different embedding models multiplies the work for nothing.
         params.set_param("ai.embedding_model_override", "custom_llm/text-embedding-3-small")
 
-        reachable, detail = self._probe_local_embeddings()
+        reachable, detail = self._probe_embedding_endpoint()
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "type": "success" if reachable else "warning",
                 "sticky": not reachable,
-                "title": _("Local embeddings configured"),
+                "title": _("Embeddings endpoint configured"),
                 "message": (
                     _("The service answered: %s", detail) if reachable else
                     _("Settings saved, but the service did not answer (%s). "
@@ -226,9 +240,9 @@ class ResConfigSettings(models.TransientModel):
             },
         }
 
-    def action_test_local_embeddings(self):
+    def action_test_embedding_endpoint(self):
         self.ensure_one()
-        reachable, detail = self._probe_local_embeddings(
+        reachable, detail = self._probe_embedding_endpoint(
             self.custom_llm_embedding_base_url or self.custom_llm_base_url)
         return {
             "type": "ir.actions.client",

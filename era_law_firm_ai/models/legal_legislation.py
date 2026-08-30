@@ -53,6 +53,11 @@ class LegalLegislation(models.Model):
     agent_ids = fields.Many2many(
         'ai.agent', 'ai_agent_legislation_rel', 'legislation_id', 'agent_id',
         string='Agents Relying On It')
+    title_confirmed = fields.Boolean(
+        string='Official Title Confirmed',
+        help="The seeded rows carry the Ministry reference as a stand-in name, because inventing "
+             "a statute's title in a legal product is the same failure as inventing its article "
+             "number. Tick this once the row carries the real title.")
     source_attached = fields.Boolean(
         string='Text Attached as a Source',
         help="The one thing on this row that changes what an agent can do. Until the statute's "
@@ -64,7 +69,12 @@ class LegalLegislation(models.Model):
     @api.depends('name', 'moj_id')
     def _compute_display_name(self):
         for record in self:
-            record.display_name = f'{record.name} ({record.moj_id})' if record.moj_id else record.name
+            name = record.name or ''
+            # the placeholder name already ends with the reference; appending it again
+            # produced 'نظام (430...) (430...)' in tags and breadcrumbs
+            if record.moj_id and record.moj_id not in name:
+                name = f'{name} ({record.moj_id})'
+            record.display_name = name
 
 
 class AIAgentLegislation(models.Model):

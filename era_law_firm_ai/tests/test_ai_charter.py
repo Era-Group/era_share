@@ -223,3 +223,40 @@ class TestReferencePortal(TestCharter):
         captured = {}
         self._sent_request(captured)
         self.assertIn('example.gov.sa', captured['context'])
+
+
+@tagged('post_install', '-at_install')
+class TestLegislationRegister(TestCharter):
+    """The register is a worklist, and it has to read like one."""
+
+    def test_the_seeded_references_are_unique(self):
+        rows = self.env['legal.legislation'].search([])
+        ids = rows.mapped('moj_id')
+        self.assertEqual(len(ids), len(set(ids)), 'the register must not hold the same statute twice')
+        names = rows.mapped('name')
+        self.assertEqual(len(names), len(set(names)))
+
+    def test_the_same_statute_cannot_be_registered_twice(self):
+        existing = self.env['legal.legislation'].search([], limit=1)
+        with self.assertRaises(Exception):
+            with self.env.cr.savepoint():
+                self.env['legal.legislation'].create({
+                    'name': 'مكرر', 'moj_id': existing.moj_id})
+
+    def test_display_name_does_not_repeat_the_reference(self):
+        """The placeholder name ends with the reference; appending it again produced
+        'نظام (430...) (430...)' in tags and breadcrumbs."""
+        row = self.env['legal.legislation'].search([('moj_id', '!=', False)], limit=1)
+        self.assertEqual(row.display_name.count(row.moj_id), 1)
+
+    def test_a_named_statute_still_shows_its_reference(self):
+        row = self.env['legal.legislation'].search([('moj_id', '!=', False)], limit=1)
+        row.name = 'نظام المرافعات الشرعية'
+        self.assertIn(row.moj_id, row.display_name)
+
+    def test_the_seeded_rows_are_flagged_as_unfinished(self):
+        """Sixty-nine placeholders should read as work owed, not as named statutes."""
+        rows = self.env['legal.legislation'].search([])
+        self.assertTrue(rows)
+        self.assertFalse(any(rows.mapped('title_confirmed')))
+        self.assertFalse(any(rows.mapped('source_attached')))

@@ -255,6 +255,11 @@ msgid "Attempt Count"
 msgstr "عدد المحاولات"
 
 #. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
+msgid "Awaiting Official Title"
+msgstr "بانتظار العنوان الرسمي"
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_document__ai_classification__blocked
 msgid "Blocked"
 msgstr "موقوف لتعارض"
@@ -902,6 +907,11 @@ msgid "Official Portal"
 msgstr "البوابة الرسمية"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__title_confirmed
+msgid "Official Title Confirmed"
+msgstr "العنوان الرسمي مؤكَّد"
+
+#. module: era_law_firm_ai
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
 msgid "Only one charter can be active per company."
 msgstr "لا يُفعَّل إلا ميثاق واحد لكل شركة."
@@ -1168,11 +1178,6 @@ msgid "Template name"
 msgstr "اسم القالب"
 
 #. module: era_law_firm_ai
-#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
-msgid "Text Attached"
-msgstr "النص مرفوع"
-
-#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_legislation__source_attached
 msgid "Text Attached as a Source"
 msgstr "النص مرفوع كمصدر"
@@ -1422,6 +1427,17 @@ msgstr ""
 "فالموافقة تعني قبولك بخروج هذا النص من المكتب."
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__title_confirmed
+msgid ""
+"The seeded rows carry the Ministry reference as a stand-in name, because "
+"inventing a statute's title in a legal product is the same failure as "
+"inventing its article number. Tick this once the row carries the real title."
+msgstr ""
+"الصفوف المشحونة تحمل مرجع الوزارة اسماً نائباً، لأن اختراع عنوان نظام في "
+"منتج قانوني هو الخلل نفسه الذي يمثّله اختراع رقم مادته. أشّر هذا بعد أن يحمل"
+" الصف العنوان الحقيقي."
+
+#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_legislation__portal_url
 msgid ""
 "The single authority for Saudi legislation. Open it to find and verify a "
@@ -1550,6 +1566,11 @@ msgid ""
 msgstr ""
 "تُؤشَّر تلقائياً في الطلب الجديد لهذا الوكيل، فيبدأ المحامي مما يحتاجه العمل"
 " فعلاً لا من قائمة فارغة."
+
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_legislation_search
+msgid "Titled and Attached"
+msgstr "مُعنوَن ونصّه مرفوع"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__website_message_ids

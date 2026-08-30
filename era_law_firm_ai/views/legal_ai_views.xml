@@ -434,13 +434,17 @@
         <field name="name">legal.legislation.list</field>
         <field name="model">legal.legislation</field>
         <field name="arch" type="xml">
-            <list editable="bottom" decoration-muted="not source_attached">
+            <!-- The portal is the same on every row, so it is not a column; it lives on
+                 the charter, where it is explained. What varies per row is the work
+                 still owed on it: a real title, and its text attached as a source. -->
+            <list editable="bottom" decoration-muted="not title_confirmed">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
-                <field name="moj_id"/>
+                <field name="moj_id" optional="show"/>
                 <field name="category"/>
-                <field name="portal_url" widget="url" optional="show" readonly="1"/>
+                <field name="title_confirmed" widget="boolean_toggle"/>
                 <field name="source_attached" widget="boolean_toggle"/>
+                <field name="portal_url" widget="url" optional="hide" readonly="1"/>
             </list>
         </field>
     </record>
@@ -452,10 +456,12 @@
             <search>
                 <field name="name"/>
                 <field name="moj_id"/>
+                <filter name="no_title" string="Awaiting Official Title"
+                        domain="[('title_confirmed','=',False)]"/>
                 <filter name="no_source" string="Text Not Attached Yet"
                         domain="[('source_attached','=',False)]"/>
-                <filter name="has_source" string="Text Attached"
-                        domain="[('source_attached','=',True)]"/>
+                <filter name="ready" string="Titled and Attached"
+                        domain="[('title_confirmed','=',True),('source_attached','=',True)]"/>
                 <group name="group_by">
                     <filter name="group_category" string="Category" context="{'group_by':'category'}"/>
                 </group>

@@ -20,6 +20,7 @@ The e5 family expects "query: " / "passage: " prefixes; Odoo tags each call
 through ``_format_for_embedding``, and anything arriving unprefixed is treated
 as a passage, which is the indexing path.
 """
+import hmac
 import json
 import logging
 import os
@@ -39,6 +40,10 @@ CACHE = os.environ.get("ERA_EMBED_CACHE", "/var/lib/odoo/era_embed/models")
 # one-off; what runs continuously is a single short query per chat turn, and
 # that does not need twenty threads.
 THREADS = int(os.environ.get("ERA_EMBED_THREADS", "4"))
+# Required as soon as HOST is anything but loopback: a shared instance is
+# reachable by whatever else is on that network, and an open inference endpoint
+# is both a free compute donation and a way to probe what a firm is indexing.
+TOKEN = os.environ.get("ERA_EMBED_TOKEN", "")
 MAX_BODY = 64 * 1024 * 1024
 
 logging.basicConfig(
@@ -95,16 +100,29 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _authorised(self):
+        if not TOKEN:
+            return True
+        header = self.headers.get("Authorization") or ""
+        presented = header[7:] if header.startswith("Bearer ") else header
+        # compare_digest, not ==, so a wrong token cannot be found byte by byte
+        return hmac.compare_digest(presented, TOKEN)
+
     def do_GET(self):
+        # /health stays open: it carries no data and monitoring needs it.
         if self.path.rstrip("/") in ("/health", "/v1/health"):
             return self._send(200, {"status": "ok", "model": MODEL,
                                     "loaded": _model is not None})
         if self.path.rstrip("/") == "/v1/models":
+            if not self._authorised():
+                return self._send(401, {"error": {"message": "invalid or missing token"}})
             return self._send(200, {"object": "list", "data": [
                 {"id": MODEL, "object": "model", "owned_by": "local"}]})
         self._send(404, {"error": {"message": "not found"}})
 
     def do_POST(self):
+        if not self._authorised():
+            return self._send(401, {"error": {"message": "invalid or missing token"}})
         if self.path.rstrip("/") != "/v1/embeddings":
             return self._send(404, {"error": {"message": "not found"}})
         try:
@@ -147,6 +165,11 @@ def already_serving():
 
 
 if __name__ == "__main__":
+    if HOST not in ("127.0.0.1", "localhost", "::1") and not TOKEN:
+        _log.error(
+            "refusing to listen on %s without ERA_EMBED_TOKEN — an open "
+            "embeddings endpoint on a shared network is not acceptable", HOST)
+        sys.exit(2)
     if already_serving():
         # Distinct code so a supervisor can tell "someone else owns the port"
         # from "I crashed" and exit instead of restart-looping.

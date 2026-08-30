@@ -13,6 +13,17 @@ DIR="${ERA_EMBED_DIR:-/var/lib/odoo/era_embed}"
 MODEL="${ERA_EMBED_MODEL:-intfloat/multilingual-e5-large}"
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PORT="${ERA_EMBED_PORT:-8091}"
+# Loopback by default. A shared instance serving other Odoo hosts must set
+# ERA_EMBED_HOST and ERA_EMBED_TOKEN together — the server refuses a network
+# interface without a token, and rightly so.
+HOST="${ERA_EMBED_HOST:-127.0.0.1}"
+TOKEN="${ERA_EMBED_TOKEN:-}"
+
+if [ "$HOST" != "127.0.0.1" ] && [ -z "$TOKEN" ]; then
+    echo "ERA_EMBED_HOST=$HOST needs ERA_EMBED_TOKEN too — refusing to stand up" >&2
+    echo "an unauthenticated embeddings endpoint on a network." >&2
+    exit 1
+fi
 
 say() { echo "==> $*"; }
 
@@ -51,7 +62,9 @@ print(f"    model ready — {len(v)} dimensions")
 PY
 
 say "starting the service"
-setsid "$DIR/start.sh" >> "$DIR/server.log" 2>&1 &
+# start.sh reads these from its own environment, so pass them through.
+ERA_EMBED_HOST="$HOST" ERA_EMBED_PORT="$PORT" ERA_EMBED_TOKEN="$TOKEN" \
+    setsid "$DIR/start.sh" >> "$DIR/server.log" 2>&1 &
 for _ in $(seq 1 30); do
     curl -sf --max-time 2 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break
     sleep 1
@@ -67,17 +80,19 @@ cat <<EOF
 
 Done. Two steps remain that this script cannot do for you:
 
-  1. Survive a container restart — add to the container entrypoint:
+  1. Survive a restart — add to the container entrypoint or rc.local:
 
+       ERA_EMBED_HOST=$HOST ERA_EMBED_PORT=$PORT \\
+       ${TOKEN:+ERA_EMBED_TOKEN=<the token> }\\
        setsid $DIR/start.sh >> $DIR/server.log 2>&1 &
 
   2. Point Odoo at it — Settings > Technical > System Parameters,
      or run the "Use the local embeddings service" action shipped with
      era_ai_accounts:
 
-       ai.custom_llm_base_url        http://127.0.0.1:$PORT/v1
-       ai.custom_llm_key             local
-       ai.custom_llm_embedding_model $MODEL
-       ai.embedding_model_override   custom_llm/text-embedding-3-small
+       ai.custom_llm_embedding_base_url  http://$HOST:$PORT/v1
+       ai.custom_llm_key                 ${TOKEN:-local}
+       ai.custom_llm_embedding_model     $MODEL
+       ai.embedding_model_override       custom_llm/text-embedding-3-small
 
 EOF

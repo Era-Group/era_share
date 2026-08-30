@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bwatech_transaction_tree" model="ir.ui.view">
+        <field name="name">bwatech.transaction.tree</field>
+        <field name="model">bwatech.transaction</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="bank_account_id"/>
+                <field name="sequence_number"/>
+                <field name="entry_date"/>
+                <field name="value_date"/>
+                <field name="amount"/>
+                <field name="transaction_type_code"/>
+                <field name="transaction_type_description"/>
+                <field name="bank_reference"/>
+                <field name="third_party_name"/>
+                <field name="posted_to_odoo"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_bwatech_transaction_form" model="ir.ui.view">
+        <field name="name">bwatech.transaction.form</field>
+        <field name="model">bwatech.transaction</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <field name="connection_id"/>
+                        <field name="bank_account_id"/>
+                        <field name="sequence_number"/>
+                        <field name="amount"/>
+                        <field name="entry_date"/>
+                        <field name="value_date"/>
+                        <field name="transaction_type_code"/>
+                        <field name="transaction_type_description"/>
+                        <field name="bank_reference"/>
+                        <field name="customer_reference"/>
+                        <field name="transaction_description"/>
+                        <field name="third_party_name"/>
+                        <field name="third_party_bank_code"/>
+                        <field name="third_party_account_number"/>
+                        <field name="posted_to_odoo"/>
+                    </group>
+                    <field name="raw_payload"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bwatech_transaction" model="ir.actions.act_window">
+        <field name="name">Transactions</field>
+        <field name="res_model">bwatech.transaction</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

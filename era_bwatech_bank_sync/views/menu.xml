@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_bwatech_root"
+              name="BWATECH"
+              parent="account.menu_finance"
+              sequence="90"
+              groups="account.group_account_manager"/>
+    <menuitem id="menu_bwatech_connections"
+              name="Connections"
+              parent="menu_bwatech_root"
+              action="action_bwatech_connection"
+              sequence="10"/>
+    <menuitem id="menu_bwatech_accounts"
+              name="Bank Accounts"
+              parent="menu_bwatech_root"
+              action="action_bwatech_bank_account"
+              sequence="20"/>
+    <menuitem id="menu_bwatech_transactions"
+              name="Transactions"
+              parent="menu_bwatech_root"
+              action="action_bwatech_transaction"
+              sequence="30"/>
+    <menuitem id="menu_bwatech_api_logs"
+              name="API Logs"
+              parent="menu_bwatech_root"
+              action="action_bwatech_api_log"
+              sequence="90"
+              groups="account.group_account_manager"/>
+</odoo>

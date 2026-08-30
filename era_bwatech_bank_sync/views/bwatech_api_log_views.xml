@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bwatech_api_log_tree" model="ir.ui.view">
+        <field name="name">bwatech.api.log.tree</field>
+        <field name="model">bwatech.api.log</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" decoration-danger="state == 'error'"
+                  decoration-muted="state == 'success'">
+                <field name="create_date" string="Timestamp"/>
+                <field name="connection_id"/>
+                <field name="service"/>
+                <field name="state"/>
+                <field name="error_type"/>
+                <field name="http_status"/>
+                <field name="status_code"/>
+                <field name="correlation_id"/>
+                <field name="duration_ms"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_bwatech_api_log_form" model="ir.ui.view">
+        <field name="name">bwatech.api.log.form</field>
+        <field name="model">bwatech.api.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="connection_id"/>
+                            <field name="service"/>
+                            <field name="endpoint"/>
+                            <field name="create_date" string="Timestamp"/>
+                            <field name="duration_ms"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="error_type" invisible="state != 'error'"/>
+                            <field name="http_status"/>
+                            <field name="status_code"/>
+                            <field name="status_description"/>
+                            <field name="message_id"/>
+                            <field name="correlation_id"/>
+                        </group>
+                    </group>
+                    <group string="Error" invisible="state != 'error'">
+                        <field name="error_message" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Request">
+                            <field name="request_body" nolabel="1" widget="ace"/>
+                        </page>
+                        <page string="Response">
+                            <field name="response_body" nolabel="1" widget="ace"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bwatech_api_log_search" model="ir.ui.view">
+        <field name="name">bwatech.api.log.search</field>
+        <field name="model">bwatech.api.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="service"/>
+                <field name="correlation_id"/>
+                <field name="message_id"/>
+                <field name="status_code"/>
+                <field name="connection_id"/>
+                <filter name="filter_errors" string="Errors" domain="[('state', '=', 'error')]"/>
+                <filter name="filter_success" string="Successful" domain="[('state', '=', 'success')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today"
+                        domain="[('create_date', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_service" string="Service" context="{'group_by': 'service'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_error_type" string="Error Type" context="{'group_by': 'error_type'}"/>
+                    <filter name="group_connection" string="Connection" context="{'group_by': 'connection_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bwatech_api_log" model="ir.actions.act_window">
+        <field name="name">API Logs</field>
+        <field name="res_model">bwatech.api.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'create': False}</field>
+    </record>
+</odoo>

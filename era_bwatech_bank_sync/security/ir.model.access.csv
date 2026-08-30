@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bwatech_connection_account_manager,bwatech.connection account manager,model_bwatech_connection,account.group_account_manager,1,1,1,1
+access_bwatech_bank_account_account_manager,bwatech.bank.account account manager,model_bwatech_bank_account,account.group_account_manager,1,1,1,1
+access_bwatech_transaction_account_manager,bwatech.transaction account manager,model_bwatech_transaction,account.group_account_manager,1,1,1,1
+access_bwatech_api_log_account_manager,bwatech.api.log account manager,model_bwatech_api_log,account.group_account_manager,1,0,0,1

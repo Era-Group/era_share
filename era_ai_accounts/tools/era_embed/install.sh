@@ -59,7 +59,7 @@ if [ ! -x "$DIR/venv/bin/python" ]; then
     fi
 fi
 say "installing python dependencies"
-"$DIR/venv/bin/pip" install -q --disable-pip-version-check -r "$SRC/requirements.txt"
+"$DIR/venv/bin/pip" install -q --disable-pip-version-check -r "$SRC/era_embed_requirements.txt"
 
 # Fetch the weights now rather than on the first user-facing request, which
 # would otherwise time out while 2.2GB downloads.

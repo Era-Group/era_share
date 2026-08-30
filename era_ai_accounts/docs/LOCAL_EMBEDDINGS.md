@@ -23,6 +23,7 @@
 | `/var/lib/odoo/era_embed/server.py` | خادم `POST /v1/embeddings` متوافق مع OpenAI |
 | `/var/lib/odoo/era_embed/venv/` | بيئة بايثون مستقلة (`fastembed`) — منفصلة عن بيئة أودو |
 | `/var/lib/odoo/era_embed/models/` | أوزان النموذج (~2.2GB) |
+| `tools/era_embed/era_embed_requirements.txt` | تبعيات الخدمة — **ليس** `requirements.txt` عمداً |
 | `/var/lib/odoo/era_embed/server.log` | السجل |
 
 النموذج: `intfloat/multilingual-e5-large` — متعدد اللغات وأداؤه جيد على
@@ -106,9 +107,15 @@ curl -s http://127.0.0.1:8091/health
 الفهرسة والاسترجاع — ويقتصر على النماذج التي يحمل اسمها `e5`، حتى تبقى أي
 وجهة `custom_llm` أخرى (OpenRouter مثلاً) تستقبل النص خاماً.
 
+## لماذا الاسم ليس `requirements.txt`
+
+أدوات النشر تفحص مسار الإضافات عن ملفات بهذا الاسم بالضبط وتثبّت محتواها في
+بيئة أودو نفسها. حدث ذلك فعلاً: حاولت جرّ `onnxruntime` إلى بيئة أودو ولم
+تنجُ إلا بتعارض في الإصدارات. النجاح كان سيكون أسوأ.
+
 ## تثبيت إصدار fastembed — ليس تفصيلاً
 
-`requirements.txt` يثبّت `fastembed==0.8.0`، و**رفع التثبيت يُفسد الاسترجاع بصمت**.
+`era_embed_requirements.txt` يثبّت `fastembed==0.8.0`، و**رفع التثبيت يُفسد الاسترجاع بصمت**.
 
 غيّرت fastembed طريقة التجميع في `multilingual-e5-large` من CLS إلى المتوسط
 بعد الإصدار 0.5.1. المتجه المخزّن لا يقارَن إلا بمتجه أُنتج بالطريقة نفسها؛

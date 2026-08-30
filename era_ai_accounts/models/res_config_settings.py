@@ -60,6 +60,13 @@ class ResConfigSettings(models.TransientModel):
         string="Embedding Model", config_parameter="ai.custom_llm_embedding_model",
         default="openrouter/free", readonly=False, groups="base.group_system",
     )
+    embedding_model_override = fields.Char(
+        string="Embedding Routing", config_parameter="ai.embedding_model_override",
+        readonly=False, groups="base.group_system",
+        help="Forces every agent to index through this embedding model whatever "
+             "its chat model. Odoo dedupes embeddings by (checksum, model), so "
+             "agents drifting onto different models multiplies the work.",
+    )
     custom_llm_embedding_key = fields.Char(
         string="Embedding API key", config_parameter="ai.custom_llm_embedding_key",
         readonly=False, groups="base.group_system",
@@ -166,18 +173,6 @@ class ResConfigSettings(models.TransientModel):
     # indexed through them. era_ai_accounts/tools/era_embed ships a small
     # OpenAI-compatible embeddings service; one instance serves every Odoo
     # host, and these fields are the Odoo half of that setup.
-    # Single source of truth with the install hook, so the button and a fresh
-    # install cannot drift apart.
-    @property
-    def DEFAULT_EMBED_URL(self):
-        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
-        return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_base_url"]
-
-    @property
-    def DEFAULT_EMBED_MODEL(self):
-        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
-        return EMBEDDING_DEFAULTS["ai.custom_llm_embedding_model"]
-
     embedding_service_status = fields.Char(
         string="Service status", compute="_compute_embedding_service_status",
         groups="base.group_system",
@@ -209,36 +204,28 @@ class ResConfigSettings(models.TransientModel):
             )
 
     def action_restore_default_embedding_endpoint(self):
-        """Point every agent's indexing back at the shared endpoint."""
-        self.ensure_one()
-        params = self.env["ir.config_parameter"].sudo()
-        # Deliberately NOT ai.custom_llm_base_url: that one carries chat, and
-        # the embeddings service answers embeddings only — it 404s on chat.
-        params.set_param("ai.custom_llm_embedding_base_url", self.DEFAULT_EMBED_URL)
-        # No placeholder token: the shared endpoint authenticates for real, and
-        # a fake value would turn a missing secret into a puzzling 401 later.
-        params.set_param("ai.custom_llm_embedding_model", self.DEFAULT_EMBED_MODEL)
-        # Overrides every agent regardless of its chat model: Odoo dedupes
-        # embeddings by (checksum, embedding_model), so letting agents drift
-        # onto different embedding models multiplies the work for nothing.
-        params.set_param("ai.embedding_model_override", "custom_llm/text-embedding-3-small")
+        """Fill the form with the shared defaults. Do not save them.
 
-        reachable, detail = self._probe_embedding_endpoint()
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "type": "success" if reachable else "warning",
-                "sticky": not reachable,
-                "title": _("Embeddings endpoint configured"),
-                "message": (
-                    _("The service answered: %s", detail) if reachable else
-                    _("Settings saved, but the service did not answer (%s). "
-                      "Check that the bearer token is set in 'Provider API key'.",
-                      detail)
-                ),
-            },
-        }
+        A settings button that writes ir.config_parameter directly is wrong
+        twice over: the change is committed without the user pressing Save, and
+        the form still shows the old values because nothing told it otherwise —
+        so it reads as a button that does nothing. Write to the transient
+        record instead and return nothing: the client re-reads it, the fields
+        visibly change, and Save remains the user's decision.
+
+        The key is left alone. It is a secret that differs per deployment and
+        this module has no business inventing one.
+        """
+        self.ensure_one()
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        self.custom_llm_embedding_base_url = EMBEDDING_DEFAULTS[
+            "ai.custom_llm_embedding_base_url"]
+        self.custom_llm_embedding_model = EMBEDDING_DEFAULTS[
+            "ai.custom_llm_embedding_model"]
+        self.embedding_model_override = EMBEDDING_DEFAULTS[
+            "ai.embedding_model_override"]
+        self.custom_llm_embedding_batch_size = EMBEDDING_DEFAULTS[
+            "ai.custom_llm_embedding_batch_size"]
 
     def action_test_embedding_endpoint(self):
         self.ensure_one()

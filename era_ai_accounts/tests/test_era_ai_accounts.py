@@ -2913,3 +2913,39 @@ class TestEmbeddingRouting(TransactionCase):
         })
         self.assertNotIn(source, self.env["ai.embedding"]._reopen_sources_without_embeddings())
         self.assertEqual(source.status, "indexed")
+
+    def test_the_button_fills_the_form_without_saving_anything(self):
+        """A settings button must not commit; Save is the user's decision."""
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_embedding_base_url", "https://old.example/v1")
+        settings = self.env["res.config.settings"].create({})
+        settings.custom_llm_embedding_base_url = "https://old.example/v1"
+
+        self.assertIsNone(settings.action_restore_default_embedding_endpoint(),
+                          "returning an action would reload the form")
+
+        self.assertEqual(settings.custom_llm_embedding_base_url,
+                         EMBEDDING_DEFAULTS["ai.custom_llm_embedding_base_url"],
+                         "the form field must show the default")
+        self.assertEqual(params.get_param("ai.custom_llm_embedding_base_url"),
+                         "https://old.example/v1",
+                         "and nothing may reach the database before Save")
+
+    def test_saving_after_the_button_applies_the_defaults(self):
+        from odoo.addons.era_ai_accounts import EMBEDDING_DEFAULTS
+        params = self.env["ir.config_parameter"].sudo()
+        settings = self.env["res.config.settings"].create({})
+        settings.action_restore_default_embedding_endpoint()
+        settings.execute()
+        for key in ("ai.custom_llm_embedding_base_url", "ai.custom_llm_embedding_model",
+                    "ai.embedding_model_override", "ai.custom_llm_embedding_batch_size"):
+            self.assertEqual(params.get_param(key), EMBEDDING_DEFAULTS[key], key)
+
+    def test_the_button_never_invents_a_key(self):
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_embedding_key", "")
+        settings = self.env["res.config.settings"].create({})
+        settings.action_restore_default_embedding_endpoint()
+        self.assertFalse(settings.custom_llm_embedding_key,
+                         "the secret differs per deployment; do not fabricate one")

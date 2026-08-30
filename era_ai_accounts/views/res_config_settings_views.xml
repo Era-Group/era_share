@@ -82,6 +82,14 @@
                                 <label for="custom_llm_embedding_batch_size"/>
                                 <field name="custom_llm_embedding_batch_size"
                                        placeholder="32" class="w-100"/>
+                                <label for="embedding_model_override"/>
+                                <field name="embedding_model_override"
+                                       placeholder="custom_llm/text-embedding-3-small"
+                                       class="w-100"/>
+                                <div class="text-muted small mt-2">
+                                    The button fills these fields in; nothing is
+                                    applied until you Save.
+                                </div>
                                 <div class="mt-2">
                                     <button name="action_restore_default_embedding_endpoint" type="object"
                                             string="Restore default endpoint"

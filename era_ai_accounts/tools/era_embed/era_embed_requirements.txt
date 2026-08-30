@@ -1,7 +1,12 @@
 # Installed into a virtualenv of its own, deliberately separate from Odoo's:
 # this pulls onnxruntime and must never constrain Odoo's dependency set.
 #   python3 -m venv <dir>/venv
-#   <dir>/venv/bin/pip install -r requirements.txt
+#   <dir>/venv/bin/pip install -r era_embed_requirements.txt
+#
+# NOT named requirements.txt on purpose. Deployment tooling scans the addons
+# path for that exact filename and pip-installs what it finds into Odoo's own
+# environment — which it duly tried, and only failed on a version conflict.
+# Succeeding would have been worse.
 #
 # The version is PINNED, and unpinning it will silently corrupt retrieval.
 # fastembed changed multilingual-e5-large from CLS to mean pooling after 0.5.1,

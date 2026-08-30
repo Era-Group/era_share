@@ -1,16 +1,13 @@
-"""Cite the statute where it actually lives.
+"""Keep a source's retry path tied to what the source actually is.
 
-Odoo's RAG answers end each claim with a link to its source. Core builds that
-link as ``source.url or /web/content/<attachment>``, so with the URL empty
-every citation in a legal answer pointed at the copy indexed inside Odoo — a
-lawyer following a citation landed on our attachment rather than on the article
-at laws.moj.gov.sa. For legal work the authority is the ministry's page, not
-our copy of it.
-
-The corpus sync already records the official URL on ``moj.law``; this carries
-it onto the sources so core's own preference does the rest.
+Citations were briefly pointed at laws.moj.gov.sa instead of the indexed copy;
+that was reverted because the ministry's deep links do not reliably resolve.
+What remains is the defect that change exposed: core decides how to retry a
+failed source by looking at whether ``url`` is set, which is not the same
+question as what the source *is*. Anyone pasting a URL onto a file-backed
+source still hits it.
 """
-from odoo import _, api, fields, models
+from odoo import models
 
 
 class AIAgentSource(models.Model):
@@ -36,19 +33,3 @@ class AIAgentSource(models.Model):
         chunks.unlink()
         self.write({"status": "processing", "is_active": False, "error_details": False})
         self.env.ref("ai.ir_cron_generate_embedding")._trigger()
-
-
-class MojLaw(models.Model):
-    _inherit = "moj.law"
-
-    def _apply_official_url_to_sources(self):
-        """Point every attached source at the ministry's page for that statute."""
-        touched = self.env["ai.agent.source"]
-        for law in self:
-            if not law.source_url:
-                continue
-            stale = law.source_ids.filtered(lambda s: s.url != law.source_url)
-            if stale:
-                stale.write({"url": law.source_url})
-                touched |= stale
-        return touched

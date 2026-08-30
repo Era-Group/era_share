@@ -11,13 +11,53 @@ turn left knowledge sources stuck in ``processing`` with no embeddings at all.
 
 Re-sync the frozen copy once the registry is built.
 """
+import logging
+
 from odoo import models
 
 from odoo.addons.ai.utils.llm_providers import EMBEDDING_MODELS_SELECTION
 
+_logger = logging.getLogger(__name__)
+
 
 class AIEmbedding(models.Model):
     _inherit = "ai.embedding"
+
+    def _cron_generate_embedding(self, batch_size=100):
+        """Re-open sources that are indexed in name only, then embed.
+
+        Chunks are shared by ``(checksum, embedding_model)``: the first source
+        needing a file creates them, every later copy is skipped as already
+        done. So the rows live under exactly one attachment, and deleting that
+        one source cascades them away — leaving every other copy of the same
+        document still marked "indexed" while contributing nothing to
+        retrieval. Nothing errors, nothing is logged, and the answer quietly
+        stops citing that statute.
+
+        Cheap to detect and cheap to repair, so do it on the way in.
+        """
+        self._reopen_sources_without_embeddings()
+        return super()._cron_generate_embedding(batch_size=batch_size)
+
+    def _reopen_sources_without_embeddings(self):
+        sources = self.env["ai.agent.source"].sudo().search([
+            ("status", "=", "indexed"),
+            ("attachment_id", "!=", False),
+        ])
+        orphaned = sources.browse()
+        for source in sources:
+            model = source.agent_id._get_embedding_model()
+            if not self.sudo().search_count([
+                ("checksum", "=", source.attachment_id.checksum),
+                ("embedding_model", "=", model),
+            ]):
+                orphaned |= source
+        if orphaned:
+            _logger.info(
+                "Re-indexing %s source(s) marked indexed with no embeddings",
+                len(orphaned))
+            orphaned.write({"status": "processing", "error_details": False})
+        return orphaned
 
     def _create_batches(self, embeddings, provider):
         """Keep one HTTP request short enough to finish before it is cut off.

@@ -46,7 +46,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.26.0",
+    "version": "19.0.1.27.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",

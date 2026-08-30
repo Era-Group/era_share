@@ -2872,3 +2872,44 @@ class TestEmbeddingRouting(TransactionCase):
         svc._era_embedding_call = True
         self.assertEqual(svc._get_api_token(), "only-key",
                          "a single-endpoint deployment keeps working unchanged")
+
+    def test_a_source_indexed_in_name_only_is_re_opened(self):
+        """Deleting one copy of a shared file must not silently unindex the rest.
+
+        Chunks are keyed by (checksum, embedding_model) and live under a single
+        attachment. Delete that source and every other copy keeps saying
+        "indexed" while contributing nothing — no error, no log, the statute
+        just stops being cited.
+        """
+        agent = self.env["ai.agent"].create({
+            "name": "RAG", "llm_model": "custom_llm/custom",
+        })
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام.txt", "raw": b"a legal document", "mimetype": "text/plain",
+        })
+        source = self.env["ai.agent.source"].create({
+            "agent_id": agent.id, "attachment_id": attachment.id,
+            "type": "binary", "status": "indexed",
+        })
+        reopened = self.env["ai.embedding"]._reopen_sources_without_embeddings()
+        self.assertIn(source, reopened, "a source with no embeddings is not indexed")
+        self.assertEqual(source.status, "processing")
+
+    def test_a_genuinely_indexed_source_is_left_alone(self):
+        agent = self.env["ai.agent"].create({
+            "name": "RAG2", "llm_model": "custom_llm/custom",
+        })
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام2.txt", "raw": b"another legal document",
+            "mimetype": "text/plain",
+        })
+        self.env["ai.embedding"].create({
+            "attachment_id": attachment.id, "content": "passage: مادة",
+            "embedding_model": agent._get_embedding_model(),
+        })
+        source = self.env["ai.agent.source"].create({
+            "agent_id": agent.id, "attachment_id": attachment.id,
+            "type": "binary", "status": "indexed",
+        })
+        self.assertNotIn(source, self.env["ai.embedding"]._reopen_sources_without_embeddings())
+        self.assertEqual(source.status, "indexed")

@@ -6,3 +6,4 @@ from . import ai_attempt
 from . import ai_agent_bridge
 from . import legal_charter
 from . import ai_help
+from . import legal_corpus

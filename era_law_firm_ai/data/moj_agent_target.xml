@@ -1,0 +1,10 @@
+<odoo>
+    <!-- The research agent is the one that answers only from its sources, so it is
+         the one that must carry the statute texts. Flagging it here means a fresh
+         install wires the corpus to it without anyone remembering to. Kept in its
+         own file (not noupdate) so an upgrade re-asserts the flag if it was cleared;
+         the agent record itself stays defined, noupdate, in legal_ai_agents_data. -->
+    <record id="agent_research" model="ai.agent">
+        <field name="moj_corpus_target" eval="True"/>
+    </record>
+</odoo>

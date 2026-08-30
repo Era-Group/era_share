@@ -1,0 +1,14 @@
+<odoo>
+    <!-- Weekly, a few hours behind the scraper's own Sunday run so the published
+         corpus is already refreshed. The sync skips its heavy fetch when the
+         corpus has not changed since last time, so running often is cheap. -->
+    <record id="cron_moj_corpus_sync" model="ir.cron">
+        <field name="name">MOJ Legislation Corpus Sync</field>
+        <field name="model_id" ref="model_moj_law"/>
+        <field name="state">code</field>
+        <field name="code">model._run_corpus_sync()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

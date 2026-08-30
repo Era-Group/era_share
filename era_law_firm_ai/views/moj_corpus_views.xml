@@ -1,0 +1,90 @@
+<odoo>
+
+    <!-- ==================== moj.law ==================== -->
+
+    <record id="view_moj_law_list" model="ir.ui.view">
+        <field name="name">moj.law.list</field>
+        <field name="model">moj.law</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="name"/>
+                <field name="law_type"/>
+                <field name="status"/>
+                <field name="article_count"/>
+                <field name="last_synced"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_moj_law_form" model="ir.ui.view">
+        <field name="name">moj.law.form</field>
+        <field name="model">moj.law</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <header>
+                    <button name="action_open_sources" type="object" string="Attached Sources"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="law_type"/>
+                            <field name="status"/>
+                            <field name="article_count"/>
+                        </group>
+                        <group>
+                            <field name="last_synced"/>
+                            <field name="law_id"/>
+                            <field name="source_url" widget="url"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_moj_law" model="ir.actions.act_window">
+        <field name="name">Legislation Corpus</field>
+        <field name="res_model">moj.law</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">The statute corpus is filled by the scheduled sync.</p>
+            <p>Every row here is a Saudi MOJ statute the sync has attached to the research agent as a
+               source, so the agent cites the statute text instead of recalling it. Nothing is entered
+               by hand. If this list is empty, run the sync from the AI agent or wait for the weekly job.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_moj_law" name="Legislation Corpus"
+              parent="era_law_firm.menu_legal_config"
+              action="action_moj_law" sequence="36"
+              groups="era_law_firm.group_legal_manager"/>
+
+    <!-- ==================== ai.agent ==================== -->
+
+    <record id="view_ai_agent_form_moj_corpus" model="ir.ui.view">
+        <field name="name">ai.agent.form.moj.corpus</field>
+        <field name="model">ai.agent</field>
+        <field name="inherit_id" ref="ai_app.ai_agent_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="MOJ Legislation Corpus" name="moj_corpus">
+                    <field name="moj_corpus_target" widget="boolean_toggle"/>
+                    <field name="moj_corpus_law_count" invisible="not moj_corpus_target"/>
+                    <button name="action_resync_moj_corpus" type="object"
+                            string="Resync Corpus Now" class="btn-secondary"
+                            invisible="not moj_corpus_target"
+                            help="Fetch the corpus and attach it to this agent now, without waiting for the weekly job."/>
+                </group>
+                <div class="alert alert-info" role="alert" invisible="not moj_corpus_target">
+                    The weekly sync keeps the full Saudi MOJ legislation corpus attached to this agent
+                    as sources, so it answers statutory questions from the actual statute text.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,9 @@
+<odoo>
+    <!-- The public, unauthenticated endpoint the scraper-moj pipeline publishes to.
+         Overridable per database without touching code; the model falls back to the
+         same default if the parameter is ever cleared. -->
+    <record id="param_moj_endpoint" model="ir.config_parameter">
+        <field name="key">era_law_firm_ai.moj_endpoint</field>
+        <field name="value">https://moj-laws.era.net.sa</field>
+    </record>
+</odoo>

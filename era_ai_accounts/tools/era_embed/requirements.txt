@@ -1,0 +1,5 @@
+# Installed into a virtualenv of its own, deliberately separate from Odoo's:
+# this pulls onnxruntime and must never constrain Odoo's dependency set.
+#   python3 -m venv /var/lib/odoo/era_embed/venv
+#   /var/lib/odoo/era_embed/venv/bin/pip install -r requirements.txt
+fastembed==0.8.0

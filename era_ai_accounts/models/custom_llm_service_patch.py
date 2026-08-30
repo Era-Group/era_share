@@ -279,6 +279,7 @@ def _patch_llm_api_service():
     original_get_api_token = LLMApiService._get_api_token
     original_get_base_headers = LLMApiService._get_base_headers
     original_get_embedding = LLMApiService.get_embedding
+    original_format_for_embedding = LLMApiService._format_for_embedding
     original_request_llm_openai = LLMApiService._request_llm_openai
     original_request_llm_openai_helper = LLMApiService._request_llm_openai_helper
     original_request = LLMApiService._request
@@ -354,6 +355,22 @@ def _patch_llm_api_service():
             encoding_format=encoding_format,
             user=user,
         )
+
+    def _format_for_embedding(self, content, mode, title=None):
+        """Give E5 models the query/passage prefix they are trained on.
+
+        The E5 family scores badly without it, and Odoo calls this on both
+        sides — mode="document" while indexing, mode="query" while
+        retrieving — so the asymmetry has to be applied here to stay
+        symmetric. Scoped to E5: a plain OpenAI-compatible endpoint behind
+        ``custom_llm`` (OpenRouter, a gateway) must keep receiving raw text.
+        """
+        if self.provider != "custom_llm":
+            return original_format_for_embedding(self, content, mode, title)
+        model = _custom_llm_param(self.env, "ai.custom_llm_embedding_model", "") or ""
+        if "e5" not in model.lower():
+            return original_format_for_embedding(self, content, mode, title)
+        return f"query: {content}" if mode == "query" else f"passage: {content}"
 
     def _request(
         self, method, endpoint, headers, body,
@@ -746,6 +763,7 @@ def _patch_llm_api_service():
     LLMApiService._get_api_token = _get_api_token
     LLMApiService._get_base_headers = _get_base_headers
     LLMApiService.get_embedding = get_embedding
+    LLMApiService._format_for_embedding = _format_for_embedding
     LLMApiService._request = _request
     LLMApiService._request_llm_openai = _request_llm_openai
     LLMApiService._request_llm_openai_helper = _request_llm_openai_helper

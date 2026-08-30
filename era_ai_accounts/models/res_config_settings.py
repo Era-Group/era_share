@@ -3,7 +3,11 @@
 These global config parameters back the legacy, single custom_llm provider. They
 remain available alongside the new per-account configuration.
 """
-from odoo import fields, models
+import json
+import urllib.error
+import urllib.request
+
+from odoo import _, api, fields, models
 
 
 class ResConfigSettings(models.TransientModel):
@@ -135,3 +139,85 @@ class ResConfigSettings(models.TransientModel):
         icp = self.env["ir.config_parameter"].sudo()
         for record in self:
             icp.set_param("ai.cli_gap_enabled", "True" if record.cli_gap_enabled else "False")
+
+    # ------------------------------------------------- local embeddings
+    # The CLI-proxy accounts are text-only, so knowledge sources cannot be
+    # indexed through them. era_ai_accounts/tools/era_embed ships a small
+    # OpenAI-compatible embeddings service to run on the same host; these two
+    # buttons are the Odoo half of that setup.
+    LOCAL_EMBED_URL = "http://127.0.0.1:8091/v1"
+    LOCAL_EMBED_MODEL = "intfloat/multilingual-e5-large"
+
+    local_embedding_status = fields.Char(
+        string="Local Embeddings", compute="_compute_local_embedding_status",
+        groups="base.group_system",
+        help="Whether the local embeddings service is answering. Without it, "
+             "knowledge sources stay in 'processing' forever with no error.",
+    )
+
+    def _probe_local_embeddings(self, base_url=None):
+        """Return (reachable, detail) for the local embeddings service."""
+        url = (base_url or self.LOCAL_EMBED_URL).rstrip("/")
+        url = url[:-3] if url.endswith("/v1") else url
+        try:
+            with urllib.request.urlopen(f"{url}/health", timeout=3) as response:
+                payload = json.loads(response.read())
+            if payload.get("status") == "ok":
+                return True, payload.get("model") or ""
+            return False, _("unexpected reply: %s", payload)
+        except (urllib.error.URLError, OSError, ValueError) as err:
+            return False, str(err)
+
+    @api.depends("custom_llm_base_url")
+    def _compute_local_embedding_status(self):
+        for setting in self:
+            reachable, detail = setting._probe_local_embeddings(setting.custom_llm_base_url)
+            setting.local_embedding_status = (
+                _("Running — %s", detail) if reachable
+                else _("Not reachable — %s", detail)
+            )
+
+    def action_use_local_embeddings(self):
+        """Point every agent's indexing at the local service."""
+        self.ensure_one()
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_base_url", self.LOCAL_EMBED_URL)
+        # The service ignores the token, but the provider refuses to build a
+        # request without one.
+        if not params.get_param("ai.custom_llm_key"):
+            params.set_param("ai.custom_llm_key", "local")
+        params.set_param("ai.custom_llm_embedding_model", self.LOCAL_EMBED_MODEL)
+        # Overrides every agent regardless of its chat model: Odoo dedupes
+        # embeddings by (checksum, embedding_model), so letting agents drift
+        # onto different embedding models multiplies the work for nothing.
+        params.set_param("ai.embedding_model_override", "custom_llm/text-embedding-3-small")
+
+        reachable, detail = self._probe_local_embeddings()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "type": "success" if reachable else "warning",
+                "sticky": not reachable,
+                "title": _("Local embeddings configured"),
+                "message": (
+                    _("The service answered: %s", detail) if reachable else
+                    _("Settings saved, but the service is not answering yet (%s). "
+                      "Run tools/era_embed/install.sh on this host.", detail)
+                ),
+            },
+        }
+
+    def action_test_local_embeddings(self):
+        self.ensure_one()
+        reachable, detail = self._probe_local_embeddings(self.custom_llm_base_url)
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "type": "success" if reachable else "danger",
+                "sticky": not reachable,
+                "title": _("Embeddings service") if reachable else _("Not reachable"),
+                "message": detail,
+            },
+        }

@@ -2635,6 +2635,11 @@ class TestEmbeddingRouting(TransactionCase):
 
     def test_cli_proxy_agent_falls_back_to_an_embeddable_model(self):
         """A CLI-proxy account is text-only, so RAG must not be routed to it."""
+        # This database may already point at a local embeddings service; the
+        # test has to define its own starting point rather than inherit one.
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.embedding_model_override", "")
+        params.set_param("ai.embedding_fallback_model", "")
         agent = self.env["ai.agent"].create({
             "name": "RAG agent", "llm_model": "custom_llm/custom",
         })
@@ -2648,7 +2653,6 @@ class TestEmbeddingRouting(TransactionCase):
         self.assertEqual(agent._get_embedding_model(), "text-embedding-3-small",
                          "CLI proxies cannot embed — fall back to a provider that can")
 
-        params = self.env["ir.config_parameter"].sudo()
         params.set_param("ai.embedding_fallback_model", "gemini-embedding-2")
         self.assertEqual(agent._get_embedding_model(), "gemini-embedding-2",
                          "the fallback provider must be configurable")
@@ -2691,3 +2695,33 @@ class TestEmbeddingRouting(TransactionCase):
             "mimetype": "image/png",
         })
         self.assertFalse(attachment._get_attachment_content())
+
+    # ------------------------------------------------------- E5 prefixes
+    def test_e5_models_get_the_query_passage_prefix(self):
+        """E5 is trained with these prefixes and scores badly without them."""
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_embedding_model", "intfloat/multilingual-e5-large")
+        svc = LLMApiService(self.env, provider="custom_llm")
+        self.assertEqual(
+            svc._format_for_embedding(content="نظام المحاماة", mode="document", title="t"),
+            "passage: نظام المحاماة")
+        self.assertEqual(
+            svc._format_for_embedding(content="ما شروط القيد؟", mode="query"),
+            "query: ما شروط القيد؟")
+
+    def test_non_e5_custom_endpoints_get_raw_text(self):
+        """OpenRouter and friends must not be fed an E5 prefix."""
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_embedding_model", "openai/text-embedding-3-small")
+        svc = LLMApiService(self.env, provider="custom_llm")
+        self.assertEqual(
+            svc._format_for_embedding(content="نظام المحاماة", mode="document", title="t"),
+            "نظام المحاماة")
+
+    def test_other_providers_keep_core_behaviour(self):
+        params = self.env["ir.config_parameter"].sudo()
+        params.set_param("ai.custom_llm_embedding_model", "intfloat/multilingual-e5-large")
+        svc = LLMApiService(self.env, provider="openai")
+        self.assertEqual(
+            svc._format_for_embedding(content="contract review", mode="document", title="t"),
+            "contract review", "the E5 prefix must not leak onto OpenAI")

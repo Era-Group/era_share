@@ -1,12 +1,16 @@
 {
     "name": "ERA BWATECH Bank Sync",
-    "version": "19.0.1.2.0",
+    "version": "19.0.1.3.0",
     "category": "Accounting/Accounting",
     "summary": "BWATECH bank accounts, balances and transaction synchronization",
     "author": "ERA",
     "website": "https://era.net.sa",
     "license": "LGPL-3",
-    "depends": ["account"],
+    # account_accountant carries the bank reconciliation engine this module's
+    # workflow relies on: the matching rules, the Bank Matching screen and the
+    # scheduled auto-reconciliation. Declaring it here installs it with us
+    # instead of leaving the reconciliation half silently missing.
+    "depends": ["account", "account_accountant"],
     "data": [
         "security/ir.model.access.csv",
         "views/bwatech_connection_views.xml",

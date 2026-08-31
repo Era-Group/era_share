@@ -500,7 +500,7 @@
 
     <!-- ==================== MENUS ==================== -->
 
-    <menuitem id="menu_legal_billing" name="Billing" parent="menu_legal_root" sequence="50"
+    <menuitem id="menu_legal_billing" name="Billing" parent="menu_legal_root" sequence="40"
               groups="group_legal_lawyer,group_legal_accountant"/>
     <menuitem id="menu_legal_engagements" name="Engagements" parent="menu_legal_billing"
               action="action_legal_engagement" sequence="10" groups="group_legal_accountant"/>
@@ -511,7 +511,7 @@
     <menuitem id="menu_legal_success_fees" name="Success Fees" parent="menu_legal_billing"
               action="action_legal_success_fee" sequence="40" groups="group_legal_accountant"/>
 
-    <menuitem id="menu_legal_trust_root" name="Client Trust" parent="menu_legal_root" sequence="60"
+    <menuitem id="menu_legal_trust_root" name="Client Trust" parent="menu_legal_billing" sequence="50"
               groups="group_legal_accountant"/>
     <menuitem id="menu_legal_trust" name="Trust Accounts" parent="menu_legal_trust_root"
               action="action_trust_account" sequence="10"/>

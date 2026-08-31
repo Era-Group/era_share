@@ -3,15 +3,10 @@
 .o_legal_dashboard {
     .o_form_sheet {
         max-width: 1180px;
+        padding-top: 1rem;
         background: transparent;
         border: 0;
         box-shadow: none;
-    }
-
-    .o_legal_dash_head {
-        margin-bottom: 1.5rem;
-        h1 { font-weight: 700; letter-spacing: -.02em; margin-bottom: .15rem; }
-        .o_legal_dash_sub { color: var(--o-main-color-muted, #6c757d); }
     }
 
     .o_legal_dash_section {

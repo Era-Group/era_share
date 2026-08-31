@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 23:20+0000\n"
-"PO-Revision-Date: 2026-08-31 23:20+0000\n"
+"POT-Creation-Date: 2026-08-31 23:42+0000\n"
+"PO-Revision-Date: 2026-08-31 23:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -83,7 +83,15 @@ msgid ""
 "                    <code>opponent.demo@example.sa</code> — the other side of seven cases,\n"
 "                    who correctly sees none of them: that emptiness is the security\n"
 "                    boundary working, not a bug."
-msgstr "<strong>جرّب بوابة الموكّل:</strong> حسابان يأتيان مع البيانات،\n                    كلمة المرور <code>PortalDemo!2026</code> لكليهما.<br/>\n                    <code>client.demo@example.sa</code> — موكّل له عدة قضايا:\n                    جلسات ومستندات مشتركة وفواتير وأموال أمانة.<br/>\n                    <code>opponent.demo@example.sa</code> — الطرف الآخر في عدة قضايا،\n                    ولا يرى منها شيئاً وهذا هو الصواب: ذلك الفراغ هو الحدّ الأمني\n                    وهو يعمل، لا خلل فيه."
+msgstr ""
+"<strong>جرّب بوابة الموكّل:</strong> حسابان يأتيان مع البيانات،\n"
+"                    كلمة المرور <code>PortalDemo!2026</code> لكليهما.<br/>\n"
+"                    <code>client.demo@example.sa</code> — موكّل له عدة قضايا:\n"
+"                    جلسات ومستندات مشتركة وفواتير وأموال أمانة.<br/>\n"
+"                    <code>opponent.demo@example.sa</code> — الطرف الآخر في عدة قضايا،\n"
+"                    ولا يرى منها شيئاً وهذا هو الصواب: ذلك الفراغ هو الحدّ الأمني\n"
+"                    وهو يعمل، لا خلل فيه."
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_finance.py:0
@@ -168,6 +176,10 @@ msgstr "يجب اعتماد أتعاب النجاح من مدير قانوني �
 msgid "A transfer must move between two different cases."
 msgstr "التحويل يجب أن يكون بين قضيتين مختلفتين."
 
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_ai
+msgid "AI"
+msgstr "الذكاء الاصطناعي"
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_dashboard.py:0
@@ -298,11 +310,17 @@ msgstr "الأتعاب المتفق عليها في العقد ذي المبلغ
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__ai_needs_review
 msgid "Ai Needs Review"
 msgstr "ذكاء يحتاج مراجعة"
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/controllers/portal.py:0
 msgid "All"
 msgstr "الكل"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_documents
+msgid "All Documents"
+msgstr "المستندات"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_document__allowed_user_ids
@@ -441,6 +459,7 @@ msgstr "اعتمده"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__approved_expenses
 msgid "Approved Expenses"
 msgstr "مصروفات معتمدة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__expense_amount
 msgid ""
@@ -594,6 +613,7 @@ msgstr "نوع الأتعاب"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__blocked
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
 msgid "Blocked"
 msgstr "موقوف لتعارض"
 
@@ -698,10 +718,25 @@ msgid "Case Load by Lawyer"
 msgstr "توزيع القضايا على المحامين"
 
 #. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_cases
+msgid "Case Setup"
+msgstr "إعداد القضايا"
+
+#. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_case_stage
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_config_stages
 msgid "Case Stages"
 msgstr "مراحل القضية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__case_state
+msgid "Case Status"
+msgstr "حالة القضية"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
+msgid "Case Still Open"
+msgstr "القضية ما زالت مفتوحة"
 
 #. module: era_law_firm
 #: model:ir.actions.report,name:era_law_firm.action_report_case_summary
@@ -771,6 +806,11 @@ msgstr ""
 "تنبيه يظهر لمن يستخدم هذه القاعدة، مثل أن المدة لا تسري أثناء وقف الخصومة."
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
+msgid "Certain Matches"
+msgstr "مطابقات مؤكدة"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__changed_fields
 msgid "Changed Fields"
 msgstr "الحقول المعدَّلة"
@@ -817,6 +857,7 @@ msgstr "قيمة المطالبة"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__clear
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
 msgid "Clear"
 msgstr "لا تعارض"
 
@@ -833,6 +874,7 @@ msgstr ""
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__client_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__client_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__client_id
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_case_party__role__client
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
@@ -1093,6 +1135,12 @@ msgstr "فحص تعارض المصالح"
 #: model:ir.model,name:era_law_firm.model_legal_conflict_check_line
 msgid "Conflict Check Result"
 msgstr "نتيجة فحص التعارض"
+
+#. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_conflict_check
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_conflict_check
+msgid "Conflict Register"
+msgstr "سجل التعارضات"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__conflict_state
@@ -1539,7 +1587,7 @@ msgstr "عنوان المستند"
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_actions.py:0
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_document
-#: model:ir.ui.menu,name:era_law_firm.menu_legal_documents
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_documents_root
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
 msgid "Documents"
@@ -1585,6 +1633,7 @@ msgstr "وقت مسودة"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__state
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__case_state
 msgid ""
 "Draft files are still being prepared. Confirming requires a valid conflict "
 "check, and closing requires the client's trust balance to be settled."
@@ -1661,6 +1710,12 @@ msgstr "مُدخل يدوياً"
 msgid "Event Date"
 msgstr "تاريخ الحدث"
 
+#. module: era_law_firm
+#: model_terms:ir.actions.act_window,help:era_law_firm.action_legal_conflict_check
+msgid ""
+"Every case that ran a check came back clear, or a manager recorded a\n"
+"               reason to proceed. Clear the Blocked filter to see the whole register."
+msgstr "كل قضية فُحصت عادت خالية من التعارض، أو سجّل مدير سبباً للمضي.\n               أزل مرشِّح «موقوف» لرؤية السجل كاملاً."
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_next_step.py:0
@@ -1803,6 +1858,7 @@ msgstr "مطوي"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_home_legal
 msgid "Follow your cases, hearings and shared documents"
 msgstr "تابع قضاياك وجلساتك ومستنداتك المشتركة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_follower_ids
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__message_follower_ids
@@ -1871,12 +1927,6 @@ msgid "General Judiciary"
 msgstr "القضاء العام"
 
 #. module: era_law_firm
-#. odoo-python
-#: code:addons/era_law_firm/models/legal_dashboard.py:0
-msgid "Good day, %s"
-msgstr "أهلاً، %s"
-
-#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__has_message
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__has_message
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__has_message
@@ -1902,10 +1952,6 @@ msgstr ""
 "بصمة على السجل والعملية والوقت، ليمكن كشف أي عبث. والمدخلات لا تقبل التعديل "
 "ولا الحذف إطلاقاً."
 
-#. module: era_law_firm
-#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__headline
-msgid "Headline"
-msgstr "العنوان"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__hearing_ids
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
@@ -2356,6 +2402,11 @@ msgid "Judicial Jurisdiction"
 msgstr "اختصاص قضائي"
 
 #. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_judiciary
+msgid "Judiciary"
+msgstr "الجهات القضائية"
+
+#. module: era_law_firm
 #: model:ir.model,name:era_law_firm.model_legal_judiciary_migration
 msgid "Judiciary Text to Record Migration"
 msgstr "ترحيل بيانات القضاء من نص إلى سجلات"
@@ -2399,6 +2450,11 @@ msgstr "المحكمة العمالية"
 #: model:legal.jurisdiction,name:era_law_firm.jurisdiction_labour
 msgid "Labour Judiciary"
 msgstr "القضاء العمالي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__checked_on
+msgid "Last Run"
+msgstr "آخر فحص"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__write_uid
@@ -2475,10 +2531,12 @@ msgstr "لوحة قيادة المكتب"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__lawyer_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__lawyer_id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__lawyer_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__lawyer_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__lawyer_id
 #: model:res.groups,name:era_law_firm.group_legal_lawyer
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
@@ -2782,9 +2840,20 @@ msgid "Matched on"
 msgstr "المطابقة على"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__match_count
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_list
+msgid "Matches"
+msgstr "المطابقات"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_intake_wizard__name
 msgid "Matter"
 msgstr "موضوع القضية"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_matters
+msgid "Matters"
+msgstr "الملفات"
 
 #. module: era_law_firm
 #: model:ir.model,name:era_law_firm.model_mail_message
@@ -2889,10 +2958,12 @@ msgstr "قضاياي"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_deadlines_overdue
 msgid "My Deadlines Overdue"
 msgstr "مهلي المتأخرة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_deadlines_week
 msgid "My Deadlines Week"
 msgstr "مهل الأسبوع"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
 msgid "My Documents"
@@ -2902,10 +2973,12 @@ msgstr "مستنداتي"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_draft_cases
 msgid "My Draft Cases"
 msgstr "قضاياي المسودة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_draft_time
 msgid "My Draft Time"
 msgstr "وقتي المسودة"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
 msgid "My Hearings"
@@ -2915,6 +2988,7 @@ msgstr "جلساتي"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_hearings_week
 msgid "My Hearings Week"
 msgstr "جلسات أسبوعي"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_breadcrumbs
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_home_legal
@@ -2981,6 +3055,11 @@ msgid "Name"
 msgstr "الاسم"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
+msgid "Name Matches Only"
+msgstr "مطابقة بالاسم فقط"
+
+#. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/wizard/legal_intake_wizard.py:0
 msgid ""
@@ -3003,6 +3082,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_list
 msgid "Net"
 msgstr "الصافي"
+
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_conflict_display.py:0
+msgid "New Case"
+msgstr "قضية جديدة"
 
 #. module: era_law_firm
 #. odoo-python
@@ -3118,6 +3203,11 @@ msgstr "لا يمكن فوترة أي شيء على عقد أتعاب قبل ت�
 #: code:addons/era_law_firm/models/legal_next_step.py:0
 msgid "Nothing further is required."
 msgstr "لا يلزم شيء بعد."
+
+#. module: era_law_firm
+#: model_terms:ir.actions.act_window,help:era_law_firm.action_legal_conflict_check
+msgid "Nothing is blocked"
+msgstr "لا شيء موقوف"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_deadline_rule__start_point__notification
@@ -3384,6 +3474,7 @@ msgstr "حالة التأخر"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__state__overridden
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
 msgid "Overridden"
 msgstr "متجاوَز بقرار مدير"
 
@@ -3816,19 +3907,27 @@ msgid "SMS Delivery error"
 msgstr "خطأ في تسليم الرسالة النصية"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__strongest_basis__identity_number
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check_line__match_basis__identity_number
 msgid "Same ID / registration number"
 msgstr "نفس رقم الهوية أو السجل"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__strongest_basis__same_partner
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check_line__match_basis__same_partner
 msgid "Same contact record"
 msgstr "نفس سجل جهة الاتصال"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check__strongest_basis__normalised_name
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_conflict_check_line__match_basis__normalised_name
 msgid "Same name (different record)"
 msgstr "نفس الاسم (سجل مختلف)"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_schedule
+msgid "Schedule"
+msgstr "المواعيد"
 
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_consultation__state__scheduled
@@ -3877,22 +3976,27 @@ msgstr "رمز مختصر يُستخدم في التقارير والقوائم 
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_accountant
 msgid "Show Accountant"
 msgstr "إظهار المحاسب"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_ai
 msgid "Show Ai"
 msgstr "إظهار الذكاء"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_lawyer
 msgid "Show Lawyer"
 msgstr "إظهار المحامي"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_manager
 msgid "Show Manager"
 msgstr "إظهار المدير"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_supervisor
 msgid "Show Supervisor"
 msgstr "إظهار المشرف"
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case_party__portal_visible
 msgid ""
@@ -3906,6 +4010,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__signed_amount
 msgid "Signed Amount"
 msgstr "المبلغ الموقَّع"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_signing
+msgid "Signing"
+msgstr "التوقيع"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__source
@@ -3970,6 +4079,7 @@ msgstr "الحالة"
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_search
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_consultation_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_engagement_search
@@ -4019,6 +4129,12 @@ msgstr "السند النظامي أو ملاحظة على ما يشمله هذ�
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_hearing__stop_datetime
 msgid "Stop Datetime"
 msgstr "تاريخ ووقت النهاية"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check__strongest_basis
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_conflict_check_search
+msgid "Strongest Match"
+msgstr "أقوى مطابقة"
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
@@ -4073,6 +4189,11 @@ msgstr "المحكمة العليا"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Team"
 msgstr "الفريق"
+
+#. module: era_law_firm
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_config_technical
+msgid "Technical"
+msgstr "تقني"
 
 #. module: era_law_firm
 #. odoo-python
@@ -4362,6 +4483,7 @@ msgstr ""
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__lawyer_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__lawyer_id
 msgid ""
 "The lawyer answerable for the file. They can always open it, and hearing and"
 " deadline reminders are raised against them."
@@ -4412,6 +4534,7 @@ msgstr "أطراف هذا الملف يظهرون في قضايا أخرى. وي
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__client_id
+#: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__client_id
 msgid ""
 "The party the firm acts for. Changing it voids the conflict check and the "
 "case must be screened again."
@@ -4855,11 +4978,6 @@ msgstr "نوع هذا المستند. والصكوك والوكالات هي م�
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_form
 msgid "What must be filed"
 msgstr "المطلوب تقديمه"
-
-#. module: era_law_firm
-#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
-msgid "What needs your attention, before you go looking."
-msgstr "ما يحتاج انتباهك، قبل أن تبحث عنه."
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_deadline_rule__start_point

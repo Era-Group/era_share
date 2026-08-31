@@ -125,8 +125,12 @@ class LegalDemoData(models.AbstractModel):
             raise UserError(_('Install a chart of accounts before loading test data.'))
         company._setup_legal_trust_accounting()
 
-        rng = random.Random(seed)
         offset = self._existing_count()
+        # Seeded by how much is already there, not by the seed alone: the load
+        # screen offers a second batch on top of the first, and a bare seed
+        # redraws the same Najiz numbers, which the uniqueness constraint
+        # rejects. A fresh database still produces the same firm every time.
+        rng = random.Random(seed + offset)
 
         product = self._demo_product()
         stages = self.env['legal.case.stage'].search([], order='sequence')

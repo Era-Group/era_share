@@ -614,14 +614,37 @@
 
     <menuitem id="menu_legal_root" name="Law Firm" sequence="30" groups="group_legal_staff"
               web_icon="era_law_firm,static/description/icon.png"/>
-    <menuitem id="menu_legal_cases" name="Cases" parent="menu_legal_root" action="action_legal_case" sequence="10"/>
-    <menuitem id="menu_legal_hearings" name="Hearings" parent="menu_legal_root" action="action_legal_hearing" sequence="20"/>
-    <menuitem id="menu_legal_deadlines" name="Deadlines" parent="menu_legal_root" action="action_legal_deadline" sequence="30"/>
-    <menuitem id="menu_legal_documents" name="Documents" parent="menu_legal_root" action="action_legal_document" sequence="40"/>
+
+    <!-- Sections, not a flat list. Thirteen entries in one column is a wall to
+         read every time; these six group by the question being asked — whose
+         matter, when is it due, what was written, what does it cost, what did
+         the machine say, how is the firm set up. Every existing xmlid is kept
+         so other modules' parent= references still resolve. -->
+    <menuitem id="menu_legal_matters" name="Matters" parent="menu_legal_root" sequence="10"/>
+    <menuitem id="menu_legal_schedule" name="Schedule" parent="menu_legal_root" sequence="20"/>
+    <menuitem id="menu_legal_documents_root" name="Documents" parent="menu_legal_root" sequence="30"/>
+
+    <menuitem id="menu_legal_cases" name="Cases" parent="menu_legal_matters" action="action_legal_case" sequence="10"/>
+    <menuitem id="menu_legal_hearings" name="Hearings" parent="menu_legal_schedule" action="action_legal_hearing" sequence="10"/>
+    <menuitem id="menu_legal_deadlines" name="Deadlines" parent="menu_legal_schedule" action="action_legal_deadline" sequence="20"/>
+    <menuitem id="menu_legal_documents" name="All Documents" parent="menu_legal_documents_root" action="action_legal_document" sequence="10"/>
 
     <menuitem id="menu_legal_config" name="Configuration" parent="menu_legal_root" sequence="90"
               groups="group_legal_manager"/>
-    <menuitem id="menu_legal_config_stages" name="Case Stages" parent="menu_legal_config"
+
+    <!-- Configuration had twelve entries of its own. These groups follow the
+         core pattern (root > section > group > item, the deepest the web
+         client renders): each becomes a heading in the panel. The AI and
+         Signing groups are empty shells here on purpose — Odoo hides a folder
+         with no reachable child, so they appear only once those modules are
+         installed and have filled them. -->
+    <menuitem id="menu_legal_config_cases" name="Case Setup" parent="menu_legal_config" sequence="10"/>
+    <menuitem id="menu_legal_config_judiciary" name="Judiciary" parent="menu_legal_config" sequence="20"/>
+    <menuitem id="menu_legal_config_ai" name="AI" parent="menu_legal_config" sequence="40"/>
+    <menuitem id="menu_legal_config_signing" name="Signing" parent="menu_legal_config" sequence="50"/>
+    <menuitem id="menu_legal_config_technical" name="Technical" parent="menu_legal_config" sequence="90"/>
+
+    <menuitem id="menu_legal_config_stages" name="Case Stages" parent="menu_legal_config_cases"
               action="action_legal_case_stage" sequence="10"/>
 
 </odoo>

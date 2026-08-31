@@ -59,7 +59,7 @@
     </record>
 
     <menuitem id="menu_moj_law" name="Legislation Corpus"
-              parent="era_law_firm.menu_legal_config"
+              parent="era_law_firm.menu_legal_config_ai"
               action="action_moj_law" sequence="36"
               groups="era_law_firm.group_legal_manager"/>
 

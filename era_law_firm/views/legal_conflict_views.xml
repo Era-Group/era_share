@@ -1,0 +1,74 @@
+<odoo>
+
+    <record id="view_legal_conflict_check_list" model="ir.ui.view">
+        <field name="name">legal.conflict.check.list</field>
+        <field name="model">legal.conflict.check</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'blocked'"
+                  decoration-warning="state == 'overridden'"
+                  decoration-muted="state == 'clear'">
+                <field name="case_id"/>
+                <field name="client_id"/>
+                <field name="lawyer_id" optional="show"/>
+                <field name="match_count" string="Matches"/>
+                <field name="strongest_basis"/>
+                <field name="checked_on"/>
+                <field name="case_state" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'blocked'"
+                       decoration-warning="state == 'overridden'"
+                       decoration-success="state == 'clear'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legal_conflict_check_search" model="ir.ui.view">
+        <field name="name">legal.conflict.check.search</field>
+        <field name="model">legal.conflict.check</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="case_id"/>
+                <field name="client_id"/>
+                <field name="lawyer_id"/>
+                <filter name="blocked" string="Blocked" domain="[('state', '=', 'blocked')]"/>
+                <filter name="overridden" string="Overridden" domain="[('state', '=', 'overridden')]"/>
+                <filter name="clear" string="Clear" domain="[('state', '=', 'clear')]"/>
+                <separator/>
+                <filter name="certain" string="Certain Matches"
+                        domain="[('strongest_basis', '=', 'same_partner')]"/>
+                <filter name="name_only" string="Name Matches Only"
+                        domain="[('strongest_basis', '=', 'normalised_name')]"/>
+                <separator/>
+                <filter name="open_cases" string="Case Still Open"
+                        domain="[('case_state', 'not in', ('closed', 'cancelled'))]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_lawyer" string="Lawyer" context="{'group_by': 'lawyer_id'}"/>
+                    <filter name="group_basis" string="Strongest Match"
+                            context="{'group_by': 'strongest_basis'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_legal_conflict_check" model="ir.actions.act_window">
+        <field name="name">Conflict Register</field>
+        <field name="res_model">legal.conflict.check</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_conflict_check_search"/>
+        <field name="context">{'search_default_blocked': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing is blocked</p>
+            <p>Every case that ran a check came back clear, or a manager recorded a
+               reason to proceed. Clear the Blocked filter to see the whole register.</p>
+        </field>
+    </record>
+
+    <!-- A register a supervisor can open on purpose, not only through the
+         dashboard tile. -->
+    <menuitem id="menu_legal_conflict_check" name="Conflict Register"
+              parent="menu_legal_matters" action="action_legal_conflict_check"
+              sequence="30" groups="era_law_firm.group_legal_supervisor"/>
+
+</odoo>

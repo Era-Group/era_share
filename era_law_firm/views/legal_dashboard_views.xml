@@ -11,11 +11,9 @@
                     <field name="show_accountant" invisible="1"/>
                     <field name="show_ai" invisible="1"/>
 
-                    <div class="o_legal_dash_head d-flex justify-content-between align-items-end flex-wrap gap-2">
-                        <div>
-                            <h1><field name="headline" nolabel="1"/></h1>
-                            <div class="o_legal_dash_sub">What needs your attention, before you go looking.</div>
-                        </div>
+                    <!-- No greeting banner: the tiles are the content, and a
+                         header the reader already knows costs a screenful. -->
+                    <div class="o_legal_dash_actions d-flex justify-content-start mb-3">
                         <button name="action_open_intake" type="object"
                                 string="Open a Case" class="btn btn-primary"/>
                     </div>

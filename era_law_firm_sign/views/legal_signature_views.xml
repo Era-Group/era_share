@@ -186,13 +186,13 @@
 
     <!-- ==================== MENUS ==================== -->
 
-    <menuitem id="menu_signature_root" name="Signatures" parent="era_law_firm.menu_legal_root" sequence="80"
+    <menuitem id="menu_signature_root" name="Signatures" parent="era_law_firm.menu_legal_documents_root" sequence="30"
               groups="era_law_firm.group_legal_manager"/>
     <menuitem id="menu_signature_requests" name="Signature Requests" parent="menu_signature_root"
               action="action_signature_request" sequence="10"/>
     <menuitem id="menu_signature_events" name="Signature Events" parent="menu_signature_root"
               action="action_signature_event" sequence="20"/>
-    <menuitem id="menu_signature_providers" name="Signature Providers" parent="era_law_firm.menu_legal_config"
+    <menuitem id="menu_signature_providers" name="Signature Providers" parent="era_law_firm.menu_legal_config_signing"
               action="action_signature_provider" sequence="50" groups="era_law_firm.group_legal_manager"/>
 
 </odoo>

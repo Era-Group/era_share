@@ -53,5 +53,5 @@
          Sequence AFTER Cases: clicking the app's root menu opens its first
          child, and that must land on the case list, not on a popup wizard. -->
     <menuitem id="menu_legal_intake_wizard" name="Open a Case"
-              parent="menu_legal_root" action="action_legal_intake_wizard" sequence="15"/>
+              parent="menu_legal_matters" action="action_legal_intake_wizard" sequence="5"/>
 </odoo>

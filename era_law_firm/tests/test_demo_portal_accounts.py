@@ -55,6 +55,10 @@ class TestDemoPortalAccounts(TransactionCase):
     def test_an_existing_login_is_left_alone(self):
         """Adoption would reset a password we do not own and delete an account
         we did not make."""
+        # setUpClass already ran the loader, so the login it made is here;
+        # clear it and hand the name to somebody else.
+        self.env['res.users'].sudo().search(
+            [('login', '=', PORTAL_OPPONENT_LOGIN)]).unlink()
         stranger = self.env['res.users'].sudo().create({
             'name': 'صاحب الحساب', 'login': PORTAL_OPPONENT_LOGIN,
             'partner_id': self.env['res.partner'].create({'name': 'غريب'}).id,
@@ -68,3 +72,10 @@ class TestDemoPortalAccounts(TransactionCase):
         self.env['legal.demo.data']._purge()
         self.assertFalse(self._user(PORTAL_CLIENT_LOGIN))
         self.assertFalse(self._user(PORTAL_OPPONENT_LOGIN))
+
+    def test_a_second_batch_loads_on_top_of_the_first(self):
+        """The load screen offers exactly this, so it has to work: a bare seed
+        redrew the same Najiz numbers and the uniqueness constraint refused."""
+        before = self.env['legal.case'].search_count([])
+        self.env['legal.demo.data']._generate(4)
+        self.assertEqual(self.env['legal.case'].search_count([]), before + 4)

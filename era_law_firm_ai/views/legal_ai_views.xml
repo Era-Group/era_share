@@ -434,7 +434,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_ai_charter" name="Legal Charter" parent="era_law_firm.menu_legal_config"
+    <menuitem id="menu_ai_charter" name="Legal Charter" parent="era_law_firm.menu_legal_config_ai"
               action="action_legal_ai_charter" sequence="36" groups="era_law_firm.group_legal_manager"/>
 
     <!-- ==================== CASE BUTTON ==================== -->
@@ -478,15 +478,15 @@
 
     <!-- ==================== MENUS ==================== -->
 
-    <menuitem id="menu_legal_ai_root" name="AI" parent="era_law_firm.menu_legal_root" sequence="70"
+    <menuitem id="menu_legal_ai_root" name="AI" parent="era_law_firm.menu_legal_root" sequence="50"
               groups="group_legal_ai_user"/>
     <menuitem id="menu_ai_requests" name="AI Requests" parent="menu_legal_ai_root"
               action="action_ai_request" sequence="10"/>
-    <menuitem id="menu_ai_generation" name="Document Generation" parent="menu_legal_ai_root"
+    <menuitem id="menu_ai_generation" name="Document Generation" parent="era_law_firm.menu_legal_documents_root"
               action="action_legal_document_generation" sequence="20"/>
-    <menuitem id="menu_ai_agents" name="AI Agents" parent="era_law_firm.menu_legal_config"
+    <menuitem id="menu_ai_agents" name="AI Agents" parent="era_law_firm.menu_legal_config_ai"
               action="ai_app.ai_agent_action" sequence="35" groups="era_law_firm.group_legal_manager"/>
-    <menuitem id="menu_ai_templates" name="Document Templates" parent="era_law_firm.menu_legal_config"
+    <menuitem id="menu_ai_templates" name="Document Templates" parent="era_law_firm.menu_legal_config_ai"
               action="action_legal_document_template" sequence="40" groups="group_legal_ai_user"/>
 
 </odoo>

@@ -23,8 +23,6 @@ class LegalDashboard(models.TransientModel):
     # The row exists only long enough to click a button (privacy_lookup idiom).
     _transient_max_hours = 24
 
-    headline = fields.Char(readonly=True)
-
     @api.depends_context('lang')
     def _compute_display_name(self):
         # Without this the breadcrumb and browser tab read "legal.dashboard,12".
@@ -152,10 +150,6 @@ class LegalDashboard(models.TransientModel):
                 'draft_engagements': ('legal.engagement', self._domain_draft_engagements()),
             })
         values.update(roles)
-        if 'headline' in fields_list:
-            # env._, not the module-level _: the global helper resolves the
-            # active context's language, this record's env is authoritative.
-            values['headline'] = self.env._('Good day, %s', user.name)
         for name, (model, domain) in counters.items():
             if name in fields_list and self.env[model].has_access('read'):
                 values[name] = self.env[model].search_count(domain)
@@ -195,14 +189,8 @@ class LegalDashboard(models.TransientModel):
                           self._domain_my_draft_time(), _('My Unbilled Draft Time'))
 
     def action_blocked_conflicts(self):
-        # No window action exists for conflict checks anywhere; this is it.
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Blocked Conflict Checks'),
-            'res_model': 'legal.conflict.check',
-            'view_mode': 'list,form',
-            'domain': self._domain_blocked_conflicts(),
-        }
+        return self._open('era_law_firm.action_legal_conflict_check',
+                          self._domain_blocked_conflicts(), _('Blocked Conflict Checks'))
 
     def action_unassigned_cases(self):
         return self._open('era_law_firm.action_legal_case',

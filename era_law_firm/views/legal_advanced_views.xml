@@ -181,11 +181,11 @@
 
     <!-- ==================== MENUS ==================== -->
 
-    <menuitem id="menu_legal_consultations" name="Consultations" parent="menu_legal_root"
-              action="action_legal_consultation" sequence="15" groups="group_legal_lawyer"/>
-    <menuitem id="menu_legal_config_deadline_rules" name="Deadline Rules" parent="menu_legal_config"
+    <menuitem id="menu_legal_consultations" name="Consultations" parent="menu_legal_matters"
+              action="action_legal_consultation" sequence="20" groups="group_legal_lawyer"/>
+    <menuitem id="menu_legal_config_deadline_rules" name="Deadline Rules" parent="menu_legal_config_cases"
               action="action_legal_deadline_rule" sequence="20"/>
-    <menuitem id="menu_legal_audit_log" name="Audit Log" parent="menu_legal_config"
+    <menuitem id="menu_legal_audit_log" name="Audit Log" parent="menu_legal_config_technical"
               action="action_legal_audit_log" sequence="90" groups="group_legal_manager"/>
 
 </odoo>

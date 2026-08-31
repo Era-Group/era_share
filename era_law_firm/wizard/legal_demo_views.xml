@@ -46,7 +46,7 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem id="menu_legal_demo_data" name="Load Test Data" parent="menu_legal_config"
+    <menuitem id="menu_legal_demo_data" name="Load Test Data" parent="menu_legal_config_technical"
               action="action_legal_demo_data" sequence="95" groups="group_legal_manager"/>
 
 </odoo>

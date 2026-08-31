@@ -6,6 +6,7 @@ the list shows 5 teaches people to ignore both. And each role sees its own
 sections: the supervisor's team numbers do not render for a lawyer, and the
 lawyer's numbers are scoped to them.
 """
+from ast import literal_eval
 from datetime import timedelta
 
 from odoo import fields
@@ -104,6 +105,20 @@ class TestDashboard(TransactionCase):
             [('parent_id', '=', root.id)], order='sequence, id')
         self.assertEqual(children[0], self.env.ref('era_law_firm.menu_legal_dashboard'))
 
+    def test_the_app_menu_is_sections_not_a_wall(self):
+        """Thirteen entries in one column is a list to read every time."""
+        root = self.env.ref('era_law_firm.menu_legal_root')
+        children = self.env['ir.ui.menu'].sudo().search([('parent_id', '=', root.id)])
+        self.assertLessEqual(len(children), 8, [c.name for c in children])
+        # and nothing was orphaned on the way
+        for xmlid in ('menu_legal_cases', 'menu_legal_hearings', 'menu_legal_deadlines',
+                      'menu_legal_documents', 'menu_legal_consultations',
+                      'menu_legal_conflict_check', 'menu_legal_trust',
+                      'menu_legal_time', 'menu_legal_config_courts'):
+            menu = self.env.ref('era_law_firm.%s' % xmlid)
+            self.assertTrue(menu.parent_id, xmlid)
+            self.assertEqual(menu.parent_path.split('/')[0], str(root.id), xmlid)
+
     def test_every_button_answers_for_every_role(self):
         """No tile may crash for a role that can see it."""
         for user in (self.lawyer, self.supervisor):
@@ -114,3 +129,58 @@ class TestDashboard(TransactionCase):
                          'action_open_intake'):
                 action = getattr(board, name)()
                 self.assertTrue(action.get('res_model') or action.get('type'), name)
+
+
+@tagged('post_install', '-at_install')
+class TestConflictRegister(TransactionCase):
+    """The register has to say which case, whose client, and how certain."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي السجل', 'login': 'reg_lawyer',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('era_law_firm.group_legal_lawyer').id])]})
+        cls.client = cls.env['res.partner'].create({'name': 'موكّل السجل'})
+
+    def _case(self, client=None, opponents=None):
+        wizard = self.env['legal.intake.wizard'].with_user(self.lawyer).create({
+            'client_id': (client or self.client).id, 'case_type': 'litigation',
+            'lawyer_id': self.lawyer.id, 'engagement_type': 'none',
+            'opponent_ids': [(6, 0, (opponents or self.env['res.partner']).ids)]})
+        return self.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+
+    def test_a_row_names_its_case_and_client(self):
+        check = self._case().conflict_check_id
+        self.assertEqual(check.client_id, self.client)
+        self.assertEqual(check.lawyer_id, self.lawyer)
+        self.assertIn(check.case_id.name, check.display_name,
+                      'a bare id tells a supervisor nothing')
+
+    def test_the_run_stamps_its_time(self):
+        check = self._case().conflict_check_id
+        self.assertTrue(check.checked_on, 'the register sorts on recency')
+
+    def test_the_strongest_evidence_wins_the_summary(self):
+        opponent = self.env['res.partner'].create({
+            'name': 'خصم مشترك', 'legal_identity_number': '1122334455'})
+        first = self._case(opponents=opponent)
+        first.action_confirm()
+        twin = self.env['res.partner'].create({
+            'name': 'خصم مشترك', 'legal_identity_number': '1122334455'})
+        second = self._case(
+            client=self.env['res.partner'].create({'name': 'موكّل آخر'}),
+            opponents=twin)
+        check = second.conflict_check_id
+        self.assertEqual(check.state, 'blocked')
+        self.assertGreaterEqual(check.match_count, 1)
+        self.assertIn(check.strongest_basis, ('same_partner', 'identity_number'),
+                      'a shared ID is stronger evidence than a name coincidence')
+
+    def test_the_register_action_opens_on_what_is_blocked(self):
+        action = self.env['ir.actions.act_window']._for_xml_id(
+            'era_law_firm.action_legal_conflict_check')
+        # act_window.context is a Char: what comes back is source, not a dict.
+        context = literal_eval(action['context'])
+        self.assertEqual(context.get('search_default_blocked'), 1)

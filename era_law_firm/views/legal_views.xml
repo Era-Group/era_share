@@ -281,6 +281,7 @@
                             <field name="partner_id"/>
                             <field name="source_case_id"/>
                             <field name="role"/>
+                            <field name="match_basis"/>
                         </list>
                     </field>
                     <group string="Override">

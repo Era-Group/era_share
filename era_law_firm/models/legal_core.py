@@ -142,12 +142,85 @@ class LegalConflictCheck(models.Model):
     approved_at = fields.Datetime()
 
     def action_run_check(self):
+        """Look for the same person, not merely the same record.
+
+        Matching on partner_id alone means a client entered twice — «محمد
+        عبدالله» and «محمد عبد الله» are two res.partner rows — passes the
+        check and the firm is told there is no conflict. That is a
+        professional-liability failure, not a data-quality annoyance, and
+        duplicate contact records are the normal state of any client list.
+
+        Three keys, strongest first: the same partner record; the same
+        national ID or commercial registration; the same name once Arabic
+        orthography is normalised. Each match records which key found it, so a
+        lawyer reviewing a hit can see whether it is certain or a name
+        coincidence to judge.
+        """
+        Party = self.env['legal.case.party']
         for rec in self:
             rec.line_ids.unlink()
             partners = rec.case_id.client_id | rec.case_id.party_ids.mapped('partner_id')
-            hits = self.env['legal.case.party'].search([('company_id','=',rec.company_id.id),('partner_id','in',partners.ids),('case_id','!=',rec.case_id.id),('case_id.state','in',('confirmed','closed'))])
-            rec.write({'party_signature': rec.case_id._party_signature(), 'state': 'blocked' if hits else 'clear', 'line_ids': [(0,0,{'partner_id': h.partner_id.id,'source_case_id': h.case_id.id,'role':h.role}) for h in hits]})
+            candidates = Party.search([
+                ('company_id', '=', rec.company_id.id),
+                ('case_id', '!=', rec.case_id.id),
+                ('case_id.state', 'in', ('confirmed', 'closed')),
+            ])
+            hits = []
+            for candidate in candidates:
+                basis = rec._conflict_basis(partners, candidate.partner_id)
+                if basis:
+                    hits.append((0, 0, {
+                        'partner_id': candidate.partner_id.id,
+                        'source_case_id': candidate.case_id.id,
+                        'role': candidate.role,
+                        'match_basis': basis,
+                    }))
+            rec.write({
+                'party_signature': rec.case_id._party_signature(),
+                'state': 'blocked' if hits else 'clear',
+                'line_ids': hits,
+            })
             rec.case_id.conflict_check_id = rec
+
+    @api.model
+    def _identity_keys(self, partner):
+        """Identity numbers reduced to digits and letters, so formatting differs harmlessly."""
+        keys = set()
+        for value in (partner.legal_identity_number, partner.legal_registration_number):
+            cleaned = re.sub(r'[^0-9a-zA-Z]', '', value or '')
+            if len(cleaned) >= 6:  # too short to identify anyone
+                keys.add(cleaned)
+        return keys
+
+    def _conflict_basis(self, partners, other):
+        """Why this partner counts as one of ours, or False."""
+        self.ensure_one()
+        if not other:
+            return False
+        if other in partners:
+            return 'same_partner'
+        ours = set()
+        for partner in partners:
+            ours |= self._identity_keys(partner)
+        if ours & self._identity_keys(other):
+            return 'identity_number'
+        names = {self._name_key(p.name) for p in partners if p.name}
+        names.discard('')
+        if other.name and self._name_key(other.name) in names:
+            return 'normalised_name'
+        return False
+
+    @api.model
+    def _name_key(self, name):
+        """A name reduced to what identifies the person rather than the typing.
+
+        Spaces come out as well as the orthography the shared normaliser
+        handles: «عبدالله» and «عبد الله» are one name written two ways, and
+        that split is the most common variant in Saudi records. Done here
+        rather than in normalize_legal_text, which other comparisons rely on
+        keeping word boundaries.
+        """
+        return self._normalize_arabic_text(name).replace(' ', '')
 
     def action_manager_override(self):
         self.ensure_one()
@@ -164,6 +237,13 @@ class LegalConflictCheckLine(models.Model):
     partner_id = fields.Many2one('res.partner', required=True)
     source_case_id = fields.Many2one('legal.case', required=True)
     role = fields.Char()
+    # A name match and an ID match are not the same evidence, and the lawyer
+    # deciding whether to override needs to know which one this is.
+    match_basis = fields.Selection([
+        ('same_partner', 'Same contact record'),
+        ('identity_number', 'Same ID / registration number'),
+        ('normalised_name', 'Same name (different record)'),
+    ], string='Matched on', default='same_partner')
 
 
 class LegalHearing(models.Model):

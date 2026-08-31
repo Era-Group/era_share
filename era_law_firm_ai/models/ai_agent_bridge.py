@@ -140,7 +140,10 @@ class LegalAIRequest(models.Model):
         self.ensure_one()
         lines = [f'الغرض: {self.purpose}']
         if self.case_id:
-            case_types = dict(self.case_id._fields['case_type'].selection)
+            # The payload is Arabic and a lawyer reads it before consenting;
+            # the raw tuples would put 'Litigation' in the middle of it.
+            case_types = dict(self.case_id.fields_get(
+                ['case_type'])['case_type']['selection'])
             lines.append(f'نوع القضية: {case_types.get(self.case_id.case_type, "")}')
             if self.case_id.court_id:
                 lines.append(f'المحكمة: {self.case_id.court_id.display_name}')

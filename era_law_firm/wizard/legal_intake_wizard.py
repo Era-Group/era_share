@@ -27,8 +27,7 @@ class LegalIntakeWizard(models.TransientModel):
         string='Matter', help="What this file is about, in the firm's own words. "
                               "Left blank, the case takes its reference number.")
     case_type = fields.Selection(
-        selection=lambda self: self.env['legal.case']._fields['case_type'].selection,
-        string='Type', required=True)
+        selection='_case_type_selection', string='Type', required=True)
     lawyer_id = fields.Many2one(
         'res.users', string='Responsible Lawyer', required=True,
         default=lambda self: self.env.user)
@@ -45,6 +44,19 @@ class LegalIntakeWizard(models.TransientModel):
     fixed_amount = fields.Monetary(string='Fixed Fee', currency_field='currency_id')
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.company.currency_id)
+
+    @api.model
+    def _case_type_selection(self):
+        """Borrow the case's own list, with its labels translated.
+
+        Reading ``_fields['case_type'].selection`` gives the raw tuples defined
+        in Python: Odoo keeps selection labels in ir.model.fields.selection and
+        applies the language there, so the wizard showed English in an Arabic
+        form. fields_get resolves them for the active language, and borrowing
+        rather than restating keeps the two lists from drifting apart.
+        """
+        return self.env['legal.case'].fields_get(
+            ['case_type'])['case_type']['selection']
 
     conflict_preview = fields.Html(
         string='Conflict', compute='_compute_conflict_preview',
@@ -87,7 +99,10 @@ class LegalIntakeWizard(models.TransientModel):
                 _('No existing file shares a party with this one.') if named else
                 _('Name the opposing parties — a check run before they are known '
                   'has almost nothing to compare.'))
-        labels = dict(self.env['legal.conflict.check.line']._fields['match_basis'].selection)
+        # fields_get, not _fields[...].selection: the raw tuples carry the
+        # English defined in Python, and this text is shown to the lawyer.
+        labels = dict(self.env['legal.conflict.check.line'].fields_get(
+            ['match_basis'])['match_basis']['selection'])
         rows = ''.join(
             '<li>%s — %s <span class="text-muted">(%s)</span></li>'
             % (partner.display_name, case.display_name, labels.get(basis, basis))

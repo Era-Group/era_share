@@ -7,3 +7,4 @@ from . import test_conflict_matching
 from . import test_trust_allocation
 from . import test_workflow_defaults
 from . import test_next_step
+from . import test_intake_wizard

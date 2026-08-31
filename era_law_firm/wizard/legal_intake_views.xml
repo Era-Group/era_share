@@ -1,0 +1,55 @@
+<odoo>
+    <record id="view_legal_intake_wizard_form" model="ir.ui.view">
+        <field name="name">legal.intake.wizard.form</field>
+        <field name="model">legal.intake.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Open a Case">
+                <div class="alert alert-info" role="status">
+                    Opening a file has an order to it: the parties have to be named
+                    before a conflict check means anything, and the check has to pass
+                    before the case can be confirmed. Fill this in and the steps run
+                    in that order.
+                </div>
+                <group>
+                    <group string="The Matter">
+                        <field name="client_id" options="{'no_quick_create': True}"/>
+                        <field name="name" placeholder="What this file is about"/>
+                        <field name="case_type"/>
+                        <field name="lawyer_id"/>
+                    </group>
+                    <group string="The Other Side">
+                        <field name="opponent_ids" widget="many2many_tags"
+                               options="{'no_quick_create': True}"/>
+                    </group>
+                </group>
+                <group string="Fees">
+                    <field name="engagement_type" widget="radio"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="hourly_rate" invisible="engagement_type != 'hourly'"
+                           required="engagement_type == 'hourly'"/>
+                    <field name="fixed_amount" invisible="engagement_type != 'fixed'"
+                           required="engagement_type == 'fixed'"/>
+                </group>
+                <separator string="Conflict check, before the file exists"/>
+                <field name="conflict_preview" nolabel="1" readonly="1"/>
+                <footer>
+                    <button name="action_open_case" type="object" string="Open the Case"
+                            class="btn-primary"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_intake_wizard" model="ir.actions.act_window">
+        <field name="name">Open a Case</field>
+        <field name="res_model">legal.intake.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- A sibling of Cases, not a child: menu_legal_cases carries the list
+         action, and giving it children turns a one-click list into a dropdown. -->
+    <menuitem id="menu_legal_intake_wizard" name="Open a Case"
+              parent="menu_legal_root" action="action_legal_intake_wizard" sequence="5"/>
+</odoo>

@@ -5,3 +5,5 @@ from . import test_trust_setup
 from . import test_deletion_rights
 from . import test_conflict_matching
 from . import test_trust_allocation
+from . import test_workflow_defaults
+from . import test_next_step

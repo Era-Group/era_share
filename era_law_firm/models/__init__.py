@@ -9,3 +9,5 @@ from . import legal_judiciary
 from . import legal_deletion
 from . import legal_demo
 from . import legal_help
+from . import legal_defaults
+from . import legal_next_step

@@ -1,0 +1,11 @@
+<odoo>
+    <!-- The product an engagement and its expenses bill through. Odoo needs one
+         to put a line on an invoice; a lawyer has no reason to hold an opinion
+         about which. Shipping it means the field can default instead of being
+         a question. A firm that wants a product per service still can. -->
+    <record id="product_legal_services" model="product.template">
+        <field name="name">Legal Services</field>
+        <field name="type">service</field>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+</odoo>

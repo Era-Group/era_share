@@ -1,0 +1,110 @@
+<odoo>
+    <!-- What a client may see of their own file, enforced where it cannot be
+         forgotten. The portal previously had no rules at all: the list route
+         crashed with an AccessError, and the detail page compensated with
+         sudo — meaning every field a template author ever added would have
+         leaked. With the scope in record rules, the controller searches as
+         the user, and a template can only show what these rules let through.
+
+         Scoping is by commercial partner, matching how core treats invoices:
+         every portal contact of a corporate client sees the company's cases.
+         That is the semantic of inviting a company, not a defect. -->
+
+    <record id="rule_legal_case_portal" model="ir.rule">
+        <field name="name">Portal: own cases, once accepted</field>
+        <field name="model_id" ref="model_legal_case"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <!-- Draft is the firm still deciding (conflict check pending or
+             blocked), cancelled is an engagement that never happened; neither
+             is the client's file. -->
+        <field name="domain_force">[
+            ('state', 'not in', ('draft', 'cancelled')),
+            ('client_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_legal_document_portal" model="ir.rule">
+        <field name="name">Portal: published and approved documents only</field>
+        <field name="model_id" ref="model_legal_document"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <!-- Both conditions, always: publishing checks approval at publish
+             time only, and nothing clears the flag if the document is later
+             sent back to draft. The rule re-checks on every read. -->
+        <field name="domain_force">[
+            ('portal_published', '=', True),
+            ('state', '=', 'approved'),
+            ('case_id.state', 'not in', ('draft', 'cancelled')),
+            ('case_id.client_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_legal_hearing_portal" model="ir.rule">
+        <field name="name">Portal: confirmed hearings of own cases</field>
+        <field name="model_id" ref="model_legal_hearing"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <!-- A tentative hearing is the firm's planning, not the client's
+             calendar; it appears once someone confirms it. -->
+        <field name="domain_force">[
+            ('state', 'in', ('confirmed', 'done')),
+            ('case_id.state', 'not in', ('draft', 'cancelled')),
+            ('case_id.client_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_legal_party_portal" model="ir.rule">
+        <field name="name">Portal: parties marked visible</field>
+        <field name="model_id" ref="model_legal_case_party"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <!-- portal_visible defaults to off, so nothing shows until a lawyer
+             decides it should — the flag the backend has advertised all along
+             is enforced here for the first time. -->
+        <field name="domain_force">[
+            ('portal_visible', '=', True),
+            ('case_id.state', 'not in', ('draft', 'cancelled')),
+            ('case_id.client_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_legal_trust_account_portal" model="ir.rule">
+        <field name="name">Portal: own trust account</field>
+        <field name="model_id" ref="model_legal_trust_account"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[
+            ('partner_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_legal_trust_transaction_portal" model="ir.rule">
+        <field name="name">Portal: posted movements of own trust money</field>
+        <field name="model_id" ref="model_legal_trust_transaction"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[
+            ('state', '=', 'posted'),
+            ('trust_account_id.partner_id.commercial_partner_id', '=', user.partner_id.commercial_partner_id.id),
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

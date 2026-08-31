@@ -1,5 +1,148 @@
 <odoo>
- <template id="portal_my_home_legal" inherit_id="portal.portal_my_home" name="Legal cases portal entry"><xpath expr="//div[hasclass('o_portal_docs')]" position="inside"><t t-call="portal.portal_docs_entry"><t t-set="title">My Legal Cases</t><t t-set="url" t-value="'/my/legal-cases'"/><t t-set="placeholder_count" t-value="'legal_case_count'"/></t></xpath></template>
- <template id="portal_my_legal_cases" name="My Legal Cases"><t t-call="portal.portal_layout"><div class="container"><h2>My Legal Cases</h2><table class="table"><thead><tr><th>Reference</th><th>Type</th><th>Stage</th></tr></thead><tbody><tr t-foreach="cases" t-as="case"><td><a t-att-href="case.access_url"><t t-out="case.name"/></a></td><td><t t-out="case.case_type"/></td><td><t t-out="case.stage_id.name"/></td></tr></tbody></table></div></t></template>
- <template id="portal_legal_case" name="Legal Case"><t t-call="portal.portal_layout"><div class="container"><h2><t t-out="case.name"/></h2><p><t t-out="case.stage_id.name"/></p><h4>Published documents</h4><ul><li t-foreach="documents" t-as="doc"><a t-att-href="'/my/legal-cases/%s/documents/%s/download' % (case.id, doc.id)"><t t-out="doc.name"/></a></li></ul></div></t></template>
+    <!-- Inside the client category container, the way core account does it:
+         appended loose after o_portal_docs, the card sat outside Odoo 19's
+         category rows and their show/hide behaviour. -->
+    <template id="portal_my_home_legal" inherit_id="portal.portal_my_home" name="Legal cases portal entry" priority="35">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Legal Cases</t>
+                <t t-set="url" t-value="'/my/legal-cases'"/>
+                <t t-set="text">Follow your cases, hearings and shared documents</t>
+                <t t-set="placeholder_count" t-value="'legal_case_count'"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="portal_legal_breadcrumbs" inherit_id="portal.portal_breadcrumbs" name="Legal cases breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'legal_case'" class="breadcrumb-item">
+                <a t-if="case" t-attf-href="/my/legal-cases?{{ keep_query() }}">My Legal Cases</a>
+                <t t-else="">My Legal Cases</t>
+            </li>
+            <li t-if="page_name == 'legal_case' and case" class="breadcrumb-item active">
+                <t t-out="case.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_legal_cases" name="My Legal Cases">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Legal Cases</t>
+            </t>
+            <t t-if="not cases">
+                <p class="alert alert-info">There are no cases to show for this filter.</p>
+            </t>
+            <t t-if="cases" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Type</th>
+                        <th>Stage</th>
+                        <th class="text-end">Opened</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="cases" t-as="case">
+                        <td><a t-att-href="case.get_portal_url()"><t t-out="case.name"/></a></td>
+                        <td><t t-out="dict(case.fields_get(['case_type'])['case_type']['selection']).get(case.case_type)"/></td>
+                        <td><span class="badge text-bg-light"><t t-out="case.stage_id.name"/></span></td>
+                        <td class="text-end"><t t-out="case.create_date" t-options="{'widget': 'date'}"/></td>
+                    </tr>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_legal_case" name="Legal Case">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                    <div>
+                        <h2 class="mb-1"><t t-out="case.name"/></h2>
+                        <p class="text-muted mb-1">
+                            <span class="badge text-bg-secondary"><t t-out="case.stage_id.name"/></span>
+                            <t t-if="case.court_id"> · <t t-out="case.court_id.display_name"/></t>
+                        </p>
+                        <p t-if="case.najiz_number" class="text-muted small mb-0">
+                            <span>Najiz case number:</span> <t t-out="case.najiz_number"/>
+                        </p>
+                    </div>
+                </div>
+
+                <t t-if="hearings">
+                    <h4 class="mt-4">Hearings</h4>
+                    <table class="table table-sm">
+                        <thead><tr><th>Hearing</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="hearings" t-as="hearing">
+                                <td><t t-out="hearing.name"/></td>
+                                <td><t t-out="hearing.start_datetime" t-options="{'widget': 'datetime'}"/></td>
+                                <td>
+                                    <span t-if="hearing.state == 'done'" class="badge text-bg-success">Held</span>
+                                    <span t-else="" class="badge text-bg-info">Scheduled</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+
+                <t t-if="parties">
+                    <h4 class="mt-4">Parties</h4>
+                    <ul class="list-unstyled">
+                        <li t-foreach="parties" t-as="party">
+                            <t t-out="party.partner_id.name"/>
+                            <span class="text-muted"> — <t t-out="dict(party.fields_get(['role'])['role']['selection']).get(party.role)"/></span>
+                        </li>
+                    </ul>
+                </t>
+
+                <h4 class="mt-4">Documents</h4>
+                <t t-if="not documents">
+                    <p class="text-muted">No documents have been shared on this case yet.</p>
+                </t>
+                <ul t-if="documents" class="list-group list-group-flush">
+                    <li t-foreach="documents" t-as="doc" class="list-group-item px-0">
+                        <a t-attf-href="/my/legal-cases/{{ case.id }}/documents/{{ doc.id }}/download{{ access_token and ('?access_token=' + access_token) or '' }}">
+                            <i class="fa fa-download me-1" role="img" aria-label="Download"/> <t t-out="doc.name"/>
+                        </a>
+                    </li>
+                </ul>
+
+                <t t-if="invoice_rows">
+                    <h4 class="mt-4">Invoices</h4>
+                    <table class="table table-sm">
+                        <thead><tr><th>Invoice</th><th>Date</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="invoice_rows" t-as="row">
+                                <td><a t-att-href="row['url']"><t t-out="row['name']"/></a></td>
+                                <td><t t-out="row['date']" t-options="{'widget': 'date'}"/></td>
+                                <td class="text-end"><t t-out="row['amount']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/></td>
+                                <td>
+                                    <span t-if="row['payment_state'] in ('paid', 'in_payment')" class="badge text-bg-success">Paid</span>
+                                    <span t-else="" class="badge text-bg-warning">Awaiting payment</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+
+                <t t-if="trust_allocated">
+                    <h4 class="mt-4">Money held in trust</h4>
+                    <p>
+                        <span>Held for this case:</span>
+                        <strong><t t-out="trust_allocated" t-options="{'widget': 'monetary', 'display_currency': case.company_id.currency_id}"/></strong>
+                    </p>
+                    <p class="text-muted small">
+                        This is your money, held separately from the firm's own funds until it
+                        is applied to an invoice or returned to you.
+                    </p>
+                </t>
+            </div>
+        </t>
+    </template>
 </odoo>

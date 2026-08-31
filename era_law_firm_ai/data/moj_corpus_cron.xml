@@ -1,7 +1,11 @@
 <odoo>
-    <!-- Weekly on a Sunday, a day behind the scraper's Saturday run, so the
-         published corpus is already refreshed when we fetch it. The sync skips
-         its heavy work when nothing changed, so running often is cheap.
+    <!-- Monthly, on the first of the month. The scraper republishes every
+         Saturday, but statutes do not change at that rate: a run that finds
+         nothing new does no work beyond one fetch, and a run that finds
+         something re-embeds only the statutes whose text actually moved. The
+         cost of being up to a month behind on a royal decree is lower than the
+         cost of the weekly churn, and a firm that needs a change today has the
+         Resync button.
 
          Indexing needs no cron of its own: ai.agent.source.create() calls
          _trigger() on ai.ir_cron_generate_embedding, and that cron is shipped
@@ -16,7 +20,12 @@
         <field name="state">code</field>
         <field name="code">model._run_corpus_sync()</field>
         <field name="interval_number">1</field>
-        <field name="interval_type">weeks</field>
+        <field name="interval_type">months</field>
+        <!-- Anchored to the 1st at 02:00: Odoo adds the interval to nextcall,
+             so the anchor is what keeps it on the first of every month rather
+             than drifting to whatever day it was installed. -->
+        <field name="nextcall"
+               eval="(DateTime.now().replace(day=1, hour=2, minute=0, second=0, microsecond=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
         <field name="active" eval="True"/>
     </record>
 </odoo>

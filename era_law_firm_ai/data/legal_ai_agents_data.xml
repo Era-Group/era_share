@@ -6,6 +6,12 @@
          and nothing may be presented as a legal opinion on its own. -->
 
     <record id="agent_contract_review" model="ai.agent">
+        <!-- Set here, not only in moj_agent_target.xml: the prompt below
+             promises to cite only the attached texts, and a record that
+             carries that promise without the flag fails its own constraint
+             the moment it is created. That file still re-asserts it on
+             upgrade, which this one cannot: it is noupdate. -->
+        <field name="moj_corpus_target" eval="True"/>
         <field name="name">مراجعة العقود — Contract Review</field>
         <field name="subtitle">Extracts obligations, risks and missing clauses from a contract.</field>
         <field name="response_style">analytical</field>
@@ -26,6 +32,12 @@
     </record>
 
     <record id="agent_drafting" model="ai.agent">
+        <!-- Set here, not only in moj_agent_target.xml: the prompt below
+             promises to cite only the attached texts, and a record that
+             carries that promise without the flag fails its own constraint
+             the moment it is created. That file still re-asserts it on
+             upgrade, which this one cannot: it is noupdate. -->
+        <field name="moj_corpus_target" eval="True"/>
         <field name="name">صياغة المذكرات — Legal Drafting</field>
         <field name="subtitle">Drafts pleadings and memoranda from the firm's template and the case facts.</field>
         <field name="response_style">balanced</field>
@@ -63,6 +75,12 @@
     </record>
 
     <record id="agent_research" model="ai.agent">
+        <!-- Set here, not only in moj_agent_target.xml: the prompt below
+             promises to cite only the attached texts, and a record that
+             carries that promise without the flag fails its own constraint
+             the moment it is created. That file still re-asserts it on
+             upgrade, which this one cannot: it is noupdate. -->
+        <field name="moj_corpus_target" eval="True"/>
         <field name="name">البحث النظامي — Legal Research</field>
         <field name="subtitle">Answers statutory questions from the firm's own uploaded sources.</field>
         <field name="response_style">analytical</field>

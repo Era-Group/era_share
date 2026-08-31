@@ -5,6 +5,8 @@ numbers recalled from memory. A wrong article number in a filed memo is the
 most expensive thing this module can produce, and nothing downstream catches
 it — it looks exactly like a correct one.
 """
+from dateutil.relativedelta import relativedelta
+
 from odoo.tests.common import TransactionCase, tagged
 
 
@@ -112,3 +114,18 @@ class TestCitationGrounding(TransactionCase):
                          'Odoo adds the interval to nextcall, so the anchor is '
                          'what keeps it on the same date rather than drifting')
         self.assertTrue(cron.active)
+
+    def test_a_fresh_install_does_not_wait_a_month_for_its_corpus(self):
+        """Installed on the 3rd, a firm would otherwise wait four weeks.
+
+        Until the statutes arrive the research agent is restricted to sources
+        it does not have, and its own constraint refuses to approve it — an
+        install that looks finished and an agent that cannot be used.
+        """
+        from odoo import fields
+        from odoo.addons.era_law_firm_ai import _schedule_first_corpus_sync
+        cron = self.env.ref('era_law_firm_ai.cron_moj_corpus_sync')
+        cron.nextcall = '2099-01-02 02:00:00'
+        _schedule_first_corpus_sync(self.env)
+        self.assertLess(cron.nextcall, fields.Datetime.now() + relativedelta(minutes=1),
+                        'the first sync must be due immediately')

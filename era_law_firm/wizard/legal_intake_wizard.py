@@ -77,11 +77,13 @@ class LegalIntakeWizard(models.TransientModel):
             return []
         Check = self.env['legal.conflict.check']
         probe = Check.new({'company_id': self.env.company.id})
-        candidates = self.env['legal.case.party'].search([
+        # sudo for the same reason the real check uses it: a preview limited
+        # to the current lawyer's own book previews nothing.
+        candidates = self.env['legal.case.party'].sudo().search([
             ('company_id', '=', self.env.company.id),
             ('case_id.state', 'in', ('confirmed', 'closed')),
         ])
-        cases = self.env['legal.case'].search([
+        cases = self.env['legal.case'].sudo().search([
             ('company_id', '=', self.env.company.id),
             ('state', 'in', ('confirmed', 'closed')),
         ])

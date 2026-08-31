@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 21:57+0000\n"
-"PO-Revision-Date: 2026-08-31 21:57+0000\n"
+"POT-Creation-Date: 2026-08-31 23:02+0000\n"
+"PO-Revision-Date: 2026-08-31 23:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -72,6 +72,18 @@ msgstr "<strong>الموكِّل:</strong>"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.report_case_summary
 msgid "<strong>Court:</strong>"
 msgstr "<strong>المحكمة:</strong>"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_demo_data_wizard_form
+msgid ""
+"<strong>Try the client portal:</strong> two logins ship with the data,\n"
+"                    password <code>PortalDemo!2026</code> for both.<br/>\n"
+"                    <code>client.demo@example.sa</code> — a client with several cases:\n"
+"                    hearings, shared documents, invoices and trust money.<br/>\n"
+"                    <code>opponent.demo@example.sa</code> — the other side of seven cases,\n"
+"                    who correctly sees none of them: that emptiness is the security\n"
+"                    boundary working, not a bug."
+msgstr ""
 
 #. module: era_law_firm
 #. odoo-python
@@ -157,6 +169,15 @@ msgstr "يجب اعتماد أتعاب النجاح من مدير قانوني �
 msgid "A transfer must move between two different cases."
 msgstr "التحويل يجب أن يكون بين قضيتين مختلفتين."
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "AI Answers Needing Review"
+msgstr "إجابات الذكاء التي تحتاج مراجعة"
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "AI Needs Review"
+msgstr "ذكاء يحتاج مراجعة"
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_form
 msgid "Access Restriction"
@@ -273,10 +294,16 @@ msgid "Agreed fee for a fixed-price engagement."
 msgstr "الأتعاب المتفق عليها في العقد ذي المبلغ الثابت."
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__ai_needs_review
+msgid "Ai Needs Review"
+msgstr ""
+
+#. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/controllers/portal.py:0
 msgid "All"
 msgstr "الكل"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_document__allowed_user_ids
 msgid "Allowed User"
@@ -411,6 +438,11 @@ msgid "Approved By"
 msgstr "اعتمده"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__approved_expenses
+msgid "Approved Expenses"
+msgstr ""
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__expense_amount
 msgid ""
 "Approved and invoiced disbursements on this file, such as court fees and "
@@ -425,6 +457,11 @@ msgstr ""
 msgid "Approved documents must be archived."
 msgstr "المستندات المعتمدة تُؤرشف ولا تُحذف."
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Approved, Not Invoiced"
+msgstr "معتمدة، غير مفوترة"
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__archived
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_court_form
@@ -484,6 +521,10 @@ msgid "Available Balance"
 msgstr "الرصيد المتاح"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Awaiting Conflict Check"
+msgstr "بانتظار فحص التعارض"
+#. module: era_law_firm
 #: model:legal.case.stage,name:era_law_firm.stage_hearing
 msgid "Awaiting Hearing"
 msgstr "بانتظار جلسة"
@@ -497,6 +538,7 @@ msgstr "بانتظار حكم"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "Awaiting payment"
 msgstr "بانتظار السداد"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_list
 msgid "Balance"
@@ -526,7 +568,18 @@ msgid "Billable Hours"
 msgstr "الساعات القابلة للفوترة"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__billable_time
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Billable Time"
+msgstr "وقت قابل للفوترة"
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Billable, Not Invoiced"
+msgstr "قابل للفوترة، غير مفوتر"
+#. module: era_law_firm
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_billing
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Billing"
 msgstr "الفوترة"
 
@@ -541,6 +594,16 @@ msgstr "نوع الأتعاب"
 msgid "Blocked"
 msgstr "موقوف لتعارض"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Blocked Conflict Checks"
+msgstr "فحوص التعارض الموقوفة"
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__blocked_conflicts
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Blocked Conflicts"
+msgstr "تعارضات موقوفة"
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_finance.py:0
@@ -623,6 +686,12 @@ msgid "Case Allocation Transfer"
 msgstr "تحويل"
 
 #. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Case Load by Lawyer"
+msgstr "توزيع القضايا على المحامين"
+#. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_case_stage
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_config_stages
 msgid "Case Stages"
@@ -671,6 +740,11 @@ msgstr ""
 msgid "Cases"
 msgstr "القضايا"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Cases Awaiting a Conflict Check"
+msgstr "قضايا بانتظار فحص التعارض"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__case_count
 msgid "Cases to create"
@@ -778,6 +852,11 @@ msgstr "حساب أمانة الموكل"
 msgid "Client Trust Accounting"
 msgstr "محاسبة أمانات الموكلين"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Client Trust Accounts"
+msgstr "حسابات أمانة الموكّلين"
 #. module: era_law_firm
 #: model:account.account,name:era_law_firm.trust_bank_account_company_1
 msgid "Client Trust Bank"
@@ -1142,6 +1221,7 @@ msgstr "إنشاء فاتورة قانونية"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__create_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__create_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__create_uid
@@ -1171,6 +1251,7 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__create_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__create_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__create_date
@@ -1238,6 +1319,12 @@ msgid "Customer Portal URL"
 msgstr "رابط بوابة العميل"
 
 #. module: era_law_firm
+#: model:ir.actions.act_window,name:era_law_firm.action_legal_dashboard
+#: model:ir.ui.menu,name:era_law_firm.menu_legal_dashboard
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Dashboard"
+msgstr "لوحة القيادة"
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_time_entry__date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__date
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
@@ -1300,6 +1387,15 @@ msgstr "يجب أن تكون مدة القاعدة أكبر من صفر."
 msgid "Deadlines"
 msgstr "المواعيد النظامية"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Deadlines — Next 7 Days"
+msgstr "المهل — الأيام السبعة القادمة"
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Deadlines, 7 Days"
+msgstr "مهل ٧ أيام"
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__document_type__deed
 msgid "Deed"
@@ -1377,6 +1473,7 @@ msgstr "دائرة القضايا التعزيرية"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deletion_guard__display_name
@@ -1463,6 +1560,15 @@ msgid "Draft"
 msgstr "مسودة"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__draft_engagements
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Draft Engagements"
+msgstr "اتفاقيات مسودة"
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Draft Time"
+msgstr "وقت مسودة"
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__state
 msgid ""
 "Draft files are still being prepared. Confirming requires a valid conflict "
@@ -1516,6 +1622,11 @@ msgstr "مرجع عقد الأتعاب"
 msgid "Engagements"
 msgstr "عقود الأتعاب"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Engagements Awaiting Activation"
+msgstr "اتفاقيات بانتظار التفعيل"
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_demo.py:0
@@ -1582,6 +1693,10 @@ msgstr "قيمة المصروفات"
 msgid "Expenses"
 msgstr "المصروفات"
 
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Expenses to Invoice"
+msgstr "مصروفات للفوترة"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_document__expiry_date
 msgid "Expiry Date"
@@ -1666,6 +1781,11 @@ msgstr "أتعاب مقطوعة"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_stage__fold
 msgid "Fold"
 msgstr "مطوي"
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_home_legal
+msgid "Follow your cases, hearings and shared documents"
+msgstr ""
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__message_follower_ids
@@ -1798,9 +1918,19 @@ msgid "Hearings"
 msgstr "الجلسات"
 
 #. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "Hearings — Next 7 Days"
+msgstr "الجلسات — الأيام السبعة القادمة"
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Hearings, 7 Days"
+msgstr "جلسات ٧ أيام"
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "Held"
 msgstr "انعقدت"
+
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_document__restricted
 msgid ""
@@ -1942,6 +2072,7 @@ msgstr "كيف انتهت المسألة: الحكم، أو شروط التسو�
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__id
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deletion_guard__id
@@ -2025,6 +2156,7 @@ msgstr "عند التحديد، توجد رسائل فشل تسليمها."
 #: code:addons/era_law_firm/controllers/portal.py:0
 msgid "In Progress"
 msgstr "جارية"
+
 #. module: era_law_firm
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_document__state__review
 #: model:ir.model.fields.selection,name:era_law_firm.selection__legal_success_fee__state__review
@@ -2250,6 +2382,7 @@ msgstr "القضاء العمالي"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__write_uid
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__write_uid
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__write_uid
@@ -2279,6 +2412,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_conflict_check_line__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_court__write_date
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline_rule__write_date
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_demo_data_wizard__write_date
@@ -2305,6 +2439,10 @@ msgstr "آخر تحديث في"
 msgid "Law Firm"
 msgstr "مكتب المحاماة"
 
+#. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_legal_dashboard
+msgid "Law Firm Dashboard"
+msgstr "لوحة قيادة المكتب"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__lawyer_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__lawyer_id
@@ -2680,6 +2818,7 @@ msgstr "اسم النموذج"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "Money held in trust"
 msgstr "أموال محفوظة أمانةً"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
@@ -2718,14 +2857,39 @@ msgid "My Cases"
 msgstr "قضاياي"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_deadlines_overdue
+msgid "My Deadlines Overdue"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_deadlines_week
+msgid "My Deadlines Week"
+msgstr ""
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_document_search
 msgid "My Documents"
 msgstr "مستنداتي"
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_draft_cases
+msgid "My Draft Cases"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_draft_time
+msgid "My Draft Time"
+msgstr ""
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_hearing_search
 msgid "My Hearings"
 msgstr "جلساتي"
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_hearings_week
+msgid "My Hearings Week"
+msgstr ""
 
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_breadcrumbs
@@ -2735,10 +2899,25 @@ msgid "My Legal Cases"
 msgstr "قضاياي"
 
 #. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__my_open_cases
+msgid "My Open Cases"
+msgstr "قضاياي المفتوحة"
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_time_entry_search
 msgid "My Time"
 msgstr "أوقاتي"
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+msgid "My Unbilled Draft Time"
+msgstr "وقتي المسودة غير المفوتر"
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "My Work"
+msgstr "عملي"
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__najiz_number
 msgid "Najiz Number"
@@ -2809,6 +2988,7 @@ msgstr "قضية جديدة"
 #: code:addons/era_law_firm/controllers/portal.py:0
 msgid "Newest"
 msgstr "الأحدث"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__activity_calendar_event_id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_consultation__activity_calendar_event_id
@@ -2854,6 +3034,7 @@ msgstr "الجلسة القادمة"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "No documents have been shared on this case yet."
 msgstr "لم تُشارك مستندات على هذه القضية بعد."
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/wizard/legal_intake_wizard.py:0
@@ -3055,9 +3236,14 @@ msgid "Open"
 msgstr "مفتوح"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Open Cases"
+msgstr "قضايا مفتوحة"
+#. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_intake_wizard
 #: model:ir.model,name:era_law_firm.model_legal_intake_wizard
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_intake_wizard
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_intake_wizard_form
 msgid "Open a Case"
 msgstr "فتح قضية"
@@ -3077,6 +3263,7 @@ msgstr "افتح القضية"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
 msgid "Opened"
 msgstr "تاريخ الفتح"
+
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_intake_wizard_form
 msgid ""
@@ -3156,6 +3343,12 @@ msgid "Overdue"
 msgstr "متأخر"
 
 #. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Overdue Deadlines"
+msgstr "مهل متأخرة"
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_deadline__overdue_state
 msgid "Overdue State"
 msgstr "حالة التأخر"
@@ -3176,6 +3369,10 @@ msgid "Override Reason"
 msgstr "سبب التجاوز"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Oversight"
+msgstr "الإشراف"
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_document__owner_id
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_deadline_search
 msgid "Owner"
@@ -3185,6 +3382,7 @@ msgstr "المالك"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_legal_case
 msgid "Paid"
 msgstr "مدفوعة"
+
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__paid_amount
 msgid "Paid Amount"
@@ -3646,6 +3844,31 @@ msgid "Short code used in reports and reference lists."
 msgstr "رمز مختصر يُستخدم في التقارير والقوائم المرجعية."
 
 #. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_accountant
+msgid "Show Accountant"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_ai
+msgid "Show Ai"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_lawyer
+msgid "Show Lawyer"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_manager
+msgid "Show Manager"
+msgstr ""
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__show_supervisor
+msgid "Show Supervisor"
+msgstr ""
+
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case_party__portal_visible
 msgid ""
 "Show this party to the client in the portal. Leave off to keep a party out "
@@ -3821,6 +4044,10 @@ msgstr "مجموع كل الحركات المرحَّلة على هذا الحس
 msgid "Supreme Court"
 msgstr "المحكمة العليا"
 
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Team"
+msgstr "الفريق"
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_demo.py:0
@@ -4256,6 +4483,7 @@ msgstr "قيمة المطالبة في القضية. تُستخدم للتقار
 #: model_terms:ir.ui.view,arch_db:era_law_firm.portal_my_legal_cases
 msgid "There are no cases to show for this filter."
 msgstr "لا قضايا ضمن هذا المرشِّح."
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/wizard/legal_wizards.py:0
@@ -4316,7 +4544,9 @@ msgstr "هذه المحكمة موجودة مسبقاً لهذه المدينة.
 msgid ""
 "This is your money, held separately from the firm's own funds until it\n"
 "                        is applied to an invoice or returned to you."
-msgstr "هذا مالك، محفوظ بمعزل عن أموال المكتب حتى يُطبَّق على فاتورة أو يُعاد إليك."
+msgstr ""
+"هذا مالك، محفوظ بمعزل عن أموال المكتب حتى يُطبَّق على فاتورة أو يُعاد إليك."
+
 #. module: era_law_firm
 #: model:ir.model.constraint,message:era_law_firm.constraint_legal_jurisdiction_name_unique
 msgid "This jurisdiction already exists."
@@ -4378,6 +4608,10 @@ msgid "To Review"
 msgstr "بانتظار المراجعة"
 
 #. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Today"
+msgstr "اليوم"
+#. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__invoiced_amount
 msgid "Total of posted customer invoices linked to this case."
 msgstr "إجمالي فواتير العملاء المرحَّلة المرتبطة بهذه القضية."
@@ -4412,6 +4646,7 @@ msgstr "حساب أمانة"
 
 #. module: era_law_firm
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_trust
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Trust Accounts"
 msgstr "حسابات الأمانات"
 
@@ -4473,6 +4708,13 @@ msgstr "النوع"
 msgid "Type of the exception activity on record."
 msgstr "نوع النشاط الاستثنائي على السجل."
 
+#. module: era_law_firm
+#. odoo-python
+#: code:addons/era_law_firm/models/legal_dashboard.py:0
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__unassigned_cases
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Unassigned Cases"
+msgstr "قضايا بلا محامٍ"
 #. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_account_form
 msgid "Unfreeze"

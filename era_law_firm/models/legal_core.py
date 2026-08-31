@@ -177,7 +177,13 @@ class LegalConflictCheck(models.Model):
             rec = rec.sudo()
             rec.line_ids.unlink()
             partners = rec.case_id.client_id | rec.case_id.party_ids.mapped('partner_id')
-            candidates = Party.search([
+            # sudo, deliberately: record rules show a lawyer their own book,
+            # and a conflict check that only compares against what the current
+            # user can see is blind to the firm-wide conflicts it exists to
+            # catch — another lawyer's client is exactly the case that matters.
+            # What the hit reveals (partner, case reference, role) is the
+            # minimum a conflicts register must show to be actionable.
+            candidates = Party.sudo().search([
                 ('company_id', '=', rec.company_id.id),
                 ('case_id', '!=', rec.case_id.id),
                 ('case_id.state', 'in', ('confirmed', 'closed')),
@@ -186,7 +192,7 @@ class LegalConflictCheck(models.Model):
             # row — and taking an engagement against a former client is the
             # classic conflict. Relying on someone having added the client as a
             # party row made the most important comparison optional.
-            other_cases = self.env['legal.case'].search([
+            other_cases = self.env['legal.case'].sudo().search([
                 ('company_id', '=', rec.company_id.id),
                 ('id', '!=', rec.case_id.id),
                 ('state', 'in', ('confirmed', 'closed')),

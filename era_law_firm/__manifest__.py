@@ -1,7 +1,7 @@
 {
     'name': 'Era Saudi Law Firm Management',
     'summary': 'Cases, hearings, billing and client trust accounting for Saudi law firms',
-    'version': '19.0.26.0.0',
+    'version': '19.0.27.0.0',
     'category': 'Services',
     'author': 'Era Group',
     'email': 'info@era.net.sa',
@@ -16,6 +16,7 @@
         'data/legal_trust_setup_data.xml',
         'data/legal_judiciary_migration.xml',
         'views/legal_views.xml',
+        'views/legal_dashboard_views.xml',
         'wizard/legal_intake_views.xml',
         'views/legal_judiciary_views.xml',
         'views/legal_finance_views.xml',

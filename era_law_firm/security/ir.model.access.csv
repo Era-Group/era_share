@@ -65,3 +65,4 @@ trust_transaction_portal,trust transaction portal,model_legal_trust_transaction,
 jurisdiction_portal,jurisdiction portal,model_legal_jurisdiction,base.group_portal,1,0,0,0
 court_portal,court portal,model_legal_court,base.group_portal,1,0,0,0
 circuit_portal,circuit portal,model_legal_circuit,base.group_portal,1,0,0,0
+dashboard_staff,dashboard staff,model_legal_dashboard,group_legal_staff,1,1,1,1

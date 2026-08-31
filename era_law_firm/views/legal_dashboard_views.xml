@@ -1,0 +1,94 @@
+<odoo>
+    <record id="view_legal_dashboard_form" model="ir.ui.view">
+        <field name="name">legal.dashboard.form</field>
+        <field name="model">legal.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+                    <field name="show_lawyer" invisible="1"/>
+                    <field name="show_supervisor" invisible="1"/>
+                    <field name="show_manager" invisible="1"/>
+                    <field name="show_accountant" invisible="1"/>
+                    <field name="show_ai" invisible="1"/>
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                        <h1 class="mb-0">Today</h1>
+                        <button name="action_open_intake" type="object"
+                                string="Open a Case" class="btn btn-primary"/>
+                    </div>
+
+                    <group string="My Work" invisible="not show_lawyer">
+                        <div class="o_row flex-wrap" colspan="2">
+                            <button name="action_my_open_cases" type="object" class="oe_stat_button" icon="fa-briefcase">
+                                <field name="my_open_cases" widget="statinfo" string="Open Cases"/>
+                            </button>
+                            <button name="action_my_hearings_week" type="object" class="oe_stat_button" icon="fa-university">
+                                <field name="my_hearings_week" widget="statinfo" string="Hearings, 7 Days"/>
+                            </button>
+                            <button name="action_my_deadlines_overdue" type="object" class="oe_stat_button text-danger" icon="fa-exclamation-triangle">
+                                <field name="my_deadlines_overdue" widget="statinfo" string="Overdue Deadlines"/>
+                            </button>
+                            <button name="action_my_deadlines_week" type="object" class="oe_stat_button" icon="fa-clock-o">
+                                <field name="my_deadlines_week" widget="statinfo" string="Deadlines, 7 Days"/>
+                            </button>
+                            <button name="action_my_draft_cases" type="object" class="oe_stat_button" icon="fa-balance-scale">
+                                <field name="my_draft_cases" widget="statinfo" string="Awaiting Conflict Check"/>
+                            </button>
+                            <button name="action_my_draft_time" type="object" class="oe_stat_button" icon="fa-hourglass-half">
+                                <field name="my_draft_time" widget="statinfo" string="Draft Time"/>
+                            </button>
+                        </div>
+                    </group>
+
+                    <group string="Team" invisible="not show_supervisor">
+                        <div class="o_row flex-wrap" colspan="2">
+                            <button name="action_blocked_conflicts" type="object" class="oe_stat_button text-danger" icon="fa-ban">
+                                <field name="blocked_conflicts" widget="statinfo" string="Blocked Conflicts"/>
+                            </button>
+                            <button name="action_unassigned_cases" type="object" class="oe_stat_button" icon="fa-user-times">
+                                <field name="unassigned_cases" widget="statinfo" string="Unassigned Cases"/>
+                            </button>
+                            <button name="action_cases_by_lawyer" type="object" class="oe_stat_button" icon="fa-users" string="Case Load by Lawyer"/>
+                        </div>
+                    </group>
+
+                    <group string="Oversight" invisible="not show_manager">
+                        <div class="o_row flex-wrap" colspan="2">
+                            <button name="action_ai_needs_review" type="object" class="oe_stat_button text-warning"
+                                    icon="fa-eye" invisible="not show_ai">
+                                <field name="ai_needs_review" widget="statinfo" string="AI Needs Review"/>
+                            </button>
+                            <button name="action_trust_accounts" type="object" class="oe_stat_button" icon="fa-shield" string="Trust Accounts"/>
+                        </div>
+                    </group>
+
+                    <group string="Billing" invisible="not show_accountant">
+                        <div class="o_row flex-wrap" colspan="2">
+                            <button name="action_billable_time" type="object" class="oe_stat_button" icon="fa-money">
+                                <field name="billable_time" widget="statinfo" string="Billable Time"/>
+                            </button>
+                            <button name="action_approved_expenses" type="object" class="oe_stat_button" icon="fa-receipt">
+                                <field name="approved_expenses" widget="statinfo" string="Expenses to Invoice"/>
+                            </button>
+                            <button name="action_draft_engagements" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                                <field name="draft_engagements" widget="statinfo" string="Draft Engagements"/>
+                            </button>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">legal.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Sequence 5: clicking the app's root opens its first child, and the
+         landing everyone asked for is this, with Cases one click away. -->
+    <menuitem id="menu_legal_dashboard" name="Dashboard"
+              parent="menu_legal_root" action="action_legal_dashboard" sequence="5"/>
+</odoo>

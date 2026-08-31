@@ -12,3 +12,4 @@ from . import legal_help
 from . import legal_defaults
 from . import legal_next_step
 from . import legal_portal_surface
+from . import legal_dashboard

@@ -12,7 +12,12 @@ Read the bytes ourselves when the ASCII pass came back empty. This is scoped to
 the AI content extractor: ``index_content`` and attachment search are untouched,
 so no reindexing of existing attachments is required.
 """
-from odoo import models
+import logging
+
+from odoo import api, models
+
+
+_logger = logging.getLogger(__name__)
 
 
 class IrAttachment(models.Model):
@@ -46,3 +51,39 @@ class IrAttachment(models.Model):
         if len({w.lower() for w in text.split()}) < self._MIN_UNIQUE_WORDS:
             return None
         return text
+
+
+    @api.ondelete(at_uninstall=False)
+    def _rehome_embeddings_before_unlink(self):
+        """Hand a doomed attachment's chunks to a surviving twin.
+
+        Chunks are created once per ``(checksum, embedding_model)`` and live
+        under whichever attachment happened to be first; every other copy of
+        the same file is skipped as already done. Deleting that one attachment
+        therefore destroys the index for every source that shared it, while
+        those sources go on reporting "indexed" — no error, no log, the statute
+        simply stops being cited.
+
+        Retrieval matches on ``ir_attachment.checksum``, not on the attachment
+        id, so the rows are equally valid under any twin. Move them instead of
+        losing them.
+        """
+        embeddings = self.env["ai.embedding"].sudo()
+        doomed = self.filtered(lambda a: a.checksum)
+        if not doomed:
+            return
+        held = embeddings.search([("attachment_id", "in", doomed.ids)])
+        if not held:
+            return
+        for checksum, chunks in held.grouped(lambda e: e.attachment_id.checksum).items():
+            survivor = self.sudo().search([
+                ("checksum", "=", checksum),
+                ("id", "not in", self.ids),
+            ], limit=1)
+            if not survivor:
+                continue  # nothing to inherit them; let them go with the file
+            chunks.write({"attachment_id": survivor.id})
+            _logger.info(
+                "Moved %s embedding chunk(s) to attachment %s so deleting %s "
+                "does not unindex the copies that share its content",
+                len(chunks), survivor.id, checksum[:12])

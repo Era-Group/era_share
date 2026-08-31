@@ -3029,3 +3029,46 @@ class TestEmbeddingRouting(TransactionCase):
         self.assertNotIn("urllib", (captured["agent"] or "").lower())
         self.assertEqual(captured["url"], "https://embed.example/health",
                          "the /v1 suffix is dropped for the health path")
+
+    def _twin_attachments(self):
+        """Two attachments holding byte-identical content, as the corpus makes."""
+        raw = "المادة الأولى من النظام".encode()
+        return (
+            self.env["ir.attachment"].create({
+                "name": "نظام.txt", "raw": raw, "mimetype": "text/plain"}),
+            self.env["ir.attachment"].create({
+                "name": "نظام.txt", "raw": raw, "mimetype": "text/plain"}),
+        )
+
+    def test_deleting_one_copy_hands_its_chunks_to_the_other(self):
+        """Chunks live under one attachment and serve every copy of the file.
+
+        Retrieval matches on checksum, so losing the holder silently unindexes
+        every peer while they go on reporting "indexed".
+        """
+        holder, twin = self._twin_attachments()
+        self.assertEqual(holder.checksum, twin.checksum, "same bytes, same checksum")
+        chunk = self.env["ai.embedding"].create({
+            "attachment_id": holder.id, "content": "passage: مادة",
+            "embedding_model": "custom_llm/text-embedding-3-small",
+        })
+        holder.unlink()
+        self.assertTrue(chunk.exists(), "the chunk must outlive the attachment")
+        self.assertEqual(chunk.attachment_id, twin, "and belong to the survivor")
+
+    def test_the_last_copy_takes_its_chunks_with_it(self):
+        """With no twin to inherit them, the rows are genuinely obsolete."""
+        holder, twin = self._twin_attachments()
+        chunk = self.env["ai.embedding"].create({
+            "attachment_id": holder.id, "content": "passage: مادة",
+            "embedding_model": "custom_llm/text-embedding-3-small",
+        })
+        twin.unlink()
+        holder.unlink()
+        self.assertFalse(chunk.exists())
+
+    def test_an_attachment_with_no_chunks_deletes_normally(self):
+        attachment = self.env["ir.attachment"].create({
+            "name": "x.txt", "raw": b"unrelated", "mimetype": "text/plain"})
+        attachment.unlink()
+        self.assertFalse(attachment.exists())

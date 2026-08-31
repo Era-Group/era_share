@@ -16,6 +16,11 @@ class TestDemoPortalAccounts(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # The loader refuses to adopt a login someone else already owns, so
+        # clear the two names first (inside the test transaction) to test the
+        # loader's own lifecycle rather than whatever this database holds.
+        cls.env['res.users'].sudo().search(
+            [('login', 'in', (PORTAL_CLIENT_LOGIN, PORTAL_OPPONENT_LOGIN))]).unlink()
         cls.cases = cls.env['legal.demo.data']._generate(6)
 
     def _user(self, login):
@@ -46,6 +51,18 @@ class TestDemoPortalAccounts(TransactionCase):
         self.assertFalse(self.env['legal.case'].sudo().search_count([
             ('client_id.commercial_partner_id', '=',
              user.partner_id.commercial_partner_id.id)]))
+
+    def test_an_existing_login_is_left_alone(self):
+        """Adoption would reset a password we do not own and delete an account
+        we did not make."""
+        stranger = self.env['res.users'].sudo().create({
+            'name': 'صاحب الحساب', 'login': PORTAL_OPPONENT_LOGIN,
+            'partner_id': self.env['res.partner'].create({'name': 'غريب'}).id,
+            'group_ids': [(6, 0, [self.env.ref('base.group_portal').id])]})
+        self.env['legal.demo.data']._generate(3)
+        self.assertTrue(stranger.exists(), 'the loader must not delete it')
+        self.env['legal.demo.data']._purge()
+        self.assertTrue(stranger.exists(), 'nor may the purge')
 
     def test_purge_takes_the_logins_with_it(self):
         self.env['legal.demo.data']._purge()

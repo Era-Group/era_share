@@ -25,56 +25,56 @@
                         <div class="row g-2">
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_open_cases" type="object" class="o_legal_tile">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-briefcase" role="img" aria-label="Open Cases"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_open_cases"/></span>
-                                        <span class="o_legal_tile_label">Open Cases</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-briefcase" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_open_cases" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Open Cases</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_hearings_week" type="object" class="o_legal_tile o_legal_tile_info">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-university" role="img" aria-label="Hearings, 7 Days"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_hearings_week"/></span>
-                                        <span class="o_legal_tile_label">Hearings, 7 Days</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-university" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_hearings_week" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Hearings, 7 Days</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_deadlines_overdue" type="object" class="o_legal_tile o_legal_tile_danger">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-exclamation-triangle" role="img" aria-label="Overdue Deadlines"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_deadlines_overdue"/></span>
-                                        <span class="o_legal_tile_label">Overdue Deadlines</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-exclamation-triangle" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_deadlines_overdue" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Overdue Deadlines</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_deadlines_week" type="object" class="o_legal_tile o_legal_tile_warning">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-clock-o" role="img" aria-label="Deadlines, 7 Days"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_deadlines_week"/></span>
-                                        <span class="o_legal_tile_label">Deadlines, 7 Days</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-clock-o" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_deadlines_week" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Deadlines, 7 Days</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_draft_cases" type="object" class="o_legal_tile">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-balance-scale" role="img" aria-label="Awaiting Conflict Check"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_draft_cases"/></span>
-                                        <span class="o_legal_tile_label">Awaiting Conflict Check</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-balance-scale" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_draft_cases" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Awaiting Conflict Check</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_draft_time" type="object" class="o_legal_tile">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-hourglass-half" role="img" aria-label="Draft Time"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="my_draft_time"/></span>
-                                        <span class="o_legal_tile_label">Draft Time</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-hourglass-half" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="my_draft_time" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Draft Time</div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -85,28 +85,28 @@
                         <div class="row g-2">
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_blocked_conflicts" type="object" class="o_legal_tile o_legal_tile_danger">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-ban" role="img" aria-label="Blocked Conflicts"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="blocked_conflicts"/></span>
-                                        <span class="o_legal_tile_label">Blocked Conflicts</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-ban" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="blocked_conflicts" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Blocked Conflicts</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_unassigned_cases" type="object" class="o_legal_tile o_legal_tile_warning">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-user-times" role="img" aria-label="Unassigned Cases"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="unassigned_cases"/></span>
-                                        <span class="o_legal_tile_label">Unassigned Cases</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-user-times" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="unassigned_cases" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Unassigned Cases</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_cases_by_lawyer" type="object" class="o_legal_tile">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-users" role="img" aria-label="Case Load by Lawyer"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_label">Case Load by Lawyer</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-users" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_label">Case Load by Lawyer</div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -117,19 +117,19 @@
                         <div class="row g-2">
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_ai_needs_review" type="object" class="o_legal_tile o_legal_tile_warning">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-eye" role="img" aria-label="AI Needs Review"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="ai_needs_review"/></span>
-                                        <span class="o_legal_tile_label">AI Needs Review</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-eye" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="ai_needs_review" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">AI Needs Review</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_trust_accounts" type="object" class="o_legal_tile o_legal_tile_success">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-shield" role="img" aria-label="Trust Accounts"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_label">Trust Accounts</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-shield" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_label">Trust Accounts</div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -140,29 +140,29 @@
                         <div class="row g-2">
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_billable_time" type="object" class="o_legal_tile o_legal_tile_success">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-money" role="img" aria-label="Billable Time"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="billable_time"/></span>
-                                        <span class="o_legal_tile_label">Billable Time</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-money" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="billable_time" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Billable Time</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_approved_expenses" type="object" class="o_legal_tile o_legal_tile_success">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-file-text-o" role="img" aria-label="Expenses to Invoice"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="approved_expenses"/></span>
-                                        <span class="o_legal_tile_label">Expenses to Invoice</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-file-text-o" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="approved_expenses" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Expenses to Invoice</div>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_draft_engagements" type="object" class="o_legal_tile">
-                                    <span class="o_legal_tile_icon"><i class="fa fa-handshake-o" role="img" aria-label="Draft Engagements"/></span>
-                                    <span class="o_legal_tile_body">
-                                        <span class="o_legal_tile_count"><field name="draft_engagements"/></span>
-                                        <span class="o_legal_tile_label">Draft Engagements</span>
-                                    </span>
+                                    <div class="o_legal_tile_icon"><i class="fa fa-handshake-o" role="img"/></div>
+                                    <div class="o_legal_tile_body">
+                                        <div class="o_legal_tile_count"><field name="draft_engagements" nolabel="1"/></div>
+                                        <div class="o_legal_tile_label">Draft Engagements</div>
+                                    </div>
                                 </button>
                             </div>
                         </div>

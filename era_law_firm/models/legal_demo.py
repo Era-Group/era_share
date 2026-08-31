@@ -425,14 +425,22 @@ class LegalDemoData(models.AbstractModel):
             return
 
         def ensure(login, partner):
-            user = Users.search([('login', '=', login)], limit=1)
-            if not user:
-                user = Users.create({
-                    'name': partner.name, 'login': login,
-                    'password': PORTAL_DEMO_PASSWORD, 'partner_id': partner.id,
-                    'lang': 'ar_001',
-                    'group_ids': [(6, 0, [self.env.ref('base.group_portal').id])]})
-                self._tag(user, 'portal_user_%s' % login.split('@')[0].replace('.', '_'))
+            existing = Users.search([('login', '=', login)], limit=1)
+            if existing:
+                # Someone already owns this login. Adopting it would mean
+                # resetting a password that is not ours and deleting an account
+                # we did not make; say so and leave it alone.
+                _logger.warning(
+                    'era_law_firm: portal demo login %s already exists; leaving it '
+                    'untouched, so its own password applies, not %s.',
+                    login, PORTAL_DEMO_PASSWORD)
+                return existing
+            user = Users.create({
+                'name': partner.name, 'login': login,
+                'password': PORTAL_DEMO_PASSWORD, 'partner_id': partner.id,
+                'lang': 'ar_001',
+                'group_ids': [(6, 0, [self.env.ref('base.group_portal').id])]})
+            self._tag(user, 'portal_user_%s' % login.split('@')[0].replace('.', '_'))
             return user
 
         richest = max(visible.mapped('client_id'), key=lambda partner: len(
@@ -471,9 +479,12 @@ class LegalDemoData(models.AbstractModel):
         def tagged(model):
             return self.env[model].sudo().browse(index.get(model, [])).exists()
 
-        # 0. portal demo logins go first: a res.users row restricts deleting
-        #    its partner, and the partners are about to be swept as demo data.
-        tagged('res.users').unlink()
+        # 0. the two portal logins go first: a res.users row restricts deleting
+        #    its partner, and those partners are swept below as demo data.
+        #    Only those two — the demo LAWYER users are tagged as well, and
+        #    hearings reference them, so they wait for the sweep at the end.
+        portal_logins = (PORTAL_CLIENT_LOGIN, PORTAL_OPPONENT_LOGIN)
+        tagged('res.users').filtered(lambda user: user.login in portal_logins).unlink()
 
         cases = tagged('legal.case')
         engagements = self.env['legal.engagement'].sudo().search([('case_id', 'in', cases.ids)])

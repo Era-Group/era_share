@@ -6,6 +6,8 @@ the list shows 5 teaches people to ignore both. And each role sees its own
 sections: the supervisor's team numbers do not render for a lawyer, and the
 lawyer's numbers are scoped to them.
 """
+from datetime import timedelta
+
 from odoo import fields
 from odoo.tests.common import TransactionCase, tagged
 
@@ -68,7 +70,7 @@ class TestDashboard(TransactionCase):
         case = self._case_for(self.lawyer)
         self.env['legal.deadline'].create({
             'name': 'فات موعدها', 'case_id': case.id, 'user_id': self.lawyer.id,
-            'deadline_date': fields.Date.today() - fields.date_utils.relativedelta(days=3),
+            'deadline_date': fields.Date.today() - timedelta(days=3),
             'source': 'يدوي', 'state': 'confirmed', 'company_id': self.env.company.id})
         board = self._dashboard(self.lawyer)
         self.assertEqual(board.my_deadlines_overdue, 1)

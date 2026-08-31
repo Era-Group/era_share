@@ -25,6 +25,12 @@ class LegalDashboard(models.TransientModel):
 
     headline = fields.Char(readonly=True)
 
+    @api.depends_context('lang')
+    def _compute_display_name(self):
+        # Without this the breadcrumb and browser tab read "legal.dashboard,12".
+        for record in self:
+            record.display_name = record.env._('Dashboard')
+
     # role visibility — resolved server-side, not left to view groups alone,
     # so tests can assert who sees what
     show_lawyer = fields.Boolean(readonly=True)

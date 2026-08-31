@@ -3072,3 +3072,47 @@ class TestEmbeddingRouting(TransactionCase):
             "name": "x.txt", "raw": b"unrelated", "mimetype": "text/plain"})
         attachment.unlink()
         self.assertFalse(attachment.exists())
+
+    def test_a_source_embedded_via_a_sibling_is_marked_indexed(self):
+        """is_active gates retrieval, so 'processing' means invisible.
+
+        Chunks are shared by (checksum, embedding_model). A source whose file
+        was already chunked for another agent never gets a batch of its own,
+        so core never flips its status — and it contributes to no answer while
+        every one of its vectors sits ready.
+        """
+        raw = "المادة الأولى من النظام".encode()
+        first_agent = self.env["ai.agent"].create({
+            "name": "A", "llm_model": "custom_llm/custom"})
+        second_agent = self.env["ai.agent"].create({
+            "name": "B", "llm_model": "custom_llm/custom"})
+        attachments = [self.env["ir.attachment"].create({
+            "name": "نظام.txt", "raw": raw, "mimetype": "text/plain"}) for _ in range(2)]
+        self.env["ai.embedding"].create({
+            "attachment_id": attachments[0].id, "content": "passage: مادة",
+            "embedding_model": first_agent._get_embedding_model(),
+            "embedding_vector": [0.1] * 1536,
+        })
+        sibling = self.env["ai.agent.source"].create({
+            "agent_id": second_agent.id, "attachment_id": attachments[1].id,
+            "type": "binary", "status": "processing", "is_active": False,
+        })
+        self.assertIn(sibling, self.env["ai.embedding"]._close_out_fully_embedded_sources())
+        self.assertEqual(sibling.status, "indexed")
+        self.assertTrue(sibling.is_active, "otherwise it is excluded from retrieval")
+
+    def test_a_source_still_missing_vectors_is_left_processing(self):
+        agent = self.env["ai.agent"].create({
+            "name": "C", "llm_model": "custom_llm/custom"})
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام2.txt", "raw": b"text", "mimetype": "text/plain"})
+        self.env["ai.embedding"].create({
+            "attachment_id": attachment.id, "content": "passage: مادة",
+            "embedding_model": agent._get_embedding_model(),
+        })
+        source = self.env["ai.agent.source"].create({
+            "agent_id": agent.id, "attachment_id": attachment.id,
+            "type": "binary", "status": "processing",
+        })
+        self.assertNotIn(source, self.env["ai.embedding"]._close_out_fully_embedded_sources())
+        self.assertEqual(source.status, "processing")

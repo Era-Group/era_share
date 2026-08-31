@@ -38,7 +38,46 @@ class AIEmbedding(models.Model):
         """
         self._reopen_sources_without_embeddings()
         self._clear_stale_failure_flags()
-        return super()._cron_generate_embedding(batch_size=batch_size)
+        result = super()._cron_generate_embedding(batch_size=batch_size)
+        self._close_out_fully_embedded_sources()
+        return result
+
+    def _close_out_fully_embedded_sources(self):
+        """Mark a source indexed when its chunks were embedded for a sibling.
+
+        Core flips status and is_active while processing a batch. A source
+        whose file was already chunked for another agent never has a batch of
+        its own — the chunks are shared by ``(checksum, embedding_model)`` —
+        so it sits in ``processing`` with every vector present.
+
+        That is not cosmetic. ``is_active`` gates retrieval outright
+        (``ai_embedding._get_similar_chunks`` filters on it), so the statute is
+        fully indexed and contributes to nothing, with no error to notice.
+        Two statutes were in that state after a corpus expansion.
+        """
+        pending = self.env["ai.agent.source"].sudo().search([
+            ("status", "=", "processing"),
+            ("attachment_id", "!=", False),
+        ])
+        closed = pending.browse()
+        for source in pending:
+            domain = [
+                ("checksum", "=", source.attachment_id.checksum),
+                ("embedding_model", "=", source.agent_id._get_embedding_model()),
+            ]
+            if not self.sudo().search_count(domain):
+                continue  # nothing embedded yet; leave it to the cron
+            if self.sudo().search_count(domain + [("embedding_vector", "=", False)]):
+                continue  # still mid-flight
+            closed |= source
+        if closed:
+            _logger.info(
+                "Marking %s source(s) indexed: their chunks were embedded under "
+                "a sibling attachment, so no batch of their own ever ran",
+                len(closed))
+            closed.write({"status": "indexed", "is_active": True,
+                          "error_details": False})
+        return closed
 
     def _clear_stale_failure_flags(self):
         """Let "put the source back to processing" actually mean retry.

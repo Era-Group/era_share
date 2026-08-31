@@ -6,3 +6,4 @@ from . import test_moj_citation_links
 from . import test_moj_repealed_marking
 from . import test_agent_citation_grounding
 from . import test_citation_audit
+from . import test_lawyer_can_work

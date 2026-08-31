@@ -81,11 +81,24 @@ class LegalIntakeWizard(models.TransientModel):
             ('company_id', '=', self.env.company.id),
             ('case_id.state', 'in', ('confirmed', 'closed')),
         ])
-        hits = []
-        for candidate in candidates:
-            basis = probe._conflict_basis(partners, candidate.partner_id)
+        cases = self.env['legal.case'].search([
+            ('company_id', '=', self.env.company.id),
+            ('state', 'in', ('confirmed', 'closed')),
+        ])
+        # Same pool as the real check: party rows plus other files' clients —
+        # a preview that misses the former-client case teaches the wrong lesson.
+        # Party rows compare against everyone named; other files' clients only
+        # against the opposing side — a returning client is not a conflict.
+        pool = [(c.partner_id, c.case_id, partners) for c in candidates]
+        pool += [(c.client_id, c, self.opponent_ids) for c in cases if c.client_id]
+        hits, seen = [], set()
+        for partner, case, against in pool:
+            if (partner.id, case.id) in seen:
+                continue
+            basis = probe._conflict_basis(against, partner)
             if basis:
-                hits.append((candidate.partner_id, candidate.case_id, basis))
+                seen.add((partner.id, case.id))
+                hits.append((partner, case, basis))
         return hits
 
     @api.model

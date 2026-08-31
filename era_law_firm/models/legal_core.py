@@ -1,3 +1,4 @@
+import hashlib
 import re
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -94,15 +95,26 @@ class LegalCase(models.Model):
         return super().unlink()
 
     def _party_signature(self):
+        """A fingerprint of who is on the file, safe to store and compare.
+
+        Two constraints shape it. Identity numbers are readable by legal
+        managers only, yet the comparison needs them — so they are read with
+        sudo, as system logic that uses the number without showing it. And the
+        signature is stored on the conflict check, which a lawyer can read, so
+        the raw values must not survive into it: storing them plainly would
+        hand every restricted identity number to anyone who can open a check.
+        It is hashed; equality is all it is ever used for.
+        """
         self.ensure_one()
         values = [('client', self.client_id)] + [(line.role, line.partner_id) for line in self.party_ids]
         normalized = []
         for role, partner in values:
+            partner = partner.sudo()
             identity = re.sub(r'\D', '', partner.legal_identity_number or '')
             registration = re.sub(r'\D', '', partner.legal_registration_number or '')
             phone = re.sub(r'\D', '', partner.phone or '')[-9:]
             normalized.append('|'.join((role or '', re.sub(r'\s+', ' ', (partner.name or '').strip().lower()), identity, registration, phone, (partner.email or '').strip().lower())))
-        return '\n'.join(sorted(normalized))
+        return hashlib.sha256('\n'.join(sorted(normalized)).encode()).hexdigest()
 
     def init(self):
         self.env.cr.execute('ALTER TABLE legal_case DROP CONSTRAINT IF EXISTS legal_case_najiz_unique')
@@ -158,6 +170,11 @@ class LegalConflictCheck(models.Model):
         """
         Party = self.env['legal.case.party']
         for rec in self:
+            # The findings are the system's record, not the lawyer's: a lawyer
+            # may run the check (ACL gives read-only on the lines), and sudo
+            # here is what lets the run record what it found — while keeping
+            # the lines untouchable by hand, which is the point of them.
+            rec = rec.sudo()
             rec.line_ids.unlink()
             partners = rec.case_id.client_id | rec.case_id.party_ids.mapped('partner_id')
             candidates = Party.search([
@@ -165,14 +182,37 @@ class LegalConflictCheck(models.Model):
                 ('case_id', '!=', rec.case_id.id),
                 ('case_id.state', 'in', ('confirmed', 'closed')),
             ])
-            hits = []
-            for candidate in candidates:
-                basis = rec._conflict_basis(partners, candidate.partner_id)
+            # Other files' clients live on client_id, not necessarily in a party
+            # row — and taking an engagement against a former client is the
+            # classic conflict. Relying on someone having added the client as a
+            # party row made the most important comparison optional.
+            other_cases = self.env['legal.case'].search([
+                ('company_id', '=', rec.company_id.id),
+                ('id', '!=', rec.case_id.id),
+                ('state', 'in', ('confirmed', 'closed')),
+            ])
+            # Two comparisons with different scopes. Party rows are compared
+            # against everyone on the new file, as before. Other files' clients
+            # are compared against the new file's OPPOSING side only: acting
+            # against a former client is the classic conflict, while acting for
+            # the same client on a second matter is a Tuesday — comparing their
+            # client against our client would block every returning client.
+            opposing = rec.case_id.party_ids.filtered(
+                lambda party: party.role != 'client').mapped('partner_id')
+            pool = [(c.partner_id, c.case_id, c.role, partners) for c in candidates]
+            pool += [(c.client_id, c, 'client', opposing) for c in other_cases if c.client_id]
+            hits, seen = [], set()
+            for partner, source_case, role, against in pool:
+                key = (partner.id, source_case.id)
+                if key in seen:
+                    continue
+                basis = rec._conflict_basis(against, partner)
                 if basis:
+                    seen.add(key)
                     hits.append((0, 0, {
-                        'partner_id': candidate.partner_id.id,
-                        'source_case_id': candidate.case_id.id,
-                        'role': candidate.role,
+                        'partner_id': partner.id,
+                        'source_case_id': source_case.id,
+                        'role': role,
                         'match_basis': basis,
                     }))
             rec.write({
@@ -186,6 +226,9 @@ class LegalConflictCheck(models.Model):
     def _identity_keys(self, partner):
         """Identity numbers reduced to digits and letters, so formatting differs harmlessly."""
         keys = set()
+        # sudo: the comparison needs the number, the user never sees it — the
+        # match reports 'same ID number' as its basis, not the number itself.
+        partner = partner.sudo()
         for value in (partner.legal_identity_number, partner.legal_registration_number):
             cleaned = re.sub(r'[^0-9a-zA-Z]', '', value or '')
             if len(cleaned) >= 6:  # too short to identify anyone

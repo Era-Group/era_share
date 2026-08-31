@@ -16,7 +16,13 @@ class LegalAIRequest(models.Model):
             if r.document_id and r.document_id.ai_classification=='blocked':raise UserError(_('This document is blocked from AI processing.'))
             if r.case_id and not self.env.user.can_access_legal_case(r.case_id):raise UserError(_('You cannot send a case you cannot access.'))
             requested={item.strip() for item in (r.fields_sent or '').split(',') if item.strip()}
-            if not requested or not requested <= self._ALLOWED_FIELDS:raise UserError(_('The AI request contains fields that are not allowed by policy.'))
+            # No ticks is legitimate: a research question needs no case data, and
+            # the free-text instructions pass through the same redaction. What the
+            # policy forbids is a tick outside the catalogue — and the refusal
+            # names the offenders, because 'not allowed' without saying which was
+            # this module's least helpful sentence.
+            disallowed=requested - self._ALLOWED_FIELDS
+            if disallowed:raise UserError(_('These entries are outside the approved catalogue and cannot be sent: %s', ', '.join(sorted(disallowed))))
 
     @staticmethod
     def _redact(value):
@@ -33,7 +39,21 @@ class LegalAIRequest(models.Model):
         self.write({'consent_user_id':self.env.user.id,'consent_date':fields.Datetime.now(),'state':'approved'})
     def action_send(self):
         for r in self:
-            r._check_provider_policy();payload=r._prepare_redacted_payload();digest=hashlib.sha256(payload.encode()).hexdigest();r.write({'input_payload':False,'instructions_sent':r._redact(r.input_payload or ''),'redacted_payload':payload,'payload_hash':digest,'state':'sent'});r.env['legal.audit.log'].log(r,'ai_send',['purpose','fields_sent','payload_hash'])
+            r._check_provider_policy()
+            payload = r._prepare_redacted_payload()
+            # Every tick may point at an empty value on this particular case, and
+            # the instructions box may be blank — the request looks ready and
+            # would dispatch nothing: a consent burned on an empty prompt, and a
+            # model answering from no context while appearing to answer the case.
+            if not payload.strip():
+                raise UserError(_('Nothing would be sent: the ticked entries are empty on this case and there are no instructions. Tick entries that carry a value, or write what you need in the instructions box.'))
+            digest = hashlib.sha256(payload.encode()).hexdigest()
+            r.write({'input_payload': False,
+                     'instructions_sent': r._redact(r.input_payload or ''),
+                     'redacted_payload': payload,
+                     'payload_hash': digest,
+                     'state': 'sent'})
+            r.env['legal.audit.log'].log(r, 'ai_send', ['purpose', 'fields_sent', 'payload_hash'])
             r._dispatch_to_provider(payload)
     def _store_sanitized_response(self,response):self.ensure_one();self.write({'sanitized_response':self._redact(response)[:100000],'state':'done'})
     def action_reject(self):self.write({'state':'rejected'})

@@ -118,3 +118,23 @@ class TestConflictMatching(TransactionCase):
         self._case('قديمة', 'confirmed', [(first, 'opponent')])
         check = self._check(self._case('جديدة', 'draft', [(other, 'opponent')]))
         self.assertEqual(check.state, 'clear')
+
+    def test_taking_an_engagement_against_a_former_client_is_caught(self):
+        """The classic conflict. Former clients live on client_id, not in a
+        party row, and nothing guarantees anyone added them as one — the most
+        important comparison must not be optional."""
+        former = self.env['res.partner'].create({'name': 'موكّل سابق'})
+        old_case = self.env['legal.case'].create({
+            'name': 'ملف قديم', 'client_id': former.id, 'lawyer_id': self.env.user.id,
+            'case_type': 'litigation', 'company_id': self.company.id,
+            'stage_id': self.env.ref('era_law_firm.stage_intake').id})
+        self.env['legal.conflict.check'].create({
+            'case_id': old_case.id, 'company_id': self.company.id}).action_run_check()
+        old_case.action_confirm()
+
+        new_case = self._case('ضد الموكّل السابق', 'draft', [(former, 'opponent')])
+        check = self._check(new_case)
+        self.assertEqual(check.state, 'blocked')
+        self.assertEqual(check.line_ids.source_case_id, old_case)
+        self.assertEqual(check.line_ids.role, 'client',
+                         'the hit names them as the other file\'s client')

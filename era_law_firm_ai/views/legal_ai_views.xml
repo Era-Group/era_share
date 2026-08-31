@@ -7,7 +7,10 @@
         <field name="model">legal.ai.request</field>
         <field name="arch" type="xml">
             <list decoration-success="state == 'done'" decoration-danger="state == 'rejected'"
-                  decoration-muted="state == 'cancelled'">
+                  decoration-muted="state == 'cancelled'"
+                  decoration-warning="cited_repealed or cited_nothing">
+                <field name="cited_repealed" column_invisible="1"/>
+                <field name="cited_nothing" column_invisible="1"/>
                 <field name="purpose"/>
                 <field name="agent_id"/>
                 <field name="case_id"/>
@@ -30,6 +33,10 @@
                 <field name="consent_user_id"/>
                 <filter name="pending" string="Pending" domain="[('state','in',('draft','approved','sent'))]"/>
                 <filter name="done" string="Completed" domain="[('state','=','done')]"/>
+                <separator/>
+                <filter name="needs_review" string="Needs Review"
+                        domain="['|', ('cited_repealed','=',True), ('cited_nothing','=',True)]"
+                        help="Answers that cited a repealed statute, or that cited nothing at all"/>
                 <group name="group_by">
                     <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
@@ -141,6 +148,16 @@
                          same text. The field itself remains as the audit record. -->
                     <div class="mt-4" invisible="not sanitized_response">
                         <separator string="Response"/>
+                        <field name="cited_repealed" invisible="1"/>
+                        <field name="cited_nothing" invisible="1"/>
+                        <div class="alert alert-danger" role="alert" invisible="not cited_repealed">
+                            This answer relied on a statute that is no longer in force.
+                            Check the text currently in force before acting on it.
+                        </div>
+                        <div class="alert alert-warning" role="alert" invisible="not cited_nothing">
+                            This agent answers only from its attached sources, and this
+                            answer cited none. Treat it as unsupported opinion.
+                        </div>
                         <field name="redacted_payload" invisible="1"/>
                         <field name="sanitized_response" nolabel="1" readonly="1"/>
                     </div>

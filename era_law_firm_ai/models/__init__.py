@@ -8,3 +8,4 @@ from . import legal_charter
 from . import ai_help
 from . import legal_corpus
 from . import ai_source_citation
+from . import ai_citation_audit

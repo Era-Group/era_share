@@ -13,7 +13,7 @@ Re-sync the frozen copy once the registry is built.
 """
 import logging
 
-from odoo import models
+from odoo import _, api, models
 
 from odoo.addons.ai.utils.llm_providers import EMBEDDING_MODELS_SELECTION
 
@@ -160,3 +160,70 @@ class AIEmbedding(models.Model):
             for value, label in EMBEDDING_MODELS_SELECTION:
                 frozen.setdefault(value, label)
         return super()._register_hook()
+
+    # ------------------------------------------------------------------
+    # Availability
+    # ------------------------------------------------------------------
+    _ENDPOINT_ACTIVITY_SUMMARY = "Embeddings endpoint unreachable"
+
+    @api.model
+    def _cron_check_embedding_endpoint(self):
+        """Notice the embeddings endpoint is down before a lawyer does.
+
+        Losing it is not a partial failure: indexing stops, and so does
+        retrieval, because the question itself has to be embedded before
+        anything can be found. A source-restricted agent then has nothing to
+        answer from. The only existing signal was a status line on the
+        settings page, which reports the truth to whoever happens to open it.
+
+        One activity, reused rather than repeated — a daily alert that stacks
+        up becomes something people close without reading.
+        """
+        settings = self.env["res.config.settings"].sudo().new({})
+        reachable, detail = settings._probe_embedding_endpoint(
+            settings.custom_llm_embedding_base_url or settings.custom_llm_base_url)
+        partner = self.env.company.partner_id
+        existing = self.env["mail.activity"].sudo().search([
+            ("res_model", "=", "res.partner"),
+            ("res_id", "=", partner.id),
+            ("summary", "=", self._ENDPOINT_ACTIVITY_SUMMARY),
+        ], limit=1)
+
+        if reachable:
+            if existing:
+                existing.action_feedback(feedback=_("Endpoint answering again: %s", detail))
+                _logger.info("Embeddings endpoint is back: %s", detail)
+            return True
+
+        _logger.error(
+            "Embeddings endpoint is not answering (%s). Indexing and retrieval "
+            "are both down until it returns.", detail)
+        note = _(
+            "The embeddings service did not answer: %(detail)s\n\n"
+            "While it is down, knowledge sources cannot be indexed and agents "
+            "cannot search the ones they have — a source-restricted agent has "
+            "nothing to answer from. Check the service on its host, then reopen "
+            "Settings to confirm the status line reads Running.", detail=detail)
+        if existing:
+            existing.write({"note": note})
+            return False
+        self.env["mail.activity"].sudo().create({
+            "res_model_id": self.env["ir.model"]._get_id("res.partner"),
+            "res_id": partner.id,
+            "activity_type_id": self.env.ref("mail.mail_activity_data_todo").id,
+            "summary": self._ENDPOINT_ACTIVITY_SUMMARY,
+            "note": note,
+            "user_id": self._endpoint_alert_user().id,
+        })
+        return False
+
+    @api.model
+    def _endpoint_alert_user(self):
+        """Someone who can actually act on it, falling back to the superuser."""
+        admin = self.env["res.users"].sudo().search([
+            # Odoo 19 renamed res.users.groups_id to group_ids; all_group_ids
+            # also covers membership inherited through an implied group.
+            ("all_group_ids", "in", self.env.ref("base.group_system").ids),
+            ("active", "=", True),
+        ], order="id", limit=1)
+        return admin or self.env.ref("base.user_root")

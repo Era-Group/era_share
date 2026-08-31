@@ -3116,3 +3116,52 @@ class TestEmbeddingRouting(TransactionCase):
         })
         self.assertNotIn(source, self.env["ai.embedding"]._close_out_fully_embedded_sources())
         self.assertEqual(source.status, "processing")
+
+    def test_a_dead_endpoint_raises_an_activity(self):
+        """Losing the endpoint stops retrieval too, so it cannot pass unnoticed."""
+        Embedding = self.env["ai.embedding"]
+        with patch.object(
+            type(self.env["res.config.settings"]), "_probe_embedding_endpoint",
+            lambda self, url=None: (False, "Connection refused"),
+        ):
+            self.assertFalse(Embedding._cron_check_embedding_endpoint())
+        activity = self.env["mail.activity"].search([
+            ("res_model", "=", "res.partner"),
+            ("res_id", "=", self.env.company.partner_id.id),
+            ("summary", "=", Embedding._ENDPOINT_ACTIVITY_SUMMARY),
+        ])
+        self.assertEqual(len(activity), 1)
+        self.assertIn("Connection refused", activity.note)
+        self.assertTrue(activity.user_id, "someone has to be asked to look")
+
+    def test_a_daily_check_does_not_stack_activities(self):
+        """An alert repeated every day becomes one people close without reading."""
+        Embedding = self.env["ai.embedding"]
+        with patch.object(
+            type(self.env["res.config.settings"]), "_probe_embedding_endpoint",
+            lambda self, url=None: (False, "still down"),
+        ):
+            Embedding._cron_check_embedding_endpoint()
+            Embedding._cron_check_embedding_endpoint()
+            Embedding._cron_check_embedding_endpoint()
+        self.assertEqual(self.env["mail.activity"].search_count([
+            ("res_model", "=", "res.partner"),
+            ("summary", "=", Embedding._ENDPOINT_ACTIVITY_SUMMARY),
+        ]), 1, "one open alert, refreshed — not one per day")
+
+    def test_recovery_closes_the_alert(self):
+        Embedding = self.env["ai.embedding"]
+        with patch.object(
+            type(self.env["res.config.settings"]), "_probe_embedding_endpoint",
+            lambda self, url=None: (False, "down"),
+        ):
+            Embedding._cron_check_embedding_endpoint()
+        with patch.object(
+            type(self.env["res.config.settings"]), "_probe_embedding_endpoint",
+            lambda self, url=None: (True, "multilingual-e5-large"),
+        ):
+            self.assertTrue(Embedding._cron_check_embedding_endpoint())
+        self.assertFalse(self.env["mail.activity"].search_count([
+            ("res_model", "=", "res.partner"),
+            ("summary", "=", Embedding._ENDPOINT_ACTIVITY_SUMMARY),
+        ]), "a stale alert about a service that is back is noise")

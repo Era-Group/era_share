@@ -46,7 +46,7 @@ stack with first-class **AI accounts**:
 See the module README for configuration and the compliance note about using a
 subscription-backed CLI to serve multiple users.
 """,
-    "version": "19.0.1.32.0",
+    "version": "19.0.1.33.0",
     "category": "Productivity/AI",
     "author": "Era Group",
     "license": "LGPL-3",
@@ -62,6 +62,7 @@ subscription-backed CLI to serve multiple users.
         "views/ai_agent_views.xml",
         "views/res_config_settings_views.xml",
         "views/era_ai_accounts_menus.xml",
+        "data/embedding_health_cron.xml",
     ],
     "assets": {
         # Mirror the bundles where core ``ai`` loads its discuss "post" patch

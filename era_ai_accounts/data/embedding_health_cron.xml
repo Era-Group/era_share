@@ -1,0 +1,20 @@
+<odoo>
+    <!-- Daily. Losing the embeddings endpoint stops indexing and retrieval
+         both — the question itself has to be embedded before anything can be
+         found — and the only signal before this was a status line on the
+         settings page, which tells the truth to whoever happens to open it.
+
+         03:00, an hour after the corpus sync, so a sync that leaves the
+         service busy is not mistaken for one that killed it. -->
+    <record id="cron_check_embedding_endpoint" model="ir.cron">
+        <field name="name">AI: Check the embeddings endpoint</field>
+        <field name="model_id" ref="ai.model_ai_embedding"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_embedding_endpoint()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall"
+               eval="(DateTime.now().replace(hour=3, minute=0, second=0, microsecond=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

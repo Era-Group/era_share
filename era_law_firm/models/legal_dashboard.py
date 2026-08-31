@@ -23,6 +23,8 @@ class LegalDashboard(models.TransientModel):
     # The row exists only long enough to click a button (privacy_lookup idiom).
     _transient_max_hours = 24
 
+    headline = fields.Char(readonly=True)
+
     # role visibility — resolved server-side, not left to view groups alone,
     # so tests can assert who sees what
     show_lawyer = fields.Boolean(readonly=True)
@@ -144,6 +146,10 @@ class LegalDashboard(models.TransientModel):
                 'draft_engagements': ('legal.engagement', self._domain_draft_engagements()),
             })
         values.update(roles)
+        if 'headline' in fields_list:
+            # env._, not the module-level _: the global helper resolves the
+            # active context's language, this record's env is authoritative.
+            values['headline'] = self.env._('Good day, %s', user.name)
         for name, (model, domain) in counters.items():
             if name in fields_list and self.env[model].has_access('read'):
                 values[name] = self.env[model].search_count(domain)

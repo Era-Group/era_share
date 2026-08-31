@@ -6,6 +6,11 @@
     'author': 'Era Group',
     'email': 'info@era.net.sa',
     'website': 'https://era.net.sa',
+    'assets': {
+        'web.assets_backend': [
+            'era_law_firm/static/src/scss/legal_dashboard.scss',
+        ],
+    },
     'license': 'LGPL-3',
     'depends': ['mail', 'portal', 'calendar', 'account', 'hr_timesheet', 'l10n_sa', 'l10n_sa_edi'],
     'data': [

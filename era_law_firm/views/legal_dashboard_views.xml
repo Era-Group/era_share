@@ -3,7 +3,7 @@
         <field name="name">legal.dashboard.form</field>
         <field name="model">legal.dashboard</field>
         <field name="arch" type="xml">
-            <form string="Dashboard" create="false" edit="false" delete="false">
+            <form string="Dashboard" create="false" edit="false" delete="false" class="o_legal_dashboard">
                 <sheet>
                     <field name="show_lawyer" invisible="1"/>
                     <field name="show_supervisor" invisible="1"/>
@@ -11,70 +11,162 @@
                     <field name="show_accountant" invisible="1"/>
                     <field name="show_ai" invisible="1"/>
 
-                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                        <h1 class="mb-0">Today</h1>
+                    <div class="o_legal_dash_head d-flex justify-content-between align-items-end flex-wrap gap-2">
+                        <div>
+                            <h1><field name="headline" nolabel="1"/></h1>
+                            <div class="o_legal_dash_sub">What needs your attention, before you go looking.</div>
+                        </div>
                         <button name="action_open_intake" type="object"
                                 string="Open a Case" class="btn btn-primary"/>
                     </div>
 
-                    <group string="My Work" invisible="not show_lawyer">
-                        <div class="o_row flex-wrap" colspan="2">
-                            <button name="action_my_open_cases" type="object" class="oe_stat_button" icon="fa-briefcase">
-                                <field name="my_open_cases" widget="statinfo" string="Open Cases"/>
-                            </button>
-                            <button name="action_my_hearings_week" type="object" class="oe_stat_button" icon="fa-university">
-                                <field name="my_hearings_week" widget="statinfo" string="Hearings, 7 Days"/>
-                            </button>
-                            <button name="action_my_deadlines_overdue" type="object" class="oe_stat_button text-danger" icon="fa-exclamation-triangle">
-                                <field name="my_deadlines_overdue" widget="statinfo" string="Overdue Deadlines"/>
-                            </button>
-                            <button name="action_my_deadlines_week" type="object" class="oe_stat_button" icon="fa-clock-o">
-                                <field name="my_deadlines_week" widget="statinfo" string="Deadlines, 7 Days"/>
-                            </button>
-                            <button name="action_my_draft_cases" type="object" class="oe_stat_button" icon="fa-balance-scale">
-                                <field name="my_draft_cases" widget="statinfo" string="Awaiting Conflict Check"/>
-                            </button>
-                            <button name="action_my_draft_time" type="object" class="oe_stat_button" icon="fa-hourglass-half">
-                                <field name="my_draft_time" widget="statinfo" string="Draft Time"/>
-                            </button>
+                    <div class="o_legal_dash_section" invisible="not show_lawyer">
+                        <div class="o_legal_dash_section_title">My Work</div>
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_open_cases" type="object" class="o_legal_tile">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-briefcase" role="img" aria-label="Open Cases"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_open_cases"/></span>
+                                        <span class="o_legal_tile_label">Open Cases</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_hearings_week" type="object" class="o_legal_tile o_legal_tile_info">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-university" role="img" aria-label="Hearings, 7 Days"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_hearings_week"/></span>
+                                        <span class="o_legal_tile_label">Hearings, 7 Days</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_deadlines_overdue" type="object" class="o_legal_tile o_legal_tile_danger">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-exclamation-triangle" role="img" aria-label="Overdue Deadlines"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_deadlines_overdue"/></span>
+                                        <span class="o_legal_tile_label">Overdue Deadlines</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_deadlines_week" type="object" class="o_legal_tile o_legal_tile_warning">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-clock-o" role="img" aria-label="Deadlines, 7 Days"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_deadlines_week"/></span>
+                                        <span class="o_legal_tile_label">Deadlines, 7 Days</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_draft_cases" type="object" class="o_legal_tile">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-balance-scale" role="img" aria-label="Awaiting Conflict Check"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_draft_cases"/></span>
+                                        <span class="o_legal_tile_label">Awaiting Conflict Check</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_my_draft_time" type="object" class="o_legal_tile">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-hourglass-half" role="img" aria-label="Draft Time"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="my_draft_time"/></span>
+                                        <span class="o_legal_tile_label">Draft Time</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </group>
+                    </div>
 
-                    <group string="Team" invisible="not show_supervisor">
-                        <div class="o_row flex-wrap" colspan="2">
-                            <button name="action_blocked_conflicts" type="object" class="oe_stat_button text-danger" icon="fa-ban">
-                                <field name="blocked_conflicts" widget="statinfo" string="Blocked Conflicts"/>
-                            </button>
-                            <button name="action_unassigned_cases" type="object" class="oe_stat_button" icon="fa-user-times">
-                                <field name="unassigned_cases" widget="statinfo" string="Unassigned Cases"/>
-                            </button>
-                            <button name="action_cases_by_lawyer" type="object" class="oe_stat_button" icon="fa-users" string="Case Load by Lawyer"/>
+                    <div class="o_legal_dash_section" invisible="not show_supervisor">
+                        <div class="o_legal_dash_section_title">Team</div>
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_blocked_conflicts" type="object" class="o_legal_tile o_legal_tile_danger">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-ban" role="img" aria-label="Blocked Conflicts"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="blocked_conflicts"/></span>
+                                        <span class="o_legal_tile_label">Blocked Conflicts</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_unassigned_cases" type="object" class="o_legal_tile o_legal_tile_warning">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-user-times" role="img" aria-label="Unassigned Cases"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="unassigned_cases"/></span>
+                                        <span class="o_legal_tile_label">Unassigned Cases</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_cases_by_lawyer" type="object" class="o_legal_tile">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-users" role="img" aria-label="Case Load by Lawyer"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_label">Case Load by Lawyer</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </group>
+                    </div>
 
-                    <group string="Oversight" invisible="not show_manager">
-                        <div class="o_row flex-wrap" colspan="2">
-                            <button name="action_ai_needs_review" type="object" class="oe_stat_button text-warning"
-                                    icon="fa-eye" invisible="not show_ai">
-                                <field name="ai_needs_review" widget="statinfo" string="AI Needs Review"/>
-                            </button>
-                            <button name="action_trust_accounts" type="object" class="oe_stat_button" icon="fa-shield" string="Trust Accounts"/>
+                    <div class="o_legal_dash_section" invisible="not show_manager">
+                        <div class="o_legal_dash_section_title">Oversight</div>
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_ai_needs_review" type="object" class="o_legal_tile o_legal_tile_warning">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-eye" role="img" aria-label="AI Needs Review"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="ai_needs_review"/></span>
+                                        <span class="o_legal_tile_label">AI Needs Review</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_trust_accounts" type="object" class="o_legal_tile o_legal_tile_success">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-shield" role="img" aria-label="Trust Accounts"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_label">Trust Accounts</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </group>
+                    </div>
 
-                    <group string="Billing" invisible="not show_accountant">
-                        <div class="o_row flex-wrap" colspan="2">
-                            <button name="action_billable_time" type="object" class="oe_stat_button" icon="fa-money">
-                                <field name="billable_time" widget="statinfo" string="Billable Time"/>
-                            </button>
-                            <button name="action_approved_expenses" type="object" class="oe_stat_button" icon="fa-receipt">
-                                <field name="approved_expenses" widget="statinfo" string="Expenses to Invoice"/>
-                            </button>
-                            <button name="action_draft_engagements" type="object" class="oe_stat_button" icon="fa-file-text-o">
-                                <field name="draft_engagements" widget="statinfo" string="Draft Engagements"/>
-                            </button>
+                    <div class="o_legal_dash_section" invisible="not show_accountant">
+                        <div class="o_legal_dash_section_title">Billing</div>
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_billable_time" type="object" class="o_legal_tile o_legal_tile_success">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-money" role="img" aria-label="Billable Time"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="billable_time"/></span>
+                                        <span class="o_legal_tile_label">Billable Time</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_approved_expenses" type="object" class="o_legal_tile o_legal_tile_success">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-file-text-o" role="img" aria-label="Expenses to Invoice"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="approved_expenses"/></span>
+                                        <span class="o_legal_tile_label">Expenses to Invoice</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <button name="action_draft_engagements" type="object" class="o_legal_tile">
+                                    <span class="o_legal_tile_icon"><i class="fa fa-handshake-o" role="img" aria-label="Draft Engagements"/></span>
+                                    <span class="o_legal_tile_body">
+                                        <span class="o_legal_tile_count"><field name="draft_engagements"/></span>
+                                        <span class="o_legal_tile_label">Draft Engagements</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </group>
+                    </div>
                 </sheet>
             </form>
         </field>

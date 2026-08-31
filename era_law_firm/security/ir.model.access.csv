@@ -12,6 +12,7 @@ document_staff,document staff,model_legal_document,group_legal_staff,1,1,1,0
 engagement_accountant,engagement accountant,model_legal_engagement,group_legal_accountant,1,1,1,0
 time_lawyer,time lawyer,model_legal_time_entry,group_legal_lawyer,1,1,1,0
 expense_accountant,expense accountant,model_legal_expense,group_legal_accountant,1,1,1,0
+time_accountant,time accountant,model_legal_time_entry,group_legal_accountant,1,1,0,0
 trust_accountant,trust accountant,model_legal_trust_account,group_legal_accountant,1,1,1,0
 trust_tx_accountant,trust tx accountant,model_legal_trust_transaction,group_legal_accountant,1,1,1,0
 invoice_wizard,invoice wizard,model_legal_invoice_create_wizard,group_legal_accountant,1,1,1,1

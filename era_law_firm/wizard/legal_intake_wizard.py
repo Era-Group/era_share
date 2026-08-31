@@ -152,14 +152,22 @@ class LegalIntakeWizard(models.TransientModel):
         check.action_run_check()
 
         if self.engagement_type != 'none':
-            self.env['legal.engagement'].create(dict(
-                self.env['legal.engagement'].default_get(['product_id']),
+            # Engagements are deliberately manager/accountant territory — fees
+            # are billing policy. The wizard records what was agreed at intake
+            # (sudo, draft), and whether it becomes billable stays with the
+            # people who own that: activation is left to whoever may write it,
+            # and the case banner tells the lawyer it is waiting.
+            Engagement = self.env['legal.engagement']
+            engagement = Engagement.sudo().create(dict(
+                Engagement.default_get(['product_id']),
                 case_id=case.id,
                 name=_('Fee agreement'),
                 billing_type='hourly' if self.engagement_type == 'hourly' else 'fixed',
                 hourly_rate=self.hourly_rate,
                 amount=self.fixed_amount,
-            )).action_activate()
+            ))
+            if Engagement.has_access('write'):
+                engagement.action_activate()
 
         if check.state == 'clear':
             case.action_confirm()

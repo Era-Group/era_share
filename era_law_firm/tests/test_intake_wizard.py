@@ -96,3 +96,25 @@ class TestIntakeWizard(TransactionCase):
         case = self._open(self._wizard(engagement_type='none'))
         self.assertFalse(case.engagement_ids)
         self.assertEqual(case.state, 'confirmed')
+
+    def test_a_lawyer_can_agree_fees_without_owning_billing(self):
+        """Engagement creation is manager/accountant territory by ACL, and the
+        wizard must not crash a lawyer for recording what was agreed at
+        intake. It lands as a draft; making it billable stays with billing."""
+        lawyer = self.env['res.users'].create({
+            'name': 'محامٍ بلا فوترة', 'login': 'intake_fee_lawyer',
+            'group_ids': [(6, 0, [self.env.ref('base.group_user').id,
+                                  self.env.ref('era_law_firm.group_legal_lawyer').id])]})
+        wizard = self.env['legal.intake.wizard'].with_user(lawyer).create({
+            'client_id': self.client.id, 'case_type': 'litigation',
+            'lawyer_id': lawyer.id, 'engagement_type': 'hourly', 'hourly_rate': 500})
+        case = self.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+        engagement = case.engagement_ids
+        self.assertEqual(engagement.state, 'draft',
+                         'recorded, but not billable until billing activates it')
+        self.assertEqual(engagement.hourly_rate, 500)
+
+    def test_a_manager_gets_it_active_immediately(self):
+        case = self._open(self._wizard(engagement_type='hourly', hourly_rate=600))
+        self.assertEqual(case.engagement_ids.state, 'active',
+                         'whoever may write engagements is not made to click twice')

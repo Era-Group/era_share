@@ -127,3 +127,70 @@ class TestTrustWizard(TransactionCase):
         self._operate(transaction_type='deposit', amount=1000, case_id=self.case_a.id)
         with self.assertRaises(UserError):
             self._operate(transaction_type='refund', amount=100, case_id=self.case_a.id)
+
+
+@tagged('post_install', '-at_install')
+class TestBillingRoles(TransactionCase):
+    """The sequence as the roles actually run it: the lawyer logs and marks,
+    the accountant invoices. The accountant had ACL rows for every billing
+    source except time entries — hourly work, the commonest arrangement, was
+    the one thing the billing role could not see."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.lawyer = cls.env['res.users'].create({
+            'name': 'محامي الفوترة', 'login': 'billing_seq_lawyer',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('era_law_firm.group_legal_lawyer').id])]})
+        cls.accountant = cls.env['res.users'].create({
+            'name': 'محاسب الفوترة', 'login': 'billing_seq_acct',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('era_law_firm.group_legal_accountant').id,
+                                  cls.env.ref('account.group_account_invoice').id])]})
+        client = cls.env['res.partner'].create({'name': 'موكّل الأدوار'})
+        wizard = cls.env['legal.intake.wizard'].with_user(cls.lawyer).create({
+            'client_id': client.id, 'case_type': 'litigation',
+            'lawyer_id': cls.lawyer.id, 'engagement_type': 'hourly',
+            'hourly_rate': 500})
+        cls.case = cls.env['legal.case'].browse(wizard.action_open_case()['res_id'])
+        cls.engagement = cls.case.engagement_ids.sudo()
+        cls.engagement.action_activate()
+
+    def test_the_lawyer_logs_and_marks_their_own_hours(self):
+        entry = self.env['legal.time.entry'].with_user(self.lawyer).create({
+            'name': 'مرافعة', 'case_id': self.case.id,
+            'engagement_id': self.engagement.id, 'hours': 3,
+            'user_id': self.lawyer.id, 'date': fields.Date.today()})
+        entry.action_mark_billable()
+        self.assertEqual(entry.state, 'billable')
+        self.assertEqual(entry.rate, 500, 'the agreed rate came across for them')
+
+    def test_the_accountant_can_actually_invoice_those_hours(self):
+        entry = self.env['legal.time.entry'].with_user(self.lawyer).create({
+            'name': 'جلسة', 'case_id': self.case.id,
+            'engagement_id': self.engagement.id, 'hours': 2,
+            'user_id': self.lawyer.id, 'date': fields.Date.today()})
+        entry.action_mark_billable()
+        action = self.env['legal.invoice.create.wizard'].with_user(self.accountant).create({
+            'case_id': self.case.id, 'engagement_id': self.engagement.id,
+            'time_entry_ids': [(6, 0, entry.ids)]}).action_create_invoice()
+        invoice = self.env['account.move'].browse(action['res_id'])
+        self.assertEqual(invoice.amount_untaxed, 1000)
+        self.assertEqual(entry.state, 'invoiced')
+
+    def test_the_accountant_still_cannot_log_or_delete_hours(self):
+        """Read and write, not create and unlink: hours are the lawyer's act
+        and, once logged, evidence."""
+        from odoo.exceptions import AccessError
+        entry = self.env['legal.time.entry'].with_user(self.lawyer).create({
+            'name': 'إثبات', 'case_id': self.case.id,
+            'engagement_id': self.engagement.id, 'hours': 1,
+            'user_id': self.lawyer.id, 'date': fields.Date.today()})
+        with self.assertRaises(AccessError):
+            self.env['legal.time.entry'].with_user(self.accountant).create({
+                'name': 'دخيل', 'case_id': self.case.id,
+                'engagement_id': self.engagement.id, 'hours': 1,
+                'user_id': self.accountant.id, 'date': fields.Date.today()})
+        with self.assertRaises(AccessError):
+            entry.with_user(self.accountant).unlink()

@@ -36,19 +36,29 @@ class TestCitationGrounding(TransactionCase):
             self.assertIn('المرفقة بهذا الوكيل', prompt,
                           f'{xmlid}: article numbers must be bounded to the sources')
 
-    def test_contract_review_admits_what_it_cannot_ground(self):
-        """نظام الشركات and نظام العمل are not Ministry of Justice texts."""
-        prompt = self.env.ref('era_law_firm_ai.agent_contract_review').system_prompt or ''
-        self.assertIn('ليسا ضمنها', prompt,
-                      'naming a statute the corpus lacks must not imply it is grounded')
+    def test_every_statute_the_prompt_names_is_in_the_corpus(self):
+        """A prompt that names a statute promises the agent can cite it.
 
-    def test_the_corpus_really_lacks_them(self):
-        """If either is ever added, the wording above becomes wrong."""
+        نظام الشركات and نظام العمل were absent when this agent was first
+        grounded, and the prompt said so. They are published now, so the
+        caveat is gone — and this assertion is what keeps the prompt and the
+        corpus from drifting apart again in either direction.
+        """
         names = self.env['moj.law'].search([]).mapped('name')
         if not names:
             self.skipTest('corpus not synced in this database')
-        self.assertFalse([n for n in names if 'الشركات' in n])
-        self.assertFalse([n for n in names if n.startswith('نظام العمل')])
+        prompt = self.env.ref('era_law_firm_ai.agent_contract_review').system_prompt or ''
+        for statute in ('نظام المعاملات المدنية', 'نظام الشركات', 'نظام العمل'):
+            self.assertIn(statute, prompt, 'precondition: the prompt names it')
+            self.assertTrue(
+                [n for n in names if n.strip() == statute],
+                f"the prompt names {statute} but the corpus does not carry it, "
+                f"so its article numbers would come from memory")
+
+    def test_the_caveat_about_missing_statutes_is_gone(self):
+        prompt = self.env.ref('era_law_firm_ai.agent_contract_review').system_prompt or ''
+        self.assertNotIn('ليسا ضمنها', prompt,
+                         'both statutes are in the corpus now; the caveat is false')
 
     def test_turning_the_corpus_off_on_a_grounded_agent_is_refused(self):
         """The prompt and the sources are one decision, not two.

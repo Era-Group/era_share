@@ -77,7 +77,12 @@
                         <field name="trust_account_id" readonly="1"/>
                         <field name="partner_id" invisible="1"/>
                         <field name="transaction_type"/>
-                        <field name="case_id" domain="[('client_id','=',partner_id)]"/>
+                        <field name="case_id" domain="[('client_id','=',partner_id)]"
+                               required="transaction_type == 'transfer'"/>
+                        <field name="destination_case_id"
+                               domain="[('client_id','=',partner_id),('id','!=',case_id)]"
+                               invisible="transaction_type != 'transfer'"
+                               required="transaction_type == 'transfer'"/>
                     </group>
                     <group>
                         <field name="amount"/>

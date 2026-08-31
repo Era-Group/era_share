@@ -108,6 +108,32 @@ class LegalTimeEntry(models.Model):
             found = self.env['legal.expense']._engagement_from_case(self.case_id.id)
             if found:
                 self.engagement_id = found['engagement_id']
+                self._onchange_engagement_sets_rate()
+
+    @api.onchange('engagement_id')
+    def _onchange_engagement_sets_rate(self):
+        """Bill the hours at the rate the engagement agreed.
+
+        `rate` was a free field nothing filled. A lawyer logged four hours,
+        marked them billable, invoiced them — and the line came out at zero,
+        because the number the client agreed to was sitting on the engagement
+        and nobody carried it across. The invoice looked complete and the firm
+        billed nothing.
+        """
+        if self.engagement_id and not self.rate:
+            self.rate = self.engagement_id.hourly_rate
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """The onchange covers the form; imports and the API come through here."""
+        engagements = self.env['legal.engagement'].browse([
+            values.get('engagement_id') for values in vals_list
+            if values.get('engagement_id') and not values.get('rate')])
+        rates = {engagement.id: engagement.hourly_rate for engagement in engagements}
+        for values in vals_list:
+            if not values.get('rate') and values.get('engagement_id') in rates:
+                values['rate'] = rates[values['engagement_id']]
+        return super().create(vals_list)
 
 
 class LegalHearing(models.Model):

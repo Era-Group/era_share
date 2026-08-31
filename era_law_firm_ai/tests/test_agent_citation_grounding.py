@@ -88,3 +88,17 @@ class TestCitationGrounding(TransactionCase):
         agent = self.env.ref('era_law_firm_ai.agent_summary')
         agent.system_prompt = (agent.system_prompt or '') + '\n- سطر إضافي.'
         self.assertFalse(agent.moj_corpus_target)
+
+    def test_citing_agents_know_retrieval_is_nearest_match(self):
+        """Odoo's RAG has no relevance floor and never returns nothing.
+
+        A measured threshold was rejected: across sixteen questions the
+        in-corpus scores ran 0.807-0.873 and the out-of-corpus ones
+        0.789-0.822, overlapping. Only the model can read a chunk and see it
+        answers a different question, so it has to be told.
+        """
+        for xmlid in self.CITING:
+            prompt = self.env.ref(xmlid).system_prompt or ''
+            self.assertIn('مُسترجَعة بالتقارب لا بالمطابقة', prompt, xmlid)
+            self.assertIn('لا يوجد في المصادر المرفقة ما يغطي هذه المسألة', prompt,
+                          f'{xmlid}: it needs the words to decline with')

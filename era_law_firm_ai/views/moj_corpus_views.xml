@@ -71,7 +71,7 @@
         <field name="inherit_id" ref="ai_app.ai_agent_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
-                <group string="MOJ Legislation Corpus" name="moj_corpus">
+                <group string="Saudi Legislation Corpus" name="moj_corpus">
                     <field name="moj_corpus_target" widget="boolean_toggle"/>
                     <field name="moj_corpus_law_count" invisible="not moj_corpus_target"/>
                     <button name="action_resync_moj_corpus" type="object"

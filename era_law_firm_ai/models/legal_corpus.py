@@ -34,12 +34,18 @@ FETCH_TIMEOUT = 60
 
 
 class MojLaw(models.Model):
+    # The model name predates the corpus outgrowing a single ministry. The
+    # authoritative source is the Bureau of Experts at the Council of Ministers
+    # (laws.boe.gov.sa), which publishes every statute whatever ministry
+    # administers it, so the feed now mixes hosts. Renaming the model would
+    # cost a migration across ir.model.data and the m2m table for no user-
+    # visible gain; the labels a lawyer reads are what had to be corrected.
     _name = 'moj.law'
-    _description = 'MOJ Statute Attached as a Source'
+    _description = 'Saudi Statute Attached as a Source'
     _order = 'name'
 
     law_id = fields.Char(
-        string='MoJ Statute ID', required=True, index=True,
+        string='Statute ID', required=True, index=True,
         help="The identifier the Ministry's portal uses for this statute. The sync matches on it, "
              "so an amended statute updates its row instead of creating a second one.")
     name = fields.Char(string='Statute', required=True)
@@ -293,11 +299,11 @@ class AIAgentMojCorpus(models.Model):
                 "ولا نصوص مرفقة. إطفاء «%(field)s» يعيده إلى الاستشهاد من الذاكرة "
                 "بلا أي تنبيه — وهو ما يجعل رقم مادة خاطئاً يبدو موثّقاً. "
                 "فعّل الحقل، أو عدّل البرومت ليتوقف عن طلب أرقام المواد.",
-                field=_('Carries the MOJ Legislation Corpus')))
+                field=_('Carries the Saudi Legislation Corpus')))
 
     moj_corpus_target = fields.Boolean(
-        string='Carries the MOJ Legislation Corpus', copy=False,
-        help="Keeps the 75 Ministry of Justice statutes attached to this agent as sources, "
+        string='Carries the Saudi Legislation Corpus', copy=False,
+        help="Keeps the Saudi legislation corpus attached to this agent as sources, "
              "so it cites the text instead of recalling it.\n\n"
              "Set it on any agent whose prompt asks for article numbers — otherwise the numbers "
              "come from the model's memory, and a wrong one looks exactly like a right one. "
@@ -330,7 +336,7 @@ class AIAgentMojCorpus(models.Model):
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
-                'message': _('MOJ legislation corpus resynced.'),
+                'message': _('Saudi legislation corpus resynced.'),
                 'next': {'type': 'ir.actions.act_window_close'},
             },
         }

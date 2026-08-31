@@ -11,7 +11,7 @@
          one every cron is deactivated, and Odoo deliberately refuses to let
          them be re-enabled, so indexing there has to be run by hand. -->
     <record id="cron_moj_corpus_sync" model="ir.cron">
-        <field name="name">MOJ Legislation Corpus Sync</field>
+        <field name="name">Saudi Legislation Corpus Sync</field>
         <field name="model_id" ref="model_moj_law"/>
         <field name="state">code</field>
         <field name="code">model._run_corpus_sync()</field>

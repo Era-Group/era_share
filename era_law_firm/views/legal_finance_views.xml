@@ -415,6 +415,7 @@
                 <field name="partner_id"/>
                 <field name="transaction_type"/>
                 <field name="case_id" optional="show"/>
+                <field name="destination_case_id" optional="show"/>
                 <field name="amount"/>
                 <field name="signed_amount" sum="Net"/>
                 <field name="currency_id" column_invisible="1"/>
@@ -462,6 +463,9 @@
                             <field name="partner_id" readonly="1"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="case_id"/>
+                            <field name="destination_case_id"
+                                   invisible="transaction_type != 'transfer'"
+                                   required="transaction_type == 'transfer'"/>
                         </group>
                         <group>
                             <field name="transaction_type"/>

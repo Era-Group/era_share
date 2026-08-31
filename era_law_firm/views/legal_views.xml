@@ -15,6 +15,7 @@
                 <field name="date_filed" optional="hide"/>
                 <field name="stage_id"/>
                 <field name="outstanding_amount" optional="hide" sum="Outstanding"/>
+                <field name="trust_allocated_amount" optional="hide" sum="Trust Allocated"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="state" widget="badge"/>
             </list>

@@ -51,13 +51,41 @@ class LegalTrustAccount(models.Model):
 class LegalTrustTransaction(models.Model):
     _name='legal.trust.transaction'; _description='Trust Transaction'; _inherit=['mail.thread']; _check_company_auto=True; _order='date,id'
     name=fields.Char(default='New',readonly=True,copy=False); trust_account_id=fields.Many2one('legal.trust.account',required=True,check_company=True); company_id=fields.Many2one(related='trust_account_id.company_id',store=True,index=True); partner_id=fields.Many2one(related='trust_account_id.partner_id',store=True)
-    case_id=fields.Many2one('legal.case',check_company=True); transaction_type=fields.Selection([('deposit','Deposit'),('apply','Apply to Invoice'),('refund','Refund'),('transfer','Case Allocation Transfer'),('reversal','Reversal')],required=True); amount=fields.Monetary(required=True); currency_id=fields.Many2one(related='company_id.currency_id'); signed_amount=fields.Monetary(compute='_signed',store=True); date=fields.Date(default=fields.Date.today,required=True); reference=fields.Char(); reason=fields.Text(); invoice_id=fields.Many2one('account.move'); move_id=fields.Many2one('account.move',copy=False); reversal_move_id=fields.Many2one('account.move',copy=False); reversed_transaction_id=fields.Many2one('legal.trust.transaction',copy=False); state=fields.Selection([('draft','Draft'),('posted','Posted'),('cancelled','Cancelled')],default='draft')
+    case_id=fields.Many2one('legal.case',check_company=True); destination_case_id=fields.Many2one('legal.case',check_company=True,copy=False,help="Where a Case Allocation Transfer moves the money to. The account total does not change; "
+         "only which case the client's money is earmarked for."); transaction_type=fields.Selection([('deposit','Deposit'),('apply','Apply to Invoice'),('refund','Refund'),('transfer','Case Allocation Transfer'),('reversal','Reversal')],required=True); amount=fields.Monetary(required=True); currency_id=fields.Many2one(related='company_id.currency_id'); signed_amount=fields.Monetary(compute='_signed',store=True); date=fields.Date(default=fields.Date.today,required=True); reference=fields.Char(); reason=fields.Text(); invoice_id=fields.Many2one('account.move'); move_id=fields.Many2one('account.move',copy=False); reversal_move_id=fields.Many2one('account.move',copy=False); reversed_transaction_id=fields.Many2one('legal.trust.transaction',copy=False); state=fields.Selection([('draft','Draft'),('posted','Posted'),('cancelled','Cancelled')],default='draft')
     @api.depends('amount','transaction_type')
     def _signed(self):
         for r in self:r.signed_amount=r.amount if r.transaction_type=='deposit' else (0 if r.transaction_type=='transfer' else -r.amount)
     @api.constrains('amount')
     def _positive(self):
         if any(r.amount<=0 for r in self):raise ValidationError(_('Amount must be positive.'))
+
+    @api.constrains('transaction_type', 'case_id', 'destination_case_id')
+    def _check_transfer_has_two_cases(self):
+        """A transfer with no destination moves nothing.
+
+        The type is called Case Allocation Transfer and the help text promises
+        it reallocates between the client's cases; without both ends it wrote a
+        row that changed no figure, which is worse than not offering it.
+        """
+        for record in self:
+            if record.transaction_type != 'transfer':
+                if record.destination_case_id:
+                    raise ValidationError(_(
+                        'A destination case only applies to a Case Allocation Transfer.'))
+                continue
+            if not record.case_id or not record.destination_case_id:
+                raise ValidationError(_(
+                    'A Case Allocation Transfer needs the case the money leaves '
+                    'and the case it goes to.'))
+            if record.case_id == record.destination_case_id:
+                raise ValidationError(_('A transfer must move between two different cases.'))
+            clients = {record.case_id.client_id, record.destination_case_id.client_id}
+            if clients != {record.partner_id}:
+                raise ValidationError(_(
+                    "Both cases must belong to the trust account's client. Money held "
+                    "for one client cannot be earmarked for another's case."))
+
     @api.model_create_multi
     def create(self,vals):
         rs=super().create(vals)
@@ -69,6 +97,13 @@ class LegalTrustTransaction(models.Model):
             self.env.cr.execute('SELECT id FROM legal_trust_account WHERE id=%s FOR UPDATE',[r.trust_account_id.id])
             r.trust_account_id.invalidate_recordset()
             if r.transaction_type!='deposit' and r.transaction_type!='transfer' and r.amount>r.trust_account_id.available_balance:raise UserError(_('Insufficient trust balance.'))
+            # The account total is unchanged by a transfer, so the balance check
+            # above cannot catch moving money a case never held.
+            if r.transaction_type=='transfer' and r.amount>r.case_id.trust_allocated_amount:
+                raise UserError(_('Case %(case)s holds %(held)s in trust; %(asked)s cannot be moved from it.',
+                                  case=r.case_id.display_name,
+                                  held=r.case_id.trust_allocated_amount,
+                                  asked=r.amount))
             if r.transaction_type!='deposit' and r.trust_account_id.state!='open':raise UserError(_('The trust account is not open.'))
             c=r.company_id; debit = c.legal_trust_bank_account_id if r.transaction_type=='deposit' else c.legal_trust_liability_account_id; credit=c.legal_trust_liability_account_id if r.transaction_type=='deposit' else (c.legal_trust_receivable_account_id if r.transaction_type=='apply' else c.legal_trust_bank_account_id)
             if r.transaction_type!='transfer':
@@ -94,3 +129,50 @@ class LegalTrustTransaction(models.Model):
     def unlink(self):
         if any(r.state=='posted' for r in self):raise UserError(_('Posted trust transactions cannot be deleted.'))
         return super().unlink()
+
+
+class LegalCaseTrustAllocation(models.Model):
+    """What the client's trust money is earmarked for, case by case.
+
+    The account balance says how much is held for the client; it never said
+    how much of it belongs to which matter. Without that figure the
+    "Case Allocation Transfer" had nothing to move — it wrote a row and
+    changed no number — and a lawyer could not answer the ordinary question
+    of whether a case is funded.
+    """
+    _inherit = 'legal.case'
+
+    trust_allocated_amount = fields.Monetary(
+        string='Trust Allocated', compute='_compute_trust_allocated_amount',
+        currency_field='company_currency_id',
+        help="Client money held in trust and earmarked for this case. Deposits "
+             "add to it, applying it to an invoice or refunding it takes it "
+             "away, and a Case Allocation Transfer moves it between cases "
+             "without changing the account total.")
+    company_currency_id = fields.Many2one(
+        related='company_id.currency_id', string='Company Currency')
+    # Declared so the compute has real dependencies. A search() inside a
+    # compute cannot be tracked by the ORM: the figure went stale the moment a
+    # transaction was posted, and showed the balance from before the transfer.
+    trust_transaction_ids = fields.One2many(
+        'legal.trust.transaction', 'case_id', string='Trust Movements')
+    trust_transfer_in_ids = fields.One2many(
+        'legal.trust.transaction', 'destination_case_id',
+        string='Trust Transfers Received')
+
+    @api.depends(
+        'trust_transaction_ids.state', 'trust_transaction_ids.amount',
+        'trust_transaction_ids.signed_amount', 'trust_transaction_ids.transaction_type',
+        'trust_transfer_in_ids.state', 'trust_transfer_in_ids.amount',
+        'trust_transfer_in_ids.transaction_type')
+    def _compute_trust_allocated_amount(self):
+        for case in self:
+            posted_out = case.trust_transaction_ids.filtered(
+                lambda t: t.state == 'posted')
+            total = sum(
+                -t.amount if t.transaction_type == 'transfer' else t.signed_amount
+                for t in posted_out)
+            total += sum(
+                t.amount for t in case.trust_transfer_in_ids
+                if t.state == 'posted' and t.transaction_type == 'transfer')
+            case.trust_allocated_amount = total

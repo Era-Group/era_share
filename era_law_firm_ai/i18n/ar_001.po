@@ -4,15 +4,22 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: era_law_firm_ai 19.0\n"
-"Report-Msgid-Bugs-To: info@era.net.sa\n"
-"Last-Translator: Era Group <info@era.net.sa>\n"
-"Language-Team: Arabic <info@era.net.sa>\n"
-"Language: ar_001\n"
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-31 21:16+0000\n"
+"PO-Revision-Date: 2026-08-31 21:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid " (مادة ملغاة)"
+msgstr ""
 
 #. module: era_law_firm_ai
 #. odoo-python
@@ -35,9 +42,12 @@ msgid ""
 "\n"
 "المرجع الوحيد للأنظمة السعودية هو %(portal)s. لا تستند إلى نظام أو مادة من خارجه، ولا تنقل حكماً من ولاية قضائية أخرى. وأنت لا تستطيع فتح هذا الرابط، فهو للتحقق البشري؛ ولا تستشهد بمادة إلا إذا ورد نصها في المعطيات أو في المصادر المرفوعة إليك."
 msgstr ""
-"%(body)s\n"
-"\n"
-"المرجع الوحيد للأنظمة السعودية هو %(portal)s. لا تستند إلى نظام أو مادة من خارجه، ولا تنقل حكماً من ولاية قضائية أخرى. وأنت لا تستطيع فتح هذا الرابط، فهو للتحقق البشري؛ ولا تستشهد بمادة إلا إذا ورد نصها في المعطيات أو في المصادر المرفوعة إليك."
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "%(name)s — النوع: %(type)s — الحالة: %(status)s"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
@@ -126,6 +136,13 @@ msgstr ""
 "الإرسال."
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__cited_nothing
+msgid ""
+"A source-restricted agent answered without citing any source. Its "
+"instruction to answer only from the attached texts is a prompt, not a gate, "
+"so this is how the gap becomes visible."
+msgstr "وكيل مقيَّد بالمصادر أجاب دون الاستشهاد بأي مصدر. وتعليمته بألا يجيب إلا من النصوص المرفقة توجيه لا بوابة، فهكذا تظهر الفجوة."
+#. module: era_law_firm_ai
 #: model:ir.ui.menu,name:era_law_firm_ai.menu_legal_ai_root
 msgid "AI"
 msgstr "الذكاء"
@@ -135,6 +152,11 @@ msgstr "الذكاء"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__agent_id
 msgid "AI Agent"
 msgstr "وكيل ذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_ai_agent_source
+msgid "AI Agent Source"
+msgstr "مصدر وكيل الذكاء الاصطناعي"
 
 #. module: era_law_firm_ai
 #. odoo-python
@@ -162,11 +184,15 @@ msgstr "توليد مستند قانوني بالذكاء"
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai_agent_bridge.py:0
 #: model:ir.actions.act_window,name:era_law_firm_ai.action_ai_request
-#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_request_count
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_request_ids
 #: model:ir.ui.menu,name:era_law_firm_ai.menu_ai_requests
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_case_form_ai
 msgid "AI Requests"
+msgstr "طلبات الذكاء"
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_case__ai_request_count
+msgid "AI Requests Count"
 msgstr "طلبات الذكاء"
 
 #. module: era_law_firm_ai
@@ -208,6 +234,14 @@ msgid "Answer"
 msgstr "الإجابة"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__cited_nothing
+msgid "Answered Without Citing"
+msgstr "أجاب بلا استشهاد"
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Answers that cited a repealed statute, or that cited nothing at all"
+msgstr "إجابات استشهدت بنظام ملغي، أو لم تستشهد بشيء"
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "Appended to every answer by the system, not by the model."
 msgstr "يُلحقه النظام بكل إجابة، لا النموذج."
@@ -237,6 +271,10 @@ msgid "Archived"
 msgstr "مؤرشف"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__article_count
+msgid "Articles"
+msgstr "المواد"
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.res_config_settings_view_form_legal_ai
 msgid "Artificial Intelligence"
 msgstr "الذكاء"
@@ -246,6 +284,13 @@ msgstr "الذكاء"
 msgid "Ask Again"
 msgstr "إعادة السؤال"
 
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__source_ids
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_moj_law_form
+msgid "Attached Sources"
+msgstr "المصادر المرفقة"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_attachment_count
 msgid "Attachment Count"
@@ -291,6 +336,12 @@ msgstr ""
 "افتراضياً."
 
 #. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__moj_corpus_target
+msgid "Carries the Saudi Legislation Corpus"
+msgstr "يحمل كوربوس الأنظمة السعودية"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__case_id
 #: model:ir.model.fields.selection,name:era_law_firm_ai.selection__legal_ai_field__source__case
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
@@ -309,6 +360,10 @@ msgstr "الميثاق المطبَّق"
 msgid "Choose the AI agent that should answer this request."
 msgstr "اختر وكيل الذكاء الذي يجيب عن هذا الطلب."
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__cited_repealed
+msgid "Cited a Repealed Statute"
+msgstr "استشهد بنظام ملغي"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__classification_blocked
 msgid "Classification Blocked"
@@ -375,6 +430,10 @@ msgid "Consented By"
 msgstr "وافق عليه"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__content_hash
+msgid "Content Hash"
+msgstr "بصمة المحتوى"
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
 msgid "Country or region the model processes data in"
 msgstr "الدولة أو الإقليم الذي يعالج فيه النموذج البيانات"
@@ -402,6 +461,7 @@ msgstr "إنشاء مستند قانوني"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__create_uid
 msgid "Created by"
 msgstr "أنشأه"
 
@@ -412,6 +472,7 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__create_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__create_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__create_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__create_date
 msgid "Created on"
 msgstr "أُنشئ في"
 
@@ -452,6 +513,7 @@ msgstr "المُرسل إلى وكيل"
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__display_name
@@ -460,6 +522,7 @@ msgstr "المُرسل إلى وكيل"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__display_name
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__display_name
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__display_name
 msgid "Display Name"
@@ -510,6 +573,13 @@ msgid "Enable governed AI"
 msgstr "تفعيل الذكاء المحكوم"
 
 #. module: era_law_firm_ai
+#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_moj_law
+msgid ""
+"Every row here is a Saudi MOJ statute the sync has attached to the research agent as a\n"
+"               source, so the agent cites the statute text instead of recalling it. Nothing is entered\n"
+"               by hand. If this list is empty, run the sync from the AI agent or wait for the weekly job."
+msgstr "كل سطر هنا نظام سعودي أرفقته المزامنة بوكيل البحث كمصدر، ليستشهد الوكيل بنص النظام بدل استرجاعه من الذاكرة. ولا شيء يُدخل يدوياً. فإن كانت القائمة فارغة، شغّل المزامنة من وكيل الذكاء أو انتظر المهمة المجدولة."
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__payload_preview
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Exactly What Will Be Sent"
@@ -538,6 +608,12 @@ msgstr ""
 "يكون خطأً حين يكون الوكيل مقيَّداً بمصادره ولا مصادر له، أو كانت مصادره قيد "
 "المعالجة. وفي هذه الحالة لا يوجد ما يتقيّد به."
 
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_moj_corpus
+msgid ""
+"Fetch the corpus and attach it to this agent now, without waiting for the "
+"weekly job."
+msgstr "اجلب الكوربوس وأرفقه بهذا الوكيل الآن، دون انتظار المهمة المجدولة."
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__fields_sent
 msgid "Fields Sent"
@@ -635,6 +711,11 @@ msgstr ""
 " المكتب قادراً على بيان مصير مواد موكليه."
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__moj_corpus_law_count
+msgid ""
+"How many statutes the sync currently has attached to this agent as sources."
+msgstr "كم نظاماً أرفقته المزامنة بهذا الوكيل كمصادر حالياً."
+#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__document_classification
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_document__ai_classification
 msgid ""
@@ -647,6 +728,7 @@ msgstr ""
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent_source__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__id
@@ -655,6 +737,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__id
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_company__id
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_res_config_settings__id
 msgid "ID"
@@ -698,12 +781,26 @@ msgid "Is Follower"
 msgstr "متابِع"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_ai_agent__moj_corpus_target
+msgid ""
+"Keeps the Saudi legislation corpus attached to this agent as sources, so it cites the text instead of recalling it.\n"
+"\n"
+"Set it on any agent whose prompt asks for article numbers — otherwise the numbers come from the model's memory, and a wrong one looks exactly like a right one. Leave it off where the job is the document in front of the agent, such as summarising: statute text is injected into every request, which pushes a summariser to opine.\n"
+"\n"
+"It cannot be turned off on an agent whose prompt promises to cite only the attached texts. Costs nothing extra to enable: the embeddings are shared between agents."
+msgstr "يُبقي كوربوس الأنظمة السعودية مرفقاً بهذا الوكيل كمصادر، ليستشهد بالنص بدل استرجاعه من الذاكرة.\n\nفعّله على أي وكيل يطلب برومته أرقام مواد — وإلا جاءت الأرقام من ذاكرة النموذج، والرقم الخاطئ يبدو تماماً كالصحيح. واتركه مطفأً حيث تكون المهمة هي المستند الذي أمام الوكيل، كالتلخيص: فنص النظام يُحقن في كل طلب، وهذا يدفع المُلخِّص إلى الإفتاء.\n\nولا يمكن إطفاؤه على وكيل يَعِد برومته بالاستشهاد من المرفقات وحدها. وتفعيله لا يكلّف شيئاً إضافياً: المتجهات مشتركة بين الوكلاء."
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__last_synced
+msgid "Last Synced"
+msgstr "آخر مزامنة"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_attempt__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_uid
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_uid
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -714,6 +811,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__write_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_generation__write_date
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_document_template__write_date
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -780,6 +878,15 @@ msgid "Legal Governance (PDPL)"
 msgstr "الحوكمة القانونية (نظام حماية البيانات الشخصية)"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__status
+msgid "Legal Status"
+msgstr "الحالة النظامية"
+#. module: era_law_firm_ai
+#: model:ir.actions.act_window,name:era_law_firm_ai.action_moj_law
+#: model:ir.ui.menu,name:era_law_firm_ai.menu_moj_law
+msgid "Legislation Corpus"
+msgstr "كوربوس الأنظمة"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_charter__disclaimer
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "Mandatory Notice"
@@ -820,6 +927,10 @@ msgid "Name the portal this office treats as authoritative for legislation."
 msgstr "سمِّ البوابة التي يعتمدها هذا المكتب مرجعاً للأنظمة."
 
 #. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_search
+msgid "Needs Review"
+msgstr "يحتاج مراجعة"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_needaction_counter
 msgid "Number of Actions"
 msgstr "عدد الإجراءات"
@@ -851,6 +962,10 @@ msgstr "كم منها خرج فعلاً من المكتب. والمسودة ال
 msgid "Off by default. When off, no AI request can be sent for this company."
 msgstr "معطّل افتراضياً. عند الإطفاء لا يمكن إرسال أي طلب لهذه الشركة."
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__source_url
+msgid "Official URL"
+msgstr "الرابط الرسمي"
 #. module: era_law_firm_ai
 #: model:ir.model.constraint,message:era_law_firm_ai.constraint_legal_ai_charter_one_active_per_company
 msgid "Only one charter can be active per company."
@@ -975,6 +1090,10 @@ msgid "Response"
 msgstr "الاستجابة"
 
 #. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_moj_corpus
+msgid "Resync Corpus Now"
+msgstr "أعد المزامنة الآن"
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__legal_retention_policy
 msgid "Retention Policy"
 msgstr "سياسة الاحتفاظ"
@@ -994,6 +1113,12 @@ msgid "Reviewed"
 msgstr "مُراجَع"
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_moj_law__content_hash
+msgid ""
+"SHA-256 of the rendered statute text. The sync re-attaches a statute only "
+"when this changes, so an unchanged law is not re-embedded every week."
+msgstr "بصمة SHA-256 لنص النظام المُصيَّر. المزامنة تعيد إرفاق النظام فقط عند تغيّرها، فلا يُعاد تضمين نظام لم يتغيّر."
+#. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "خطأ في تسليم الرسالة النصية"
@@ -1003,6 +1128,23 @@ msgstr "خطأ في تسليم الرسالة النصية"
 msgid "Sanitized Response"
 msgstr "الاستجابة المنقّحة"
 
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_moj_corpus
+msgid "Saudi Legislation Corpus"
+msgstr "كوربوس الأنظمة السعودية"
+#. module: era_law_firm_ai
+#: model:ir.actions.server,name:era_law_firm_ai.cron_moj_corpus_sync_ir_actions_server
+msgid "Saudi Legislation Corpus Sync"
+msgstr "مزامنة كوربوس الأنظمة السعودية"
+#. module: era_law_firm_ai
+#: model:ir.model,name:era_law_firm_ai.model_moj_law
+msgid "Saudi Statute Attached as a Source"
+msgstr "نظام سعودي مرفق كمصدر"
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "Saudi legislation corpus resynced."
+msgstr "أُعيدت مزامنة كوربوس الأنظمة السعودية."
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__sensitive
 msgid "Sensitive"
@@ -1067,6 +1209,18 @@ msgstr "الحالة"
 msgid "Status"
 msgstr "الحالة"
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__name
+msgid "Statute"
+msgstr "النظام"
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__law_id
+msgid "Statute ID"
+msgstr "معرّف النظام"
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_ai_agent__moj_corpus_law_count
+msgid "Statutes Attached"
+msgstr "الأنظمة المرفقة"
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_field__technical_name
 msgid "Technical Name"
@@ -1136,6 +1290,18 @@ msgstr ""
 "إجابة الوكيل، منقّحة مرة أخرى عند الدخول ومُصيَّرة من الـmarkdown الذي كتبه "
 "النموذج. مسودة يراجعها المحامي، وليست استشارة بذاتها."
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_moj_law__source_ids
+msgid ""
+"The ai.agent.source rows this statute is attached through, one per target "
+"agent."
+msgstr "سجلات المصادر التي يُرفق بها هذا النظام، واحد لكل وكيل مستهدف."
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__cited_repealed
+msgid ""
+"The answer relied on a statute that is no longer in force. The text says so "
+"on every article, but a quotation carries no such mark."
+msgstr "استند الجواب إلى نظام لم يعد سارياً. النص يقول ذلك في كل مادة، لكن الاقتباس لا يحمل هذه العلامة."
 #. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_ai_request__payload_preview
 msgid ""
@@ -1253,6 +1419,13 @@ msgid ""
 msgstr "هيكل الصياغة الخاص بالمكتب، يُستخدم أساساً للمستندات المولَّدة."
 
 #. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_moj_law__law_id
+msgid ""
+"The identifier the Ministry's portal uses for this statute. The sync matches"
+" on it, so an amended statute updates its row instead of creating a second "
+"one."
+msgstr "المعرّف الذي تستخدمه بوابة الوزارة لهذا النظام. المزامنة تطابق عليه، فالنظام المعدَّل يحدّث سجله بدل إنشاء ثانٍ."
+#. module: era_law_firm_ai
 #: model:ir.model.fields,help:era_law_firm_ai.field_legal_document_generation__document_id
 msgid ""
 "The legal document created from the output. It starts in draft with a "
@@ -1335,6 +1508,16 @@ msgstr ""
 " على ضوء القواعد التي أُنتجت تحتها."
 
 #. module: era_law_firm_ai
+#: model_terms:ir.actions.act_window,help:era_law_firm_ai.action_moj_law
+msgid "The statute corpus is filled by the scheduled sync."
+msgstr "كوربوس الأنظمة تملؤه المزامنة المجدولة."
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_moj_corpus
+msgid ""
+"The weekly sync keeps the full Saudi MOJ legislation corpus attached to this agent\n"
+"                    as sources, so it answers statutory questions from the actual statute text."
+msgstr "المزامنة المجدولة تُبقي كوربوس الأنظمة السعودية كاملاً مرفقاً بهذا الوكيل كمصادر، ليجيب عن الأسئلة النظامية من نص النظام نفسه."
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid ""
 "These instructions go in front of every request, whichever agent handles it.\n"
@@ -1347,6 +1530,12 @@ msgstr ""
 "قراءته يجب رفعه إليه كمصدر — وإدراج النظام ليس كإعطائه نصه."
 
 #. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"This agent answers only from its attached sources, and this\n"
+"                            answer cited none. Treat it as unsupported opinion."
+msgstr "هذا الوكيل لا يجيب إلا من مصادره المرفقة، ولم يستشهد هذا الجواب بشيء. عامله كرأي غير مُسنَد."
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_agent_form_legal
 msgid ""
 "This agent cannot receive a single legal request until it is approved, whatever\n"
@@ -1356,6 +1545,12 @@ msgstr ""
 "لا يستقبل هذا الوكيل أي طلب قانوني حتى يُعتمد، مهما كانت صلاحيات المستخدم. "
 "واعتماده هو إقرار المكتب بقبوله للمواد المشمولة بسرية الموكل."
 
+#. module: era_law_firm_ai
+#: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
+msgid ""
+"This answer relied on a statute that is no longer in force.\n"
+"                            Check the text currently in force before acting on it."
+msgstr "استند هذا الجواب إلى نظام لم يعد سارياً. راجع النص الساري قبل التصرف بناءً عليه."
 #. module: era_law_firm_ai
 #. odoo-python
 #: code:addons/era_law_firm_ai/models/ai.py:0
@@ -1396,6 +1591,10 @@ msgid "This request is still open -- edit it and send it."
 msgstr "هذا الطلب ما زال مفتوحاً — عدّله وأرسله."
 
 #. module: era_law_firm_ai
+#: model:ir.model.constraint,message:era_law_firm_ai.constraint_moj_law_law_unique
+msgid "This statute is already tracked."
+msgstr "هذا النظام متتبَّع سلفاً."
+#. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid ""
 "Tick only what the agent needs. Entries carrying narrative text\n"
@@ -1421,6 +1620,11 @@ msgid ""
 msgstr ""
 "تُؤشَّر تلقائياً في الطلب الجديد لهذا الوكيل، فيبدأ المحامي مما يحتاجه العمل"
 " فعلاً لا من قائمة فارغة."
+
+#. module: era_law_firm_ai
+#: model:ir.model.fields,field_description:era_law_firm_ai.field_moj_law__law_type
+msgid "Type"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:ir.model.fields,field_description:era_law_firm_ai.field_legal_ai_request__website_message_ids
@@ -1475,6 +1679,13 @@ msgid ""
 "would be refused on dispatch."
 msgstr "هل المستند أعلى حساسيةً من الوكيل المختار، فيُرفض الطلب عند الإرسال."
 
+#. module: era_law_firm_ai
+#: model:ir.model.fields,help:era_law_firm_ai.field_moj_law__status
+msgid ""
+"Whether the statute is in force or repealed, as the Ministry reports it. "
+"Carried so a repealed law is visibly repealed rather than silently retrieved"
+" as if current."
+msgstr "هل النظام سارٍ أم ملغي، كما تُعلنه الوزارة. يُحمل ليظهر الإلغاء بوضوح بدل أن يُسترجع النظام الملغي كأنه سارٍ."
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_ai_request_form
 msgid "Why this request is being made"
@@ -1531,7 +1742,13 @@ msgstr ""
 #. module: era_law_firm_ai
 #: model_terms:ir.ui.view,arch_db:era_law_firm_ai.view_legal_ai_charter_form
 msgid "https://laws.moj.gov.sa/"
-msgstr "https://laws.moj.gov.sa/"
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "id"
+msgstr ""
 
 #. module: era_law_firm_ai
 #. odoo-python
@@ -1565,73 +1782,66 @@ msgid ""
 "حدود المخرَج:\n"
 "مخرجك مسودة اجتهادية يراجعها محامٍ مرخص ويتحمل مسؤوليتها، وليس رأياً قانونياً ولا وثيقة جاهزة للتقديم. ولا تقرر صحة عقد أو بطلانه ولا نتيجة دعوى؛ اعرض الاحتمالات وما يسندها. وإن كانت المعطيات لا تكفي لبيان حكم مسألة، فقل ذلك صراحةً بدل الافتراض."
 msgstr ""
-"أنت محامٍ ومستشار قانوني في المملكة العربية السعودية، تعمل ضمن مكتب محاماة مرخص، ومخرجاتك تمر على محامٍ مختص قبل أي استخدام.\n"
-"\n"
-"الإطار النظامي:\n"
-"تعمل ضمن الأنظمة السعودية النافذة وما تقوم عليه من مبادئ الشريعة الإسلامية، ويشمل ذلك: نظام المرافعات الشرعية، ونظام الإجراءات الجزائية، ونظام المعاملات المدنية، ونظام الشركات، ونظام العمل، ونظام التنفيذ، ونظام المحاكم التجارية، وأنظمة الأحوال الشخصية، وما يتصل بها من لوائح تنفيذية.\n"
-"\n"
-"نطاق العمل:\n"
-"الاستشارات القانونية، وصياغة العقود، ولوائح الدعاوى والمذكرات الجوابية، ومذكرات الاعتراض على الأحكام أمام محكمة الاستئناف والمحكمة العليا، والتحكيم. والفئة المخاطَبة قد تكون فرداً أو شركة أو جهة حكومية، فاضبط الأسلوب على المخاطَب.\n"
-"\n"
-"مصادر الاستناد — قاعدة ملزمة:\n"
-"لا تعتمد إلا على ما بين يديك: المعطيات الواردة في الطلب، والمصادر المرفوعة إلى هذا الوكيل. لا تستطيع فتح روابط ولا تصفح الإنترنت، فلا تتصرف كأنك اطلعت على نص لم يُعرض عليك.\n"
-"ولا تذكر رقم مادة أو تاريخ مرسوم أو رقم حكم ما لم يرد نصاً في المعطيات أو المصادر. وإذا لزم الاستناد ولم يتوفر النص، فقل: «يلزم الرجوع إلى نص النظام للتحقق من المادة» وسمِّ النظام دون رقم المادة. الاستشهاد الخاطئ أشد ضرراً من الامتناع عن الاستشهاد.\n"
-"\n"
-"طريقة الكتابة:\n"
-"اكتب بالعربية الفصحى وبأسلوب المرافعات المعتمد أمام المحاكم السعودية. ورتّب المذكرات على البناء المعتاد: بيانات الأطراف، ثم سرد الوقائع مرتباً زمنياً بلا تكييف، ثم الأساس النظامي، ثم الطلبات محددةً وقابلة للتنفيذ. وما لم يرد في المعطيات اتركه ظاهراً بين قوسين معقوفين هكذا [يُستكمل] ليملأه المحامي، ولا تخترعه.\n"
-"\n"
-"حدود المخرَج:\n"
-"مخرجك مسودة اجتهادية يراجعها محامٍ مرخص ويتحمل مسؤوليتها، وليس رأياً قانونياً ولا وثيقة جاهزة للتقديم. ولا تقرر صحة عقد أو بطلانه ولا نتيجة دعوى؛ اعرض الاحتمالات وما يسندها. وإن كانت المعطيات لا تكفي لبيان حكم مسألة، فقل ذلك صراحةً بدل الافتراض."
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_jurisdiction
 msgid "الاختصاص القضائي"
-msgstr "الاختصاص القضائي"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_outcome
 msgid "الحكم أو التسوية وشروطها. نص سردي قد يحوي تفاصيل الموكل."
-msgstr "الحكم أو التسوية وشروطها. نص سردي قد يحوي تفاصيل الموكل."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_circuit
 msgid "الدائرة"
-msgstr "الدائرة"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_circuit
 msgid "الدائرة داخل المحكمة."
-msgstr "الدائرة داخل المحكمة."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_claim
 msgid "المبلغ محل المطالبة. مالي، فلا تشاركه إلا عند الحاجة."
-msgstr "المبلغ محل المطالبة. مالي، فلا تشاركه إلا عند الحاجة."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_court
 msgid "المحكمة"
-msgstr "المحكمة"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_court
 msgid "المحكمة الناظرة للقضية. تفيد في ضبط الصياغة وفق ما تعتاده المحكمة."
-msgstr "المحكمة الناظرة للقضية. تفيد في ضبط الصياغة وفق ما تعتاده المحكمة."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_city
 msgid "المدينة"
-msgstr "المدينة"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_name
 msgid "المرجع الداخلي للمكتب، مثل LAW/2026/00042. لا يكشف هوية أحد."
-msgstr "المرجع الداخلي للمكتب، مثل LAW/2026/00042. لا يكشف هوية أحد."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.charter,name:era_law_firm_ai.charter_default
 msgid "الميثاق القانوني للمكتب"
-msgstr "الميثاق القانوني للمكتب"
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid ""
+"برومت هذا الوكيل يقصر الاستشهاد بالمواد على النصوص المرفقة به، ولا نصوص "
+"مرفقة. إطفاء «%(field)s» يعيده إلى الاستشهاد من الذاكرة بلا أي تنبيه — وهو "
+"ما يجعل رقم مادة خاطئاً يبدو موثّقاً. فعّل الحقل، أو عدّل البرومت ليتوقف عن "
+"طلب أرقام المواد."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.charter,disclaimer:era_law_firm_ai.charter_default
@@ -1641,42 +1851,49 @@ msgid ""
 "الرجوع إلى المحامين لدينا، ويخلي المكتب مسؤوليته من أي إجراء يتم اتخاذه بناء"
 " عليها مجردة دون الرجوع إلى المختصين."
 msgstr ""
-"تنبيه: الإفادة أعلاه جرى تقديمها عبر الذكاء الاصطناعي حسب المعطيات والوقائع "
-"المدخلة من قبلكم وهي اجتهادية تحتمل الخطأ، ولا يمكن الاستناد إليها دون "
-"الرجوع إلى المحامين لدينا، ويخلي المكتب مسؤوليته من أي إجراء يتم اتخاذه بناء"
-" عليها مجردة دون الرجوع إلى المختصين."
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_type
 msgid ""
 "دعوى قضائية أو تنفيذ أو استشارة. يساعد الوكيل على اختيار الأسلوب المناسب."
 msgstr ""
-"دعوى قضائية أو تنفيذ أو استشارة. يساعد الوكيل على اختيار الأسلوب المناسب."
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_name
 msgid "رقم القضية الداخلي"
-msgstr "رقم القضية الداخلي"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_najiz
 msgid "رقم القضية في ناجز"
-msgstr "رقم القضية في ناجز"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_najiz
 msgid "رقم القضية لدى وزارة العدل. رقم مرجعي لا يحمل بيانات شخصية."
-msgstr "رقم القضية لدى وزارة العدل. رقم مرجعي لا يحمل بيانات شخصية."
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "ساري"
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "غير محدد"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_jurisdiction
 msgid "فرع القضاء: عام، تجاري، عمالي، جزائي وغيرها."
-msgstr "فرع القضاء: عام، تجاري، عمالي، جزائي وغيرها."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_claim
 msgid "قيمة المطالبة"
-msgstr "قيمة المطالبة"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_document_text
@@ -1684,25 +1901,45 @@ msgid ""
 "محتوى المستند المرفق بالكامل. أوسع ما يمكن مشاركته — راجع المعاينة قبل "
 "الموافقة."
 msgstr ""
-"محتوى المستند المرفق بالكامل. أوسع ما يمكن مشاركته — راجع المعاينة قبل "
-"الموافقة."
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,description:era_law_firm_ai.field_case_city
 msgid "مدينة انعقاد المحكمة."
-msgstr "مدينة انعقاد المحكمة."
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_outcome
 msgid "نتيجة القضية"
-msgstr "نتيجة القضية"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_document_text
 msgid "نص المستند كاملاً"
-msgstr "نص المستند كاملاً"
+msgstr ""
 
 #. module: era_law_firm_ai
 #: model:legal.ai.field,name:era_law_firm_ai.field_case_type
 msgid "نوع القضية"
-msgstr "نوع القضية"
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_audit.py:0
+msgid ""
+"⚠️ تنبيه النظام: هذا الوكيل مقيَّد بالمصادر المرفقة، ولم يستشهد الجواب بأي "
+"مصدر. عامله كرأي غير مُسنَد."
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/ai_citation_audit.py:0
+msgid ""
+"⛔ تنبيه النظام: استند هذا الجواب إلى نظام غير سارٍ (%(names)s). راجع النص "
+"الساري قبل الاعتماد عليه."
+msgstr ""
+
+#. module: era_law_firm_ai
+#. odoo-python
+#: code:addons/era_law_firm_ai/models/legal_corpus.py:0
+msgid "⛔ هذا النظام حالته «%(status)s» — لا يُستشهد به كنص ساري."
+msgstr ""

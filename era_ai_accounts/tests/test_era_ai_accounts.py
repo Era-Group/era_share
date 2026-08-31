@@ -2949,3 +2949,83 @@ class TestEmbeddingRouting(TransactionCase):
         settings.action_restore_default_embedding_endpoint()
         self.assertFalse(settings.custom_llm_embedding_key,
                          "the secret differs per deployment; do not fabricate one")
+
+    def test_returning_a_source_to_processing_really_retries_it(self):
+        """Core writes off a chunk that failed once; a restart must not be fatal.
+
+        has_embedding_generation_failed excludes a chunk from every later run,
+        and nothing clears it when the source goes back to 'processing'. The
+        cron then reports no work and no error while a statute sits half
+        indexed — indistinguishable from finished.
+        """
+        agent = self.env["ai.agent"].create({
+            "name": "RAG3", "llm_model": "custom_llm/custom",
+        })
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام.txt", "raw": b"a statute", "mimetype": "text/plain",
+        })
+        chunk = self.env["ai.embedding"].create({
+            "attachment_id": attachment.id, "content": "passage: مادة",
+            "embedding_model": agent._get_embedding_model(),
+            "has_embedding_generation_failed": True,
+        })
+        source = self.env["ai.agent.source"].create({
+            "agent_id": agent.id, "attachment_id": attachment.id,
+            "type": "binary", "status": "processing",
+        })
+        self.assertIn(chunk, self.env["ai.embedding"]._clear_stale_failure_flags())
+        self.assertFalse(chunk.has_embedding_generation_failed)
+        self.assertEqual(source.status, "processing")
+
+    def test_a_failure_under_an_indexed_source_is_left_written_off(self):
+        """Only a source asking to be processed again justifies a retry."""
+        agent = self.env["ai.agent"].create({
+            "name": "RAG4", "llm_model": "custom_llm/custom",
+        })
+        attachment = self.env["ir.attachment"].create({
+            "name": "نظام2.txt", "raw": b"another statute", "mimetype": "text/plain",
+        })
+        chunk = self.env["ai.embedding"].create({
+            "attachment_id": attachment.id, "content": "passage: مادة",
+            "embedding_model": agent._get_embedding_model(),
+            "has_embedding_generation_failed": True,
+        })
+        self.env["ai.agent.source"].create({
+            "agent_id": agent.id, "attachment_id": attachment.id,
+            "type": "binary", "status": "indexed",
+        })
+        self.assertNotIn(chunk, self.env["ai.embedding"]._clear_stale_failure_flags())
+        self.assertTrue(chunk.has_embedding_generation_failed)
+
+    def test_the_health_probe_identifies_itself(self):
+        """Cloudflare 403s urllib's default agent, so the probe must set one.
+
+        Without it the settings page reports the endpoint unreachable while
+        indexing — which goes through requests — works perfectly: a status
+        line that lies is worse than no status line.
+        """
+        captured = {}
+
+        class FakeResponse:
+            def read(self):
+                return b'{"status": "ok", "model": "m"}'
+            def __enter__(self):
+                return self
+            def __exit__(self, *a):
+                return False
+
+        def fake_urlopen(request, timeout=None):
+            captured["agent"] = request.get_header("User-agent")
+            captured["url"] = request.full_url
+            return FakeResponse()
+
+        settings = self.env["res.config.settings"].create({})
+        with patch("urllib.request.urlopen", fake_urlopen):
+            reachable, detail = settings._probe_embedding_endpoint(
+                "https://embed.example/v1")
+        self.assertTrue(reachable)
+        self.assertEqual(detail, "m")
+        self.assertTrue(captured["agent"], "the probe must name itself")
+        self.assertNotIn("urllib", (captured["agent"] or "").lower())
+        self.assertEqual(captured["url"], "https://embed.example/health",
+                         "the /v1 suffix is dropped for the health path")

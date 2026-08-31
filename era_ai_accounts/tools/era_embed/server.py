@@ -108,6 +108,18 @@ class Handler(BaseHTTPRequestHandler):
         # compare_digest, not ==, so a wrong token cannot be found byte by byte
         return hmac.compare_digest(presented, TOKEN)
 
+    def do_HEAD(self):
+        """Answer the plain health check idiom instead of 501."""
+        if self.path.rstrip("/") in ("/health", "/v1/health"):
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        self.send_response(404)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def do_GET(self):
         # /health stays open: it carries no data and monitoring needs it.
         if self.path.rstrip("/") in ("/health", "/v1/health"):

@@ -184,8 +184,13 @@ class ResConfigSettings(models.TransientModel):
         """Return (reachable, detail) for the configured embeddings endpoint."""
         url = (base_url or self.DEFAULT_EMBED_URL).rstrip("/")
         url = url[:-3] if url.endswith("/v1") else url
+        # Cloudflare answers 403 to urllib's default "Python-urllib/3.x" while
+        # letting requests and curl through — so an unnamed probe reports the
+        # endpoint dead while indexing, which goes through requests, is fine.
+        probe = urllib.request.Request(
+            f"{url}/health", headers={"User-Agent": "era-odoo-embeddings/1.0"})
         try:
-            with urllib.request.urlopen(f"{url}/health", timeout=3) as response:
+            with urllib.request.urlopen(probe, timeout=5) as response:
                 payload = json.loads(response.read())
             if payload.get("status") == "ok":
                 return True, payload.get("model") or ""

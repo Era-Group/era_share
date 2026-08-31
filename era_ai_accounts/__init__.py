@@ -15,7 +15,10 @@ EMBEDDING_DEFAULTS = {
     # The endpoint is CPU-bound at well under a chunk per second. OpenAI's
     # inherited 2048 would be over an hour in one request, dying on a timeout
     # and leaving the source stuck in "processing" with nothing to explain it.
-    "ai.custom_llm_embedding_batch_size": "32",
+    # 16 measured at ~42s against Cloudflare's 100s ceiling; 32 came in at 84s,
+    # which is a 16-second margin and not a margin at all. Indexing is once per
+    # document, so the extra round trips cost nothing anyone will notice.
+    "ai.custom_llm_embedding_batch_size": "16",
 }
 
 

@@ -37,7 +37,33 @@ class AIEmbedding(models.Model):
         Cheap to detect and cheap to repair, so do it on the way in.
         """
         self._reopen_sources_without_embeddings()
+        self._clear_stale_failure_flags()
         return super()._cron_generate_embedding(batch_size=batch_size)
+
+    def _clear_stale_failure_flags(self):
+        """Let "put the source back to processing" actually mean retry.
+
+        Core skips any chunk with has_embedding_generation_failed, and nothing
+        clears that flag when a source is returned to ``processing`` — so a
+        batch interrupted by, say, a container restart is written off forever.
+        The cron then reports no work and no error while a statute sits half
+        indexed, which is indistinguishable from being done.
+
+        A flagged chunk under a source that is processing again is a
+        contradiction; the source state is the newer intent, so honour it.
+        """
+        stale = self.sudo().search([
+            ("embedding_vector", "=", False),
+            ("has_embedding_generation_failed", "=", True),
+            ("checksum", "in", self.env["ai.agent.source"].sudo().search([
+                ("status", "=", "processing"),
+            ]).mapped("attachment_id.checksum")),
+        ])
+        if stale:
+            _logger.info("Clearing the failure flag on %s chunk(s) whose source "
+                         "is being processed again", len(stale))
+            stale.write({"has_embedding_generation_failed": False})
+        return stale
 
     def _reopen_sources_without_embeddings(self):
         sources = self.env["ai.agent.source"].sudo().search([

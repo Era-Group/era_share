@@ -1,7 +1,15 @@
 <odoo>
-    <!-- Weekly, a few hours behind the scraper's own Sunday run so the published
-         corpus is already refreshed. The sync skips its heavy fetch when the
-         corpus has not changed since last time, so running often is cheap. -->
+    <!-- Weekly on a Sunday, a day behind the scraper's Saturday run, so the
+         published corpus is already refreshed when we fetch it. The sync skips
+         its heavy work when nothing changed, so running often is cheap.
+
+         Indexing needs no cron of its own: ai.agent.source.create() calls
+         _trigger() on ai.ir_cron_generate_embedding, and that cron is shipped
+         with a 9999-month interval precisely because it is trigger-driven
+         rather than scheduled. A new or replaced statute is embedded within
+         seconds of the sync writing it — on a live database. On a neutralized
+         one every cron is deactivated, and Odoo deliberately refuses to let
+         them be re-enabled, so indexing there has to be run by hand. -->
     <record id="cron_moj_corpus_sync" model="ir.cron">
         <field name="name">MOJ Legislation Corpus Sync</field>
         <field name="model_id" ref="model_moj_law"/>

@@ -457,7 +457,10 @@ class LegalCaseAIActivity(models.Model):
     _inherit = 'legal.case'
 
     ai_request_ids = fields.One2many('legal.ai.request', 'case_id', string='AI Requests')
-    ai_request_count = fields.Integer(compute='_compute_ai_request_count', string='AI Requests')
+    # Distinct from ai_request_ids: two fields on one model sharing a label make
+    # a filter or export list read as duplicates with no way to tell them apart.
+    ai_request_count = fields.Integer(
+        compute='_compute_ai_request_count', string='AI Requests Count')
     ai_dispatched_count = fields.Integer(
         compute='_compute_ai_request_count', string='Dispatched to an Agent',
         help="Of those, how many actually left the firm. A draft that was never sent shared nothing.")

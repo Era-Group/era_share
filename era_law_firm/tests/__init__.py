@@ -10,3 +10,4 @@ from . import test_next_step
 from . import test_intake_wizard
 from . import test_billing_path
 from . import test_portal_access
+from . import test_demo_portal_accounts

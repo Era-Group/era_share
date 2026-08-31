@@ -19,6 +19,15 @@
                     Test data is already loaded. Loading again adds a further batch on top;
                     use Remove to clear what is there first.
                 </div>
+                <div class="alert alert-success" role="alert" invisible="existing_count == 0">
+                    <strong>Try the client portal:</strong> two logins ship with the data,
+                    password <code>PortalDemo!2026</code> for both.<br/>
+                    <code>client.demo@example.sa</code> — a client with several cases:
+                    hearings, shared documents, invoices and trust money.<br/>
+                    <code>opponent.demo@example.sa</code> — the other side of seven cases,
+                    who correctly sees none of them: that emptiness is the security
+                    boundary working, not a bug.
+                </div>
                 <footer>
                     <button name="action_load" type="object" string="Load Test Data" class="btn-primary"/>
                     <button name="action_purge" type="object" string="Remove Test Data"

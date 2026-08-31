@@ -20,6 +20,14 @@ _logger = logging.getLogger(__name__)
 
 DEMO_MODULE = '__era_law_demo__'
 
+# Two ready portal logins, created with the data and removed with it. The
+# passwords are fixed and documented on the Load Test Data screen — this is a
+# test tool for a staging database, which is also why DEPLOYMENT.md forbids
+# loading demo data on production.
+PORTAL_CLIENT_LOGIN = 'client.demo@example.sa'
+PORTAL_OPPONENT_LOGIN = 'opponent.demo@example.sa'
+PORTAL_DEMO_PASSWORD = 'PortalDemo!2026'
+
 CLIENT_COMPANIES = [
     'شركة الراجحي للتجارة', 'مؤسسة الفيصل للمقاولات', 'شركة نجد للصناعات الغذائية',
     'مجموعة الخليج القابضة', 'شركة تبوك الزراعية', 'مؤسسة الحرمين للنقل',
@@ -134,6 +142,7 @@ class LegalDemoData(models.AbstractModel):
             cases |= self._demo_case(index + offset, rng, clients, opponents, stages,
                                      courts, rules, lawyers, product, company)
 
+        self._ensure_portal_accounts(cases)
         _logger.info('era_law_firm: generated %s test case(s), %s client(s), %s opponent(s)',
                      len(cases), len(clients), len(opponents))
         return cases
@@ -400,6 +409,44 @@ class LegalDemoData(models.AbstractModel):
     # ------------------------------------------------------------------
 
     @api.model
+    def _ensure_portal_accounts(self, cases):
+        """Two logins that make the portal demonstrable out of the box.
+
+        The client account belongs to the generated client with the most to
+        look at; the opponent account exists to demonstrate the boundary —
+        logging in as the other side of seven cases and seeing none of them
+        is the security model, shown rather than asserted. Without these,
+        whoever tests the portal grabs the first demo email they find, and
+        the plausible-looking ones are the opponents.
+        """
+        Users = self.env['res.users'].sudo().with_context(no_reset_password=True)
+        visible = cases.filtered(lambda c: c.state not in ('draft', 'cancelled'))
+        if not visible:
+            return
+
+        def ensure(login, partner):
+            user = Users.search([('login', '=', login)], limit=1)
+            if not user:
+                user = Users.create({
+                    'name': partner.name, 'login': login,
+                    'password': PORTAL_DEMO_PASSWORD, 'partner_id': partner.id,
+                    'lang': 'ar_001',
+                    'group_ids': [(6, 0, [self.env.ref('base.group_portal').id])]})
+                self._tag(user, 'portal_user_%s' % login.split('@')[0].replace('.', '_'))
+            return user
+
+        richest = max(visible.mapped('client_id'), key=lambda partner: len(
+            visible.filtered(lambda c: c.client_id == partner)))
+        ensure(PORTAL_CLIENT_LOGIN, richest)
+
+        opponents = visible.mapped('party_ids').filtered(
+            lambda pr: pr.role == 'opponent').mapped('partner_id')
+        # never hand the opponent login to someone who is also a client somewhere
+        clients = visible.mapped('client_id')
+        pure = (opponents - clients)
+        if pure:
+            ensure(PORTAL_OPPONENT_LOGIN, pure[0])
+
     def _purge(self):
         """Remove everything the generator made.
 
@@ -423,6 +470,10 @@ class LegalDemoData(models.AbstractModel):
 
         def tagged(model):
             return self.env[model].sudo().browse(index.get(model, [])).exists()
+
+        # 0. portal demo logins go first: a res.users row restricts deleting
+        #    its partner, and the partners are about to be swept as demo data.
+        tagged('res.users').unlink()
 
         cases = tagged('legal.case')
         engagements = self.env['legal.engagement'].sudo().search([('case_id', 'in', cases.ids)])

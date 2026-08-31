@@ -7,4 +7,18 @@
     <record id="agent_research" model="ai.agent">
         <field name="moj_corpus_target" eval="True"/>
     </record>
+
+    <!-- Drafting and contract review both ask the model for the statutory
+         basis, and a prompt that demands article numbers without the texts to
+         read them from gets them recalled from memory — a wrong article number
+         in a filed memo is the most expensive thing this module can produce.
+         Summarising is deliberately not here: its job is the document in front
+         of it, and injecting statute chunks into every summary would push it
+         to opine instead. -->
+    <record id="agent_drafting" model="ai.agent">
+        <field name="moj_corpus_target" eval="True"/>
+    </record>
+    <record id="agent_contract_review" model="ai.agent">
+        <field name="moj_corpus_target" eval="True"/>
+    </record>
 </odoo>

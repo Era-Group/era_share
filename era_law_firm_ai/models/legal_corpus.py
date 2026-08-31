@@ -23,6 +23,7 @@ import logging
 import requests
 
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -273,11 +274,38 @@ class MojLaw(models.Model):
 class AIAgentMojCorpus(models.Model):
     _inherit = 'ai.agent'
 
+    # The phrase every grounded prompt uses to bound its citations. If a prompt
+    # says "only cite articles that appear in the texts attached to this agent",
+    # then the texts have to actually be attached; the two halves of that
+    # decision must not be able to drift apart.
+    _BOUNDED_CITATION_MARKER = 'المرفقة بهذا الوكيل'
+
+    @api.constrains('moj_corpus_target', 'system_prompt')
+    def _check_citation_is_grounded(self):
+        for agent in self:
+            prompt = agent.system_prompt or ''
+            if self._BOUNDED_CITATION_MARKER not in prompt:
+                continue
+            if agent.moj_corpus_target or agent.sources_ids:
+                continue
+            raise ValidationError(_(
+                "برومت هذا الوكيل يقصر الاستشهاد بالمواد على النصوص المرفقة به، "
+                "ولا نصوص مرفقة. إطفاء «%(field)s» يعيده إلى الاستشهاد من الذاكرة "
+                "بلا أي تنبيه — وهو ما يجعل رقم مادة خاطئاً يبدو موثّقاً. "
+                "فعّل الحقل، أو عدّل البرومت ليتوقف عن طلب أرقام المواد.",
+                field=_('Carries the MOJ Legislation Corpus')))
+
     moj_corpus_target = fields.Boolean(
         string='Carries the MOJ Legislation Corpus', copy=False,
-        help="When set, the scheduled sync keeps the full Saudi MOJ legislation corpus attached to "
-             "this agent as sources, so it can cite the statute text instead of recalling it. Set it "
-             "on an agent that answers only from its sources.")
+        help="Keeps the 75 Ministry of Justice statutes attached to this agent as sources, "
+             "so it cites the text instead of recalling it.\n\n"
+             "Set it on any agent whose prompt asks for article numbers — otherwise the numbers "
+             "come from the model's memory, and a wrong one looks exactly like a right one. "
+             "Leave it off where the job is the document in front of the agent, such as "
+             "summarising: statute text is injected into every request, which pushes a "
+             "summariser to opine.\n\n"
+             "It cannot be turned off on an agent whose prompt promises to cite only the attached "
+             "texts. Costs nothing extra to enable: the embeddings are shared between agents.")
     moj_corpus_law_count = fields.Integer(
         string='Statutes Attached', compute='_compute_moj_corpus_law_count',
         help="How many statutes the sync currently has attached to this agent as sources.")

@@ -1,5 +1,5 @@
 <odoo>
-    <!-- Monthly, on the first of the month. The scraper republishes every
+    <!-- Monthly, on the 2nd of the month. The scraper republishes every
          Saturday, but statutes do not change at that rate: a run that finds
          nothing new does no work beyond one fetch, and a run that finds
          something re-embeds only the statutes whose text actually moved. The
@@ -21,11 +21,11 @@
         <field name="code">model._run_corpus_sync()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">months</field>
-        <!-- Anchored to the 1st at 02:00: Odoo adds the interval to nextcall,
-             so the anchor is what keeps it on the first of every month rather
+        <!-- Anchored to the 2nd at 02:00: Odoo adds the interval to nextcall,
+             so the anchor is what keeps it on the same date every month rather
              than drifting to whatever day it was installed. -->
         <field name="nextcall"
-               eval="(DateTime.now().replace(day=1, hour=2, minute=0, second=0, microsecond=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+               eval="(DateTime.now().replace(day=2, hour=2, minute=0, second=0, microsecond=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
         <field name="active" eval="True"/>
     </record>
 </odoo>

@@ -103,12 +103,12 @@ class TestCitationGrounding(TransactionCase):
             self.assertIn('لا يوجد في المصادر المرفقة ما يغطي هذه المسألة', prompt,
                           f'{xmlid}: it needs the words to decline with')
 
-    def test_the_corpus_sync_runs_monthly_on_the_first(self):
+    def test_the_corpus_sync_runs_monthly_on_the_second(self):
         """Weekly bought freshness nobody was waiting for; statutes move slowly."""
         cron = self.env.ref('era_law_firm_ai.cron_moj_corpus_sync')
         self.assertEqual(cron.interval_type, 'months')
         self.assertEqual(cron.interval_number, 1)
-        self.assertEqual(cron.nextcall.day, 1,
+        self.assertEqual(cron.nextcall.day, 2,
                          'Odoo adds the interval to nextcall, so the anchor is '
-                         'what keeps it on the first rather than drifting')
+                         'what keeps it on the same date rather than drifting')
         self.assertTrue(cron.active)

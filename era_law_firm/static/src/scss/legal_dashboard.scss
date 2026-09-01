@@ -1,9 +1,11 @@
 // The dashboard's look. Style only — behaviour stays server-rendered form.
 
 .o_legal_dashboard {
+    .o_form_statusbar { padding-inline: 0; }
+
     .o_form_sheet {
         max-width: 1180px;
-        padding-top: 1rem;
+        padding-top: .5rem;
         background: transparent;
         border: 0;
         box-shadow: none;

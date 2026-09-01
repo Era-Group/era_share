@@ -4,19 +4,19 @@
         <field name="model">legal.dashboard</field>
         <field name="arch" type="xml">
             <form string="Dashboard" create="false" edit="false" delete="false" class="o_legal_dashboard">
+                <!-- In the header, so the web client renders it in the control
+                     panel beside the breadcrumb rather than costing a row of
+                     its own inside the sheet. -->
+                <header>
+                    <button name="action_open_intake" type="object"
+                            string="Open a Case" class="btn-primary"/>
+                </header>
                 <sheet>
                     <field name="show_lawyer" invisible="1"/>
                     <field name="show_supervisor" invisible="1"/>
                     <field name="show_manager" invisible="1"/>
                     <field name="show_accountant" invisible="1"/>
                     <field name="show_ai" invisible="1"/>
-
-                    <!-- No greeting banner: the tiles are the content, and a
-                         header the reader already knows costs a screenful. -->
-                    <div class="o_legal_dash_actions d-flex justify-content-start mb-3">
-                        <button name="action_open_intake" type="object"
-                                string="Open a Case" class="btn btn-primary"/>
-                    </div>
 
                     <div class="o_legal_dash_section" invisible="not show_lawyer">
                         <div class="o_legal_dash_section_title">My Work</div>

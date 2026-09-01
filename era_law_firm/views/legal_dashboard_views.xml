@@ -19,7 +19,15 @@
                     <field name="show_ai" invisible="1"/>
 
                     <div class="o_legal_dash_section" invisible="not show_lawyer">
-                        <div class="o_legal_dash_section_title">My Work</div>
+                        <div class="o_legal_dash_section_head d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="o_legal_dash_section_title mb-0">Work in Progress</div>
+                            <!-- Only a supervisor has a choice to make: for
+                                 anyone else the record rules already answer
+                                 the same question. -->
+                            <field name="scope" widget="radio" options="{'horizontal': true}"
+                                   nolabel="1" invisible="not show_supervisor"
+                                   class="o_legal_dash_scope"/>
+                        </div>
                         <div class="row g-2">
                             <div class="col-6 col-md-4 col-xl-3">
                                 <button name="action_my_open_cases" type="object" class="o_legal_tile">

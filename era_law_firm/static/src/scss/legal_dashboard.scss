@@ -13,6 +13,13 @@
 
     .o_legal_dash_section {
         margin-bottom: 1.25rem;
+        .o_legal_dash_section_head { margin-bottom: .6rem; }
+
+        .o_legal_dash_scope {
+            .o_radio_item { margin-inline-end: .75rem; }
+            label { font-size: .82rem; color: var(--o-main-color-muted, #6c757d); }
+        }
+
         .o_legal_dash_section_title {
             font-size: .78rem;
             font-weight: 700;

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 23:42+0000\n"
-"PO-Revision-Date: 2026-08-31 23:42+0000\n"
+"POT-Creation-Date: 2026-09-01 19:42+0000\n"
+"PO-Revision-Date: 2026-09-01 19:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -180,6 +180,7 @@ msgstr "التحويل يجب أن يكون بين قضيتين مختلفتين
 #: model:ir.ui.menu,name:era_law_firm.menu_legal_config_ai
 msgid "AI"
 msgstr "الذكاء الاصطناعي"
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_dashboard.py:0
@@ -543,7 +544,6 @@ msgstr "الرصيد المتاح"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Awaiting Conflict Check"
 msgstr "بانتظار فحص التعارض"
-
 #. module: era_law_firm
 #: model:legal.case.stage,name:era_law_firm.stage_hearing
 msgid "Awaiting Hearing"
@@ -1525,6 +1525,7 @@ msgstr "دائرة القضايا التعزيرية"
 #: model:ir.model.fields,field_description:era_law_firm.field_account_move__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_calendar_event__display_name
+#: model:ir.model.fields,field_description:era_law_firm.field_ir_cron__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__display_name
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__display_name
@@ -1630,7 +1631,6 @@ msgstr "اتفاقيات مسودة"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Draft Time"
 msgstr "وقت مسودة"
-
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__state
 #: model:ir.model.fields,help:era_law_firm.field_legal_conflict_check__case_state
@@ -1715,7 +1715,10 @@ msgstr "تاريخ الحدث"
 msgid ""
 "Every case that ran a check came back clear, or a manager recorded a\n"
 "               reason to proceed. Clear the Blocked filter to see the whole register."
-msgstr "كل قضية فُحصت عادت خالية من التعارض، أو سجّل مدير سبباً للمضي.\n               أزل مرشِّح «موقوف» لرؤية السجل كاملاً."
+msgstr ""
+"كل قضية فُحصت عادت خالية من التعارض، أو سجّل مدير سبباً للمضي.\n"
+"               أزل مرشِّح «موقوف» لرؤية السجل كاملاً."
+
 #. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_next_step.py:0
@@ -2137,6 +2140,7 @@ msgstr "كيف انتهت المسألة: الحكم، أو شروط التسو�
 #: model:ir.model.fields,field_description:era_law_firm.field_account_move__id
 #: model:ir.model.fields,field_description:era_law_firm.field_account_move_line__id
 #: model:ir.model.fields,field_description:era_law_firm.field_calendar_event__id
+#: model:ir.model.fields,field_description:era_law_firm.field_ir_cron__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_audit_log__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__id
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case_party__id
@@ -3015,11 +3019,6 @@ msgid "My Unbilled Draft Time"
 msgstr "وقتي المسودة غير المفوتر"
 
 #. module: era_law_firm
-#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
-msgid "My Work"
-msgstr "عملي"
-
-#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__najiz_number
 msgid "Najiz Number"
 msgstr "رقم ناجز"
@@ -3263,6 +3262,11 @@ msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل التي فشل تسليمها"
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_dashboard__scope__mine
+msgid "Only Mine"
+msgstr "ما يخصّني فقط"
+
+#. module: era_law_firm
 #. odoo-python
 #: code:addons/era_law_firm/models/legal_actions.py:0
 msgid "Only a confirmed case can be invoiced."
@@ -3356,7 +3360,6 @@ msgstr "مفتوح"
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
 msgid "Open Cases"
 msgstr "قضايا مفتوحة"
-
 #. module: era_law_firm
 #: model:ir.actions.act_window,name:era_law_firm.action_legal_intake_wizard
 #: model:ir.model,name:era_law_firm.model_legal_intake_wizard
@@ -3936,6 +3939,11 @@ msgid "Scheduled"
 msgstr "مجدول"
 
 #. module: era_law_firm
+#: model:ir.model,name:era_law_firm.model_ir_cron
+msgid "Scheduled Actions"
+msgstr "الإجراءات المجدولة"
+
+#. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_case__access_token
 msgid "Security Token"
 msgstr "رمز الأمان"
@@ -4005,6 +4013,11 @@ msgid ""
 msgstr ""
 "إظهار هذا الطرف للموكل في البوابة. اتركه مطفأً لإبقاء الطرف خارج نطاق اطلاع "
 "الموكل."
+
+#. module: era_law_firm
+#: model:ir.model.fields,field_description:era_law_firm.field_legal_dashboard__scope
+msgid "Showing"
+msgstr "المعروض"
 
 #. module: era_law_firm
 #: model:ir.model.fields,field_description:era_law_firm.field_legal_trust_transaction__signed_amount
@@ -5127,6 +5140,11 @@ msgid ""
 msgstr "من يمثّله المكتب. قضاياه الأخرى هي ما يقارن به فحص التعارض."
 
 #. module: era_law_firm
+#: model:ir.model.fields.selection,name:era_law_firm.selection__legal_dashboard__scope__firm
+msgid "Whole Firm"
+msgstr "المكتب كله"
+
+#. module: era_law_firm
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_case_form
 msgid ""
 "Why it exists: acting for a party whose interests conflict with those of a current or former client breaches the Saudi Code of Law Practice and the duty of client confidentiality. It is a disciplinary matter for the lawyer, not an administrative slip.\n"
@@ -5164,6 +5182,11 @@ msgstr "لماذا لا يمنع هذا التعارض قبول التكليف..
 #: model_terms:ir.ui.view,arch_db:era_law_firm.view_trust_transaction_form
 msgid "Why this movement was made..."
 msgstr "سبب إجراء هذه الحركة..."
+
+#. module: era_law_firm
+#: model_terms:ir.ui.view,arch_db:era_law_firm.view_legal_dashboard_form
+msgid "Work in Progress"
+msgstr "العمل الجاري"
 
 #. module: era_law_firm
 #: model:ir.model.fields,help:era_law_firm.field_legal_case__internal_notes

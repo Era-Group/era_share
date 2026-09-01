@@ -184,3 +184,65 @@ class TestConflictRegister(TransactionCase):
         # act_window.context is a Char: what comes back is source, not a dict.
         context = literal_eval(action['context'])
         self.assertEqual(context.get('search_default_blocked'), 1)
+
+
+@tagged('post_install', '-at_install')
+class TestDashboardScope(TransactionCase):
+    """Whose work the dashboard counts, and who gets to choose.
+
+    An administrator whose name was on one case read "1" beside a label that
+    said Open Cases while the firm had forty-five. Someone running a practice
+    should land on the practice; a lawyer has nothing to choose, because the
+    record rules only ever show them their own.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.supervisor = cls.env['res.users'].create({
+            'name': 'مشرف النطاق', 'login': 'scope_supervisor',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('era_law_firm.group_legal_supervisor').id])]})
+        cls.colleague = cls.env['res.users'].create({
+            'name': 'زميل النطاق', 'login': 'scope_colleague',
+            'group_ids': [(6, 0, [cls.env.ref('base.group_user').id,
+                                  cls.env.ref('era_law_firm.group_legal_lawyer').id])]})
+        client = cls.env['res.partner'].create({'name': 'موكّل النطاق'})
+        for lawyer in (cls.supervisor, cls.colleague, cls.colleague):
+            wizard = cls.env['legal.intake.wizard'].with_user(lawyer).create({
+                'client_id': client.id, 'case_type': 'litigation',
+                'lawyer_id': lawyer.id, 'engagement_type': 'none'})
+            wizard.action_open_case()
+
+    def _board(self, user, scope=None):
+        Dashboard = self.env['legal.dashboard'].with_user(user)
+        board = Dashboard.new(Dashboard.default_get(list(Dashboard._fields)))
+        if scope:
+            board.scope = scope
+        return board
+
+    def test_a_supervisor_lands_on_the_whole_firm(self):
+        board = self._board(self.supervisor)
+        self.assertEqual(board.scope, 'firm')
+        firm = self.env['legal.case'].sudo().search_count([('state', '=', 'confirmed')])
+        self.assertEqual(board.my_open_cases, firm)
+        self.assertGreater(firm, 1, 'precondition: colleagues hold cases too')
+
+    def test_narrowing_to_mine_reprices_the_page(self):
+        board = self._board(self.supervisor, scope='mine')
+        self.assertEqual(board.my_open_cases, 1, 'the supervisor holds one file')
+
+    def test_a_lawyer_lands_on_their_own_and_cannot_widen(self):
+        board = self._board(self.colleague)
+        self.assertEqual(board.scope, 'mine')
+        self.assertEqual(board.my_open_cases, 2)
+        board.scope = 'firm'
+        self.assertEqual(board.my_open_cases, 2,
+                         'widening belongs to a supervisor, not to a field value')
+
+    def test_the_number_and_the_list_agree_in_both_scopes(self):
+        for scope, user in (('firm', self.supervisor), ('mine', self.supervisor)):
+            board = self.env['legal.dashboard'].with_user(user).create({'scope': scope})
+            action = board.action_my_open_cases()
+            listed = self.env['legal.case'].with_user(user).search(action['domain'])
+            self.assertEqual(len(listed), board.my_open_cases, scope)

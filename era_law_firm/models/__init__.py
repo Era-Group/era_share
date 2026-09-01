@@ -14,3 +14,4 @@ from . import legal_next_step
 from . import legal_portal_surface
 from . import legal_dashboard
 from . import legal_conflict_display
+from . import legal_cron_autostart

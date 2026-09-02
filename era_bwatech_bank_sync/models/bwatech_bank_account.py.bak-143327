@@ -305,28 +305,11 @@ class BwatechBankAccount(models.Model):
         ])
         existing_by_sequence = {rec.sequence_number: rec for rec in existing}
 
-        # Resolved once for the whole page: two queries instead of two per row.
-        prepared = {seq: self._transaction_vals(seq, item)
-                    for seq, item in by_sequence.items()}
-        partners = Tx._match_partners(
-            [(v.get("third_party_account_number"), v.get("third_party_name"))
-             for v in prepared.values()],
-            self.company_id or self.env.company,
-        )
-
         to_create = []
-        for sequence, vals in prepared.items():
-            partner = partners.get(
-                (vals.get("third_party_account_number") or False,
-                 vals.get("third_party_name") or False)
-            )
-            if partner:
-                vals["partner_id"] = partner
+        for sequence, item in by_sequence.items():
+            vals = self._transaction_vals(sequence, item)
             record = existing_by_sequence.get(sequence)
             if record:
-                # Never overwrite a partner an accountant corrected by hand.
-                if record.partner_id:
-                    vals.pop("partner_id", None)
                 record.write(vals)
             else:
                 to_create.append(vals)

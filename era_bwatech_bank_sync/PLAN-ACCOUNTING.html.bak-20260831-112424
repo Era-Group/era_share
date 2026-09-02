@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بواتك في دفاتر أودو 19</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --surface-2:#E7ECE5; --surface-3:#DDE4DA;
+  --line:#D3DBD0; --line-strong:#B6C2B2;
+  --text:#1B2A24; --text-2:#53625A; --text-3:#84908A;
+  --accent:#2F6B4F; --accent-deep:#22513C; --accent-wash:#E1EDE6;
+  --clay:#B0603A; --clay-wash:#F6E9E2;
+  --gold:#8E6A18; --gold-wash:#F4EEDC;
+  --shadow:0 1px 2px rgba(27,42,36,.05), 0 8px 22px rgba(27,42,36,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101613; --surface:#18211B; --surface-2:#1F2A23; --surface-3:#26332A;
+    --line:#2C3A31; --line-strong:#3E5044;
+    --text:#E5EAE6; --text-2:#9EAAA3; --text-3:#6F7D75;
+    --accent:#57B487; --accent-deep:#84D0AA; --accent-wash:#14291F;
+    --clay:#DB9066; --clay-wash:#2E1D14;
+    --gold:#D2B063; --gold-wash:#2B2412;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101613; --surface:#18211B; --surface-2:#1F2A23; --surface-3:#26332A;
+  --line:#2C3A31; --line-strong:#3E5044;
+  --text:#E5EAE6; --text-2:#9EAAA3; --text-3:#6F7D75;
+  --accent:#57B487; --accent-deep:#84D0AA; --accent-wash:#14291F;
+  --clay:#DB9066; --clay-wash:#2E1D14;
+  --gold:#D2B063; --gold-wash:#2B2412;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box;}
+body{
+  direction:rtl; background:var(--bg); color:var(--text);
+  font-family:"Noto Naskh Arabic","Cairo",serif;
+  font-size:17px; line-height:1.95; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 26px 90px;}
+.col{max-width:68ch;}
+
+.mast{padding:56px 0 34px;border-bottom:2px solid var(--accent);margin-bottom:12px;}
+.eyebrow{
+  font-family:"Cairo",sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.14em;color:var(--accent);margin-bottom:16px;
+}
+.mast h1{
+  font-family:"Cairo",sans-serif;font-weight:900;
+  font-size:clamp(30px,5vw,48px);line-height:1.22;
+  margin:0 0 16px;color:var(--text);text-wrap:balance;letter-spacing:-.01em;
+}
+.mast .lede{font-size:19px;color:var(--text-2);max-width:60ch;margin:0;line-height:1.8;}
+
+.qbar{display:grid;gap:12px;margin:32px 0 60px;}
+.q{
+  display:grid;grid-template-columns:auto 1fr;gap:0 16px;align-items:start;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:18px 20px;box-shadow:var(--shadow);
+}
+.q .qn{
+  font-family:"Cairo",sans-serif;font-weight:900;font-size:26px;
+  color:var(--accent);line-height:1;padding-top:4px;
+}
+.q p{margin:0;font-size:17px;color:var(--text);font-weight:500;}
+
+.part{margin:0 0 76px;}
+.phead{border-top:1px solid var(--line-strong);padding-top:22px;margin-bottom:10px;}
+.plabel{
+  font-family:"Cairo",sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:8px;
+}
+h2{
+  font-family:"Cairo",sans-serif;font-weight:700;font-size:29px;
+  line-height:1.35;margin:0 0 12px;color:var(--text);text-wrap:balance;
+}
+h3{
+  font-family:"Cairo",sans-serif;font-weight:700;font-size:20px;
+  margin:44px 0 12px;color:var(--text);text-wrap:balance;
+}
+.dek{color:var(--text-2);font-size:17px;margin:0 0 8px;max-width:64ch;}
+p{margin:0 0 16px;}
+ul{margin:0 0 16px;padding-inline-start:22px;}
+li{margin-bottom:9px;}
+li::marker{color:var(--accent);}
+strong{font-weight:700;color:var(--text);}
+
+.ui{
+  font-family:"Cairo",sans-serif;font-size:13.5px;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--line-strong);
+  border-radius:5px;padding:1px 8px;white-space:nowrap;
+  display:inline-block;line-height:1.7;color:var(--text);
+}
+
+.tscroll{overflow-x:auto;margin:26px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--shadow);}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:16px;}
+th,td{padding:13px 17px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.7;}
+thead th{
+  background:var(--surface-2);color:var(--text-2);
+  font-family:"Cairo",sans-serif;font-size:13.5px;font-weight:700;
+  border-bottom:1px solid var(--line-strong);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:none;}
+.was{color:var(--text-2);}
+.now{color:var(--text);font-weight:500;}
+
+.journey{display:flex;flex-direction:column;margin:28px 0;}
+.leg{display:grid;grid-template-columns:38px 1fr;gap:0 18px;position:relative;padding-bottom:26px;}
+.leg:last-child{padding-bottom:0;}
+.leg::before{content:"";position:absolute;top:34px;bottom:0;inset-inline-start:18px;width:2px;background:var(--line-strong);}
+.leg:last-child::before{display:none;}
+.bead{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  background:var(--accent);color:var(--surface);position:relative;z-index:1;
+  font-family:"Cairo",sans-serif;font-weight:700;font-size:15px;
+}
+.leg.manual .bead{background:var(--clay);}
+.leg-b{padding-top:3px;}
+.leg-b h4{font-family:"Cairo",sans-serif;font-weight:700;font-size:18px;margin:0 0 5px;color:var(--text);}
+.leg-b p{margin:0 0 7px;font-size:16px;color:var(--text-2);}
+.leg-b p:last-child{margin-bottom:0;}
+.who{
+  font-family:"Cairo",sans-serif;font-size:12.5px;font-weight:700;
+  color:var(--accent);letter-spacing:.04em;
+}
+.leg.manual .who{color:var(--clay);}
+
+.grid{display:grid;gap:16px;margin:26px 0;}
+.g2{grid-template-columns:repeat(auto-fit,minmax(285px,1fr));}
+.g3{grid-template-columns:repeat(auto-fit,minmax(215px,1fr));}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 21px;box-shadow:var(--shadow);}
+.card h4{font-family:"Cairo",sans-serif;font-weight:700;font-size:17px;margin:0 0 8px;color:var(--text);}
+.card p{font-size:16px;color:var(--text-2);margin:0 0 9px;}
+.card p:last-child{margin-bottom:0;}
+.card ul{font-size:16px;color:var(--text-2);margin-bottom:0;}
+
+.screen{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:0;margin:20px 0;overflow:hidden;box-shadow:var(--shadow);
+}
+.screen-h{
+  background:var(--surface-2);border-bottom:1px solid var(--line-strong);
+  padding:13px 20px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+}
+.screen-n{
+  font-family:"Cairo",sans-serif;font-weight:900;font-size:14px;
+  color:var(--surface);background:var(--accent);
+  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;
+}
+.screen-h h4{font-family:"Cairo",sans-serif;font-weight:700;font-size:18px;margin:0;color:var(--text);}
+.screen-b{padding:19px 21px;}
+.screen-b p{font-size:16px;color:var(--text-2);margin:0 0 11px;}
+.screen-b p:last-child{margin-bottom:0;}
+.screen-b ul{font-size:16px;color:var(--text-2);margin-bottom:0;}
+.path{
+  font-family:"Cairo",sans-serif;font-size:13.5px;font-weight:600;
+  color:var(--accent-deep);margin-inline-start:auto;
+}
+
+.note{
+  border:1px solid var(--line);border-inline-start:4px solid var(--accent);
+  background:var(--surface);border-radius:0 10px 10px 0;
+  padding:20px 22px;margin:26px 0;box-shadow:var(--shadow);
+}
+.note.clay{border-inline-start-color:var(--clay);}
+.note.gold{border-inline-start-color:var(--gold);}
+.note h4{font-family:"Cairo",sans-serif;font-weight:700;font-size:18px;margin:0 0 9px;color:var(--text);}
+.note p{font-size:16px;color:var(--text-2);margin:0 0 11px;}
+.note p:last-child{margin-bottom:0;}
+.note ul{font-size:16px;color:var(--text-2);}
+
+.outcome{display:grid;gap:14px;margin:26px 0;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));}
+.oc{border-radius:10px;padding:19px 20px;border:1px solid;}
+.oc h4{font-family:"Cairo",sans-serif;font-weight:700;font-size:17px;margin:0 0 7px;}
+.oc p{font-size:15.5px;margin:0;line-height:1.75;}
+.oc-a{background:var(--accent-wash);border-color:var(--accent);}
+.oc-a h4{color:var(--accent-deep);} .oc-a p{color:var(--text-2);}
+.oc-b{background:var(--gold-wash);border-color:var(--gold);}
+.oc-b h4{color:var(--gold);} .oc-b p{color:var(--text-2);}
+.oc-c{background:var(--clay-wash);border-color:var(--clay);}
+.oc-c h4{color:var(--clay);} .oc-c p{color:var(--text-2);}
+
+footer{border-top:1px solid var(--line);margin-top:14px;padding-top:26px;font-size:15px;color:var(--text-3);}
+a{color:var(--accent-deep);}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+@media (max-width:600px){
+  .wrap{padding:0 17px 60px;}
+  body{font-size:16px;}
+  .path{margin-inline-start:0;width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow">تكامل بواتك · أودو 19</div>
+  <h1>بواتك في دفاتر أودو</h1>
+  <p class="lede">كيف تصل حركات البنك إلى أودو وحدها، وأين يجلس المحاسب ليسوّيها — بلغة العمل لا لغة الكود.</p>
+</header>
+
+<div class="qbar">
+  <div class="q"><div class="qn">١</div><p>كيف ستظهر الحركات في أودو، وما الآلية التي تُسهِّل العمل؟</p></div>
+  <div class="q"><div class="qn">٢</div><p>كيف نسوّي المطابقة — من أي شاشات ومن أي واجهات؟</p></div>
+</div>
+
+<!-- ==================== PART 1 ==================== -->
+<section class="part">
+  <div class="phead">
+    <span class="plabel">الجزء الأول</span>
+    <h2>كيف ستظهر الحركات في أودو</h2>
+  </div>
+  <p class="dek">الفكرة في سطر: <strong>ما يفعله المحاسب في سبع خطوات يوميًا، يصير خطوتين — وكلتاهما مراجعة لا إدخال.</strong></p>
+
+  <h3>اليوم مقابل الغد</h3>
+  <div class="tscroll">
+    <table>
+      <thead><tr><th>اليوم — يدويًا</th><th>بعد التكامل</th></tr></thead>
+      <tbody>
+        <tr><td class="was">الدخول إلى بوابة البنك بكلمة مرور</td><td class="now">يحدث وحده</td></tr>
+        <tr><td class="was">تنزيل كشف الحساب</td><td class="now">يحدث وحده</td></tr>
+        <tr><td class="was">تحويل الملف إلى صيغة يقبلها أودو</td><td class="now"><strong>لا يوجد ملف أصلًا</strong></td></tr>
+        <tr><td class="was">رفع الملف وضبط الأعمدة</td><td class="now">يحدث وحده</td></tr>
+        <tr><td class="was">التأكد من عدم تكرار ما استُورد سابقًا</td><td class="now">مستحيل التكرار — كل حركة لها رقم فريد</td></tr>
+        <tr><td class="was">مطابقة كل سطر بفاتورة أو دفعة</td><td class="now"><strong>أودو يطابق ما يستطيع، والمحاسب يراجع الباقي</strong></td></tr>
+        <tr><td class="was">تتبّع غير المطابَق في ملف جانبي</td><td class="now">أودو نفسه يعرض قائمة المعلّقات</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>رحلة معاملة واحدة</h3>
+  <p class="dek">عميل حوّل مبلغًا إلى حسابكم. هذا ما يحدث — والأصفر الطيني يعني تدخّلًا بشريًا:</p>
+
+  <div class="journey">
+    <div class="leg"><div class="bead">١</div><div class="leg-b">
+      <h4>البنك يسجّل الحوالة</h4>
+      <p><span class="who">تلقائي</span> — تظهر الحركة في حسابكم لدى البنك.</p>
+    </div></div>
+    <div class="leg"><div class="bead">٢</div><div class="leg-b">
+      <h4>أودو يسأل بواتك — كل ساعة</h4>
+      <p><span class="who">تلقائي</span> — يسأل عن الجديد فقط منذ آخر مرة، فلا يُعيد سحب ما لديه.</p>
+    </div></div>
+    <div class="leg"><div class="bead">٣</div><div class="leg-b">
+      <h4>الحركة تدخل كشف الحساب البنكي</h4>
+      <p><span class="who">تلقائي</span> — تظهر في يومية البنك بمبلغها وتاريخها واسم الطرف الآخر ومرجعه.</p>
+    </div></div>
+    <div class="leg"><div class="bead">٤</div><div class="leg-b">
+      <h4>القيد المحاسبي يُنشأ ويُرحَّل</h4>
+      <p><span class="who">تلقائي</span> — رصيد البنك في الدفاتر يتحرك فورًا، والطرف المقابل يوضع مؤقتًا في <strong>الحساب المعلّق</strong> لأن الفاتورة لم تُحدَّد بعد.</p>
+    </div></div>
+    <div class="leg"><div class="bead">٥</div><div class="leg-b">
+      <h4>أودو يحاول المطابقة — يوميًا أو عند الطلب</h4>
+      <p><span class="who">تلقائي</span> — مهمة مجدولة تبحث عن فاتورة أو دفعة مفتوحة تطابق المبلغ والمرجع والطرف. نجح؟ يُسوّى القيد وينتقل المبلغ من الحساب المعلّق إلى حساب العميل.</p>
+      <p>وإن لم تشائي الانتظار، زر <span class="ui">Reconcile automatically</span> يشغّلها فورًا.</p>
+    </div></div>
+    <div class="leg manual"><div class="bead">٦</div><div class="leg-b">
+      <h4>المحاسب يراجع ما لم يُطابَق فقط</h4>
+      <p><span class="who">بشري</span> — الحركات الغامضة وحدها تنتظره. الواضحة انتهت قبل أن يفتح أودو.</p>
+    </div></div>
+  </div>
+
+  <div class="note">
+    <h4>الآلية التي تصنع الفرق</h4>
+    <p><strong>لا رفع ملفات.</strong> البيانات تصل من بواتك مباشرة إلى أودو كأرقام مرتّبة، لا كملف يُنزَّل ويُحوَّل ويُرفع. فتختفي أخطاء الصيغ والأعمدة المزاحة من أساسها.</p>
+    <p><strong>لا تكرار.</strong> لكل حركة رقم تسلسلي فريد من البنك. لو تكرّر السحب مئة مرة، لن تُسجَّل الحركة مرتين.</p>
+    <p><strong>المطابقة تجري بلا طلب منكِ.</strong> مهمة يومية تتكفّل بها، وزر مخصّص يشغّلها فورًا متى أردتِ.</p>
+    <p><strong>عملك يتحوّل من إدخال إلى حكم.</strong> لم تعودي تنسخين أرقامًا؛ تقرّرين في الحالات التي لم يستطع النظام حسمها.</p>
+  </div>
+
+  <h3>ماذا سترين على الشاشة</h3>
+  <div class="grid g3">
+    <div class="card">
+      <h4>رصيد بنكي حيّ</h4>
+      <p>الرصيد في أودو يتابع البنك أولًا بأول، بدل أن ينتظر كشف آخر الشهر.</p>
+    </div>
+    <div class="card">
+      <h4>عدّاد المعلّقات</h4>
+      <p>بطاقة اليومية البنكية تعرض عدد المعاملات التي تنتظر التسوية. رقم واحد يقول لكِ كم بقي.</p>
+    </div>
+    <div class="card">
+      <h4>الحساب المعلّق كمقياس صحة</h4>
+      <p>رصيده يجب أن يعود صفرًا. تضخّمه إنذار مبكر بأن حركات تتراكم بلا مطابقة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PART 2 ==================== -->
+<section class="part">
+  <div class="phead">
+    <span class="plabel">الجزء الثاني</span>
+    <h2>كيف نسوّي المطابقة — الشاشات والواجهات</h2>
+  </div>
+  <p class="dek">كل ما يلي شاشات <strong>موجودة في أودو 19 Enterprise</strong> ولا نبنيها. نحن نُوصِّل الحركات إليها ونضبط قواعدها.</p>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">١</span><h4>لوحة تحكم المحاسبة</h4><span class="path">المحاسبة ← لوحة التحكم</span></div>
+    <div class="screen-b">
+      <p>نقطة البداية اليومية. تجدين بطاقة لكل يومية بنكية، وعليها:</p>
+      <ul>
+        <li>الرصيد الحالي للحساب</li>
+        <li>عدد المعاملات بانتظار التسوية</li>
+        <li>زر <span class="ui">Transactions</span> لعرض كل الحركات الواردة</li>
+        <li>زر التسوية الذي يفتح الشاشة التالية</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">٢</span><h4>مطابقة البنك — الشاشة الأساسية</h4><span class="path"><span class="ui">Bank Matching</span></span></div>
+    <div class="screen-b">
+      <p>هنا يقضي المحاسب وقته. الشاشة مقسومة نصفين:</p>
+      <ul>
+        <li><strong>جهة:</strong> الحركة الواردة من البنك — المبلغ والتاريخ والطرف الآخر ووصف العملية.</li>
+        <li><strong>الجهة المقابلة:</strong> المرشّحون للمطابقة — فواتير ودفعات مفتوحة، وأودو يرتّبها بالأقرب تطابقًا ويُعلّم ما رجّحه.</li>
+      </ul>
+      <p>دور المحاسب: تأكيد اقتراح أودو، أو اختيار فاتورة أخرى، أو وسم الحركة للمراجعة لاحقًا. <strong>وما طابقه أودو آليًا لا يصل إلى هذه الشاشة أصلًا.</strong></p>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">٣</span><h4>تشغيل المطابقة التلقائية عند الطلب</h4><span class="path"><span class="ui">Reconcile automatically</span></span></div>
+    <div class="screen-b">
+      <p>المهمة المجدولة تعمل مرة يوميًا. هذا الزر يفتح نافذة تشغّل المطابقة <strong>الآن</strong> على ما وصل حديثًا، بدل انتظار الدورة التالية.</p>
+      <p>مفيد بعد مزامنة كبيرة، أو في نهاية اليوم قبل إقفال العمل.</p>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">٤</span><h4>مطابقة المدفوعات</h4><span class="path">من لوحة التحكم · <span class="ui">Payments Matching</span></span></div>
+    <div class="screen-b">
+      <p>لمطابقة دفعة سُجّلت في أودو مع فاتورتها، بمعزل عن كشف البنك. تفيد حين يدفع العميل دفعة واحدة تغطي عدة فواتير.</p>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">٥</span><h4>قائمة السطور غير المسوّاة</h4><span class="path">المحاسبة ← <span class="ui">Reconcile</span></span></div>
+    <div class="screen-b">
+      <p>عرض شامل لكل ما لم يُسوَّ بعد عبر الحسابات. تصلح للمراجعة الدورية وإقفال الشهر: ما الذي بقي معلّقًا ومنذ متى.</p>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="screen-h"><span class="screen-n">٦</span><h4>قواعد التسوية — تُضبط مرة واحدة</h4><span class="path">المحاسبة ← الإعدادات</span></div>
+    <div class="screen-b">
+      <p>هنا نُعرّف لأودو <strong>متى يطابق وحده ومتى يسأل</strong>. القاعدة تقول مثلًا: «إذا طابق مرجع الحوالة مرجع فاتورة مفتوحة وتساوى المبلغ — سوِّها ولا تسألني».</p>
+      <p>هذه الشاشة هي مفتاح الأتمتة. <strong>بلا قاعدة واحدة على الأقل، لن يطابق أودو شيئًا تلقائيًا</strong> وستعود المطابقة يدوية بالكامل. سنشحن قواعد جاهزة ونضبطها معكم بعد رؤية شكل البيانات الحقيقية.</p>
+    </div>
+  </div>
+
+  <h3>ثلاث نتائج ممكنة لكل حركة</h3>
+  <div class="outcome">
+    <div class="oc oc-a">
+      <h4>سُوّيت آليًا</h4>
+      <p>المرجع والمبلغ تطابقا بلا لبس. لا تظهر للمحاسب إطلاقًا. <strong>هذه هي الغالبية المستهدفة.</strong></p>
+    </div>
+    <div class="oc oc-b">
+      <h4>اقتراح ينتظر تأكيدًا</h4>
+      <p>أودو رجّح فاتورة لكنه غير واثق. تظهر في واجهة التسوية باقتراح جاهز — ضغطة تأكيد.</p>
+    </div>
+    <div class="oc oc-c">
+      <h4>بلا مطابقة</h4>
+      <p>تبقى في الحساب المعلّق حتى يقرّر المحاسب. <strong>وهذا نجاح لا فشل.</strong></p>
+    </div>
+  </div>
+
+  <div class="note clay">
+    <h4>لماذا «بلا مطابقة» نتيجة سليمة</h4>
+    <p>مطابقة خاطئة تُغلق فاتورة لم تُدفع، أو تنسب دفعة لعميل غير صاحبها — وتُكتشف بعد شهور عند تسوية الحسابات.</p>
+    <p>لذلك ستُضبط القواعد على <strong>الحسم لا التخمين</strong>: يطابق أودو آليًا حين لا يوجد احتمال ثانٍ، وفيما عدا ذلك يعرض اقتراحًا ويترك القرار لكم.</p>
+  </div>
+</section>
+
+<!-- ==================== NEEDS ==================== -->
+<section class="part">
+  <div class="phead">
+    <span class="plabel">قبل التشغيل</span>
+    <h2>ما نحتاجه منكم — قرارات لا برمجة</h2>
+  </div>
+  <p class="dek">أربعة أمور تخصّ المحاسبة، وكلها قرارات تُتخذ مرة واحدة.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>ربط كل حساب بنكي بيوميته</h4>
+      <p>تحديد أي يومية في أودو تخصّ أي حساب لدى بواتك. بدونه لا يعرف النظام أين يضع الحركة.</p>
+    </div>
+    <div class="card">
+      <h4>حساب معلّق لكل يومية بنكية</h4>
+      <p>هو المكان المؤقت لكل حركة قبل مطابقتها. أودو يرفض تسجيل أي حركة على يومية بلا حساب معلّق.</p>
+    </div>
+    <div class="card">
+      <h4>الاتفاق على قواعد المطابقة</h4>
+      <p>ما الذي نعتبره تطابقًا قاطعًا يُسوّى بلا سؤال؟ وما الذي يبقى اقتراحًا؟ نقترح المسودة وتقرّرون.</p>
+    </div>
+    <div class="card">
+      <h4>جولة تحقق على بيئة الاختبار</h4>
+      <p>سحب حركات حقيقية والتأكد أن الوارد والصادر يظهران في الاتجاه الصحيح — <strong>قبل</strong> تشغيل الترحيل على الدفاتر الفعلية.</p>
+    </div>
+  </div>
+
+  <div class="note gold">
+    <h4>ملاحظتان تستحقان الانتباه</h4>
+    <p><strong>القيود تُرحَّل فورًا، بلا مرحلة مسودة.</strong> لحظة وصول الحركة من البنك يظهر قيد مُرحَّل في الدفاتر. لذلك نُصرّ على جولة التحقق أولًا: تصحيح قيد مُرحَّل أثقل بكثير من تأجيل التشغيل أسبوعًا.</p>
+      <p><strong>لكل حركة محاولة تلقائية واحدة.</strong> إذا لم يجد أودو لها مطابقًا في تلك المحاولة، لن يعيد الكرّة من تلقائه — حتى لو صدرت الفاتورة المطابقة لاحقًا. عندها تُسوّى يدويًا من شاشة <span class="ui">Bank Matching</span>، أو بتشغيل <span class="ui">Reconcile automatically</span>.</p>
+      <p>ولا يوجد سقف زمني: الحركات القديمة مؤهّلة للمطابقة مثل الجديدة تمامًا.</p>
+  </div>
+
+  <div class="note">
+    <h4>المحصّلة</h4>
+    <p>المحاسب لن يدخل بوابة البنك، ولن ينزّل ملفًا، ولن يرفع شيئًا إلى أودو. سيفتح لوحة التحكم، ويرى كم حركة تنتظره، ويحسم الغامض منها فقط.</p>
+    <p>والباقي — وهو الأكثر — يكون قد انتهى قبل أن يجلس.</p>
+  </div>
+</section>
+
+<footer>
+  تقرير وظيفي · تكامل بواتك مع أودو 19 Enterprise · الشاشات المذكورة قياسية في أودو ولا تحتاج تطويرًا.
+</footer>
+
+</div>
+</body>
+</html>

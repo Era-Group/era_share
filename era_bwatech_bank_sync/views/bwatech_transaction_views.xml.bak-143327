@@ -14,7 +14,6 @@
                 <field name="transaction_type_description"/>
                 <field name="bank_reference"/>
                 <field name="third_party_name"/>
-                <field name="partner_id"/>
                 <field name="posted_to_odoo" widget="boolean_toggle" readonly="1"/>
                 <field name="statement_line_id" optional="hide"/>
             </list>
@@ -49,7 +48,6 @@
                         <field name="customer_reference"/>
                         <field name="transaction_description"/>
                         <field name="third_party_name"/>
-                        <field name="partner_id" readonly="1"/>
                         <field name="third_party_bank_code"/>
                         <field name="third_party_account_number"/>
                         <field name="posted_to_odoo"/>

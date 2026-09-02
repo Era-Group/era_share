@@ -2,7 +2,6 @@ import json
 import logging
 
 from odoo import api, fields, models, _
-from odoo.addons.base.models.res_bank import sanitize_account_number
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -37,15 +36,6 @@ class BwatechTransaction(models.Model):
 
     raw_payload = fields.Text(readonly=True)
 
-    partner_id = fields.Many2one(
-        "res.partner",
-        string="Resolved Partner",
-        index="btree_not_null",
-        ondelete="set null",
-        help="Filled only when the third party could be identified beyond doubt, "
-             "so Odoo searches that partner's invoices instead of every open one.",
-    )
-
     statement_line_id = fields.Many2one(
         "account.bank.statement.line",
         readonly=True,
@@ -72,82 +62,6 @@ class BwatechTransaction(models.Model):
     def _compute_posted_to_odoo(self):
         for transaction in self:
             transaction.posted_to_odoo = bool(transaction.statement_line_id)
-
-    # ------------------------------------------------------------------
-    # Identifying the third party
-    # ------------------------------------------------------------------
-
-    @api.model
-    def _match_partners(self, keys, company):
-        """Resolve ``(account_number, name)`` pairs to partners, in two queries.
-
-        The account number is tried first because an IBAN identifies its holder
-        beyond doubt; the name is only a fallback. Either way a key is resolved
-        only when it points at exactly one partner — a second candidate means
-        the module has no business guessing, and Odoo is better left to ask.
-
-        :param keys: iterable of ``(account_number, name)`` tuples.
-        :return: ``{(account_number, name): partner_id}`` for the resolved keys.
-        """
-        keys = {(acc or False, name or False) for acc, name in keys}
-        keys.discard((False, False))
-        if not keys:
-            return {}
-
-        numbers = {sanitize_account_number(acc) for acc, _n in keys if acc}
-        numbers.discard(False)
-        by_number = {}
-        if numbers:
-            banks = self.env["res.partner.bank"].sudo().search([
-                ("sanitized_acc_number", "in", list(numbers)),
-                ("company_id", "in", (False, company.id)),
-            ])
-            for bank in banks:
-                by_number.setdefault(bank.sanitized_acc_number, set()).add(bank.partner_id.id)
-
-        names = {name for _a, name in keys if name}
-        by_name = {}
-        if names:
-            partners = self.env["res.partner"].sudo().search([
-                ("name", "in", list(names)),
-                ("company_id", "in", (False, company.id)),
-            ])
-            for partner in partners:
-                by_name.setdefault(partner.name, set()).add(partner.id)
-
-        # Matching our own company would turn an internal transfer into a
-        # receivable, so the company partner is never a valid third party.
-        own = company.partner_id.id
-
-        resolved = {}
-        for acc, name in keys:
-            candidates = by_number.get(sanitize_account_number(acc)) if acc else None
-            if not candidates:
-                candidates = by_name.get(name) if name else None
-            if not candidates:
-                continue
-            candidates = candidates - {own}
-            if len(candidates) == 1:
-                resolved[(acc, name)] = next(iter(candidates))
-        return resolved
-
-    def _resolve_missing_partners(self):
-        """Fill ``partner_id`` on the records that still have none."""
-        pending = self.filtered(lambda t: not t.partner_id)
-        if not pending:
-            return
-        company = pending[0].bank_account_id.company_id or self.env.company
-        resolved = self._match_partners(
-            [(t.third_party_account_number, t.third_party_name) for t in pending],
-            company,
-        )
-        for transaction in pending:
-            partner = resolved.get(
-                (transaction.third_party_account_number or False,
-                 transaction.third_party_name or False)
-            )
-            if partner:
-                transaction.partner_id = partner
 
     # ------------------------------------------------------------------
     # Posting to the bank journal
@@ -210,9 +124,6 @@ class BwatechTransaction(models.Model):
             # The sign comes straight from BWATECH and matches Odoo's own
             # convention: positive is money in, negative is money out.
             "amount": self.amount,
-            # A resolved partner narrows Odoo's candidate search to that
-            # partner's open invoices; the name alone only pre-fills the search box.
-            "partner_id": self.partner_id.id or False,
             "partner_name": self.third_party_name or False,
             "account_number": self.third_party_account_number or False,
             "ref": self.customer_reference or self.bank_reference or False,
@@ -233,10 +144,6 @@ class BwatechTransaction(models.Model):
         postable = self.filtered(lambda t: not t.posted_to_odoo).sorted("sequence_number")
         if not postable:
             raise UserError(_("لا توجد حركات قابلة للترحيل ضمن ما اخترتِه."))
-
-        # Records synchronised before this feature existed still have no
-        # partner, so the lookup runs once more here rather than never.
-        postable._resolve_missing_partners()
 
         blocked = []
         vals_list = []

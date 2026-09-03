@@ -11,9 +11,8 @@ sends is written next to it rather than in a manual — see ``tour_telemetry``,
 which is also where the tests live that keep the promise true.
 """
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
-from . import tour_builder
 from .tour_request import DEFAULT_MATCH_THRESHOLD
 
 
@@ -67,41 +66,3 @@ class ResConfigSettings(models.TransientModel):
         """
         return self.env["tour.assistant.telemetry"]._snapshot()
 
-    tour_assistant_build = fields.Char(
-        string="Walkthrough Builder",
-        compute="_compute_tour_assistant_build",
-        help="Which build of the walkthrough builder this database is running, "
-             "and how many stored walkthroughs an older one wrote. Anything "
-             "older is rebuilt on its next use.",
-    )
-
-    @api.depends_context("uid")
-    def _compute_tour_assistant_build(self):
-        """Answer "is this up to date?" with a number rather than a feeling.
-
-        A database that has not been upgraded looks exactly like one that has,
-        right up until somebody walks a walkthrough written by the older
-        builder and meets a fault that was fixed weeks ago. Two containers of
-        this module ran three versions apart and nothing on any screen said
-        so.
-        """
-        # sudo: counting generated walkthroughs is not a business record, and
-        # an administrator reading their own Settings page should not need
-        # rights over web_tour.tour to see whether their install is current.
-        tours = self.env["web_tour.tour"].sudo()
-        current = tour_builder.BUILDER_VERSION
-        stale = tours.search_count([
-            ("assistant_generated", "=", True),
-            ("assistant_builder_version", "<", current),
-        ])
-        total = tours.search_count([("assistant_generated", "=", True)])
-        for record in self:
-            if stale:
-                record.tour_assistant_build = _(
-                    "Build %(current)s — %(stale)s of %(total)s walkthroughs "
-                    "were written by an older one and will be rebuilt.",
-                    current=current, stale=stale, total=total)
-            else:
-                record.tour_assistant_build = _(
-                    "Build %(current)s — all %(total)s walkthroughs were "
-                    "written by it.", current=current, total=total)

@@ -43,6 +43,7 @@ the tours present in the database.
             "era_web_tour_assistant/static/src/xml/tour_assistant_templates.xml",
         ],
     },
+    "post_init_hook": "_set_install_defaults",
     "application": True,
     "installable": True,
 }

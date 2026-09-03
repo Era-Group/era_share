@@ -1,6 +1,3 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* era_web_tour_assistant
 #
 msgid ""
 msgstr ""
@@ -866,22 +863,6 @@ msgstr "بحث"
 
 #. module: era_web_tour_assistant
 #. odoo-python
-#: code:addons/era_web_tour_assistant/models/res_config_settings.py:0
-msgid ""
-"Build %(current)s — %(stale)s of %(total)s walkthroughs were written by an "
-"older one and will be rebuilt."
-msgstr ""
-"البناء %(current)s — %(stale)s من أصل %(total)s من الشروح كتبها بناء أقدم "
-"وستُعاد كتابتها."
-
-#. module: era_web_tour_assistant
-#. odoo-python
-#: code:addons/era_web_tour_assistant/models/res_config_settings.py:0
-msgid "Build %(current)s — all %(total)s walkthroughs were written by it."
-msgstr "البناء %(current)s — جميع الشروح وعددها %(total)s مكتوبة به."
-
-#. module: era_web_tour_assistant
-#. odoo-python
 #: code:addons/era_web_tour_assistant/models/tour_builder.py:0
 msgid ""
 "%(reason)s\n"
@@ -1099,11 +1080,6 @@ msgstr ""
 "يُسجَّل الإكمال عليها."
 
 #. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "This Install"
-msgstr "هذا التثبيت"
-
-#. module: era_web_tour_assistant
 #: model:ir.model,name:era_web_tour_assistant.model_tour_assistant_planner
 msgid "Tour Assistant Planner"
 msgstr "مخطِّط مساعد الجولات"
@@ -1129,16 +1105,6 @@ msgid "User"
 msgstr "المستخدم"
 
 #. module: era_web_tour_assistant
-#: model:ir.model.fields,field_description:era_web_tour_assistant.field_res_config_settings__tour_assistant_build
-msgid "Walkthrough Builder"
-msgstr "بنّاء الشروح"
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid "Walkthrough builder"
-msgstr "بنّاء الشروح"
-
-#. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_telemetry_url
 msgid ""
 "Where the report is posted. Nothing is sent until both this and the switch "
@@ -1146,27 +1112,6 @@ msgid ""
 msgstr ""
 "العنوان الذي يُرسل إليه التقرير. لا يُرسل شيء حتى يُضبط هذا والمفتاح أعلاه "
 "معًا."
-
-#. module: era_web_tour_assistant
-#: model:ir.model.fields,help:era_web_tour_assistant.field_res_config_settings__tour_assistant_build
-msgid ""
-"Which build of the walkthrough builder this database is running, and how "
-"many stored walkthroughs an older one wrote. Anything older is rebuilt on "
-"its next use."
-msgstr ""
-"أي إصدار من بنّاء الشروح تشغّله قاعدة البيانات هذه، وكم شرحًا مخزّنًا كتبه "
-"إصدار أقدم. وكل ما هو أقدم يُعاد بناؤه عند أول استخدام له."
-
-#. module: era_web_tour_assistant
-#: model_terms:ir.ui.view,arch_db:era_web_tour_assistant.res_config_settings_view_form
-msgid ""
-"Which build wrote the walkthroughs on this database. A container running an "
-"older one looks identical until somebody meets a fault that was fixed "
-"elsewhere weeks ago."
-msgstr ""
-"أي إصدار كتب الشروح الموجودة على قاعدة البيانات هذه. الحاوية التي تشغّل "
-"إصدارًا أقدم تبدو مطابقة تمامًا، إلى أن يصادف أحدهم عيبًا أُصلح في مكان آخر "
-"قبل أسابيع."
 
 #. module: era_web_tour_assistant
 #: model:ir.model.fields,help:era_web_tour_assistant.field_web_tour_tour__assistant_builder_version

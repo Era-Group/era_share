@@ -12,14 +12,6 @@
                      name="era_web_tour_assistant"
                      groups="era_web_tour_assistant.group_tour_assistant_manager">
 
-                    <block title="This Install">
-                        <setting id="tour_assistant_build_setting"
-                                 string="Walkthrough builder"
-                                 help="Which build wrote the walkthroughs on this database. A container running an older one looks identical until somebody meets a fault that was fixed elsewhere weeks ago.">
-                            <field name="tour_assistant_build" readonly="1"/>
-                        </setting>
-                    </block>
-
                     <block title="Answering">
                         <setting id="tour_assistant_generate_setting"
                                  string="Build walkthroughs automatically"

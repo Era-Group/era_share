@@ -1,0 +1,849 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* web_tour_assistant
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-31 21:44+0000\n"
+"PO-Revision-Date: 2026-07-31 21:44+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;
+"
+"Language: ar\n"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "<b>That is the way there.</b>"
+msgstr "<b>هذا هو الطريق.</b>"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "A step asks the user to %s, which is not allowed."
+msgstr "خطوة تطلب من المستخدم %s، وهذا غير مسموح."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "A step with no trigger points at nothing."
+msgstr "خطوة بلا محدد لا تشير إلى شيء."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "A step's trigger is implausibly long."
+msgstr "محدد إحدى الخطوات طويل بشكل غير معقول."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "A tour must start on a path within Odoo."
+msgstr "الجولة يجب أن تبدأ من مسار داخل أودو."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "A walkthrough of %s steps is too long to be useful."
+msgstr "جولة من %s خطوة أطول من أن تكون مفيدة."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_keywords
+msgid "Also Matches"
+msgstr "تطابق أيضًا"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Answer"
+msgstr "الإجابة"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Answered"
+msgstr "الإجابة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields.selection,name:web_tour_assistant.selection__tour_assistant_request__state__matched
+msgid "Answered by a Tour"
+msgstr "أجابت عليه جولة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_description
+msgid "Answers the Question"
+msgstr "تجيب على السؤال"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__user_ids
+msgid "Asked By"
+msgstr "سأله"
+
+#. module: web_tour_assistant
+#: model:ir.actions.act_window,name:web_tour_assistant.tour_request_action
+#: model:ir.ui.menu,name:web_tour_assistant.menu_tour_request_action
+msgid "Assistant Questions"
+msgstr "أسئلة المساعد"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_users__assistant_pending_tour_id
+msgid "Assistant Tour in Progress"
+msgstr "جولة مساعد جارية"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields.selection,name:web_tour_assistant.selection__tour_assistant_request__state__building
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Being Built"
+msgstr "قيد الإنشاء"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__build_attempts
+msgid "Build Attempts"
+msgstr "محاولات البناء"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__tour_generated
+msgid "Built Automatically"
+msgstr "بُنيت تلقائيًا"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_generated
+msgid "Built by the Assistant"
+msgstr "بناها المساعد"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_list
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__completion_rate
+msgid "Completion Rate"
+msgstr "نسبة الإكمال"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__completion_rate
+msgid "Completions divided by times asked."
+msgstr "عدد الإكمالات مقسومًا على عدد مرات السؤال."
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Demand"
+msgstr "الطلب"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Describe what you are trying to do, in your own words."
+msgstr "اكتب المهمة التي تريد إنجازها، بأسلوبك الخاص."
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Did It Work"
+msgstr "هل نفعت؟"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Dismiss"
+msgstr "استبعاد"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields.selection,name:web_tour_assistant.selection__tour_assistant_request__state__dismissed
+msgid "Dismissed"
+msgstr "مُستبعَد"
+
+#. module: web_tour_assistant
+#: model:ir.model.constraint,message:web_tour_assistant.constraint_tour_assistant_request_uniq_question_key
+msgid "Each question is tracked once; asking it again raises its count."
+msgstr "كل سؤال يُسجَّل مرة واحدة؛ وإعادة سؤاله ترفع عدّاده."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "Each step must be an object."
+msgstr "كل خطوة يجب أن تكون كائنًا."
+
+#. module: web_tour_assistant
+#: model_terms:ir.actions.act_window,help:web_tour_assistant.tour_request_action
+msgid ""
+"Every question a user types into the assistant lands here.\n"
+"                The ones no tour answers sit at the top, ordered by how often\n"
+"                they were asked, so the walkthrough worth recording next is\n"
+"                always the first row."
+msgstr "كل سؤال يكتبه مستخدم في المساعد يصل إلى هنا. الأسئلة التي لا تجيب عنها أي جولة تقف في الأعلى، مرتبة حسب عدد مرات السؤال، فتكون الجولة التي تستحق التسجيل التالية دائمًا في الصف الأول."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_web_tour_tour__assistant_keywords
+msgid ""
+"Extra words that should reach this tour, separated by spaces or commas. Use "
+"it for the wording staff actually use, including synonyms and the other "
+"language."
+msgstr "كلمات إضافية توصل لهذه الجولة، مفصولة بمسافات أو فواصل. استخدمها للألفاظ التي يستعملها الموظفون فعلًا، بما فيها المرادفات واللغة الأخرى."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Fill in %s."
+msgstr "املأ %s."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__question_key
+msgid ""
+"Folded form of the question. Two people asking the same thing differently "
+"land on the same record, so the count means demand."
+msgstr "الصيغة المطبَّعة للسؤال. شخصان يسألان الشيء نفسه بصياغتين مختلفتين يقعان على السجل نفسه، فيصير العدّاد معبّرًا عن الطلب الحقيقي."
+
+#. module: web_tour_assistant
+#: model:res.groups,comment:web_tour_assistant.group_tour_assistant_worker
+msgid ""
+"For the automated account that builds walkthroughs. Do not give this to a "
+"person."
+msgstr "للحساب الآلي الذي يبني الجولات. لا تعطه لشخص."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__build_attempts
+msgid ""
+"How many times an agent has tried and failed to work this out. After a few "
+"it stops trying and leaves the question for a person to record."
+msgstr "كم مرة حاول الوكيل وفشل. بعد عدة محاولات يتوقف ويترك السؤال لإنسان يسجّله."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__match_score
+msgid "How much of the question the matched tour covered, 0 to 1."
+msgstr "كم غطّت الجولة المطابقة من السؤال، من 0 إلى 1."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__completed_count
+msgid ""
+"How often the matched tour was actually run to the end. A question asked far"
+" more often than its tour is completed is a sign the tour does not answer "
+"it."
+msgstr "كم مرة شُغّلت الجولة المطابقة حتى نهايتها. سؤال يُسأل أكثر بكثير مما تُكمل جولته علامة على أن الجولة لا تجيب عنه."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__ask_count
+msgid ""
+"How often this was asked. The queue is ordered by it, so the tour worth "
+"building next is at the top."
+msgstr "كم مرة سُئل هذا. الطابور مرتب حسبه، فالجولة التي تستحق البناء التالية تكون في الأعلى."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__last_asked
+msgid "Last Asked"
+msgstr "آخر سؤال"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_web_tour_tour__assistant_group_ids
+msgid ""
+"Leave empty to offer this tour to everyone. Otherwise only members of these "
+"groups are shown it."
+msgstr "اتركها فارغة لعرض الجولة على الجميع. وإلا فلن تُعرض إلا لأعضاء هذه المجموعات."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_web_tour_tour__assistant_enabled
+msgid ""
+"Let the assistant start this tour when a question matches it. Tours that are"
+" still being written should stay off."
+msgstr "اسمح للمساعد ببدء هذه الجولة عند مطابقة سؤال لها. الجولات التي ما زالت قيد الكتابة يُفضَّل إبقاؤها مغلقة."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "Link or create a tour before publishing %s."
+msgstr "اربط أو أنشئ جولة قبل نشر %s."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__match_score
+msgid "Match Score"
+msgstr "درجة المطابقة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__match_detail
+msgid "Matched Words"
+msgstr "الكلمات المطابقة"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Never Completed"
+msgstr "لم تُكمل أبدًا"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields.selection,name:web_tour_assistant.selection__tour_assistant_request__state__queued
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "No Tour Yet"
+msgstr "لا توجد جولة بعد"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "No such question."
+msgstr "لا يوجد سؤال بهذا المعرّف."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid ""
+"No walkthrough covers that yet. Your question has been recorded — it has now"
+" been asked %(count)s time(s)."
+msgstr "ما فيه جولة تغطي هذا بعد. سؤالك تسجّل — سُئل الآن %(count)s مرة."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__question_key
+msgid "Normalised Question"
+msgstr "السؤال بعد التطبيع"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid ""
+"Nothing covers that yet, so one is being put together for you now. Ask again"
+" in a few minutes."
+msgstr "ما فيه شرح يغطي هذا بعد، وجارٍ تجهيز واحد لك الآن. جرّب بعد دقائق."
+
+#. module: web_tour_assistant
+#: model_terms:ir.actions.act_window,help:web_tour_assistant.tour_request_action
+msgid "Nothing has been asked yet"
+msgstr "لم يُسأل شيء بعد"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_enabled
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_search_assistant
+msgid "Offered by the Assistant"
+msgstr "يعرضها المساعد"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_users__assistant_onboarding_restore
+msgid "Onboarding Setting to Restore"
+msgstr "إعداد التهيئة المراد إرجاعه"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "Only the tour assistant worker may call this."
+msgstr "لا يستدعي هذا إلا عامل مساعد الجولات."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Go back to the apps."
+msgstr "ارجع إلى التطبيقات."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Now go to %s."
+msgstr "الآن انتقل إلى %s."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Open %s."
+msgstr "افتح %s."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "Please describe the task in a few words, not only question words."
+msgstr "صف المهمة بكلمات قليلة، لا بأدوات استفهام فقط."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "Please type what you are trying to do."
+msgstr "اكتب المهمة التي تريد إنجازها."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Press New."
+msgstr "اضغط «جديد»."
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Publish"
+msgstr "نشر"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Put Back in the Queue"
+msgstr "أعده إلى الطابور"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__name
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Question"
+msgstr "السؤال"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_list
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Questions"
+msgstr "السؤال"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Record a Tour"
+msgstr "سجّل جولة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_group_ids
+msgid "Restricted to Groups"
+msgstr "مقصورة على المجموعات"
+
+#. module: web_tour_assistant
+#: model:res.groups,comment:web_tour_assistant.group_tour_assistant_manager
+msgid ""
+"Reviews the queue of unanswered questions, records tours and publishes them."
+msgstr "يراجع طابور الأسئلة بلا إجابة، ويسجّل الجولات وينشرها."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Save once the required fields are filled."
+msgstr "احفظ بعد إكمال الحقول المطلوبة."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Show me"
+msgstr "اعرض الخطوات"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Show me how"
+msgstr "اشرح لي الطريقة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__state
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_form
+msgid "Technical"
+msgstr "تقني"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "The agent returned no steps."
+msgstr "الوكيل لم يُرجع أي خطوات."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__tour_generated
+msgid ""
+"The answer was assembled from the menus rather than recorded by a person. "
+"Worth reviewing: it gets the user to the right screen, but it cannot explain"
+" the work itself."
+msgstr "الإجابة جُمّعت من القوائم لا سجّلها إنسان. تستحق المراجعة: توصل المستخدم للشاشة الصحيحة، لكنها لا تشرح العمل نفسه."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__name
+msgid "The question as it was first asked."
+msgstr "السؤال كما سُئل أول مرة."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "The tour for %s has no steps yet."
+msgstr "جولة %s ما فيها خطوات بعد."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__tour_id
+msgid "The tour that answers this question."
+msgstr "الجولة التي تجيب على هذا السؤال."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_res_users__assistant_pending_tour_id
+msgid ""
+"The tour the user asked the assistant for and has not finished. While it is "
+"set, Odoo's own onboarding tours stay out of the way so they cannot "
+"interrupt it."
+msgstr "الجولة التي طلبها المستخدم من المساعد ولم يُنهها. ما دامت محددة تبقى جولات التهيئة الخاصة بأودو بعيدة عن الطريق حتى لا تقاطعها."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Then %s."
+msgstr "ثم %s."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_request.py:0
+msgid "This question already has a tour."
+msgstr "هذا السؤال له جولة بالفعل."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_web_tour_tour__assistant_generated
+msgid ""
+"This tour was assembled from the menus and views rather than recorded by "
+"hand. It gets someone to the right screen; a recorded tour will usually "
+"explain the work better."
+msgstr "هذه الجولة جُمّعت من القوائم والواجهات لا سُجّلت بيد إنسان. توصل المستخدم إلى الشاشة الصحيحة، لكن جولة مسجّلة تشرح العمل نفسه أفضل."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid ""
+"This walkthrough could not be started. Someone will need to look at it."
+msgstr "ما قدرنا نبدأ هذي الجولة. تحتاج من يراجعها."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__ask_count
+msgid "Times Asked"
+msgstr "عدد مرات السؤال"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__completed_count
+msgid "Times Completed"
+msgstr "عدد مرات الإكمال"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__tour_id
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_request_search
+msgid "Tour"
+msgstr "الجولة"
+
+#. module: web_tour_assistant
+#: model:ir.module.category,name:web_tour_assistant.module_category_tour_assistant
+#: model:res.groups.privilege,name:web_tour_assistant.res_groups_privilege_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_form_assistant
+msgid "Tour Assistant"
+msgstr "مساعد الجولات"
+
+#. module: web_tour_assistant
+#: model:ir.model,name:web_tour_assistant.model_tour_assistant_builder
+msgid "Tour Assistant Builder"
+msgstr "مساعد الجولات"
+
+#. module: web_tour_assistant
+#: model:res.groups,name:web_tour_assistant.group_tour_assistant_manager
+msgid "Tour Assistant Manager"
+msgstr "مدير مساعد الجولات"
+
+#. module: web_tour_assistant
+#: model:ir.model,name:web_tour_assistant.model_tour_assistant_request
+msgid "Tour Assistant Request"
+msgstr "طلب مساعد الجولات"
+
+#. module: web_tour_assistant
+#: model:res.groups,name:web_tour_assistant.group_tour_assistant_worker
+msgid "Tour Assistant Worker"
+msgstr "عامل مساعد الجولات"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields.selection,name:web_tour_assistant.selection__tour_assistant_request__state__ready
+msgid "Tour Published"
+msgstr "الجولة"
+
+#. module: web_tour_assistant
+#: model:ir.model,name:web_tour_assistant.model_web_tour_tour
+msgid "Tours"
+msgstr "الجولات"
+
+#. module: web_tour_assistant
+#: model:ir.module.category,description:web_tour_assistant.module_category_tour_assistant
+msgid "Walkthroughs built from what users ask for"
+msgstr "جولات تُبنى مما يسأل عنه المستخدمون"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_res_users__assistant_onboarding_restore
+msgid ""
+"What the Onboarding setting was before the assistant had to turn it on. It "
+"is put back when the tour finishes."
+msgstr "ما كان عليه إعداد التهيئة قبل أن يضطر المساعد لتشغيله. يُعاد عند انتهاء الجولة."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__build_error
+msgid "What the agent reported on its last attempt."
+msgstr "ما أبلغ عنه الوكيل في محاولته الأخيرة."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_web_tour_tour__assistant_description
+msgid ""
+"What this tour teaches, in the words a user would use to ask for it — for "
+"example 'how do I add a new contact?'."
+msgstr "ما تعلّمه هذه الجولة، بالكلمات التي يستخدمها المستخدم ليطلبها — مثل «كيف أضيف جهة اتصال جديدة؟»."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,help:web_tour_assistant.field_tour_assistant_request__match_detail
+msgid ""
+"Which words of the question reached the tour. Use it to work out what to add"
+" to the tour's keywords."
+msgstr "أي كلمات من السؤال وصلت إلى الجولة. استخدمها لمعرفة ما يجب إضافته إلى كلمات الجولة."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__build_error
+msgid "Why It Failed"
+msgstr "سبب الفشل"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.tour_form_assistant
+msgid "e.g. how do I add a new contact?"
+msgstr "مثال: كيف أضيف جهة اتصال جديدة؟"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Working out how to do that."
+msgstr "جارٍ إعداد الشرح."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "Usually about %(middle)s seconds, rarely more than %(upper)s."
+msgstr "عادةً %(middle)s ثوانٍ، ونادراً أكثر من %(upper)s."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__build_seconds
+msgid "Seconds to Build"
+msgstr "ثوانِ البناء"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__step_count
+msgid "Steps"
+msgstr "الخطوات"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Ask how to do something and be walked through it"
+msgstr "اسأل عن أي مهمة في أودو، وسنرشدك إليها خطوة بخطوة"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Step by step"
+msgstr "خطوة بخطوة"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Ask about any task and be walked through it on screen"
+msgstr "اسأل عن أي مهمة، وسنرشدك إليها خطوة بخطوة على الشاشة"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Walkthroughs ready for you"
+msgstr "شروح جاهزة لك"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Show me again"
+msgstr "اعرضه مرة أخرى"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Did not help"
+msgstr "لم يفِ بالغرض"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Tell us this walkthrough did not help"
+msgstr "أبلِغنا أن هذا الشرح لم يفِ بالغرض"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Reported"
+msgstr "تم التبليغ"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Screens this walkthrough crosses"
+msgstr "الشاشات التي يمر بها هذا الشرح"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "Noted — thank you. Somebody will look at this one."
+msgstr "تم التسجيل، شكرًا لك. سيراجعه فريقنا."
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_config_settings__tour_assistant_telemetry
+msgid "Share Usage With The Publisher"
+msgstr "مشاركة الاستخدام مع الناشر"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_config_settings__tour_assistant_telemetry_url
+msgid "Reporting Address"
+msgstr "عنوان إرسال التقارير"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_config_settings__tour_assistant_match_threshold
+msgid "Answer Confidence"
+msgstr "درجة الثقة قبل الإجابة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_res_config_settings__tour_assistant_generate
+msgid "Build Walkthroughs Automatically"
+msgstr "بناء الشروح تلقائيًا"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_tour_assistant_request__reported_count
+msgid "Times Reported"
+msgstr "عدد البلاغات"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_next_stage_id
+msgid "Next Stage"
+msgstr "المرحلة التالية"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_first_stage_id
+msgid "First Stage"
+msgstr "المرحلة الأولى"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_skip_model
+msgid "Stage Creates"
+msgstr "ما تنشئه المرحلة"
+
+#. module: web_tour_assistant
+#: model:ir.model.fields,field_description:web_tour_assistant.field_web_tour_tour__assistant_builder_version
+msgid "Built By Version"
+msgstr "إصدار البنّاء"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Answering"
+msgstr "الإجابة"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Sharing Usage"
+msgstr "مشاركة الاستخدام"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Build walkthroughs automatically"
+msgstr "ابنِ الشروح تلقائيًا"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Answer confidence"
+msgstr "درجة الثقة قبل الإجابة"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Share usage with the publisher"
+msgstr "شارك بيانات الاستخدام مع الناشر"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Sent:"
+msgstr "الذي يُرسل:"
+
+#. module: web_tour_assistant
+#: model_terms:ir.ui.view,arch_db:web_tour_assistant.res_config_settings_view_form
+msgid "Never sent:"
+msgstr "الذي لا يُرسل أبدًا:"
+
+#. module: web_tour_assistant
+#: model:ir.model,name:web_tour_assistant.model_tour_assistant_telemetry
+msgid "Tour Assistant Telemetry"
+msgstr "تقارير استخدام مساعد الشرح"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "Report this walkthrough?"
+msgstr "تبلّغ عن هذا الشرح؟"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid ""
+"You are about to tell us that “%(label)s” did not help. It will be looked at "
+"and rebuilt. Nothing you typed is sent."
+msgstr ""
+"أنت على وشك إبلاغنا أن «%(label)s» لم يفِ بالغرض. سنراجعه ونعيد بناءه. ولا يُرسل "
+"شيء مما كتبته."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "Yes, it did not help"
+msgstr "نعم، لم يفِ بالغرض"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Tell us this walkthrough did not help. You will be asked to confirm."
+msgstr "أبلِغنا أن هذا الشرح لم يفِ بالغرض. سيُطلب منك التأكيد."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "%(count)s steps"
+msgstr "%(count)s خطوة"
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/js/tour_assistant_dialog.js:0
+msgid "%(count)s screens"
+msgstr "%(count)s شاشات"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Press %s to complete the step."
+msgstr "اضغط «%s» لإتمام الخطوة."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/tour_builder.py:0
+msgid "Open the record you need from the list."
+msgstr "افتح السجل المطلوب من القائمة."
+
+#. module: web_tour_assistant
+#. odoo-javascript
+#: code:addons/web_tour_assistant/static/src/xml/tour_assistant_templates.xml:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/res_config_settings.py:0
+msgid "Build %(current)s — %(stale)s of %(total)s walkthroughs were written by an older one and will be rebuilt."
+msgstr "البناء %(current)s — و%(stale)s من %(total)s جولة كتبها بناء أقدم وستُعاد كتابتها."
+
+#. module: web_tour_assistant
+#. odoo-python
+#: code:addons/web_tour_assistant/models/res_config_settings.py:0
+msgid "Build %(current)s — all %(total)s walkthroughs were written by it."
+msgstr "البناء %(current)s — وكل الجولات الـ%(total)s مكتوبة به."

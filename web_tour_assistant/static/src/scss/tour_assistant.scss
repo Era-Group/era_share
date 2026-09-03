@@ -1,0 +1,84 @@
+.o_tour_assistant_systray {
+    display: flex;
+    align-items: center;
+
+    .o_tour_assistant_button {
+        display: flex;
+        align-items: center;
+        padding: .15rem .6rem;
+        border: 0;
+        border-radius: 999px;
+        color: inherit;
+        // Enough of a shape to read as something you press, not enough to
+        // compete with the toolbar it sits in. A user who has never been told
+        // this exists has to notice it; one who has must not be nagged by it.
+        background: rgba(255, 255, 255, .12);
+        opacity: .9;
+
+        &:hover,
+        &:focus {
+            background: rgba(255, 255, 255, .22);
+            color: inherit;
+            opacity: 1;
+        }
+    }
+
+    .o_tour_assistant_label {
+        font-size: .8125rem;
+        white-space: nowrap;
+    }
+}
+
+.o_tour_assistant_dialog {
+    .o_tour_assistant_input {
+        resize: vertical;
+    }
+}
+
+// Reporting is destructive of nothing, but it costs somebody an investigation
+// and it is the measurement this module leans on. Quiet enough not to invite a
+// stray click, red enough that nobody presses it thinking it replays the
+// walkthrough — which is the button immediately before it.
+.o_tour_assistant_report {
+    color: var(--danger, #d9534f) !important;
+    opacity: 0.65;
+
+    &:hover,
+    &:focus {
+        opacity: 1;
+        text-decoration: underline;
+    }
+}
+
+.o_tour_assistant_sift {
+    // Narrow enough that the heading and the count stay on one line, wide
+    // enough to hold the few words anybody actually types.
+    max-width: 14rem;
+}
+
+.o_tour_assistant_library {
+    // The box you type in must never scroll away. As the list of ready
+    // walkthroughs grows it pushes the dialog past its height, the whole body
+    // scrolls, and the first thing to leave the screen is the thing the dialog
+    // exists for. The list scrolls inside itself instead.
+    max-height: 46vh;
+    overflow-y: auto;
+
+    // The header stays put while its rows move under it, or a list you are
+    // halfway down stops saying what it is.
+    thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    // One line per walkthrough, whatever the question was. A list whose rows
+    // are different heights is read as a list of different things.
+    td.o_tour_assistant_title {
+        max-width: 0;          // lets the cell take its share and no more
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

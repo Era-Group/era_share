@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tour_form_assistant" model="ir.ui.view">
+        <field name="name">web_tour.tour.form.assistant</field>
+        <field name="model">web_tour.tour</field>
+        <field name="inherit_id" ref="web_tour.tour_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="before">
+                <group string="Tour Assistant" colspan="2">
+                    <field name="assistant_enabled"/>
+                    <field name="assistant_description"
+                           placeholder="e.g. how do I add a new contact?"/>
+                    <field name="assistant_keywords"
+                           placeholder="e.g. add, new, save, إضافة, جديد, حفظ"/>
+                    <field name="assistant_group_ids" widget="many2many_tags"
+                           options="{'no_create': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="tour_list_assistant" model="ir.ui.view">
+        <field name="name">web_tour.tour.list.assistant</field>
+        <field name="model">web_tour.tour</field>
+        <field name="inherit_id" ref="web_tour.tour_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='custom']" position="after">
+                <field name="assistant_enabled"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="tour_search_assistant" model="ir.ui.view">
+        <field name="name">web_tour.tour.search.assistant</field>
+        <field name="model">web_tour.tour</field>
+        <field name="inherit_id" ref="web_tour.tour_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="assistant_keywords"/>
+                <filter name="assistant_enabled" string="Offered by the Assistant"
+                        domain="[('assistant_enabled', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

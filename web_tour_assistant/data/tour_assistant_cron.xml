@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The account this module asks is a credential somebody logged in with
+        once, and a login can be revoked, expire, or be invalidated by a
+        password change at any time. When that happens nothing breaks loudly:
+        the planner simply answers nothing, questions that used to be answered
+        start going to the queue, and the only sign is a slow decline nobody
+        attributes to a login. So it is checked on a schedule, and the failure
+        is written where somebody responsible for the instance will read it.
+    -->
+    <record id="ir_cron_check_ai_account" model="ir.cron">
+        <field name="name">Tour Assistant: check the AI account still answers</field>
+        <field name="model_id" ref="model_tour_assistant_planner"/>
+        <field name="state">code</field>
+        <field name="code">model.check_account()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!--
+        A fix to how steps are written is invisible to the walkthroughs a
+        database already holds: they are replayed exactly as they were built.
+        Filtering an older one out of the candidates stops it being offered;
+        this is what stops them piling up, and it means an upgrade needs no
+        migration script and a database nobody is watching still ends clean.
+    -->
+    <record id="ir_cron_drop_stale_walkthroughs" model="ir.cron">
+        <field name="name">Tour Assistant: remove walkthroughs an older builder wrote</field>
+        <field name="model_id" ref="model_web_tour_tour"/>
+        <field name="state">code</field>
+        <field name="code">model._assistant_drop_stale()
+model._assistant_reopen_after_upgrade()
+model.env['tour.assistant.request']._release_abandoned_claims()
+model.env['res.users']._assistant_restore_orphans()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!--
+        Off unless the customer turns it on, and both a switch and an address
+        are needed. What it sends is counts and menu identifiers: the question
+        somebody typed can carry a customer's name or an amount, and it is
+        also the one thing that does not help — see tour_telemetry.py.
+    -->
+    <record id="ir_cron_report_usage" model="ir.cron">
+        <field name="name">Tour Assistant: report how it is doing, if allowed</field>
+        <field name="model_id" ref="model_tour_assistant_telemetry"/>
+        <field name="state">code</field>
+        <field name="code">model.send()</field>
+        <field name="interval_number">7</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

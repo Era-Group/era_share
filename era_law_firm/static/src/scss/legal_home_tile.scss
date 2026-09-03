@@ -8,10 +8,12 @@
 // The cell is selected through the app link inside it, because the link is
 // what carries the menu's xmlid — the cell itself has nothing to identify it.
 //
-// Icons here are 70px in core; ours is asked for at double that. The number is
-// written once, as a variable, so the two places that need it cannot disagree.
+// Icons here are 70px in core, and ours is asked for at half again as large.
+// Written as that ratio rather than as the answer, so the relationship stays
+// readable, and written once so the two places that need it cannot disagree.
 
-$era-app-icon: 140px;
+$o-era-home-icon-base: 70px;   // core's own size, home_menu.variables.scss:3
+$era-app-icon: $o-era-home-icon-base * 1.5;
 
 .o_home_menu .o_apps {
   > .o_draggable:has(> .o_app[data-menu-xmlid="era_law_firm.menu_legal_root"]) {
